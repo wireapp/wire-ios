@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+import WireDesign
 
-final class SpinnerButtonTests: BaseSnapshotTestCase {
+@testable import Wire
+
+final class SpinnerButtonTests: XCTestCase {
     var sut: SpinnerButton!
 
     override func tearDown() {
