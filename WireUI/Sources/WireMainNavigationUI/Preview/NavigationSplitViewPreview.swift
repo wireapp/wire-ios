@@ -111,10 +111,6 @@ struct ThreeColumnSplitView: View {
 
 struct ThreeColumnSplitView_Previews: PreviewProvider {
     static var previews: some View {
-        if #available(iOS 16.0, *) {
-            ThreeColumnSplitView()
-        } else {
-            Text(verbatim: "")
-        }
+        ThreeColumnSplitView()
     }
 }

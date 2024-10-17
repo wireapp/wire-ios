@@ -384,9 +384,7 @@ final class ConversationListViewController: UIViewController {
         } else {
             navigationItem.searchController = nil
         }
-        if #available(iOS 16.0, *) {
-            navigationItem.preferredSearchBarPlacement = .stacked
-        }
+        navigationItem.preferredSearchBarPlacement = .stacked
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
