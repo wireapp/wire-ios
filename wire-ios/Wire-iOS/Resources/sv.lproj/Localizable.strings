@@ -1032,8 +1032,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Inställningar";
 "self.profile" = "Profil";
 "self.account" = "Konto";
@@ -1514,7 +1520,7 @@
 
 
 // Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
+"registration.no_history.restore_backup.restoring" = "Återställer…";
 "registration.no_history.restore_backup.completed" = "Completed";
 
 // Password Import Alert
@@ -1564,7 +1570,7 @@
 
 "registration.personal.title" = "Skapa ett konto";
 "registration.signin.title" = "Logga in";
-"registration.signin.too_many_devices.title" = "Too Many Devices";
+"registration.signin.too_many_devices.title" = "För många enheter";
 "registration.signin.too_many_devices.subtitle" = "Ta bort en av dina andra enheter för att börja använda Wire på den här enheten.";
 "registration.signin.too_many_devices.manage_button.title" = "Hantera enheter";
 "registration.signin.too_many_devices.sign_out_button.title" = "Logga ut";

@@ -1032,8 +1032,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Profil teilen";
+"qrcode.share_message" = "Teilen Sie Ihr Profil, um einfach mit anderen Personen in Kontakt zu treten. Sie müssen noch die Kontaktanfrage akzeptieren, bevor sie miteinander kommunizieren können.";
+"qrcode.share_profile_link.button.title" = "Profil-Link teilen";
+"qrcode.share_qrcode.button.title" = "QR-Code teilen";
+
+// Options menu contents
 "self.settings" = "Einstellungen";
 "self.profile" = "Profil";
 "self.account" = "Benutzerkonto";
