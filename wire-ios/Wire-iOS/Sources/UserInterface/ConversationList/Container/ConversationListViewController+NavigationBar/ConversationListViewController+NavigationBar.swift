@@ -54,9 +54,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        // TODO: [WPB-11604] call this only for collapsed layout
-        setupLeftNavigationBarButtonItems()
-        // TODO: [WPB-11604] what to update for expanded layout?
+        if mainSplitViewState == .collapsed {
+            setupLeftNavigationBarButtonItems()
+        }
     }
 
     // MARK: - Navigation Bar Items
