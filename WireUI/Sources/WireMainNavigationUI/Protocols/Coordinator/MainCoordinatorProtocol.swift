@@ -16,11 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 public protocol MainCoordinatorProtocol: AnyObject {
-    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
-        where ConversationFilter: MainConversationFilterRepresentable
-    func showArchivedConversations() async
-    func showSelfProfile() async
+
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+
+    typealias ConversationFilter = Dependencies.ConversationFilter
+    typealias ConversationModel = Dependencies.ConversationModel
+    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+    typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
+    typealias User = Dependencies.User
+
+    @MainActor
+    func showConversationList(conversationFilter: ConversationFilter?) async
+    @MainActor
+    func showArchive() async
+    @MainActor
     func showSettings() async
-    func showNewConversation() async
+
+    @MainActor
+    func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async
+    /// This method will be called by the custom back button in the conversation content screen.
+    @MainActor
+    func hideConversation()
+
+    @MainActor
+    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
+    @MainActor
+    func hideSettingsContent()
+
+    @MainActor
+    func showSelfProfile() async
+    @MainActor
+    func showUserProfile(user: User) async
+    @MainActor
+    func showConnect() async
+    @MainActor
+    func showCreateGroupConversation() async
+
+    @MainActor
+    func presentViewController(_ viewController: UIViewController) async
+    @MainActor
+    func dismissPresentedViewController() async
 }

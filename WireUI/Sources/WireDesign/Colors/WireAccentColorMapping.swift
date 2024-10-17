@@ -78,9 +78,10 @@ private struct MappingTestView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
     var body: some View {
+        let foregroundColor = wireAccentColorMapping?.color(for: wireAccentColor) ?? .primary.opacity(0.8)
         VStack {
             Text(verbatim: "\(String(describing: wireAccentColor))")
-            Circle().foregroundStyle(wireAccentColorMapping.color(for: wireAccentColor))
+            Circle().foregroundStyle(foregroundColor)
         }
     }
 }
