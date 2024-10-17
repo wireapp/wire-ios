@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 enum ImageToolbarConfiguration {
     case cell
@@ -63,7 +64,7 @@ final class ImageToolbarView: UIView {
     }
 
     private func updateButtonStyle() {
-        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) : .from(scheme: .iconNormal)
+        let normalColor: UIColor = SemanticColors.Icon.foregroundDefault
         let highlightedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
         let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
 
