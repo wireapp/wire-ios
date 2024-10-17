@@ -99,7 +99,7 @@ extension SegmentationEntry {
     /// - Parameter value: The duration of the call.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func duration(_ value: TimeInterval) -> Self {
+    static func callDuration(_ value: TimeInterval) -> Self {
         .init(key: "duration", value: String(value))
     }
 
