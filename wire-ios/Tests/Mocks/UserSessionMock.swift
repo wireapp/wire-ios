@@ -347,7 +347,7 @@ final class UserSessionMock: UserSession {
         ToggleMessageReactionUseCase(analyticsEventTracker: nil)
     }
 
-    func makeCallQualitySurveyUseCase() -> any CallQualitySurveyUseCaseProtocol {
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
         CallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 

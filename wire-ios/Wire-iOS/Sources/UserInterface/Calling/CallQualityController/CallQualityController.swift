@@ -32,11 +32,11 @@ class CallQualityController: NSObject {
     fileprivate var token: Any?
 
     private let rootViewController: UIViewController
-    private let callQualitySurvey: CallQualitySurveyUseCaseProtocol
+    private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(rootViewController: UIViewController, callQualitySurvey: CallQualitySurveyUseCaseProtocol) {
+    init(rootViewController: UIViewController, callQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
         self.rootViewController = rootViewController
-        self.callQualitySurvey = callQualitySurvey
+        self.submitCallQualitySurvey = callQualitySurvey
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -115,12 +115,12 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            callQualitySurvey.invoke(.notDisplayed(reason: .callTooShort, duration: callDuration))
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .callTooShort, duration: callDuration))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            callQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
             return
         }
 
@@ -178,7 +178,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        callQualitySurvey.invoke(.answered(score: score, duration: controller.callDuration))
+        submitCallQualitySurvey.invoke(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {

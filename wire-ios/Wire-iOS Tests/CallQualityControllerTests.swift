@@ -34,7 +34,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     private var conversation: ZMConversation!
     private var callConversationProvider: MockCallConversationProvider!
     private var callQualityViewController: CallQualityViewController!
-    private var callQualitySurvey: MockCallQualitySurveyUseCaseProtocol!
+    private var callQualitySurvey: MockSubmitCallQualitySurveyUseCaseProtocol!
 
     // MARK: - setUp
 
@@ -49,7 +49,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         )
         callConversationProvider = MockCallConversationProvider()
 
-        callQualitySurvey = MockCallQualitySurveyUseCaseProtocol()
+        callQualitySurvey = MockSubmitCallQualitySurveyUseCaseProtocol()
         callQualitySurvey.invoke_MockMethod = { _ in }
 
         // NOTE: the sut is not really a mock it's just the real implementation

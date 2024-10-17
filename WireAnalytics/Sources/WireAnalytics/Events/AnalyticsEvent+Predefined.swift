@@ -134,21 +134,21 @@ public enum CallQualitySurveyReview {
         case .notDisplayed(let reason, let duration):
             [
                 .callLabel("not-displayed"),
-                .duration(duration),
-                .ignoreReason(reason.rawValue)
+                .callDuration(duration),
+                .callIgnoreReason(reason.rawValue)
             ]
 
         case .answered(let score, let duration):
             [
                 .callLabel("answered"),
-                .score(score),
-                .duration(duration)
+                .callScore(score),
+                .callDuration(duration)
             ]
 
         case .dismissed(let duration):
             [
                 .callLabel("dismissed"),
-                .duration(duration)
+                .callDuration(duration)
             ]
         }
     }

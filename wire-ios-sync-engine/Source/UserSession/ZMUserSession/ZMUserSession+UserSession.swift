@@ -379,7 +379,7 @@ extension ZMUserSession: UserSession {
         return ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeCallQualitySurveyUseCase() -> CallQualitySurveyUseCaseProtocol {
+    public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {
         return CallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
