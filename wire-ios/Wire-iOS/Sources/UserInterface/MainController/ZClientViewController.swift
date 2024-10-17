@@ -86,7 +86,7 @@ final class ZClientViewController: UIViewController {
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
-    private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
+    private(set) lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -118,8 +118,7 @@ final class ZClientViewController: UIViewController {
         settingsContentUIBuilder: settingsViewControllerBuilder,
         connectUIBuilder: connectBuilder,
         createGroupConversationUIBuilder: createGroupConversationBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        userProfileUIBuilder: userProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
