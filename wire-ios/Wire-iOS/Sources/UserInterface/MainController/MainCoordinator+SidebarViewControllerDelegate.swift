@@ -19,6 +19,8 @@
 import WireMainNavigationUI
 import WireSidebarUI
 
+// TODO: [WPB-11651] Create a dedicated delegate type for the sidebar and let it use the main coordinator.
+
 extension MainCoordinator: SidebarViewControllerDelegate where Dependencies.ConversationFilter == Wire.ConversationFilter {
 
     @MainActor

@@ -28,8 +28,6 @@ import WireSidebarUI
 import WireSyncEngine
 
 // TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
-// TODO: [WPB-11604] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
-// TODO: [WPB-11599] the E2EI green shield is sometimes not shown when it should (after starting the app)
 
 final class ZClientViewController: UIViewController {
 
