@@ -19,7 +19,7 @@
 import WireAnalytics
 
 /// sourcery: AutoMockable
-public protocol CallQualitySurveyUseCaseProtocol {
+public protocol SubmitCallQualitySurveyUseCaseProtocol {
 
     func invoke(_ review: CallQualitySurveyReview)
 }
