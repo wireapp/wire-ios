@@ -46,7 +46,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     private let connectUIBuilder: Dependencies.ConnectUIBuilder
     private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
     private var selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
-    private var userProfileUIBuilder: Dependencies.UserProfileUIBuilder // TODO: remove
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -86,8 +85,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
         connectUIBuilder: Dependencies.ConnectUIBuilder,
         createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder,
-        selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder,
-        userProfileUIBuilder: Dependencies.UserProfileUIBuilder // TODO: remove
+        selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
@@ -96,7 +94,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         self.connectUIBuilder = connectUIBuilder
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
-        self.userProfileUIBuilder = userProfileUIBuilder
 
         super.init()
 
@@ -267,18 +264,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.present(selfProfileUI, animated: true, completion: continuation.resume)
         }
     }
-
-//    public func showUserProfile(user: User) async {
-//        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-//            splitViewController.hideSidebar()
-//        }
-//
-//        let userProfileUI = userProfileUIBuilder.build(
-//            user: user,
-//            mainCoordinator: self
-//        )
-//        await presentViewController(userProfileUI)
-//    }
 
     public func showConnect() async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
