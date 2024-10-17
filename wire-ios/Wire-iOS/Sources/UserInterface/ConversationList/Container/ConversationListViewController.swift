@@ -240,7 +240,7 @@ final class ConversationListViewController: UIViewController {
 
         adjustRightBarButtonItemsSpace()
         configureEmptyPlaceholder()
-        filterContainerView.isHidden = isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -434,12 +434,19 @@ final class ConversationListViewController: UIViewController {
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
     func applyFilter(_ filter: ConversationFilter) {
-        self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtonItems()
-        self.setupSearchController()
+        listContentController.listViewModel.selectedFilter = filter
+        setupTitleView()
+
+        if mainSplitViewState == .collapsed {
+            setupRightNavigationBarButtonItems()
+        } else {
+            setupRightNavigationBarButtonItems_SplitView()
+        }
+
+        setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
-        filterContainerView.isHidden = isEmptyPlaceholderVisible
+        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible
         configureEmptyPlaceholder()
     }
 

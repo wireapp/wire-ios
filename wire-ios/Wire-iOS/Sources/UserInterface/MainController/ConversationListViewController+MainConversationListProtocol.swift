@@ -24,9 +24,11 @@ extension ConversationListViewController: MainConversationListUIProtocol {
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set {
-            listContentController.listViewModel.selectedFilter = newValue
-            setupTitleView()
-            configureEmptyPlaceholder()
+            if let filter = newValue {
+                applyFilter(filter)
+            } else {
+                clearFilter()
+            }
         }
     }
 
