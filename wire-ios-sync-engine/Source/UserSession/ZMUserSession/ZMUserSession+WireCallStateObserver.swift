@@ -37,6 +37,8 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         case .outgoing:
             trackCallInitialized(isVideo: isVideoCall, conversationType: conversation.conversationType)
         case .answered:
+            // Currently, there is a limitation where we cannot track if isVideo is on or off for group calls.
+            // This tracking is only possible in one-on-one calls.
             trackCallJoined(isVideo: isVideoCall, conversationType: conversation.conversationType)
         default:
             break
