@@ -78,7 +78,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @interface ZMUser (Editable) <ZMEditableUserType>
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
-@property (nullable, nonatomic, copy) NSString *phoneNumber;
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *handle;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;

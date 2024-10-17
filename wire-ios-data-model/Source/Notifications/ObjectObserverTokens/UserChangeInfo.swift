@@ -35,7 +35,6 @@ extension ZMUser: ObjectInSnapshot {
             #keyPath(ZMUser.previewProfileAssetIdentifier),
             #keyPath(ZMUser.completeProfileAssetIdentifier),
             #keyPath(ZMUser.emailAddress),
-            #keyPath(ZMUser.phoneNumber),
             #keyPath(ZMUser.canBeConnected),
             #keyPath(ZMUser.isConnected),
             #keyPath(ZMUser.isPendingApprovalByOtherUser),
@@ -105,7 +104,7 @@ extension ZMUser: ObjectInSnapshot {
     }
 
     open var profileInformationChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.emailAddress), #keyPath(ZMUser.phoneNumber))
+        return changedKeysContain(keys: #keyPath(ZMUser.emailAddress))
     }
 
     open var connectionStateChanged: Bool {
