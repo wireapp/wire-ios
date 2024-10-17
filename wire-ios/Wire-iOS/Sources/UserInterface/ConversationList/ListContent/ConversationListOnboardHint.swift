@@ -35,30 +35,34 @@ final class ConversationListOnboardingHint: UIView {
         arrowView.tintColor = SemanticColors.Label.textDefault
 
         messageLabel.numberOfLines = 0
-        messageLabel.textAlignment = .left
+        messageLabel.textAlignment = .right
         messageLabel.text = L10n.Localizable.ConversationList.Empty.NoContacts.message
 
         [arrowView, messageLabel].forEach(addSubview)
+        arrowView.transform = .init(rotationAngle: .pi)
 
         createConstraints()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
-        [arrowView, messageLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+
+        arrowView.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let margin: CGFloat = 24
-
         NSLayoutConstraint.activate([
-            messageLabel.topAnchor.constraint(equalTo: topAnchor),
-            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margin),
-            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            arrowView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: margin),
-            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin)])
+            arrowView.topAnchor.constraint(equalTo: topAnchor, constant: margin),
+            trailingAnchor.constraint(equalTo: arrowView.trailingAnchor, constant: 4),
+
+            messageLabel.topAnchor.constraint(equalTo: arrowView.bottomAnchor, constant: margin),
+            messageLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2),
+            trailingAnchor.constraint(equalToSystemSpacingAfter: messageLabel.trailingAnchor, multiplier: 2),
+            bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor)])
     }
 }

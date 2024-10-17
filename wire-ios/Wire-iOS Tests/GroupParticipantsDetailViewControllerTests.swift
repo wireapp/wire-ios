@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMainNavigationUI
 import WireTestingPackage
 import XCTest
 
@@ -41,13 +42,13 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        super.setUp()
-        mockMainCoordinator = .init()
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
         snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
@@ -58,8 +59,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
         SelfUser.provider = nil
         userSession = nil
         mockMainCoordinator = nil
-
-        super.tearDown()
     }
 
     func testThatItRendersALotOfUsers() {

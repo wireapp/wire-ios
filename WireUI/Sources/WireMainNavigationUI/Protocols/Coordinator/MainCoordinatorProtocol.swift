@@ -47,6 +47,13 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideSettingsContent()
 
     @MainActor
+    func presentViewController(_ viewController: UIViewController) async
+    @MainActor
+    func dismissPresentedViewController() async
+
+    // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
+
+    @MainActor
     func showSelfProfile() async
     @MainActor
     func showUserProfile(user: User) async
@@ -54,9 +61,4 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showConnect() async
     @MainActor
     func showCreateGroupConversation() async
-
-    @MainActor
-    func presentViewController(_ viewController: UIViewController) async
-    @MainActor
-    func dismissPresentedViewController() async
 }

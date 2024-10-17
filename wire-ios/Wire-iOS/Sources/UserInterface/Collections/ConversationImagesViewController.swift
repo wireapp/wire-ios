@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
@@ -77,7 +78,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: any MainCoordinatorProtocol
 
     var dismissAction: DismissAction? = .none {
         didSet {
@@ -92,7 +93,7 @@ final class ConversationImagesViewController: UIViewController {
         initialMessage: ZMConversationMessage,
         inverse: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         assert(initialMessage.isImage)
 

@@ -34,8 +34,14 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
-    func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
-        var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
+    func accountGroup(
+        isTeamMember: Bool,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsCellDescriptorType {
+        var sections: [SettingsSectionDescriptorType] = [
+            infoSection(userSession: userSession, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
+        ]
 
         if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor) &&
            userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -62,26 +68,42 @@ extension SettingsCellDescriptorFactory {
 
         sections.append(signOutSection())
 
-        return SettingsGroupCellDescriptor(items: sections,
-                                           title: L10n.Localizable.Self.Settings.accountSection,
-                                           icon: .personalProfile,
-                                           accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: sections,
+            title: L10n.Localizable.Self.Settings.accountSection,
+            icon: .personalProfile,
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
+            settingsTopLevelMenuItem: .account,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     // MARK: - Sections
 
-    func infoSection(userSession: UserSession) -> SettingsSectionDescriptorType {
+    func infoSection(
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsSectionDescriptorType {
         let federationEnabled = BackendInfo.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
-        cellDescriptors = [nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
-                           handleElement(
-                            enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
-                            federationEnabled: federationEnabled
-                           )]
+        cellDescriptors = [
+            nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
+            handleElement(
+                enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
+                federationEnabled: federationEnabled,
+                useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+            )
+        ]
 
         if let user = SelfUser.provider?.providedSelfUser {
             if !user.usesCompanyLogin {
-                cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
+                cellDescriptors.append(
+                    emailElement(
+                        enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail),
+                        userSession: userSession,
+                        useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+                    )
+                )
             }
 
             if user.hasTeam {
@@ -174,7 +196,11 @@ extension SettingsCellDescriptorFactory {
         return textValueCellDescriptor(propertyName: .profileName, enabled: enabled)
     }
 
-    func emailElement(enabled: Bool = true, userSession: UserSession) -> SettingsCellDescriptorType {
+    func emailElement(
+        enabled: Bool = true,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsCellDescriptorType {
         if enabled {
             return SettingsExternalScreenCellDescriptor(
                 title: L10n.Localizable.Self.Settings.AccountSection.Email.title,
@@ -185,7 +211,12 @@ extension SettingsCellDescriptorFactory {
                         assertionFailure("ZMUser.selfUser() is nil")
                         return .none
                     }
-                    return ChangeEmailViewController(user: selfUser, userSession: userSession)
+                    return ChangeEmailViewController(
+                        user: selfUser,
+                        userSession: userSession,
+                        useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                        settingsCoordinator: settingsCoordinator
+                    )
                 },
                 previewGenerator: { _ in
                     if let email = ZMUser.selfUser()?.emailAddress, !email.isEmpty {
@@ -201,11 +232,18 @@ extension SettingsCellDescriptorFactory {
         }
     }
 
-    func handleElement(enabled: Bool = true, federationEnabled: Bool) -> SettingsCellDescriptorType {
+    func handleElement(
+        enabled: Bool = true,
+        federationEnabled: Bool,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsCellDescriptorType {
         typealias AccountSection = L10n.Localizable.Self.Settings.AccountSection
         if enabled {
-            let presentation: () -> ChangeHandleViewController = {
-                return ChangeHandleViewController()
+            let presentation = {
+                ChangeHandleViewController(
+                    useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+                    settingsCoordinator: settingsCoordinator
+                )
             }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
@@ -270,7 +308,9 @@ extension SettingsCellDescriptorFactory {
             text: L10n.Localizable.`Self`.Settings.AccountPictureGroup.picture.capitalized,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,
-            presentationAction: presentationAction)
+            presentationAction: presentationAction,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
     private func colorElement() -> SettingsCellDescriptorType {
@@ -278,7 +318,8 @@ extension SettingsCellDescriptorFactory {
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
             previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
-            presentationAction: colorElementPresentationAction
+            presentationAction: colorElementPresentationAction,
+            settingsCoordinator: settingsCoordinator
         )
     }
 

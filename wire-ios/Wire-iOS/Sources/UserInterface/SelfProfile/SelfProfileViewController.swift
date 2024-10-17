@@ -16,21 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: [WPB-6647] when opening self profile ensure these alerts are shown and also don't block each other
+// - alert that newes devices have been added
+// - alert about read receipts enabled
+
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
 import WireReusableUIComponents
+import WireSettingsUI
 import WireSyncEngine
 
-/**
- * The first page of the user settings.
- */
-
+/// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
 
-    var userRightInterfaceType: UserRightInterface.Type
-    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
-    var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
+    let userSession: UserSession
+    private let userRightInterfaceType: UserRightInterface.Type
+    private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
+    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
 
     // MARK: - Views
 
@@ -40,8 +44,8 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
-    let userSession: UserSession
     private let accountSelector: AccountSelector?
+    let openDevicesSettingsAction: () -> Void
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
@@ -56,33 +60,29 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the settings screen with the specified user and permissions.
-     * - parameter selfUser: The current user.
-     * - parameter userRightInterfaceType: The type of object to determine the user permissions.
-     */
-
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelector: AccountSelector?
+        accountSelector: AccountSelector?,
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
-
-        self.userSession = userSession
         self.accountSelector = accountSelector
+        openDevicesSettingsAction = {
+            mainCoordinator.showSettingsContent(.init(.devices))
+        }
 
         // Create the settings hierarchy
-
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 
+        let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: userRightInterfaceType
+            userRightInterfaceType: userRightInterfaceType,
+            settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
-
+        let rootGroup = settingsCellDescriptorFactory.rootGroup()
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
@@ -100,6 +100,7 @@ final class SelfProfileViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
+        self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup

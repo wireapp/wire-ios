@@ -81,7 +81,7 @@ final class UserStatusView: TitleView {
         var title = ""
 
         if options.contains(.displayUserName) {
-            title = userStatus.name
+            title = userStatus.displayName
             var accessibilityLabel = title
             if userStatus.isE2EICertified {
                 trailingIcons += [.e2eiCertifiedShield]

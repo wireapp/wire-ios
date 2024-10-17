@@ -457,9 +457,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
-
-        case .contacts, .folders:
-            break
         }
     }
 

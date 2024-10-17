@@ -77,28 +77,21 @@ class CameraKeyboardViewController: UIViewController {
     let goBackButton = IconButton()
     let cameraRollButton = IconButton()
 
-    let splitLayoutObservable: SplitLayoutObservable
     weak var delegate: CameraKeyboardViewControllerDelegate?
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     // MARK: - Init
 
-    init(splitLayoutObservable: SplitLayoutObservable,
-         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
-         permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()) {
-        self.splitLayoutObservable = splitLayoutObservable
+    init(
+        imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
+        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
+    ) {
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary?.delegate = self
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(splitLayoutChanged(_:)),
-            name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
-            object: self.splitLayoutObservable
-        )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidBecomeActive(_:)),
@@ -166,11 +159,11 @@ class CameraKeyboardViewController: UIViewController {
         self.assetLibrary?.refetchAssets()
     }
 
-    @objc
-    func splitLayoutChanged(_ notification: Notification!) {
-        self.collectionViewLayout.invalidateLayout()
-        self.collectionView.reloadData()
-    }
+    // @objc
+    // func splitLayoutChanged(_ notification: Notification!) {
+    //     self.collectionViewLayout.invalidateLayout()
+    //     self.collectionView.reloadData()
+    // }
 
     // MARK: - Setup UI
 
@@ -517,12 +510,8 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     private var cameraCellSize: CGSize {
-        switch self.splitLayoutObservable.layoutSize {
-        case .compact:
-            return CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
-        case .regularPortrait, .regularLandscape:
-            return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
-        }
+        // TODO: [WPB-11615] Before navigation overhaul the width of the camera preview was the same as the left column.
+        CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

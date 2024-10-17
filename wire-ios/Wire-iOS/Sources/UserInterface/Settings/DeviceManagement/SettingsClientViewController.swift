@@ -73,7 +73,6 @@ final class SettingsClientViewController: UIViewController,
         self.viewModel = SettingsClientViewModel(userClient: userClient,
                                                  getUserClientFingerprint: userSession.getUserClientFingerprint)
         super.init(nibName: nil, bundle: nil)
-        self.edgesForExtendedLayout = []
         self.userClientToken = UserClientChangeInfo.add(observer: self, for: userClient)
 
         self.viewModel.fingerprintDataClosure = { [weak self] _ in

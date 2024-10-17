@@ -119,5 +119,4 @@ final class GroupConversationCell: UICollectionViewCell {
             subtitleLabel.isHidden = true
         }
     }
-
 }

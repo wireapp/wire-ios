@@ -24,7 +24,7 @@ import WireSystem
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
                                               at indexPath: IndexPath?) {
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+        _ = searchController.searchBar.resignFirstResponder()
 
         guard let indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
@@ -34,7 +34,7 @@ extension StartUIViewController {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
             } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
-                    _ = self.searchHeaderViewController.tokenField.becomeFirstResponder()
+                _ = self.searchController.searchBar.becomeFirstResponder()
                     self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
             }
         })
@@ -51,7 +51,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         if !user.isConnected && !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
-            delegate?.startUI(self, didSelect: user)
+            delegate?.startUIViewController(self, didSelect: user)
         }
     }
 
@@ -63,14 +63,14 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             return
         }
 
-        delegate?.startUI(self, didSelect: user)
+        delegate?.startUIViewController(self, didSelect: user)
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnConversation conversation: ZMConversation) {
         guard conversation.conversationType == .group || conversation.conversationType == .oneOnOne else { return }
 
-        delegate?.startUI(self, didSelect: conversation)
+        delegate?.startUIViewController(self, didSelect: conversation)
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
@@ -86,7 +86,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             if let result {
                 switch result {
                 case .success(let conversation):
-                    delegate?.startUI(self, didSelect: conversation)
+                    delegate?.startUIViewController(self, didSelect: conversation)
                 case .failure(let error):
                     error.displayAddBotError(in: self)
                 }
@@ -97,102 +97,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
         navigationController?.pushViewController(detail, animated: true)
     }
-
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     wantsToPerformAction action: SearchResultsViewControllerAction) {
-        switch action {
-        case .createGroup:
-            openCreateGroupController()
-        case .createGuestRoom:
-            createGuestRoom()
-        }
-    }
-
-    func openCreateGroupController() {
-        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
-        controller.delegate = self
-
-        if self.traitCollection.horizontalSizeClass == .compact {
-            let avoiding = KeyboardAvoidingViewController(viewController: controller)
-            navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateConversation.BackButton.description
-            self.navigationController?.pushViewController(avoiding, animated: true) {
-            }
-        } else {
-            let embeddedNavigationController = controller.wrapInNavigationController()
-            embeddedNavigationController.modalPresentationStyle = .formSheet
-            self.present(embeddedNavigationController, animated: true)
-        }
-    }
-
-    func createGuestRoom() {
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-        guard let userSession = userSession as? ZMUserSession else {
-            return WireLogger.conversation.error("failed to create guest room: no user session")
-        }
-
-        activityIndicator.start()
-
-        let service = ConversationService(context: userSession.viewContext)
-        service.createGroupConversation(
-            name: L10n.Localizable.General.guestRoomName,
-            users: [],
-            allowGuests: true,
-            allowServices: true,
-            enableReceipts: false,
-            messageProtocol: .proteus
-        ) { [weak self] in
-            switch $0 {
-            case .success(let conversation):
-                guard let self else { return }
-                self.delegate?.startUI(
-                    self,
-                    didSelect: conversation
-                )
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
-            }
-
-        }
-    }
-}
-
-extension StartUIViewController: ConversationCreationControllerDelegate {
-
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didCreateConversation conversation: ZMConversation
-    ) {
-        dismiss(controller: controller) { [weak self] in
-            guard let self else { return }
-
-            delegate?.startUI(
-                self,
-                didSelect: conversation
-            )
-        }
-    }
-
-    func dismiss(
-        controller: ConversationCreationController,
-        completion: (() -> Void)? = nil
-    ) {
-        switch traitCollection.horizontalSizeClass {
-        case .compact:
-            navigationController?.popToRootViewController(
-                animated: true,
-                completion: completion
-            )
-
-        default:
-            controller.navigationController?.dismiss(
-                animated: true,
-                completion: completion
-            )
-        }
-    }
-
 }
 
 extension StartUIViewController: EmptySearchResultsViewDelegate {

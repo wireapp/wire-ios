@@ -44,9 +44,10 @@ public protocol ReadReceipt {
 
 @objc
 public protocol ZMConversationMessage: NSObjectProtocol {
+    typealias MessageID = UUID
 
     /// Unique identifier for the message
-    var nonce: UUID? { get }
+    var nonce: MessageID? { get }
 
     /// The user who sent the message (internal)
     @available(*, deprecated, message: "Use `senderUser` instead")
