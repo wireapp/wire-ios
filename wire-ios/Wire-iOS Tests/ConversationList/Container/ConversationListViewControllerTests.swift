@@ -80,7 +80,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut = ConversationListViewController(
             viewModel: viewModel,
             zClientViewController: .init(account: account, userSession: userSession),
-            mainCoordinator: mockMainCoordinator,
+            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             selfProfileViewControllerBuilder: .mock
         )
 
@@ -148,7 +148,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
-        sut.clearFilter()
+        sut.applyFilter(.none)
 
         // THEN
         snapshotHelper.verify(matching: tabBarController)
