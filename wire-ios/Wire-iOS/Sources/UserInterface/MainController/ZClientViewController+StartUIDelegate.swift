@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-extension ConversationListViewController.ViewModel: StartUIDelegate {
+extension ZClientViewController: StartUIDelegate {
 
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         guard let userID = user.qualifiedID else { return }
