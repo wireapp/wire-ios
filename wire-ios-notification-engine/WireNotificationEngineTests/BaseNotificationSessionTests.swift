@@ -115,7 +115,6 @@ class BaseTest: ZMTBaseTest {
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: pushNotificationStatus,
-            notificationsTracker: nil,
             lastEventIDRepository: lastEventIDRepository
         )
 

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public extension AnalyticsEvent {
 
     /// An event tracking when the user opens the app.
@@ -83,7 +85,7 @@ public extension AnalyticsEvent {
     ///   - conversationType: The type of conversation.
     ///   - conversationSize: The number of participants in the conversation.
     ///
-    /// - Returns: A conversation contribution anlytics event.
+    /// - Returns: A conversation contribution analytics event.
 
     static func conversationContribution(
         _ contributionType: ConversationContributionType,
@@ -100,4 +102,11 @@ public extension AnalyticsEvent {
         )
     }
 
+    /// An event tracking the call quality when the user end the call.
+    /// - Parameter review: The Review containing score, reason or duration related to the call
+    /// - Returns: A callQualitySurvey analytics event.
+
+    static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
+        .init(name: "calling.call_quality_review", segmentation: review.segmentation)
+    }
 }

@@ -31,21 +31,18 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         // We were given some time to run, resume background task creation.
         BackgroundActivityFactory.shared.resume()
-        notificationsTracker?.registerReceivedPush()
 
         guard
             let accountId = accountId(from: payload),
             let account = self.accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
-                expirationHandler: { [weak self] in
+                expirationHandler: {
                   WireLogger.notifications.warn("Processing push payload expired: \(payload)")
-                  self?.notificationsTracker?.registerProcessingExpired()
                 }
             )
         else {
             WireLogger.notifications.warn("Aborted processing of payload: \(payload)")
-            notificationsTracker?.registerProcessingAborted()
             return completion()
         }
 
@@ -55,9 +52,8 @@ extension SessionManager: VoIPPushManagerDelegate {
                 attributes: .safePublic
             )
 
-            userSession.receivedPushNotification(with: payload, completion: { [weak self] in
+            userSession.receivedPushNotification(with: payload, completion: {
                 WireLogger.notifications.info("Processing push payload completed")
-                self?.notificationsTracker?.registerNotificationProcessingCompleted()
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completion()
             })

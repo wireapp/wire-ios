@@ -20,8 +20,6 @@ import Foundation
 import WireAnalytics
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "Analytics")
-
 protocol CountlyInstance {
     func recordEvent(_ key: String, segmentation: [String: String]?)
     func start(with config: WireCountlyConfig)

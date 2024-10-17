@@ -43,7 +43,6 @@ public final class ZMUserSession: NSObject {
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
-    private(set) var analytics: AnalyticsType?
     private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
@@ -344,7 +343,6 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        analytics: (any AnalyticsType)?,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -367,7 +365,6 @@ public final class ZMUserSession: NSObject {
         self.appVersion = appVersion
         self.flowManager = flowManager
         self.mediaManager = mediaManager
-        self.analytics = analytics
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.notificationDispatcher = NotificationDispatcher(managedObjectContext: coreDataStack.viewContext)
@@ -407,7 +404,6 @@ public final class ZMUserSession: NSObject {
         configuration: Configuration,
         isDeveloperModeEnabled: Bool
     ) {
-        coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
         coreDataStack.linkContexts()
 

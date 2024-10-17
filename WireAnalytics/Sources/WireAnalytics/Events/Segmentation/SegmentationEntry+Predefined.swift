@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 // MARK: - Predefined entries
 
 extension SegmentationEntry {
@@ -83,4 +85,37 @@ extension SegmentationEntry {
         .init(key: "conversation_size", value: value.analyticsValue)
     }
 
+    /// Creates a `SegmentationEntry` for the score of the calling survey
+    ///
+    /// - Parameter value: The score from 1 to 5.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+    static func callScore(_ value: Int) -> Self {
+        .init(key: "score", value: String(value))
+    }
+
+    /// Creates a `SegmentationEntry` for the duration of the calling survey
+    ///
+    /// - Parameter value: The duration of the call.
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+    static func callDuration(_ value: TimeInterval) -> Self {
+        .init(key: "duration", value: String(value))
+    }
+
+    /// Creates a `SegmentationEntry` for the label of the calling survey
+    /// - Parameter value: The label
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+    static func callLabel(_ value: String) -> Self {
+        .init(key: "label", value: value)
+    }
+
+    /// Creates a `SegmentationEntry` for the ignore reason of the calling survey
+    /// - Parameter value: the ignore reason
+    /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
+
+    static func callIgnoreReason(_ value: String) -> Self {
+        .init(key: "ignore-reason", value: value)
+    }
 }
