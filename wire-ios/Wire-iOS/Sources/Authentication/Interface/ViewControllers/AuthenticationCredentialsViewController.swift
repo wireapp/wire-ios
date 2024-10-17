@@ -340,7 +340,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     @objc
     func forgotPasswordTapped(sender: UIButton) {
-        actioner?.executeAction(.openURL(WireURLs.shared.passwordReset))
+        actioner?.executeAction(.openURL(URL.wr_passwordReset))
     }
 
     override func createConstraints() {
