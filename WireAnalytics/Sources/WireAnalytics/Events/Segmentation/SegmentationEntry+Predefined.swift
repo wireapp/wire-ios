@@ -115,7 +115,7 @@ extension SegmentationEntry {
     /// - Parameter value: the ignore reason
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func ignoreReason(_ value: String) -> Self {
+    static func callIgnoreReason(_ value: String) -> Self {
         .init(key: "ignore-reason", value: value)
     }
 }
