@@ -68,6 +68,7 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
         }
         toView?.alpha = 0
 
+        let originalFromViewAlpha = fromView?.alpha
         UIView.animate(easing: .easeInQuad, duration: durationPhase1, animations: {
             fromView?.alpha = 0
             fromView?.transform = self.direction == .horizontal ? CGAffineTransform(translationX: 48, y: 0) : verticalTransform
@@ -77,6 +78,7 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 toView?.alpha = 1
             }, completion: { _ in
                 fromView?.transform = .identity
+                fromView?.alpha = originalFromViewAlpha ?? 1
                 transitionContext.completeTransition(true)
             })
         })

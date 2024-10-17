@@ -19,6 +19,7 @@
 @import WireTransport;
 @import WireDataModel;
 @import WireTransport;
+@import WireTransportSupport;
 
 #import "MessagingTest.h"
 #import "ZMUserSessionRegistrationNotification.h"
@@ -87,7 +88,7 @@
 - (void)testThatItIsLoggedInWhenThereIsAuthenticationDataSelfUserSyncedAndClientIsAlreadyRegistered
 {
     // when
-    self.sut.authenticationCookieData = NSData.data;
+    self.sut.authenticationCookieData = [NSHTTPCookie validCookieData];
     [self.uiMOC setPersistentStoreMetadata:@"someID" forKey:ZMPersistedClientIdKey];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID new];

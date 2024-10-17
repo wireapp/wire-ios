@@ -17,7 +17,7 @@
 //
 
 import WireLinkPreview
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -128,7 +128,7 @@ final class ShareViewControllerTests: XCTestCase {
 
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
     }
 
     func testThatItRendersCorrectlyShareViewController_Photos() {
@@ -143,7 +143,7 @@ final class ShareViewControllerTests: XCTestCase {
         activateDarkColorScheme()
 
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-        verifyInAllDeviceSizes(matching: sut)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
     private func createSut(message: MockShareableMessage,
@@ -159,21 +159,12 @@ final class ShareViewControllerTests: XCTestCase {
 
     /// create a SUT with a group conversation and a one-to-one conversation and verify snapshot
     private func makeTestForShareViewController(message: MockShareableMessage,
-                                                inAllColorSchemes: Bool = false,
                                                 file: StaticString = #file,
                                                 testName: String = #function,
                                                 line: UInt = #line) {
         createSut(message: message)
 
-        verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
-
-        if inAllColorSchemes {
-            activateDarkColorScheme()
-
-            createSut(message: message)
-
-            verifyInAllDeviceSizes(matching: sut, file: file, testName: testName + "dark", line: line)
-        }
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
 
     }
 

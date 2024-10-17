@@ -103,17 +103,6 @@ final class Stroke: Renderable {
         return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY).insetBy(dx: outset, dy: outset)
     }
 
-    func interpolateLinearPath(points: [CGPoint]) -> UIBezierPath {
-        let path = UIBezierPath()
-        path.move(to: points.first!)
-
-        for point in points.dropFirst() {
-            path.addLine(to: point)
-        }
-
-        return path
-    }
-
     func smooth(point: CGPoint, factor: CGFloat = 0.35) -> CGPoint {
         let previous = points.last!
         return CGPoint(x: previous.x * (1 - factor) + point.x * factor,

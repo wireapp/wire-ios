@@ -327,6 +327,40 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    func testThatItStoresConferenceCalling_V6() async {
+        await syncMOC.perform {
+            // Given
+            let sut = FeatureRepository(context: self.syncMOC)
+            let config = Feature.ConferenceCalling.Config(
+                useSFTForOneToOneCalls: true
+            )
+            let conferenceCalling = Feature.ConferenceCalling(status: .disabled, config: config)
+            self.assertFeatureDoesNotExist(name: .conferenceCalling)
+
+            // When
+            sut.storeConferenceCalling(conferenceCalling)
+
+            // Then
+            guard let feature = Feature.fetch(name: .conferenceCalling, context: self.syncMOC) else {
+                XCTFail("feature not found")
+                return
+            }
+
+            guard let configData = feature.config else {
+                XCTFail("expected config data")
+                return
+            }
+
+            guard let featureConfig = configData.decode(as: Feature.ConferenceCalling.Config.self) else {
+                XCTFail("failed to decode config data")
+                return
+            }
+
+            XCTAssertEqual(feature.status, .disabled)
+            XCTAssertEqual(featureConfig, config)
+        }
+    }
+
     // MARK: - Conversation guest links
 
     func testThatItFetchesConversationGuestLinks() {

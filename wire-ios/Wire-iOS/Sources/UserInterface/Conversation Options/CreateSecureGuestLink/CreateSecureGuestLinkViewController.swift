@@ -34,8 +34,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     let conversation: ZMConversation
     let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
-    weak var delegate: ValidatedTextFieldDelegate?
-
     private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
         CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
     }()
@@ -94,7 +92,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     private let setPasswordLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
             text: SecuredGuestLinkWithPasswordLocale.Textfield.header,
-            fontSpec: .subheadlineFont,
+            style: .h4,
             color: SemanticColors.Label.textFieldFloatingLabel
         )
         label.isAccessibilityElement = false
@@ -128,7 +126,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     private let passwordRequirementsLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
             text: SecuredGuestLinkWithPasswordLocale.Textfield.footer,
-            fontSpec: .mediumRegularFont,
+            style: .subline1,
             color: SemanticColors.Label.textFieldFloatingLabel
         )
         label.textAlignment = .left
@@ -139,7 +137,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     private let confirmPasswordLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(
             text: SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.header,
-            fontSpec: .subheadlineFont,
+            style: .h4,
             color: SemanticColors.Label.textFieldFloatingLabel
         )
         label.isAccessibilityElement = false

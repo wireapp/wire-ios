@@ -43,7 +43,6 @@ extension Settings {
         if let rootValue = defaults.value(forKey: key) {
             setValue(rootValue, settingKey: settingKey, in: account)
             defaults.removeObject(forKey: key)
-            defaults.synchronize()
         }
 
         let accountPayload = payload(for: account)
@@ -77,7 +76,6 @@ extension Settings {
     func setLastViewed(conversation: ZMConversation, for account: Account) {
         let conversationURI = conversation.objectID.uriRepresentation()
         setValue(conversationURI.absoluteString, settingKey: .lastViewedConversation, in: account)
-        defaults.synchronize()
     }
 
     func notifyDisableSendButtonChanged() {

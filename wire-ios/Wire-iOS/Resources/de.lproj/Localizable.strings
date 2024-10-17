@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Zum Aktivieren tippen.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiv.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Hat neue Nachrichten.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakte";
-"conversation_list.bottom_bar.conversations.title" = "Unterhaltungen";
-"conversation_list.bottom_bar.folders.title" = "Ordner";
-"conversation_list.bottom_bar.archived.title" = "Archiv";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -512,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Zugestellt";
 "content.system.message_read_timestamp" = "Gesehen";
 "content.system.failedtosend_message.general_reason" = "Nachricht konnte aufgrund von Verbindungsproblemen nicht gesendet werden.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Nachricht nicht gesendet, da Sie das Hochladen abgebrochen haben.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Nachricht nicht gesendet, da das Backend **%@**  nicht erreichbar ist. [Mehr erfahren](%@)";
 "content.system.failedtosend_message.retry" = "Wiederholen";
 
@@ -1157,11 +1152,6 @@
 "self.settings.privacy_analytics.title" = "Anonyme Nutzungsdaten senden";
 "self.settings.privacy_analytics_menu.description.title" = "Anhand der Nutzungsdaten kann Wire verstehen, wie die App genutzt wird und wie sie verbessert werden kann. Die Daten sind anonym und umfassen nicht den Inhalt Ihrer Kommunikation (wie Nachrichten, Dateien oder Anrufe).";
 
-"self.settings.receiveNews_and_offers.title" = "Newsletter abonnieren";
-"self.settings.receiveNews_and_offers.description.title" = "Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten.";
-
-
-
 // Change Username
 
 "self.settings.account_section.handle.change.title" = "Benutzername";
@@ -1303,18 +1293,18 @@
 
 // Technical Report
 "self.settings.technical_report_section.title" = "Fehlerbericht";
-"self.settings.technical_report.send_report" = "Send Report";
-"self.settings.technical_report.share_report" = "Share Report Via Wire";
+"self.settings.technical_report.send_report" = "Protokoll senden";
+"self.settings.technical_report.share_report" = "Protokoll über Wire teilen";
 "self.settings.technical_report.mail.subject" = "Fehlerbericht";
 "self.settings.technical_report.include_log" = "Detaillierten Verlauf hinzufügen";
-"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
+"self.settings.technical_report.info" = "Wenn Sie während der Benutzung von Wire auf unerwartetes Verhalten oder einen Fehler stoßen, können Sie von hier aus ein Protokoll an unser Support-Team senden. Das Protokoll könnte persönliche Informationen enthalten. \n\nSie können Ihre Protokolle auch direkt mit Ihrem Team-Administrator via Wire teilen.";
 "self.settings.technical_report.privacy_warning" = "Detaillierte Protokolle können personenbezogene Daten enthalten.";
 "self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Wählen Sie \"OK\" und senden Sie die Protokolle manuell an: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
-"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
-"self.settings.technical_report.mail_body.section2" = "What Happened:";
-"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Füllen Sie bitte die folgenden Felder aus";
+"self.settings.technical_report.mail_body.section1" = "Datum und Zeit, zu der das Problem auftrat";
+"self.settings.technical_report.mail_body.section2" = "Was passiert ist:";
+"self.settings.technical_report.mail_body.section3" = "Schritte zum Nachstellen des Problems (falls relevant):";
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
 
@@ -1663,7 +1653,7 @@
 "error.user.network_error" = "Es gibt ein Problem mit Ihrem Netzwerk. Bitte versuchen Sie es später noch einmal.";
 "error.user.email_is_taken" = "Die verwendete E-Mail-Adresse wurde bereits registriert. Bitte versuchen Sie es mit einer anderen.";
 "error.user.verification_code_invalid" = "Bitte geben Sie einen gültigen Bestätigungscode ein.";
-"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
+"error.user.verification_code_too_many" = "Wir haben Ihnen bereits einen Code geschickt. Tippe nach 10 Minuten auf \"Erneut senden\" um einen neuen Code zu erhalten.";
 "error.user.registration_unknown_error" = "Ein Fehler ist aufgetreten, bitte erneut versuchen.";
 "error.user.device_deleted_remotely" = "Sie wurden von einem anderen Gerät abgemeldet.";
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
@@ -1803,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "keine weiteren gifs";
-"giphy.error.no_result" = "kein gif gefunden";
+"giphy.error.no_result" = "Kein Gif gefunden";
 
 "giphy.confirm" = "senden";
 "giphy.cancel" = "abbrechen";
@@ -1922,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Ungültiger Link.";
 "url_action.invalid_link.message" = "Der geöffnete Link ist ungültig.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Möchten Sie Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten?";
-"news_offers.consent.message" = "Sie können sich jederzeit abmelden.";
-"news_offers.consent.button.privacy_policy.title" = "Datenschutzerklärung";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

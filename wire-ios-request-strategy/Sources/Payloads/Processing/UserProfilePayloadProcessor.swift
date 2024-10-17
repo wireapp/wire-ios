@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {

@@ -17,6 +17,7 @@
 //
 
 import WireSyncEngine
+import WireTransport
 import XCTest
 
 @testable import Wire
@@ -35,13 +36,11 @@ final class AppStateCalculatorTests: XCTestCase {
             completion()
         }
         sut.delegate = delegate
-        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
         sut = nil
         delegate = nil
-        BackendInfo.apiVersion = nil
 
         super.tearDown()
     }

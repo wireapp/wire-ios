@@ -16,50 +16,55 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
 import XCTest
 
-class MockContainer: NetworkStatusViewDelegate {
-    var shouldAnimateNetworkStatusView: Bool = true
-
-    var bottomMargin: CGFloat = 0
-
-    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
-
-    }
-}
+@testable import Wire
 
 final class NetworkStatusViewTests: XCTestCase {
-    var sut: NetworkStatusView!
-    var mockApplication: MockApplication!
-    var mockContainer: MockContainer!
 
-    override func setUp() {
-        super.setUp()
+    private var sut: NetworkStatusView!
+    private var mockContainer: MockNetworkStatusViewDelegate!
 
-        mockApplication = MockApplication()
-        mockContainer = MockContainer()
-        sut = NetworkStatusView(application: mockApplication)
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        mockContainer = .init()
+        mockContainer.bottomMargin = 0
+        mockContainer.didChangeHeightAnimatedState_MockMethod = { _, _, _ in }
+
+        sut = .init()
         sut.delegate = mockContainer
+        let rootView = try XCTUnwrap((UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?.rootViewController?.view)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        rootView.addSubview(sut)
+        NSLayoutConstraint.activate([
+            sut.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
+            sut.centerYAnchor.constraint(equalTo: rootView.centerYAnchor)
+        ])
     }
 
     override func tearDown() {
+        sut.removeFromSuperview()
         sut = nil
-        mockApplication = nil
         mockContainer = nil
 
         super.tearDown()
     }
 
-    func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() {
+    func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() throws {
         // GIVEN
-        mockApplication.applicationState = .active
         sut.state = .onlineSynchronizing
         XCTAssertEqual(sut.connectingView.heightConstraint.constant, CGFloat.SyncBar.height, "NetworkStatusView should not be zero height")
 
+        // ... the activation state of the scene returns `.background`
+        let getterSelector = #selector(getter: UIScene.activationState)
+        let getBackgroundSelector = #selector(getter: UIScene.backgroundActivationState)
+        let originalGetter = try XCTUnwrap(class_getInstanceMethod(UIScene.self, getterSelector))
+        let temporaryGetter = try XCTUnwrap(class_getInstanceMethod(UIScene.self, getBackgroundSelector))
+        method_exchangeImplementations(originalGetter, temporaryGetter)
+        defer { method_exchangeImplementations(originalGetter, temporaryGetter) }
+
         // WHEN
-        mockApplication.applicationState = .background
         sut.state = .onlineSynchronizing
 
         // THEN
@@ -67,40 +72,11 @@ final class NetworkStatusViewTests: XCTestCase {
     }
 }
 
-final class NetworkStatusViewSnapShotTests: XCTestCase {
+// MARK: - Method Swizzling
 
-    var sut: NetworkStatusView!
-    var mockContainer: MockContainer!
+private extension UIScene {
 
-    override func setUp() {
-        super.setUp()
-        accentColor = .purple
-        mockContainer = MockContainer()
-        sut = NetworkStatusView()
-        sut.overrideUserInterfaceStyle = .light
-        sut.backgroundColor = .clear
-        sut.delegate = mockContainer
+    @objc var backgroundActivationState: UIScene.ActivationState {
+        .background
     }
-
-    override func tearDown() {
-        sut = nil
-        mockContainer = nil
-        super.tearDown()
-    }
-
-    func testOfflineExpandedState() {
-        // GIVEN
-        sut.state = .offlineExpanded
-        // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
-    }
-
-    func testOnlineSynchronizing() {
-        // GIVEN
-        sut.state = .onlineSynchronizing
-        sut.layer.speed = 0 // freeze animations for deterministic tests
-        // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
-    }
-
 }

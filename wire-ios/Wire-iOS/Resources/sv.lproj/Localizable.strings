@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiva nu.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Har nya meddelanden.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakter";
-"conversation_list.bottom_bar.conversations.title" = "Konversationer";
-"conversation_list.bottom_bar.folders.title" = "Mappar";
-"conversation_list.bottom_bar.archived.title" = "Arkiv";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i kontakter";
 
@@ -184,7 +178,7 @@
 "folder.creation.name.button.create" = "Skapa";
 "folder.creation.name.header" = "Move the conversation \"%@\" to a new folder.";
 "folder.creation.name.footer" = "Maximum 64 characters";
-"folder.creation.name.placeholder" = "Folder name";
+"folder.creation.name.placeholder" = "Mappnamn";
 
 "folder.picker.title" = "Flytta till";
 "folder.picker.empty.hint" = "Skapa en ny mapp genom att trycka på +-knappen";
@@ -309,8 +303,8 @@
 "conversation.create.group_name.placeholder" = "Gruppens namn";
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
-"conversation.create.options.title" = "Conversation options";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
+"conversation.create.options.title" = "Konversationsalternativ";
+"conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
 "conversation.create.services.title" = "Allow services";
@@ -350,7 +344,7 @@
 "conversation.action.search" = "Sök";
 
 // Reply message preview
-"conversation.input_bar.message_preview.image" = "Image";
+"conversation.input_bar.message_preview.image" = "Bild";
 "conversation.input_bar.message_preview.location" = "Plats";
 "conversation.input_bar.message_preview.video" = "Video";
 "conversation.input_bar.message_preview.audio" = "Ljudmeddelande";
@@ -369,7 +363,7 @@
 "image_confirmer.confirm" = "OK";
 "image_confirmer.cancel" = "Avbryt";
 "image.add_sketch" = "Lägg till en skiss";
-"image.add_emoji" = "Add an emoji";
+"image.add_emoji" = "Lägg till en emoji";
 "image.edit_image" = "Redigera bild";
 
 // Camera access
@@ -467,7 +461,7 @@
 "content.system.mls_migration.finalized.done" = "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.";
 "content.system.mls_migration.join_afterwards" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 "content.system.mls_migration.ongoing_call" = "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.";
-"content.system.mls_migration.learn_more" = "Learn more about MLS";
+"content.system.mls_migration.learn_more" = "Läs mer om MLS";
 "content.system.mls_migration.potentialGap" = "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.";
 "content.system.mls_migration.mls_not_supported_by_otherUser" = "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.";
 "content.system.mls_migration.mls_not_supported_by_you" = "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.";
@@ -512,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Levererat";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Försök igen";
 
@@ -562,8 +557,8 @@
 "content.system.message_read_receipt_on" = "%@ turned read receipts on for everyone";
 "content.system.message_read_receipt_on-you" = "%@ turned read receipts on for everyone";
 
-"content.system.message_read_receipt_off" = "%@ turned read receipts off for everyone";
-"content.system.message_read_receipt_off-you" = "%@ turned read receipts off for everyone";
+"content.system.message_read_receipt_off" = "%@ stängde av läskvitton för alla";
+"content.system.message_read_receipt_off-you" = "%@ stängde av läskvitton för alla";
 
 "content.system.message_read_receipt_on_add_to_group" = "Läskvitton är på";
 
@@ -743,7 +738,7 @@
 "call.participants.list.title" = "Deltagare";
 
 "call.overlay.switch_to.speakers" = "SPEAKERS";
-"call.overlay.switch_to.all" = "ALL";
+"call.overlay.switch_to.all" = "ALLA";
 
 "call.grid.no_active_speakers" = "No active video speakers...";
 "call.grid.connecting" = "Connecting";
@@ -822,7 +817,7 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Alternativ";
 "participants.footer.add_title" = "Lägg till deltagare";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Upp till %1$d deltagare kan delta i en gruppkonversation.";
 "participants.section.admins.footer" = "Det finns inga administratörer.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -835,7 +830,7 @@
 "meta.menu.archive" = "Arkiv";
 "meta.menu.unarchive" = "Hämta från Arkiv";
 "meta.menu.delete" = "Radera grupp…";
-"meta.menu.clear_content" = "Clear Content…";
+"meta.menu.clear_content" = "Rensa innehåll…";
 "meta.menu.move_to_folder" = "Flytta till…";
 "meta.menu.remove_from_folder" = "Remove from \"%@\"";
 "meta.menu.silence.mute" = "Tysta";
@@ -941,8 +936,8 @@
 "profile.create_conversation_button_title" = "Skapa grupp";
 "profile.open_conversation_button_title" = "Öppna konversation";
 "profile.start_conversation_button_title" = "Starta konversation";
-"profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
-"profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
+"profile.read_receipts_enabled_memo.header" = "DU HAR AKTIVERAT LÄSKVITTON";
+"profile.read_receipts_disabled_memo.header" = "DU HAR INAKTIVERAT LÄSKVITTON";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
 
 "profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
@@ -1070,7 +1065,7 @@
 
 "self.read_receipts_enabled.title" = "Du har aktiverat läskvitton";
 "self.read_receipts_disabled.title" = "Du har inaktiverat läskvitton";
-"self.read_receipts_description.title" = "Du kan ändra det här alternativet i dina konto-inställningar.";
+"self.read_receipts_description.title" = "Du kan ändra detta alternativ i dina kontoinställningar.";
 
 // Settings - top level
 "self.settings.create_team.title" = "Skapa ett team";
@@ -1156,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Skicka anonyma användningsdata";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Ta emot nyheter och produkt-uppdateringar från Wire via e-post.";
-
-
 
 // Change Username
 
@@ -1303,7 +1293,7 @@
 
 // Technical Report
 "self.settings.technical_report_section.title" = "Debug Report";
-"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.send_report" = "Skicka rapport";
 "self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Debug Report";
 "self.settings.technical_report.include_log" = "Inkludera detaljerad logg";
@@ -1436,7 +1426,7 @@
 "guest_room.share.message" = "Join me in a conversation on Wire:\n%@";
 
 "guest_room.expiration.hours_left" = "%@h left";
-"guest_room.expiration.less_than_minutes_left" = "Less than %@m left";
+"guest_room.expiration.less_than_minutes_left" = "Mindre än %@m kvar";
 
 // Join Conversation Alert
 "join.group.conversation.alert.title" = "%@ \n Ange lösenord";
@@ -1531,7 +1521,7 @@
 "registration.no_history.restore_backup.password.title" = "This backup is password protected.";
 "registration.no_history.restore_backup.password.message" = "The password is required to restore this backup.";
 "registration.no_history.restore_backup.password.placeholder" = "Lösenord";
-"registration.no_history.restore_backup.password_error.title" = "Wrong Password";
+"registration.no_history.restore_backup.password_error.title" = "Fel lösenord";
 
 "registration.no_history.logged_out.hero" = "Du har använt Wire på den här enheten innan.";
 "registration.no_history.logged_out.subtitle" = "Meddelanden som skickats under tiden visas inte här.";
@@ -1603,7 +1593,7 @@
 
 "registration.signin.username.title" = "Ditt användarnamn";
 "registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
-"registration.signin.username.placeholder" = "username";
+"registration.signin.username.placeholder" = "Användarnamn";
 "registration.signin.username.unknown_error.title" = "Couldn't update username";
 "registration.signin.username.unknown_error.message" = "Försök igen senare.";
 "registration.signin.username.already_taken_error.title" = "Username is already taken";
@@ -1627,7 +1617,7 @@
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
 
-"signin.email.missing_password.subtitle" = "Enter your email address and password to continue.";
+"signin.email.missing_password.subtitle" = "Ange din e-postadress och ditt lösenord för att fortsätta.";
 
 "registration.add_email_password.hero.title" = "Add your email and password";
 "registration.add_email_password.hero.paragraph" = "Detta gör så du kan använda Wire på flera enheter.";
@@ -1636,7 +1626,7 @@
 "registration.email_invitation.hero.title" = "Hej, %@";
 "registration.email_invitation.hero.paragraph" = "Välj ett lösenord för att skapa ditt konto.";
 
-"registration.confirm" = "Sign Up";
+"registration.confirm" = "Registrera dig";
 
 "error.name_and_email" = "Ange ditt fullständiga namn och en giltig e-postadress";
 "error.full_name" = "Vänligen ange ditt fullständiga namn";
@@ -1803,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "inga fler gifs";
-"giphy.error.no_result" = "ingen gif hittades";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "skicka";
 "giphy.cancel" = "avbryt";
@@ -1924,13 +1914,6 @@
 "url_action.invalid_link.message" = "The link you opened is not valid.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Vill du ta emot nyheter och produkt-uppdateringar från Wire via e-post?";
-"news_offers.consent.message" = "Du kan avprenumerera när som helst.";
-"news_offers.consent.button.privacy_policy.title" = "Integritetspolicy";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
 "message_details.empty_likes" = "Ingen har reagerat på detta meddelande än.";
 "message_details.empty_read_receipts" = "Ingen har läst detta meddelande än.";
@@ -1966,7 +1949,7 @@
 "legalhold_request.alert.title" = "Legal Hold Requested";
 "legalhold_request.alert.detail" = "All future messages will be recorded by the device with fingerprint:\n\n%@\n\nThis includes deleted, edited, and self-deleting messages in all conversations.";
 "legalhold_request.alert.detail.enter_password" = "Ange Ditt lösenord för att bekräfta.";
-"legalhold_request.alert.error_wrong_password" = "Wrong Password";
+"legalhold_request.alert.error_wrong_password" = "Fel lösenord";
 
 // Legal hold activated
 "legalhold_active.alert.title" = "Legal Hold is Active";
@@ -2055,7 +2038,7 @@
 "keyboardshortcut.openPeople" = "Personer";
 
 // MARK: - Security classification
-"security_classification.security_level" = "Security level:";
+"security_classification.security_level" = "Säkerhetsnivå:";
 "security_classification.level.bund" = "VS-NfD";
 "security_classification.level.not_classified" = "UNCLASSIFIED";
 
@@ -2111,10 +2094,10 @@
 "device.details.section.e2ei.update_certificate" = "Uppdatera certifikat";
 "device.details.section.e2ei.status.title" = "Status";
 "device.details.section.e2ei.status.not_activated" = "Not activated";
-"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.valid" = "Giltig";
 "device.details.section.e2ei.status.revoked" = "Revoked";
 "device.details.section.e2ei.status.expired" = "Expired";
-"device.details.section.e2ei.status.invalid" = "Invalid";
+"device.details.section.e2ei.status.invalid" = "Ogiltig";
 "device.details.section.e2ei.serial_number" = "Serienummer";
 "device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";

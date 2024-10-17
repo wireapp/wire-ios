@@ -17,8 +17,10 @@
 //
 
 import UIKit
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 // MARK: - MockDestination
 
@@ -55,9 +57,10 @@ final class ShareDestinationCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: ShareDestinationCell<MockDestination>!
-    var destination: MockDestination?
-    var mockAvatarView: UIImageView {
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ShareDestinationCell<MockDestination>!
+    private var destination: MockDestination?
+    private var mockAvatarView: UIImageView {
         // just using a simple UIImageView, since ConversationAvatarView is covered in ConversationAvatarViewTests
         let imageView = UIImageView(image: image(inTestBundleNamed: "unsplash_burger.jpg"))
         imageView.contentMode = .scaleAspectFill
@@ -69,19 +72,17 @@ final class ShareDestinationCellTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: check what would be the default value after test
-        // swiftlint:enable todo_requires_jira_link
+        snapshotHelper = SnapshotHelper()
         accentColor = .red
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
-        sut.overrideUserInterfaceStyle = .dark
+
         sut.backgroundColor = .black
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         destination = nil
         super.tearDown()
@@ -98,7 +99,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
@@ -111,7 +114,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_LegalHold() {
@@ -124,7 +129,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked() {
@@ -136,7 +143,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
@@ -149,7 +158,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked() {
@@ -161,7 +172,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked_Guest() {
@@ -174,7 +187,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked() {
@@ -186,7 +201,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked_Guest() {
@@ -199,7 +216,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked() {
@@ -211,7 +230,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest() {
@@ -224,7 +245,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest_LegalHold() {
@@ -238,7 +261,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked() {
@@ -250,7 +275,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked_Guest() {
@@ -263,7 +290,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked() {
@@ -275,7 +304,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked_Guest() {
@@ -288,7 +319,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked() {
@@ -300,7 +333,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked_Guest() {
@@ -313,7 +348,9 @@ final class ShareDestinationCellTests: XCTestCase {
         sut.destination = destination
 
         // THEN
-        verify(matching: sut.prepareForSnapshotWithCellSelected())
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 }
 

@@ -20,52 +20,62 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
+import WireTestingPackage
+import XCTest
 
 final class UpdateEventsRepositoryTests: XCTestCase {
 
-    var sut: UpdateEventsRepository!
-    var updateEventsAPI: MockUpdateEventsAPI!
-    var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
-    var lastEventIDRepository: MockLastEventIDRepositoryInterface!
+    private var sut: UpdateEventsRepository!
+    private var updateEventsAPI: MockUpdateEventsAPI!
+    private var pushChannel: MockPushChannelProtocol!
+    private var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
+    private var mockUserDefaults: UserDefaults!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
 
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.eventContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         updateEventsAPI = MockUpdateEventsAPI()
+        pushChannel = MockPushChannelProtocol()
         updateEventDecryptor = MockUpdateEventDecryptorProtocol()
-        lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        mockUserDefaults = UserDefaults(
+            suiteName: Scaffolding.defaultsTestSuiteName
+        )
         sut = UpdateEventsRepository(
+            userID: Scaffolding.selfUserID.uuid,
             selfClientID: Scaffolding.selfClientID,
             updateEventsAPI: updateEventsAPI,
+            pushChannel: pushChannel,
             updateEventDecryptor: updateEventDecryptor,
             eventContext: context,
-            lastEventIDRepository: lastEventIDRepository
+            sharedUserDefaults: mockUserDefaults
         )
 
         // Base mocks
         updateEventDecryptor.decryptEventsIn_MockMethod = { $0.events }
-        lastEventIDRepository.storeLastEventID_MockMethod = { _ in }
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
+        coreDataStackHelper = CoreDataStackHelper()
         stack = nil
         updateEventsAPI = nil
+        pushChannel = nil
         updateEventDecryptor = nil
-        lastEventIDRepository = nil
         sut = nil
+        mockUserDefaults.removePersistentDomain(
+            forName: Scaffolding.defaultsTestSuiteName
+        )
+        mockUserDefaults = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
@@ -85,9 +95,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
     // MARK: - Pull pending events
 
     func testItThrowsErrorWhenPullingPendingEventsWithoutLastEventID() async throws {
-        // Given no last event id.
-        lastEventIDRepository.fetchLastEventID_MockValue = .some(nil)
-
         do {
             // When
             try await sut.pullPendingEvents()
@@ -107,7 +114,10 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         ])
 
         // There is a last event id.
-        lastEventIDRepository.fetchLastEventID_MockValue = Scaffolding.lastEventID
+        mockUserDefaults.set(
+            Scaffolding.lastEventID.uuidString,
+            forKey: Scaffolding.lastEventIDUserDefaultsKey
+        )
 
         // There are two pages of events waiting to be pulled.
         updateEventsAPI.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page1") { start in
@@ -193,17 +203,11 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             XCTAssertEqual(storedEventEnvelopes[5].sortIndex, 5)
         }
 
-        // The the last update event id was persisted for each non-transient envelope.
-        let lastEventIDInvocations = lastEventIDRepository.storeLastEventID_Invocations
+        // The the update event id was persisted for the last non-transient envelope.
 
-        guard lastEventIDInvocations.count == 3 else {
-            XCTFail("expected 3 invocations, got \(lastEventIDInvocations.count)")
-            return
-        }
+        let lastEventID = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
 
-        XCTAssertEqual(lastEventIDInvocations[0], Scaffolding.id3)
-        XCTAssertEqual(lastEventIDInvocations[1], Scaffolding.id5)
-        XCTAssertEqual(lastEventIDInvocations[2], Scaffolding.id6)
+        XCTAssertEqual(UUID(uuidString: lastEventID), Scaffolding.envelope6.id)
     }
 
     // MARK: - Fetch next pending events
@@ -253,117 +257,246 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
-}
+    // MARK: - Delete next pending events
 
-private enum Scaffolding {
+    func testItDeletesAllStoredEnvelopesIfLimitExceedsTotalNumberOfEnvelopes() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
 
-    // MARK: - Local domain
+        // When it deletes more than 3.
+        try await sut.deleteNextPendingEvents(limit: 10)
 
-    static let localDomain = "local.com"
-    static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
-    static let selfClientID = "abcd1234"
-    static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+        // Then all stored events were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.fetchRequest()
+            let result = try context.fetch(request)
+            XCTAssertTrue(result.isEmpty)
+        }
+    }
 
-    static let lastEventID = UUID(uuidString: "571d22a5-026c-48b4-90bf-78d00354f121")!
+    func testItDeletesStoredEnvelopesOnlyUpToTheLimit() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
 
-    // MARK: - Other domain
+        // When it deletes 2 envelopes.
+        try await sut.deleteNextPendingEvents(limit: 2)
 
-    static let otherDomain = "other.com"
-    static let aliceID = UserID(uuid: UUID(), domain: otherDomain)
-    static let aliceClientID = "efgh5678"
+        // Then the first 2 envelopes were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try context.fetch(request)
 
-    // MARK: - Pending events
+            XCTAssertEqual(result.count, 1)
 
-    // 6 envelopes, the first 2 will be already stored in the DB
-    // and the rest will come from the backend.
+            let envelope = try XCTUnwrap(result.first)
+            XCTAssertEqual(envelope.sortIndex, 2)
 
-    static let envelope1 = UpdateEventEnvelope(
-        id: id1,
-        events: [.user(.pushRemove)],
-        isTransient: false
-    )
+            let decoder = JSONDecoder()
+            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
+            XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+        }
+    }
 
-    static let envelope2 = UpdateEventEnvelope(
-        id: id2,
-        events: [.user(.pushRemove)],
-        isTransient: false
-    )
+    // MARK: - Live events
 
-    static let envelope3 = UpdateEventEnvelope(
-        id: id3,
-        events: [.conversation(.proteusMessageAdd(proteusMessage1))],
-        isTransient: false
-    )
+    func testItBuffersLiveEventsUntilIterationStarts() async throws {
+        // Mock push channel.
+        var liveEventsContinuation: AsyncThrowingStream<UpdateEventEnvelope, Error>.Continuation?
+        pushChannel.open_MockValue = AsyncThrowingStream {
+            liveEventsContinuation = $0
+        }
 
-    static let envelope4 = UpdateEventEnvelope(
-        id: id4,
-        events: [.user(.pushRemove)],
-        isTransient: true
-    )
+        // Given it starts buffering.
+        let liveEventStream = try await sut.startBufferingLiveEvents()
 
-    static let envelope5 = UpdateEventEnvelope(
-        id: id5,
-        events: [.conversation(.proteusMessageAdd(proteusMessage2))],
-        isTransient: false
-    )
+        // Given live events arrive.
+        liveEventsContinuation?.yield(Scaffolding.envelope1)
+        liveEventsContinuation?.yield(Scaffolding.envelope2)
+        liveEventsContinuation?.yield(Scaffolding.envelope3)
 
-    static let envelope6 = UpdateEventEnvelope(
-        id: id6,
-        events: [.conversation(.proteusMessageAdd(proteusMessage3))],
-        isTransient: false
-    )
+        // When iteration starts.
+        let task = Task {
+            var receivedEnvelopes = [UpdateEventEnvelope]()
+            for try await envelope in liveEventStream {
+                receivedEnvelopes.append(envelope)
+            }
+            return receivedEnvelopes
+        }
 
-    static let proteusMessage1 = ConversationProteusMessageAddEvent(
-        conversationID: conversationID,
-        senderID: aliceID,
-        timestamp: time30SecondsAgo,
-        message: .ciphertext("xxxxx"),
-        externalData: nil,
-        messageSenderClientID: aliceClientID,
-        messageRecipientClientID: selfClientID
-    )
+        liveEventsContinuation?.finish()
+        let receivedEnvelopes = try await task.value
 
-    static let proteusMessage2 = ConversationProteusMessageAddEvent(
-        conversationID: conversationID,
-        senderID: aliceID,
-        timestamp: time20SecondsAgo,
-        message: .ciphertext("yyyyy"),
-        externalData: nil,
-        messageSenderClientID: aliceClientID,
-        messageRecipientClientID: selfClientID
-    )
+        // Then all three envelopes are received.
+        guard receivedEnvelopes.count == 3 else {
+            XCTFail("Expected 3 envelopes, got \(receivedEnvelopes.count)")
+            return
+        }
 
-    static let proteusMessage3 = ConversationProteusMessageAddEvent(
-        conversationID: conversationID,
-        senderID: aliceID,
-        timestamp: time10SecondsAgo,
-        message: .ciphertext("zzzzz"),
-        externalData: nil,
-        messageSenderClientID: aliceClientID,
-        messageRecipientClientID: selfClientID
-    )
+        XCTAssertEqual(receivedEnvelopes[0], Scaffolding.envelope1)
+        XCTAssertEqual(receivedEnvelopes[1], Scaffolding.envelope2)
+        XCTAssertEqual(receivedEnvelopes[2], Scaffolding.envelope3)
 
-    static let id1 = UUID(uuidString: "d92f875d-9599-4469-886e-39addaffdad7")!
-    static let id2 = UUID(uuidString: "a826994f-082b-4d1e-9655-df8e1c7dccbf")!
-    static let id3 = UUID(uuidString: "000e7674-6fbe-4099-b081-10c5757c37f2")!
-    static let id4 = UUID(uuidString: "94d2dbb9-7a81-411d-b009-41a58cdae13b")!
-    static let id5 = UUID(uuidString: "9ec9d043-150b-4b4e-b916-33bf04e8c74f")!
-    static let id6 = UUID(uuidString: "9924114a-9773-436e-b1f8-b7cf32385ca2")!
+        // Then each envelope was decrypted.
+        let decryptionInvocations = updateEventDecryptor.decryptEventsIn_Invocations
+        guard decryptionInvocations.count == 3 else {
+            XCTFail("expected 4 decryption invocations, got \(decryptionInvocations.count)")
+            return
+        }
 
-    static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
-    static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
-    static let time10SecondsAgo = Date(timeIntervalSinceNow: -10)
+        XCTAssertEqual(decryptionInvocations[0], Scaffolding.envelope1)
+        XCTAssertEqual(decryptionInvocations[1], Scaffolding.envelope2)
+        XCTAssertEqual(decryptionInvocations[2], Scaffolding.envelope3)
+    }
 
-    static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
-        element: [envelope3, envelope4],
-        hasMore: true,
-        nextStart: "page2"
-    )
+    func testItStoresLastEventEnvelopeID() throws {
+        // Given
+        let id = UUID()
 
-    static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
-        element: [envelope5, envelope6],
-        hasMore: false,
-        nextStart: ""
-    )
+        // When
+        sut.storeLastEventEnvelopeID(id)
+
+        // Then
+        let lastEventId = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
+        XCTAssertEqual(UUID(uuidString: lastEventId), id)
+    }
+
+    func testPullLastEventID_It_Stores_Last_Event_ID() async throws {
+        // Mock
+
+        updateEventsAPI.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
+
+        // When
+
+        try await sut.pullLastEventID()
+
+        // Then
+        let lastEventId = try XCTUnwrap(mockUserDefaults.string(forKey: Scaffolding.lastEventIDUserDefaultsKey))
+        XCTAssertEqual(UUID(uuidString: lastEventId), Scaffolding.envelope1.id)
+    }
+
+    private enum Scaffolding {
+
+        // MARK: - Local domain
+
+        static let localDomain = "local.com"
+        static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+        static let selfClientID = "abcd1234"
+        static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+
+        static let lastEventID = UUID(uuidString: "571d22a5-026c-48b4-90bf-78d00354f121")!
+
+        // MARK: - Other domain
+
+        static let otherDomain = "other.com"
+        static let aliceID = UserID(uuid: UUID(), domain: otherDomain)
+        static let aliceClientID = "efgh5678"
+
+        // MARK: - Pending events
+
+        // 6 envelopes, the first 2 will be already stored in the DB
+        // and the rest will come from the backend.
+
+        nonisolated(unsafe) static let envelope1 = UpdateEventEnvelope(
+            id: id1,
+            events: [.user(.pushRemove)],
+            isTransient: false
+        )
+
+        nonisolated(unsafe) static let envelope2 = UpdateEventEnvelope(
+            id: id2,
+            events: [.user(.pushRemove)],
+            isTransient: false
+        )
+
+        nonisolated(unsafe) static let envelope3 = UpdateEventEnvelope(
+            id: id3,
+            events: [.conversation(.proteusMessageAdd(proteusMessage1))],
+            isTransient: false
+        )
+
+        nonisolated(unsafe) static let envelope4 = UpdateEventEnvelope(
+            id: id4,
+            events: [.user(.pushRemove)],
+            isTransient: true
+        )
+
+        nonisolated(unsafe) static let envelope5 = UpdateEventEnvelope(
+            id: id5,
+            events: [.conversation(.proteusMessageAdd(proteusMessage2))],
+            isTransient: false
+        )
+
+        nonisolated(unsafe) static let envelope6 = UpdateEventEnvelope(
+            id: id6,
+            events: [.conversation(.proteusMessageAdd(proteusMessage3))],
+            isTransient: false
+        )
+
+        nonisolated(unsafe) static let proteusMessage1 = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: aliceID,
+            timestamp: time30SecondsAgo,
+            message: .ciphertext("xxxxx"),
+            externalData: nil,
+            messageSenderClientID: aliceClientID,
+            messageRecipientClientID: selfClientID
+        )
+
+        nonisolated(unsafe) static let proteusMessage2 = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: aliceID,
+            timestamp: time20SecondsAgo,
+            message: .ciphertext("yyyyy"),
+            externalData: nil,
+            messageSenderClientID: aliceClientID,
+            messageRecipientClientID: selfClientID
+        )
+
+        nonisolated(unsafe) static let proteusMessage3 = ConversationProteusMessageAddEvent(
+            conversationID: conversationID,
+            senderID: aliceID,
+            timestamp: time10SecondsAgo,
+            message: .ciphertext("zzzzz"),
+            externalData: nil,
+            messageSenderClientID: aliceClientID,
+            messageRecipientClientID: selfClientID
+        )
+
+        static let id1 = UUID(uuidString: "d92f875d-9599-4469-886e-39addaffdad7")!
+        static let id2 = UUID(uuidString: "a826994f-082b-4d1e-9655-df8e1c7dccbf")!
+        static let id3 = UUID(uuidString: "000e7674-6fbe-4099-b081-10c5757c37f2")!
+        static let id4 = UUID(uuidString: "94d2dbb9-7a81-411d-b009-41a58cdae13b")!
+        static let id5 = UUID(uuidString: "9ec9d043-150b-4b4e-b916-33bf04e8c74f")!
+        static let id6 = UUID(uuidString: "9924114a-9773-436e-b1f8-b7cf32385ca2")!
+
+        static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
+        static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
+        static let time10SecondsAgo = Date(timeIntervalSinceNow: -10)
+
+        nonisolated(unsafe) static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
+            element: [envelope3, envelope4],
+            hasMore: true,
+            nextStart: "page2"
+        )
+
+        nonisolated(unsafe) static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
+            element: [envelope5, envelope6],
+            hasMore: false,
+            nextStart: ""
+        )
+
+        static let defaultsTestSuiteName = UUID().uuidString
+
+        static let lastEventIDUserDefaultsKey = "\(selfUserID.uuid.uuidString)_lastEventID"
+
+    }
 
 }

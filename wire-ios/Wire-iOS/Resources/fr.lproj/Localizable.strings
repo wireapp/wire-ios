@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest Room";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Vous)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Invitez des contacts à rejoindre votre équipe";
 "peoplepicker.quick-action.open-conversation" = "Ouvrir";
 "peoplepicker.quick-action.create-conversation" = "Créer un groupe";
-"peoplepicker.quick-action.create-guest-room" = "Créer une Guest Room";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Gérer les Services";
 
 "peoplepicker.federation.domain_unvailable" = "Le domaine fédéré n'est actuellement pas disponible. [En savoir plus](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Appuyez pour activer.";
 "conversation_list.header.self_team.accessibility_value.active" = "Actif.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Nouveaux messages.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contacts";
-"conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiver";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "dans les contacts";
@@ -512,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Distribué";
 "content.system.message_read_timestamp" = "Vu";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1157,11 +1152,6 @@
 "self.settings.privacy_analytics.title" = "Envoyer des données d'utilisation anonymes";
 "self.settings.privacy_analytics_menu.description.title" = "Les données d'utilisation permettent à Wire de comprendre comment l'application est utilisée et comment elle peut être améliorée. Les données sont anonymes et n'incluent pas le contenu de vos communications (messages, fichiers ou appels).";
 
-"self.settings.receiveNews_and_offers.title" = "Recevoir notre Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Recevoir des e-mails sur les nouveautés de Wire.";
-
-
-
 // Change Username
 
 "self.settings.account_section.handle.change.title" = "Nom d'utilisateur";
@@ -1803,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "plus aucun gif";
-"giphy.error.no_result" = "aucun gif trouvé";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "envoyer";
 "giphy.cancel" = "annuler";
@@ -1922,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Lien invalide.";
 "url_action.invalid_link.message" = "Le lien que vous avez ouvert n'est pas valide.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Souhaitez-vous recevoir des e-mails pour rester au courant des nouveautés de Wire ?";
-"news_offers.consent.message" = "Vous pouvez vous désinscrire à tout moment.";
-"news_offers.consent.button.privacy_policy.title" = "Politique de confidentialité";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

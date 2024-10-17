@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireTransport
 import XCTest
 
 @testable import WireRequestStrategy
@@ -45,6 +46,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -53,7 +55,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSEventProcessor = nil
         mockRemoveLocalConversation = nil
         mockMLSEventProcessor = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -1065,6 +1066,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS: Conversation Create
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToUpdateConversationIfNeeded() async {
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
         // given
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
@@ -1236,6 +1241,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS conversation member leave
 
     func test_UpdateConversationMemberLeave_WipesMLSGroup() async {
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
         // Given
         let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
@@ -1372,7 +1381,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
         expectation.handler = { notification in
-            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] is AccountDeletedNotification
         }
 
         // When

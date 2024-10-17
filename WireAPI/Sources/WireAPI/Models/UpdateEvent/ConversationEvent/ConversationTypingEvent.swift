@@ -34,4 +34,21 @@ public struct ConversationTypingEvent: Equatable, Codable {
 
     public let isTyping: Bool
 
+    /// Create a new `ConversationTypingEvent`.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The id of the conversation.
+    ///   - senderID: The id of the user who is typing in the conversation.
+    ///   - isTyping: Whether the user is typing.
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        isTyping: Bool
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.isTyping = isTyping
+    }
+
 }

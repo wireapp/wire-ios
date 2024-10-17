@@ -21,10 +21,22 @@ import Foundation
 /// An event where the account of a user (either the
 /// self user or another user) was deleted.
 
-public struct UserDeleteEvent: Equatable, Codable {
+public struct UserDeleteEvent: Equatable, Codable, Sendable {
 
     /// The user's qualified id.
 
     public let qualifiedUserID: QualifiedID
+
+    /// The time at which the user was deleted.
+
+    public let time: Date
+
+    public init(
+        qualifiedUserID: QualifiedID,
+        time: Date
+    ) {
+        self.qualifiedUserID = qualifiedUserID
+        self.time = time
+    }
 
 }

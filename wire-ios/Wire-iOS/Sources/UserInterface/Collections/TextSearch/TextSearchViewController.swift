@@ -57,7 +57,7 @@ final class TextSearchViewController: NSObject {
         resultsView.tableView.dataSource = self
 
         searchBar.delegate = self
-        searchBar.placeholderString = L10n.Localizable.Collections.Search.Field.placeholder.capitalizingFirstCharacterOnly
+        searchBar.placeholderString = L10n.Localizable.Collections.Search.Field.placeholder
 
     }
 

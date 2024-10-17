@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 @testable import WireRequestStrategy
+import WireTransport
 import XCTest
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
@@ -99,7 +100,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
     }
 
@@ -113,7 +114,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
-        BackendInfo.storage = .standard
         super.tearDown()
     }
 

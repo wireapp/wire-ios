@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -29,8 +27,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
-        BackendInfo.enableMocking()
-
+        BackendInfo.apiVersion = nil
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
 
@@ -40,8 +37,6 @@ final class APIVersionResolverTests: ZMTBaseTest {
     override func tearDown() {
         mockDelegate = nil
         transportSession = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -80,7 +75,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
     // MARK: - Endpoint unavailable
 
-    func testThatItDefaultsToVersionZeroIfEndpointIsUnavailable() throws {
+    func testThatItDefaultsToVersionZeroIfEndpointIsUnavailable404() throws {
         // Given the client supports API versioning.
         let sut = createSUT(
             clientProdVersions: Set(APIVersion.allCases),
@@ -102,7 +97,33 @@ final class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertEqual(BackendInfo.isFederationEnabled, false)
     }
 
-    // MARK: - Highest productino version
+    func testThatItDefaultsToNothingIfFailureOtherThan404() throws {
+        let previousApiVersion = BackendInfo.apiVersion
+        let previousDomain = BackendInfo.domain
+        let previousIsFederationEnabled = BackendInfo.isFederationEnabled
+
+        // Given the client supports API versioning.
+        let sut = createSUT(
+            clientProdVersions: Set(APIVersion.allCases),
+            clientDevVersions: []
+        )
+
+        // Given the backend does not.
+        transportSession.isInternalError = true
+
+        // When version is resolved.
+        let done = customExpectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then it should not changed.
+        let resolvedVersion = BackendInfo.apiVersion
+        XCTAssertEqual(resolvedVersion, previousApiVersion)
+        XCTAssertEqual(BackendInfo.domain, previousDomain)
+        XCTAssertEqual(BackendInfo.isFederationEnabled, previousIsFederationEnabled)
+    }
+
+    // MARK: - Highest production version
 
     func testThatItResolvesTheHighestProductionAPIVersion() throws {
         // Given client has prod and dev versions.
@@ -160,7 +181,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
         XCTAssertEqual(BackendInfo.isFederationEnabled, true)
     }
 
-    // MARK: - Peferred version
+    // MARK: - Preferred version
 
     func testThatItResolvesThePreferredAPIVersion() throws {
         // Given client has prod and dev versions in dev mode.

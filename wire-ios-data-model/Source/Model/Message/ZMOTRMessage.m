@@ -52,7 +52,7 @@ NSString * const DeliveredKey = @"delivered";
     [self missesRecipients:[NSSet setWithObject:recipient]];
 }
 
-- (void)missesRecipients:(NSSet<UserClient *> *)recipients
+- (void)missesRecipients:(NSSet<UserClient *> * _Nonnull)recipients
 {
     [[self mutableSetValueForKey:ZMMessageMissingRecipientsKey] addObjectsFromArray:recipients.allObjects];
 }
@@ -104,9 +104,9 @@ NSString * const DeliveredKey = @"delivered";
     [super markAsSent];
 }
 
-- (void)expire
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
-    [super expire];
+    [super expireWithExpirationReason:expirationReason];
 }
 
 - (void)resend

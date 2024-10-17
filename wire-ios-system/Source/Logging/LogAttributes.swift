@@ -24,6 +24,7 @@ public enum LogAttributesKey: String, Comparable {
     case selfUserId = "self_user_id"
     case recipientID = "recipient_id"
     case eventId = "event_id"
+    case eventEnvelopeID = "event_envelope_id"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
     case messageType = "message_type"
@@ -33,6 +34,8 @@ public enum LogAttributesKey: String, Comparable {
     case eventSource = "event_source"
     case `public`
     case tag
+    case processId = "process_id"
+    case processName = "process_name"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue

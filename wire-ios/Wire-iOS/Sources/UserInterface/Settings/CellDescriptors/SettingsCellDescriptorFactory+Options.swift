@@ -135,12 +135,11 @@ extension SettingsCellDescriptorFactory {
             inverse: false
         )
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // FIXME: Headers
         // The header of the CallKit section is used as a generic "Calls" section header, not
         // only for the CallKit toggle but also for the other call settings. The CallKit toggle
         // is sometimes hidden, which means if it is, we need to add the header to the next section.
-        // swiftlint:enable todo_requires_jira_link
         return SettingsSectionDescriptor(
             cellDescriptors: [muteCallToggle],
             header: SecurityFlags.forceCallKitDisabled.isEnabled ? L10n.Localizable.Self.Settings.Callkit.title : .none,

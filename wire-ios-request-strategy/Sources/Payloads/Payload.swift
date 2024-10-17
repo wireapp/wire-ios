@@ -374,7 +374,47 @@ public enum Payload {
         let deleted: ClientListByUserID
     }
 
-    public struct MessageSendingStatus: Codable, Equatable {
+    public struct MessageSendingStatusV1: Codable, Equatable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case missing
+            case redundant
+            case deleted
+            case failedToSend = "failed_to_send"
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByQualifiedUserID
+
+        /// When a message is partially sent contains the list of clients which
+        /// didn't receive the message.
+        let failedToSend: ClientListByQualifiedUserID
+
+        func toAPIModel() -> MessageSendingStatus {
+            MessageSendingStatus(
+                time: time,
+                missing: missing,
+                redundant: redundant,
+                deleted: deleted,
+                failedToSend: failedToSend,
+                failedToConfirm: [:]
+            )
+        }
+
+    }
+
+    public struct MessageSendingStatusV4: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case time
@@ -385,7 +425,48 @@ public enum Payload {
             case failedToConfirm = "failed_to_confirm_clients"
         }
 
-        public init(time: Date, missing: ClientListByQualifiedUserID, redundant: ClientListByQualifiedUserID, deleted: ClientListByQualifiedUserID, failedToSend: ClientListByQualifiedUserID, failedToConfirm: ClientListByQualifiedUserID) {
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByQualifiedUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByQualifiedUserID
+
+        /// When a message is partially sent contains the list of clients which
+        /// didn't receive the message.
+        let failedToSend: ClientListByQualifiedUserID
+
+        /// The lists the users for which the client verification could not be performed.
+        let failedToConfirm: ClientListByQualifiedUserID
+
+        func toAPIModel() -> MessageSendingStatus {
+            MessageSendingStatus(
+                time: time,
+                missing: missing,
+                redundant: redundant,
+                deleted: deleted,
+                failedToSend: failedToSend,
+                failedToConfirm: failedToConfirm
+            )
+        }
+    }
+
+    public struct MessageSendingStatus: Equatable {
+
+        public init(
+            time: Date,
+            missing: ClientListByQualifiedUserID,
+            redundant: ClientListByQualifiedUserID,
+            deleted: ClientListByQualifiedUserID,
+            failedToSend: ClientListByQualifiedUserID,
+            failedToConfirm: ClientListByQualifiedUserID
+        ) {
             self.time = time
             self.missing = missing
             self.redundant = redundant
@@ -460,7 +541,7 @@ public enum Payload {
 
 extension Payload.ResponseFailure {
 
-    func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
+    func updateExpirationReason(for message: OTREntity, with reason: ExpirationReason) {
         message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 

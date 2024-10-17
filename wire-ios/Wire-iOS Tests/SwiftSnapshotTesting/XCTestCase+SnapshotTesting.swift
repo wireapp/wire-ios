@@ -18,6 +18,7 @@
 
 import SnapshotTesting
 import UIKit
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -29,89 +30,6 @@ private let perceptualPrecision: Float = 0.98
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
-
-    /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [(ViewImageConfig, String)] {
-        [
-            (.iPhoneSe(orientation), "iPhone-4_0_Inch"),
-            (.iPhone8(orientation), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(orientation), "iPhone-5_5_Inch"),
-            (.iPhoneX(orientation), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(orientation), "iPhone-6_5_Inch")
-        ]
-    }
-
-    static let padConfigNames: [(ViewImageConfig, String)] = [
-        (.iPadMini(.landscape), "iPad-landscape"),
-        (.iPadMini(.portrait), "iPad-portrait")
-    ]
-
-    func verifyAllIPhoneSizes(matching value: UIViewController,
-                              orientation: ViewImageConfig.Orientation = .portrait,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-
-        for(config, name) in XCTestCase.phoneConfigNames(orientation: orientation) {
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
-
-    func verifyInAllDeviceSizes(
-        matching value: UIViewController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let allDevices = XCTestCase.phoneConfigNames() + XCTestCase.padConfigNames
-        for (config, name) in allDevices {
-
-            verify(
-                matching: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                named: name,
-                file: file,
-                testName: testName,
-                line: line
-            )
-        }
-    }
-
-    func verifyInAllDeviceSizes_(
-        matching value: UIViewController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-
-        let allDevices: [(ViewImageConfig, String)] = [
-
-            (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
-            (.iPhone8(.portrait), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
-            (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
-
-            (.iPadMini(.landscape), "iPad-landscape"),
-            (.iPadMini(.portrait), "iPad-portrait")
-        ]
-
-        for (config, name) in allDevices {
-            verify(
-                matching: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                named: name,
-                file: file,
-                testName: testName,
-                line: line
-            )
-        }
-    }
 
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
@@ -155,24 +73,6 @@ extension XCTestCase {
         verify(
             matching: value,
             named: nameWithProperty,
-            file: file,
-            testName: testName,
-            line: line
-        )
-    }
-
-    func verifyInAllPhoneWidths(
-        matching value: UIViewController,
-        snapshotBackgroundColor: UIColor? = nil,
-        named name: String? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        verifyInAllPhoneWidths(
-            matching: value.view,
-            snapshotBackgroundColor: snapshotBackgroundColor,
-            named: name,
             file: file,
             testName: testName,
             line: line
@@ -255,40 +155,6 @@ extension XCTestCase {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    func verify(matching value: UIImage,
-                named name: String? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        let failure = verifySnapshot(of: value,
-                                     as: .image,
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
-    func verify<Value, Format>(matching value: Value,
-                               as snapshotting: Snapshotting<Value, Format>,
-                               named name: String? = nil,
-                               file: StaticString = #file,
-                               testName: String = #function,
-                               line: UInt = #line) {
-
-        let failure = verifySnapshot(of: value,
-                                     as: snapshotting,
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {

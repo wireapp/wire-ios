@@ -29,6 +29,8 @@ public protocol UserSession: AnyObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
+    var userProfile: UserProfile { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -184,17 +186,6 @@ public protocol UserSession: AnyObject {
     var maxUploadFileSize: UInt64 { get }
 
     func acknowledgeFeatureChange(for feature: Feature.Name)
-
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    )
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    )
 
     func classification(
         users: [UserType],

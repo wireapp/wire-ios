@@ -165,7 +165,6 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self enableBackendInfoMocking];
     [self setBackendInfoAPIVersionNil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
@@ -181,8 +180,6 @@
     // then
     XCTAssertFalse(self.mockRequestStrategy.nextRequestCalled);
     XCTAssertNil(self.mockTransportSesssion.lastEnqueuedRequest);
-
-    [self resetBackendInfoMocking];
 }
 
 - (void)testThatItSendsAsManyCallsAsTheTransportSessionCanHandle
@@ -271,7 +268,7 @@
 {
     // given
 
-    // FIXME: [jacob] use a mock sync status
+    // FIXME: [WPB-9091] use a mock sync status
     // simulate being online
     [self.syncStatus pushChannelDidOpen];
     while (self.syncStatus.isSyncing) {

@@ -17,6 +17,7 @@
 //
 
 @testable import WireRequestStrategy
+import WireTransport
 import XCTest
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {

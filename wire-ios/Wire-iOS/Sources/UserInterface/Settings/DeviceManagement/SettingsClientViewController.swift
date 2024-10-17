@@ -21,8 +21,6 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "UI")
-
 enum ClientSection: Int {
     case info = 0
     case fingerprintAndVerify = 1

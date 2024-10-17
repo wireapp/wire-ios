@@ -27,12 +27,14 @@ actor EventProcessor: UpdateEventProcessor {
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
     private var bufferedEvents: [ZMUpdateEvent]
-    private let eventDecoder: EventDecoder
+    private let eventDecoder: any EventDecoderProtocol
     private let eventProcessingTracker: EventProcessingTrackerProtocol
     private let earService: EARServiceInterface
     private var processingTask: Task<Void, Error>?
     private let eventConsumers: [ZMEventConsumer]
     private let eventAsyncConsumers: [ZMEventAsyncConsumer]
+
+    private let processedEventList = ProcessedEventList()
 
     // MARK: Life Cycle
 
@@ -44,13 +46,33 @@ actor EventProcessor: UpdateEventProcessor {
         eventAsyncConsumers: [ZMEventAsyncConsumer],
         lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
-        self.syncContext = storeProvider.syncContext
-        self.eventContext = storeProvider.eventContext
-        self.eventDecoder = EventDecoder(
-            eventMOC: eventContext,
-            syncMOC: syncContext,
+        let eventDecoder = EventDecoder(
+            eventMOC: storeProvider.eventContext,
+            syncMOC: storeProvider.syncContext,
             lastEventIDRepository: lastEventIDRepository
         )
+
+        self.init(
+            storeProvider: storeProvider,
+            eventDecoder: eventDecoder,
+            eventProcessingTracker: eventProcessingTracker,
+            earService: earService,
+            eventConsumers: eventConsumers,
+            eventAsyncConsumers: eventAsyncConsumers
+        )
+    }
+
+    init(
+        storeProvider: CoreDataStack,
+        eventDecoder: any EventDecoderProtocol,
+        eventProcessingTracker: EventProcessingTrackerProtocol,
+        earService: EARServiceInterface,
+        eventConsumers: [ZMEventConsumer],
+        eventAsyncConsumers: [ZMEventAsyncConsumer]
+    ) {
+        self.syncContext = storeProvider.syncContext
+        self.eventContext = storeProvider.eventContext
+        self.eventDecoder = eventDecoder
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
         self.bufferedEvents = []
@@ -140,7 +162,7 @@ actor EventProcessor: UpdateEventProcessor {
         }
     }
 
-    private func processStoredUpdateEvents(
+    func processStoredUpdateEvents(
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false
     ) async {
@@ -169,17 +191,29 @@ actor EventProcessor: UpdateEventProcessor {
             for event in decryptedUpdateEvents {
                 WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
 
+                // Workaround: there's a concurrency bug where a stored event was fetched
+                // and processed, then before it could be deleted, a second pass refetched
+                // the same event and processed it again. It's not known why this happens,
+                // but in the meantime we will avoid processing an event more than once.
+                guard await !self.processedEventList.containsEvent(event) else {
+                    WireLogger.updateEvent.warn(
+                        "event already processed, skipping...",
+                        attributes: event.logAttributes
+                    )
+                    continue
+                }
+
                 await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
-                // swiftlint:disable todo_requires_jira_link
-                // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
-                // swiftlint:enable todo_requires_jira_link
+
                 for eventConsumer in self.eventAsyncConsumers {
-                    await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                    await eventConsumer.processEvents([event])
                 }
+
+                await self.processedEventList.addEvent(event)
             }
 
             await syncContext.perform {
@@ -224,4 +258,35 @@ extension Notification.Name {
 
     /// Published after the last event has been processed.
     static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
+}
+
+private actor ProcessedEventList {
+
+    private var hashes = Set<Int64>()
+
+    // A full list would contain approx 80kB.
+    private let capacity = 10_000
+
+    func addEvent(_ event: ZMUpdateEvent) {
+        guard let hash = event.contentHash else {
+            assertionFailure("events for processing should have a content hash")
+            return
+        }
+
+        if hashes.count >= capacity, let randomElement = hashes.randomElement() {
+            hashes.remove(randomElement)
+        }
+
+        hashes.insert(hash)
+    }
+
+    func containsEvent(_ event: ZMUpdateEvent) -> Bool {
+        guard let hash = event.contentHash else {
+            assertionFailure("events for processing should have a content hash")
+            return false
+        }
+
+        return hashes.contains(hash)
+    }
+
 }

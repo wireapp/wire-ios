@@ -25,7 +25,7 @@ public protocol CompositeMessageData {
 }
 
 public enum CompositeMessageItem {
-    case text(ZMTextMessageData)
+    case text(TextMessageData)
     case button(ButtonMessageData)
 
     internal init?(with protoItem: Composite.Item, message: ZMClientMessage) {
@@ -41,7 +41,7 @@ public enum CompositeMessageItem {
 }
 
 extension CompositeMessageItem {
-    public var textData: ZMTextMessageData? {
+    public var textData: TextMessageData? {
         guard case .text(let data) = self else { return nil }
         return data
     }

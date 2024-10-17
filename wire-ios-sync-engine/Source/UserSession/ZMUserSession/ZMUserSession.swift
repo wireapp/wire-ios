@@ -250,7 +250,8 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            featureRepository: featureRepository
         )
 
         let e2eiRepository = E2EIRepository(
@@ -531,15 +532,18 @@ public final class ZMUserSession: NSObject {
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
         return [
+            ImportEventsURLActionProcessor(
+                eventProcessor: updateEventProcessor!
+            ),
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!
+                eventProcessor: conversationEventProcessor
             ),
             ConnectToBotURLActionProcessor(
                 contextprovider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!,
+                eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers
             )
         ]
@@ -632,9 +636,14 @@ public final class ZMUserSession: NSObject {
 
     // temporary function to simplify call to ConversationEventProcessor
     // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
+    public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
+        WaitingGroupTask(context: self.syncContext) { [weak self] in
+            guard let self else {
+                completion?()
+                return
+            }
+            await self.conversationEventProcessor.processAndSaveConversationEvents(events)
+            completion?()
         }
     }
 
@@ -757,9 +766,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 // MARK: - UpdateEventProcessor
 
-// swiftlint:disable todo_requires_jira_link
-// TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
-// swiftlint:enable todo_requires_jira_link
+// TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)
@@ -804,7 +811,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
-                await mlsService.repairOutOfSyncConversations()
+                do {
+                    try await mlsService.repairOutOfSyncConversations()
+                } catch {
+                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                }
             }
         }
     }
@@ -842,24 +853,35 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            mlsService.commitPendingProposalsIfNeeded()
+        }
 
         WaitingGroupTask(context: syncContext) { [self] in
-            do {
-                var getFeatureConfigAction = GetFeatureConfigsAction()
-                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
-
-                try await getFeatureConfigAction.perform(in: notificationContext)
-                try await resolveOneOnOneUseCase.invoke()
-            } catch {
-                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
-            }
+            await fetchAndStoreFeatureConfig()
+            await calculateSelfSupportedProtocolsIfNeeded()
+            await resolveOneOnOneConversationsIfNeeded()
         }
 
         recurringActionService.performActionsIfNeeded()
+        performPostQuickSyncE2EIActions()
+    }
 
-        checkExpiredCertificateRevocationLists()
-        checkE2EICertificateExpiryStatus()
+    /// Calculate supported protocols for self user in case they are empty
+    /// - note: Supported protocols are calculated only during slow sync
+    /// or while resolving 1-1 conversations (MLS enabled).
+    /// It fixes users that updates to latest version without having a supported-protocol.
+    /// This could be removed once MLS is enabled.
+    private func calculateSelfSupportedProtocolsIfNeeded() async {
+        await syncContext.perform { [syncContext] in
+            let service = SupportedProtocolsService(context: syncContext)
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            if selfUser.supportedProtocols.isEmpty {
+                WireLogger.supportedProtocols.warn("no supported protocols found")
+                selfUser.supportedProtocols = service.calculateSupportedProtocols()
+                syncContext.saveOrRollback()
+            }
+        }
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
@@ -871,6 +893,33 @@ extension ZMUserSession: ZMSyncStateDelegate {
             supportedProtocolService: supportedProtocolService,
             resolver: resolver
         )
+    }
+
+    private func resolveOneOnOneConversationsIfNeeded() async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+        do {
+            try await resolveOneOnOneUseCase.invoke()
+        } catch {
+            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+        }
+    }
+
+    private func performPostQuickSyncE2EIActions() {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        checkExpiredCertificateRevocationLists()
+        checkE2EICertificateExpiryStatus()
+    }
+
+    private func fetchAndStoreFeatureConfig() async {
+        do {
+            var getFeatureConfigAction = GetFeatureConfigsAction()
+            try await getFeatureConfigAction.perform(in: notificationContext)
+        } catch {
+            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
     }
 
     func processEvents() {

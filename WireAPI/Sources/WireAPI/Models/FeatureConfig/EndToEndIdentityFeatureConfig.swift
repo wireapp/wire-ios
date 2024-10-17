@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *End To End Identity* feature.
 
-public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
+public struct EndToEndIdentityFeatureConfig: Equatable, Codable, Sendable {
 
     /// The feature's status.
 
@@ -33,5 +33,13 @@ public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
     /// The login grace period for OAUTH/OpenID Connect authentication.
 
     public let verificationExpiration: UInt
+
+    /// The crl proxy URL
+
+    public let crlProxy: String?
+
+    /// Uses proxy on mobile
+
+    public let useProxyOnMobile: Bool
 
 }

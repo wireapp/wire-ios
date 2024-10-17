@@ -90,7 +90,7 @@ fileprivate extension NSRange {
     }
 }
 
-public extension ZMTextMessageData {
+public extension TextMessageData {
     var isMentioningSelf: Bool {
         return mentions.any(\.isForSelf)
     }

@@ -32,16 +32,6 @@ extension UIPageViewController {
 }
 
 extension UIViewController {
-    var wr_tabBarController: TabBarController? {
-        if parent == nil {
-            return nil
-        } else if parent?.isKind(of: TabBarController.self) != nil {
-            return parent as? TabBarController
-        } else {
-            return parent?.wr_tabBarController
-        }
-    }
-
     func takeFirstResponder() {
         if UIAccessibility.isVoiceOverRunning {
             return

@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "A32707A7-C104-45A8-B589-1A01369DE203",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-NSShowNonLocalizedStrings YES"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireFoundationTests",
+        "name" : "WireFoundationTests"
+      }
+    }
+  ],
+  "version" : 1
+}
