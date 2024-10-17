@@ -21,7 +21,6 @@ import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: WireCallCenterCallStateObserver {
-
     public func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
@@ -29,15 +28,14 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         timestamp: Date?,
         previousCallState: CallState?
     ) {
-        guard let conversationId = conversation.remoteIdentifier else { return }
 
-        let isVideoCall = isVideoCall(for: conversation)
-
-        switch callState {
-        case .outgoing:
+        switch (callState, previousCallState) {
+        case (.outgoing, _):
+            let isVideoCall = isVideoCall(for: conversation)
             trackCallInitialized(isVideo: isVideoCall, conversationType: conversation.conversationType)
-        case .answered:
+        case (.answered(_), .incoming(video: let isVideoCall, shouldRing: _, degraded: _)):
             trackCallJoined(isVideo: isVideoCall, conversationType: conversation.conversationType)
+
         default:
             break
         }
