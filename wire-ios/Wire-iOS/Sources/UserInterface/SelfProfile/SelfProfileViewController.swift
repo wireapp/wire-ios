@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: [WPB-6647] when opening self profile ensure these alerts are shown and also don't block each other
+// - alert that newes devices have been added
+// - alert about read receipts enabled
+
 import UIKit
 import WireCommonComponents
 import WireDesign
