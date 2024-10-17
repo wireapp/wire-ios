@@ -51,7 +51,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func dismissPresentedViewController() async
 
-    // TODO: [WPB-6647] consider moving those methods out of the protocol
+    // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
 
     @MainActor
     func showSelfProfile() async
