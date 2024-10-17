@@ -37,7 +37,6 @@ import WireDataModel
      * - parameter clientId: The identifier of the current client on the user's account.
      * - parameter uiMOC: The Core Data context to use to coordinate events.
      * - parameter flowManager: The object that controls media flow.
-     * - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
      * - parameter transport: The object that performs network requests when the call center requests them.
      * - returns: The call center to use for the given configuration.
      */
@@ -46,7 +45,6 @@ import WireDataModel
                                  clientId: String,
                                  uiMOC: NSManagedObjectContext,
                                  flowManager: FlowManagerType,
-                                 analytics: AnalyticsType? = nil,
                                  transport: WireCallCenterTransport) -> WireCallCenterV3 {
 
         if let wireCallCenter = uiMOC.zm_callCenter {
@@ -56,7 +54,6 @@ import WireDataModel
                                                                                clientId: clientId,
                                                                                uiMOC: uiMOC,
                                                                                flowManager: flowManager,
-                                                                               analytics: analytics,
                                                                                transport: transport)
 
             newInstance.useConstantBitRateAudio = uiMOC.zm_useConstantBitRateAudio

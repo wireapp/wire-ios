@@ -32,9 +32,11 @@ class CallQualityController: NSObject {
     fileprivate var token: Any?
 
     private let rootViewController: UIViewController
+    private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(rootViewController: UIViewController) {
+    init(rootViewController: UIViewController, callQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
         self.rootViewController = rootViewController
+        self.submitCallQualitySurvey = callQualitySurvey
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -113,10 +115,12 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .callTooShort, duration: callDuration))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
             return
         }
 
@@ -174,6 +178,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
+        submitCallQualitySurvey.invoke(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {

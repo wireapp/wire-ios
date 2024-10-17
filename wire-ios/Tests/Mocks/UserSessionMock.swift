@@ -347,6 +347,10 @@ final class UserSessionMock: UserSession {
         ToggleMessageReactionUseCase(analyticsEventTracker: nil)
     }
 
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
+        CallQualitySurveyUseCase(analyticsEventTracker: nil)
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(

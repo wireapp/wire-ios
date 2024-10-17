@@ -84,7 +84,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                                                             clientId: clientId,
                                                             uiMOC: managedObjectContext.zm_userInterface,
                                                             flowManager: flowManager,
-                                                            analytics: managedObjectContext.analytics,
                                                             transport: self)
         }
 
@@ -219,13 +218,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             if let userClient = object as? UserClient, userClient.isSelfClient(), let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
                 zmLog.debug("Creating callCenter")
                 let uiContext = managedObjectContext.zm_userInterface!
-                let analytics = managedObjectContext.analytics
                 uiContext.performGroupedBlock {
                     self.callCenter = WireCallCenterV3Factory.callCenter(withUserId: userId,
                                                                          clientId: clientId,
                                                                          uiMOC: uiContext.zm_userInterface,
                                                                          flowManager: self.flowManager,
-                                                                         analytics: analytics,
                                                                          transport: self)
                 }
                 break

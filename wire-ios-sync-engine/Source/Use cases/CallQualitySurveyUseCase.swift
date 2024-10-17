@@ -16,13 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilities
+import WireAnalytics
 
-extension CoreDataStack {
+/// sourcery: AutoMockable
+public protocol SubmitCallQualitySurveyUseCaseProtocol {
 
-    public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
-        syncContext.performGroupedAndWait {
-            self.syncContext.analytics = analytics
-        }
+    func invoke(_ review: CallQualitySurveyReview)
+}
+
+public struct CallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProtocol {
+
+    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+
+    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+        self.analyticsEventTracker = analyticsEventTracker
+    }
+
+    public func invoke(_ review: CallQualitySurveyReview) {
+        analyticsEventTracker?.trackEvent(.callQualitySurvey(review))
     }
 }

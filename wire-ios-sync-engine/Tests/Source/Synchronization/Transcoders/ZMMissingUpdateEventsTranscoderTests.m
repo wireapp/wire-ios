@@ -70,7 +70,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self verifyMockLater:self.mockPushNotificationStatus];
     
     _sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.uiMOC
-                                                            notificationsTracker:nil
                                                                   eventProcessor:self.mockUpdateEventProcessor
                                                                applicationStatus:self.mockApplicationDirectory
                                                           pushNotificationStatus:self.mockPushNotificationStatus
@@ -392,7 +391,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 
     // when
     ZMMissingUpdateEventsTranscoder *sut = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                            notificationsTracker:nil
                                                                                                   eventProcessor:self.mockUpdateEventProcessor
                                                                                                applicationStatus:self.mockApplicationDirectory
                                                                                           pushNotificationStatus:self.mockPushNotificationStatus
