@@ -2773,6 +2773,15 @@ internal enum L10n {
             return L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.subheadline", String(describing: p1), fallback: "You have no contacts yet.\nSearch for people on %@ and get connected.")
           }
         }
+        internal enum Search {
+          internal enum Subheadline {
+            /// No results found.
+            internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.ipad", fallback: "No results found.")
+            /// No conversations could be found.
+            /// Connect with people or start a new group conversation:
+            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.phone", fallback: "No conversations could be found.\nConnect with people or start a new group conversation:")
+          }
+        }
       }
       internal enum Filter {
         internal enum AllConversations {
@@ -3461,6 +3470,8 @@ internal enum L10n {
       internal static let on = L10n.tr("Localizable", "general.on", fallback: "On")
       /// Open Wire Settings
       internal static let openSettings = L10n.tr("Localizable", "general.open_settings", fallback: "Open Wire Settings")
+      /// or
+      internal static let or = L10n.tr("Localizable", "general.or", fallback: "or")
       /// Paste
       internal static let paste = L10n.tr("Localizable", "general.paste", fallback: "Paste")
       /// Service
