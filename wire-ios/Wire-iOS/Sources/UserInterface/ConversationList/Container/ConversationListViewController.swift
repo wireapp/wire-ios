@@ -433,25 +433,14 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: ConversationFilter) {
+    func applyFilter(_ filter: ConversationFilter?) {
         listContentController.listViewModel.selectedFilter = filter
         setupTitleView()
-
         if mainSplitViewState == .collapsed {
             setupRightNavigationBarButtonItems()
         } else {
             setupRightNavigationBarButtonItems_SplitView()
         }
-
-        setupSearchController()
-
-        updateFilterContainerView()
-        configureEmptyPlaceholder()
-    }
-
-    func clearFilter() {
-        listContentController.listViewModel.selectedFilter = .none
-        setupRightNavigationBarButtonItems()
         setupSearchController()
         updateFilterContainerView()
         configureEmptyPlaceholder()

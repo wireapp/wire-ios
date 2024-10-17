@@ -33,7 +33,7 @@ struct ThreeColumnSplitView: View {
                 Text(verbatim: "Tab 3")
                     .tag("Tab 3")
             }
-            .navigationTitle("Sidebar")
+            .navigationTitle(Text(verbatim: "Sidebar"))
             .frame(minWidth: 100) // Width of the sidebar
         } content: {
             // Middle Content Column (Based on Tab Selection)
@@ -41,37 +41,61 @@ struct ThreeColumnSplitView: View {
                 NavigationStack {
                     VStack {
                         Text(verbatim: "Tab 1 Content")
-                        NavigationLink("Go to Detail 1", destination: Text(verbatim: "Detail View 1"))
+                        NavigationLink {
+                            Text(verbatim: "Detail View 1")
+                        } label: {
+                            Text(verbatim: "Go to Detail 1")
+                        }
                     }
-                    .navigationTitle("Tab 1")
+                    .navigationTitle(Text(verbatim: "Tab 1"))
                 }
                 .tag("Tab 1")
                 .tabItem {
-                    Label("Tab 1", systemImage: "1.circle")
+                    Label {
+                        Text(verbatim: "Tab 2")
+                    } icon: {
+                        Image(systemName: "2.circle")
+                    }
                 }
 
                 NavigationStack {
                     VStack {
                         Text(verbatim: "Tab 2 Content")
-                        NavigationLink("Go to Detail 2", destination: Text(verbatim: "Detail View 2"))
+                        NavigationLink {
+                            Text(verbatim: "Detail View 2")
+                        } label: {
+                            Text(verbatim: "Go to Detail 2")
+                        }
                     }
-                    .navigationTitle("Tab 2")
+                    .navigationTitle(Text(verbatim: "Tab 2"))
                 }
                 .tag("Tab 2")
                 .tabItem {
-                    Label("Tab 2", systemImage: "2.circle")
+                    Label {
+                        Text(verbatim: "Tab 2")
+                    } icon: {
+                        Image(systemName: "2.circle")
+                    }
                 }
 
                 NavigationStack {
                     VStack {
                         Text(verbatim: "Tab 3 Content")
-                        NavigationLink("Go to Detail 3", destination: Text(verbatim: "Detail View 3"))
+                        NavigationLink {
+                            Text(verbatim: "Detail View 3")
+                        } label: {
+                            Text(verbatim: "Go to Detail 3")
+                        }
                     }
-                    .navigationTitle("Tab 3")
+                    .navigationTitle(Text(verbatim: "Tab 3"))
                 }
                 .tag("Tab 3")
                 .tabItem {
-                    Label("Tab 3", systemImage: "3.circle")
+                    Label {
+                        Text(verbatim: "Tab 3")
+                    } icon: {
+                        Image(systemName: "3.circle")
+                    }
                 }
             }
             .frame(maxWidth: .infinity) // Allows the TabView to take up the space needed
