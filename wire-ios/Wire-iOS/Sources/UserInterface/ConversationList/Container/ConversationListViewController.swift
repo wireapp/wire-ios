@@ -396,11 +396,11 @@ final class ConversationListViewController: UIViewController {
 
         switch mainSplitViewState {
         case .collapsed:
-            setupLeftNavigationBarButtons()
-            setupRightNavigationBarButtons()
+            setupLeftNavigationBarButtonItems()
+            setupRightNavigationBarButtonItems()
         case .expanded:
-            setupLeftNavigationBarButtons_SplitView()
-            setupRightNavigationBarButtons_SplitView()
+            setupLeftNavigationBarButtonItems_SplitView()
+            setupRightNavigationBarButtonItems_SplitView()
         }
     }
 
@@ -435,7 +435,7 @@ final class ConversationListViewController: UIViewController {
     /// - Parameter filter: The selected filter type to be applied
     func applyFilter(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtons()
+        self.setupRightNavigationBarButtonItems()
         self.setupSearchController()
 
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
@@ -445,7 +445,7 @@ final class ConversationListViewController: UIViewController {
 
     func clearFilter() {
         listContentController.listViewModel.selectedFilter = .none
-        setupRightNavigationBarButtons()
+        setupRightNavigationBarButtonItems()
         setupSearchController()
         filterContainerView.isHidden = true
         configureEmptyPlaceholder()
