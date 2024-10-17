@@ -584,7 +584,7 @@ final class ZClientViewController: UIViewController {
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mainSplitViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            mainSplitViewController.view.topAnchor.constraint(equalTo: topOverlayContainer.bottomAnchor),
             mainSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mainSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mainSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)

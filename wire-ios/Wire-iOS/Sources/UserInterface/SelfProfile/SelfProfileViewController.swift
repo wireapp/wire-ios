@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: when opening self profile
+// - new devices alert
+// - read indicator alert
+
 import UIKit
 import WireCommonComponents
 import WireDesign
