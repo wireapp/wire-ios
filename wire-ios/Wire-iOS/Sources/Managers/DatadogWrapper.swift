@@ -37,7 +37,8 @@ public final class DatadogWrapper {
 
         guard
             let appID = bundle.infoForKey("DatadogAppId"),
-            let clientToken = bundle.infoForKey("DatadogClientToken")
+            let clientToken = bundle.infoForKey("DatadogClientToken"),
+            !appID.isEmpty, !clientToken.isEmpty
         else {
             print("missing Datadog appID and clientToken - logging disabled")
             return nil
