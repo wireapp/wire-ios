@@ -46,7 +46,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     private let connectUIBuilder: Dependencies.ConnectUIBuilder
     private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
     private var selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
-    private var userProfileUIBuilder: Dependencies.UserProfileUIBuilder
+    private var userProfileUIBuilder: Dependencies.UserProfileUIBuilder // TODO: remove
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -87,7 +87,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         connectUIBuilder: Dependencies.ConnectUIBuilder,
         createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder,
         selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder,
-        userProfileUIBuilder: Dependencies.UserProfileUIBuilder
+        userProfileUIBuilder: Dependencies.UserProfileUIBuilder // TODO: remove
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
@@ -268,17 +268,17 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         }
     }
 
-    public func showUserProfile(user: User) async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let userProfileUI = userProfileUIBuilder.build(
-            user: user,
-            mainCoordinator: self
-        )
-        await presentViewController(userProfileUI)
-    }
+//    public func showUserProfile(user: User) async {
+//        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+//            splitViewController.hideSidebar()
+//        }
+//
+//        let userProfileUI = userProfileUIBuilder.build(
+//            user: user,
+//            mainCoordinator: self
+//        )
+//        await presentViewController(userProfileUI)
+//    }
 
     public func showConnect() async {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
