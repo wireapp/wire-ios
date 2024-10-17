@@ -19,6 +19,8 @@
 import UIKit
 import WireMainNavigationUI
 
+// Manually created mock since sourcery: AutoMockable didn't work with associatedtypes.
+
 final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     typealias Dependencies = MockMainCoordinatorDependencies
 
