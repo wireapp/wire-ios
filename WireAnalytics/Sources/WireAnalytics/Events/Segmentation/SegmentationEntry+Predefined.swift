@@ -90,7 +90,7 @@ extension SegmentationEntry {
     /// - Parameter value: The score from 1 to 5.
     /// - Returns: A `SegmentationEntry` instance with the appropriate key and value.
 
-    static func score(_ value: Int) -> Self {
+    static func callScore(_ value: Int) -> Self {
         .init(key: "score", value: String(value))
     }
 
