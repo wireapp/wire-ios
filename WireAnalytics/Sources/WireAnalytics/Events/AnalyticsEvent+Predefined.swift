@@ -126,25 +126,27 @@ public enum CallQualitySurveyReview {
 
     public enum IgnoreReason: String {
         case callTooShort = "call-too-short"
-        case muted = "muted"
+        case muted
     }
 
     var segmentation: Set<SegmentationEntry> {
         switch self {
         case .notDisplayed(let reason, let duration):
-            return [
+            [
                 .callLabel("not-displayed"),
                 .duration(duration),
                 .ignoreReason(reason.rawValue)
             ]
+
         case .answered(let score, let duration):
-            return [
+            [
                 .callLabel("answered"),
                 .score(score),
                 .duration(duration)
             ]
+
         case .dismissed(let duration):
-            return [
+            [
                 .callLabel("dismissed"),
                 .duration(duration)
             ]
