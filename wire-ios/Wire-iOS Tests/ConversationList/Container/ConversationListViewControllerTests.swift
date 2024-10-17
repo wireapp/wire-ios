@@ -85,7 +85,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         )
 
         tabBarController = MainTabBarController()
-        tabBarController.conversationList = sut
+        tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
@@ -171,6 +171,22 @@ final class ConversationListViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: tabBarController)
     }
 
+    func testForShowingNoConversationsFilteredByGroups() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: false)
+        ]
+        userSession.mockConversationDirectory.mockGroupConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.groups)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
     func testForShowingConversationsFilteredByFavourites() {
         // GIVEN
         let conversationData = [
@@ -179,6 +195,22 @@ final class ConversationListViewControllerTests: XCTestCase {
         ]
         let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.favorites)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    func testForShowingNoConversationsFilteredByFavourites() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: true)
+        ]
+        userSession.mockConversationDirectory.mockFavoritesConversations = []
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
@@ -200,6 +232,24 @@ final class ConversationListViewControllerTests: XCTestCase {
         let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: coreDataFixture.coreDataStack.viewContext)
 
         userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.oneOnOne)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    func testForShowingNoConversationsFilteredByOneOnOne() throws {
+        // GIVEN
+        let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user1.name = "Alice"
+
+        let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user2.name = "Bob"
+
+        userSession.mockConversationDirectory.mockContactsConversations = []
 
         // WHEN
         sut.hideNoContactLabel(animated: false)

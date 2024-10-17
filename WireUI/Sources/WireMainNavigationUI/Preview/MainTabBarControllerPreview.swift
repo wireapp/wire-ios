@@ -21,9 +21,9 @@ import SwiftUI
 @MainActor
 func MainTabBarControllerPreview() -> some MainTabBarControllerProtocol {
     let tabBarController = PreviewTabBarController()
-    tabBarController.conversationList = .init("conversationList")
-    tabBarController.archive = PlaceholderViewController()
-    tabBarController.settings = .init()
+    tabBarController.conversationListUI = .init("conversationList")
+    tabBarController.archiveUI = PlaceholderViewController()
+    tabBarController.settingsUI = .init()
     tabBarController.selectedContent = .conversations
     return tabBarController
 }

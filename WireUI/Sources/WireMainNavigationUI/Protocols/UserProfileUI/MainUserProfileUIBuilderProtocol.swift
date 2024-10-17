@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class CreateGuestRoomCell: StartUIIconCell {
+import UIKit
 
-    override func setupViews() {
-        super.setupViews()
+public protocol MainUserProfileUIBuilderProtocol {
+    associatedtype UserProfileUI: UIViewController
+    associatedtype User
 
-        icon = .guest
-        // TODO: [WPB-11449] why is this string missing?
-        // title = PeoplePicker.QuickAction.createGuestRoom
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.createguestroom"
-    }
+    @MainActor
+    func build(
+        user: User,
+        mainCoordinator: some MainCoordinatorProtocol
+    ) -> UserProfileUI
 }

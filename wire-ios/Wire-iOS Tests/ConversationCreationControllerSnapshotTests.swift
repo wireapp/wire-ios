@@ -33,7 +33,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = SnapshotHelper()
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
     }
 
     // MARK: - tearDown
@@ -52,7 +52,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTeamGroupOptionsCollapsed() {
+    func testTeamGroupOptions() {
         createSut(isTeamMember: true)
 
         snapshotHelper
@@ -74,13 +74,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
                 testName: #function,
                 line: #line
             )
-    }
-
-    func testTeamGroupOptionsExpanded() {
-        createSut(isTeamMember: true)
-        sut.expandOptions()
-
-        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method

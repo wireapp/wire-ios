@@ -29,30 +29,30 @@ final class MainCoordinatorTests: XCTestCase {
     private var splitViewController: MockSplitViewController!
     private var tabBarController: SUT.TabBarController!
     private var sidebar: MockSidebarViewController!
-    private var conversationList: SUT.ConversationList!
+    private var conversationListUI: SUT.ConversationListUI!
 
     @MainActor
     override func setUp() async throws {
         sidebar = .init()
-        conversationList = .init("")
+        conversationListUI = .init("")
 
         splitViewController = .init(style: .tripleColumn)
         splitViewController.sidebar = sidebar
-        splitViewController.conversationList = conversationList
+        splitViewController.conversationListUI = conversationListUI
 
         tabBarController = .init()
-        tabBarController.archive = .init()
-        tabBarController.settings = .init()
+        tabBarController.archiveUI = .init()
+        tabBarController.settingsUI = .init()
 
         sut = .init(
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
-            conversationBuilder: .init(),
-            settingsContentBuilder: .init(),
-            connectBuilder: .init(),
-            createGroupConversationBuilder: .init(),
-            selfProfileBuilder: .init(),
-            userProfileBuilder: .init()
+            conversationUIBuilder: .init(),
+            settingsContentUIBuilder: .init(),
+            connectUIBuilder: .init(),
+            createGroupConversationUIBuilder: .init(),
+            selfProfileUIBuilder: .init(),
+            userProfileUIBuilder: .init()
         )
     }
 
@@ -60,20 +60,20 @@ final class MainCoordinatorTests: XCTestCase {
         sut = nil
         tabBarController = nil
         splitViewController = nil
-        conversationList = nil
+        conversationListUI = nil
         sidebar = nil
     }
 
     @MainActor
     func testShowingGroupConversations() async {
         // When
-        let conversationFilter: SUT.ConversationList.ConversationFilter = .groups
+        let conversationFilter: SUT.ConversationListUI.ConversationFilter = .groups
         await sut.showConversationList(conversationFilter: conversationFilter)
 
         // Then
-        XCTAssertNotNil(splitViewController.conversationList)
-        XCTAssertNil(tabBarController.conversationList)
-        XCTAssertEqual(conversationList.conversationFilter, .groups)
+        XCTAssertNotNil(splitViewController.conversationListUI)
+        XCTAssertNil(tabBarController.conversationListUI)
+        XCTAssertEqual(conversationListUI.conversationFilter, .groups)
         XCTAssertEqual(sidebar.selectedMenuItem, .groups)
     }
 
@@ -92,8 +92,8 @@ final class MainCoordinatorTests: XCTestCase {
         sut.splitViewControllerDidCollapse(splitViewController)
 
         // Then
-        XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversationList)
+        XCTAssertNil(splitViewController.conversationListUI)
+        XCTAssertNotNil(tabBarController.conversationListUI)
     }
 
     @MainActor
@@ -102,13 +102,13 @@ final class MainCoordinatorTests: XCTestCase {
         await sut.showArchive()
 
         // Then
-        XCTAssertNil(splitViewController.conversationList)
-        XCTAssertNotNil(tabBarController.conversationList)
-        XCTAssertNotNil(splitViewController.archive)
-        XCTAssertNil(tabBarController.archive)
+        XCTAssertNil(splitViewController.conversationListUI)
+        XCTAssertNotNil(tabBarController.conversationListUI)
+        XCTAssertNotNil(splitViewController.archiveUI)
+        XCTAssertNil(tabBarController.archiveUI)
     }
 
-    // TODO: [WPB-10903] add many more tests, e.g.
+    // TODO: [WPB-10903] consider increasing test coverage, e.g.
     // - collapsing archive, connect, settings, selfProfile
     // - expanding archive, connect, settings, selfProfile
     // - dismissing conversationList, archive, connect, connect, settings, selfProfile

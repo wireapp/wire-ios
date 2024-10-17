@@ -26,27 +26,27 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewTabBarController>!
     private var sidebar: PreviewSidebarViewController!
-    private var conversationList: PreviewConversationListViewController!
-    private var conversation: PreviewConversationViewController!
+    private var conversationListUI: PreviewConversationListViewController!
+    private var conversationUI: PreviewConversationViewController!
     private var noConversationPlaceholder: UIViewController!
-    private var tabContainer: PreviewTabBarController!
+    private var tabController: PreviewTabBarController!
 
     private var snapshotHelper: SnapshotHelper!
 
     @MainActor
     override func setUp() async throws {
         sidebar = .init("Sidebar", .gray)
-        conversationList = .init("Conversation List", .purple)
-        conversation = .init()
+        conversationListUI = .init("Conversation List", .purple)
+        conversationUI = .init()
         noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
-        tabContainer = .init()
+        tabController = .init()
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,
-            tabContainer: tabContainer
+            tabController: tabController
         )
-        sut.conversationList = conversationList
-        sut.conversation = conversation
+        sut.conversationListUI = conversationListUI
+        sut.conversationUI = conversationUI
 
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
@@ -55,19 +55,19 @@ final class MainSplitViewControllerTests: XCTestCase {
     override func tearDown() async throws {
         snapshotHelper = nil
         sut = nil
-        tabContainer = nil
+        tabController = nil
         noConversationPlaceholder = nil
-        conversation = nil
-        conversationList = nil
+        conversationUI = nil
+        conversationListUI = nil
         sidebar = nil
     }
 
     @MainActor
     func testInitializationWithConversation() {
         XCTAssert(sut.sidebar === sidebar)
-        XCTAssert(sut.conversationList === conversationList)
-        XCTAssert(sut.conversation === conversation)
-        XCTAssert(sut.tabContainer === tabContainer)
+        XCTAssert(sut.conversationListUI === conversationListUI)
+        XCTAssert(sut.conversationUI === conversationUI)
+        XCTAssert(sut.tabController === tabController)
     }
 
     @MainActor
@@ -76,15 +76,15 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,
-            tabContainer: tabContainer
+            tabController: tabController
         )
-        sut.conversationList = conversationList
+        sut.conversationListUI = conversationListUI
 
         // When
-        let conversation = sut.conversation
+        let conversationUI = sut.conversationUI
 
         // Then
-        XCTAssertNil(conversation)
+        XCTAssertNil(conversationUI)
         let container = sut.viewController(for: .secondary) as! DoubleColumnContainerViewController
         let secondaryNavigationController = container.secondaryNavigationController
         XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
@@ -93,56 +93,56 @@ final class MainSplitViewControllerTests: XCTestCase {
     @MainActor
     func testConversationListIsReleased() {
         // Given
-        weak var conversationList = conversationList
-        self.conversationList = nil
+        weak var conversationListUI = conversationListUI
+        self.conversationListUI = nil
 
         // When
-        sut.conversationList = nil
+        sut.conversationListUI = nil
 
         // Then
-        XCTAssertEqual(conversationList, nil)
+        XCTAssertEqual(conversationListUI, nil)
     }
 
     @MainActor
     func testConversationIsReleasedWhenSetToNil() async {
         // Given
-        weak var conversation = conversation
-        self.conversation = nil
+        weak var conversationUI = conversationUI
+        self.conversationUI = nil
 
         // When
-        sut.conversation = nil
+        sut.conversationUI = nil
 
         // Then
         await Task.yield()
-        XCTAssertEqual(conversation, nil)
+        XCTAssertEqual(conversationUI, nil)
     }
 
     @MainActor
     func testConversationListIsReleasedWhenArchiveIsSet() async {
         // Given
-        weak var conversationList = conversationList
-        self.conversationList = nil
+        weak var conversationListUI = conversationListUI
+        self.conversationListUI = nil
 
         // When
-        sut.archive = .init()
+        sut.archiveUI = .init()
 
         // Then
         await Task.yield()
-        XCTAssertEqual(conversationList, nil)
+        XCTAssertEqual(conversationListUI, nil)
     }
 
     @MainActor
     func testConversationIsReleasedWhenSettingsIsSet() async {
         // Given
-        weak var conversationList = conversationList
-        self.conversationList = nil
+        weak var conversationListUI = conversationListUI
+        self.conversationListUI = nil
 
         // When
-        sut.settings = .init()
+        sut.settingsUI = .init()
 
         // Then
         await Task.yield()
-        XCTAssertEqual(conversationList, nil)
+        XCTAssertEqual(conversationListUI, nil)
     }
 
     // MARK: - Snapshot Tests

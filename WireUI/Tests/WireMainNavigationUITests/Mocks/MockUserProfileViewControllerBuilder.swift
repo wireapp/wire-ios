@@ -19,7 +19,7 @@
 import UIKit
 import WireMainNavigationUI
 
-struct MockUserProfileViewControllerBuilder: MainUserProfileBuilderProtocol {
+struct MockUserProfileViewControllerBuilder: MainUserProfileUIBuilderProtocol {
     typealias UserProfile = UIViewController
 
     func build(

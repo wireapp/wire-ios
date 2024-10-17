@@ -18,7 +18,7 @@
 
 import UIKit
 
-public protocol MainSettingsContentBuilderProtocol {
+public protocol MainSettingsContentUIBuilderProtocol {
     associatedtype TopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
 
     @MainActor

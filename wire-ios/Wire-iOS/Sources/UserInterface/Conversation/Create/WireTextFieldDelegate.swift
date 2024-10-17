@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+protocol WireTextFieldDelegate: AnyObject {
 
-public protocol MainSettingsBuilderProtocol {
-    associatedtype Settings: UIViewController
+    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value)
 
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> Settings
+    func textFieldReturnPressed(_ textField: WireTextField)
+
+    func textFieldDidEndEditing(_ textField: WireTextField)
+
+    func textFieldDidBeginEditing(_ textField: WireTextField)
+
 }

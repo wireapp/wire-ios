@@ -16,17 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class CreateGroupCell: StartUIIconCell {
+import UIKit
+import WireDesign
 
-    override func setupViews() {
-        super.setupViews()
+final class SectionTableFooter: UITableViewHeaderFooterView {
 
-        icon = .createConversation
-        // TODO: [WPB-11449] why is this string missing?
-        // title = PeoplePicker.QuickAction.createConversation
-        isAccessibilityElement = true
-        accessibilityLabel = title
-        accessibilityTraits.insert(.button)
-        accessibilityIdentifier = "button.searchui.creategroup"
+    private let footerView = SectionFooterView()
+
+    var titleLabel: UILabel {
+        return footerView.titleLabel
     }
+
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        addSubview(footerView)
+        footerView.translatesAutoresizingMaskIntoConstraints = false
+        footerView.fitIn(view: self)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
 }

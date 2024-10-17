@@ -22,45 +22,45 @@ import UIKit
 
 final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
 
-    typealias ConversationList = PreviewConversationListViewController
-    typealias Archive = UIViewController
-    typealias Settings = UIViewController
+    typealias ConversationListUI = PreviewConversationListViewController
+    typealias ArchiveUI = UIViewController
+    typealias SettingsUI = UIViewController
 
-    typealias Conversation = MockConversationViewController<PreviewConversationModel>
-    typealias SettingsContent = UIViewController
+    typealias ConversationUI = MockConversationViewController<PreviewConversationModel>
+    typealias SettingsContentUI = UIViewController
 
-    typealias Connect = UIViewController
+    typealias ConnectUI = UIViewController
 
     var sidebar: MockSidebarViewController!
-    var conversationList: ConversationList?
-    var archive: Archive?
-    var connect: Connect?
-    var settings: Settings?
-    var conversation: Conversation?
-    var settingsContent: SettingsContent?
-    var tabContainer: MockTabBarController!
+    var conversationListUI: ConversationListUI?
+    var archiveUI: ArchiveUI?
+    var connectUI: ConnectUI?
+    var settingsUI: SettingsUI?
+    var conversationUI: ConversationUI?
+    var settingsContentUI: SettingsContentUI?
+    var tabController: MockTabBarController!
 
-    func setConversationList(_ conversationList: ConversationList?, animated: Bool) {
+    func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 
-    func setArchive(_ archive: UIViewController?, animated: Bool) {
+    func setArchiveUI(_ archiveUI: UIViewController?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 
-    func setSettings(_ settings: Settings?, animated: Bool) {
+    func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 
-    func setConversation(_ conversation: Conversation?, animated: Bool) {
+    func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 
-    func setSettingsContent(_ settingsContent: SettingsContent?, animated: Bool) {
+    func setSettingsContentUI(_ settingsContentUI: SettingsContentUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 
-    func setConnect(_ connect: Connect?, animated: Bool) {
+    func setConnectUI(_ connectUI: ConnectUI?, animated: Bool) {
         fatalError("mock method not implemented")
     }
 

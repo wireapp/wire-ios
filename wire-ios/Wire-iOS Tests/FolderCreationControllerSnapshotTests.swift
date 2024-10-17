@@ -34,7 +34,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
         let convo = createTeamGroupConversation()
         let conversationDirectory = coreDataFixture.uiMOC.conversationListDirectory()
         sut = FolderCreationController(conversation: convo, directory: conversationDirectory)
-        UIColor.setAccentOverride(.blue)
+        accentColor = .purple
     }
 
     override func tearDown() {

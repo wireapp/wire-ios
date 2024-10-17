@@ -104,7 +104,7 @@ class ImagePickerManager: NSObject {
 
                     // UIKit will crash if the photo library is not presented using a popoverPresentationController
                     // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
-                    // TODO: [WPB-11449] fix this workaround and choose proper sourceView/sourceRect
+                    // TODO: [WPB-11605] fix this workaround and choose proper sourceView/sourceRect
                     popoverPresentationController.sourceView = viewController.view
                     popoverPresentationController.sourceRect = .init(
                         origin: .init(

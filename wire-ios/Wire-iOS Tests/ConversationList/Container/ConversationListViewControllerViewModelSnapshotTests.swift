@@ -33,37 +33,34 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
 
     private var coreDataFixture: CoreDataFixture!
 
-    override func setUp() async throws {
-        await MainActor.run {
+    override func setUp() {
+        coreDataFixture = CoreDataFixture()
 
-            coreDataFixture = CoreDataFixture()
+        userSession = UserSessionMock()
 
-            userSession = UserSessionMock()
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-            mockIsSelfUserE2EICertifiedUseCase = .init()
-            mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+        mockGetUserAccountImageUseCase = .init()
+        mockGetUserAccountImageUseCase.invoke_MockValue = .init()
 
-            mockGetUserAccountImageUseCase = .init()
-            mockGetUserAccountImageUseCase.invoke_MockValue = .init()
+        let account = Account.mockAccount(imageData: Data())
+        let selfUser = MockUserType.createSelfUser(name: "Bob")
+        sut = ConversationListViewController.ViewModel(
+            account: account,
+            selfUserLegalHoldSubject: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock,
+            getUserAccountImageUseCase: mockGetUserAccountImageUseCase
+        )
 
-            let account = Account.mockAccount(imageData: Data())
-            let selfUser = MockUserType.createSelfUser(name: "Bob")
-            sut = ConversationListViewController.ViewModel(
-                account: account,
-                selfUserLegalHoldSubject: selfUser,
-                userSession: userSession,
-                isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-                mainCoordinator: .mock,
-                getUserAccountImageUseCase: mockGetUserAccountImageUseCase
-            )
+        mockViewController = MockConversationListContainer(viewModel: sut)
+        window = .init()
+        window.rootViewController = mockViewController
+        window.isHidden = false
 
-            mockViewController = MockConversationListContainer(viewModel: sut)
-            window = .init()
-            window.rootViewController = mockViewController
-            window.isHidden = false
-
-            sut.viewController = mockViewController
-        }
+        sut.viewController = mockViewController
     }
 
     override func tearDown() {
@@ -76,8 +73,6 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         userSession = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         mockGetUserAccountImageUseCase = nil
-
-        super.tearDown()
     }
 
     // MARK: - Action menu

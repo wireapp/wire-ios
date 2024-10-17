@@ -510,7 +510,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     private var cameraCellSize: CGSize {
-        // TODO: [WPB-11449] Before navigation overhaul the width of the camera preview was the same as the left column.
+        // TODO: [WPB-11615] Before navigation overhaul the width of the camera preview was the same as the left column.
         CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
     }
 

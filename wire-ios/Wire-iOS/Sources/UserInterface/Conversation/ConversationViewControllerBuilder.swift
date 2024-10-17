@@ -22,10 +22,10 @@ import WireMainNavigationUI
 import WireSyncEngine
 
 @MainActor
-struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
+struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
 
     typealias Dependencies = MainCoordinatorDependencies
-    typealias Conversation = ConversationRootViewController
+    typealias ConversationUI = ConversationRootViewController
 
     var userSession: UserSession
     var mediaPlaybackManager: MediaPlaybackManager?
@@ -34,7 +34,7 @@ struct ConversationViewControllerBuilder: MainConversationBuilderProtocol {
         conversation: ConversationModel,
         message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
-    ) -> Conversation where MainCoordinator.Dependencies == Dependencies {
+    ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies {
 
         let viewController = ConversationRootViewController(
             conversation: conversation,

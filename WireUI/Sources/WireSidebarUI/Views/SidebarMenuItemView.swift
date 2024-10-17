@@ -33,6 +33,10 @@ struct SidebarMenuItemView: View {
     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
     @Environment(\.sidebarMenuItemIsSelectedTitleForegroundColor) private var isSelectedTitleForegroundColor
 
+    private var accentColor: UIColor {
+        wireAccentColorMapping?.uiColor(for: wireAccentColor) ?? .systemGray
+    }
+
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
     private(set) var iconSize: CGSize?
@@ -50,7 +54,6 @@ struct SidebarMenuItemView: View {
     // MARK: -
 
     var body: some View {
-        let accentColor = wireAccentColorMapping?.uiColor(for: wireAccentColor) ?? .systemGray
         Button(action: action) {
             HStack {
                 Label {

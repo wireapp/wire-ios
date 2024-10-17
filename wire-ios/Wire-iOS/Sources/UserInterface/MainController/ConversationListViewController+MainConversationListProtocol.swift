@@ -19,13 +19,14 @@
 import WireDataModel
 import WireMainNavigationUI
 
-extension ConversationListViewController: MainConversationListProtocol {
+extension ConversationListViewController: MainConversationListUIProtocol {
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set {
             listContentController.listViewModel.selectedFilter = newValue
             setupTitleView()
+            configureEmptyPlaceholder()
         }
     }
 

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireTestingPackage
 import XCTest
 
@@ -27,11 +28,13 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var mockSelfUser: MockUserType!
+    private var settingsCoordinator: AnySettingsCoordinator!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
@@ -43,43 +46,36 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        settingsCoordinator = nil
         snapshotHelper = nil
         mockSelfUser = nil
         SelfUser.provider = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func testThatItRendersCorrectInitially() {
         verify(newHandle: nil, availability: .unknown)
     }
 
-    @MainActor
     func testThatItRendersCorrectInitially_Federated() {
         verify(newHandle: nil, availability: .unknown, federationEnabled: true)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleUnavailable() {
         verify(newHandle: "james", availability: .taken)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleAvailable() {
         verify(newHandle: "james_xXx", availability: .available)
     }
 
-    @MainActor
     func testThatItRendersCorrectNewHandleNotYetChecked() {
         verify(newHandle: "vanessa92", availability: .unknown)
     }
 
     // MARK: - Helper methods
 
-    @MainActor
     private func verify(
         currentHandle: String = "bruno",
         newHandle: String?,
@@ -98,7 +94,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
             state: state,
             useTypeIntrinsicSizeTableView: true,
             federationEnabled: federationEnabled,
-            settingsCoordinator: .init(settingsCoordinator: MockSettingsCoordinator())
+            settingsCoordinator: settingsCoordinator
         )
         sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)

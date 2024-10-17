@@ -31,7 +31,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         _ viewModel: ViewModel,
         didUpdate selfUserStatus: UserStatus
     ) {
-        accountImageView?.availability = selfUserStatus.availability.mapToAccountImageAvailability()
+        if mainSplitViewState == .collapsed {
+            setupLeftNavigationBarButtonItems()
+        }
     }
 
     func conversationListViewControllerViewModel(
@@ -41,7 +43,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         accountImageView?.accountImage = accountImage
 
-        // TODO: [WPB-11449] fix accessibilityIdentifier if needed
+        // TODO: [WPB-11606] fix accessibilityIdentifier if needed
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
             accountImageView?.accessibilityIdentifier = .none
@@ -52,7 +54,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        setupLeftNavigationBarButtons()
+        if mainSplitViewState == .collapsed {
+            setupLeftNavigationBarButtonItems()
+        }
     }
 
     // MARK: - Navigation Bar Items
@@ -86,7 +90,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         return accountImageView
     }
 
-    func setupLeftNavigationBarButtons() {
+    func setupLeftNavigationBarButtonItems() {
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -125,7 +129,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         navigationItem.leftBarButtonItems = [.init(customView: stackView)]
     }
 
-    func setupLeftNavigationBarButtons_SplitView() {
+    func setupLeftNavigationBarButtonItems_SplitView() {
         navigationItem.leftBarButtonItems = []
     }
 
@@ -147,7 +151,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
-    func setupRightNavigationBarButtons() {
+    func setupRightNavigationBarButtonItems() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
@@ -161,7 +165,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             }
         }
         let startConversationItem = UIBarButtonItem(customView: UIButton(primaryAction: newConversationAction))
-        // TODO: [WPB-11449] fix accessibility
+        // TODO: [WPB-11606] fix accessibility
         // startConversationItem.accessibilityIdentifier =
         // startConversationItem.accessibilityLabel =
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
@@ -226,11 +230,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         view.setNeedsLayout()
     }
 
-    func setupRightNavigationBarButtons_SplitView() {
+    func setupRightNavigationBarButtonItems_SplitView() {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        // TODO: [WPB-11449] fix accessibility
+        // TODO: [WPB-11606] fix accessibility
         // newConversationBarButton.accessibilityIdentifier =
         // newConversationBarButton.accessibilityLabel =
         newConversationBarButton.addAction(.init { [weak self] _ in
@@ -315,7 +319,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             let window = viewIfLoaded?.window
         else { return }
 
-        // TODO: [WPB-11449] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
+        // TODO: [WPB-11619] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
 //        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
 //        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
 //        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX

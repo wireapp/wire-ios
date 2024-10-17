@@ -2364,7 +2364,7 @@ internal enum L10n {
       internal enum Create {
         internal enum GroupName {
           /// Group name
-          internal static let placeholder = L10n.tr("Localizable", "conversation.create.group_name.placeholder", fallback: "Group name")
+          internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")
           /// Create group
           internal static let title = L10n.tr("Localizable", "conversation.create.group_name.title", fallback: "Create group")
         }
@@ -2410,8 +2410,8 @@ internal enum L10n {
           internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
             return L10n.tr("Localizable", "conversation.create.options.subtitle", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Guests: %@, Services: %@, Read receipts: %@")
           }
-          /// Conversation options
-          internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "Conversation options")
+          /// CONVERSATION OPTIONS
+          internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "CONVERSATION OPTIONS")
         }
         internal enum ProtocolSelection {
           /// MLS
@@ -2744,6 +2744,34 @@ internal enum L10n {
           /// Start a conversation or
           /// create a group.
           internal static let message = L10n.tr("Localizable", "conversation_list.empty.no_contacts.message", fallback: "Start a conversation or\ncreate a group.")
+        }
+      }
+      internal enum EmptyPlaceholder {
+        internal enum All {
+          /// Welcome
+          internal static let headline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.headline", fallback: "Welcome")
+          /// Connect with others or create a new group to start collaborating!
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.all.subheadline", fallback: "Connect with others or create a new group to start collaborating!")
+        }
+        internal enum Favorite {
+          /// How to label conversations as favorites
+          internal static let link = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.link", fallback: "How to label conversations as favorites")
+          /// Select your favorite conversations, and you’ll find them here.
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.favorite.subheadline", fallback: "Select your favorite conversations, and you’ll find them here.")
+        }
+        internal enum Group {
+          /// You are not part of any group conversation yet.
+          /// Start a new conversation!
+          internal static let subheadline = L10n.tr("Localizable", "conversation_list.empty_placeholder.group.subheadline", fallback: "You are not part of any group conversation yet.\nStart a new conversation!")
+        }
+        internal enum Oneonone {
+          /// Connect with People
+          internal static let button = L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.button", fallback: "Connect with People")
+          /// You have no contacts yet.
+          /// Search for people on %@ and get connected.
+          internal static func subheadline(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation_list.empty_placeholder.oneonone.subheadline", String(describing: p1), fallback: "You have no contacts yet.\nSearch for people on %@ and get connected.")
+          }
         }
       }
       internal enum Filter {

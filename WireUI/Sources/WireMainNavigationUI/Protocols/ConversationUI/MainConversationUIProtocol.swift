@@ -19,7 +19,7 @@
 import UIKit
 
 @MainActor
-public protocol MainConversationProtocol: UIViewController {
+public protocol MainConversationUIProtocol: UIViewController {
     associatedtype ConversationModel
 
     var conversationModel: ConversationModel! { get }

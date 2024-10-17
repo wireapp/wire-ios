@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -24,7 +25,7 @@ import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
     private var sut: ConversationViewController!
     private var mockConversation: ZMConversation!
     private var serviceUser: ZMUser!
@@ -42,8 +43,11 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
-        mockMainCoordinator = .init()
+    override func setUp() {
+        super.setUp()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
@@ -65,7 +69,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
             conversation: mockConversation,
             visibleMessage: nil,
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
+            mainCoordinator: mockMainCoordinator,
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()
