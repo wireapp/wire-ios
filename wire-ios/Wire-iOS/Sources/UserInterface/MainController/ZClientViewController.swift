@@ -93,7 +93,7 @@ final class ZClientViewController: UIViewController {
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: mainCoordinator,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
@@ -206,10 +206,6 @@ final class ZClientViewController: UIViewController {
 
         setupSplitViewController()
 
-        // in expanded layout we want to see the same background color of the
-        // sidebar also for the status bar
-        view.backgroundColor = SidebarViewDesign().backgroundColor
-
         // TODO: [WPB-11609] fix if needed
         // attemptToPresentInitialConversation()
 
@@ -227,10 +223,22 @@ final class ZClientViewController: UIViewController {
         setUpConferenceCallingUnavailableObserver()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // in expanded layout we want to see the same background color of the
+        // sidebar also for the status bar
+        if mainSplitViewController.isCollapsed {
+            view.backgroundColor = ColorTheme.Backgrounds.surface
+        } else {
+            view.backgroundColor = SidebarViewDesign().backgroundColor
+        }
+    }
+
     private func setupSplitViewController() {
         let archiveUI = ArchivedListViewController(userSession: userSession)
 
-        // TODO: [WPB-11608] the border color doesn't match on iPad 15
+        // TODO: [WPB-11608] the border color doesn't match on iPad (iOS 15)
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 

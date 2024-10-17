@@ -23,11 +23,7 @@ extension ConversationListViewController: MainConversationListUIProtocol {
 
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
-        set {
-            listContentController.listViewModel.selectedFilter = newValue
-            setupTitleView()
-            configureEmptyPlaceholder()
-        }
+        set { applyFilter(newValue) }
     }
 
     var selectedConversation: ZMConversation? {
