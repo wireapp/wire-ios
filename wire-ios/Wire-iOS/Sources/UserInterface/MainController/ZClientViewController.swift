@@ -206,9 +206,11 @@ final class ZClientViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = ColorTheme.Backgrounds.surface
-
         setupSplitViewController()
+
+        // in expanded layout we want to see the same background color of the
+        // sidebar also for the status bar
+        view.backgroundColor = SidebarViewDesign().backgroundColor
 
         // TODO: [WPB-11609] fix if needed
         // attemptToPresentInitialConversation()
@@ -593,6 +595,16 @@ final class ZClientViewController: UIViewController {
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriority.defaultLow
         heightConstraint.isActive = true
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        if mainSplitViewController.isCollapsed {
+            view.backgroundColor = ColorTheme.Backgrounds.surface
+        } else {
+            view.backgroundColor = SidebarViewDesign().backgroundColor
+        }
     }
 
     /// Open the user client list screen
