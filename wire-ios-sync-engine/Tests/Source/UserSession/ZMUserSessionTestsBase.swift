@@ -46,7 +46,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
-    var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
 
     var sut: ZMUserSession!
@@ -85,11 +84,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         }
 
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
-        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
-        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
 
         mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
-            return self.mockResolveOneOnOneConversationUseCase
+            let mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
+            mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
+            return mockResolveOneOnOneConversationUseCase
         }
 
         sut = createSut()
@@ -117,7 +116,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.mediaManager = nil
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
-        self.mockResolveOneOnOneConversationUseCase = nil
         self.mockEARService.delegate = nil
         self.mockEARService = nil
         let sut = self.sut

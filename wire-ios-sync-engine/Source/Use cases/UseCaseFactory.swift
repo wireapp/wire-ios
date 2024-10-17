@@ -38,5 +38,4 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
             resolver: oneOnOneResolver
         )
     }
-
 }

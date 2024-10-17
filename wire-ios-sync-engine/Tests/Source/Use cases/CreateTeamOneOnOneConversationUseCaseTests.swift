@@ -96,6 +96,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         do {
             // When
             _ = try await sut.invoke(with: otherUser, syncContext: syncContext)
+            XCTFail("should fail")
         } catch CreateTeamOneOnOneConversationError.userIsNotOnSameTeam {
             // Then
         } catch {
@@ -113,6 +114,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         do {
             // When
             _ = try await sut.invoke(with: otherUser, syncContext: syncContext)
+            XCTFail("should fail")
         } catch CreateTeamOneOnOneConversationError.noCommonProtocols {
             // Then
         } catch {
