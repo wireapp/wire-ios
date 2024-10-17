@@ -382,7 +382,7 @@ extension ZMUserSession: UserSession {
     public func makeCallQualitySurveyUseCase() -> CallQualitySurveyUseCaseProtocol {
         return CallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
-    
+
 }
 
 extension UInt64 {

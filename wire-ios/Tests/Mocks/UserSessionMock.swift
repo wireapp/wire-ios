@@ -350,7 +350,7 @@ final class UserSessionMock: UserSession {
     func makeCallQualitySurveyUseCase() -> any CallQualitySurveyUseCaseProtocol {
         CallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
-    
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(

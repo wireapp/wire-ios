@@ -74,7 +74,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callConversationProvider = nil
         callQualityViewController = nil
         callQualitySurvey = nil
-        
+
         super.tearDown()
     }
 

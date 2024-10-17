@@ -35,7 +35,7 @@ public extension AnalyticsEvent {
     /// An event tracking when the user fails to restores a backup.
 
     static let backupRestoredFailed = AnalyticsEvent(name: "backup.restore_failed")
-    
+
     /// An event tracking when the user initiates a call.
     ///
     /// - Parameters:
@@ -105,7 +105,7 @@ public extension AnalyticsEvent {
     /// An event tracking the call quality when the user end the call.
     /// - Parameter review: The Review containing score, reason or duration related to the call
     /// - Returns: A callQualitySurvey analytics event.
-    
+
     static func callQualitySurvey(_ review: CallQualitySurveyReview) -> AnalyticsEvent {
         .init(name: "calling.call_quality_review", segmentation: review.segmentation)
     }
