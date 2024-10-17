@@ -2364,7 +2364,7 @@ internal enum L10n {
       internal enum Create {
         internal enum GroupName {
           /// Group name
-          internal static let placeholder = L10n.tr("Localizable", "conversation.create.group_name.placeholder", fallback: "Group name")
+          internal static let label = L10n.tr("Localizable", "conversation.create.group_name.label", fallback: "Group name")
           /// Create group
           internal static let title = L10n.tr("Localizable", "conversation.create.group_name.title", fallback: "Create group")
         }
@@ -2410,8 +2410,8 @@ internal enum L10n {
           internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
             return L10n.tr("Localizable", "conversation.create.options.subtitle", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Guests: %@, Services: %@, Read receipts: %@")
           }
-          /// Conversation options
-          internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "Conversation options")
+          /// CONVERSATION OPTIONS
+          internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "CONVERSATION OPTIONS")
         }
         internal enum ProtocolSelection {
           /// MLS

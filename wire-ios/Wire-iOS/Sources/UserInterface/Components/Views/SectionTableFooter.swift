@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-final class SectionFooter: UICollectionReusableView {
+final class SectionTableFooter: UITableViewHeaderFooterView {
 
     private let footerView = SectionFooterView()
 
@@ -27,8 +27,8 @@ final class SectionFooter: UICollectionReusableView {
         return footerView.titleLabel
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
         addSubview(footerView)
         footerView.translatesAutoresizingMaskIntoConstraints = false
         footerView.fitIn(view: self)
@@ -39,7 +39,4 @@ final class SectionFooter: UICollectionReusableView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    static func register(collectionView: UICollectionView) {
-        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
-    }
 }
