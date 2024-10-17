@@ -250,7 +250,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
         userProfileViewControllerBuilder.delegate = mainCoordinator
-        connectBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)

@@ -21,6 +21,7 @@ import WireDataModel
 
 extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
 
+    // TODO: check animations
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
 
         controller?.dismiss(animated: true) {

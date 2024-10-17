@@ -20,15 +20,15 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
+// TODO: use builders
+
 extension ZClientViewController {
 
-    private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
-        let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
-        navWrapperController.modalPresentationStyle = .formSheet
-
-        dismissAllModalControllers { [weak self] in
-            self?.present(navWrapperController, animated: true)
-        }
+    @MainActor
+    private func wrapInNavigationControllerAndPresent(viewController: UIViewController) async {
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.modalPresentationStyle = .formSheet
+        await mainCoordinator.presentViewController(navigationController)
     }
 
     func showConnectionRequest(userId: UUID) {
@@ -39,15 +39,18 @@ extension ZClientViewController {
             mainCoordinator: mainCoordinator
         )
 
-        wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
+        Task {
+            await wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
+        }
     }
 
-    func showUserProfile(user: UserType) {
+    func showUserProfile(user: UserType) async {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
         }
 
+        // TODO: create UserProfileUI target and BuilderProtocol+Builder
         let profileViewController = ProfileViewController(
             user: user,
             viewer: selfUser,
@@ -57,7 +60,7 @@ extension ZClientViewController {
         )
         profileViewController.delegate = self
 
-        wrapInNavigationControllerAndPresent(viewController: profileViewController)
+        await wrapInNavigationControllerAndPresent(viewController: profileViewController)
     }
 
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {

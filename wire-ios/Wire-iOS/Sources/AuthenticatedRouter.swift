@@ -153,7 +153,9 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         case .conversationList:
             _zClientViewController?.showConversationList()
         case .userProfile(let user):
-            _zClientViewController?.showUserProfile(user: user)
+            Task { @MainActor in
+                await _zClientViewController?.showUserProfile(user: user)
+            }
         }
     }
 }
