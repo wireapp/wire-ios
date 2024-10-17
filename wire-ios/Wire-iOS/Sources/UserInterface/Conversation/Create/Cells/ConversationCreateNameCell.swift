@@ -16,11 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
+import WireCommonComponents
+import WireDesign
 
 final class ConversationCreateNameCell: UICollectionViewCell {
 
-    let textField = SimpleTextField()
+    private let stackView = UIStackView()
+    private let groupNameLabel = DynamicFontLabel(
+        text: L10n.Localizable.Conversation.Create.GroupName.label,
+        style: .h4,
+        color: SemanticColors.Label.textUserPropertyCellName
+    )
+
+    let textField = WireTextField()
+
+    private var cancellables = Set<AnyCancellable>()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,15 +44,56 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    fileprivate func setup() {
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.isAccessibilityElement = true
-        textField.accessibilityIdentifier = "textfield.newgroup.name"
-        textField.placeholder = L10n.Localizable.Conversation.Create.GroupName.placeholder.localizedUppercase
-        textField.accessibilityValue = L10n.Accessibility.CreateConversation.SearchView.description
+    private func setup() {
+        setupStackView()
+        setupGroupNameLabel()
+        setupTextField()
+        setupConstraints()
+        setupNotifications()
+    }
 
-        contentView.addSubview(textField)
-        textField.fitIn(view: contentView)
+    private func setupStackView() {
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(stackView)
+    }
 
+    private func setupGroupNameLabel() {
+        stackView.addArrangedSubview(groupNameLabel)
+    }
+
+    private func setupTextField() {
+        textField.borderStyle = .roundedRect
+        textField.layer.borderColor = SemanticColors.SearchBar.borderInputView.cgColor
+        textField.font = .font(for: .body1)
+        stackView.addArrangedSubview(textField)
+    }
+
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+
+            textField.heightAnchor.constraint(equalToConstant: 46)
+        ])
+    }
+
+    private func setupNotifications() {
+        NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification, object: textField)
+            .sink { [weak self] _ in
+                self?.groupNameLabel.textColor = UIColor.accent()
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: UITextField.textDidEndEditingNotification, object: textField)
+            .sink { [weak self] _ in
+                self?.groupNameLabel.textColor = SemanticColors.Label.textUserPropertyCellName
+            }
+            .store(in: &cancellables)
     }
 }
