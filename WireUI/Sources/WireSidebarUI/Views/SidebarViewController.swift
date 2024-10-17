@@ -30,7 +30,7 @@ public final class SidebarViewController: UIViewController {
         set { model.accountInfo = newValue }
     }
 
-    public var selectedMenuItem: SidebarMenuItem {
+    public var selectedMenuItem: SidebarSelectableMenuItem {
         get { model.selectedMenuItem }
         set {
             skipCallingDelegate.toggle()
@@ -39,9 +39,54 @@ public final class SidebarViewController: UIViewController {
         }
     }
 
+    public var wireAccentColor: WireAccentColor {
+        get { model.wireAccentColor }
+        set { model.wireAccentColor = newValue }
+    }
+
+    public var wireAccentColorMapping: WireAccentColorMapping? {
+        get { model.wireAccentColorMapping }
+        set { model.wireAccentColorMapping = newValue }
+    }
+
     public var wireTextStyleMapping: WireTextStyleMapping? {
         get { model.wireTextStyleMapping }
         set { model.wireTextStyleMapping = newValue }
+    }
+
+    public var sidebarBackgroundColor: UIColor {
+        get { model.sidebarBackgroundColor }
+        set { model.sidebarBackgroundColor = newValue }
+    }
+
+    public var sidebarAccountInfoViewDisplayNameColor: UIColor {
+        get { model.sidebarAccountInfoViewDisplayNameColor }
+        set { model.sidebarAccountInfoViewDisplayNameColor = newValue }
+    }
+
+    public var sidebarAccountInfoViewUsernameColor: UIColor {
+        get { model.sidebarAccountInfoViewUsernameColor }
+        set { model.sidebarAccountInfoViewUsernameColor = newValue }
+    }
+
+    public var sidebarMenuHeaderForegroundColor: UIColor {
+        get { model.sidebarMenuHeaderForegroundColor }
+        set { model.sidebarMenuHeaderForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemTitleForegroundColor }
+        set { model.sidebarMenuItemTitleForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemLinkIconForegroundColor: UIColor {
+        get { model.sidebarMenuItemLinkIconForegroundColor }
+        set { model.sidebarMenuItemLinkIconForegroundColor = newValue }
+    }
+
+    public var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor {
+        get { model.sidebarMenuItemIsSelectedTitleForegroundColor }
+        set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
     }
 
     // MARK: - Private Properties
@@ -60,7 +105,9 @@ public final class SidebarViewController: UIViewController {
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
-    public init(accountImageView: @escaping AccountImageViewBuilder<some View>) {
+    public init(
+        accountImageView: @escaping AccountImageViewBuilder<some View>
+    ) {
         super.init(nibName: nil, bundle: nil)
 
         model = .init(accountImageAction: { [weak self] in
@@ -68,6 +115,8 @@ public final class SidebarViewController: UIViewController {
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, connectAction: { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
@@ -117,9 +166,20 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView
-        ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
+        )
+        .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
+        .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
+        .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
+        .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
+        .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
+        .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
+        .environment(\.wireAccentColor, model.wireAccentColor)
+        .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
+        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
 

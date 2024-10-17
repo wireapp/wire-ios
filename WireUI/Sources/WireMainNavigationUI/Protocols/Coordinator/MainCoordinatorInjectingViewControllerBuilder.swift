@@ -19,8 +19,12 @@
 import UIKit
 
 public protocol MainCoordinatorInjectingViewControllerBuilder {
+
+    associatedtype Dependencies: MainCoordinatorProtocolDependencies
     associatedtype ViewController: UIViewController
 
     @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> ViewController
+    func build<MainCoordinator: MainCoordinatorProtocol>(
+        mainCoordinator: MainCoordinator
+    ) -> ViewController where MainCoordinator.Dependencies == Dependencies
 }
