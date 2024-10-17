@@ -60,12 +60,12 @@ class CallQualityController: NSObject {
      */
 
     var canPresentCallQualitySurvey: Bool {
-        #if DISABLE_CALL_QUALITY_SURVEY
+#if DISABLE_CALL_QUALITY_SURVEY
         return false
-        #else
+#else
         return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && AppDelegate.shared.launchType != .unknown
-        #endif
+        && AppDelegate.shared.launchType != .unknown
+#endif
     }
 
     // MARK: - Events
@@ -113,18 +113,16 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            //Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            //Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
             return
         }
 
-        #if !DISABLE_CALL_QUALITY_SURVEY
+#if !DISABLE_CALL_QUALITY_SURVEY
         router?.presentCallQualitySurvey(with: callDuration)
-        #endif
+#endif
     }
 
     /// Presents the debug log prompt after a call failure.
@@ -176,7 +174,6 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        //Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {
