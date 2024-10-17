@@ -181,6 +181,11 @@
 
 "profile.backButton.description" = "Zurück zu Unterhaltungsdetails";
 "profile.closeButton.description" = "Profil schließen";
+"profile.shareProfileButton.description" = "Teilen Sie Ihr Profil per QR-Code oder Link";
+
+"shareProfile.closeButton.description" = "Ansicht Profil teilen schließen";
+"shareProfile.backButton.description" = "Zurück zu Ihrem Profil";
+"shareProfile.qrCode.description" = "QR-Code";
 
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Doppeltippen, um Status zu ändern";

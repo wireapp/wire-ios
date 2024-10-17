@@ -181,6 +181,11 @@
 
 "profile.backButton.description" = "Revenir aux informations de la conversation";
 "profile.closeButton.description" = "Fermer le profil";
+"profile.shareProfileButton.description" = "Share your profile via QR code or link";
+
+"shareProfile.closeButton.description" = "Close share profile view";
+"shareProfile.backButton.description" = "Go back to your profile";
+"shareProfile.qrCode.description" = "QR code";
 
 "accountPage.availabilityStatus.description" = "Statut";
 "accountPage.availabilityStatus.hint" = "Touchez deux fois pour changer de contexte";
