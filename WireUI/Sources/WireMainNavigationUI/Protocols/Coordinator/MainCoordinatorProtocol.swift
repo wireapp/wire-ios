@@ -51,7 +51,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func dismissPresentedViewController() async
 
-    // TODO: consider moving those methods out of the protocol
+    // TODO: [WPB-6647] consider moving those methods out of the protocol
 
     @MainActor
     func showSelfProfile() async
