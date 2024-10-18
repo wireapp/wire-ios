@@ -54,13 +54,9 @@ final class SplitLayoutObserver: SplitLayoutObservable {
 
     var leftViewControllerWidth: CGFloat {
         let svc = zClientViewController.mainSplitViewController
-        if [UISplitViewController.DisplayMode.secondaryOnly, .oneOverSecondary, .twoOverSecondary].contains(svc.displayMode) {
-            let viewController = svc.conversationListUI ?? svc.archiveUI ?? svc.settingsUI
-            let view = viewController?.viewIfLoaded
-            return view?.frame.width ?? 0
-        } else {
-            return svc.sidebar.viewIfLoaded?.safeAreaLayoutGuide.layoutFrame.width ?? 0
-        }
+        let viewController = svc.conversationListUI ?? svc.archiveUI ?? svc.settingsUI
+        let view = viewController?.viewIfLoaded
+        return view?.frame.width ?? 0
     }
 
     init(zClientViewController: ZClientViewController) {

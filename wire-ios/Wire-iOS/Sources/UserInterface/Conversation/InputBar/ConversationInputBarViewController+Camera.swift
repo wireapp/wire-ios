@@ -288,6 +288,7 @@ extension ConversationInputBarViewController {
 
     @objc
     func cameraButtonPressed(_ sender: Any?) {
+        ZClientViewController.shared?.mainSplitViewController.hideSidebar()
         if mode == .camera {
             inputBar.textView.resignFirstResponder()
             cameraKeyboardViewController = nil
