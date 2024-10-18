@@ -155,7 +155,8 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
             userSession: userSession,
-            accountSelector: MockAccountSelector()
+            accountSelector: MockAccountSelector(),
+            mainCoordinator: MockMainCoordinator()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

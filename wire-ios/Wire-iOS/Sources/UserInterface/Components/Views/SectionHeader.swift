@@ -22,14 +22,15 @@ import WireDesign
 
 final class SectionHeaderView: UIView {
 
-    let titleLabel = DynamicFontLabel(style: .h5,
-                                      color: SemanticColors.Label.textSectionHeader)
+    let titleLabel = DynamicFontLabel(
+        style: .h5,
+        color: SemanticColors.Label.textSectionHeader
+    )
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
         createConstraints()
-
     }
 
     @available(*, unavailable)
@@ -53,7 +54,6 @@ final class SectionHeaderView: UIView {
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
     }
-
 }
 
 final class SectionHeader: UICollectionReusableView {
@@ -68,7 +68,7 @@ final class SectionHeader: UICollectionReusableView {
         super.init(frame: frame)
         addSubview(headerView)
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.fitIn(view: self)
+        createConstraints()
     }
 
     @available(*, unavailable)
@@ -76,6 +76,14 @@ final class SectionHeader: UICollectionReusableView {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    private func createConstraints() {
+        NSLayoutConstraint.activate([
+            headerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            headerView.topAnchor.constraint(equalTo: topAnchor),
+            headerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            headerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
 }
 
 final class SectionTableHeader: UITableViewHeaderFooterView {
@@ -107,5 +115,4 @@ final class SectionTableHeader: UITableViewHeaderFooterView {
             headerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-
 }

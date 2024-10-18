@@ -110,10 +110,10 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     private func configureColors() {
         let iconTintColor = SemanticColors.Icon.foregroundDefault
 
-        participantIconView.image = .init(resource: .contactsFilled).withRenderingMode(.alwaysTemplate)
+        participantIconView.image = .init(resource: .participants)
         participantIconView.tintColor = iconTintColor
 
-        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron)
         accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault

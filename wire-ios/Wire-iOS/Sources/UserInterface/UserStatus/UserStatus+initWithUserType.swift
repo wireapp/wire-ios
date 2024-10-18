@@ -25,7 +25,7 @@ extension UserStatus {
         isE2EICertified: Bool
     ) {
         self.init(
-            name: user.name ?? "",
+            displayName: user.name ?? "",
             availability: user.availability,
             isE2EICertified: isE2EICertified,
             isProteusVerified: user.isVerified

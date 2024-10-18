@@ -27,12 +27,12 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
         return false
     }
 
-    var value: SimpleTextField.Value? {
+    var value: WireTextField.Value? {
         return nameCell?.textField.value
     }
 
     private weak var nameCell: Cell?
-    private weak var textFieldDelegate: SimpleTextFieldDelegate?
+    private weak var textFieldDelegate: WireTextFieldDelegate?
     private var footer = SectionFooter(frame: .zero)
     private let selfUser: UserType
 
@@ -41,7 +41,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     }()
 
     init(selfUser: UserType,
-         delegate: SimpleTextFieldDelegate? = nil) {
+         delegate: WireTextFieldDelegate? = nil) {
         textFieldDelegate = delegate
         self.selfUser = selfUser
     }
@@ -67,7 +67,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
-        cell.textField.textFieldDelegate = textFieldDelegate
+        cell.textField.wireTextFieldDelegate = textFieldDelegate
         nameCell = cell
         return cell
     }
@@ -79,7 +79,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        return CGSize(width: collectionView.bounds.size.width, height: 76)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {

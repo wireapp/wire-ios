@@ -66,7 +66,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()
-
+        team!.name = "Wire"
         teamMember = Member.insertNewObject(in: uiMOC)
         teamMember!.user = selfUser
         teamMember!.team = team
