@@ -47,12 +47,12 @@ files: [
   "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Localizable.xcstrings",
   "dest" : "/App/WireMainNavigationUI/Resources/Localizable.xcstrings",
   "translation" : "%original_path%/%original_file_name%",
-  "multilingual": "true",
+  "multilingual": true,
  },
 {
   "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Accessibility.xcstrings",
   "dest" : "/App/WireMainNavigationUI/Resources/Accessibility.xcstrings",
   "translation" : "%original_path%/%original_file_name%",
-  "multilingual": "true",
+  "multilingual": true,
  },
 ]
