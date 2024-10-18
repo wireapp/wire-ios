@@ -122,6 +122,8 @@ jobs:
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      REPO_ROOT: ${{ github.workspace }}
+      PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       
     steps:
       - name: Add Masks
@@ -154,6 +156,20 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+         # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_DATADOG }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -168,6 +184,8 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+        env:
+          HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()
