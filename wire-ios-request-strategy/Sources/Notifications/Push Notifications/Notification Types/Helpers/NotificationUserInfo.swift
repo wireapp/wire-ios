@@ -227,7 +227,7 @@ extension NotificationUserInfo {
         self.conversationID = conversation.remoteIdentifier
         self.senderID = event.senderUUID
         self.messageNonce = event.messageNonce
-        self.eventTime = event.uuid
+        self.eventID = event.uuid
         self.eventTime = event.timestamp
     }
 
