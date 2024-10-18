@@ -347,6 +347,7 @@ final class ZClientViewController: UIViewController {
             select(conversation: conversation)
         }
 
+        // TODO: remove?
         mainSplitViewController.show(.primary)
     }
 
@@ -669,7 +670,7 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11620] check if the conversation is opened, e.g. after accepting a connection request
+        // TODO: [WPB-11620] dismiss animation is missing
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
@@ -685,7 +686,6 @@ final class ZClientViewController: UIViewController {
     }
 
     func select(conversation: ZMConversation) {
-        // TODO: align with select(conversation:scrollTo:focusOnView:animated)?
         conversationListViewController.viewModel.select(conversation: conversation)
     }
 

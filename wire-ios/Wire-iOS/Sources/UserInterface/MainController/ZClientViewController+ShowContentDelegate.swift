@@ -20,8 +20,6 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-// TODO: use builders
-
 extension ZClientViewController {
 
     @MainActor
