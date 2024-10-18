@@ -71,3 +71,16 @@ extension WireAPI.ConversationMessageProtocol {
     }
 
 }
+
+extension WireAPI.ConversationMemberLeaveReason {
+    
+    func toDomainModel() -> ZMSystemMessageType {
+        switch self {
+            
+        case .userDeleted, .left:
+            .teamMemberLeave
+        case .removed:
+            .participantsRemoved
+        }
+    }
+}

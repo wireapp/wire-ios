@@ -30,6 +30,17 @@ import WireDataModel
 ///
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
+    
+    /// Fetches or creates a conversation locally.
+    /// - parameter id: The ID of the conversation.
+    /// - parameter domain: The domain of the conversation if any.
+    ///
+    /// - returns: The `ZMConversation` found or created locally.
+    
+    func fetchOrCreateConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation
 
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
@@ -67,16 +78,51 @@ public protocol ConversationLocalStoreProtocol {
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
 
-    /// Removes a given user from all conversations.
+    /// Removes a given user from all group conversations.
     ///
     /// - parameters:
     ///     - user: The user to remove from the conversations.
     ///     - removalDate: The date the user was removed from the conversations.
 
-    func removeFromConversations(
+    func removeUserFromAllGroupConversations(
         user: ZMUser,
         removalDate: Date
     ) async
+    
+    /// Get local participants from a conversation
+    ///
+    /// - parameter conversation: The conversation to get the participants from.
+    /// - returns: A list of local participants.
+
+    func getParticipants(
+        from conversation: ZMConversation
+    ) async -> Set<ZMUser>
+    
+    /// Get message protocol from a conversation
+    /// - parameter conversation: The conversation to get the message protocol from.
+    /// - returns: The message protocol used for that conversation.
+
+    func getMessageProtocol(
+        from conversation: ZMConversation
+    ) async -> WireDataModel.MessageProtocol
+    
+    /// Adds a system message to a given conversation.
+     /// - parameters:
+     ///     - message: The system message to add.
+     ///     - conversation: The conversation to add the system message to.
+
+     func addSystemMessage(
+         _ message: SystemMessage,
+         to conversation: ZMConversation
+     ) async
+    
+    /// Fetches the MLS group ID (if any) from a conversation.
+    /// - parameter conversation: The conversation to get the MLS group ID from.
+    /// - returns: The MLS group ID for that conversation (if any)
+    
+    func fetchMLSGroupID(
+        for conversation: ZMConversation
+    ) async -> MLSGroupID?
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -104,6 +150,48 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+    
+    public func fetchOrCreateConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation {
+        await context.perform { [context] in
+            ZMConversation.fetchOrCreate(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
+    
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+            systemMessage.systemMessageType = message.type
+            systemMessage.sender = message.sender
+            systemMessage.users = message.users ?? Set()
+            systemMessage.addedUsers = message.addedUsers
+            systemMessage.clients = message.clients ?? Set()
+            systemMessage.serverTimestamp = message.timestamp
+            
+            if let duration = message.duration {
+                systemMessage.duration = duration
+            }
+            
+            if let messageTimer = message.messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
+            
+            systemMessage.relevantForConversationStatus = message.relevantForStatus
+            systemMessage.participantsRemovedReason = message.removedReason
+            systemMessage.domains = message.domains
+            
+            conversation.append(systemMessage)
+        }
+    }
 
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
@@ -205,8 +293,24 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
+    
+    public func getParticipants(
+        from conversation: ZMConversation
+    ) async -> Set<ZMUser> {
+        await context.perform {
+            conversation.localParticipants
+        }
+    }
+    
+    public func getMessageProtocol(
+        from conversation: ZMConversation
+    ) async -> WireDataModel.MessageProtocol {
+        await context.perform {
+            conversation.messageProtocol
+        }
+    }
 
-    public func removeFromConversations(
+    public func removeUserFromAllGroupConversations(
         user: ZMUser,
         removalDate: Date
     ) async {
@@ -236,6 +340,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
+        }
+    }
+    
+    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
+        await context.perform {
+            conversation.mlsGroupID
         }
     }
 

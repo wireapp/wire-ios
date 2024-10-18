@@ -355,7 +355,7 @@ public final class UserRepository: UserRepositoryProtocol {
         } else {
             await userLocalStore.markAccountAsDeleted(for: user)
 
-            await conversationRepository.removeFromConversations(
+            await conversationRepository.removeUserFromAllGroupConversations(
                 user: user,
                 removalDate: date
             )
