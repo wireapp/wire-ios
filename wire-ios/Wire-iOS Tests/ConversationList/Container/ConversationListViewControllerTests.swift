@@ -83,6 +83,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             selfProfileViewControllerBuilder: .mock
         )
+        sut.mainSplitViewState = .collapsed
 
         tabBarController = MainTabBarController()
         tabBarController.conversationListUI = sut
