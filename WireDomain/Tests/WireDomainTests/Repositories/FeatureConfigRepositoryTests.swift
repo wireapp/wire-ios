@@ -71,8 +71,12 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let features = Feature.Name.allCases.compactMap {
-            Feature.fetch(name: $0, context: context)
+        let features = await context.perform { [self] in
+            let allFeatures = Feature.Name.allCases.compactMap {
+                Feature.fetch(name: $0, context: context)
+            }
+            
+            return allFeatures
         }
 
         XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
@@ -127,12 +131,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         subscription = sut.observeFeatureStates()
             .sink { featureState in
                 featureStates.append(featureState)
-                let feature = Feature.fetch(name: featureState.name, context: self.context)
-                XCTAssertNotNil(feature)
-                XCTAssertEqual(featureState.status, .enabled)
-                XCTAssertEqual(featureState.shouldNotifyUser, false)
-
-                expectation.fulfill()
+                
+                if featureStates.count == Scaffolding.featureConfigs.count {
+                    expectation.fulfill()
+                }
             }
 
         // When
@@ -142,6 +144,15 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
+        
+        for featureState in featureStates {
+            await context.perform {
+                let feature = Feature.fetch(name: featureState.name, context: self.context)
+                XCTAssertNotNil(feature)
+                XCTAssertEqual(featureState.status, .enabled)
+                XCTAssertEqual(featureState.shouldNotifyUser, false)
+            }
+        }
     }
 
     private enum Scaffolding {

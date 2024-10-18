@@ -191,19 +191,21 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let userClient = try await sut.fetchOrCreateUserClient(
+        let userClient = await sut.fetchOrCreateUserClient(
             with: Scaffolding.userClientID
         )
 
         // Then
 
-        XCTAssertNotNil(userClient)
+        await context.perform {
+            XCTAssertNotNil(userClient)
+        }
     }
 
     func testUpdatesUserClient() async throws {
         // Given
 
-        let createdClient = try await sut.fetchOrCreateUserClient(
+        let createdClient = await sut.fetchOrCreateUserClient(
             with: Scaffolding.userClientID
         )
 
@@ -234,15 +236,17 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchSelfUser() async {
         // Given
 
-        let selfUser = modelHelper.createSelfUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
-        let localSelfUser = sut.fetchSelfUser()
+        let localSelfUser = await sut.fetchSelfUser()
 
         // Then
 
@@ -254,11 +258,13 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchUser() async throws {
         // Given
 
-        let user = modelHelper.createUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        let user = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
@@ -274,11 +280,13 @@ final class UserRepositoryTests: XCTestCase {
     func testAddLegalholdRequest() async throws {
         // Given
 
-        modelHelper.createSelfUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        _ = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
@@ -315,7 +323,7 @@ final class UserRepositoryTests: XCTestCase {
     }
 
     func testDeleteUserAccountForSelfUser() async throws {
-        let selfUser = await context.perform { [self] in
+        _ = await context.perform { [self] in
             modelHelper.createSelfUser(
                 id: Scaffolding.userID,
                 domain: nil,
@@ -374,7 +382,10 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(user.isAccountDeleted, true)
+        await context.perform {
+            XCTAssertEqual(user.isAccountDeleted, true)
+        }
+        
         XCTAssertEqual(conversationsRepository.removeUserFromAllGroupConversationsUserRemovalDate_Invocations.count, 1)
     }
 
@@ -397,9 +408,10 @@ final class UserRepositoryTests: XCTestCase {
         try await sut.updateUserProperty(.areReadReceiptsEnabled(true))
 
         // Then
+        
+        let selfUser = await sut.fetchSelfUser()
 
-        try await context.perform { [self] in
-            let selfUser = try XCTUnwrap(sut.fetchSelfUser())
+        await context.perform {
 
             XCTAssertEqual(selfUser.readReceiptsEnabled, true)
             XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
@@ -447,13 +459,15 @@ final class UserRepositoryTests: XCTestCase {
     func testUpdateUser_It_Updates_User_Locally() async throws {
         // Given
 
-        modelHelper.createUser(
-            id: Scaffolding.userID,
-            handle: Scaffolding.existingHandle,
-            email: Scaffolding.existingEmail,
-            supportedProtocols: [.mls],
-            in: context
-        )
+        _ = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                handle: Scaffolding.existingHandle,
+                email: Scaffolding.existingEmail,
+                supportedProtocols: [.mls],
+                in: context
+            )
+        }
 
         // When
 

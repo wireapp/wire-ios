@@ -31,7 +31,7 @@ public protocol UserRepositoryProtocol {
 
     /// Fetch self user from the local store
 
-    func fetchSelfUser() -> ZMUser
+    func fetchSelfUser() async -> ZMUser
 
     /// Fetches a user locally
     ///
@@ -81,7 +81,7 @@ public protocol UserRepositoryProtocol {
     func fetchOrCreateUser(
         with uuid: UUID,
         domain: String?
-    ) -> ZMUser
+    ) async -> ZMUser
 
     /// Removes user push token from storage.
 
@@ -165,6 +165,10 @@ public protocol UserRepositoryProtocol {
         id: UUID,
         domain: String?
     ) async throws -> Bool
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: move to ClientRepository when related branch is merged
+    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -195,18 +199,22 @@ public final class UserRepository: UserRepositoryProtocol {
 
     // MARK: - Public
 
-    public func fetchSelfUser() -> ZMUser {
-        userLocalStore.fetchSelfUser()
+    public func fetchSelfUser() async -> ZMUser {
+        await userLocalStore.fetchSelfUser()
     }
 
     public func fetchOrCreateUser(
         with id: UUID,
         domain: String? = nil
-    ) -> ZMUser {
-        userLocalStore.fetchOrCreateUser(
+    ) async -> ZMUser {
+        await userLocalStore.fetchOrCreateUser(
             with: id,
             domain: domain
         )
+    }
+    
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        await userLocalStore.allSelfUserClientsAreActiveMLSClients()
     }
 
     public func fetchUser(

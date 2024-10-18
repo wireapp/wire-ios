@@ -27,7 +27,7 @@ public protocol UserLocalStoreProtocol {
     
     /// Fetch self user from the local store
 
-    func fetchSelfUser() -> ZMUser
+    func fetchSelfUser() async -> ZMUser
 
     /// Fetches a user locally
     ///
@@ -50,7 +50,7 @@ public protocol UserLocalStoreProtocol {
     func fetchOrCreateUser(
         with uuid: UUID,
         domain: String?
-    ) -> ZMUser
+    ) async -> ZMUser
 
     /// Removes user push token from storage.
 
@@ -137,6 +137,9 @@ public protocol UserLocalStoreProtocol {
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
     
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: move to ClientLocalStore when related branch is merged
+    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -160,8 +163,40 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         self.userDefaults = userDefaults
     }
     
-    public func fetchSelfUser() -> ZMUser {
-        ZMUser.selfUser(in: context)
+    public func fetchSelfUser() async -> ZMUser {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
+    }
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: move to ClientLocalStore when related branch is merged
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        let selfUser = await fetchSelfUser()
+        
+        return await context.perform {
+            selfUser.clients.all { userClient in
+                let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
+
+                let isRecentlyActive: Bool = {
+                    if userClient.isSelfClient() {
+                        return true
+                    }
+
+                    guard let lastActiveDate = userClient.lastActiveDate else {
+                        return false
+                    }
+
+                    guard lastActiveDate <= Date() else {
+                        return true
+                    }
+
+                    return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
+                }()
+
+                return hasMLSIdentity && isRecentlyActive
+            }
+        }
     }
     
     public func fetchUser(
@@ -184,12 +219,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func fetchOrCreateUser(
         with uuid: UUID,
         domain: String? = nil
-    ) -> ZMUser {
-        ZMUser.fetchOrCreate(
-            with: uuid,
-            domain: domain,
-            in: context
-        )
+    ) async -> ZMUser {
+        await context.perform { [context] in
+            ZMUser.fetchOrCreate(
+                with: uuid,
+                domain: domain,
+                in: context
+            )
+        }
     }
     
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
@@ -204,7 +241,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         isReadReceiptsEnabled: Bool,
         isReadReceiptsEnabledChangedRemotely: Bool
     ) async {
-        let selfUser = fetchSelfUser()
+        let selfUser = await fetchSelfUser()
 
         await context.perform {
             selfUser.readReceiptsEnabled = isReadReceiptsEnabled
@@ -271,7 +308,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
     
     public func cancelSelfUserLegalholdRequest() async {
-        let selfUser = fetchSelfUser()
+        let selfUser = await fetchSelfUser()
 
         await context.perform {
             selfUser.legalHoldRequestWasCancelled()
@@ -292,7 +329,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly, merge this method with updateUser method.
     public func persistUser(from user: WireAPI.User) async {
-        let persistedUser = fetchOrCreateUser(
+        let persistedUser = await fetchOrCreateUser(
             with: user.id.uuid,
             domain: user.id.domain
         )
@@ -320,7 +357,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     
     // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
     public func updateUser(from event: UserUpdateEvent) async {
-        let user = fetchOrCreateUser(
+        let user = await fetchOrCreateUser(
             with: event.userID
         )
         

@@ -255,8 +255,10 @@ final class ConversationRepositoryTests: XCTestCase {
         let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
 
         // Then
-
-        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+        
+        await context.perform {
+            XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+        }
     }
 
     func testRemoveFromConversations_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
@@ -438,11 +440,13 @@ final class ConversationRepositoryTests: XCTestCase {
 
          // Then
 
-         try internalTest_checkLastMessage(
-             in: conversation,
-             messageType: .participantsAdded,
-             at: timestamp
-         )
+        try await context.perform { [self] in
+            try internalTest_checkLastMessage(
+                in: conversation,
+                messageType: .participantsAdded,
+                at: timestamp
+            )
+        }
      }
 
     private func internalTest_checkLastMessage(

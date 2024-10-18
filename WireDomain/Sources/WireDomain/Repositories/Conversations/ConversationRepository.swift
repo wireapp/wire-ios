@@ -265,13 +265,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             domain: domain
         )
         
-        let removedUsers = removedUserIDs.map {
-            userRepository.fetchOrCreateUser(
-                with: $0.uuid,
-                domain: $0.domain
-            )
-        }
-        
+        let removedUsers = await getRemovedUsers(from: removedUserIDs)
         let participants = await conversationsLocalStore.getParticipants(from: conversation)
         
         let sender = try await userRepository.fetchUser(
@@ -290,10 +284,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             await addSystemMessage(systemMessage, to: conversation)
         }
         
-        let isSelfUserRemoved = await isSelfUserRemoved(in: removedUsers)
+        let isSelfUserRemoved = await isSelfUserRemoved(in: removedUserIDs)
         let messageProtocol = await conversationsLocalStore.getMessageProtocol(from: conversation)
         
-        conversation.removeParticipantsAndUpdateConversationState(
+        await conversationsLocalStore.removeParticipantsAndUpdateConversationState(
+            conversation: conversation,
             users: Set(removedUsers),
             initiatingUser: sender
         )
@@ -315,29 +310,52 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: time)
     }
     
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await conversationsLocalStore.addSystemMessage(
+            message,
+            to: conversation
+        )
+    }
+    
     // MARK: - Private
     
-    public func addSystemMessage(
-         _ message: SystemMessage,
-         to conversation: ZMConversation
-     ) async {
-         await conversationsLocalStore.addSystemMessage(
-             message,
-             to: conversation
-         )
-     }
-    
-    private func isSelfUserRemoved(in removedUsers: [ZMUser]) async -> Bool {
-        await withTaskGroup(of: Bool.self) { taskGroup in
-            for removedUser in removedUsers {
-                do {
-                    return try await userRepository.isSelfUser(
-                        id: removedUser.remoteIdentifier,
-                        domain: removedUser.domain
+    private func getRemovedUsers(from userIDs: Set<UserID>) async -> [WireDataModel.ZMUser] {
+        await withTaskGroup(of: WireDataModel.ZMUser.self) { taskGroup in
+            for userID in userIDs {
+                taskGroup.addTask { [self] in
+                    await userRepository.fetchOrCreateUser(
+                        with: userID.uuid,
+                        domain: userID.domain
                     )
-                    
-                } catch {
-                    return false
+                }
+            }
+            
+            var users: [WireDataModel.ZMUser] = []
+            
+            for await user in taskGroup {
+                users.append(user)
+            }
+            
+            return users
+        }
+    }
+    
+    private func isSelfUserRemoved(in removedUsersIDs: Set<UserID>) async -> Bool {
+        await withTaskGroup(of: Bool.self) { taskGroup in
+            for removedUserID in removedUsersIDs {
+                taskGroup.addTask { [self] in
+                    do {
+                        return try await userRepository.isSelfUser(
+                            id: removedUserID.uuid,
+                            domain: removedUserID.domain
+                        )
+                        
+                    } catch {
+                        return false
+                    }
                 }
             }
             

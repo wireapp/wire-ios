@@ -123,6 +123,18 @@ public protocol ConversationLocalStoreProtocol {
     func fetchMLSGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
+    
+    /// Removes participants from conversation and updates conversation state.
+    /// - Parameters:
+    ///     - conversation: The conversation to remove the participants from.
+    ///     - users: The users to remove.
+    ///     - initiatingUser: The user that initiated the removal.
+
+    func removeParticipantsAndUpdateConversationState(
+        conversation: ZMConversation,
+        users: Set<ZMUser>,
+        initiatingUser: ZMUser
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -327,7 +339,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
         
         for conversation in allGroupConversations {
-            if user.isTeamMember, conversation.team == user.team {
+            let (userTeam, isTeamMember) = await context.perform {
+                (user.team, user.isTeamMember)
+            }
+            
+            let teamConversation = await context.perform {
+                conversation.team
+            }
+            
+            if isTeamMember, teamConversation == userTeam {
                 
                 let systemMessage = SystemMessage(
                     type: .teamMemberLeave,
@@ -362,6 +382,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
         await context.perform {
             conversation.mlsGroupID
+        }
+    }
+    
+    public func removeParticipantsAndUpdateConversationState(
+        conversation: ZMConversation,
+        users: Set<ZMUser>,
+        initiatingUser: ZMUser
+    ) async {
+        await context.perform {
+            conversation.removeParticipantsAndUpdateConversationState(
+                users: users,
+                initiatingUser: initiatingUser
+            )
         }
     }
 

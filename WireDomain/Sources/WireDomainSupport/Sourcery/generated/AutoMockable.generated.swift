@@ -326,6 +326,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - removeParticipantsAndUpdateConversationState
+
+    public var removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_Invocations: [(conversation: ZMConversation, users: Set<ZMUser>, initiatingUser: ZMUser)] = []
+    public var removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_MockMethod: ((ZMConversation, Set<ZMUser>, ZMUser) async -> Void)?
+
+    public func removeParticipantsAndUpdateConversationState(conversation: ZMConversation, users: Set<ZMUser>, initiatingUser: ZMUser) async {
+        removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_Invocations.append((conversation: conversation, users: users, initiatingUser: initiatingUser))
+
+        guard let mock = removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_MockMethod else {
+            fatalError("no mock for `removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser`")
+        }
+
+        await mock(conversation, users, initiatingUser)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
@@ -898,14 +913,14 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
     // MARK: - fetchSelfUser
 
     public var fetchSelfUser_Invocations: [Void] = []
-    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockMethod: (() async -> ZMUser)?
     public var fetchSelfUser_MockValue: ZMUser?
 
-    public func fetchSelfUser() -> ZMUser {
+    public func fetchSelfUser() async -> ZMUser {
         fetchSelfUser_Invocations.append(())
 
         if let mock = fetchSelfUser_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = fetchSelfUser_MockValue {
             return mock
         } else {
@@ -939,14 +954,14 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
     // MARK: - fetchOrCreateUser
 
     public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
-    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) async -> ZMUser)?
     public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
 
-    public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
+    public func fetchOrCreateUser(with uuid: UUID, domain: String?) async -> ZMUser {
         fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
 
         if let mock = fetchOrCreateUserWithDomain_MockMethod {
-            return mock(uuid, domain)
+            return await mock(uuid, domain)
         } else if let mock = fetchOrCreateUserWithDomain_MockValue {
             return mock
         } else {
@@ -1158,6 +1173,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(event)
     }
 
+    // MARK: - allSelfUserClientsAreActiveMLSClients
+
+    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
+    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
+    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
+
+        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
+            return await mock()
+        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
+        }
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
@@ -1170,14 +1203,14 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
     // MARK: - fetchSelfUser
 
     public var fetchSelfUser_Invocations: [Void] = []
-    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockMethod: (() async -> ZMUser)?
     public var fetchSelfUser_MockValue: ZMUser?
 
-    public func fetchSelfUser() -> ZMUser {
+    public func fetchSelfUser() async -> ZMUser {
         fetchSelfUser_Invocations.append(())
 
         if let mock = fetchSelfUser_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = fetchSelfUser_MockValue {
             return mock
         } else {
@@ -1286,14 +1319,14 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
     // MARK: - fetchOrCreateUser
 
     public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
-    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) async -> ZMUser)?
     public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
 
-    public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
+    public func fetchOrCreateUser(with uuid: UUID, domain: String?) async -> ZMUser {
         fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
 
         if let mock = fetchOrCreateUserWithDomain_MockMethod {
-            return mock(uuid, domain)
+            return await mock(uuid, domain)
         } else if let mock = fetchOrCreateUserWithDomain_MockValue {
             return mock
         } else {
@@ -1459,6 +1492,24 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `isSelfUserIdDomain`")
+        }
+    }
+
+    // MARK: - allSelfUserClientsAreActiveMLSClients
+
+    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
+    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
+    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
+
+        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
+            return await mock()
+        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
         }
     }
 

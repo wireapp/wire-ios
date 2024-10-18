@@ -75,7 +75,7 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
 
         let commonProtocol = WireDataModel.MessageProtocol.mls
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: commonProtocol,
             userProtocol: commonProtocol
         )
@@ -107,7 +107,7 @@ final class OneOnOneResolverTests: XCTestCase {
         let commonProtocol = WireDataModel.MessageProtocol.mls
         let mlsEpoch: UInt64 = 0
 
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: commonProtocol,
             userProtocol: commonProtocol,
             mlsEpoch: mlsEpoch
@@ -137,12 +137,15 @@ final class OneOnOneResolverTests: XCTestCase {
             createGroupInvocation.users,
             [MLSUser(Scaffolding.receiverQualifiedID.toDomainModel())]
         )
-        XCTAssertEqual(mlsOneOnOneConversation.ciphersuite, Scaffolding.ciphersuite)
-        XCTAssertEqual(mlsOneOnOneConversation.mlsStatus, .ready)
-        XCTAssertEqual(mlsOneOnOneConversation.isForcedReadOnly, false)
-        XCTAssertEqual(mlsOneOnOneConversation.needsToBeUpdatedFromBackend, true)
-        XCTAssertEqual(user.oneOnOneConversation, mlsOneOnOneConversation)
-        XCTAssertEqual(mlsOneOnOneConversation.oneOnOneUser, user)
+        
+        await context.perform {
+            XCTAssertEqual(mlsOneOnOneConversation.ciphersuite, Scaffolding.ciphersuite)
+            XCTAssertEqual(mlsOneOnOneConversation.mlsStatus, .ready)
+            XCTAssertEqual(mlsOneOnOneConversation.isForcedReadOnly, false)
+            XCTAssertEqual(mlsOneOnOneConversation.needsToBeUpdatedFromBackend, true)
+            XCTAssertEqual(user.oneOnOneConversation, mlsOneOnOneConversation)
+            XCTAssertEqual(mlsOneOnOneConversation.oneOnOneUser, user)
+        }
     }
 
     func testProcessEvent_It_Resolves_MLS_Conversation_Epoch_Not_Zero() async throws {
@@ -151,7 +154,7 @@ final class OneOnOneResolverTests: XCTestCase {
         let commonProtocol = WireDataModel.MessageProtocol.mls
         let mlsEpoch: UInt64 = 1
 
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: commonProtocol,
             userProtocol: commonProtocol,
             mlsEpoch: mlsEpoch
@@ -174,8 +177,11 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mlsService.joinGroupWith_Invocations.count, 1)
         let invokedMLSGroupID = try XCTUnwrap(mlsService.joinGroupWith_Invocations.first)
         XCTAssertEqual(invokedMLSGroupID, Scaffolding.mlsGroupID)
-        XCTAssertEqual(user.oneOnOneConversation, mlsOneOnOneConversation)
-        XCTAssertEqual(mlsOneOnOneConversation.oneOnOneUser, user)
+        
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation, mlsOneOnOneConversation)
+            XCTAssertEqual(mlsOneOnOneConversation.oneOnOneUser, user)
+        }
     }
 
     func testProcessEvent_It_Migrates_Proteus_Messages_To_MLS_Conversation() async throws {
@@ -183,7 +189,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         let commonProtocol = WireDataModel.MessageProtocol.mls
 
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: commonProtocol,
             userProtocol: commonProtocol
         )
@@ -202,10 +208,12 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        let migratedMessagesTexts = mlsOneOnOneConversation.allMessages
-            .compactMap(\.textMessageData)
-            .compactMap(\.messageText)
-            .sorted()
+        let migratedMessagesTexts = await context.perform {
+            mlsOneOnOneConversation.allMessages
+                .compactMap(\.textMessageData)
+                .compactMap(\.messageText)
+                .sorted()
+        }
 
         /// Ensuring proteus messages were migrated to MLS conversation.
         XCTAssertEqual(migratedMessagesTexts.first, "Hello")
@@ -216,12 +224,14 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
 
         let commonProtocol = WireDataModel.MessageProtocol.proteus
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: commonProtocol,
             userProtocol: commonProtocol
         )
 
-        XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        }
 
         // Mock
 
@@ -237,7 +247,9 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        }
     }
 
     func testProcessEvent_It_Resolves_Conversation_With_No_Common_Protocol() async throws {
@@ -245,13 +257,15 @@ final class OneOnOneResolverTests: XCTestCase {
 
         let forcedReadOnly = false
 
-        let (selfUser, user, mlsOneOnOneConversation) = try setupManagedObjects(
+        let (selfUser, user, mlsOneOnOneConversation) = try await setupManagedObjects(
             selfUserProtocol: .mls,
             userProtocol: .proteus,
             forcedReadOnly: forcedReadOnly
         )
 
-        XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        await context.perform {
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, false)
+        }
 
         // Mock
 
@@ -267,9 +281,11 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // Then
 
-        let lastMessage = try XCTUnwrap(user.oneOnOneConversation?.lastMessage as? ZMSystemMessage)
-        XCTAssertEqual(lastMessage.systemMessageType, .mlsNotSupportedOtherUser)
-        XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        try await context.perform {
+            let lastMessage = try XCTUnwrap(user.oneOnOneConversation?.lastMessage as? ZMSystemMessage)
+            XCTAssertEqual(lastMessage.systemMessageType, .mlsNotSupportedOtherUser)
+            XCTAssertEqual(user.oneOnOneConversation?.isForcedReadOnly, true)
+        }
     }
 
     // MARK: - Setup
@@ -281,43 +297,46 @@ final class OneOnOneResolverTests: XCTestCase {
         userProtocol: WireDataModel.MessageProtocol,
         forcedReadOnly: Bool = true,
         mlsEpoch: UInt64 = 0
-    ) throws -> ManagedObjects {
-        let user = modelHelper.createUser(
-            id: Scaffolding.receiverQualifiedID.uuid,
-            domain: Scaffolding.receiverQualifiedID.domain,
-            in: context
-        )
+    ) async throws -> ManagedObjects {
+        try await context.perform { [self] in
+            let user = modelHelper.createUser(
+                id: Scaffolding.receiverQualifiedID.uuid,
+                domain: Scaffolding.receiverQualifiedID.domain,
+                in: context
+            )
+            
+            user.supportedProtocols = [userProtocol]
 
-        user.supportedProtocols = [userProtocol]
+            let selfUser = modelHelper.createSelfUser(
+                id: UUID(),
+                domain: nil,
+                in: context
+            )
 
-        let selfUser = modelHelper.createSelfUser(
-            id: UUID(),
-            domain: nil,
-            in: context
-        )
+            selfUser.supportedProtocols = [selfUserProtocol]
 
-        selfUser.supportedProtocols = [selfUserProtocol]
+            let proteusConversation = modelHelper.createOneOnOne(
+                with: selfUser,
+                in: context
+            )
 
-        let proteusConversation = modelHelper.createOneOnOne(
-            with: selfUser,
-            in: context
-        )
+            proteusConversation.isForcedReadOnly = forcedReadOnly
+            user.oneOnOneConversation = proteusConversation
 
-        proteusConversation.isForcedReadOnly = forcedReadOnly
-        user.oneOnOneConversation = proteusConversation
+            try proteusConversation.appendText(content: "Hello")
+            try proteusConversation.appendText(content: "World!")
 
-        try proteusConversation.appendText(content: "Hello")
-        try proteusConversation.appendText(content: "World!")
+            let mlsOneOnOneConversation = modelHelper.createMLSConversation(
+                mlsGroupID: Scaffolding.mlsGroupID,
+                mlsStatus: .pendingJoin,
+                conversationType: .oneOnOne,
+                epoch: mlsEpoch,
+                in: context
+            )
 
-        let mlsOneOnOneConversation = modelHelper.createMLSConversation(
-            mlsGroupID: Scaffolding.mlsGroupID,
-            mlsStatus: .pendingJoin,
-            conversationType: .oneOnOne,
-            epoch: mlsEpoch,
-            in: context
-        )
+            return (selfUser, user, mlsOneOnOneConversation)
+        }
 
-        return (selfUser, user, mlsOneOnOneConversation)
     }
 
     private func setupMock(
