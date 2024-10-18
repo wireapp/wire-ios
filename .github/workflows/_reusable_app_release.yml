@@ -157,32 +157,6 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-        # Cache for the first folder (scripts)
-      - name: Restore Swift Package Dependencies (scripts)
-        uses: actions/cache@v3
-        id: cache-scripts-package
-        with:
-          path: scripts/.build
-          key: ${{ runner.os }}-swiftpm-scripts-${{ hashFiles('scripts/Package.resolved') }}
-
-        # Cache for the second folder (SourceryPlugin)
-      - name: Restore Swift Package Dependencies (SourceryPlugin)
-        uses: actions/cache@v3
-        id: cache-sourceryPlugin-package
-        with:
-          path: SourceryPlugin/.build
-          key: ${{ runner.os }}-swiftpm-sourcery-${{ hashFiles('SourceryPlugin/Package.resolved') }}
-
-        # Bootstrap dependencies if no cash for scripts
-      - name: Bootstrap Swift Package Dependencies (scripts)
-        if: steps.cache-scripts-package.outputs.cache-hit != 'true'
-        run: xcrun --sdk macosx swift package --package-path scripts resolve
-       
-        # Bootstrap dependencies if no cash for SourceryPlugin
-      - name: Bootstrap Swift Package Dependencies (SourceryPlugin)
-        if: steps.cache-sourceryPlugin-package.outputs.cache-hit != 'true'
-        run: xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
-
          # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
         id: cache-swift-packages
