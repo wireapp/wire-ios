@@ -40,7 +40,7 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
 
 // MARK: - CameraKeyboardViewController
 
-class CameraKeyboardViewController: UIViewController {
+final class CameraKeyboardViewController: UIViewController {
 
     // MARK: - Properties
 
@@ -158,12 +158,6 @@ class CameraKeyboardViewController: UIViewController {
     private func applicationDidBecomeActive(_ notification: Notification!) {
         self.assetLibrary?.refetchAssets()
     }
-
-    // @objc
-    // func splitLayoutChanged(_ notification: Notification!) {
-    //     self.collectionViewLayout.invalidateLayout()
-    //     self.collectionView.reloadData()
-    // }
 
     // MARK: - Setup UI
 
