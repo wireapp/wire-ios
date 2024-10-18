@@ -32,10 +32,11 @@ final class StatusBarVideoEditorController: UIVideoEditorController {
 extension ConversationInputBarViewController: CameraKeyboardViewControllerDelegate {
 
     func createCameraKeyboardViewController() -> CameraKeyboardViewController {
-        guard let splitViewController = ZClientViewController.shared?.mainSplitViewController else {
+        guard let zClientViewController = ZClientViewController.shared else {
             fatal("SplitViewController is not created")
         }
-        let cameraKeyboardViewController = CameraKeyboardViewController()
+        let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
+        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitLayoutObserver)
         cameraKeyboardViewController.delegate = self
         self.cameraKeyboardViewController = cameraKeyboardViewController
         return cameraKeyboardViewController
@@ -287,6 +288,10 @@ extension ConversationInputBarViewController {
 
     @objc
     func cameraButtonPressed(_ sender: Any?) {
+        if let svc = ZClientViewController.shared?.mainSplitViewController, !svc.isCollapsed {
+            svc.hideSidebar()
+        }
+
         if mode == .camera {
             inputBar.textView.resignFirstResponder()
             cameraKeyboardViewController = nil

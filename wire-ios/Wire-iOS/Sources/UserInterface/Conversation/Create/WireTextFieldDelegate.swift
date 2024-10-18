@@ -16,20 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+protocol WireTextFieldDelegate: AnyObject {
 
-extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
+    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value)
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+    func textFieldReturnPressed(_ textField: WireTextField)
 
-        controller?.dismiss(animated: true) {
-            ZClientViewController.shared?.select(
-                conversation: conversation,
-                focusOnView: true,
-                animated: true
-            )
-        }
-    }
+    func textFieldDidEndEditing(_ textField: WireTextField)
+
+    func textFieldDidBeginEditing(_ textField: WireTextField)
 
 }

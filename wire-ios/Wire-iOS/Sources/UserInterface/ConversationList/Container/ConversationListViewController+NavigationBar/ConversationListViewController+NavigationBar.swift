@@ -31,7 +31,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         _ viewModel: ViewModel,
         didUpdate selfUserStatus: UserStatus
     ) {
-        accountImageView?.availability = selfUserStatus.availability.mapToAccountImageAvailability()
+        if mainSplitViewState == .collapsed {
+            setupLeftNavigationBarButtonItems()
+        }
     }
 
     func conversationListViewControllerViewModel(
@@ -52,7 +54,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        setupLeftNavigationBarButtons()
+        if mainSplitViewState == .collapsed {
+            setupLeftNavigationBarButtonItems()
+        }
     }
 
     // MARK: - Navigation Bar Items
@@ -86,7 +90,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         return accountImageView
     }
 
-    func setupLeftNavigationBarButtons() {
+    func setupLeftNavigationBarButtonItems() {
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -125,7 +129,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         navigationItem.leftBarButtonItems = [.init(customView: stackView)]
     }
 
-    func setupLeftNavigationBarButtons_SplitView() {
+    func setupLeftNavigationBarButtonItems_SplitView() {
         navigationItem.leftBarButtonItems = []
     }
 
@@ -147,7 +151,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
-    func setupRightNavigationBarButtons() {
+    func setupRightNavigationBarButtonItems() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
@@ -226,7 +230,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         view.setNeedsLayout()
     }
 
-    func setupRightNavigationBarButtons_SplitView() {
+    func setupRightNavigationBarButtonItems_SplitView() {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
@@ -271,10 +275,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
         let actionImage = FilterButtonStyleHelper.makeActionImage(named: imageName, isSelected: isSelected)
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
-            if let filter {
-                self?.applyFilter(filter)
-            } else {
-                self?.clearFilter()
+            Task {
+                await self?.mainCoordinator.showConversationList(conversationFilter: filter)
             }
         }
         action.accessibilityLabel = accessibilityLabelForFilterAction(for: filter, isSelected: isSelected)

@@ -17,14 +17,26 @@
 //
 
 import UIKit
+import WireDesign
 
-public protocol MainUserProfileUIBuilderProtocol {
-    associatedtype UserProfileUI: UIViewController
-    associatedtype User
+final class SectionTableFooter: UITableViewHeaderFooterView {
 
-    @MainActor
-    func build(
-        user: User,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UserProfileUI
+    private let footerView = SectionFooterView()
+
+    var titleLabel: UILabel {
+        return footerView.titleLabel
+    }
+
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
+        addSubview(footerView)
+        footerView.translatesAutoresizingMaskIntoConstraints = false
+        footerView.fitIn(view: self)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+    }
+
 }

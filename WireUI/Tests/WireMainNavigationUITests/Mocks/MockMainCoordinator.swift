@@ -19,6 +19,8 @@
 import UIKit
 import WireMainNavigationUI
 
+// Manually created mock since sourcery: AutoMockable didn't work with associatedtypes.
+
 final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     typealias Dependencies = MockMainCoordinatorDependencies
 
@@ -60,11 +62,6 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
     var showSelfProfile_Invocations: [Void] = []
     func showSelfProfile() async {
         showSelfProfile_Invocations.append(())
-    }
-
-    var showUserProfile_Invocations: [User] = []
-    func showUserProfile(user: User) async {
-        showUserProfile_Invocations += [user]
     }
 
     var showConnect_Invocations: [Void] = []

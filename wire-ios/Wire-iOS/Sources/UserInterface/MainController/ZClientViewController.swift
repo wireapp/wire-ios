@@ -28,8 +28,6 @@ import WireSidebarUI
 import WireSyncEngine
 
 // TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
-// TODO: [WPB-11604] after getting E2EI certificate the conversation list is shown in collapsed layout mode even on iPad (expanded)
-// TODO: [WPB-11599] the E2EI green shield is sometimes not shown when it should (after starting the app)
 
 final class ZClientViewController: UIViewController {
 
@@ -88,14 +86,13 @@ final class ZClientViewController: UIViewController {
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
-    private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: mainCoordinator,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
@@ -120,8 +117,7 @@ final class ZClientViewController: UIViewController {
         settingsContentUIBuilder: settingsViewControllerBuilder,
         connectUIBuilder: connectBuilder,
         createGroupConversationUIBuilder: createGroupConversationBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        userProfileUIBuilder: userProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -206,8 +202,6 @@ final class ZClientViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = ColorTheme.Backgrounds.surface
-
         setupSplitViewController()
 
         // TODO: [WPB-11609] fix if needed
@@ -227,10 +221,22 @@ final class ZClientViewController: UIViewController {
         setUpConferenceCallingUnavailableObserver()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // in expanded layout we want to see the same background color of the
+        // sidebar also for the status bar
+        if mainSplitViewController.isCollapsed {
+            view.backgroundColor = ColorTheme.Backgrounds.surface
+        } else {
+            view.backgroundColor = SidebarViewDesign().backgroundColor
+        }
+    }
+
     private func setupSplitViewController() {
         let archiveUI = ArchivedListViewController(userSession: userSession)
 
-        // TODO: [WPB-11608] the border color doesn't match on iPad 15
+        // TODO: [WPB-11608] the border color doesn't match on iPad (iOS 15)
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
@@ -241,8 +247,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
-        userProfileViewControllerBuilder.delegate = mainCoordinator
-        connectBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
@@ -341,8 +346,6 @@ final class ZClientViewController: UIViewController {
         if let conversation = conversationsList.items.first {
             select(conversation: conversation)
         }
-
-        mainSplitViewController.show(.primary)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
@@ -584,7 +587,7 @@ final class ZClientViewController: UIViewController {
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mainSplitViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            mainSplitViewController.view.topAnchor.constraint(equalTo: topOverlayContainer.bottomAnchor),
             mainSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mainSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mainSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
@@ -593,6 +596,16 @@ final class ZClientViewController: UIViewController {
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriority.defaultLow
         heightConstraint.isActive = true
+    }
+
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        if mainSplitViewController.isCollapsed {
+            view.backgroundColor = ColorTheme.Backgrounds.surface
+        } else {
+            view.backgroundColor = SidebarViewDesign().backgroundColor
+        }
     }
 
     /// Open the user client list screen
@@ -654,7 +667,7 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11620] check if the conversation is opened, e.g. after accepting a connection request
+        // TODO: [WPB-11620] dismiss animation is missing
         dismissAllModalControllers { [weak self] in
             guard
                 let self,
