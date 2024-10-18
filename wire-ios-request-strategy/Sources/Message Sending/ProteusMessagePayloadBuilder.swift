@@ -40,9 +40,9 @@ struct ProteusMessagePayloadBuilder {
         // 2) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
         if useQualifiedIds {
-            messageData = try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
+            messageData = try qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
         } else {
-            messageData = try await unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
+            messageData = try unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
         }
 
         // Message too big?
@@ -71,13 +71,13 @@ struct ProteusMessagePayloadBuilder {
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
 
         if useQualifiedIds {
-            return try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
+            return try qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
         } else {
-            return try await unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
+            return try unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
         }
     }
 
-    private func unQualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) async throws -> Data {
+    private func unQualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) throws -> Data {
         var userEntries = [Proteus_UserEntry]()
         for (_, entries) in messageInfo.listClients {
 
@@ -96,10 +96,11 @@ struct ProteusMessagePayloadBuilder {
             blob: externalData
         )
 
-        return try message.serializedData()
+        let result = try message.serializedData()
+        return result
     }
 
-    private func qualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) async throws -> Data {
+    private func qualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) throws -> Data {
 
         var finalRecipients = [Proteus_QualifiedUserEntry]()
         for (domain, entries) in messageInfo.listClients {

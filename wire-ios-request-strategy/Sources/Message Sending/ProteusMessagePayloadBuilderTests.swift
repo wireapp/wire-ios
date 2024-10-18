@@ -116,12 +116,11 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         }
         XCTAssertEqual(createdMessage.hasBlob, true)
 
-        guard let userEntry = createdMessage.recipients.first else {
-            return XCTFail()
-        }
+        let userEntry = try  XCTUnwrap(createdMessage.recipients.first { $0.user.uuid == userBID.uuid.uuidData }  )
 
         XCTAssertEqual(userEntry.clients.count, 1)
-        XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+        let client = try XCTUnwrap(userEntry.clients.first)
+        XCTAssertEqual(String(data: client.text, encoding: .utf8), ZMFailedToCreateEncryptedMessagePayloadString)
     }
 
     // MARK: - Helpers
