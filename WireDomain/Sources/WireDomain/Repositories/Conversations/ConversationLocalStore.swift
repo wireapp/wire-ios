@@ -31,6 +31,17 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
@@ -77,6 +88,16 @@ public protocol ConversationLocalStoreProtocol {
         user: ZMUser,
         removalDate: Date
     ) async
+
+    /// Adds a system message to a given conversation.
+    /// - parameters:
+    ///     - message: The system message to add.
+    ///     - conversation: The conversation to add the system message to.
+
+    func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -104,6 +125,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
 
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
@@ -236,6 +270,35 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
+        }
+    }
+
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+            systemMessage.systemMessageType = message.type
+            systemMessage.sender = message.sender
+            systemMessage.users = message.users ?? Set()
+            systemMessage.addedUsers = message.addedUsers
+            systemMessage.clients = message.clients ?? Set()
+            systemMessage.serverTimestamp = message.timestamp
+
+            if let duration = message.duration {
+                systemMessage.duration = duration
+            }
+
+            if let messageTimer = message.messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
+
+            systemMessage.relevantForConversationStatus = message.relevantForStatus
+            systemMessage.participantsRemovedReason = message.removedReason
+            systemMessage.domains = message.domains
+
+            conversation.append(systemMessage)
         }
     }
 
