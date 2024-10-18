@@ -28,5 +28,4 @@ public extension MainCoordinator {
 
     typealias ConnectUI = Dependencies.ConnectUIBuilder.ViewController
     typealias SelfProfileUI = Dependencies.SelfProfileUIBuilder.ViewController
-    typealias User = Dependencies.UserProfileUIBuilder.User
 }

@@ -86,7 +86,6 @@ final class ZClientViewController: UIViewController {
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
-    private lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -118,8 +117,7 @@ final class ZClientViewController: UIViewController {
         settingsContentUIBuilder: settingsViewControllerBuilder,
         connectUIBuilder: connectBuilder,
         createGroupConversationUIBuilder: createGroupConversationBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        userProfileUIBuilder: userProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -249,8 +247,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
-        userProfileViewControllerBuilder.delegate = mainCoordinator
-        connectBuilder.delegate = mainCoordinator
+        connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
@@ -349,8 +346,6 @@ final class ZClientViewController: UIViewController {
         if let conversation = conversationsList.items.first {
             select(conversation: conversation)
         }
-
-        mainSplitViewController.show(.primary)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
@@ -672,7 +667,7 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11620] check if the conversation is opened, e.g. after accepting a connection request
+        // TODO: [WPB-11620] dismiss animation is missing
         dismissAllModalControllers { [weak self] in
             guard
                 let self,

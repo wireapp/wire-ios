@@ -24,6 +24,7 @@ extension ProfilePresenter: ProfileViewControllerDelegate {
         guard let controller else { return }
 
         Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
