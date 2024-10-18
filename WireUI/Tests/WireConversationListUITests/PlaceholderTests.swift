@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireSettingsUI
+@testable import WireConversationListUI
 
 final class PlaceholderTests: XCTestCase {
 

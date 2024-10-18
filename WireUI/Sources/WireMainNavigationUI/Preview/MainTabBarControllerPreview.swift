@@ -20,13 +20,10 @@ import SwiftUI
 
 @MainActor
 func MainTabBarControllerPreview() -> some MainTabBarControllerProtocol {
-    let tabBarController = MainTabBarController<PreviewConversationListViewController>()
-    tabBarController.conversations = (
-        .init("conversationList"),
-        .none
-    )
-    tabBarController.archive = PlaceholderViewController()
-    tabBarController.settings = PlaceholderViewController()
+    let tabBarController = PreviewTabBarController()
+    tabBarController.conversationListUI = .init("conversationList")
+    tabBarController.archiveUI = PlaceholderViewController()
+    tabBarController.settingsUI = .init()
     tabBarController.selectedContent = .conversations
     return tabBarController
 }
@@ -36,7 +33,7 @@ private final class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .yellow // ColorTheme.Backgrounds.surfaceVariant
+        view.backgroundColor = .yellow
         navigationItem.title = navigationController!.tabBarItem.title
         let imageView = UIImageView(image: navigationController!.tabBarItem.image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
