@@ -314,27 +314,43 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         user: ZMUser,
         removalDate: Date
     ) async {
-        await context.perform {
+        let allGroupConversations = await context.perform {
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
                 guard $0.conversation?.conversationType == .group else {
                     return nil
                 }
+                
                 return $0.conversation
             }
-
-            for conversation in allGroupConversations {
-                if user.isTeamMember, conversation.team == user.team {
-                    conversation.appendTeamMemberRemovedSystemMessage(
-                        user: user,
-                        at: removalDate
-                    )
-                } else {
-                    conversation.appendParticipantRemovedSystemMessage(
-                        user: user,
-                        at: removalDate
-                    )
-                }
-
+            
+            return allGroupConversations
+        }
+        
+        for conversation in allGroupConversations {
+            if user.isTeamMember, conversation.team == user.team {
+                
+                let systemMessage = SystemMessage(
+                    type: .teamMemberLeave,
+                    sender: user,
+                    users: [user],
+                    timestamp: removalDate
+                )
+                
+                await addSystemMessage(systemMessage, to: conversation)
+                
+            } else {
+                
+                let systemMessage = SystemMessage(
+                    type: .participantsRemoved,
+                    sender: user,
+                    users: [user],
+                    timestamp: removalDate
+                )
+                
+                await addSystemMessage(systemMessage, to: conversation)
+            }
+            
+            await context.perform {
                 conversation.removeParticipantAndUpdateConversationState(
                     user: user,
                     initiatingUser: user
