@@ -9,11 +9,14 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
+        .library(name: "WireSystemPackage", targets: ["WireSystemPackage"]),
+        .library(name: "WireSystemPackageSupport", targets: ["WireSystemPackageSupport"]),
         .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin")
     ],
@@ -26,6 +29,24 @@ let package = Package(
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
+        ),
+
+        .target(name: "WireSystemPackage", path: "./Sources/WireSystem"),
+        .testTarget(
+            name: "WireSystemPackageTests",
+            dependencies: [
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                "WireSystemPackage",
+                "WireSystemPackageSupport",
+                "WireTestingPackage"
+            ],
+            path: "./Tests/WireSystemTests"
+        ),
+        .target(
+            name: "WireSystemPackageSupport",
+            dependencies: ["WireSystemPackage"],
+            path: "./Sources/WireSystemSupport",
             plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
         ),
 
