@@ -12,6 +12,129 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect-changes-new:
+    if: github.event.pull_request.draft == false
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
+
+      - uses: maxim-lobanov/setup-xcode@v1.5.1
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+            path: fastlane/
+
+      - name: Restore Carthage Cache
+        uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+
+      - name: Bootstrap Carthage if no cache
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+      - name: Restore Bundler Cache
+        uses: actions/cache@v3
+        id: cache-bundler
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-bundler-${{ hashFiles('Gemfile.lock') }}
+
+      - name: Setup workspace
+        run: |
+          ./setup.sh
+      
+      - name: Setup simulator
+        run: |
+          bundle exec fastlane prepare_for_tests
+      
+      - name: Setup selective testing
+        run: |
+          mint run mikeger/XcodeSelectiveTesting@0.9.3 --base-branch $GITHUB_BASE_REF
+      - name: Run tests
+        run: |
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS.junit
+
+      - name: Upload Failed snapshots
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Failed Snapshots and log
+          path: |
+            wire-ios/SnapshotResults/    
+            xcodebuild*.log
+
+      - name: Upload Test Reports as Artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            build/reports/*.junit
+
+      - name: Prepare visual representation of test results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always()
+        with:
+          files: |
+            build/reports/*.junit
+          compare_to_earlier_commit: false
+            
+      - name: Archiving DerivedData Logs
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: derived-data-xcode
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+
+      - name: Notify on Wire if failed
+        if: ${{ failure() && github.ref_name == 'develop' }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+
+  upload-test-results-datadadog:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    steps:
+      - name: Download tests results
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: test-reports
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install datadog-ci
+        run: npm install -g @datadog/datadog-ci
+      - name: "Upload results"
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ci
+          DATADOG_SITE: datadoghq.eu
+        run: |
+          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+
+
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
