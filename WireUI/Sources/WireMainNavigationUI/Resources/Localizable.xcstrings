@@ -455,7 +455,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.contacts.description"
           }
         },
@@ -573,7 +573,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.contacts.hint"
           }
         },
@@ -1187,7 +1187,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.folders.description"
           }
         },
@@ -1305,7 +1305,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.folders.hint"
           }
         },
@@ -1547,7 +1547,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.settings.description"
           }
         },
@@ -1665,7 +1665,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "tabBar.settings.hint"
           }
         },
