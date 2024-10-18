@@ -86,7 +86,6 @@ final class ZClientViewController: UIViewController {
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
-    private(set) lazy var userProfileViewControllerBuilder = UserProfileViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -248,7 +247,6 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
-        userProfileViewControllerBuilder.delegate = mainCoordinator
         connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
 

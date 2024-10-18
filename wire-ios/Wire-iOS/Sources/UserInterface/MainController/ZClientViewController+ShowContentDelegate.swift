@@ -50,10 +50,6 @@ extension ZClientViewController {
             return
         }
 
-        // TODO: create UserProfileUI target and BuilderProtocol+Builder?
-
-        print(userProfileViewControllerBuilder)
-
         let profileViewController = ProfileViewController(
             user: user,
             viewer: selfUser,

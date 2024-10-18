@@ -40,5 +40,4 @@ enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependenci
     typealias ConnectUIBuilder = StartUIViewControllerBuilder
     typealias CreateGroupConversationUIBuilder = CreateGroupConversationViewControllerBuilder
     typealias SelfProfileUIBuilder = SelfProfileViewControllerBuilder
-    typealias UserProfileUIBuilder = UserProfileViewControllerBuilder
 }
