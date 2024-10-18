@@ -32,7 +32,11 @@ let package = Package(
             plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
         ),
 
-        .target(name: "WireSystemPackage", path: "./Sources/WireSystem"),
+        .target(
+            name: "WireSystemPackage",
+            dependencies: ["ZipArchive"],
+            path: "./Sources/WireSystem"
+        ),
         .testTarget(
             name: "WireSystemPackageTests",
             dependencies: [
@@ -49,6 +53,7 @@ let package = Package(
             path: "./Sources/WireSystemSupport",
             plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
         ),
+        .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework"),
 
         .target(
             name: "WireUtilitiesPackage",
