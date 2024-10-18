@@ -54,7 +54,7 @@ public protocol UserLocalStoreProtocol {
 
     /// Removes user push token from storage.
 
-    func deletePushTokenFromUserDefaults()
+    func deletePushToken()
 
     /// Fetches or creates a user client locally.
     ///
@@ -225,7 +225,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         return (user, isSelfUser)
     }
     
-    public func deletePushTokenFromUserDefaults() {
+    public func deletePushToken() {
         userDefaults.set(
             nil,
             forKey: DefaultsKeys.pushToken.rawValue

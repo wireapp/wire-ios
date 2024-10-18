@@ -160,6 +160,11 @@ public protocol UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws
+    
+    func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -252,7 +257,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func removePushToken() {
-        userLocalStore.deletePushTokenFromUserDefaults()
+        userLocalStore.deletePushToken()
     }
 
     public func fetchOrCreateUserClient(
@@ -329,8 +334,8 @@ public final class UserRepository: UserRepositoryProtocol {
             break
 
         case .labels:
-            /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
-            /// see `ConversationLabelsRepository`
+            // Already handled with `user.properties-set` event (adding new labels and removing old ones)
+            // see `ConversationLabelsRepository`
             break
         }
     }
@@ -355,5 +360,17 @@ public final class UserRepository: UserRepositoryProtocol {
                 removalDate: date
             )
         }
+    }
+    
+    public func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool {
+        let (_, isSelfUser) = try await userLocalStore.isSelfUser(
+            id: id,
+            domain: domain
+        )
+       
+        return isSelfUser
     }
 }

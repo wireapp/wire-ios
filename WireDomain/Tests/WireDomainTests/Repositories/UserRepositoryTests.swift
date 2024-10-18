@@ -457,7 +457,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.updateUser(from: Scaffolding.event)
+        await sut.updateUser(from: Scaffolding.event)
 
         // Then
 
@@ -470,6 +470,27 @@ final class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
             XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
         }
+    }
+    
+    func testIsSelfUser_Returns_True_If_Is_Self_User() async throws {
+        
+        // Mock
+        
+        let user = await context.perform { [self] in
+            modelHelper.createSelfUser(id: Scaffolding.userID, in: context)
+        }
+        
+        // When
+        
+        let isSelfUser = try await sut.isSelfUser(id: Scaffolding.userID, domain: nil)
+        
+        // Then
+        
+        let isUserSelfUser = await context.perform {
+            user.isSelfUser
+        }
+        
+        XCTAssertEqual(isUserSelfUser, isSelfUser)
     }
 
     private enum Scaffolding {
