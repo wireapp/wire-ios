@@ -163,7 +163,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/Package.resolved') }}-${{ env.ENABLE_DATADOG }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_DATADOG }}
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
