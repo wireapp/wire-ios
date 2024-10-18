@@ -242,16 +242,16 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - removeFromConversations
+    // MARK: - removeUserFromAllGroupConversations
 
-    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var removeUserFromAllGroupConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeUserFromAllGroupConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
 
-    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+    public func removeUserFromAllGroupConversations(user: ZMUser, removalDate: Date) async {
+        removeUserFromAllGroupConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
 
-        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
-            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        guard let mock = removeUserFromAllGroupConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeUserFromAllGroupConversationsUserRemovalDate`")
         }
 
         await mock(user, removalDate)
@@ -306,6 +306,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(message, conversation)
+    }
+
+    // MARK: - fetchMLSGroupID
+
+    public var fetchMLSGroupIDFor_Invocations: [ZMConversation] = []
+    public var fetchMLSGroupIDFor_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
+    public var fetchMLSGroupIDFor_MockValue: MLSGroupID??
+
+    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
+        fetchMLSGroupIDFor_Invocations.append(conversation)
+
+        if let mock = fetchMLSGroupIDFor_MockMethod {
+            return await mock(conversation)
+        } else if let mock = fetchMLSGroupIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSGroupIDFor`")
+        }
     }
 
 }
@@ -396,16 +414,16 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
     }
 
-    // MARK: - removeFromConversations
+    // MARK: - removeUserFromAllGroupConversations
 
-    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var removeUserFromAllGroupConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeUserFromAllGroupConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
 
-    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+    public func removeUserFromAllGroupConversations(user: ZMUser, removalDate: Date) async {
+        removeUserFromAllGroupConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
 
-        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
-            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        guard let mock = removeUserFromAllGroupConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeUserFromAllGroupConversationsUserRemovalDate`")
         }
 
         await mock(user, removalDate)
@@ -413,22 +431,37 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - removeMembers
 
-    public var removeMembersWithFromInitiatedByAtReason_Invocations: [(IDs: Set<UserID>, conversation: ConversationID, sender: UserID, date: Date, reason: ConversationMemberLeaveReason)] = []
-    public var removeMembersWithFromInitiatedByAtReason_MockError: Error?
-    public var removeMembersWithFromInitiatedByAtReason_MockMethod: ((Set<UserID>, ConversationID, UserID, Date, ConversationMemberLeaveReason) async throws -> Void)?
+    public var removeMembersFromInitiatedByAtReason_Invocations: [(userIDs: Set<UserID>, conversation: ConversationID, sender: UserID, date: Date, reason: ConversationMemberLeaveReason)] = []
+    public var removeMembersFromInitiatedByAtReason_MockError: Error?
+    public var removeMembersFromInitiatedByAtReason_MockMethod: ((Set<UserID>, ConversationID, UserID, Date, ConversationMemberLeaveReason) async throws -> Void)?
 
-    public func removeMembers(with IDs: Set<UserID>, from conversation: ConversationID, initiatedBy sender: UserID, at date: Date, reason: ConversationMemberLeaveReason) async throws {
-        removeMembersWithFromInitiatedByAtReason_Invocations.append((IDs: IDs, conversation: conversation, sender: sender, date: date, reason: reason))
+    public func removeMembers(_ userIDs: Set<UserID>, from conversation: ConversationID, initiatedBy sender: UserID, at date: Date, reason: ConversationMemberLeaveReason) async throws {
+        removeMembersFromInitiatedByAtReason_Invocations.append((userIDs: userIDs, conversation: conversation, sender: sender, date: date, reason: reason))
 
-        if let error = removeMembersWithFromInitiatedByAtReason_MockError {
+        if let error = removeMembersFromInitiatedByAtReason_MockError {
             throw error
         }
 
-        guard let mock = removeMembersWithFromInitiatedByAtReason_MockMethod else {
-            fatalError("no mock for `removeMembersWithFromInitiatedByAtReason`")
+        guard let mock = removeMembersFromInitiatedByAtReason_MockMethod else {
+            fatalError("no mock for `removeMembersFromInitiatedByAtReason`")
         }
 
-        try await mock(IDs, conversation, sender, date, reason)
+        try await mock(userIDs, conversation, sender, date, reason)
+    }
+
+    // MARK: - addSystemMessage
+
+    public var addSystemMessageTo_Invocations: [(message: SystemMessage, conversation: ZMConversation)] = []
+    public var addSystemMessageTo_MockMethod: ((SystemMessage, ZMConversation) async -> Void)?
+
+    public func addSystemMessage(_ message: SystemMessage, to conversation: ZMConversation) async {
+        addSystemMessageTo_Invocations.append((message: message, conversation: conversation))
+
+        guard let mock = addSystemMessageTo_MockMethod else {
+            fatalError("no mock for `addSystemMessageTo`")
+        }
+
+        await mock(message, conversation)
     }
 
 }
@@ -612,22 +645,22 @@ public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
 
     // MARK: - deleteMembership
 
-    public var deleteMembershipForUserFromTeamAt_Invocations: [(userID: UUID, teamID: UUID, time: Date)] = []
-    public var deleteMembershipForUserFromTeamAt_MockError: Error?
-    public var deleteMembershipForUserFromTeamAt_MockMethod: ((UUID, UUID, Date) async throws -> Void)?
+    public var deleteMembershipForDomainAt_Invocations: [(userID: UUID, domain: String?, time: Date)] = []
+    public var deleteMembershipForDomainAt_MockError: Error?
+    public var deleteMembershipForDomainAt_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
-    public func deleteMembership(forUser userID: UUID, fromTeam teamID: UUID, at time: Date) async throws {
-        deleteMembershipForUserFromTeamAt_Invocations.append((userID: userID, teamID: teamID, time: time))
+    public func deleteMembership(for userID: UUID, domain: String?, at time: Date) async throws {
+        deleteMembershipForDomainAt_Invocations.append((userID: userID, domain: domain, time: time))
 
-        if let error = deleteMembershipForUserFromTeamAt_MockError {
+        if let error = deleteMembershipForDomainAt_MockError {
             throw error
         }
 
-        guard let mock = deleteMembershipForUserFromTeamAt_MockMethod else {
-            fatalError("no mock for `deleteMembershipForUserFromTeamAt`")
+        guard let mock = deleteMembershipForDomainAt_MockMethod else {
+            fatalError("no mock for `deleteMembershipForDomainAt`")
         }
 
-        try await mock(userID, teamID, time)
+        try await mock(userID, domain, time)
     }
 
     // MARK: - storeTeamMemberNeedsBackendUpdate
@@ -921,16 +954,16 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
-    // MARK: - deletePushTokenFromUserDefaults
+    // MARK: - deletePushToken
 
-    public var deletePushTokenFromUserDefaults_Invocations: [Void] = []
-    public var deletePushTokenFromUserDefaults_MockMethod: (() -> Void)?
+    public var deletePushToken_Invocations: [Void] = []
+    public var deletePushToken_MockMethod: (() -> Void)?
 
-    public func deletePushTokenFromUserDefaults() {
-        deletePushTokenFromUserDefaults_Invocations.append(())
+    public func deletePushToken() {
+        deletePushToken_Invocations.append(())
 
-        guard let mock = deletePushTokenFromUserDefaults_MockMethod else {
-            fatalError("no mock for `deletePushTokenFromUserDefaults`")
+        guard let mock = deletePushToken_MockMethod else {
+            fatalError("no mock for `deletePushToken`")
         }
 
         mock()
@@ -1404,6 +1437,29 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
 
         try await mock(id, domain, date)
+    }
+
+    // MARK: - isSelfUser
+
+    public var isSelfUserIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var isSelfUserIdDomain_MockError: Error?
+    public var isSelfUserIdDomain_MockMethod: ((UUID, String?) async throws -> Bool)?
+    public var isSelfUserIdDomain_MockValue: Bool?
+
+    public func isSelfUser(id: UUID, domain: String?) async throws -> Bool {
+        isSelfUserIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = isSelfUserIdDomain_MockError {
+            throw error
+        }
+
+        if let mock = isSelfUserIdDomain_MockMethod {
+            return try await mock(id, domain)
+        } else if let mock = isSelfUserIdDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isSelfUserIdDomain`")
+        }
     }
 
 }
