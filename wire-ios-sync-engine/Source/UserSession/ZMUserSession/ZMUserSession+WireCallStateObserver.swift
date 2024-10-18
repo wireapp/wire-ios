@@ -30,6 +30,8 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         previousCallState: CallState?
     ) {
         guard let conversationId = conversation.remoteIdentifier else { return }
+        // Prevent duplicate tracking if state hasn't changed
+        guard callState != previousCallState else { return }
 
         let isVideoCall = isVideoCall(for: conversation)
 
