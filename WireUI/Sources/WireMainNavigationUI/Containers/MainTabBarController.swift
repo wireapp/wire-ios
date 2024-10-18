@@ -114,8 +114,16 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "text.bubble.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.conversations.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.conversations.hint", bundle: .module)
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.conversations.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.conversations.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
                 conversationListNavigationController.tabBarItem = tabBarItem
 
             case .archive:
@@ -125,8 +133,16 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.archived.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.archived.hint", bundle: .module)
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.archived.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.archived.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
                 archiveNavigationController.tabBarItem = tabBarItem
 
             case .settings:
@@ -137,8 +153,16 @@ public final class MainTabBarController<
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
                 // TODO: [WPB-9727] missing string localization
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.settings.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.settings.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
                 settingsNavigationController.tabBarItem = tabBarItem
             }
         }
