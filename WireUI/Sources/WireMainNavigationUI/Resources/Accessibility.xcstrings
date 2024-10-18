@@ -517,6 +517,12 @@
             "value" : "tabBar.settings.description"
           }
         },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "new",
@@ -633,6 +639,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "tabBar.settings.hint"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double tap to open Settings"
           }
         },
         "es" : {
