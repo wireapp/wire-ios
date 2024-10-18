@@ -346,9 +346,6 @@ final class ZClientViewController: UIViewController {
         if let conversation = conversationsList.items.first {
             select(conversation: conversation)
         }
-
-        // TODO: remove?
-        mainSplitViewController.show(.primary)
     }
 
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
