@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ZClientViewController: ProfileViewControllerDelegate {
 
-    func profileViewController(_ controller: ProfileViewController, wantsToNavigateTo conversation: ZMConversation) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         select(conversation: conversation, focusOnView: true, animated: true)
     }
 

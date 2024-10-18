@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-// import WireMainNavigationUI
 
 extension ZClientViewController: StartUIDelegate {
 
@@ -56,6 +55,7 @@ extension ZClientViewController: StartUIDelegate {
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }

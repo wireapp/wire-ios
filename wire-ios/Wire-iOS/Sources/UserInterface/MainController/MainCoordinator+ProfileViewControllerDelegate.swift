@@ -22,7 +22,7 @@ import WireMainNavigationUI
 extension MainCoordinator: ProfileViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 
     func profileViewController(
-        _ controller: ProfileViewController,
+        _ controller: ProfileViewController?,
         wantsToNavigateTo conversation: ZMConversation
     ) {
         Task { @MainActor in

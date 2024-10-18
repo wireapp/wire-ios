@@ -22,9 +22,9 @@ import WireDataModel
 extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
 
     // TODO: check animations
-    func profileViewController(_ controller: ProfileViewController, wantsToNavigateTo conversation: ZMConversation) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
 
-        controller.dismiss(animated: true) {
+        controller?.dismiss(animated: true) {
             ZClientViewController.shared?.select(
                 conversation: conversation,
                 focusOnView: true,

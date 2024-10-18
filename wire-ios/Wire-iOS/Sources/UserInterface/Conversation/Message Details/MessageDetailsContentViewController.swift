@@ -411,7 +411,7 @@ extension MessageDetailsContentViewController: ViewControllerDismisser {
 
 extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
     func profileViewController(
-        _ controller: ProfileViewController,
+        _ controller: ProfileViewController?,
         wantsToNavigateTo conversation: ZMConversation
     ) {
         dismiss(animated: true) {

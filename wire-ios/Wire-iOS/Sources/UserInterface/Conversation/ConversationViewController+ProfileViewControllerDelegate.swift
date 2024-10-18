@@ -37,9 +37,9 @@ extension ConversationViewController {
 }
 
 extension ConversationViewController: ProfileViewControllerDelegate {
-    func profileViewController(_ controller: ProfileViewController, wantsToNavigateTo conversation: ZMConversation) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
-            // TODO: showConversationList?
+            await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
