@@ -27,6 +27,7 @@ private enum NotificationUserInfoKey: String {
     case requestID = "requestIDString"
     case conversationID = "conversationIDString"
     case messageNonce = "messageNonceString"
+    case eventID = "eventIDString"
     case senderID = "senderIDString"
     case eventTime = "eventTime"
     case selfUserID = "selfUserIDString"
@@ -104,6 +105,11 @@ public class NotificationUserInfo: NSObject, NSCoding {
         set { self[.messageNonce] = newValue?.uuidString }
     }
 
+    public var eventID: UUID? {
+        get { return uuid(for: .eventID) }
+        set { self[.eventID] = newValue?.uuidString }
+    }
+
     public var senderID: UUID? {
         get { return uuid(for: .senderID) }
         set { self[.senderID] = newValue?.uuidString }
@@ -147,6 +153,7 @@ extension NotificationUserInfo {
                 lhs.conversationName == rhs.conversationName &&
                 lhs.teamName == rhs.teamName &&
                 lhs.messageNonce == rhs.messageNonce &&
+                lhs.eventID == rhs.eventID &&
                 lhs.senderID == rhs.senderID &&
                 lhs.eventTime == rhs.eventTime &&
                 lhs.selfUserID == rhs.selfUserID
@@ -220,6 +227,7 @@ extension NotificationUserInfo {
         self.conversationID = conversation.remoteIdentifier
         self.senderID = event.senderUUID
         self.messageNonce = event.messageNonce
+        self.eventTime = event.uuid
         self.eventTime = event.timestamp
     }
 
