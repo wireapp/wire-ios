@@ -22,7 +22,7 @@ class FileManager_CryptoboxTests: XCTestCase {
 
     func testThatItReturnsTheCryptoboxPath() {
         // given
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let url = URL.cachesDirectory
 
         // when
         let storeURL = FileManager.keyStoreURL(accountDirectory: url, createParentIfNeeded: false)
@@ -38,7 +38,7 @@ class FileManager_CryptoboxTests: XCTestCase {
 
     func testThatItCreatesTheParentDirectoryIfNeededAndExcludesItFromBackup() {
         // given
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let url = URL.cachesDirectory
 
         // when
         let storeURL = FileManager.keyStoreURL(accountDirectory: url, createParentIfNeeded: true)
@@ -58,7 +58,7 @@ class FileManager_CacheTests: XCTestCase {
 
     func testThatItReturnsTheCachesDirectory_WithAccountId() {
         // given
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let url = URL.cachesDirectory
         let accountId = UUID()
 
         // when
@@ -84,7 +84,7 @@ class FileManager_CacheTests: XCTestCase {
 
     func testThatItReturnsTheCachesDirectory_WithoutAccountId() {
         // given
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let url = URL.cachesDirectory
 
         // when
         let cachesURL = FileManager.default.cachesURLForAccount(with: nil, in: url)

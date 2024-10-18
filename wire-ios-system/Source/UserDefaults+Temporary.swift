@@ -55,8 +55,8 @@ private final class SuiteCleanUp {
         // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app id>/Library/Preferences/<suiteName>.plist
         do {
             let fileManager = FileManager.default
-            let url = try fileManager
-                .url(for: .libraryDirectory, in: .userDomainMask, appropriateFor: .init(string: "/")!, create: false)
+            let url = URL
+                .libraryDirectory
                 .appendingPathComponent("Preferences")
                 .appendingPathComponent(suiteName + ".plist")
             if fileManager.fileExists(atPath: url.path) {

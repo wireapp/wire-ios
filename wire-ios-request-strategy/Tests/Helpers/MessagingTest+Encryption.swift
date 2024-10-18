@@ -122,7 +122,7 @@ extension MessagingTestBase {
 
     /// Returns the folder where the encryption contexts for other test clients are stored
     var otherClientsEncryptionContextsURL: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("OtherClients")
+        return URL.cachesDirectory.appendingPathComponent("OtherClients")
     }
 
     /// Returns the encryption context to use for a given client. There are extra cryptobox sessions

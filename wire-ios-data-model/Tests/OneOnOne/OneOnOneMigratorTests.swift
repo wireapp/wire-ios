@@ -215,9 +215,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         }
 
         // required to add be able to add images
-        let cacheLocation = try XCTUnwrap(
-            FileManager.default.randomCacheURL
-        )
+        let cacheLocation = FileManager.default.randomCacheURL
 
         await syncContext.perform {
             self.syncContext.zm_fileAssetCache = FileAssetCache(location: cacheLocation)

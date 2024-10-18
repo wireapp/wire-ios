@@ -27,20 +27,11 @@ public final class AssertionDumpFile: NSObject {
     }
 
     public static var url: URL {
-        get throws {
-            let applicationSupportDirectory = try FileManager.default.url(
-                for: .applicationSupportDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: true
-            )
-
-            return applicationSupportDirectory.appendingPathComponent("last_assertion.log")
-        }
+        URL.applicationSupportDirectory.appendingPathComponent("last_assertion.log")
     }
 
     public static func write(content: String) throws {
-        var dumpFile = try url
+        var dumpFile = url
         try Data().write(to: dumpFile)
 
         var resourceValues = URLResourceValues()

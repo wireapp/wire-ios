@@ -23,8 +23,7 @@ import XCTest
 extension ZMBaseManagedObjectTest {
 
     var storageDirectory: URL {
-        FileManager.default.urls(for: .documentDirectory,
-                                 in: .userDomainMask).first!
+        URL.documentsDirectory
     }
 
     func createClientTextMessage(in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {

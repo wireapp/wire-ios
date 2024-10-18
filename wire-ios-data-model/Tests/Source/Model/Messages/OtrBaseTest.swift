@@ -30,7 +30,7 @@ class OtrBaseTest: XCTestCase {
     }
 
     static var sharedContainerURL: URL {
-        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        URL.applicationSupportDirectory
     }
 
     static func otrDirectoryURL(accountIdentifier: UUID) -> URL {

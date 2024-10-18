@@ -25,9 +25,7 @@ class DatabaseBaseTest: ZMTBaseTest {
     var accountID: UUID = UUID.create()
 
     public static var applicationContainer: URL {
-        FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first!
+        URL.applicationSupportDirectory
             .appendingPathComponent("StorageStackTests")
     }
 

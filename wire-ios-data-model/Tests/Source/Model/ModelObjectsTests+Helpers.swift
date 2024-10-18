@@ -79,7 +79,7 @@ extension ModelObjectsTests {
     }
 
     func testURLWithFilename(_ filename: String) -> URL {
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let documents = URL.documentDirectory
         let documentsURL = URL(fileURLWithPath: documents)
         return documentsURL.appendingPathComponent(filename)
     }

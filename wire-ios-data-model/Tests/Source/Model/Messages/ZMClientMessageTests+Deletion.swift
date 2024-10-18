@@ -100,7 +100,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAnAssetMessage_File() {
         // given
         let data = Data("Hello World".utf8)
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let documents = URL.documentDirectory
         let url = URL(fileURLWithPath: documents).appendingPathComponent("file.dat")
 
         defer { try! FileManager.default.removeItem(at: url) }

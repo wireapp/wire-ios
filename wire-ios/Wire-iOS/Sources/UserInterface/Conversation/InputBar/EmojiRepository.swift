@@ -59,20 +59,12 @@ final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Recently used
 
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID]) {
-        guard
-            let emojiDirectory,
-            let recentlyUsedEmojisURL
-        else {
-            return
-        }
-
         try! FileManager.default.createAndProtectDirectory(at: emojiDirectory)
         (emojis as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
     }
 
     func fetchRecentlyUsedEmojis() -> [Emoji] {
         guard
-            let recentlyUsedEmojisURL,
             let emojiValues = NSArray(contentsOf: recentlyUsedEmojisURL) as? [String]
         else {
             return []
@@ -82,7 +74,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
     }
 
     private lazy var emojiDirectory = URL.directoryURL("emoji")
-    private lazy var recentlyUsedEmojisURL = emojiDirectory?.appendingPathComponent("recently_used.plist")
+    private lazy var recentlyUsedEmojisURL = emojiDirectory.appendingPathComponent("recently_used.plist")
 
     // MARK: - Availability
 

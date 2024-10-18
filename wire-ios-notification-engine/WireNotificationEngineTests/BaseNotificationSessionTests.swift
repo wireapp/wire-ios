@@ -53,12 +53,7 @@ class BaseTest: ZMTBaseTest {
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
-        cachesDirectory = try! FileManager.default.url(
-            for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
-        )
+        cachesDirectory = URL.cachesDirectory
 
         let account = Account(
             userName: "",

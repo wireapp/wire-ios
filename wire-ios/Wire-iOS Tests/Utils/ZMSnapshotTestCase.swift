@@ -35,7 +35,7 @@ class ZMSnapshotTestCase: XCTestCase {
         return false
     }
 
-    var documentsDirectory: URL?
+    var documentsDirectory: URL!
 
     override open func setUp() {
         super.setUp()
@@ -50,11 +50,7 @@ class ZMSnapshotTestCase: XCTestCase {
         accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
-        do {
-            documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        documentsDirectory = URL.documentsDirectory
 
         setupCoreDataStack()
         if needsCaches {
@@ -65,7 +61,7 @@ class ZMSnapshotTestCase: XCTestCase {
     func setupCoreDataStack() {
         let account = Account(userName: "", userIdentifier: UUID())
         let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: documentsDirectory!,
+                                          applicationContainer: documentsDirectory,
                                           inMemoryStore: true)
 
         coreDataStack.loadStores(completionHandler: { error in
@@ -92,7 +88,7 @@ class ZMSnapshotTestCase: XCTestCase {
 
     func removeContentsOfDocumentsDirectory() {
         do {
-            let contents = try FileManager.default.contentsOfDirectory(at: documentsDirectory!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let contents = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
 
             for content: URL in contents {
                 do {
@@ -115,9 +111,8 @@ class ZMSnapshotTestCase: XCTestCase {
     }
 
     func setUpCaches() {
-        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: .cachesDirectory)
     }
 
 }

@@ -206,7 +206,7 @@ extension MockUserClient {
 @objc extension MockUserClient {
 
     public static var mockEncryptionSessionDirectory: URL {
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
+        return URL.applicationSupportDirectory.appendingPathComponent("mocktransport-encryptionDirectory")
     }
 
     static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {

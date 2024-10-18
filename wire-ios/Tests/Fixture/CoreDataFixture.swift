@@ -58,7 +58,7 @@ final class CoreDataFixture {
         return false
     }
 
-    var documentsDirectory: URL?
+    var documentsDirectory: URL
 
     init() {
         /// From ZMSnapshotTestCase
@@ -71,16 +71,12 @@ final class CoreDataFixture {
         UIView.setAnimationsEnabled(false)
         snapshotBackgroundColor = UIColor.clear
 
-        do {
-            documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        } catch {
-            XCTAssertNil(error, "Unexpected error \(error)")
-        }
+        documentsDirectory = URL.documentsDirectory
 
         let account = Account(userName: "", userIdentifier: UUID())
         let group = ZMSDispatchGroup(dispatchGroup: dispatchGroup, label: "CoreDataStack")
         let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: documentsDirectory!,
+                                          applicationContainer: documentsDirectory,
                                           inMemoryStore: true,
                                           dispatchGroup: group)
 
@@ -115,9 +111,8 @@ final class CoreDataFixture {
     }
 
     func setUpCaches() {
-        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: .cachesDirectory)
     }
 
     // MARK: – Setup
