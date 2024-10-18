@@ -63,6 +63,34 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireSystemPackage"
+               BuildableName = "WireSystemPackage"
+               BlueprintName = "WireSystemPackage"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireSystemPackageSupport"
+               BuildableName = "WireSystemPackageSupport"
+               BlueprintName = "WireSystemPackageSupport"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -94,6 +122,16 @@
                BlueprintIdentifier = "WireUtilitiesPackageTests"
                BuildableName = "WireUtilitiesPackageTests"
                BlueprintName = "WireUtilitiesPackageTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireSystemPackageTests"
+               BuildableName = "WireSystemPackageTests"
+               BlueprintName = "WireSystemPackageTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
