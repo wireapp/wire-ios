@@ -46,12 +46,12 @@ public protocol TeamRepositoryProtocol {
 
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.
-    /// - Parameter teamID: The ID of the team.
+    /// - Parameter domain: The domain of the team member.
     /// - Parameter time: The time the member left the team.
 
     func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
+        for userID: UUID,
+        domain: String?,
         at time: Date
     ) async throws
 
@@ -69,6 +69,8 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create TeamLocalStore
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
@@ -114,18 +116,18 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
+        for userID: UUID,
+        domain: String?,
         at time: Date
     ) async throws {
         let user = try await userRepository.fetchUser(
             with: userID,
-            domain: nil
+            domain: domain
         )
 
         let member = try await context.perform {
             guard let member = user.membership else {
-                throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
+                throw TeamRepositoryError.userNotAMemberInTeam(user: userID)
             }
 
             return member
