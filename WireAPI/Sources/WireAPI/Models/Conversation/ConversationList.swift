@@ -17,7 +17,7 @@
 //
 
 /// A list of conversations categorized by status.
-public struct ConversationList {
+public struct ConversationList: Sendable {
 
     /// Representing objects of resolved conversations.
     public let found: [Conversation]

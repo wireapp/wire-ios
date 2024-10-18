@@ -43,7 +43,7 @@ final class EphemeralKeyboardViewController: UIViewController {
 
     private let titleLabel = DynamicFontLabel(
         text: L10n.Localizable.Input.Ephemeral.title,
-        fontSpec: .mediumSemiboldFont,
+        style: .body1,
         color: SemanticColors.Label.textDefault
     )
 

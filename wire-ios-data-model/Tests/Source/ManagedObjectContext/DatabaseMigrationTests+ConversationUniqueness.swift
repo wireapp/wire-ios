@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 import XCTest
 
-@available(iOS 15.0, *)
 final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
