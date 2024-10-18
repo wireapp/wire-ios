@@ -27,6 +27,7 @@ import XCTest
 final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     private var sut: PushSupportedProtocolsUseCase!
+    private var userLocalStore: MockUserLocalStoreProtocol!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
     private var modelHelper: ModelHelper!
@@ -44,6 +45,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         mockSelfUserAPI = MockSelfUserAPI()
+        userLocalStore = MockUserLocalStoreProtocol()
 
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
@@ -51,11 +53,10 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
                 context: context
             ),
             userRepository: UserRepository(
-                context: context,
                 usersAPI: MockUsersAPI(),
                 selfUserAPI: mockSelfUserAPI,
-                conversationLabelsRepository: MockConversationLabelsRepositoryProtocol(),
-                conversationRepository: MockConversationRepositoryProtocol()
+                conversationLabelsRepository: MockConversationLabelsRepositoryProtocol(), conversationRepository: MockConversationRepositoryProtocol(),
+                userLocalStore: userLocalStore
             )
         )
     }
@@ -63,6 +64,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         try await super.tearDown()
         sut = nil
+        userLocalStore = nil
         stack = nil
         modelHelper = nil
         mockSelfUserAPI = nil
@@ -75,10 +77,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteus() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: true)
+        let selfUser = try await setup(allActiveMLSClients: true)
         await setup(remoteSupportedProtocols: [.proteus])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -100,10 +104,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteusAndMLS() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: true)
+        let selfUser = try await setup(allActiveMLSClients: true)
         await setup(remoteSupportedProtocols: [.proteus, .mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.proteus, .mls]),
@@ -125,10 +131,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteMLS() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: true)
+        let selfUser = try await setup(allActiveMLSClients: true)
         await setup(remoteSupportedProtocols: [.mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.mls]),
@@ -150,10 +158,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteus() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: false)
+        let selfUser = try await setup(allActiveMLSClients: false)
         await setup(remoteSupportedProtocols: [.proteus])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = true
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -175,10 +185,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteusAndMLS() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: false)
+        let selfUser = try await setup(allActiveMLSClients: false)
         await setup(remoteSupportedProtocols: [.proteus, .mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.proteus]),
@@ -200,10 +212,12 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
         // Given
 
-        try await setup(allActiveMLSClients: false)
+        let selfUser = try await setup(allActiveMLSClients: false)
         await setup(remoteSupportedProtocols: [.mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        userLocalStore.fetchSelfUser_MockMethod = { selfUser }
+        userLocalStore.allSelfUserClientsAreActiveMLSClients_MockValue = false
 
         let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.mls]),
@@ -224,7 +238,8 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     // MARK: - Setup
 
-    private func setup(allActiveMLSClients: Bool) async throws {
+    @discardableResult
+    private func setup(allActiveMLSClients: Bool) async throws -> ZMUser {
         await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(id: UUID(), domain: nil, in: context)
 
@@ -251,6 +266,8 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
                     otherClient.lastActiveDate = invalidLastActiveDate
                 }
             }
+
+            return selfUser
         }
     }
 

@@ -273,8 +273,8 @@ final class TeamRepositoryTests: XCTestCase {
         // When
 
         try await sut.deleteMembership(
-            forUser: Scaffolding.userID,
-            fromTeam: Scaffolding.teamID,
+            for: Scaffolding.userID,
+            domain: nil,
             at: Scaffolding.date(from: Scaffolding.time)
         )
 

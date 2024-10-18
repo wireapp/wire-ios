@@ -314,20 +314,23 @@ public struct ModelHelper {
 
     @discardableResult
     public func createMLSConversation(
+        id: UUID = UUID(),
         mlsGroupID: MLSGroupID? = nil,
         mlsStatus: MLSGroupStatus = .ready,
         conversationType: ZMConversationType = .group,
         epoch: UInt64 = 0,
+        with participants: Set<ZMUser> = [],
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
+        conversation.remoteIdentifier = id
         conversation.domain = "domain.com"
         conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .mls
         conversation.mlsStatus = mlsStatus
         conversation.conversationType = conversationType
         conversation.epoch = epoch
+        conversation.addParticipantsAndUpdateConversationState(users: participants)
 
         return conversation
     }
