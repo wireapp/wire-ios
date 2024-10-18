@@ -31,7 +31,7 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: any MainCoordinatorProtocol
+    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
@@ -56,7 +56,9 @@ final class ConversationListViewController: UIViewController {
         button.setTitleColor(UIColor.accent(), for: .normal)
         button.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterView.RemoveButton.descritpion
         let action = UIAction { [weak self] _ in
-            self?.clearFilter()
+            Task {
+                await self?.mainCoordinator.showConversationList(conversationFilter: .none)
+            }
         }
         button.addAction(action, for: .touchUpInside)
         return button
@@ -105,24 +107,21 @@ final class ConversationListViewController: UIViewController {
             setupTitleView()
             updateNavigationItem()
             applyColorTheme()
+            updateFilterContainerView()
         }
     }
 
     // MARK: - Init
 
-    convenience init<MainCoordinator>(
+    convenience init(
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where
-    MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
-
+    ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
@@ -139,16 +138,12 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
-    required init<MainCoordinator>(
+    required init(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
-    ) where
-    MainCoordinator: MainCoordinatorProtocol,
-    MainCoordinator.ConversationModel == ZMConversation,
-    MainCoordinator.ConversationMessageModel == ZMConversationMessage {
-
+    ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
@@ -240,7 +235,7 @@ final class ConversationListViewController: UIViewController {
 
         adjustRightBarButtonItemsSpace()
         configureEmptyPlaceholder()
-        filterContainerView.isHidden = isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        updateFilterContainerView()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -298,6 +293,11 @@ final class ConversationListViewController: UIViewController {
 
         // Initially hide the filter container view
         filterContainerView.isHidden = true
+    }
+
+    func updateFilterContainerView() {
+        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
 
     private func setupListContentController() {
@@ -384,9 +384,7 @@ final class ConversationListViewController: UIViewController {
         } else {
             navigationItem.searchController = nil
         }
-        if #available(iOS 16.0, *) {
-            navigationItem.preferredSearchBarPlacement = .stacked
-        }
+        navigationItem.preferredSearchBarPlacement = .stacked
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
@@ -433,21 +431,16 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: ConversationFilter) {
-        self.listContentController.listViewModel.selectedFilter = filter
-        self.setupRightNavigationBarButtonItems()
-        self.setupSearchController()
-
-        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
-        filterContainerView.isHidden = isEmptyPlaceholderVisible
-        configureEmptyPlaceholder()
-    }
-
-    func clearFilter() {
-        listContentController.listViewModel.selectedFilter = .none
-        setupRightNavigationBarButtonItems()
+    func applyFilter(_ filter: ConversationFilter?) {
+        listContentController.listViewModel.selectedFilter = filter
+        setupTitleView()
+        if mainSplitViewState == .collapsed {
+            setupRightNavigationBarButtonItems()
+        } else {
+            setupRightNavigationBarButtonItems_SplitView()
+        }
         setupSearchController()
-        filterContainerView.isHidden = true
+        updateFilterContainerView()
         configureEmptyPlaceholder()
     }
 

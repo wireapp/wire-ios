@@ -275,10 +275,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
         let actionImage = FilterButtonStyleHelper.makeActionImage(named: imageName, isSelected: isSelected)
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
-            if let filter {
-                self?.applyFilter(filter)
-            } else {
-                self?.clearFilter()
+            Task {
+                await self?.mainCoordinator.showConversationList(conversationFilter: filter)
             }
         }
         action.accessibilityLabel = accessibilityLabelForFilterAction(for: filter, isSelected: isSelected)
