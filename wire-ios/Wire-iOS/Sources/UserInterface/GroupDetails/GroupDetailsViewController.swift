@@ -467,8 +467,9 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 }
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+    func profileViewController(_ controller: ProfileViewController, wantsToNavigateTo conversation: ZMConversation) {
         Task {
+            // TODO: showConversationList?
             await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }

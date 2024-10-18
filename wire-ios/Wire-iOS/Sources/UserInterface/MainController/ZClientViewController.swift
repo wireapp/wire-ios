@@ -687,6 +687,7 @@ final class ZClientViewController: UIViewController {
     }
 
     func select(conversation: ZMConversation) {
+        // TODO: align with select(conversation:scrollTo:focusOnView:animated)?
         conversationListViewController.viewModel.select(conversation: conversation)
     }
 

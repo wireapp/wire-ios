@@ -29,7 +29,7 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 @MainActor // TODO: check where this protocol is used
 protocol ProfileViewControllerDelegate: AnyObject {
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
+    func profileViewController(_ controller: ProfileViewController, wantsToNavigateTo conversation: ZMConversation)
 }
 
 extension ZMConversationType {
@@ -111,7 +111,7 @@ final class ProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
-            self?.delegate?.profileViewController(self, wantsToNavigateTo: conversation)
+            self?.delegate?.profileViewController(self!, wantsToNavigateTo: conversation)
         }
 
         let user = viewModel.user
