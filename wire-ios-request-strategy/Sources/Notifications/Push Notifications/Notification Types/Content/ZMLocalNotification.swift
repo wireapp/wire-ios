@@ -129,11 +129,11 @@ public class ZMLocalNotification: NSObject {
 
     public var logAttributes: LogAttributes {
         [
-            LogAttributesKey.eventId.rawValue: userInfo?.eventID?.safeForLoggingDescription,
-            LogAttributesKey.nonce.rawValue: userInfo?.messageNonce?.safeForLoggingDescription,
-            LogAttributesKey.conversationId.rawValue: userInfo?.conversationID?.safeForLoggingDescription,
-            LogAttributesKey.senderUserId.rawValue: userInfo?.senderID?.safeForLoggingDescription,
-            LogAttributesKey.selfUserId.rawValue: userInfo?.selfUserID?.safeForLoggingDescription
+            LogAttributesKey.eventId: userInfo?.eventID?.safeForLoggingDescription,
+            LogAttributesKey.nonce: userInfo?.messageNonce?.safeForLoggingDescription,
+            LogAttributesKey.conversationId: userInfo?.conversationID?.safeForLoggingDescription,
+            LogAttributesKey.senderUserId: userInfo?.senderID?.safeForLoggingDescription,
+            LogAttributesKey.selfUserId: userInfo?.selfUserID?.safeForLoggingDescription
         ]
     }
 }
