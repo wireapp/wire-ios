@@ -131,7 +131,7 @@ import Foundation
 
     public static func purgePINCachesInHostBundle() {
         let fileManager = FileManager.default
-        guard let cachesDirectory = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else { return }
+        let cachesDirectory = URL.cachesDirectory
         let PINCacheFolders = ["com.pinterest.PINDiskCache.images", "com.pinterest.PINDiskCache.largeUserImages", "com.pinterest.PINDiskCache.smallUserImages"]
 
         PINCacheFolders.forEach { PINCacheFolder in

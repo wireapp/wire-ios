@@ -283,8 +283,7 @@ extension ConversationTests {
             let fileData = Data.secureRandomData(length: 100)
             let fileName = "foo.bar"
 
-            let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            let fileURL = URL(fileURLWithPath: documentsURL).appendingPathComponent(fileName)
+            let fileURL = URL.documentsDirectory.appendingPathComponent(fileName)
             try fileData.write(to: fileURL)
 
             XCTAssertNotNil(selfUserID)

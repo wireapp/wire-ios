@@ -26,7 +26,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
 
     override func setUp() {
         super.setUp()
-        let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let applicationSupport = URL.applicationSupportDirectory
         url = applicationSupport.appendingPathComponent("AccountStoreTests")
     }
 

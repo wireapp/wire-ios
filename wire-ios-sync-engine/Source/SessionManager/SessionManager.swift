@@ -302,9 +302,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     let pushTokenService: PushTokenServiceInterface
 
-    var cachesDirectory: URL? {
-        let manager = FileManager.default
-        return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+    var cachesDirectory: URL {
+        URL.cachesDirectory
     }
 
     private let minTLSVersion: String?
@@ -965,9 +964,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func clearCacheDirectory() {
-        guard let cachesDirectoryPath = cachesDirectory else { return }
         let manager = FileManager.default
-        try? manager.removeItem(at: cachesDirectoryPath)
+        try? manager.removeItem(at: cachesDirectory)
     }
 
     fileprivate func deleteAccountData(for account: Account) {

@@ -36,7 +36,7 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
     override func setUp() {
         super.setUp()
-        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let url = URL.applicationSupportDirectory
         sut = ContextDidSaveNotificationPersistence(accountContainer: url)
     }
 
@@ -128,7 +128,7 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
 
     override func setUp() {
         super.setUp()
-        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let url = URL.applicationSupportDirectory
         sut = ShareExtensionAnalyticsPersistence(accountContainer: url)
     }
 
@@ -185,7 +185,7 @@ class ShareObjectStoreTests: ZMTBaseTest {
     }
 
     func createStore() -> SharedObjectStore<WireDataModel.SharedObjectTestClass> {
-        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let url = URL.cachesDirectory
         return SharedObjectStore(accountContainer: url, fileName: "store")
     }
 

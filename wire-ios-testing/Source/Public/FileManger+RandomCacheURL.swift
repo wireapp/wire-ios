@@ -20,8 +20,8 @@ import Foundation
 
 public extension FileManager {
 
-    var randomCacheURL: URL? {
-        urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
+    var randomCacheURL: URL {
+        URL.cachesDirectory.appendingPathComponent(UUID().uuidString)
     }
 
 }
