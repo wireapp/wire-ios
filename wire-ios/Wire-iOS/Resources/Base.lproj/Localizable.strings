@@ -151,6 +151,9 @@
 "conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\nConnect with people or start a new group conversation:";
 "conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
 
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
 

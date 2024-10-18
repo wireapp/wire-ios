@@ -2774,6 +2774,12 @@ internal enum L10n {
           }
         }
         internal enum Search {
+          internal enum Button {
+            /// Start a new Conversation
+            internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.button.ipad", fallback: "Start a new Conversation")
+            /// New Conversation
+            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.button.phone", fallback: "New Conversation")
+          }
           internal enum Subheadline {
             /// No results found.
             internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.ipad", fallback: "No results found.")
