@@ -152,7 +152,6 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
-                // TODO: [WPB-9727] missing string localization
                 tabBarItem.accessibilityLabel = String(
                     localized: "tabBar.settings.description",
                     table: "Accessibility",
