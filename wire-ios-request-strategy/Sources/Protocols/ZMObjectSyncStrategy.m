@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import CoreData;
-@import WireSystemObjC;
-
 #import "ZMObjectSyncStrategy.h"
+@import CoreData;
 
 @interface ZMObjectSyncStrategy ()
 

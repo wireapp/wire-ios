@@ -31,7 +31,9 @@ struct EndToEndIdentityFeatureConfigDecoder {
         return EndToEndIdentityFeatureConfig(
             status: payload.status,
             acmeDiscoveryURL: payload.config.acmeDiscoveryURL,
-            verificationExpiration: payload.config.verificationExpiration
+            verificationExpiration: payload.config.verificationExpiration,
+            crlProxy: nil,
+            useProxyOnMobile: false
         )
     }
 

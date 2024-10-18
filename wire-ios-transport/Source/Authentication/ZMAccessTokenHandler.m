@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 @import WireUtilities;
 
 #import "ZMAccessTokenHandler.h"
@@ -192,7 +191,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         return;
     }
 
-    if(self.cookieStorage.authenticationCookieData == nil) {
+    if(self.cookieStorage.hasAuthenticationCookie == NO) {
         [self logError:@"No cookie to request access token"];
         [self notifyTokenFailure:nil];
         return;

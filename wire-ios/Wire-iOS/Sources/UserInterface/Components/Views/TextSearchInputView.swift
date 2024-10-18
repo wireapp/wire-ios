@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-import WireSystemPackage
+import WireSystem
 
 protocol TextSearchInputViewDelegate: AnyObject {
     func searchView(_ searchView: TextSearchInputView, didChangeQueryTo: String)
@@ -31,7 +31,7 @@ final class TextSearchInputView: UIView {
 
     let iconView = UIImageView()
     let searchInput = SearchTextView(style: .default)
-    let placeholderLabel = DynamicFontLabel(fontSpec: .body,
+    let placeholderLabel = DynamicFontLabel(style: .body1,
                                             color: SearchBarColors.textInputViewPlaceholder)
     let clearButton = IconButton(style: .default)
 
@@ -62,10 +62,8 @@ final class TextSearchInputView: UIView {
 
         backgroundColor = SemanticColors.View.backgroundDefault
 
-        iconView.setIcon(.search,
-                         size: .tiny,
-                         color: SearchBarColors.backgroundButton)
-
+        iconView.setTemplateIcon(.search, size: .tiny)
+        iconView.tintColor = SearchBarColors.backgroundButton
         iconView.contentMode = .center
         searchInput.delegate = self
         searchInput.autocorrectionType = .no

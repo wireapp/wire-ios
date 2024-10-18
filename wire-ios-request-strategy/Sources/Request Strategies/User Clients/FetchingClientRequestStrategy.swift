@@ -19,7 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
-import WireSystemPackage
+import WireSystem
 import WireTransport
 import WireUtilities
 

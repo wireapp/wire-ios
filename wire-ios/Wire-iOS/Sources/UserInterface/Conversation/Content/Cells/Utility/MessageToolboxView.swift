@@ -59,8 +59,6 @@ final class MessageToolboxView: UIView {
     /// The timer for ephemeral messages.
     private var timestampTimer: Timer?
 
-    typealias MessageActionsColor = SemanticColors.Label
-
     private let contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -109,10 +107,8 @@ final class MessageToolboxView: UIView {
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
 
     fileprivate let separatorView = UIView()
-    fileprivate var likeButtonWidth: NSLayoutConstraint!
     fileprivate var heightConstraint: NSLayoutConstraint!
     fileprivate var previousLayoutBounds: CGRect = CGRect.zero
-    fileprivate var forceShowTimestamp: Bool = false
 
     // MARK: - Initialization
 
@@ -172,12 +168,18 @@ final class MessageToolboxView: UIView {
 
             // statusTextView align vertically center
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            contentStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
@@ -202,11 +204,6 @@ final class MessageToolboxView: UIView {
         if newWindow == nil {
             stopCountdownTimer()
         }
-    }
-
-    func prepareForReuse() {
-        dataSource = nil
-        stopCountdownTimer()
     }
 
     // MARK: - Configuration

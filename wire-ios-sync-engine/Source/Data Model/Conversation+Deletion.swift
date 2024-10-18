@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireSystemPackage
+import WireSystem
 
 public enum ConversationDeletionError: Error {
     case unknown, invalidOperation, conversationNotFound

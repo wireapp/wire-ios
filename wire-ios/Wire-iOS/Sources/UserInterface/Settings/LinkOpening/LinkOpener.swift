@@ -18,7 +18,7 @@
 
 import SafariServices
 import UIKit
-import WireSystemPackage
+import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
 
@@ -41,14 +41,6 @@ extension URL {
         let browser = BrowserViewController(url: self)
         browser.modalPresentationCapturesStatusBarAppearance = true
         viewController.present(browser, animated: true, completion: nil)
-    }
-
-}
-
-extension NSURL {
-
-    func openInApp(aboveViewController viewController: UIViewController) {
-        (self as URL).openInApp(above: viewController)
     }
 
 }

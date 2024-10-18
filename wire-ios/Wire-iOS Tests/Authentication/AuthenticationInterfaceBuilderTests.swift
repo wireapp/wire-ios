@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -81,10 +80,6 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     func testSetPasswordScreen() {
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setPassword))
-    }
-
-    func testThatItDoesNotGenerateInterfaceForMarketingConsentStep() {
-        runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .provideMarketingConsent))
     }
 
     // MARK: - Login

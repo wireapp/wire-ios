@@ -190,19 +190,18 @@ struct SettingsCellDescriptorFactory {
     }
 
     func helpSection() -> SettingsCellDescriptorType {
-
         let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_support.appendingLocaleParameter)
+            return BrowserViewController(url: WireURLs.shared.support)
         }, previewGenerator: .none)
 
         let contactButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.contactSupport, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_askSupport.appendingLocaleParameter)
+            return BrowserViewController(url: WireURLs.shared.askSupportArticle)
         }, previewGenerator: .none)
 
         let helpSection = SettingsSectionDescriptor(cellDescriptors: [supportButton, contactButton])
 
         let reportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.reportAbuse, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_reportAbuse.appendingLocaleParameter)
+            return BrowserViewController(url: WireURLs.shared.reportAbuse)
         }, previewGenerator: .none)
 
         let reportSection = SettingsSectionDescriptor(cellDescriptors: [reportButton])
@@ -222,7 +221,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: URL.wr_legal.appendingLocaleParameter)
+                BrowserViewController(url: WireURLs.shared.legal)
             },
             previewGenerator: .none
         )
@@ -243,9 +242,8 @@ struct SettingsCellDescriptorFactory {
             header: nil,
             footer: "\n" + version + "\n" + copyrightInfo
         )
-
         let websiteButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.About.Website.title, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_website.appendingLocaleParameter)
+            return BrowserViewController(url: WireURLs.shared.website)
         }, previewGenerator: .none)
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])

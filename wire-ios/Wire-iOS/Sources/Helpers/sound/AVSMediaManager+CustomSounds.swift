@@ -20,7 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"
@@ -88,10 +88,6 @@ extension AVSMediaManager {
         }
 
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
-    }
-
-    func configureWithActualSoundsFromSettings() {
-        self.configureDefaultSounds()
     }
 
     func unregisterCallRingingSounds() {

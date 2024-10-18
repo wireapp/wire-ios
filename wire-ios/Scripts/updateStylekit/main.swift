@@ -34,7 +34,7 @@ import Foundation
 let template = """
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,8 +114,8 @@ func getRenderingInfo(in str: String) -> [String: String] {
 }
 
 func generateText(renderingInfo: [String: String]) -> (enumCases: String, renderingProperties: String) {
-    var enumCases: String = ""
-    var renderingProperties: String = ""
+    var enumCases = ""
+    var renderingProperties = ""
 
     for (name, size) in renderingInfo {
         enumCases.append("    case \(name)\n")

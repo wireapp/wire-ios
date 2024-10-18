@@ -22,6 +22,7 @@ import Foundation
 import PushKit
 import UserNotifications
 import WireDataModel
+import WireFoundation
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -100,9 +101,6 @@ public protocol SessionManagerType: AnyObject {
 
     /// ask UI to open the profile of a user
     func showUserProfile(user: UserType)
-
-    /// ask UI to open the connection request screen
-    func showConnectionRequest(userId: UUID)
 
     /// Needs to be called before we try to register another device because API requires password
     func update(credentials: UserCredentials) -> Bool
@@ -757,21 +755,27 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if let session = backgroundUserSessions[account.userIdentifier] {
             if session == activeUserSession {
-                logoutCurrentSession(deleteCookie: true, error: error)
+                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
             } else {
                 tearDownBackgroundSession(for: account.userIdentifier)
             }
         }
     }
 
-    public func logoutCurrentSession(deleteCookie: Bool = true) {
-        logoutCurrentSession(deleteCookie: deleteCookie, error: nil)
+    public func logoutCurrentSession() {
+        logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: nil)
     }
 
+    #if DEBUG
+    /// This method is only used in tests and should be deleted. See [WPB-10404].
+    func logoutCurrentSessionWithoutDeletingCookie() {
+        logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
+    }
+    #endif
+
     fileprivate func deleteTemporaryData() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
-        // swiftlint:enable todo_requires_jira_link
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
@@ -781,8 +785,13 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
     }
 
-    fileprivate func logoutCurrentSession(deleteCookie: Bool = true, deleteAccount: Bool = false, error: Error?) {
+    /// Logs out current session optionally deleting account data
+    ///
+    /// - Note: `deleteCookie == false` is only used for testing. It is not a valid production value and should be
+    /// removed. See [WPB-10404].
+    fileprivate func logoutCurrentSession(deleteCookie: Bool, deleteAccount: Bool, error: Error?) {
         guard let account = accountManager.selectedAccount else {
+            WireLogger.sessionManager.critical("No selected account")
             return
         }
 
@@ -793,6 +802,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
 
         guard let activeUserSession else {
+            WireLogger.sessionManager.critical("No active user session")
             delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
 
             if deleteAccount {
@@ -801,28 +811,18 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
+        requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-            if deleteCookie {
-                self?.environment.cookieStorage(for: account).deleteKeychainItems()
-            }
+        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [dispatchGroup] in
+            dispatchGroup.enter()
 
-            if deleteAccount {
-                activeUserSession.lastEventIDRepository.storeLastEventID(nil)
-            }
-
-            let group = self?.dispatchGroup
-            group?.enter()
-
-            activeUserSession.e2eiActivationDateRepository.removeE2EIActivationDate()
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
-                    self?.deleteAccountData(for: account)
-                    self?.deleteUserLogs?()
+                    self.deleteAccountData(for: account)
                 }
-                group?.leave()
+                dispatchGroup.leave()
             }
-            self?.activeUserSession = nil
+            self.activeUserSession = nil
         })
     }
 
@@ -978,11 +978,15 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         clearCRLExpirationDates(for: account)
 
+        deleteUserLogs?()
+
         // also deletes ZMSLogs from cache
         clearCacheDirectory()
 
         // Clear tmp directory when the user logout from the session.
         deleteTemporaryData()
+
+        PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
 
         let accountID = account.userIdentifier
         self.accountManager.remove(account)
@@ -990,8 +994,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         do {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
         } catch {
-            WireLogger.sessionManager.error("Impossible to delete the acccount \(account): \(error)")
-            WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
         }
     }
 
@@ -1212,7 +1215,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func performPostRebootLogout() {
         let error = NSError(userSessionErrorCode: .needsAuthenticationAfterReboot, userInfo: accountManager.selectedAccount?.loginCredentials?.dictionaryRepresentation)
-        self.logoutCurrentSession(deleteCookie: true, error: error)
+        logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
         WireLogger.sessionManager.debug("Logout caused by device reboot.")
     }
 

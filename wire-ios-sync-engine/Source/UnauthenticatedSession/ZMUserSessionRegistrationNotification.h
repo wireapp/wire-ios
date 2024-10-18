@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemObjC;
-
-#import <Foundation/Foundation.h>
-#import <WireSystemPackage/WireSystemPackage.h>
+@import Foundation;
+@import WireSystem;
 
 @class ZMAuthenticationStatus;
 @class UnauthenticatedSession;

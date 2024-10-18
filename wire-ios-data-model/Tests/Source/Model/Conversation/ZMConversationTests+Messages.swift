@@ -203,9 +203,8 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(start, self.uiMOC.insertedObjects)
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: check why fail on Xcode 11
-    // swiftlint:enable todo_requires_jira_link
     func disable_testThatWeCanInsertAnImageMessageFromImageData() {
         // given
         let imageData = try! self.data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()
@@ -229,9 +228,8 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.imageMessageData?.imageData?.count, imageData.count)
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: check why fail on Xcode 11
-    // swiftlint:enable todo_requires_jira_link
     func disable_testThatItIsSafeToPassInMutableDataWhenCreatingAnImageMessage() {
         // given
         let originalImageData = try! self.data(forResource: "1900x1500", extension: "jpg").wr_removingImageMetadata()

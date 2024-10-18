@@ -42,10 +42,9 @@ extension ZMMessage {
             }
             return false
         }
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Re-enable
         //            NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
-        // swiftlint:enable todo_requires_jira_link
         confirmationReceipts?.map { $0 as ZMClientMessage }.forEach {
             $0.managedObjectContext?.delete($0)
         }

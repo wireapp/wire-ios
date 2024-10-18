@@ -21,7 +21,6 @@ import WireUtilities
 
 protocol EmojiRepositoryInterface {
 
-    func allEmojis() -> [Emoji]
     func emojis(for category: EmojiCategory) -> [Emoji]
     func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
@@ -48,10 +47,6 @@ final class EmojiRepository: EmojiRepositoryInterface {
     }
 
     // MARK: - Fetch
-
-    func allEmojis() -> [Emoji] {
-        return allEmojiData
-    }
 
     func emojis(for category: EmojiCategory) -> [Emoji] {
         return emojisByCategory[category] ?? []
@@ -100,10 +95,8 @@ final class EmojiRepository: EmojiRepositoryInterface {
     private static let supportedEmojiVersion: Double = {
         if #available(iOS 16.4, *) {
             return 15.0
-        } else if #available(iOS 15.4, *) {
-            return 14.0
         } else {
-            return 13.1
+            return 14.0
         }
     }()
 

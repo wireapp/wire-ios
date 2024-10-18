@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemObjC;
-
 #import "ZMWebSocketFrame.h"
 #import "ZMTLogging.h"
 #import <WireTransport/WireTransport-Swift.h>
+
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL_LOW_LEVEL;
 

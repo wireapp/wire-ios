@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystemPackage
+import WireSystem
 
 class _CBox: PointerWrapper {}
 
@@ -144,9 +144,8 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: can this be removed?
-    // swiftlint:enable todo_requires_jira_link
     public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void ) async {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
@@ -170,14 +169,12 @@ extension EncryptionContext {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.path)")
         }
-        zmLog.debug("Acquired lock for cryptobox at path: \(self.path)")
     }
 
     fileprivate func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(self.path)")
         }
-        zmLog.debug("Released lock for cryptobox at path: \(self.path)")
     }
 }
 

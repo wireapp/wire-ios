@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireSystemPackage/WireSystemPackage.h>
-#import <WireUtilities/WireUtilities.h>
+@import Foundation;
+@import WireSystem;
+@import WireUtilities;
 
 #import <WireTransport/ZMReachability.h>
 #import <WireTransport/ZMTransportRequest.h>

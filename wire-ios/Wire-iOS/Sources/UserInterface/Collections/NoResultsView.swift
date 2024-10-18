@@ -19,10 +19,10 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 final class NoResultsView: UIView {
-    let label = DynamicFontLabel(fontSpec: .body,
+    let label = DynamicFontLabel(style: .body1,
                                  color: SemanticColors.Label.textCollectionSecondary)
     private let iconView = UIImageView()
 

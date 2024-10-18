@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 // MARK: - ConversationRootViewController
@@ -28,10 +29,10 @@ final class ConversationRootViewController: UIViewController {
 
     // MARK: - Properties
 
-    let navBarContainer: UINavigationBarContainer
+    let navBarContainer: NavigationBarContainer
     fileprivate var contentView = UIView()
     private var navBarHeightForFederatedUsers: CGFloat = 50
-    // This value is coming from UINavigationBarContainer. swift file
+    // This value is coming from NavigationBarContainer. swift file
     // where the value for the navigation bar height is set to 44.
     private var defaultNavBarHeight: CGFloat = 44
     var navHeight: NSLayoutConstraint?
@@ -74,7 +75,7 @@ final class ConversationRootViewController: UIViewController {
         navbar.tintColor = SemanticColors.Label.textDefault
         navbar.barStyle = .default
 
-        navBarContainer = UINavigationBarContainer(navbar)
+        navBarContainer = NavigationBarContainer(navbar)
 
         super.init(nibName: .none, bundle: .none)
 
@@ -162,7 +163,7 @@ final class ConversationRootViewController: UIViewController {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            networkStatusViewController.view.topAnchor.constraint(equalTo: self.safeTopAnchor),
+            networkStatusViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
 
@@ -174,7 +175,7 @@ final class ConversationRootViewController: UIViewController {
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
             contentView.topAnchor.constraint(equalTo: navBarContainer.view.bottomAnchor),
-            contentView.bottomAnchor.constraint(equalTo: self.safeBottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

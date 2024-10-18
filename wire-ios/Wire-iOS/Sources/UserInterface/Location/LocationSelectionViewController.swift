@@ -58,7 +58,6 @@ final class LocationSelectionViewController: UIViewController {
         return button
     }()
 
-    let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
     private let mapViewController = MapViewController()
@@ -122,7 +121,7 @@ final class LocationSelectionViewController: UIViewController {
 
         locationButton.addAction(action, for: .touchUpInside)
 
-        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
+        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
     }
 
     private func createConstraints() {
@@ -133,7 +132,7 @@ final class LocationSelectionViewController: UIViewController {
         }
 
         sendControllerHeightConstraint = sendController.heightAnchor.constraint(
-            equalToConstant: LayoutConstants.sendControllerHeight + UIScreen.safeArea.bottom
+            equalToConstant: LayoutConstants.sendControllerHeight + sendController.safeAreaInsets.bottom
         )
 
         sendControllerHeightConstraint?.isActive = false
@@ -163,13 +162,6 @@ final class LocationSelectionViewController: UIViewController {
     }
 
     // MARK: - Helpers
-
-    private func updateUserLocation() {
-        mapViewController.mapView.showsUserLocation = appLocationManager.userLocationAuthorized
-        if appLocationManager.userLocationAuthorized {
-            appLocationManager.startUpdatingLocation()
-        }
-    }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

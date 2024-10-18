@@ -120,6 +120,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 
+        WireLogger.assets.debug("sending request for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
         var request: ZMTransportRequest?
 
         if shouldUseBackgroundSession {
@@ -166,9 +167,11 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             let message = managedObject as? ZMAssetClientMessage,
             let asset = message.assets.first(where: { !$0.isUploaded })
         else {
+            WireLogger.assets.warn("response for asset not processed")
             return false
         }
 
+        WireLogger.assets.debug("processing response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
         guard
             let payload = response.payload?.asDictionary(),
             let assetId = payload["key"] as? String
@@ -185,13 +188,18 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             domain: domain
         )
 
+        WireLogger.assets.debug("processed response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
+            WireLogger.assets.debug("message with asset uploaded", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
             return false
         } else {
             // There are more assets to upload
+            WireLogger.assets.debug("more assets to upload", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+
             return true
         }
     }
@@ -206,7 +214,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        message.expire()
+        message.expire(withReason: .other)
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return false
     }
@@ -219,7 +227,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return
         }
 
-        message.expire()
+        message.expire(withReason: .other)
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return
     }

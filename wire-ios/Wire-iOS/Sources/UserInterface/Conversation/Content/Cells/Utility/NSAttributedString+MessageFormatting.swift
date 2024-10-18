@@ -41,10 +41,6 @@ extension NSAttributedString {
         return previewMarkdownStyle()
     }()
 
-    static var linkDataDetector: NSDataDetector? = {
-        return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-    }()
-
     /// This method needs to be called as soon as the preferredContentSizeCategory is changed
     @objc
     static func invalidateParagraphStyle() {
@@ -103,7 +99,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func formatForPreview(message: ZMTextMessageData, inputMode: Bool) -> NSAttributedString {
+    static func formatForPreview(message: TextMessageData, inputMode: Bool) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
@@ -134,7 +130,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: ZMTextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 

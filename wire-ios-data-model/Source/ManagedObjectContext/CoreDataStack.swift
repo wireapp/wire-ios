@@ -18,7 +18,7 @@
 
 import CoreData
 import Foundation
-import WireSystemPackage
+import WireSystem
 import WireUtilities
 
 enum CoreDataStackError: Error {
@@ -128,7 +128,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
-    private let migrator: CoreDataMessagingMigrator
+    private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
+    private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
 
     // MARK: - Initialization
@@ -182,7 +183,8 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.messagesContainer = messagesContainer
         self.eventsContainer = eventContainer
-        self.migrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
+        self.messagesMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
+        self.eventsMigrator = CoreDataMigrator(isInMemoryStore: inMemoryStore)
 
         super.init()
 
@@ -241,6 +243,27 @@ public class CoreDataStack: NSObject, ContextProvider {
                     WireLogger.localStorage.info("[setup] finished migration of core data messaging store!", attributes: .safePublic)
                 } catch {
                     let logMessage = "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
+                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
+
+                    DispatchQueue.main.async {
+                        onFailure(error)
+                    }
+                    return
+                }
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                }
+            }
+
+            if self.needsEventStoreMigration() {
+                let tp = TimePoint(interval: 60.0, label: "db migration")
+                WireLogger.localStorage.info("[setup] start migration of core data event store!", attributes: .safePublic)
+
+                do {
+                    try self.migrateEventStore()
+                    WireLogger.localStorage.info("[setup] finished migration of core data event store!", attributes: .safePublic)
+                } catch {
+                    let logMessage = "[setup] failed migration of core data event store: \(error.localizedDescription)."
                     WireLogger.localStorage.error(logMessage, attributes: .safePublic)
 
                     DispatchQueue.main.async {
@@ -453,7 +476,17 @@ public class CoreDataStack: NSObject, ContextProvider {
         let modelBundle = Bundle(for: ZMManagedObject.self)
 
         guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("zmessaging.momd")) else {
-            fatal("Can't load data model bundle")
+            fatal("Can't load data model for messaging bundle")
+        }
+
+        return result
+    }
+
+    public static func loadEventsModel() -> NSManagedObjectModel {
+        let modelBundle = WireDataModelBundle.bundle
+
+        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("ZMEventModel.momd")) else {
+            fatal("Can't load data model for events bundle")
         }
 
         return result
@@ -465,16 +498,32 @@ public class CoreDataStack: NSObject, ContextProvider {
         guard let storeURL = messagesContainer.storeURL else {
             return false
         }
-        return migrator.requiresMigration(at: storeURL, toVersion: .current)
+        return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateMessagingStore() throws {
         guard let storeURL = messagesContainer.storeURL else {
-            throw CoreDataMessagingMigratorError.missingStoreURL
+            throw CoreDataMigratorError.missingStoreURL
         }
 
-        try migrator.migrateStore(at: storeURL, toVersion: .current)
+        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
     }
+
+    public func needsEventStoreMigration() -> Bool {
+        guard let storeURL = eventsContainer.storeURL else {
+            return false
+        }
+        return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateEventStore() throws {
+        guard let storeURL = eventsContainer.storeURL else {
+            throw CoreDataMigratorError.missingStoreURL
+        }
+
+        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+    }
+
 }
 
 // MARK: -

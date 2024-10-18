@@ -17,7 +17,7 @@
 //
 
 import UserNotifications
-import WireSystemPackage
+import WireSystem
 import WireUtilities
 
 struct ShouldPresentNotificationPermissionHintUseCase<DateProvider>: ShouldPresentNotificationPermissionHintUseCaseProtocol

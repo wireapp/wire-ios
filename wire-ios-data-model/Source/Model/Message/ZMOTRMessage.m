@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemObjC;
-
 #import "ZMOTRMessage.h"
 #import "ZMConversation+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>
@@ -54,7 +52,7 @@ NSString * const DeliveredKey = @"delivered";
     [self missesRecipients:[NSSet setWithObject:recipient]];
 }
 
-- (void)missesRecipients:(NSSet<UserClient *> *)recipients
+- (void)missesRecipients:(NSSet<UserClient *> * _Nonnull)recipients
 {
     [[self mutableSetValueForKey:ZMMessageMissingRecipientsKey] addObjectsFromArray:recipients.allObjects];
 }
@@ -106,9 +104,9 @@ NSString * const DeliveredKey = @"delivered";
     [super markAsSent];
 }
 
-- (void)expire
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
-    [super expire];
+    [super expireWithExpirationReason:expirationReason];
 }
 
 - (void)resend

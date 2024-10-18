@@ -173,8 +173,10 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
-            await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+        if DeveloperFlag.enableMLSSupport.isOn {
+            if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
+                await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
+            }
         }
 
         await context.perform {
@@ -621,7 +623,7 @@ struct ConversationEventPayloadProcessor {
         if await context.perform({ conversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
             await context.perform { conversation.ciphersuite = ciphersuite }
-        } else if await !mlsService.conversationExists(groupID: groupID) {
+        } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
     }
@@ -893,6 +895,7 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,

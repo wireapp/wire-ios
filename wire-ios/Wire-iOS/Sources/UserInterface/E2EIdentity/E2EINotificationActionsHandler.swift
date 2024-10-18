@@ -18,7 +18,7 @@
 
 import Foundation
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 protocol E2EINotificationActions {
 
@@ -46,7 +46,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
 
-    private let targetVC: UIViewController
+    private let targetVC: () -> UIViewController
     private var observer: NSObjectProtocol?
 
     private weak var alertForE2EIChange: UIAlertController?
@@ -69,7 +69,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        targetVC: UIViewController
+        targetVC: @escaping () -> UIViewController
     ) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
@@ -185,7 +185,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     private func presentScreen(viewController: UIViewController) {
-        let vc = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? targetVC
+        let vc = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? targetVC()
         vc.present(viewController, animated: true)
     }
 

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTransport
+
 @testable import WireSyncEngine
 
 extension MessagingTest {
@@ -81,16 +83,12 @@ extension MessagingTest {
     }
 
     @objc
-    public func setDefaults() {
-        setCurrentAPIVersion(.v0)
+    public func setBackendInfoDefaults() {
+        BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
 
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         proteusViaCoreCrypto.isOn = false
     }
 
-    @objc
-    public func unsetDefaultAPIVersion() {
-        resetCurrentAPIVersion()
-    }
 }

@@ -17,8 +17,7 @@
 //
 
 @import SystemConfiguration;
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 @import WireUtilities;
 
 #import "ZMReachability.h"

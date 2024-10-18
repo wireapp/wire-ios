@@ -53,4 +53,38 @@ struct HTTPRequestSnapshotHelper {
             XCTFail(errorMessage, file: file, line: line)
         }
     }
+
+    /// Snapshot test a given request
+    /// - Parameters:
+    ///   - request: url request to verify
+    ///   - resourceName: name of the file containing the expected request description
+    ///   - record: if true, a new snapshot will be recorded, overwriting an existing snapshot.
+    ///   - file: The file invoking the test.
+    ///   - function: The method invoking the test.
+    ///   - line: The line invoking the test.
+
+    @MainActor
+    func verifyRequest(
+        request: URLRequest,
+        resourceName: String? = nil,
+        record: Bool = false,
+        file: StaticString = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let errorMessage = verifySnapshot(
+            of: request,
+            as: .curl,
+            named: resourceName,
+            record: record,
+            file: file,
+            testName: function,
+            line: line
+        )
+
+        if let errorMessage {
+            XCTFail(errorMessage, file: file, line: line)
+        }
+    }
+
 }

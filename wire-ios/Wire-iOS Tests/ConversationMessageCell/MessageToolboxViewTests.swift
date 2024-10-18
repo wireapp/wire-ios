@@ -17,7 +17,7 @@
 //
 
 import WireDesign
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -74,21 +74,26 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     }
 
     func testThatItConfiguresWithFailedToSendAndReason() {
-        // GIVEN
-        message.deliveryState = .failedToSend
-        message.conversationLike = otherUserConversation
-        message.failedToSendReason = .federationRemoteError
-        message.conversation?.domain = "anta.wire.link"
+        let testCases: [ExpirationReason] = [.cancelled, .timeout, .federationRemoteError]
 
-        // WHEN
-        sut.configureForMessage(message, animated: false)
+        for reason in testCases {
+            // GIVEN
+            message.deliveryState = .failedToSend
+            message.conversationLike = otherUserConversation
+            message.expirationReason = reason
+            message.conversation?.domain = "anta.wire.link"
 
-        // THEN
-        verifyInWidths(
-            matching: sut,
-            widths: [defaultIPhoneSize.width],
-            snapshotBackgroundColor: backgroundColor
-        )
+            // WHEN
+            sut.configureForMessage(message, animated: false)
+
+            // THEN
+            verifyInWidths(
+                matching: sut,
+                widths: [defaultIPhoneSize.width],
+                snapshotBackgroundColor: backgroundColor,
+                named: "\(reason)"
+            )
+        }
     }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {

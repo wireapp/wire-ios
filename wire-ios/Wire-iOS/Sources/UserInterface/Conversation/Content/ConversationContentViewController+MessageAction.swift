@@ -156,7 +156,7 @@ extension ConversationContentViewController {
             parent?.present(detailsViewController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
-            isLoadingViewVisible = true
+            activityIndicator.start()
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
         case .react(let reaction):
@@ -185,11 +185,8 @@ extension ConversationContentViewController {
 
     private func presentDownloadNecessaryAlert(for message: ZMConversationMessage) {
         let alertMessage = L10n.Localizable.DigitalSignature.Alert.downloadNecessary
-        let alertController = UIAlertController(title: "",
-                                                message: alertMessage,
-                                                preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close,
-                                         style: .default)
+        let alertController = UIAlertController(title: "", message: alertMessage, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close, style: .default)
         alertController.addAction(cancelAction)
         present(alertController, animated: true)
     }
@@ -202,41 +199,42 @@ extension ConversationContentViewController: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         if changeInfo.sessionHasBeenReset {
             userClientToken = nil
-            isLoadingViewVisible = false
+            activityIndicator.stop()
         }
     }
-
 }
 
 // MARK: - SignatureObserver
 
 extension ConversationContentViewController: SignatureObserver {
+
     func willReceiveSignatureURL() {
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     func didReceiveSignatureURL(_ url: URL) {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         presentDigitalSignatureVerification(with: url)
     }
 
     func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
-        dismissDigitalSignatureVerification(completion: { [weak self] in
-            ZMUserSession.shared()?.perform({
+        dismissDigitalSignatureVerification { [weak self] in
+            ZMUserSession.shared()?.perform {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
-            })
-        })
+            }
+        }
     }
 
     func didFailSignature(errorType: SignatureStatus.ErrorYpe) {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         if isDigitalSignatureVerificationShown {
-            dismissDigitalSignatureVerification(completion: { [weak self] in                  self?.presentDigitalSignatureErrorAlert(errorType: errorType)
-            })
+            dismissDigitalSignatureVerification { [weak self] in
+                self?.presentDigitalSignatureErrorAlert(errorType: errorType)
+            }
         } else {
             presentDigitalSignatureErrorAlert(errorType: errorType)
         }

@@ -18,7 +18,7 @@
 
 import UIKit
 import WireCommonComponents
-import WireSystemPackage
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TextView")
 
@@ -84,8 +84,6 @@ class TextView: UITextView {
     private let placeholderLabel: TransformLabel = TransformLabel()
     private var placeholderLabelLeftConstraint: NSLayoutConstraint?
     private var placeholderLabelRightConstraint: NSLayoutConstraint?
-
-    private var shouldDrawPlaceholder = false
 
     override var accessibilityValue: String? {
         get {

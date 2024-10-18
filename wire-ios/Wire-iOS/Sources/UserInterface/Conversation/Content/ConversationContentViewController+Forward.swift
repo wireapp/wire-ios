@@ -89,21 +89,24 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendImage(from: imageData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
-                ZMUserSession.shared()?.perform {
+            Task {
+                let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
+                let userSession = ZMUserSession.shared()
+                await userSession?.managedObjectContext.perform {
                     conversations.forEachNonEphemeral {
                         do {
                             try $0.appendFile(with: fileMetadata)
                         } catch {
-                            Logging.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            WireLogger.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
                         }
                     }
+                    userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {
@@ -113,7 +116,7 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }
             }

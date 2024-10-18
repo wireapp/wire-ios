@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,10 +25,10 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    var conversation: SwiftMockConversation!
-    var mockSelfUser: MockUserType!
-    var otherUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var conversation: SwiftMockConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method

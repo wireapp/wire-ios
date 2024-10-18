@@ -20,7 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 enum SettingsLastScreen: Int {
     case none = 0
@@ -153,8 +153,6 @@ class Settings {
     // Persist all the settings
     private func synchronize() {
         storeCurrentIntensityLevelAsLastUsed()
-
-        defaults.synchronize()
     }
 
     @objc

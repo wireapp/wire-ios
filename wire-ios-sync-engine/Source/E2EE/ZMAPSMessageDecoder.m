@@ -17,8 +17,7 @@
 //
 
 @import CoreFoundation;
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 @import WireUtilities;
 @import WireTransport;
 

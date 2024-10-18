@@ -21,7 +21,7 @@ import Foundation
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 final class ConversationListViewModel: NSObject {
 
@@ -334,10 +334,6 @@ final class ConversationListViewModel: NSObject {
         return sections[sectionIndex].elements.count
     }
 
-    private func numberOfItems(of kind: Section.Kind) -> Int? {
-        return sections.first(where: { $0.kind == kind })?.elements.count ?? nil
-    }
-
     func section(at sectionIndex: Int) -> [ConversationListItem]? {
         if sectionIndex >= sectionCount {
             return nil
@@ -353,9 +349,8 @@ final class ConversationListViewModel: NSObject {
         return items[indexPath.item]
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
-    // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
         guard let item else { return nil }
 
@@ -388,95 +383,6 @@ final class ConversationListViewModel: NSObject {
 
         return conversationDirectory.conversations(by: conversationListType).filter({ !$0.hasIncompleteMetadata }).map({ SectionItem(item: $0, kind: kind) })
 
-    }
-
-    /// Select the item at an index path
-    ///
-    /// - Parameter indexPath: indexPath of the item to select
-    /// - Returns: the item selected
-    @discardableResult
-    func selectItem(at indexPath: IndexPath) -> ConversationListItem? {
-        let item = self.item(for: indexPath)
-        select(itemToSelect: item)
-        return item
-    }
-
-    /// Search for next items
-    ///
-    /// - Parameters:
-    ///   - index: index of search item
-    ///   - sectionIndex: section of search item
-    /// - Returns: an index path for next existing item
-    func item(after index: Int, section sectionIndex: Int) -> IndexPath? {
-        guard let section = self.section(at: sectionIndex) else { return nil }
-
-        if section.count > index + 1 {
-            // Select next item in section
-            return IndexPath(item: index + 1, section: sectionIndex)
-        } else if index + 1 >= section.count {
-            // select last item in previous section
-            return firstItemInSection(after: sectionIndex)
-        }
-
-        return nil
-    }
-
-    private func firstItemInSection(after sectionIndex: Int) -> IndexPath? {
-        let nextSectionIndex = sectionIndex + 1
-
-        if nextSectionIndex >= sectionCount {
-            // we are at the end, so return nil
-            return nil
-        }
-
-        if let section = self.section(at: nextSectionIndex) {
-            if section.isEmpty {
-                // Recursively move forward
-                return firstItemInSection(after: nextSectionIndex)
-            } else {
-                return IndexPath(item: 0, section: nextSectionIndex)
-            }
-        }
-
-        return nil
-    }
-
-    /// Search for previous items
-    ///
-    /// - Parameters:
-    ///   - index: index of search item
-    ///   - sectionIndex: section of search item
-    /// - Returns: an index path for previous existing item
-    func itemPrevious(to index: Int, section sectionIndex: Int) -> IndexPath? {
-        guard let section = self.section(at: sectionIndex) else { return nil }
-
-        if section.indices.contains(index - 1) {
-            // Select previous item in section
-            return IndexPath(item: index - 1, section: sectionIndex)
-        } else if index == 0 {
-            // select last item in previous section
-            return lastItemInSectionPrevious(to: sectionIndex)
-        }
-
-        return nil
-    }
-
-    func lastItemInSectionPrevious(to sectionIndex: Int) -> IndexPath? {
-        let previousSectionIndex = sectionIndex - 1
-
-        if previousSectionIndex < 0 {
-            // we are at the top, so return nil
-            return nil
-        }
-
-        guard let section = self.section(at: previousSectionIndex) else { return nil }
-
-        if section.isEmpty {
-            // Recursively move back
-            return lastItemInSectionPrevious(to: previousSectionIndex)
-        } else {
-            return IndexPath(item: section.count - 1, section: previousSectionIndex)
-        }
     }
 
     private func updateAllSections() {

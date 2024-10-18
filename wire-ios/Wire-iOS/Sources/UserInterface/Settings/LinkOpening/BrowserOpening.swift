@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystemPackage
+import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
 

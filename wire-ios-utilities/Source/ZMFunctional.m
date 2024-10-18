@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemPackage;
-
+@import WireSystem;
 #import "ZMFunctional.h"
 
 @implementation NSArray (ZMFunctional)

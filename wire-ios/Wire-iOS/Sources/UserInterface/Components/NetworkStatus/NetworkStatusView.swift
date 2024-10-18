@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 enum NetworkStatusViewState {
     case online
@@ -26,6 +26,7 @@ enum NetworkStatusViewState {
     case offlineExpanded
 }
 
+// sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
 
     /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
@@ -44,33 +45,36 @@ protocol NetworkStatusViewDelegate: AnyObject {
 }
 
 // MARK: - default implementation of didChangeHeight, animates the layout process
+
 extension NetworkStatusViewDelegate where Self: UIViewController {
+
     func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
 
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
-            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState], animations: {
+            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
                 self.view.layoutIfNeeded()
-            })
+            }
         } else {
             self.view.layoutIfNeeded()
         }
-
     }
 }
 
 final class NetworkStatusView: UIView {
+
     let connectingView: BreathLoadingBar
     private let offlineView: OfflineBar
     private var _state: NetworkStatusViewState = .online
 
     private lazy var topMargin: CGFloat = {
-        if UIScreen.hasNotch {
-            return 0
-        } else {
-            return CGFloat.NetworkStatusBar.topMargin
+        if let window = UIApplication.shared.windows.first {
+            // Check if the device has a non-zero top safe area inset (indicating a notch or similar feature)
+            return window.safeAreaInsets.top > 20 ? 0 : CGFloat.NetworkStatusBar.topMargin
         }
+
+        return CGFloat.NetworkStatusBar.topMargin
     }()
 
     weak var delegate: NetworkStatusViewDelegate?
@@ -78,16 +82,10 @@ final class NetworkStatusView: UIView {
     private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
     private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    fileprivate var application: ApplicationProtocol = UIApplication.shared
 
     var state: NetworkStatusViewState {
-        get {
-            return _state
-        }
-
-        set {
-            update(state: newValue, animated: false)
-        }
+        get { _state }
+        set { update(state: newValue, animated: false) }
     }
 
     func update(state: NetworkStatusViewState, animated: Bool) {
@@ -95,15 +93,6 @@ final class NetworkStatusView: UIView {
         // if this is called before the frame is set then the offline
         // bar zooms into view (which we don't want).
         updateViewState(animated: (frame == .zero) ? false : animated)
-    }
-
-    /// init method with a parameter for injecting mock application
-    ///
-    /// - Parameter application: Provide this param for testing only
-    convenience init(application: ApplicationProtocol = UIApplication.shared) {
-        self.init(frame: .zero)
-
-        self.application = application
     }
 
     override init(frame: CGRect) {
@@ -115,8 +104,7 @@ final class NetworkStatusView: UIView {
 
         connectingView.delegate = self
 
-        let subviews: [UIView] = [offlineView, connectingView]
-        subviews.forEach { subview in
+        [offlineView, connectingView].forEach { subview in
             addSubview(subview)
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -128,21 +116,21 @@ final class NetworkStatusView: UIView {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineViewTopMargin,
-          offlineViewBottomMargin,
+            offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineViewTopMargin,
+            offlineViewBottomMargin,
 
-          connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
-          connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
-          connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
-          connectingViewBottomMargin
+            connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
+            connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
+            connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
+            connectingViewBottomMargin
         ])
     }
 
@@ -211,9 +199,10 @@ final class NetworkStatusView: UIView {
 
     func updateUI(animated: Bool) {
         log(networkStatus: state)
-        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        if application.applicationState == .background {
+
+        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
+        if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }
 
@@ -251,6 +240,7 @@ final class NetworkStatusView: UIView {
 }
 
 extension NetworkStatusView: BreathLoadingBarDelegate {
+
     func animationDidStarted() {
         delegate?.didChangeHeight(self, animated: true, state: state)
     }

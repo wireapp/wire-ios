@@ -27,9 +27,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
-final class ConversationContentViewController: UIViewController, SpinnerCapable {
-
-    var dismissSpinner: SpinnerCompletion?
+final class ConversationContentViewController: UIViewController {
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
@@ -109,6 +107,8 @@ final class ConversationContentViewController: UIViewController, SpinnerCapable 
     private var onScreen = false
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
+
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     init(
         conversation: ZMConversation,
@@ -415,19 +415,21 @@ final class ConversationContentViewController: UIViewController, SpinnerCapable 
     // MARK: - MediaPlayer
     /// Update media bar visiblity
     private func updateMediaBar() {
-        let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage else {
+            return
+        }
 
-        if let mediaPlayingMessage,
-           mediaPlayingMessage.conversationLike === conversation,
+        if mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         } else {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         }
     }
 
@@ -493,7 +495,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URL.wr_legalHoldLearnMore.appendingLocaleParameter)
+            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
             topmostViewController?.present(browserViewController, animated: true)
         }
 

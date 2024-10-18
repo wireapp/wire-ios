@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <WireSystemPackage/WireSystemPackage.h>
-#import <WireTransport/WireTransport.h>
+@import Foundation;
+@import WireSystem;
+@import WireTransport;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystemPackage
+import WireSystem
 
 /// User default key for the array of enabled logs
 private let enabledLogsKey = "WireEnabledZMLogTags"
@@ -145,7 +145,6 @@ extension Settings {
             "UserImageCache",
             "FileLocation",
             "local-storage",
-            "safeFileContext",
             "UpdateEvents",
             "Push channel",
             "SafeTypes"

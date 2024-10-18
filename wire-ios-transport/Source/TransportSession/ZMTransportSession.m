@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 @import WireUtilities;
 @import UIKit;
 
@@ -690,7 +689,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)URLSession:(ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)request responseData:(NSData *)data;
 {
     NSTimeInterval timeDiff = -[request.startOfUploadTimestamp timeIntervalSinceNow];
-    ZMLogDebug(@"(Almost) bare network time for request %p %@ %@: %@s", request, request.methodAsString, request.path, @(timeDiff));
+    ZMLogDebug(@"(Almost) bare network time for request %@: %@s", [request safeForLoggingDescription], @(timeDiff));
     NSError *error = task.error;
     NSHTTPURLResponse *HTTPResponse = (id)task.response;
     [self processCookieResponse:HTTPResponse];

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 class ZMMessageTests_Removal: BaseZMClientMessageTests {
@@ -27,7 +28,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        var textMessage: ZMTextMessage? = ZMTextMessage(nonce: nonce, managedObjectContext: uiMOC)
+        var textMessage: TextMessage? = TextMessage(nonce: nonce, managedObjectContext: uiMOC)
         textMessage?.visibleInConversation = conversation
 
         let hidden = MessageHide.with {
@@ -46,7 +47,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
 
         // THEN
-        textMessage = ZMTextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
+        textMessage = TextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
         XCTAssertNil(textMessage)
         XCTAssertEqual(conversation.allMessages.count, 0)
     }
@@ -60,7 +61,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         sender.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        var textMessage: ZMTextMessage? = ZMTextMessage(nonce: nonce, managedObjectContext: uiMOC)
+        var textMessage: TextMessage? = TextMessage(nonce: nonce, managedObjectContext: uiMOC)
         textMessage?.sender = sender
         textMessage?.visibleInConversation = conversation
 
@@ -79,7 +80,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
 
         // THEN
-        textMessage = ZMTextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
+        textMessage = TextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
         XCTAssertTrue(textMessage?.hasBeenDeleted ?? false)
     }
 
@@ -92,7 +93,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         sender.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        var textMessage: ZMTextMessage? = ZMTextMessage(nonce: nonce, managedObjectContext: uiMOC)
+        var textMessage: TextMessage? = TextMessage(nonce: nonce, managedObjectContext: uiMOC)
         textMessage?.sender = sender
         textMessage?.visibleInConversation = conversation
 
@@ -111,7 +112,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
 
         // THEN
-        textMessage = ZMTextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
+        textMessage = TextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
         XCTAssertFalse(textMessage?.hasBeenDeleted ?? true)
     }
 
@@ -124,7 +125,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         sender.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        var textMessage: ZMTextMessage? = ZMTextMessage(nonce: nonce, managedObjectContext: uiMOC)
+        var textMessage: TextMessage? = TextMessage(nonce: nonce, managedObjectContext: uiMOC)
         textMessage?.sender = sender
         textMessage?.hiddenInConversation = conversation
 
@@ -147,7 +148,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
 
         // THEN
-        textMessage = ZMTextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
+        textMessage = TextMessage.fetch(withNonce: nonce, for: conversation, in: uiMOC)
         XCTAssertTrue(textMessage?.hasBeenDeleted ?? false)
     }
 
@@ -195,7 +196,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatATextMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMTextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            return TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)
@@ -214,7 +215,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAnPreE2EETextMessageIsRemovedWhenAskedForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMTextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            return TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)

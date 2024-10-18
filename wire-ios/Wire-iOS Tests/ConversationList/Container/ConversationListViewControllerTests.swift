@@ -17,8 +17,9 @@
 //
 
 import WireDataModelSupport
+import WireMainNavigationUI
 import WireSyncEngineSupport
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -32,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: UITabBarController!
+    private var tabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -40,8 +41,9 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
@@ -71,19 +73,15 @@ final class ConversationListViewControllerTests: XCTestCase {
             mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
-        tabBarController = MainTabBarController(
-            contacts: .init(),
-            conversations: UINavigationController(rootViewController: sut),
-            folders: .init(),
-            archive: .init()
-        )
+        tabBarController = .init()
+        tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
-        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
 
+        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
         UIView.setAnimationsEnabled(false)
     }
 
@@ -104,7 +102,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - View controller
+    // MARK: - View Controller
 
     func testForNoConversations() {
         window.rootViewController = nil

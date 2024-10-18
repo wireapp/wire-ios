@@ -18,7 +18,7 @@
 
 @import CoreGraphics;
 @import ImageIO;
-@import WireSystemPackage;
+@import WireSystem;
 
 #import "ZMImagePreprocessor.h"
 

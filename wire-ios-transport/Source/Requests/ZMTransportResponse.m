@@ -18,10 +18,11 @@
 
 @import ImageIO;
 @import MobileCoreServices;
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 
 #import "ZMTransportResponse.h"
+
+
 #import "ZMTransportData.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportSession.h"

@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -26,6 +27,8 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+
+    var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
@@ -113,6 +116,7 @@ final class UserSessionMock: UserSession {
         self.editableSelfUser = editableSelfUser
 
         searchUsersCache = .init()
+        userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen
@@ -242,21 +246,6 @@ final class UserSessionMock: UserSession {
     }
 
     func acknowledgeFeatureChange(for feature: Feature.Name) {
-
-    }
-
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    ) {
-
-    }
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
 
     }
 

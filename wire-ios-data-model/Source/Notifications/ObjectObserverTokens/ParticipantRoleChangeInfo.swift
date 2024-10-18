@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystemPackage
+import WireSystem
 
 extension ParticipantRole: ObjectInSnapshot {
 
@@ -44,9 +44,8 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
         participantRole = object as! ParticipantRole
         super.init(object: object)
     }
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: create ParticipantRoleType
-    // swiftlint:enable todo_requires_jira_link
     public let participantRole: ParticipantRole
 
     public var roleChanged: Bool {

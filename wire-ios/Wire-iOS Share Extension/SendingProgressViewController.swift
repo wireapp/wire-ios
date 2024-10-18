@@ -20,7 +20,7 @@ import SystemConfiguration
 import UIKit
 import WireCommonComponents
 import WireShareEngine
-import WireSystemPackage
+import WireSystem
 
 final class SendingProgressViewController: UIViewController {
 

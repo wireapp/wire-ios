@@ -17,7 +17,7 @@
 //
 
 @import WireUtilities;
-@import WireSystemPackage;
+@import WireSystem;
 @import WireTransport;
 @import WireCryptobox;
 @import WireDataModel;

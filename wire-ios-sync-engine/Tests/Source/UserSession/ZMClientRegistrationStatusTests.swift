@@ -17,10 +17,12 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
+import WireTransport
 import XCTest
 
-class MockCookieStorage: CookieProvider {
+@testable import WireSyncEngine
+
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
@@ -33,7 +35,7 @@ class MockCookieStorage: CookieProvider {
 
 }
 
-class ZMClientRegistrationStatusTests: MessagingTest {
+final class ZMClientRegistrationStatusTests: MessagingTest {
 
     private var sut: ZMClientRegistrationStatus!
     private var mockCookieStorage: MockCookieStorage!
@@ -761,36 +763,35 @@ class ZMClientRegistrationStatusTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func needsPasswordError() -> NSError {
+    private func needsPasswordError() -> NSError {
         NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue)
     }
 
-    func tooManyClientsError() -> NSError {
+    private func tooManyClientsError() -> NSError {
         NSError(domain: "ZMUserSession", code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue)
     }
 
-    func needToRegisterEmailError() -> NSError {
+    private func needToRegisterEmailError() -> NSError {
         NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue)
     }
 
-    func needToToEnrollE2EIToRegisterClientError() -> NSError {
+    private func needToToEnrollE2EIToRegisterClientError() -> NSError {
         NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToEnrollE2EIToRegisterClient.rawValue)
     }
 
-    func needToSetHandleError() -> NSError {
+    private func needToSetHandleError() -> NSError {
         NSError(domain: "ZMUserSession", code: UserSessionErrorCode.needsToHandleToRegisterClient.rawValue)
     }
 
     @objc
-    func enableMLS() {
+    private func enableMLS() {
         DeveloperFlag.storage = .temporary()
         DeveloperFlag.enableMLSSupport.enable(true)
-        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v5
     }
 
     @objc
-    func enableE2EI() {
+    private func enableE2EI() {
         FeatureRepository(context: syncMOC).storeE2EI(Feature.E2EI(status: .enabled))
     }
 }

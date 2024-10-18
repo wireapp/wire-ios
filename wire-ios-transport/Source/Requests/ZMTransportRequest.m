@@ -17,8 +17,7 @@
 //
 
 @import WireUtilities;
-@import WireSystemPackage;
-@import WireSystemObjC;
+@import WireSystem;
 @import ImageIO;
 @import MobileCoreServices;
 @import UniformTypeIdentifiers;
@@ -722,7 +721,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     if (self.shouldUseOnlyBackgroundSession) {
         return;
     }
-    NSString *activityName = [NSString stringWithFormat:@"Network request: %@ %@", self.methodAsString, self.path];
+    NSString *activityName = [NSString stringWithFormat:@"Network request: %@", self.safeForLoggingDescription];
     self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:activityName];
 }
 

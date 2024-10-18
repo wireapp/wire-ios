@@ -18,7 +18,7 @@
 
 import UIKit
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "Drag and drop images")
 
@@ -64,9 +64,8 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                         }
                     }
                 })
-                // swiftlint:disable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: it's a temporary solution to drag only one image, while we have no design for multiple images
-                // swiftlint:enable todo_requires_jira_link
                 break
             }
         }
@@ -85,15 +84,6 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
         return true
     }
-}
-
-private extension UIDropSession {
-
-    func hasText() -> Bool {
-        // Image dragged from browser can be both NSString and UIImage
-        return canLoadObjects(ofClass: NSString.self) && !canLoadObjects(ofClass: UIImage.self)
-    }
-
 }
 
 private extension NSItemProvider {

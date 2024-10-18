@@ -63,7 +63,7 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.authenticationCookieData != nil
+        return transportSession.cookieStorage.hasAuthenticationCookie
     }
 
 }
@@ -75,7 +75,7 @@ extension BackendEnvironmentProvider {
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        return cookieStorage(for: account).authenticationCookieData != nil
+        return cookieStorage(for: account).hasAuthenticationCookie
     }
 }
 

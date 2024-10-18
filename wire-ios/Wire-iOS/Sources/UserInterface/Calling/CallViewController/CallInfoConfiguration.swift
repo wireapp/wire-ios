@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
 
 extension VoiceChannel {
@@ -66,8 +67,10 @@ extension VoiceChannel {
         return true
     }
 
+    @MainActor
     func mediaState(with permissions: CallPermissionsConfiguration) -> MediaState {
-        let isPadOrPod = UIDevice.current.type == .iPad || UIDevice.current.type == .iPod
+        let device = DeviceWrapper(device: .current)
+        let isPadOrPod = device.userInterfaceIdiom == .pad || device.model.contains("iPod")
         let speakerEnabled = AVSMediaManager.sharedInstance().isSpeakerEnabled
         let speakerState = MediaState.SpeakerState(
             isEnabled: speakerEnabled || isPadOrPod,
@@ -119,6 +122,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
 
     private let voiceChannelSnapshot: VoiceChannelSnapshot
 
+    @MainActor
     init(
         voiceChannel: VoiceChannel,
         preferedVideoPlaceholderState: CallVideoPlaceholderState,

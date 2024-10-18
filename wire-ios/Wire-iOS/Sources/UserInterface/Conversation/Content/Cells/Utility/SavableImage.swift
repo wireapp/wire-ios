@@ -18,7 +18,7 @@
 
 import Photos
 import UIKit
-import WireSystemPackage
+import WireSystem
 import WireUtilities
 
 protocol PhotoLibraryProtocol {
@@ -141,7 +141,10 @@ final class SavableImage: NSObject {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
 }

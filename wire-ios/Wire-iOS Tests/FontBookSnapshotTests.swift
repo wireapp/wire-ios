@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireCommonComponents
 import WireDesign
-import WireTestingPkg
+import WireFoundation
+import WireTestingPackage
 import XCTest
 
 @testable import Wire

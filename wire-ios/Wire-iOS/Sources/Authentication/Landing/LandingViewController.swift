@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 import WireTransport
 
 protocol LandingViewControllerDelegate: AnyObject {
@@ -348,7 +348,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private func createAndAddConstraints() {
 
-        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeTopAnchor,
+        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
                                                               constant: topStackTopConstraintConstant)
 
         contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 375)
@@ -370,7 +370,7 @@ final class LandingViewController: AuthenticationStepViewController {
         createAccountInfoLabelTopConstraint = createAccountInfoLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor,
                                                                                           constant: 98)
 
-        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor,
+        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
                                                                                           constant: -35)
 
         NSLayoutConstraint.activate([

@@ -21,8 +21,6 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewController")
-
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
@@ -30,10 +28,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-}
-
-protocol BackButtonTitleDelegate: AnyObject {
-    func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String?
 }
 
 extension ZMConversationType {
@@ -199,9 +193,8 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
-        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(
             user: viewModel.user,
             viewer: viewModel.viewer,
@@ -374,7 +367,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }

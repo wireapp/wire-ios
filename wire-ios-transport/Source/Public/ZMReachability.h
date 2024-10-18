@@ -17,10 +17,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WireSystemPackage/WireSystemPackage.h>
-#import <WireUtilities/WireUtilities.h>
 
 NS_ASSUME_NONNULL_BEGIN
+@import WireSystem;
+@import WireUtilities;
 
 @protocol ZMReachabilityObserver;
 @protocol ReachabilityProvider;

@@ -18,13 +18,11 @@
 
 import UIKit
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 protocol SketchColorPickerControllerDelegate: AnyObject {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor)
 }
-
-private let zmLog = ZMSLog(tag: "SketchColorPickerController")
 
 /// The color picker for the sketching
 

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /// This class will combine all fetch requests from all change trackers' -fetchRequestForTrackedObjects and pass the result to their -addTrackedObjects:
 /// This allows us to do fewer fetch requests during app launch.

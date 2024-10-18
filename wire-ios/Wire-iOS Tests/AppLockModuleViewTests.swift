@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -51,7 +50,7 @@ final class AppLockModuleViewTests: XCTestCase {
         sut.viewDidAppear(false)
 
         // Then
-        XCTAssertEqual(presenter.events, [.viewDidAppear])
+        XCTAssertEqual(presenter.events, [.viewDidFirstAppear])
     }
 
     // @SF.Locking @TSFI.FS-IOS @S0.1

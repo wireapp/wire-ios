@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystemObjC;
-
 #import <Foundation/Foundation.h>
 #import <WireRequestStrategy/WireRequestStrategy-Swift.h>
 #import "ZMAbstractRequestStrategy.h"

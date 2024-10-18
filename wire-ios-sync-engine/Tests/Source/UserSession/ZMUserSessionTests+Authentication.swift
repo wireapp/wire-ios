@@ -16,28 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import XCTest
+
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
 
-    var previousApiVersion: APIVersion?
-
     override func setUp() {
         super.setUp()
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = .v0
 
         syncMOC.performGroupedAndWait {
             self.createSelfClient()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
-
-    override func tearDown() {
-        BackendInfo.apiVersion = previousApiVersion
-        super.tearDown()
     }
 
     func testThatIsLoggedInIsFalseAtStartup() {

@@ -322,9 +322,8 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] proper federation error handling.
-        // swiftlint:enable todo_requires_jira_link
         // This is a quick fix to make the app somewhat usable when
         // a remote federated backend is down.
         if response.httpStatus == 533 {

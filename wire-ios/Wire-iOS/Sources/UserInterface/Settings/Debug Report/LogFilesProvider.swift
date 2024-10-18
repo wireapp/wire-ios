@@ -18,7 +18,7 @@
 
 import UIKit
 import WireCommonComponents
-import WireSystemPackage
+import WireSystem
 import ZipArchive
 
 // sourcery: AutoMockable

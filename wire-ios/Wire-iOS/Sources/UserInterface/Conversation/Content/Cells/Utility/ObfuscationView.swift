@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 final class ObfuscationView: UIImageView {
     init(icon: StyleKitIcon) {

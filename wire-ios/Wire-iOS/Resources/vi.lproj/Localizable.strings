@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Phòng khách";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Bạn)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Mời mọi người vào nhóm";
 "peoplepicker.quick-action.open-conversation" = "Mở";
 "peoplepicker.quick-action.create-conversation" = "Tạo nhóm";
-"peoplepicker.quick-action.create-guest-room" = "Tạo phòng khách";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Quản lý Dịch vụ";
 
 "peoplepicker.federation.domain_unvailable" = "Miền liên kết hiện không có sẵn. [Tìm hiểu thêm] (%@)";
@@ -134,18 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Chạm để kích hoạt.";
 "conversation_list.header.self_team.accessibility_value.active" = "Kích hoạt ngay.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Có tin nhắn mới.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Danh bạ";
-"conversation_list.bottom_bar.conversations.title" = "Các cuộc hội thoại";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Lưu trữ";
-
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Giúp chúng tôi làm cho Wire tốt hơn";
-"conversation_list.data_usage_permission_alert.message" = "Tôi đồng ý rằng Wire có thể tạo và sử dụng các dữ liệu ẩn danh và báo cáo lỗi để cải thiện Ứng dụng Wire. Tôi có thể thu hồi sự đồng tình này bất cứ lúc nào.";
-"conversation_list.data_usage_permission_alert.disagree" = "Không";
-"conversation_list.data_usage_permission_alert.agree" = "Tôi đồng ý";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "trong Danh bạ";
@@ -401,6 +389,9 @@
 "location.unauthorized_alert.cancel" = "Huỷ";
 "location.unauthorized_alert.settings" = "Cài đặt";
 
+"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ trên Twitter";
 
@@ -515,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Đã gửi";
 "content.system.message_read_timestamp" = "Đã xem";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -624,7 +616,6 @@
 
 "content.message.like" = "Thích";
 "content.message.unlike" = "Không thích";
-"content.message.forward" = "Chia sẽ";
 "content.message.go_to_conversation" = "Hiển thị";
 "content.message.forward.to" = "Tìm kiếm…";
 "content.message.open" = "Mở";
@@ -1013,6 +1004,20 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
+"secured_guest_link_with_password.textfield.header" = "Đặt mật khẩu";
+"secured_guest_link_with_password.textfield.footer" = "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"secured_guest_link_with_password.textfield.placeholder" = "Enter password";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
+"secured_guest_link_with_password.createLinkButton.title" = "Create Link";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Password copied";
+"secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
 "group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
 "group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
@@ -1046,14 +1051,8 @@
 "about.legal.title" = "Legal";
 "about.tos.title" = "Điều khoản Sử dụng";
 "about.privacy.title" = "Chính sách Riêng tư";
-"about.license.title" = "Thông tin Giấy phép";
 "about.website.title" = "Trang web Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Chi tiết";
-"about.license.open_project_button" = "View Project Page";
-"about.license.license_header" = "Acknowledgements";
 
 // Self new devices
 "self.new_device_alert.title" = "Your account was used on:";
@@ -1148,18 +1147,10 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Báo cáo Lạm dụng và Sự cố";
 
-// Crash
-"self.settings.privacy_crash.title" = "Send anonymous crash data";
-"self.settings.privacy_crash_menu.description.title" = "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
-
-
 
 // Change Username
 
@@ -1296,16 +1287,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "Nếu bạn gặp vấn đề với thông báo đẩy, Hỗ Trợ Wire có thể yêu cầu bạn đặt lại token thông báo này.";
 "self.settings.advanced.reset_push_token_alert.title" = "Token đẩy đã đặt lại";
 "self.settings.advanced.reset_push_token_alert.message" = "Thông báo sẽ khôi phục lại trong vài giây.";
-"self.settings.advanced.version_technical_details.title" = "Chi tiết Phiên bản Kỹ Thuật";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Data Usage Permissions";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Báo cáo Kỹ Thuật";
-"self.settings.technical_report.send_report" = "Gửi báo cáo cho Wire";
+"self.settings.technical_report_section.title" = "Debug Report";
+"self.settings.technical_report.send_report" = "Send Report";
+"self.settings.technical_report.share_report" = "Share Report Via Wire";
 "self.settings.technical_report.mail.subject" = "Wire Debug Report";
 "self.settings.technical_report.include_log" = "Bao gồm nhật ký chi tiết";
+"self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Nhật ký chi tiết có thể chứa dữ liệu cá nhân";
 "self.settings.technical_report.no_mail_alert" = "No mail client detected. Tap \"OK\" and send logs manually to: ";
 
@@ -1420,6 +1412,12 @@
 
 "guest_room.link.button.title" = "Create Link";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Copy Link";
 "guest_room.actions.copied_link" = "Link Copied!";
 "guest_room.actions.share_link" = "Share Link";
@@ -1429,6 +1427,13 @@
 
 "guest_room.expiration.hours_left" = "%@h left";
 "guest_room.expiration.less_than_minutes_left" = "Less than %@m left";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
 // Services Options
 
@@ -1788,7 +1793,7 @@
 "giphy.conversation.message" = "%@ · bằng giphy.com";
 "giphy.conversation.random_message" = "bằng giphy.com";
 "giphy.error.no_more_results" = "hết gifs";
-"giphy.error.no_result" = "không tìm thấy gif";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "gửi";
 "giphy.cancel" = "huỷ";
@@ -1893,6 +1898,8 @@
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
 "url_action.invalid_user.message" = "You may not have permission with this account or it no longer exists.";
@@ -1905,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Invalid link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "Chính sách Riêng tư";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

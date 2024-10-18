@@ -17,10 +17,10 @@
 //
 
 import XCTest
-import WireTestingPkg
 
 @testable import Wire
 @testable import WireSyncEngineSupport
+import WireTestingPackage
 
 final class ProfileViewControllerTests: XCTestCase {
 

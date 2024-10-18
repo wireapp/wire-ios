@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a user's metadata was updated.
 
-public struct UserUpdateEvent: Equatable, Codable {
+public struct UserUpdateEvent: Equatable, Codable, Sendable {
 
     /// The updated user's id.
 
@@ -52,6 +52,26 @@ public struct UserUpdateEvent: Equatable, Codable {
 
     /// The new supported protocols.
 
-    public let supportedProtocols: Set<SupportedProtocol>?
+    public let supportedProtocols: Set<MessageProtocol>?
+
+    public init(
+        userID: UUID,
+        accentColorID: Int?,
+        name: String?,
+        handle: String?,
+        email: String?,
+        isSSOIDDeleted: Bool?,
+        assets: [UserAsset]?,
+        supportedProtocols: Set<MessageProtocol>?
+    ) {
+        self.userID = userID
+        self.accentColorID = accentColorID
+        self.name = name
+        self.handle = handle
+        self.email = email
+        self.isSSOIDDeleted = isSSOIDDeleted
+        self.assets = assets
+        self.supportedProtocols = supportedProtocols
+    }
 
 }

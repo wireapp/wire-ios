@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystemPackage
+import WireSystem
 
 protocol TemporaryFileServiceInterface {
     func removeTemporaryData()

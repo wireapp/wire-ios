@@ -24,10 +24,6 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
         selectedConversation = conversation
     }
 
-    func conversationList(_ controller: ConversationListContentController?, willSelectIndexPathAfterSelectionDeleted conv: IndexPath?) {
-        ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
-    }
-
     func conversationListContentController(_ controller: ConversationListContentController?, wantsActionMenuFor conversation: ZMConversation?, fromSourceView sourceView: UIView?) {
         showActionMenu(for: conversation, from: sourceView)
     }

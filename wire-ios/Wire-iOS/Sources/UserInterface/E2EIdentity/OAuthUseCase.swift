@@ -19,7 +19,7 @@
 import AppAuth
 import Foundation
 import WireRequestStrategy
-import WireSystemPackage
+import WireSystem
 import WireUtilities
 
 protocol OAuthUseCaseInterface {
@@ -32,9 +32,9 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
-    private var targetViewController: UIViewController
+    private var targetViewController: () -> UIViewController
 
-    init(targetViewController: UIViewController) {
+    init(targetViewController: @escaping () -> UIViewController) {
         self.targetViewController = targetViewController
     }
 
@@ -109,7 +109,7 @@ class OAuthUseCase: OAuthUseCaseInterface {
     @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
         guard let userAgent = OIDExternalUserAgentIOS(
-            presenting: targetViewController,
+            presenting: targetViewController(),
             prefersEphemeralSession: true
         ) else {
             throw OAuthError.missingOIDExternalUserAgent

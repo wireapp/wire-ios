@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum CoreDataMessagingMigrationVersion: String, CaseIterable {
+enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     private enum Constant {
         static let dataModelPrefix = "zmessaging"

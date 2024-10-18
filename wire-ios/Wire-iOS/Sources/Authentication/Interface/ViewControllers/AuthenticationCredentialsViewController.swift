@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSystemPackage
+import WireSystem
 import WireTransport
 
 /**
@@ -293,7 +293,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     @objc
     func forgotPasswordTapped(sender: UIButton) {
-        actioner?.executeAction(.openURL(.wr_passwordReset))
+        actioner?.executeAction(.openURL(WireURLs.shared.passwordReset))
     }
 
     override func createConstraints() {
@@ -466,10 +466,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         addChild(proxyCredentialsViewController)
         contentStack.addArrangedSubview(proxyCredentialsViewController.view)
         proxyCredentialsViewController.didMove(toParent: self)
-    }
-
-    func textFieldDidUpdateText(_ textField: ValidatedTextField) {
-        updateLoginButtonState()
     }
 
     func textField(_ textField: UITextField, editing: Bool) {

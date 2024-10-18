@@ -17,7 +17,7 @@
 //
 
 import WireDesign
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 import Ziphy
 
@@ -57,8 +57,9 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
             conversation: (mockConversation as Any) as! ZMConversation,
             searchResultsController: resultsController
         )
-        sut.searchBar.placeholderLabel.isHidden = true
-        mockNavigationController = sut.wrapInsideNavigationController()
+
+        mockNavigationController = UINavigationController(rootViewController: sut)
+        mockNavigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
@@ -82,4 +83,5 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
     func testEmptySearchScreenWithKeyword() {
         snapshotHelper.verify(matching: mockNavigationController.view)
     }
+
 }

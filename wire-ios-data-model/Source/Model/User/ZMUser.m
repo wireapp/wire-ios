@@ -22,7 +22,6 @@
 @import WireProtos;
 @import WireTransport;
 @import Foundation;
-@import WireSystemObjC;
 
 #import "ZMManagedObject+Internal.h"
 #import "ZMUser+Internal.h"

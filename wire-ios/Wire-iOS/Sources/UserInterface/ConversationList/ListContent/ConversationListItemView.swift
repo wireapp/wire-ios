@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-typealias ConversationListItemViewConversation = ConversationAvatarViewConversation & ConversationStatusProvider & ConnectedUserProvider
-
 extension Notification.Name {
     static let conversationListItemDidScroll = Notification.Name("ConversationListItemDidScroll")
 }
@@ -174,11 +172,6 @@ final class ConversationListItemView: UIView {
         titleField.font = FontSpec(.normal, .semibold).font!
     }
 
-    func updateAppearance() {
-        titleField.attributedText = titleText
-        titleField.textColor = SemanticColors.Label.textDefault
-    }
-
     // MARK: - Observer
     @objc
     private func contentSizeCategoryDidChange(_ notification: Notification?) {
@@ -216,12 +209,13 @@ final class ConversationListItemView: UIView {
 
     @objc
     private func mediaPlayerStateChanged(_ notification: Notification?) {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             if let conversation = self.conversation as? ZMConversation,
-                AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+               let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+               appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
                 self.update(for: conversation)
             }
-        })
+        }
     }
 
     func configure(with title: NSAttributedString?,
@@ -291,9 +285,10 @@ final class ConversationListItemView: UIView {
 
         // Configure the accessory
         let statusIcon: ConversationStatusIcon?
-        if let player = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer,
-            let message = player.sourceMessage,
-            message.conversationLike === conversation {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let player = appDelegate.mediaPlaybackManager?.activeMediaPlayer,
+           let message = player.sourceMessage,
+           message.conversationLike === conversation {
             statusIcon = .playingMedia
         } else {
             statusIcon = status.icon(for: conversation)

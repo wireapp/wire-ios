@@ -49,16 +49,11 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
-                Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-                    // swiftlint:enable todo_requires_jira_link
-                    try? await userSession.updateEventProcessor?.processEvents([event])
+
+                userSession.processConversationEvents([event]) {
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
                     }
-                    userSession.syncContext.leaveAllGroups(groups)
                 }
             } else if response.httpStatus == 204 {
                 self.hasReadReceiptsEnabled = enabled

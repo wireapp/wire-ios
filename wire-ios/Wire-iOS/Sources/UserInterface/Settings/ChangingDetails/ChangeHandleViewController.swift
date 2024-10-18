@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 fileprivate extension UIView {
@@ -211,6 +212,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
     convenience init() {
         let user = SelfUser.provider?.providedSelfUser
         self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
@@ -275,7 +278,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     func saveButtonTapped() {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     fileprivate var attributedFooterTitle: NSAttributedString? {
@@ -383,7 +386,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     func didSetHandle() {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         state.availability = .taken
         guard popOnSuccess else { return }
         _ = navigationController?.popViewController(animated: true)
@@ -391,13 +394,13 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 
     func didFailToSetHandle() {
         presentFailureAlert()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func didFailToSetHandleBecauseExisting() {
         state.availability = .taken
         updateUI()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     private func presentFailureAlert() {

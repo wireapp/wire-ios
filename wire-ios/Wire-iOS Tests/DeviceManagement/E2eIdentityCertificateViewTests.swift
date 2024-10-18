@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire

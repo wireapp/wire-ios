@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystemPackage
+import WireSystem
 
 protocol SaveFileActions {
     func save(value: String, fileName: String, type: String)

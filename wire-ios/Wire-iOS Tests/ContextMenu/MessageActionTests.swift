@@ -17,7 +17,7 @@
 //
 
 import WireCommonComponents
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -56,7 +56,7 @@ final class MessageActionTests: XCTestCase {
         MessageAction.allCases.forEach { action in
             if let icon = action.icon {
                 let image = icon.makeImage(size: .tiny, color: .black)
-                verify(matching: image, named: "\(action)")
+                snapshotHelper.verify(matching: image, named: "\(action)")
             }
         }
     }

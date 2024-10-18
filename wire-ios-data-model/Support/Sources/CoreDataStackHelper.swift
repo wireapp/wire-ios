@@ -25,11 +25,7 @@ public struct CoreDataStackHelper {
 
     public var storageDirectory: URL {
         var path = fileManager.temporaryDirectory
-        if #available(iOS 16, *) {
-            path.append(path: uniquePath, directoryHint: .isDirectory)
-        } else {
-            path.appendPathComponent(uniquePath, isDirectory: true)
-        }
+        path.append(path: uniquePath, directoryHint: .isDirectory)
         return path
     }
 
@@ -39,18 +35,18 @@ public struct CoreDataStackHelper {
         self.uniquePath = UUID().uuidString
     }
 
-    public func createStack() async throws -> CoreDataStack {
-        try await createStack(at: storageDirectory)
+    public func createStack(inMemoryStore: Bool = true) async throws -> CoreDataStack {
+        try await createStack(at: storageDirectory, inMemoryStore: inMemoryStore)
     }
 
     @MainActor
-    public func createStack(at directory: URL) async throws -> CoreDataStack {
+    public func createStack(at directory: URL, inMemoryStore: Bool = true) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: UUID())
 
         let stack = CoreDataStack(
             account: account,
             applicationContainer: directory,
-            inMemoryStore: true
+            inMemoryStore: inMemoryStore
         )
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -74,16 +70,10 @@ public struct CoreDataStackHelper {
             return
         }
 
-        guard fileManager.fileExists(atPath: storageDirectory.absoluteString) else {
+        guard fileManager.fileExists(atPath: storageDirectory.path) else {
             return
         }
 
-        let files = try fileManager.contentsOfDirectory(
-            at: storageDirectory,
-            includingPropertiesForKeys: nil,
-            options: []
-        )
-
-        try files.forEach { try fileManager.removeItem(at: $0) }
+        try fileManager.removeItem(atPath: storageDirectory.path)
     }
 }

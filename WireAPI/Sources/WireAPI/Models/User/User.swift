@@ -20,7 +20,7 @@ import Foundation
 
 /// User profile for a user
 
-public struct User: Equatable {
+public struct User: Equatable, Sendable {
 
     /// The unique id of the user
 
@@ -66,7 +66,7 @@ public struct User: Equatable {
 
     /// Messaging protocols which this user supports
 
-    public let supportedProtocols: Set<SupportedProtocol>?
+    public let supportedProtocols: Set<MessageProtocol>?
 
     /// The user's legalhold status
 

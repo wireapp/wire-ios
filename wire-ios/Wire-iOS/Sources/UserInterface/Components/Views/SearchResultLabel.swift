@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 final class SearchResultLabel: UILabel, Copyable {
 

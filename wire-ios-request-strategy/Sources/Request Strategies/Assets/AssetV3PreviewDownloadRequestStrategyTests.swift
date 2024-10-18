@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 import WireTesting
+import WireTransport
 
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
@@ -31,7 +32,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -53,7 +54,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = nil
         sut = nil
         conversation = nil
-        apiVersion = nil
         super.tearDown()
     }
 

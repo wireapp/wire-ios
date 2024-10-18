@@ -17,7 +17,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WireSystemPackage/WireSystemPackage.h>
+#import <WireSystem/WireSystem.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

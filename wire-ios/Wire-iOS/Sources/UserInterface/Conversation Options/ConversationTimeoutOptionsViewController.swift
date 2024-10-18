@@ -19,12 +19,12 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
     case unsupportedValue(MessageDestructionTimeoutValue)
-    case customValue
 }
 
 extension ZMConversation {
@@ -36,16 +36,11 @@ extension ZMConversation {
             newItems.append(.unsupportedValue(groupTimeout))
         }
 
-        if Bundle.developerModeEnabled {
-            newItems.append(.customValue)
-        }
-
         return newItems
     }
 }
 
-final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+final class ConversationTimeoutOptionsViewController: UIViewController {
 
     private let conversation: ZMConversation
     private var items: [Item] = []
@@ -56,9 +51,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerC
 
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
-    }()
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     // MARK: - Initialization
 
@@ -152,9 +145,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             configure(cell, for: value, disabled: false)
         case .unsupportedValue(let value):
             configure(cell, for: value, disabled: true)
-        case .customValue:
-            cell.title = "Custom"
-            cell.showCheckmark = false
         }
 
         cell.showSeparator = indexPath.row < (items.count - 1)
@@ -167,8 +157,9 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
-        let item = CancelableItem(delay: 0.4) { [weak self] in
-            self?.isLoadingViewVisible = true
+        let activityIndicator = BlockingActivityIndicator(view: view)
+        let item = CancelableItem(delay: 0.4) {
+            activityIndicator.start()
         }
 
         self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
@@ -177,7 +168,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             }
 
             item.cancel()
-            self.isLoadingViewVisible = false
+            activityIndicator.stop()
 
             if case .failure(let error) = result {
                 self.handle(error: error)
@@ -188,23 +179,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     private func handle(error: Error) {
         let controller = UIAlertController.checkYourConnection()
         present(controller, animated: true)
-    }
-
-    private func requestCustomValue() {
-        UIAlertController.requestCustomTimeInterval(over: self) { [weak self] result in
-
-            guard let self else {
-                return
-            }
-
-            switch result {
-            case .success(let value):
-                self.updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
-            default:
-                break
-            }
-
-        }
     }
 
     // MARK: Saving Changes
@@ -225,9 +199,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
                 break
             }
             updateTimeout(value)
-        case .customValue:
-            requestCustomValue()
-        default:
+        case .unsupportedValue:
             break
         }
     }

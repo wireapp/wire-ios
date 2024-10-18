@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireSystemPackage
 
 @objcMembers
 public final class DispatchGroupQueue: NSObject, GroupQueue {

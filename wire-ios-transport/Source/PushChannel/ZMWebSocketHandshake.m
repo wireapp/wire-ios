@@ -19,7 +19,7 @@
 #import "ZMWebSocketHandshake.h"
 #import <WireTransport/WireTransport-Swift.h>
 
-@import WireSystemPackage;
+@import WireSystem;
 
 
 

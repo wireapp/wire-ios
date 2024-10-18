@@ -17,10 +17,11 @@
 //
 
 @import XCTest;
-@import WireSystemPackage;
+@import WireSystem;
 @import OCMock;
 @import WireTesting;
 @import WireTransport;
+@import WireTransportSupport;
 @import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE
@@ -478,7 +479,7 @@ static XCTestCase *currentTestCase;
 - (void)setAuthenticationCookieData;
 {
     NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
-    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+    NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL
                                                               statusCode:200
                                                              HTTPVersion:@""
@@ -1473,7 +1474,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItNotifiesTheSchedulerWhenItReceivesAnAccessToken;
 {
     // given
-    self.sut.cookieStorage.authenticationCookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
+    [self setAuthenticationCookieData];
     
     // The access token request:
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
@@ -1531,8 +1532,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    self.sut.cookieStorage.authenticationCookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
     // The request will fail with a 401:
     NSDictionary *dummyPayload = @{@"b": @"B"};
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request, NSData *data ZM_UNUSED) {
@@ -1570,8 +1570,8 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = cookieData;
-    
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
+
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
         testResponse.body = [NSJSONSerialization dataWithJSONObject:@{@"a": @"A"} options:0 error:NULL];
@@ -1596,7 +1596,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = cookieData;
+    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1648,7 +1648,7 @@ static XCTestCase *currentTestCase;
 - (void)setCookieData;
 {
     // Set cookie on cookie storage:
-    NSDictionary *originalHeaders = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+    NSDictionary *originalHeaders = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:originalHeaders];
     [self.sut.cookieStorage setCookieDataFromResponse:response forURL:URL];

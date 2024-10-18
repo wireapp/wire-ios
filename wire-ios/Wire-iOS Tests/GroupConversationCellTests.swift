@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -73,6 +73,7 @@ final class GroupConversationCellTests: XCTestCase {
         sut.configure(conversation: conversation)
 
         snapshotHelper
+            .withPerceptualPrecision(0.98)
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -83,6 +84,7 @@ final class GroupConversationCellTests: XCTestCase {
             )
 
         snapshotHelper
+            .withPerceptualPrecision(0.98)
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,

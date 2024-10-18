@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystemPackage
+import WireSystem
 
 enum SettingsColorScheme: Int, CaseIterable {
 
@@ -32,7 +32,11 @@ enum SettingsColorScheme: Int, CaseIterable {
         case .dark:
             return .dark
         case .system:
-            return UIApplication.userInterfaceStyle == .dark ? .dark : .light
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let currentStyle = windowScene.windows.first(where: { $0.isKeyWindow })?.traitCollection.userInterfaceStyle {
+                return currentStyle == .dark ? .dark : .light
+            }
+            return .light
         }
     }
 

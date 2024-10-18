@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class BackendInfoAPITests: XCTestCase {
 
@@ -29,14 +29,21 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfoRequest() async throws {
         // Given
-        let httpClient = HTTPClientMock()
-        let sut = BackendInfoAPIImpl(httpClient: httpClient)
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { _, _ in
+            throw "no response needed"
+        }
+
+        let sut = BackendInfoAPIImpl(apiService: apiService)
 
         // When
         _ = try? await sut.getBackendInfo()
 
         // Then
-        let request = try XCTUnwrap(httpClient.receivedRequest)
+        let invocations = apiService.executeRequestRequiringAccessToken_Invocations
+        try XCTAssertCount(invocations, count: 1)
+
+        let request = invocations[0].request
         await snapshotter.verifyRequest(request: request)
     }
 
@@ -44,12 +51,15 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfoResponseWithoutDevelopmentVersions() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: 200,
-            payloadResourceName: "GetBackendInfoSuccessResponse1"
-        )
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+            try request.mockResponse(
+                statusCode: .ok,
+                jsonResourceName: "GetBackendInfoSuccessResponse1"
+            )
+        }
 
-        let sut = BackendInfoAPIImpl(httpClient: httpClient)
+        let sut = BackendInfoAPIImpl(apiService: apiService)
 
         // When
         let result = try await sut.getBackendInfo()
@@ -68,12 +78,15 @@ final class BackendInfoAPITests: XCTestCase {
 
     func testGetBackendInfoResponseWithDevelopmentVersions() async throws {
         // Given
-        let httpClient = try HTTPClientMock(
-            code: 200,
-            payloadResourceName: "GetBackendInfoSuccessResponse2"
-        )
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+            try request.mockResponse(
+                statusCode: .ok,
+                jsonResourceName: "GetBackendInfoSuccessResponse2"
+            )
+        }
 
-        let sut = BackendInfoAPIImpl(httpClient: httpClient)
+        let sut = BackendInfoAPIImpl(apiService: apiService)
 
         // When
         let result = try await sut.getBackendInfo()

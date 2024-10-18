@@ -44,13 +44,11 @@ extension UITraitEnvironment {
         return conversationHorizontalMargins()
     }
 
-    func conversationHorizontalMargins(windowWidth: CGFloat? = UIApplication.shared.firstKeyWindow?.frame.width) -> HorizontalMargins {
-
+    func conversationHorizontalMargins(windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width) -> HorizontalMargins {
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
-        // On iPad 9.7 inch 2/3 mode, right view's width is  396pt, use the compact mode's narrower margin
-        if let windowWidth,
-            windowWidth <= CGFloat.SplitView.IPadMarginLimit {
+        // On iPad 9.7 inch 2/3 mode, right view's width is 396pt, use the compact mode's narrower margin
+        if let windowWidth, windowWidth <= CGFloat.SplitView.IPadMarginLimit {
             userInterfaceSizeClass = .compact
         } else {
             userInterfaceSizeClass = .regular

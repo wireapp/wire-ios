@@ -17,59 +17,13 @@
 //
 
 import UIKit
-import WireSystemPackage
-
-struct EdgeInsets {
-    let top, leading, bottom, trailing: CGFloat
-
-    static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-
-    init(top: CGFloat, leading: CGFloat, bottom: CGFloat, trailing: CGFloat) {
-        self.top = top
-        self.leading = leading
-        self.bottom = bottom
-        self.trailing = trailing
-    }
-
-    init(margin: CGFloat) {
-        self = EdgeInsets(top: margin, leading: margin, bottom: margin, trailing: margin)
-    }
-
-    init(edgeInsets: UIEdgeInsets) {
-        top = edgeInsets.top
-        leading = edgeInsets.leading
-        bottom = edgeInsets.bottom
-        trailing = edgeInsets.trailing
-    }
-}
+import WireSystem
 
 enum Anchor {
     case top
     case bottom
     case leading
     case trailing
-}
-
-enum AxisAnchor {
-    case centerX
-    case centerY
-}
-
-enum LengthAnchor {
-    case width
-    case height
-}
-
-struct LengthConstraints {
-    let constraints: [LengthAnchor: NSLayoutConstraint]
-
-    subscript(anchor: LengthAnchor) -> NSLayoutConstraint? {
-        return constraints[anchor]
-    }
-
-    var array: [NSLayoutConstraint] {
-        return constraints.values.map { $0 }
-    }
 }
 
 extension UIView {

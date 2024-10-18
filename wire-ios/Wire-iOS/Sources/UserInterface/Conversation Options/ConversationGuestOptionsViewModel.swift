@@ -114,11 +114,7 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    weak var delegate: ConversationGuestOptionsViewModelDelegate? {
-        didSet {
-            delegate?.conversationGuestOptionsViewModel(self, didUpdateState: state)
-        }
-    }
+    weak var delegate: ConversationGuestOptionsViewModelDelegate?
 
     private var isGuestLinkWithPasswordAvailable: Bool {
         guard let apiVersion = BackendInfo.apiVersion else { return false }
@@ -161,9 +157,8 @@ final class ConversationGuestOptionsViewModel {
         state.rows = computeVisibleRows()
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: copy?
-    // swiftlint:enable todo_requires_jira_link
     private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
             get: { [unowned self] in return self.configuration.allowGuests },

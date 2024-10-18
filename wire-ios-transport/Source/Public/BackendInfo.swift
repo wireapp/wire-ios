@@ -29,6 +29,11 @@ public enum BackendInfo {
 
     }
 
+    /// The `UserDefaults` used to store backend configuration info.
+    ///
+    /// - Note: By default this is `UserDefaults.standard`. However, this property is currently overwritten by the main
+    /// app on startup.
+
     public static var storage = UserDefaults.standard
 
     /// The currently selected API Version.
@@ -68,5 +73,4 @@ public enum BackendInfo {
         let storedValue = storage.integer(forKey: key.rawValue)
         return APIVersion(rawValue: Int32(storedValue))
     }
-
 }

@@ -27,6 +27,7 @@ import UIKit
 public final class WireDatadog {
 
     private let applicationID: String
+    private let buildVersion: String
     private let buildNumber: String
     private let logLevel: LogLevel = .debug
 
@@ -35,12 +36,14 @@ public final class WireDatadog {
 
     public init(
         applicationID: String,
+        buildVersion: String,
         buildNumber: String,
         clientToken: String,
         identifierForVendor: UUID?,
         environmentName: String
     ) {
         self.applicationID = applicationID
+        self.buildVersion = buildVersion
         self.buildNumber = buildNumber
 
         if let identifierForVendor {
@@ -103,11 +106,12 @@ public final class WireDatadog {
     public func log(
         level: LogLevel,
         message: String,
-        error: Error? = nil,
+        error: (any Error)? = nil,
         attributes: [String: any Encodable]
     ) {
         var finalAttributes = attributes
         finalAttributes["build_number"] = buildNumber
+        finalAttributes["version"] = buildVersion
 
         logger?.log(
             level: level,

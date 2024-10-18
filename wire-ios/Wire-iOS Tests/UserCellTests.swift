@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPkg
+@testable import Wire
+import WireTestingPackage
 import WireUtilities
 import XCTest
-
-@testable import Wire
 
 final class UserCellTests: XCTestCase {
 

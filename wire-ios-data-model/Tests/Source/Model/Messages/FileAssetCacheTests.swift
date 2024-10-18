@@ -266,6 +266,25 @@ class FileAssetCacheTests: XCTestCase {
         XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
     }
 
+    func testThatItDoesNotDecryptAFileIfSHA256IsEmpty() {
+
+        // given
+        let message = createMessageForCaching()
+        sut.storeEncryptedMediumImage(data: testData(), for: message)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
+
+        // when
+        let result = sut.decryptedMediumImageData(
+            for: message,
+            encryptionKey: .randomEncryptionKey(),
+            sha256Digest: Data()
+        )
+
+        // then
+        XCTAssertNil(result)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
+    }
+
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
     func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() {
 

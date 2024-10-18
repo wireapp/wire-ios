@@ -17,7 +17,7 @@
 //
 
 @import Foundation;
-@import WireSystemPackage;
+@import WireSystem;
 @import WireTesting;
 
 #import "NSData+ZMAdditions.h"

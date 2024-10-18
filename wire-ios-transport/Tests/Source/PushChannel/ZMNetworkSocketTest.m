@@ -18,7 +18,7 @@
 
 @import XCTest;
 @import WireTesting;
-@import WireSystemPackage;
+@import WireSystem;
 @import WireTransport;
 #import "WireTransport_ios_tests-Swift.h"
 

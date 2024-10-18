@@ -26,7 +26,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
     typealias View = ConversationNewDeviceSystemMessageCell
     typealias LabelColors = SemanticColors.Label
-    typealias IconColors = SemanticColors.Icon
 
     let configuration: View.Configuration
 
@@ -95,10 +94,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
     private static var verifiedIcon: UIImage {
         return WireStyleKit.imageOfShieldnotverified
-    }
-
-    private static var exclamationMarkIcon: UIImage {
-        return StyleKitIcon.exclamationMark.makeImage(size: 16, color: IconColors.foregroundExclamationMarkInSystemMessage)
     }
 
     private static func configureForNewClientOfSelfUser(_ selfUser: UserType, clients: [UserClientType], link: URL) -> View.Configuration {

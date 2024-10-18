@@ -20,10 +20,6 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-protocol FolderCreationValuesConfigurable: AnyObject {
-    func configure(with name: String)
-}
-
 protocol FolderCreationControllerDelegate: AnyObject {
 
     func folderController(
@@ -34,7 +30,6 @@ protocol FolderCreationControllerDelegate: AnyObject {
 
 final class FolderCreationController: UIViewController {
 
-    static let mainViewHeight: CGFloat = 56
     private let collectionViewController = SectionCollectionViewController()
 
     private lazy var nameSection: FolderCreationNameSectionController = {
@@ -85,9 +80,8 @@ final class FolderCreationController: UIViewController {
     }
 
     private func setupViews() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: if keyboard is open, it should scroll.
-        // swiftlint:enable todo_requires_jira_link
         let collectionView = UICollectionView(forGroupedSections: ())
 
         collectionView.contentInsetAdjustmentBehavior = .never
@@ -95,10 +89,10 @@ final class FolderCreationController: UIViewController {
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         collectionViewController.collectionView = collectionView
@@ -113,7 +107,7 @@ final class FolderCreationController: UIViewController {
             navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
+            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
 

@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireSystemPackage
+import WireSystem
 
 extension NSManagedObjectContext: GroupQueue {
 

@@ -30,7 +30,6 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 5
@@ -109,7 +108,7 @@ extension NSAttributedString {
 
         return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
                                   attributes: [.font: UIFont.mediumSemiboldFont,
-                                               .link: URL.wr_unreachableBackendLearnMore])
+                                               .link: WireURLs.shared.unreachableBackendInfo])
     }
 
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {

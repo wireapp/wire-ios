@@ -97,6 +97,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
+            defer {
+                context.leaveAllGroups(groups)
+            }
             do {
                 try await messageSender.sendMessage(message: object)
 
@@ -110,9 +113,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
-
                 await context.perform {
-                    object.expire()
+                    object.expire(withReason: .other)
                     self.localNotificationDispatcher.didFailToSend(object)
 
                     if case NetworkError.invalidRequestError(let responseFailure, _) = error,
@@ -133,8 +135,6 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 // make sure completion is called on same calling thread so syncContext
                 completion()
             }
-
-            context.leaveAllGroups(groups)
         }
     }
 
@@ -189,7 +189,6 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else {
-                WireLogger.updateEvent.warn("message could not be created from event", attributes: event.logAttributes)
                 return
             }
             message.markAsSent()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Учасник";
 "contactsList.userCell.hint" = "Торкніться двічі, щоб відкрити розмову";
 "contactsList.pendingConnection.hint" = "Подвійний дотик для відкриття профілю";
-"contactsList.closeButton.description" = "Закрити список контактів";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Торкніться двічі, щоб відкрити детальну інформацію про сервіс";
 
@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Мінімізувати екран дзвінка";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Контакти";
-"tabBar.contacts.hint" = "Торкніться двічі для пошуку людей та відкриття списку контактів";
-"tabBar.conversations.description" = "Список недавніх розмов";
-"tabBar.conversations.hint" = "Торкніться двічі, щоб відкрити список недавніх розмов";
-"tabBar.folders.description" = "Список розмов організованих у директорії";
-"tabBar.folders.hint" = "Торкніться двічі, щоб відкрити список розмов, організованих у директорії";
-"tabBar.archived.description" = "Архівувати";
-"tabBar.archived.hint" = "Торкніться двічі, щоб відкрити список заархівованих розмов";
 "tabBar.item.value" = "Вибрано";
 
 "landing.loginEnterpriseButton.description" = "Увійти через SSO";
@@ -281,3 +273,28 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
 "reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Generate password";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Enter a new password for the secure guest link";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Password validation error. Please make sure the password meets the requirements.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirm Guest Link Password";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Re-enter the password for verification";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

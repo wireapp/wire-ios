@@ -1,23 +1,22 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 
 import Foundation
 import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
-        .library(name: "WireAnalytics", type: .dynamic, targets: ["WireAnalytics"]),
-        .library(name: "WireDatadog", type: .dynamic, targets: ["WireDatadog"])
+        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
+        .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies(),
-            swiftSettings: swiftSettings
+            dependencies: resolveWireAnalyticsDependencies()
         ),
         .target(
             name: "WireDatadog",
@@ -27,8 +26,7 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ],
-            swiftSettings: swiftSettings
+            ]
         )
     ]
 )
@@ -50,6 +48,10 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     }
 }
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
-]
+for target in package.targets {
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}

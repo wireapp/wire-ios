@@ -63,9 +63,8 @@ extension XCTestCase {
         }))
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: [AGIS] - Check if that's still the case when we drop iOS 13 and 14
-    // swiftlint:enable todo_requires_jira_link
     /// return the smallest iPhone screen size that Wire app supports
     var defaultIPhoneSize: CGSize {
         return XCTestCase.DeviceSizeIPhone5

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystemPackage
+import WireSystem
 import WireUtilities
 
 extension UUID: SafeForLoggingStringConvertible {

@@ -18,7 +18,8 @@
 
 import SwiftUI
 import WireCommonComponents
-import WireTestingPkg
+import WireFoundation
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -35,7 +36,6 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         selfUser = MockUserType.createDefaultSelfUser()
         selfUser.accentColorValue = AccentColor.default.rawValue
@@ -51,8 +51,6 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
         selfUser = nil
         userSession = nil
         sut = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Test

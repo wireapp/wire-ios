@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireTestingPkg
+import WireTestingPackage
 import WireUtilities
 import XCTest
 
@@ -87,7 +86,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut = nil
         mediaManager = nil
         mockHintView = nil
-        CallingConfiguration.resetDefaultConfig()
+        CallingConfiguration.testHelper_resetDefaultConfig()
 
         super.tearDown()
     }

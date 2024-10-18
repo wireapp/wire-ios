@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSyncEngine
-import WireSystemPackage
+import WireSystem
 
 enum ProfileViewControllerContext {
     case search

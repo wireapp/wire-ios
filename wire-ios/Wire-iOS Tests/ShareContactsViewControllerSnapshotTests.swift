@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPkg
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class ShareContactsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: ShareContactsViewController!
+    private var sut: ShareContactsViewController!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

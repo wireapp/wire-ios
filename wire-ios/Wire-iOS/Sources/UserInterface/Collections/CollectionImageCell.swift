@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSystemPackage
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 

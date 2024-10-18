@@ -17,35 +17,36 @@
 //
 
 import UIKit
+import WireDesign
 
 public final class ProgressSpinner: UIView {
 
-    public var didBecomeActiveNotificationToken: NSObjectProtocol?
-    public var didEnterBackgroundNotificationToken: NSObjectProtocol?
+    private var didBecomeActiveNotificationToken: (any NSObjectProtocol)?
+    private var didEnterBackgroundNotificationToken: (any NSObjectProtocol)?
 
     public var color: UIColor = .white {
-        didSet {
-            updateSpinnerIcon()
-        }
+        didSet { updateSpinnerIcon() }
     }
 
     public var iconSize: CGFloat = 32 {
-        didSet {
-            updateSpinnerIcon()
+        didSet { updateSpinnerIcon() }
+    }
+
+    public var text: String {
+        get { label.text ?? "" }
+        set {
+            label.text = newValue
+            label.isHidden = newValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
     }
 
     public var hidesWhenStopped: Bool = false {
-        didSet {
-            isHidden = hidesWhenStopped && !isAnimationRunning
-        }
+        didSet { isHidden = hidesWhenStopped && !isAnimationRunning }
     }
 
     public var isAnimating = false {
         didSet {
-            guard oldValue != isAnimating else {
-                return
-            }
+            guard oldValue != isAnimating else { return }
 
             if isAnimating {
                 startAnimationInternal()
@@ -55,14 +56,16 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    private let spinner: UIImageView = .init()
+    private let stackView = UIStackView()
+    private let spinner = UIImageView()
+    private let label = UILabel()
 
     private var isAnimationRunning: Bool {
         spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    public init() {
-        super.init(frame: .zero)
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
         setup()
     }
 
@@ -72,8 +75,26 @@ public final class ProgressSpinner: UIView {
     }
 
     private func setup() {
-        createSpinner()
-        setupConstraints()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 20
+        stackView.distribution = .fillProportionally
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+
+        spinner.contentMode = .center
+        updateSpinnerIcon()
+        stackView.addArrangedSubview(spinner)
+
+        label.textColor = .white
+        label.font = FontSpec(.small, .regular).font
+        label.isHidden = true
+        stackView.addArrangedSubview(label)
+
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
 
         hidesWhenStopped = true
 
@@ -103,22 +124,8 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    private func createSpinner() {
-        spinner.contentMode = .center
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(spinner)
-
-        updateSpinnerIcon()
-    }
-
     override public var intrinsicContentSize: CGSize {
         spinner.image?.size ?? super.intrinsicContentSize
-    }
-
-    private func setupConstraints() {
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     private func startAnimationInternal() {
@@ -135,16 +142,14 @@ public final class ProgressSpinner: UIView {
         spinner.layer.removeAllAnimations()
     }
 
-    func updateSpinnerIcon() {
+    private func updateSpinnerIcon() {
         spinner.image = UIImage.imageForIcon(.spinner, size: iconSize, color: color)
     }
 
-    @objc
     public func startAnimation() {
         isAnimating = true
     }
 
-    @objc
     public func stopAnimation() {
         isAnimating = false
     }
