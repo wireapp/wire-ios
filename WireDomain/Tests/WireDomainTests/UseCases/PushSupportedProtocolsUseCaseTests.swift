@@ -266,7 +266,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
                     otherClient.lastActiveDate = invalidLastActiveDate
                 }
             }
-            
+
             return selfUser
         }
     }

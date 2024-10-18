@@ -118,7 +118,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         let userID = await context.perform {
             user.qualifiedID
         }
-        
+
         guard let userID else {
             throw Error.failedToActivateConversation
         }
@@ -131,7 +131,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         /// Then, fetch the synced MLS conversation.
         let mlsConversation = await conversationsRepository.fetchMLSConversation(with: mlsGroupID)
-        
+
         let localMLSGroupID = await context.perform {
             mlsConversation?.mlsGroupID
         }
@@ -198,7 +198,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         let epoch = await context.perform {
             mlsConversation.epoch
         }
-        
+
         if epoch == 0 {
             let users = [MLSUser(userID)]
 
@@ -252,7 +252,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         for user: ZMUser
     ) async {
         WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
-        
+
         let conversation = await context.perform {
             user.oneOnOneConversation
         }
@@ -280,7 +280,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         and user: ZMUser
     ) async {
         WireLogger.conversation.debug("No common protocols found")
-        
+
         let conversation = await context.perform {
             user.oneOnOneConversation
         }
@@ -290,7 +290,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
                 "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
             )
         }
-        
+
         let isForcedReadOnly = await context.perform {
             conversation.isForcedReadOnly
         }
@@ -315,7 +315,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         let selfUserProtocols = await context.perform {
             selfUser.supportedProtocols
         }
-        
+
         let otherUserProtocols = await context.perform {
             otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser.supportedProtocols
         }

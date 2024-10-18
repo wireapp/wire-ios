@@ -18,42 +18,42 @@
 
 import WireDataModel
 
- public struct SystemMessage {
-     let type: ZMSystemMessageType
-     let sender: ZMUser
-     let users: Set<ZMUser>?
-     let addedUsers: Set<ZMUser>
-     let clients: Set<WireDataModel.UserClient>?
-     let timestamp: Date
-     let duration: TimeInterval?
-     let messageTimer: Double?
-     let relevantForStatus: Bool
-     let removedReason: ZMParticipantsRemovedReason
-     let domains: [String]?
+public struct SystemMessage {
+    let type: ZMSystemMessageType
+    let sender: ZMUser
+    let users: Set<ZMUser>?
+    let addedUsers: Set<ZMUser>
+    let clients: Set<WireDataModel.UserClient>?
+    let timestamp: Date
+    let duration: TimeInterval?
+    let messageTimer: Double?
+    let relevantForStatus: Bool
+    let removedReason: ZMParticipantsRemovedReason
+    let domains: [String]?
 
-     public init(
-         type: ZMSystemMessageType,
-         sender: ZMUser,
-         users: Set<ZMUser>? = nil,
-         addedUsers: Set<ZMUser> = Set(),
-         clients: Set<WireDataModel.UserClient>? = nil,
-         timestamp: Date,
-         duration: TimeInterval? = nil,
-         messageTimer: Double? = nil,
-         relevantForStatus: Bool = true,
-         removedReason: ZMParticipantsRemovedReason = .none,
-         domains: [String]? = nil
-     ) {
-         self.type = type
-         self.sender = sender
-         self.users = users
-         self.addedUsers = addedUsers
-         self.clients = clients
-         self.timestamp = timestamp
-         self.duration = duration
-         self.messageTimer = messageTimer
-         self.relevantForStatus = relevantForStatus
-         self.removedReason = removedReason
-         self.domains = domains
-     }
- }
+    public init(
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>? = nil,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<WireDataModel.UserClient>? = nil,
+        timestamp: Date,
+        duration: TimeInterval? = nil,
+        messageTimer: Double? = nil,
+        relevantForStatus: Bool = true,
+        removedReason: ZMParticipantsRemovedReason = .none,
+        domains: [String]? = nil
+    ) {
+        self.type = type
+        self.sender = sender
+        self.users = users
+        self.addedUsers = addedUsers
+        self.clients = clients
+        self.timestamp = timestamp
+        self.duration = duration
+        self.messageTimer = messageTimer
+        self.relevantForStatus = relevantForStatus
+        self.removedReason = removedReason
+        self.domains = domains
+    }
+}

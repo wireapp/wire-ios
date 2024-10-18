@@ -160,12 +160,12 @@ public protocol UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws
-    
+
     func isSelfUser(
         id: UUID,
         domain: String?
     ) async throws -> Bool
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to ClientRepository when related branch is merged
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
@@ -212,7 +212,7 @@ public final class UserRepository: UserRepositoryProtocol {
             domain: domain
         )
     }
-    
+
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
         await userLocalStore.allSelfUserClientsAreActiveMLSClients()
     }
@@ -249,10 +249,10 @@ public final class UserRepository: UserRepositoryProtocol {
         do {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
-                for user in userList.found {
-                    await userLocalStore.persistUser(from: user)
-                }
-            
+            for user in userList.found {
+                await userLocalStore.persistUser(from: user)
+            }
+
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
@@ -297,7 +297,7 @@ public final class UserRepository: UserRepositoryProtocol {
                 "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
             )
         }
-        
+
         await userLocalStore.addSelfLegalHoldRequest(
             for: userID,
             clientID: clientID,
@@ -312,12 +312,12 @@ public final class UserRepository: UserRepositoryProtocol {
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
-            
+
             await userLocalStore.updateSelfUserReadReceipts(
                 isReadReceiptsEnabled: isEnabled,
                 isReadReceiptsEnabledChangedRemotely: true
             )
-            
+
         case .conversationLabels(let conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
 
@@ -337,6 +337,7 @@ public final class UserRepository: UserRepositoryProtocol {
                 isReadReceiptsEnabled: false,
                 isReadReceiptsEnabledChangedRemotely: true
             )
+
         case .wireTypingIndicatorMode:
             // TODO: [WPB-726] feature not implemented yet
             break
@@ -369,7 +370,7 @@ public final class UserRepository: UserRepositoryProtocol {
             )
         }
     }
-    
+
     public func isSelfUser(
         id: UUID,
         domain: String?
@@ -378,7 +379,7 @@ public final class UserRepository: UserRepositoryProtocol {
             id: id,
             domain: domain
         )
-       
+
         return isSelfUser
     }
 }

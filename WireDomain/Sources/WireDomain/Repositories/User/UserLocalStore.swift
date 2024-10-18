@@ -17,14 +17,14 @@
 //
 
 import CoreData
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 // sourcery: AutoMockable
 /// A local store dedicated to user.
 /// The store uses the injected context to perform `CoreData` operations on user objects.
 public protocol UserLocalStoreProtocol {
-    
+
     /// Fetch self user from the local store
 
     func fetchSelfUser() async -> ZMUser
@@ -106,12 +106,12 @@ public protocol UserLocalStoreProtocol {
         isReadReceiptsEnabled: Bool,
         isReadReceiptsEnabledChangedRemotely: Bool
     ) async
-    
+
     /// Fetches users qualified IDs locally.
     /// - returns: A list of qualified IDs.
-    
+
     func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID]
-    
+
     /// Indicates whether the user is a self user.
     /// - Parameters:
     ///     - id: The ID of the user
@@ -122,39 +122,39 @@ public protocol UserLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async throws -> (user: ZMUser, isSelfUser: Bool)
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Should be factored out
     func postAccountDeletedNotification()
-    
+
     /// Marks a user account as deleted locally.
     /// - parameters:
     ///     - user: The user to mark the account deleted for.
-    
+
     func markAccountAsDeleted(for user: ZMUser) async
-    
+
     // TODO: [WPB-10727] Merge these two methods into a single method (also no API objects should be passed to local store)
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to ClientLocalStore when related branch is merged
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
-    
+
     enum DefaultsKeys: String {
         case pushToken = "PushToken"
     }
-    
+
     // MARK: - Properties
-    
+
     private let context: NSManagedObjectContext
     private let userDefaults: UserDefaults
-    
+
     // MARK: - Object lifecycle
-    
+
     public init(
         context: NSManagedObjectContext,
         userDefaults: UserDefaults = .standard
@@ -162,18 +162,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         self.context = context
         self.userDefaults = userDefaults
     }
-    
+
     public func fetchSelfUser() async -> ZMUser {
         await context.perform { [context] in
             ZMUser.selfUser(in: context)
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to ClientLocalStore when related branch is merged
     public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
         let selfUser = await fetchSelfUser()
-        
+
         return await context.perform {
             selfUser.clients.all { userClient in
                 let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
@@ -198,7 +198,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             }
         }
     }
-    
+
     public func fetchUser(
         with id: UUID,
         domain: String?
@@ -215,7 +215,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             return user
         }
     }
-    
+
     public func fetchOrCreateUser(
         with uuid: UUID,
         domain: String? = nil
@@ -228,7 +228,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             )
         }
     }
-    
+
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
         try await context.perform {
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
@@ -236,7 +236,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             return knownUsers.compactMap(\.qualifiedID)
         }
     }
-    
+
     public func updateSelfUserReadReceipts(
         isReadReceiptsEnabled: Bool,
         isReadReceiptsEnabledChangedRemotely: Bool
@@ -248,7 +248,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             selfUser.readReceiptsEnabledChangedRemotely = isReadReceiptsEnabledChangedRemotely
         }
     }
-    
+
     public func isSelfUser(
         id: UUID,
         domain: String?
@@ -258,17 +258,17 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         let isSelfUser = await context.perform {
             user.isSelfUser
         }
-        
+
         return (user, isSelfUser)
     }
-    
+
     public func deletePushToken() {
         userDefaults.set(
             nil,
             forKey: DefaultsKeys.pushToken.rawValue
         )
     }
-    
+
     public func addSelfLegalHoldRequest(
         for userID: UUID,
         clientID: String,
@@ -287,7 +287,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
     }
-    
+
     public func fetchOrCreateUserClient(
         with id: String
     ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
@@ -306,7 +306,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
         return localUserClient
     }
-    
+
     public func cancelSelfUserLegalholdRequest() async {
         let selfUser = await fetchSelfUser()
 
@@ -314,18 +314,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             selfUser.legalHoldRequestWasCancelled()
         }
     }
-    
+
     public func postAccountDeletedNotification() {
         let notification = AccountDeletedNotification(context: context)
         notification.post(in: context.notificationContext)
     }
-    
+
     public func markAccountAsDeleted(for user: ZMUser) async {
         await context.perform {
             user.isAccountDeleted = true
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly, merge this method with updateUser method.
     public func persistUser(from user: WireAPI.User) async {
@@ -333,9 +333,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             with: user.id.uuid,
             domain: user.id.domain
         )
-        
-        await context.perform {
 
+        await context.perform {
             guard user.deleted == false else {
                 return persistedUser.markAccountAsDeleted(at: Date())
             }
@@ -354,15 +353,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             persistedUser.needsToBeUpdatedFromBackend = false
         }
     }
-    
+
     // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
     public func updateUser(from event: UserUpdateEvent) async {
         let user = await fetchOrCreateUser(
             with: event.userID
         )
-        
-        await context.perform {
 
+        await context.perform {
             if let name = event.name {
                 user.name = name
             }
@@ -409,7 +407,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.isPendingMetadataRefresh = false
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly
     public func updateUserClient(
@@ -467,5 +465,5 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
     }
-    
+
 }

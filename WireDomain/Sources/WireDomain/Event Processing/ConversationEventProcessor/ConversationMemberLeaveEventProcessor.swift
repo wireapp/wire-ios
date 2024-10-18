@@ -19,7 +19,6 @@
 import WireAPI
 import WireDataModel
 
-
 /// Process conversation member leave events.
 
 protocol ConversationMemberLeaveEventProcessorProtocol {
@@ -33,11 +32,11 @@ protocol ConversationMemberLeaveEventProcessorProtocol {
 }
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
-    
+
     enum Error: Swift.Error {
         case failedToRemoveMembers(userIDs: Set<UserID>)
     }
-    
+
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationMemberLeaveEvent) async throws {

@@ -21,7 +21,7 @@ import WireDataModel
 public struct MLSProvider {
     let service: any MLSServiceInterface
     let isMLSEnabled: Bool
-    
+
     public init(
         service: any MLSServiceInterface,
         isMLSEnabled: Bool

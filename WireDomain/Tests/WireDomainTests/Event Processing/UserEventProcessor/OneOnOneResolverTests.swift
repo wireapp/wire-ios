@@ -137,7 +137,7 @@ final class OneOnOneResolverTests: XCTestCase {
             createGroupInvocation.users,
             [MLSUser(Scaffolding.receiverQualifiedID.toDomainModel())]
         )
-        
+
         await context.perform {
             XCTAssertEqual(mlsOneOnOneConversation.ciphersuite, Scaffolding.ciphersuite)
             XCTAssertEqual(mlsOneOnOneConversation.mlsStatus, .ready)
@@ -177,7 +177,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mlsService.joinGroupWith_Invocations.count, 1)
         let invokedMLSGroupID = try XCTUnwrap(mlsService.joinGroupWith_Invocations.first)
         XCTAssertEqual(invokedMLSGroupID, Scaffolding.mlsGroupID)
-        
+
         await context.perform {
             XCTAssertEqual(user.oneOnOneConversation, mlsOneOnOneConversation)
             XCTAssertEqual(mlsOneOnOneConversation.oneOnOneUser, user)
@@ -304,7 +304,7 @@ final class OneOnOneResolverTests: XCTestCase {
                 domain: Scaffolding.receiverQualifiedID.domain,
                 in: context
             )
-            
+
             user.supportedProtocols = [userProtocol]
 
             let selfUser = modelHelper.createSelfUser(
@@ -336,7 +336,6 @@ final class OneOnOneResolverTests: XCTestCase {
 
             return (selfUser, user, mlsOneOnOneConversation)
         }
-
     }
 
     private func setupMock(

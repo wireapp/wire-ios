@@ -55,16 +55,16 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(repository.removeMembersFromInitiatedByAtReason_Invocations.count, 1)
     }
-    
+
     func testProcessEvent_It_Throws_Error() async throws {
         // Mock
-        
+
         enum MockError: Error {
             case failed
         }
 
         repository.removeMembersFromInitiatedByAtReason_MockError = MockError.failed
-        
+
         do {
             // When
             try await sut.processEvent(Scaffolding.event)
@@ -84,4 +84,3 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
         )
     }
 }
-

@@ -20,8 +20,8 @@
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import WireDomainSupport
 @testable import WireDomain
+import WireDomainSupport
 import XCTest
 
 final class ConversationRepositoryTests: XCTestCase {
@@ -255,7 +255,7 @@ final class ConversationRepositoryTests: XCTestCase {
         let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
 
         // Then
-        
+
         await context.perform {
             XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
         }
@@ -314,25 +314,25 @@ final class ConversationRepositoryTests: XCTestCase {
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
 
             try internalTest_checkLastMessage(
-                 in: teamConversation,
-                 messageType: .teamMemberLeave,
-                 at: timestamp
-             )
+                in: teamConversation,
+                messageType: .teamMemberLeave,
+                at: timestamp
+            )
 
-             try internalTest_checkLastMessage(
-                 in: teamAnotherConversation,
-                 messageType: .teamMemberLeave,
-                 at: timestamp
-             )
+            try internalTest_checkLastMessage(
+                in: teamAnotherConversation,
+                messageType: .teamMemberLeave,
+                at: timestamp
+            )
 
             let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage)
             XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
         }
     }
-    
+
     func testFetchConversation_It_Retrieves_Conversation_Locally() async throws {
         // Given
-        
+
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
@@ -340,51 +340,50 @@ final class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
         }
-        
+
         // When
-        
+
         let localConversation = await sut.fetchOrCreateConversation(
             with: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(localConversation, conversation)
     }
-    
+
     func testRemoveMembers() async throws {
-        
         // Mock
-        
+
         let removedMembersIDs = [UserID(uuid: Scaffolding.otherUserID, domain: Scaffolding.domain)]
         let conversationID = ConversationID(uuid: Scaffolding.conversationID, domain: Scaffolding.domain)
         let sender = UserID(uuid: Scaffolding.userID, domain: Scaffolding.domain)
-        
+
         let (conversation, selfUser, senderUser, removedUser) = await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(id: Scaffolding.selfUserId, in: context)
             let senderUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
             let removedUser = modelHelper.createUser(id: Scaffolding.otherUserID, in: context)
             let mlsGroupID = MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)
-            
+
             let mlsConversation = modelHelper.createMLSConversation(
                 id: Scaffolding.conversationID,
                 mlsGroupID: mlsGroupID,
                 with: [senderUser, selfUser, removedUser],
                 in: context
             )
-            
+
             return (mlsConversation, selfUser, senderUser, removedUser)
         }
-        
+
         userRepository.fetchOrCreateUserWithDomain_MockValue = removedUser
         userRepository.fetchUserWithDomain_MockValue = senderUser
         userRepository.isSelfUserIdDomain_MockValue = true
         mlsService.wipeGroup_MockMethod = { _ in }
-        teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in}
-        
+        teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in }
+
         // When
-        
+
         try await sut.removeMembers(
             Set(removedMembersIDs),
             from: conversationID,
@@ -392,53 +391,53 @@ final class ConversationRepositoryTests: XCTestCase {
             at: .now,
             reason: .userDeleted
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserWithDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchUserWithDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
-        
+
         let newParticipants = await context.perform {
             conversation.localParticipants
         }
-        
+
         await context.perform {
             XCTAssertEqual(newParticipants, [selfUser, senderUser])
             XCTAssertFalse(newParticipants.contains(removedUser)) // user was successfuly removed from conversation
         }
     }
-    
+
     func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
-         // Mock
+        // Mock
 
-         let (conversation, user) = await context.perform { [self] in
-             let conversation = modelHelper.createGroupConversation(
-                 id: Scaffolding.conversationID,
-                 domain: Scaffolding.domain,
-                 in: context
-             )
+        let (conversation, user) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
 
-             let user = modelHelper.createUser(in: context)
+            let user = modelHelper.createUser(in: context)
 
-             return (conversation, user)
-         }
+            return (conversation, user)
+        }
 
-         let timestamp = Scaffolding.date(from: Scaffolding.time)
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
 
-         let systemMessage = SystemMessage(
-             type: .participantsAdded,
-             sender: user,
-             timestamp: timestamp
-         )
+        let systemMessage = SystemMessage(
+            type: .participantsAdded,
+            sender: user,
+            timestamp: timestamp
+        )
 
-         // When
+        // When
 
-         await sut.addSystemMessage(systemMessage, to: conversation)
+        await sut.addSystemMessage(systemMessage, to: conversation)
 
-         // Then
+        // Then
 
         try await context.perform { [self] in
             try internalTest_checkLastMessage(
@@ -447,7 +446,7 @@ final class ConversationRepositoryTests: XCTestCase {
                 at: timestamp
             )
         }
-     }
+    }
 
     private func internalTest_checkLastMessage(
         in conversation: ZMConversation,
@@ -458,16 +457,16 @@ final class ConversationRepositoryTests: XCTestCase {
             conversation.lastMessage as? ZMSystemMessage,
             "Last message is not system message"
         )
-        
+
         XCTAssertEqual(
             lastMessage.systemMessageType,
             messageType, "System message is not \(messageType.rawValue): but '\(lastMessage.systemMessageType.rawValue)"
         )
-        
+
         let serverTimeStamp = try XCTUnwrap(
             lastMessage.serverTimestamp, "System message should have timestamp"
         )
-        
+
         XCTAssertEqual(
             serverTimeStamp.timeIntervalSince1970,
             timestamp.timeIntervalSince1970,

@@ -106,7 +106,7 @@ public class TeamRepository: TeamRepositoryProtocol {
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
         let selfUser = await userRepository.fetchSelfUser()
-        
+
         let selfUserID: UUID = await context.perform {
             selfUser.remoteIdentifier
         }
@@ -134,7 +134,7 @@ public class TeamRepository: TeamRepositoryProtocol {
 
             return member
         }
-        
+
         let domain = await context.perform {
             user.domain
         }
@@ -178,7 +178,7 @@ public class TeamRepository: TeamRepositoryProtocol {
 
     private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
         let selfUser = await userRepository.fetchSelfUser()
-        
+
         return await context.perform { [context] in
             let team = WireDataModel.Team.fetchOrCreate(
                 with: teamAPIModel.id,

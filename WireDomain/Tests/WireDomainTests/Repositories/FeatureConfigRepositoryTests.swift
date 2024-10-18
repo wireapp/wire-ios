@@ -75,7 +75,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             let allFeatures = Feature.Name.allCases.compactMap {
                 Feature.fetch(name: $0, context: context)
             }
-            
+
             return allFeatures
         }
 
@@ -131,7 +131,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         subscription = sut.observeFeatureStates()
             .sink { featureState in
                 featureStates.append(featureState)
-                
+
                 if featureStates.count == Scaffolding.featureConfigs.count {
                     expectation.fulfill()
                 }
@@ -144,7 +144,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
-        
+
         for featureState in featureStates {
             await context.perform {
                 let feature = Feature.fetch(name: featureState.name, context: self.context)
