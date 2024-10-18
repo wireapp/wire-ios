@@ -884,6 +884,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
+<<<<<<< HEAD
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
         let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
@@ -895,6 +896,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
         )
     }
 
+=======
+>>>>>>> 309e5a3aaa (fix: cannot start conversation - WPB-11572 (#2037))
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard DeveloperFlag.enableMLSSupport.isOn else { return }
 

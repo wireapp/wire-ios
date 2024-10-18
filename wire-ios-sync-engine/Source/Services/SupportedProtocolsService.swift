@@ -32,7 +32,11 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface
+<<<<<<< HEAD:wire-ios-sync-engine/Source/Services/SupportedProtocolsService.swift
     private let selfUserProvider: SelfUserProviderProtocol
+=======
+    private let userRepository: UserRepositoryInterface
+>>>>>>> 309e5a3aaa (fix: cannot start conversation - WPB-11572 (#2037)):wire-ios-request-strategy/Sources/Services/SupportedProtocolsService.swift
     private let logger = WireLogger.supportedProtocols
 
     // MARK: - Life cycle

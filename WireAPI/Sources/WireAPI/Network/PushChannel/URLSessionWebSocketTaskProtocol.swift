@@ -41,5 +41,4 @@ extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
     var isOpen: Bool {
         closeCode == .invalid
     }
-
 }

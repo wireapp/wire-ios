@@ -38,6 +38,10 @@ class ZMUserSessionTestsBase: MessagingTest {
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
     var mockSyncStateDelegate: MockSyncStateDelegate!
+<<<<<<< HEAD
+=======
+    var mockUseCaseFactory: MockUseCaseFactoryProtocol!
+>>>>>>> 309e5a3aaa (fix: cannot start conversation - WPB-11572 (#2037))
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
 
@@ -75,9 +79,19 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.finish()
         }
 
+<<<<<<< HEAD
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+=======
+        mockUseCaseFactory = MockUseCaseFactoryProtocol()
+
+        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
+            let mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
+            mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
+            return mockResolveOneOnOneConversationUseCase
+        }
+>>>>>>> 309e5a3aaa (fix: cannot start conversation - WPB-11572 (#2037))
 
         sut = createSut()
         sut.sessionManager = mockSessionManager
@@ -100,7 +114,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.transportSession = nil
         self.mediaManager = nil
         self.flowManagerMock = nil
+<<<<<<< HEAD
         self.mockRecurringActionService = nil
+=======
+        self.mockUseCaseFactory = nil
+>>>>>>> 309e5a3aaa (fix: cannot start conversation - WPB-11572 (#2037))
         self.mockEARService.delegate = nil
         self.mockEARService = nil
         let sut = self.sut
