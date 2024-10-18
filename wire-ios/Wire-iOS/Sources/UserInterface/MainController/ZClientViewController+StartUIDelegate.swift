@@ -17,9 +17,8 @@
 //
 
 import WireDataModel
-import WireMainNavigationUI
 
-extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
+extension ZClientViewController: StartUIDelegate {
 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
@@ -37,7 +36,7 @@ extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel 
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
-                    await showConversation(conversation: conversation, message: nil)
+                    await mainCoordinator.showConversation(conversation: conversation, message: nil)
 
                 } else {
 
@@ -56,7 +55,8 @@ extension MainCoordinator: StartUIDelegate where Dependencies.ConversationModel 
     @MainActor
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         Task {
-            await showConversation(conversation: conversation, message: nil)
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

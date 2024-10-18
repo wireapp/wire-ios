@@ -37,7 +37,4 @@ public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies
 
     associatedtype SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
         SelfProfileUIBuilder.Dependencies == Self
-
-    associatedtype UserProfileUIBuilder: MainUserProfileUIBuilderProtocol where
-        UserProfileUIBuilder.User == User
 }

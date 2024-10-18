@@ -26,7 +26,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     typealias ConversationModel = Dependencies.ConversationModel
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
     typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
-    typealias User = Dependencies.User
 
     @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async
@@ -55,8 +54,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showSelfProfile() async
-    @MainActor
-    func showUserProfile(user: User) async
     @MainActor
     func showConnect() async
     @MainActor

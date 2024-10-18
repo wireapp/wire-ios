@@ -19,7 +19,7 @@
 import WireDataModel
 import WireMainNavigationUI
 
-extension MainCoordinator: ConversationCreationControllerDelegate where Dependencies.ConversationModel == ZMConversation, Dependencies.User == any UserType {
+extension MainCoordinator: ConversationCreationControllerDelegate where Dependencies.ConversationModel == ZMConversation {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
