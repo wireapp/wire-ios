@@ -131,10 +131,6 @@ final class ConversationListContentController: UICollectionViewController {
         ensureCurrentSelection()
 
         emptySearchPlaceholderView.isHidden = listViewModel.appliedSearchText.isEmpty || !listViewModel.isEmptyList
-        /*
-        1. if search result is not empty
-         emptySearchPlaceholderView.isHidden = searchString.isEmpty || !searchResult.isEmpty
-         */
 
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
@@ -176,7 +172,7 @@ final class ConversationListContentController: UICollectionViewController {
         let image = UIImage.imageForIcon(.plus, size: StyleKitIcon.Size.tiny.rawValue, color: ColorTheme.Backgrounds.background)
         let newIcon = createRoundIconImage(icon: image, iconSize: 10, backgroundColor: ColorTheme.Base.primary, imageSize: 20)
 
-        let spacing: CGFloat = 10 // Amount of spacing
+        let spacing: CGFloat = 10
         newConversationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing / 2, bottom: 0, right: spacing / 2)
         newConversationButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing / 2, bottom: 0, right: -spacing / 2)
 
@@ -222,7 +218,6 @@ final class ConversationListContentController: UICollectionViewController {
 
         // Create an UIImageView for the icon and center it in the view
         let iconImageView = UIImageView(image: icon.withRenderingMode(.alwaysTemplate))
-        //iconImageView.tintColor = ColorTheme.Backgrounds.background
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.frame = CGRect(x: (imageSize - iconSize) / 2, y: (imageSize - iconSize) / 2, width: iconSize, height: iconSize)
         view.addSubview(iconImageView)
@@ -273,7 +268,6 @@ final class ConversationListContentController: UICollectionViewController {
     /// ensures that the list selection state matches that of the model.
     func ensureCurrentSelection() {
         guard let selectedItem = listViewModel.selectedItem else { return }
-        //listViewModel.sections
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems
 
