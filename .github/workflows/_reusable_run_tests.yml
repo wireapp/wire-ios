@@ -191,7 +191,7 @@ jobs:
           echo "Building WireFoundation..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireFoundation-Package -resultBundlePath xcodebuild-wire-foundation.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-foundation.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-foundation || inputs.all }}
         with:
           results: xcodebuild-wire-foundation.xcresult
@@ -214,7 +214,7 @@ jobs:
           echo "Building WireSystem Project..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSystem -resultBundlePath xcodebuild-wire-ios-system.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-system.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-system || inputs.all }}
         with:
           results: xcodebuild-wire-ios-system.xcresult
@@ -237,7 +237,7 @@ jobs:
           echo "Building WireTesting Project..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTesting -resultBundlePath xcodebuild-wire-ios-testing.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-testing.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-testing || inputs.all }}
         with:
           results: xcodebuild-wire-ios-testing.xcresult
@@ -260,7 +260,7 @@ jobs:
           echo "Building WireUtilities Project..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUtilities -resultBundlePath xcodebuild-wire-ios-utilities.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-utilities.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
         with:
           results: xcodebuild-wire-ios-utilities.xcresult
@@ -283,7 +283,7 @@ jobs:
           echo "Building WireCryptobox..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireCryptobox -resultBundlePath xcodebuild-wire-ios-cryptobox.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-cryptobox.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         with:
           results: xcodebuild-wire-ios-cryptobox.xcresult
@@ -306,7 +306,7 @@ jobs:
           echo "Building WireTransport..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireTransport -resultBundlePath xcodebuild-wire-ios-transport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-transport.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-transport || inputs.all }}
         with:
           results: xcodebuild-wire-ios-transport.xcresult
@@ -329,7 +329,7 @@ jobs:
           echo "Building WireLinkPreview..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-ios-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         with:
           results: xcodebuild-wire-ios-link-preview.xcresult
@@ -352,7 +352,7 @@ jobs:
           echo "Building WireImages..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireImages -resultBundlePath xcodebuild-wire-ios-images.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-images.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-images || inputs.all }}
         with:
           results: xcodebuild-wire-ios-images.xcresult
@@ -375,7 +375,7 @@ jobs:
           echo "Building WireProtos..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireProtos -resultBundlePath xcodebuild-wire-ios-protos.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-protos.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-protos || inputs.all }}
         with:
           results: xcodebuild-wire-ios-protos.xcresult
@@ -398,7 +398,7 @@ jobs:
           echo "Building WireMockTransport..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireMockTransport -resultBundlePath xcodebuild-wire-ios-mocktransport.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-mocktransport.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
         with:
           results: xcodebuild-wire-ios-mocktransport.xcresult
@@ -421,7 +421,7 @@ jobs:
           echo "Building WireDataModel..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -resultBundlePath xcodebuild-wire-ios-data-model.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-data-model.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
         with:
           results: xcodebuild-wire-ios-data-model.xcresult
@@ -443,7 +443,7 @@ jobs:
           echo "Building WireAPI..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-api || inputs.all }}
         with:
           results: xcodebuild-wire-api.xcresult
@@ -466,7 +466,7 @@ jobs:
           echo "Building WireDatadog..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDatadog -resultBundlePath xcodebuild-wire-datadog.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-datadog.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-datadog || inputs.all }}
         with:
           results: xcodebuild-wire-datadog.xcresult
@@ -484,7 +484,7 @@ jobs:
           echo "Building WireAnalytics..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAnalytics -resultBundlePath xcodebuild-wire-analytics.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-analytics.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-analytics || inputs.all }}
         with:
           results: xcodebuild-wire-analytics.xcresult
@@ -502,7 +502,7 @@ jobs:
           echo "Building WireDomain..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-domain || inputs.all }}
         with:
           results: xcodebuild-wire-domain.xcresult
@@ -525,7 +525,7 @@ jobs:
           echo "Building WireDomain Project..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomain -resultBundlePath xcodebuild-wire-domain-project.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain-project.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-domain-project || inputs.all }}
         with:
           results: xcodebuild-wire-domain-project.xcresult
@@ -548,7 +548,7 @@ jobs:
           echo "Building WireRequestStrategy..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireRequestStrategy -resultBundlePath xcodebuild-wire-ios-request-strategy.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-request-strategy.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
         with:
           results: xcodebuild-wire-ios-request-strategy.xcresult
@@ -571,7 +571,7 @@ jobs:
           echo "Building WireShareEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireShareEngine -resultBundlePath xcodebuild-wire-ios-share-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-share-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-share-engine.xcresult
@@ -594,7 +594,7 @@ jobs:
           echo "Building WireSyncEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -resultBundlePath xcodebuild-wire-ios-sync-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-sync-engine.xcresult
@@ -617,7 +617,7 @@ jobs:
           echo "Building WireUI..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUI-Package -resultBundlePath xcodebuild-wire-ui.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ui || inputs.all }}
         with:
           results: xcodebuild-wire-ui.xcresult
@@ -640,7 +640,7 @@ jobs:
           echo "Building Wire-iOS..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -resultBundlePath xcodebuild-wire-ios.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios || inputs.all }}
         with:
           results: xcodebuild-wire-ios.xcresult
@@ -680,7 +680,7 @@ jobs:
           echo "Building WireNotificationEngine..."
           xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireNotificationEngine -resultBundlePath xcodebuild-wire-ios-notification-engine.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-notification-engine.log | bundle exec xcpretty
 
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+      - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
         with:
           results: xcodebuild-wire-ios-notification-engine.xcresult
