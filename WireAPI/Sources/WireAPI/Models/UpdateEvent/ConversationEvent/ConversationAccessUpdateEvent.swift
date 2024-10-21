@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the access settings of a conversation were updated.
 
-public struct ConversationAccessUpdateEvent: Equatable, Codable {
+public struct ConversationAccessUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 
@@ -35,8 +35,7 @@ public struct ConversationAccessUpdateEvent: Equatable, Codable {
     public let accessModes: Set<ConversationAccessMode>
 
     /// The new access roles.
-
-    public let accessRoles: Set<ConversationAccessRole>
+    public let accessRoles: Set<ConversationAccessRole>?
 
     /// The new legacy access role.
 
@@ -45,7 +44,7 @@ public struct ConversationAccessUpdateEvent: Equatable, Codable {
     public init(conversationID: ConversationID,
                 senderID: UserID,
                 accessModes: Set<ConversationAccessMode>,
-                accessRoles: Set<ConversationAccessRole>,
+                accessRoles: Set<ConversationAccessRole>?,
                 legacyAccessRole: ConversationAccessRoleLegacy?) {
         self.conversationID = conversationID
         self.senderID = senderID
