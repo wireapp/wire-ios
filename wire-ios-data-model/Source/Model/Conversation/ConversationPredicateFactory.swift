@@ -66,20 +66,17 @@ public final class ConversationPredicateFactory: NSObject {
     public func predicateForOneToOneConversations() -> NSPredicate {
         // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
         let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForUnconnectedConversations()])
-        let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate, notInFolderPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate])
     }
 
     @objc(predicateForGroupConversations)
     public func predicateForGroupConversations() -> NSPredicate {
         let groupConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
-        let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
 
         return .all(of: [
             predicateForConversationsExcludingArchived(),
-            groupConversationPredicate,
-            notInFolderPredicate
+            groupConversationPredicate
         ])
     }
 
@@ -150,10 +147,6 @@ public final class ConversationPredicateFactory: NSObject {
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
         return isGroup.and(hasNoOneOnOneUser)
-    }
-
-    private func predicateForConversationsInFolders() -> NSPredicate {
-        return NSPredicate(format: "ANY %K.%K == \(Label.Kind.folder.rawValue)", ZMConversationLabelsKey, #keyPath(Label.type))
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {
