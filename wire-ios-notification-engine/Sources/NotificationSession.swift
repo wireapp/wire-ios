@@ -570,7 +570,10 @@ extension NotificationSession {
         var note: ZMLocalNotification?
 
         guard let conversationID = event.conversationUUID else {
-            WireLogger.notifications.warn("failed to generate notification from event: missing conversation id")
+            WireLogger.notifications.warn(
+                "failed to generate notification from event: missing conversation id",
+                attributes: event.logAttributes
+            )
             return nil
         }
 
