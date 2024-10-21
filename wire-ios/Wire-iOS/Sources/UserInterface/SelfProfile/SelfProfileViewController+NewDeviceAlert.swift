@@ -42,7 +42,10 @@ extension SelfProfileViewController {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
         let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { [weak self] _ in
-            self?.openDevicesSettingsAction()
+            Task {
+                await self?.mainCoordinator.showSettings()
+                self?.mainCoordinator.showSettingsContent(.init(.devices))
+            }
         }
 
         newLoginAlertController.addAction(actionManageDevices)
