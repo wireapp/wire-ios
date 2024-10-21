@@ -49,7 +49,6 @@ class FileAssetCacheTests: XCTestCase {
 
         location = FileManager.default.randomCacheURL
 
-
         try FileManager.default.removeItemIfExists(at: location!)
         sut = FileAssetCache(location: location!)
     }
