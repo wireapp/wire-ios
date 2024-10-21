@@ -21,43 +21,34 @@ import UIKit
 extension StartUIViewController {
 
     func setupNavigationBarButtonItems() {
-        let cancelButton = UIBarButtonItem(
+
+        let cancelButton = UIBarButtonItem.createNavigationLeftBarButtonItem(
             title: L10n.Localizable.General.cancel,
-            style: .plain,
-            target: self,
-            action: #selector(onDismiss)
-        )
+            action: UIAction { [weak self] _ in
+                _ = self?.searchController.searchBar.resignFirstResponder()
+                self?.navigationController?.dismiss(animated: true)
+            })
 
         cancelButton.accessibilityLabel = L10n.Accessibility.ContactsList.CancelButton.description
         cancelButton.accessibilityIdentifier = "cancel"
 
-        navigationItem.rightBarButtonItem = cancelButton
+        navigationItem.leftBarButtonItem = cancelButton
 
-        let button = UIButton(type: .system)
-        button.setTitle(L10n.Localizable.Peoplepicker.Button.createConversation, for: .normal)
-        button.titleLabel?.font = UIFont.font(for: .h3)
 
-        let action = UIAction { [weak self] _ in
-            guard let self else { return }
-            let conversationCreationController = ConversationCreationController(
-                preSelectedParticipants: nil,
-                userSession: userSession
-            )
-            navigationController?.pushViewController(conversationCreationController, animated: true)
-        }
-        button.addAction(action, for: .touchUpInside)
+        let createGroupButton = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: L10n.Localizable.Peoplepicker.Button.createConversation,
+            action: UIAction { [weak self] _ in
+                guard let self else { return }
+                let conversationCreationController = ConversationCreationController(
+                    preSelectedParticipants: nil,
+                    userSession: userSession
+                )
+                navigationController?.pushViewController(conversationCreationController, animated: true)
+            })
 
-        button.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
-        button.accessibilityIdentifier = "create_group"
+        createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
+        createGroupButton.accessibilityIdentifier = "create_group"
 
-        let createGroupButton = UIBarButtonItem(customView: button)
-
-        navigationItem.leftBarButtonItem = createGroupButton
-    }
-
-    @objc
-    func onDismiss() {
-        _ = searchController.searchBar.resignFirstResponder()
-        navigationController?.dismiss(animated: true)
+        navigationItem.rightBarButtonItem = createGroupButton
     }
 }

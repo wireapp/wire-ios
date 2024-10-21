@@ -128,7 +128,8 @@ final class StartUIViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        onDismiss()
+        _ = self.searchController.searchBar.resignFirstResponder()
+        self.navigationController?.dismiss(animated: true)
         return true
     }
 
