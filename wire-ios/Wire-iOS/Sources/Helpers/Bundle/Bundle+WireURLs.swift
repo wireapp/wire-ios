@@ -87,6 +87,9 @@ struct WireURLs: Codable {
     /// Shown in various places (e.g. system messages, warnings, error messages).
     let endToEndIdentityInfo: URL
 
+    /// Link to an article explaining how to add a conversation to your favourites folder.
+    let howToAddConversationToYourFavourites: URL
+
     static var shared: WireURLs = {
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
@@ -123,6 +126,7 @@ struct WireURLs: Codable {
         case federationInfo
         case mlsInfo
         case endToEndIdentityInfo
+        case howToAddConversationToYourFavourites
     }
 
     enum WireURLsError: Error {

@@ -21,5 +21,4 @@ public protocol MainCoordinatorProtocolDependencies {
     associatedtype ConversationModel
     associatedtype ConversationMessageModel
     associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
-    associatedtype User
 }

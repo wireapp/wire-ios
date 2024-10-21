@@ -24,6 +24,8 @@ class MockConversationDirectory: ConversationDirectoryType {
     var allFolders: [LabelType] = []
     var mockGroupConversations: [ZMConversation] = []
     var mockContactsConversations: [ZMConversation] = []
+    var mockFavoritesConversations: [ZMConversation] = []
+    var mockUnarchivedConversations: [ZMConversation] = []
 
     func createFolder(_ name: String) -> LabelType? {
         return nil
@@ -39,6 +41,10 @@ class MockConversationDirectory: ConversationDirectoryType {
             return mockGroupConversations
         case .contacts:
             return mockContactsConversations
+        case .favorites:
+            return mockFavoritesConversations
+        case .unarchived:
+            return mockUnarchivedConversations
         default:
             return []
         }

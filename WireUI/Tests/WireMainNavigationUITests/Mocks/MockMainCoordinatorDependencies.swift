@@ -36,5 +36,4 @@ enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
     typealias ConnectUIBuilder = MockViewControllerBuilder
     typealias CreateGroupConversationUIBuilder = MockViewControllerBuilder
     typealias SelfProfileUIBuilder = MockViewControllerBuilder
-    typealias UserProfileUIBuilder = MockUserProfileViewControllerBuilder
 }

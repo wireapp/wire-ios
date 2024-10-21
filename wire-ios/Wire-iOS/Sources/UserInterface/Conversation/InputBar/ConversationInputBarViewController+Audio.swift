@@ -247,11 +247,10 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     }
 
     private func displayRecordKeyboard() {
+        // TODO: [WPB-11616] ensure this implementation is correct and still needed
         // do not show keyboard if conversation list is shown,
-        guard let splitViewController = self.wr_splitViewController,
-              let rightViewController = splitViewController.rightViewController,
-              splitViewController.isRightViewControllerRevealed,
-              rightViewController.isVisible,
+        guard let splitViewController = ZClientViewController.shared?.mainSplitViewController,
+              splitViewController.conversationListUI != nil,
               let appDelegate = UIApplication.shared.delegate as? AppDelegate,
               let mainWindow = appDelegate.mainWindow,
               mainWindow.isKeyWindow else { return }

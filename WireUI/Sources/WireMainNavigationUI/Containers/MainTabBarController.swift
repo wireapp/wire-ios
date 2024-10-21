@@ -39,11 +39,6 @@ public final class MainTabBarController<
         set { setConversationListUI(newValue, animated: false) }
     }
 
-    public var foldersUI: UIViewController? {
-        get { _foldersUI }
-        set { setFoldersUI(newValue, animated: false) }
-    }
-
     public var archiveUI: ArchiveUI? {
         get { _archiveUI }
         set { setArchiveUI(newValue, animated: false) }
@@ -71,14 +66,11 @@ public final class MainTabBarController<
 
     // MARK: - Private Properties
 
-    private weak var contactsNavigationController: UINavigationController!
     private weak var conversationListNavigationController: UINavigationController!
-    private weak var foldersNavigationController: UINavigationController!
     private weak var archiveNavigationController: UINavigationController!
-    private /* weak */ var settingsNavigationController: UINavigationController! // TODO: [WPB-6647] make this property weak as well
+    private weak var settingsNavigationController: UINavigationController!
 
     private weak var _conversationListUI: ConversationListUI?
-    private weak var _foldersUI: UIViewController?
     private weak var _archiveUI: ArchiveUI?
     private weak var _settingsUI: SettingsUI?
     private weak var _conversationUI: ConversationUI?
@@ -98,14 +90,8 @@ public final class MainTabBarController<
     }
 
     private func setupTabs() {
-        let contactsNavigationController = UINavigationController()
-        self.contactsNavigationController = contactsNavigationController
-
         let conversationListNavigationController = UINavigationController()
         self.conversationListNavigationController = conversationListNavigationController
-
-        let foldersNavigationController = UINavigationController()
-        self.foldersNavigationController = foldersNavigationController
 
         let archiveNavigationController = UINavigationController()
         self.archiveNavigationController = archiveNavigationController
@@ -114,26 +100,13 @@ public final class MainTabBarController<
         self.settingsNavigationController = settingsNavigationController
 
         viewControllers = [
-            contactsNavigationController,
             conversationListNavigationController,
-            foldersNavigationController,
             archiveNavigationController,
             settingsNavigationController
         ]
 
         for content in MainTabBarControllerContent.allCases {
             switch content {
-            case .contacts:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.contacts.title", bundle: .module),
-                    image: .init(systemName: "person"),
-                    selectedImage: .init(systemName: "person.fill")
-                )
-                tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.contacts.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.contacts.hint", bundle: .module)
-                contactsNavigationController.tabBarItem = tabBarItem
-
             case .conversations:
                 let tabBarItem = UITabBarItem(
                     title: String(localized: "tabBar.conversations.title", bundle: .module),
@@ -141,20 +114,17 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "text.bubble.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.conversations.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.conversations.hint", bundle: .module)
-                conversationListNavigationController.tabBarItem = tabBarItem
-
-            case .folders:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.folders.title", bundle: .module),
-                    image: .init(systemName: "folder"),
-                    selectedImage: .init(systemName: "folder.fill")
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.conversations.description",
+                    table: "Accessibility",
+                    bundle: .module
                 )
-                tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.folders.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.folders.hint", bundle: .module)
-                foldersNavigationController.tabBarItem = tabBarItem
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.conversations.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                conversationListNavigationController.tabBarItem = tabBarItem
 
             case .archive:
                 let tabBarItem = UITabBarItem(
@@ -163,8 +133,16 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.archived.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.archived.hint", bundle: .module)
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.archived.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.archived.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
                 archiveNavigationController.tabBarItem = tabBarItem
 
             case .settings:
@@ -174,13 +152,19 @@ public final class MainTabBarController<
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
-                // TODO: [WPB-9727] missing string localization
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
+                tabBarItem.accessibilityLabel = String(
+                    localized: "tabBar.settings.description",
+                    table: "Accessibility",
+                    bundle: .module
+                )
+                tabBarItem.accessibilityHint = String(
+                    localized: "tabBar.settings.hint",
+                    table: "Accessibility",
+                    bundle: .module
+                )
                 settingsNavigationController.tabBarItem = tabBarItem
             }
         }
-        viewControllers?.removeLast() // this line will be removed with navigation overhaul
         selectedContent = .conversations
     }
 
@@ -212,14 +196,6 @@ public final class MainTabBarController<
         let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
-    }
-
-    private func setFoldersUI(_ foldersUI: UIViewController?, animated: Bool) {
-        _foldersUI = foldersUI
-
-        let viewControllers = [foldersUI].compactMap { $0 }
-        foldersNavigationController.setViewControllers(viewControllers, animated: animated)
-        foldersNavigationController.view.layoutIfNeeded()
     }
 
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {

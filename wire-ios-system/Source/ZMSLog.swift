@@ -352,8 +352,6 @@ public extension ZMSLog {
         }
         if let assertionFile, FileManager.default.fileExists(atPath: assertionFile.path) {
             paths.append(assertionFile)
-        } else {
-            assertionFailure("DumpFile.url is nil")
         }
         if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
             paths.append(currentPath)

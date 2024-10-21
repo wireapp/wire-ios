@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -26,6 +27,7 @@ enum ProfileViewControllerTabBarIndex: Int {
     case devices
 }
 
+@MainActor
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
 }
@@ -53,7 +55,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: any MainCoordinatorProtocol
 
     // MARK: - init
 
@@ -65,7 +67,7 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: any MainCoordinatorProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -102,7 +104,7 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -256,7 +258,7 @@ final class ProfileViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
+            securityLevelView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
 
@@ -299,7 +301,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         case .ignore:
             viewModel.ignoreConnectionRequest()
         }
-
     }
 
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction) {
@@ -372,10 +373,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             leftViewControllerRevealed = true
         }
 
-        dismiss(animated: true) {
-            self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                self.mainCoordinator.showSettings()
-            }
+        Task {
+            await mainCoordinator.showSelfProfile()
         }
     }
 

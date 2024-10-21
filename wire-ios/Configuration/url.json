@@ -17,5 +17,6 @@
     "unreachableBackendInfo": "https://support.wire.com/hc/articles/9357718008093-Backend",
     "federationInfo": "https://support.wire.com/hc/categories/4719917054365-Federation",
     "mlsInfo": "https://support.wire.com/hc/articles/12434725011485-Messaging-Layer-Security-MLS-",
-    "endToEndIdentityInfo": "https://support.wire.com/hc/articles/9211300150685-End-to-end-identity"
+    "endToEndIdentityInfo": "https://support.wire.com/hc/articles/9211300150685-End-to-end-identity",
+    "howToAddConversationToYourFavourites": "https://support.wire.com/hc/en-us/articles/360002855557-Add-a-conversation-to-your-favourites-folder"
 }

@@ -186,7 +186,8 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             return []
         }
 
-        // if the user is viewing their own profile, add the open self-profile screen button
+        // if the user is viewing their own profile by tapping his name/icon of
+        // a sent message, add the open self-profile screen button
         if viewer.isSelfUser && user.isSelfUser {
             return [.openSelfProfile]
         }

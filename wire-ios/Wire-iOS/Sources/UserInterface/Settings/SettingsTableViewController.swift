@@ -18,14 +18,18 @@
 
 import UIKit
 import WireDesign
+import WireSettingsUI
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController {
 
+    let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
+
+    let settingsCoordinator: AnySettingsCoordinator
 
     final fileprivate class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
@@ -40,10 +44,19 @@ class SettingsBaseTableViewController: UIViewController {
         }
     }
 
-    init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+    init(
+        style: UITableView.Style,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        self.settingsCoordinator = settingsCoordinator
+        tableView = if useTypeIntrinsicSizeTableView {
+            IntrinsicSizeTableView(frame: .zero, style: style)
+        } else {
+            UITableView(frame: .zero, style: style)
+        }
         super.init(nibName: nil, bundle: nil)
-        self.edgesForExtendedLayout = UIRectEdge()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -55,11 +68,10 @@ class SettingsBaseTableViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        self.createTableView()
-        self.view.addSubview(self.topSeparator)
-        self.createConstraints()
-        self.view.backgroundColor = UIColor.clear
         super.viewDidLoad()
+        createTableView()
+        view.addSubview(topSeparator)
+        createConstraints()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -131,7 +143,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -143,15 +154,21 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(group.title)
-        setupNavigationBar()
     }
 
-    required init(group: SettingsInternalGroupCellDescriptorType) {
+    required init(
+        group: SettingsInternalGroupCellDescriptorType,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.group = group
         self.sections = group.visibleItems
-        super.init(style: group.style == .plain ? .plain : .grouped)
+        super.init(
+            style: group.style == .plain ? .plain : .grouped,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
+        )
 
-        self.group.items.flatMap { return $0.cellDescriptors }.forEach {
+        self.group.items.flatMap { $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
                 groupDescriptor.viewController = self
             }
@@ -176,6 +193,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupNavigationBarAccessibility()
     }
 
     private func setupTableView() {
@@ -197,14 +215,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
-        setupAccessibility()
-    }
+    private func setupNavigationBarAccessibility() {
+        typealias Accessibility = L10n.Accessibility.Settings
 
-    private func setupAccessibility() {
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
@@ -261,11 +274,15 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)!
         let sectionDescriptor = sections[indexPath.section]
         let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
-        let cell = tableView.cellForRow(at: indexPath)!
 
-        property.select(SettingsPropertyValue.none, sender: cell)
+        if let content = property.settingsTopLevelMenuItem {
+            settingsCoordinator.showSettingsContent(content)
+        } else {
+            property.select(SettingsPropertyValue.none, sender: cell)
+        }
         tableView.deselectRow(at: indexPath, animated: false)
     }
 

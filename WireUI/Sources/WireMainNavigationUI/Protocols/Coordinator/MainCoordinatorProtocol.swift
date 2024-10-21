@@ -26,7 +26,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     typealias ConversationModel = Dependencies.ConversationModel
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
     typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
-    typealias User = Dependencies.User
 
     @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async
@@ -47,16 +46,16 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func hideSettingsContent()
 
     @MainActor
-    func showSelfProfile() async
+    func presentViewController(_ viewController: UIViewController) async
     @MainActor
-    func showUserProfile(user: User) async
+    func dismissPresentedViewController() async
+
+    // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
+
+    @MainActor
+    func showSelfProfile() async
     @MainActor
     func showConnect() async
     @MainActor
     func showCreateGroupConversation() async
-
-    @MainActor
-    func presentViewController(_ viewController: UIViewController) async
-    @MainActor
-    func dismissPresentedViewController() async
 }

@@ -114,10 +114,14 @@ extension SettingsCellDescriptorFactory {
                    selectAction: DebugActions.triggerResyncResources)
         )
 
-        return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
-                                           title: L10n.Localizable.`Self`.Settings.DeveloperOptions.title,
-                                           icon: .robot,
-                                           accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
+            title: L10n.Localizable.`Self`.Settings.DeveloperOptions.title,
+            icon: .robot,
+            accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: .developerOptions,
+            settingsCoordinator: settingsCoordinator
+        )
     }
 
 }
