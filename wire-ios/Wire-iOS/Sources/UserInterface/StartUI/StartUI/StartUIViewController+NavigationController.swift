@@ -46,6 +46,14 @@ extension StartUIViewController {
                 navigationController?.pushViewController(conversationCreationController, animated: true)
             })
 
+
+        // We explicitly set the font here because the font provided inside createNavigationRightBarButtonItem
+        // might not reflect the required design specifications in this particular context.
+        // This ensures that the button uses a custom font as needed for consistency across the app.
+        // The only change between the two is the weight. In this case is semibold.
+        let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        createGroupButton.setTitleTextAttributes([.font: font], for: .normal)
+
         createGroupButton.accessibilityLabel = L10n.Localizable.Peoplepicker.Button.createConversation
         createGroupButton.accessibilityIdentifier = "create_group"
 
