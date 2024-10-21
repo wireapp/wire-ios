@@ -161,6 +161,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation??
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
@@ -239,6 +257,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(user, removalDate)
     }
 
+    // MARK: - addSystemMessage
+
+    public var addSystemMessageTo_Invocations: [(message: SystemMessage, conversation: ZMConversation)] = []
+    public var addSystemMessageTo_MockMethod: ((SystemMessage, ZMConversation) async -> Void)?
+
+    public func addSystemMessage(_ message: SystemMessage, to conversation: ZMConversation) async {
+        addSystemMessageTo_Invocations.append((message: message, conversation: conversation))
+
+        guard let mock = addSystemMessageTo_MockMethod else {
+            fatalError("no mock for `addSystemMessageTo`")
+        }
+
+        await mock(message, conversation)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
@@ -247,6 +280,44 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public init() {}
 
+
+    // MARK: - fetchConversation
+
+    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationWithDomain_MockValue: ZMConversation??
+
+    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationWithDomain`")
+        }
+    }
+
+    // MARK: - pullConversation
+
+    public var pullConversationWith_Invocations: [ConversationID] = []
+    public var pullConversationWith_MockError: Error?
+    public var pullConversationWith_MockMethod: ((ConversationID) async throws -> Void)?
+
+    public func pullConversation(with id: ConversationID) async throws {
+        pullConversationWith_Invocations.append(id)
+
+        if let error = pullConversationWith_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversationWith_MockMethod else {
+            fatalError("no mock for `pullConversationWith`")
+        }
+
+        try await mock(id)
+    }
 
     // MARK: - pullConversations
 
@@ -322,6 +393,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         await mock(user, removalDate)
+    }
+
+    // MARK: - addSystemMessage
+
+    public var addSystemMessageTo_Invocations: [(message: SystemMessage, conversation: ZMConversation)] = []
+    public var addSystemMessageTo_MockMethod: ((SystemMessage, ZMConversation) async -> Void)?
+
+    public func addSystemMessage(_ message: SystemMessage, to conversation: ZMConversation) async {
+        addSystemMessageTo_Invocations.append((message: message, conversation: conversation))
+
+        guard let mock = addSystemMessageTo_MockMethod else {
+            fatalError("no mock for `addSystemMessageTo`")
+        }
+
+        await mock(message, conversation)
     }
 
 }
