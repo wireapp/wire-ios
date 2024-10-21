@@ -46,7 +46,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         let accessRoles = if let legacyAccessRole = event.legacyAccessRole {
             getAccessRoles(from: legacyAccessRole)
         } else {
-            event.accessRoles ?? []
+            event.accessRoles ?? [.teamMember, .nonTeamMember, .service]
         }
 
         await localStore.updateAccesses(
