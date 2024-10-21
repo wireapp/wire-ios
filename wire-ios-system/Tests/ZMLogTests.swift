@@ -551,7 +551,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        let path = try XCTUnwrap(ZMSLog.currentLogURL?.path)
+        let path = ZMSLog.currentLogURL.path
         XCTAssertFalse(FileManager.default.fileExists(atPath: path))
     }
 
@@ -682,8 +682,7 @@ extension ZMLogTests {
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
 
         guard
-            let currentLog = ZMSLog.currentLogURL,
-            let data = FileManager.default.contents(atPath: currentLog.path)
+            let data = FileManager.default.contents(atPath: ZMSLog.currentLogURL.path)
         else {
             XCTFail(file: file, line: line)
             return []
