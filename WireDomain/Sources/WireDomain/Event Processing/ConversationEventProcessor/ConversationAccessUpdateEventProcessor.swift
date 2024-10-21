@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation access update events.
@@ -33,8 +32,8 @@ protocol ConversationAccessUpdateEventProcessorProtocol {
 
 struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
 
-    let context: NSManagedObjectContext
     let repository: any ConversationRepositoryProtocol
+    let localStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationAccessUpdateEvent) async {
         let conversationID = event.conversationID
@@ -47,13 +46,14 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         let accessRoles = if let legacyAccessRole = event.legacyAccessRole {
             getAccessRoles(from: legacyAccessRole)
         } else {
-            event.accessRoles
+            event.accessRoles ?? []
         }
 
-        await context.perform {
-            localConversation.accessModeStrings = event.accessModes.map(\.rawValue)
-            localConversation.accessRoleStringsV2 = accessRoles.map(\.rawValue)
-        }
+        await localStore.updateAccesses(
+            for: localConversation,
+            accessModes: event.accessModes.map(\.rawValue),
+            accessRoles: accessRoles.map(\.rawValue)
+        )
     }
 
     private func getAccessRoles(

@@ -88,6 +88,19 @@ public protocol ConversationLocalStoreProtocol {
         user: ZMUser,
         removalDate: Date
     ) async
+
+    /// Updates access modes and roles to conversation.
+    /// - Parameters:
+    ///     - accessModes: The access modes to update (how users can join a conversation).
+    ///     - accessRoles: The access roles to update (which users are allowed to be participants in a conversation).
+    ///
+    /// See `ConversationAccessMode` and `ConversationAccessRole`
+
+    func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -260,6 +273,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
+        }
+    }
+
+    public func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async {
+        await context.perform {
+            conversation.accessModeStrings = accessModes
+            conversation.accessRoleStringsV2 = accessRoles
         }
     }
 
@@ -502,7 +526,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             with: conversationID,
             domain: domain
         )
-        
+
         return await context.perform {
             handler(conversation)
         }

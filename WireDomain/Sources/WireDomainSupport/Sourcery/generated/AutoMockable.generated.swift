@@ -257,6 +257,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(user, removalDate)
     }
 
+    // MARK: - updateAccesses
+
+    public var updateAccessesForAccessModesAccessRoles_Invocations: [(conversation: ZMConversation, accessModes: [String], accessRoles: [String])] = []
+    public var updateAccessesForAccessModesAccessRoles_MockMethod: ((ZMConversation, [String], [String]) async -> Void)?
+
+    public func updateAccesses(for conversation: ZMConversation, accessModes: [String], accessRoles: [String]) async {
+        updateAccessesForAccessModesAccessRoles_Invocations.append((conversation: conversation, accessModes: accessModes, accessRoles: accessRoles))
+
+        guard let mock = updateAccessesForAccessModesAccessRoles_MockMethod else {
+            fatalError("no mock for `updateAccessesForAccessModesAccessRoles`")
+        }
+
+        await mock(conversation, accessModes, accessRoles)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {

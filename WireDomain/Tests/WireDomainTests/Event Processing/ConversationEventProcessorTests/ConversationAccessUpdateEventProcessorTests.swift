@@ -30,6 +30,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
     private var repository: MockConversationRepositoryProtocol!
+    private var localStore: MockConversationLocalStoreProtocol!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -41,10 +42,11 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         repository = MockConversationRepositoryProtocol()
+        localStore = MockConversationLocalStoreProtocol()
 
         sut = ConversationAccessUpdateEventProcessor(
-            context: context,
-            repository: repository
+            repository: repository,
+            localStore: localStore
         )
     }
 
@@ -56,21 +58,12 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
         modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        localStore = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Updates_Roles_And_Modes_No_Legacy_Role() async throws {
-        // Given
-
-        let event = ConversationAccessUpdateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.senderID,
-            accessModes: [.invite, .link],
-            accessRoles: [.teamMember],
-            legacyAccessRole: nil /// no legacy role
-        )
-
+    func testProcessEvent_It_Invokes_Local_Store_And_Repo_Methods() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -82,116 +75,16 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
         }
 
         repository.fetchOrCreateConversationWithDomain_MockValue = conversation
+        localStore.updateAccessesForAccessModesAccessRoles_MockMethod = { _, _, _ in }
 
         // When
 
-        try await sut.processEvent(event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
         XCTAssertEqual(repository.fetchOrCreateConversationWithDomain_Invocations.count, 1)
-        internalTest_assertAccessRolesAndModes(
-            for: conversation,
-            expectedAccessModes: event.accessModes,
-            expectedAccessRoles: event.accessRoles
-        )
-    }
-
-    func testProcessEvent_It_Updates_Roles_Based_On_Legacy_Role() async throws {
-        // Given
-
-        let accessModes: Set<WireAPI.ConversationAccessMode> = [.invite, .link]
-
-        let eventLegacyRoleActivated = ConversationAccessUpdateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.senderID,
-            accessModes: accessModes,
-            accessRoles: [],
-            legacyAccessRole: .activated
-        )
-
-        let eventLegacyRoleNonActivated = ConversationAccessUpdateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.senderID,
-            accessModes: accessModes,
-            accessRoles: [],
-            legacyAccessRole: .nonActivated
-        )
-
-        let eventLegacyRolePrivate = ConversationAccessUpdateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.senderID,
-            accessModes: accessModes,
-            accessRoles: [],
-            legacyAccessRole: .private
-        )
-
-        let eventLegacyRoleTeam = ConversationAccessUpdateEvent(
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.senderID,
-            accessModes: accessModes,
-            accessRoles: [],
-            legacyAccessRole: .team
-        )
-
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createGroupConversation(
-                id: Scaffolding.id,
-                domain: Scaffolding.domain,
-                in: context
-            )
-        }
-
-        repository.fetchOrCreateConversationWithDomain_MockValue = conversation
-
-        // When legacy role == activated
-
-        try await sut.processEvent(eventLegacyRoleActivated)
-        internalTest_assertAccessRolesAndModes(
-            for: conversation,
-            expectedAccessModes: accessModes,
-            expectedAccessRoles: [.teamMember, .nonTeamMember, .guest]
-        )
-
-        // When legacy role == non activated
-
-        try await sut.processEvent(eventLegacyRoleNonActivated)
-        internalTest_assertAccessRolesAndModes(
-            for: conversation,
-            expectedAccessModes: accessModes,
-            expectedAccessRoles: [.teamMember, .nonTeamMember, .guest, .service]
-        )
-
-        // When legacy role == private
-
-        try await sut.processEvent(eventLegacyRolePrivate)
-        internalTest_assertAccessRolesAndModes(
-            for: conversation,
-            expectedAccessModes: accessModes,
-            expectedAccessRoles: []
-        )
-
-        // When legacy role == team
-
-        try await sut.processEvent(eventLegacyRoleTeam)
-        internalTest_assertAccessRolesAndModes(
-            for: conversation,
-            expectedAccessModes: accessModes,
-            expectedAccessRoles: [.teamMember]
-        )
-    }
-
-    private func internalTest_assertAccessRolesAndModes(
-        for conversation: ZMConversation,
-        expectedAccessModes: Set<WireAPI.ConversationAccessMode>,
-        expectedAccessRoles: Set<WireAPI.ConversationAccessRole>
-    ) {
-        // Then
-
-        XCTAssertEqual(conversation.accessModeStrings?.sorted(), expectedAccessModes.map(\.rawValue).sorted())
-        XCTAssertEqual(conversation.accessRoleStringsV2?.sorted(), expectedAccessRoles.map(\.rawValue).sorted())
+        XCTAssertEqual(localStore.updateAccessesForAccessModesAccessRoles_Invocations.count, 1)
     }
 
     private enum Scaffolding {
@@ -199,6 +92,14 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
         static let domain = "domain.com"
         static let conversationID = ConversationID(uuid: id, domain: domain)
         static let senderID = UserID(uuid: id, domain: domain)
+
+        static let event = ConversationAccessUpdateEvent(
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.senderID,
+            accessModes: [.invite, .link],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .team
+        )
     }
 
 }
