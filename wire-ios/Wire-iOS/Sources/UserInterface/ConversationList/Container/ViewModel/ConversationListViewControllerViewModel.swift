@@ -88,6 +88,7 @@ extension ConversationListViewController {
         var selectedConversation: ZMConversation?
 
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
+        private var accountUpdatedNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: (any NSObjectProtocol)?
 
@@ -136,6 +137,10 @@ extension ConversationListViewController {
                 notificationCenter.removeObserver(didBecomeActiveNotificationToken)
             }
 
+            if let accountUpdatedNotificationToken {
+                notificationCenter.removeObserver(accountUpdatedNotificationToken)
+            }
+
             if let e2eiCertificateChangedToken {
                 notificationCenter.removeObserver(e2eiCertificateChangedToken)
             }
@@ -164,6 +169,18 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+
+        accountUpdatedNotificationToken = notificationCenter.addObserver(
+            forName: AccountManagerDidUpdateAccountsNotificationName,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            // The notification is also triggered on logout, in which case accessing the account would crash.
+            // Therefore only update the account if the accountManager's accounts still contains the instance we have.
+            if let self, let accountManager = notification.object as? AccountManager, accountManager.accounts.contains(account) {
+                updateAccountImage()
+            }
         }
 
         e2eiCertificateChangedToken = notificationCenter.addObserver(
