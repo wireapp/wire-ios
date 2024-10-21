@@ -154,6 +154,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     func setupRightNavigationBarButtonItems() {
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
+        spacer.width = 18
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
         // New Conversation Button
@@ -164,7 +165,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 await self?.mainCoordinator.showConnect()
             }
         }
-        let startConversationItem = UIBarButtonItem(customView: UIButton(primaryAction: newConversationAction))
+        let newConversationButton = UIButton(primaryAction: newConversationAction)
+        let startConversationItem = UIBarButtonItem(customView: newConversationButton)
         // TODO: [WPB-11606] fix accessibility
         // startConversationItem.accessibilityIdentifier =
         // startConversationItem.accessibilityLabel =
@@ -304,26 +306,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale.AllConversations.description
 
         }
-    }
-
-    /// Equally distributes the space on the left and on the right side of the filter bar button item.
-    func adjustRightBarButtonItemsSpace() {
-        guard
-            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-            // let newConversationButton = rightBarButtonItems[0].customView,
-            // let filterConversationsButton = rightBarButtonItems[2].customView,
-            // let titleViewLabel,
-            let window = viewIfLoaded?.window
-        else { return }
-
-        // TODO: [WPB-11619] Fix spacing between bar button items. This code doesn't work anymore because we don't use a custom title view
-//        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
-//        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
-//        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
-//        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-//        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
-        rightBarButtonItems[1].width = 29
     }
 
     @objc

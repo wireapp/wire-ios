@@ -233,7 +233,6 @@ final class ConversationListViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        adjustRightBarButtonItemsSpace()
         configureEmptyPlaceholder()
         updateFilterContainerView()
     }
