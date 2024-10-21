@@ -29,10 +29,12 @@
 		C97C014B2CB00F92000683C5 /* OneOnOneResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */; };
 		C97C01502CB01BDF000683C5 /* OneOnOneResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */; };
 		C97C01522CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01512CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift */; };
+		C97C01542CB04626000683C5 /* UserDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01532CB04626000683C5 /* UserDeleteEventProcessorTests.swift */; };
 		C97C01592CB40010000683C5 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01562CB40010000683C5 /* FederationConnectionRemovedEventProcessorTests.swift */; };
 		C97C015A2CB40010000683C5 /* FederationDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */; };
 		C97C015C2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */; };
 		C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */; };
+		C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
@@ -105,7 +107,6 @@
 		EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */; };
 		EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */; };
 		EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */; };
-		EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */; };
 		EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */; };
 		EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */; };
 		EEAD0A242C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */; };
@@ -159,10 +160,15 @@
 		C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OneOnOneResolver.swift; path = ../../OneOnOneResolver.swift; sourceTree = "<group>"; };
 		C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverTests.swift; sourceTree = "<group>"; };
 		C97C01512CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionEventProcessorTests.swift; sourceTree = "<group>"; };
+		C91F111A2C9C4B2B00BA5BE2 /* ConnectionsRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsRepository.swift; sourceTree = "<group>"; };
+		C91F111B2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsLocalStore.swift; sourceTree = "<group>"; };
+		C97C013C2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
+		C97C01532CB04626000683C5 /* UserDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C01562CB40010000683C5 /* FederationConnectionRemovedEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationConnectionRemovedEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C01572CB40010000683C5 /* FederationDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesSetEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
+		C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
@@ -236,7 +242,6 @@
 		EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientRemoveEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnectionEventProcessor.swift; sourceTree = "<group>"; };
-		EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactJoinEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdDisableEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdEnableEventProcessor.swift; sourceTree = "<group>"; };
@@ -543,6 +548,7 @@
 		C9C8FDCC2C9DBE0E00702B91 /* UserEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
+				C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */,
 				C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */,
 				C97C01512CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift */,
 				C97C015B2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift */,
@@ -551,6 +557,7 @@
 				C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */,
 				C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */,
 				C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */,
+				C97C01532CB04626000683C5 /* UserDeleteEventProcessorTests.swift */,
 			);
 			path = UserEventProcessor;
 			sourceTree = "<group>";
@@ -657,7 +664,6 @@
 				EEAD0A172C46A88D00CC8658 /* UserClientAddEventProcessor.swift */,
 				EEAD0A192C46A92000CC8658 /* UserClientRemoveEventProcessor.swift */,
 				EEAD0A1B2C46A99D00CC8658 /* UserConnectionEventProcessor.swift */,
-				EEAD0A1D2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift */,
 				EEAD0A1F2C46AB8700CC8658 /* UserDeleteEventProcessor.swift */,
 				EEAD0A212C46ABFA00CC8658 /* UserLegalholdDisableEventProcessor.swift */,
 				EEAD0A232C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift */,
@@ -933,7 +939,6 @@
 				C99322E22C986E3A0065E10F /* ConversationLocalStore+Status.swift in Sources */,
 				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
 				C99322D92C986E3A0065E10F /* UpdateEventsRepositoryError.swift in Sources */,
-				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
@@ -991,10 +996,13 @@
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
 				C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */,
+				C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */,
 				C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */,
 				C97C01502CB01BDF000683C5 /* OneOnOneResolverTests.swift in Sources */,
 				C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */,
 				C9C8FDD12C9DBE0E00702B91 /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
+				C97C01542CB04626000683C5 /* UserDeleteEventProcessorTests.swift in Sources */,
+				C9EA76A12C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift in Sources */,
 				C9C8FDCE2C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */,
 				C9C8FDCF2C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift in Sources */,
 				C97C01592CB40010000683C5 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */,
@@ -1037,7 +1045,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1076,7 +1083,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1152,7 +1158,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1213,7 +1219,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -1242,7 +1248,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1282,7 +1287,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1314,7 +1318,6 @@
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_NAME).TestSetup";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1336,7 +1339,6 @@
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSPrincipalClass = "$(PRODUCT_NAME).TestSetup";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDomainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
