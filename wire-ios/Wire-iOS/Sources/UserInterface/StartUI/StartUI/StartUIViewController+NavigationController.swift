@@ -34,7 +34,6 @@ extension StartUIViewController {
 
         navigationItem.leftBarButtonItem = cancelButton
 
-
         let createGroupButton = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: L10n.Localizable.Peoplepicker.Button.createConversation,
             action: UIAction { [weak self] _ in
@@ -45,7 +44,6 @@ extension StartUIViewController {
                 )
                 navigationController?.pushViewController(conversationCreationController, animated: true)
             })
-
 
         // We explicitly set the font here because the font provided inside createNavigationRightBarButtonItem
         // might not reflect the required design specifications in this particular context.
