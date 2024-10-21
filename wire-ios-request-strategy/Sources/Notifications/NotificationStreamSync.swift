@@ -25,7 +25,6 @@ public protocol NotificationStreamSyncDelegate: AnyObject {
 
 public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListRequestPaginatorSync {
 
-    private var notificationsTracker: NotificationsTracker?
     private var listPaginator: ZMSimpleListRequestPaginator!
     private var managedObjectContext: NSManagedObjectContext!
     private let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -34,7 +33,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     public init(
         moc: NSManagedObjectContext,
-        notificationsTracker: NotificationsTracker?,
         eventIDRespository: LastEventIDRepositoryInterface,
         delegate: NotificationStreamSyncDelegate
     ) {
@@ -55,7 +53,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             transcoder: self
         )
 
-        self.notificationsTracker = notificationsTracker
         notificationStreamSyncDelegate = delegate
     }
 
@@ -75,11 +72,6 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         }
 
         WireLogger.notifications.info("generated request to fetch events")
-        notificationsTracker?.registerStartStreamFetching()
-        request.add(ZMCompletionHandler(on: self.managedObjectContext, block: { _ in
-            self.notificationsTracker?.registerFinishStreamFetching()
-        }))
-
         return request
     }
 

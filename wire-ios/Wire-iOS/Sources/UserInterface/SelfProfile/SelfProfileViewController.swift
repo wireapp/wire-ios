@@ -66,7 +66,8 @@ final class SelfProfileViewController: UIViewController {
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelector: AccountSelector?
+        accountSelector: AccountSelector?,
+        trackingManager: TrackingManager?
     ) {
 
         self.userSession = userSession
@@ -74,14 +75,19 @@ final class SelfProfileViewController: UIViewController {
 
         // Create the settings hierarchy
 
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            trackingManager: trackingManager,
+            selfUser: selfUser
+        )
 
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+        let isPublicDomain = selfUser.domain?.domainType == .publicDomain
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(isPublicDomain: isPublicDomain, userSession: userSession)
 
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 

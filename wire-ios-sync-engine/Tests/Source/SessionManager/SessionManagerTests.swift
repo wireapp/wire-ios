@@ -137,7 +137,6 @@ final class SessionManagerTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             dispatchGroup: dispatchGroup,
@@ -148,7 +147,8 @@ final class SessionManagerTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()
@@ -233,7 +233,6 @@ final class SessionManagerTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: self.mockDelegate,
             application: application,
             dispatchGroup: dispatchGroup,
@@ -245,7 +244,8 @@ final class SessionManagerTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()
@@ -300,7 +300,6 @@ final class SessionManagerTests: IntegrationTest {
         _ = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: self.mockDelegate,
             application: application,
             environment: sessionManager!.environment,
@@ -311,7 +310,8 @@ final class SessionManagerTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         XCTAssertEqual(mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_Invocations.count, 1)
@@ -335,6 +335,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // WHEN
         sut.start(launchOptions: [:])
+
         sut.accountManager.addAndSelect(createAccount())
         XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
@@ -364,6 +365,7 @@ final class SessionManagerTests: IntegrationTest {
         // WHEN && THEN
         sut.accountManager.addAndSelect(createAccount())
         sut.start(launchOptions: [:])
+
         XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
         performIgnoringZMLogError {

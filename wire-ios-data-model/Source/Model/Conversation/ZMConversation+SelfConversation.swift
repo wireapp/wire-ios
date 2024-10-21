@@ -93,7 +93,7 @@ extension ZMConversation {
     }
 
     @discardableResult
-    static func sendMessageToSelfClients(
+    public static func sendMessageToSelfClients(
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> (proteus: ZMClientMessage, mls: ZMClientMessage?) {

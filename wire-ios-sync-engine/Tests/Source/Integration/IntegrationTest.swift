@@ -49,7 +49,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             proxyUsername: nil,
             proxyPassword: nil,
             reachability: reachability,
-            analytics: nil,
             minTLSVersion: nil
         )
     }
@@ -70,7 +69,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            analytics: analytics,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
@@ -309,15 +307,14 @@ extension IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
         sessionManager?.start(launchOptions: [:])
-
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
     }
 
     @objc

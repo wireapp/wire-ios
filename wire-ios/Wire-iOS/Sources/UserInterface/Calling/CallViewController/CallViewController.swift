@@ -396,7 +396,6 @@ final class CallViewController: UIViewController {
         preferedVideoPlaceholderState = newState == .stopped ? .statusTextHidden : .hidden
         voiceChannel.videoState = newState
         updateConfiguration()
-        AnalyticsCallingTracker.userToggledVideo(in: voiceChannel)
     }
 
     private func toggleCameraAnimated() {

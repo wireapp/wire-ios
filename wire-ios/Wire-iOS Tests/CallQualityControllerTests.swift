@@ -21,6 +21,7 @@ import WireUITesting
 import XCTest
 
 @testable import Wire
+import WireSyncEngineSupport
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -33,6 +34,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     private var conversation: ZMConversation!
     private var callConversationProvider: MockCallConversationProvider!
     private var callQualityViewController: CallQualityViewController!
+    private var callQualitySurvey: MockSubmitCallQualitySurveyUseCaseProtocol!
 
     // MARK: - setUp
 
@@ -46,14 +48,19 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
             otherUser: otherUser
         )
         callConversationProvider = MockCallConversationProvider()
-        sut = MockCallQualityController(rootViewController: .init())
+
+        callQualitySurvey = MockSubmitCallQualitySurveyUseCaseProtocol()
+        callQualitySurvey.invoke_MockMethod = { _ in }
+
+        // NOTE: the sut is not really a mock it's just the real implementation
+        // but with canPresentCallQualitySurvey set to true for testing the callQualitySurvey
+        sut = MockCallQualityController(rootViewController: .init(), callQualitySurvey: callQualitySurvey)
         sut.router = router
         sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
-
     }
 
     // MARK: - teardown
@@ -66,6 +73,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         conversation = nil
         callConversationProvider = nil
         callQualityViewController = nil
+        callQualitySurvey = nil
 
         super.tearDown()
     }

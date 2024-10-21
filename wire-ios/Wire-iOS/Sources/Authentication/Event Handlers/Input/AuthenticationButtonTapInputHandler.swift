@@ -37,7 +37,7 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
         case .enrollE2EIdentity:
             return [.showLoadingView, .startE2EIEnrollment]
         case .noHistory:
-            return [.showLoadingView, .configureNotifications, .completeBackupStep]
+            return [.showLoadingView, .configureNotifications, .completeBackupStep(didSucceed: nil)]
         case .clientManagement(let clients):
             let nextStep = AuthenticationFlowStep.deleteClient(clients: clients)
             return [AuthenticationCoordinatorAction.transition(nextStep, mode: .normal)]

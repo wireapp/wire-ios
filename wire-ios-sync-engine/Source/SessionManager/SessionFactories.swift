@@ -24,7 +24,6 @@ open class AuthenticatedSessionFactory {
     let appVersion: String
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
-    var analytics: AnalyticsType?
     let application: ZMApplication
 
     var environment: BackendEnvironmentProvider
@@ -41,13 +40,11 @@ open class AuthenticatedSessionFactory {
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
-        analytics: AnalyticsType? = nil,
         minTLSVersion: String?
     ) {
         self.appVersion = appVersion
         self.mediaManager = mediaManager
         self.flowManager = flowManager
-        self.analytics = analytics
         self.application = application
         self.environment = environment
         self.proxyUsername = proxyUsername
@@ -77,7 +74,6 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
-            analytics: analytics,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),

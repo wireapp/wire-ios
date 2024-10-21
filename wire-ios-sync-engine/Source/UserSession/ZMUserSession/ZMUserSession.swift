@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireSystem
@@ -42,7 +43,6 @@ public final class ZMUserSession: NSObject {
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
-    private(set) var analytics: AnalyticsType?
     private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
@@ -77,6 +77,9 @@ public final class ZMUserSession: NSObject {
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
+
+    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -333,6 +336,8 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
+    var callStateObserverToken: Any?
+
     // MARK: - Initialize
 
     init(
@@ -340,7 +345,6 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        analytics: (any AnalyticsType)?,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -363,7 +367,6 @@ public final class ZMUserSession: NSObject {
         self.appVersion = appVersion
         self.flowManager = flowManager
         self.mediaManager = mediaManager
-        self.analytics = analytics
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.notificationDispatcher = NotificationDispatcher(managedObjectContext: coreDataStack.viewContext)
@@ -387,6 +390,12 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+
+        super.init()
+    }
+
+    func trackAppOpenAnalyticEventWhenAppBecomesActive() {
+        analyticsEventTracker?.trackEvent(.appOpen)
     }
 
     func setup(
@@ -397,7 +406,6 @@ public final class ZMUserSession: NSObject {
         configuration: Configuration,
         isDeveloperModeEnabled: Bool
     ) {
-        coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
         coreDataStack.linkContexts()
 
@@ -587,6 +595,34 @@ public final class ZMUserSession: NSObject {
                                                 userInfo: ["path": path])
             }
         }
+    }
+
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+        analyticsEventTracker = tracker
+
+        // Track any events that were added before the service was configured.
+        if let analyticsEventTracker {
+            while !pendingAnalyticsEvents.isEmpty {
+                let event = pendingAnalyticsEvents.removeFirst()
+                analyticsEventTracker.trackEvent(event)
+            }
+            setupCallStateObserverForAnalytics()
+        } else {
+            callStateObserverToken = nil
+        }
+    }
+
+    private func setupCallStateObserverForAnalytics() {
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+    }
+
+    func trackAnalyticsEvent(_ event: AnalyticsEvent) {
+        guard let analyticsEventTracker else {
+            pendingAnalyticsEvents.append(event)
+            return
+        }
+
+        analyticsEventTracker.trackEvent(event)
     }
 
     private func registerForCalculateBadgeCountNotification() {

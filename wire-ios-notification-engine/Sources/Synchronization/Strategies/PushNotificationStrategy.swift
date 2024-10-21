@@ -42,7 +42,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
         syncContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         pushNotificationStatus: PushNotificationStatus,
-        notificationsTracker: NotificationsTracker?,
         lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         super.init(
@@ -52,7 +51,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
 
         sync = NotificationStreamSync(
             moc: syncContext,
-            notificationsTracker: notificationsTracker,
             eventIDRespository: lastEventIDRepository,
             delegate: self
         )

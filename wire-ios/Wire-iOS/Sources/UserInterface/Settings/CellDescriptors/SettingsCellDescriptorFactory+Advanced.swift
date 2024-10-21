@@ -24,7 +24,7 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
+    func advancedGroup(userSession: UserSession) -> any SettingsCellDescriptorType {
         let items = [
             troubleshootingSection(userSession: userSession),
             debuggingToolsSection,

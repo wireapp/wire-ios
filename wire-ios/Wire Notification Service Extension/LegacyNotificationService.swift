@@ -194,7 +194,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
           applicationGroupIdentifier: appGroupID,
           accountIdentifier: accountID,
           environment: BackendEnvironment.shared,
-          analytics: nil,
           sharedUserDefaults: .applicationGroup,
           minTLSVersion: SecurityFlags.minTLSVersion.stringValue
       )

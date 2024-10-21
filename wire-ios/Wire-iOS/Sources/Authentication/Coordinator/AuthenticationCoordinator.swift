@@ -300,7 +300,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .hideLoadingView:
                 stopActivityIndicator()
 
-            case .completeBackupStep:
+            case .completeBackupStep(let didSucceed):
+                if let didSucceed {
+                    unauthenticatedSession.reportBackupImportDidSucceed(didSucceed)
+                }
+
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case .executeFeedbackAction(let action):

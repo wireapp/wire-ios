@@ -67,7 +67,8 @@ struct SessionManagerBuilder {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: .temporary(),
-            deleteUserLogs: nil
+            deleteUserLogs: nil,
+            analyticsServiceConfiguration: nil
         )
     }
 }

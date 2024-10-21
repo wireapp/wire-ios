@@ -826,7 +826,8 @@ extension ImageAsset {
 // MARK: - DataTransfer
 
 extension DataTransfer {
-    init(trackingIdentifier: UUID) {
+
+    public init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)
         }

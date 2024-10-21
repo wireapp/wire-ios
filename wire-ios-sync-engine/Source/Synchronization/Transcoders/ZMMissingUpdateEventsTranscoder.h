@@ -36,7 +36,6 @@ extern NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize;
 @property (nonatomic, readonly) NSUUID * _Nullable lastUpdateEventID;
 
 - (instancetype _Nonnull)initWithManagedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext
-                        notificationsTracker:(NotificationsTracker * _Nullable)notificationsTracker
                               eventProcessor:(id<UpdateEventProcessor> _Nonnull)eventProcessor
                            applicationStatus:(id<ZMApplicationStatus> _Nonnull)applicationStatus
                       pushNotificationStatus:(PushNotificationStatus * _Nonnull)pushNotificationStatus

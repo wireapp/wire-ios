@@ -30,7 +30,7 @@ protocol CallQualityViewControllerDelegate: AnyObject {
 final class CallQualityViewController: UIViewController, UIGestureRecognizerDelegate {
 
     let questionLabelText: String
-    let callDuration: Int
+    let callDuration: TimeInterval
 
     weak var delegate: CallQualityViewControllerDelegate?
 
@@ -59,7 +59,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 
     // MARK: Initialization
 
-    init(questionLabelText: String, callDuration: Int) {
+    init(questionLabelText: String, callDuration: TimeInterval) {
         self.questionLabelText = questionLabelText
         self.callDuration = callDuration
         super.init(nibName: nil, bundle: nil)

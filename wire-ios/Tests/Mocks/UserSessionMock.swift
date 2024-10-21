@@ -323,6 +323,34 @@ final class UserSessionMock: UserSession {
         MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
+        AppendTextMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
+        AppendImageMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
+        AppendKnockMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+        AppendLocationMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
+        AppendFileMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {
+        ToggleMessageReactionUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
+        CallQualitySurveyUseCase(analyticsEventTracker: nil)
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(

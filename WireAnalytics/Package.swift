@@ -8,15 +8,20 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
-        .library(name: "WireDatadog", targets: ["WireDatadog"])
+        .library(name: "WireDatadog", targets: ["WireDatadog"]),
+        .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(path: "../SourceryPlugin")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies(),
+            dependencies: resolveWireAnalyticsDependencies() + [
+                .product(name: "Countly", package: "countly-sdk-ios")
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -29,6 +34,20 @@ let package = Package(
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
             ],
             swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "WireAnalyticsSupport",
+            dependencies: ["WireAnalytics"],
+            plugins: [
+                .plugin(
+                    name: "SourceryPlugin",
+                    package: "SourceryPlugin"
+                )
+            ]
+        ),
+        .testTarget(
+            name: "WireAnalyticsTests",
+            dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
         )
     ]
 )

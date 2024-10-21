@@ -45,9 +45,6 @@ public class WireCallCenterV3: NSObject {
     /// The object that controls media flow.
     let flowManager: FlowManagerType
 
-    /// The object to use to record stats about the call.
-    let analytics: AnalyticsType?
-
     /// The bridge to use to communicate with and receive events from AVS.
     var avsWrapper: AVSWrapperType!
 
@@ -135,13 +132,11 @@ public class WireCallCenterV3: NSObject {
                          avsWrapper: AVSWrapperType? = nil,
                          uiMOC: NSManagedObjectContext,
                          flowManager: FlowManagerType,
-                         analytics: AnalyticsType? = nil,
                          transport: WireCallCenterTransport) {
 
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
-        self.analytics = analytics
         self.transport = transport
 
         super.init()
