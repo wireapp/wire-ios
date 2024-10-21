@@ -47,8 +47,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         /// Batch requests don't work with in-memory store
         /// so we need to use a persistent store.
         stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
-        cleanUpEntity()
-        setupConversations()
+        await cleanUpEntity()
+        await setupConversations()
         userPropertiesAPI = MockUserPropertiesAPI()
         sut = ConversationLabelsRepository(
             userPropertiesAPI: userPropertiesAPI,
@@ -362,21 +362,25 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 }
 
 private extension ConversationLabelsRepositoryTests {
-    func cleanUpEntity() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        _ = try? context.execute(batchDeleteRequest)
+    func cleanUpEntity() async {
+        await context.perform { [self] in
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            _ = try? context.execute(batchDeleteRequest)
+        }
     }
 
-    func setupConversations() {
-        conversation1 = ZMConversation.insertNewObject(in: context)
-        conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
+    func setupConversations() async {
+        await context.perform { [self] in
+            conversation1 = ZMConversation.insertNewObject(in: context)
+            conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
 
-        conversation2 = ZMConversation.insertNewObject(in: context)
-        conversation2.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[1]
+            conversation2 = ZMConversation.insertNewObject(in: context)
+            conversation2.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[1]
 
-        conversation3 = ZMConversation.insertNewObject(in: context)
-        conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
+            conversation3 = ZMConversation.insertNewObject(in: context)
+            conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
+        }
     }
 
     private enum Scaffolding {
