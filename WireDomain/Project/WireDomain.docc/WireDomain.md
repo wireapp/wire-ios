@@ -34,7 +34,7 @@ The clean architecture, implemented in WireDomain, emphasizes the separation of 
 
   - **Example**: The `ConversationAccessUpdateEventProcessor` which is responsible of updating the conversation access modes and roles would use the `fetchConversation` repository method to retrieve a conversation locally and would update specific properties from the conversation object directly through the local store.
 
-⚠️ Event processors can be considered as being on the same level as repositories except they will be dedicated to some very specific storage logic (e.g updating a user client, adding a participant to a conversation, removing a conversation). As such, they're allowed to interact directly with the local store if they need to perform some particular logic that the repository doesn't handle already.
+> Important: Event processors can be considered as being on the same level as repositories except they will be dedicated to some very specific storage logic (e.g updating a user client, adding a participant to a conversation, removing a conversation). As such, they're allowed to interact directly with the local store if they need to perform some particular logic that the repository doesn't handle already.
 
 ![img](wire-domain-architecture.png)
 
