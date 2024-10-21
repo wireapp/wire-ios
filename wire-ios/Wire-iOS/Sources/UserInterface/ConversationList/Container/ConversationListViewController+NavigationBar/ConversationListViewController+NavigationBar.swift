@@ -167,9 +167,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
-        // TODO: [WPB-11606] fix accessibility
-        // startConversationItem.accessibilityIdentifier =
-        // startConversationItem.accessibilityLabel =
+        startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+        startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: symbolConfiguration)!
