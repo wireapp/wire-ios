@@ -23,16 +23,16 @@ import XCTest
 final class ZMAssertionDumpFileTests: XCTestCase {
 
     override func setUpWithError() throws {
-        let url = try AssertionDumpFile.url
+        let url = AssertionDumpFile.url
         if FileManager.default.fileExists(atPath: url.path) {
-            try FileManager.default.removeItem(at: AssertionDumpFile.url)
+            try FileManager.default.removeItem(at: url)
         }
     }
 
     override func tearDownWithError() throws {
-        let url = try AssertionDumpFile.url
+        let url = AssertionDumpFile.url
         if FileManager.default.fileExists(atPath: url.path) {
-            try FileManager.default.removeItem(at: AssertionDumpFile.url)
+            try FileManager.default.removeItem(at: url)
         }
     }
 

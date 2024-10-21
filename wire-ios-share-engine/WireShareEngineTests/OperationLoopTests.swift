@@ -40,11 +40,10 @@ final class OperationLoopTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
         let accountId = UUID()
-        let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let account = Account(userName: "", userIdentifier: accountId)
 
         let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: directoryURL,
+                                          applicationContainer: .cachesDirectory,
                                           inMemoryStore: true,
                                           dispatchGroup: dispatchGroup)
         coreDataStack.loadStores { error in

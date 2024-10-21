@@ -47,7 +47,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.randomCacheURL!
+        return FileManager.default.randomCacheURL
 
     }
 

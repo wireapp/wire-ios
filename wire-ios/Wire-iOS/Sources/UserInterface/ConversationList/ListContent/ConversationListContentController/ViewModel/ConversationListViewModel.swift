@@ -585,9 +585,9 @@ final class ConversationListViewModel: NSObject {
 
         guard isFolderStatePersistenceEnabled,
               let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel.persistentDirectory,
-              let directoryURL = URL.directoryURL(persistentDirectory) else { return }
+              let persistentDirectory = ConversationListViewModel.persistentDirectory else { return }
 
+        let directoryURL = URL.directoryURL(persistentDirectory)
         try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
@@ -611,7 +611,7 @@ final class ConversationListViewModel: NSObject {
     static var persistentURL: URL? {
         guard let persistentDirectory else { return nil }
 
-        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
+        return URL.directoryURL(persistentDirectory).appendingPathComponent(ConversationListViewModel.persistentFilename)
     }
 }
 

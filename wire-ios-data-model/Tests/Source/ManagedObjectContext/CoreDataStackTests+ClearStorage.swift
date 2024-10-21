@@ -24,10 +24,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     let account: Account = Account(userName: "", userIdentifier: UUID())
 
     var applicationContainer: URL {
-        return FileManager.default
-            .urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first!
-            .appendingPathComponent("CoreDataStackTests")
+        URL.applicationSupportDirectory.appendingPathComponent("CoreDataStackTests")
     }
 
     func testThatPersistentStoreIsCleared_WhenUpgradingFromLegacyInstallation() {
@@ -160,8 +157,8 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         let bundleID = Bundle.main.bundleIdentifier!
 
         return [
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
-            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
+            URL.cachesDirectory,
+            URL.applicationSupportDirectory,
             applicationContainer,
             applicationContainer.appendingPathComponent(bundleID),
             applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID),

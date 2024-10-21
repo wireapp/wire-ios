@@ -22,7 +22,7 @@ import WireTesting
 extension ZMTBaseTest {
 
     var sharedContainerURL: URL {
-        FileManager.default.randomCacheURL!
+        FileManager.default.randomCacheURL
 
     }
 

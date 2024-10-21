@@ -86,8 +86,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        let docments = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        directoryURL = docments.appendingPathComponent("ChaCha20EncryptionTests")
+        directoryURL = URL.documentsDirectory.appendingPathComponent("ChaCha20EncryptionTests")
 
         do {
             try FileManager.default.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)

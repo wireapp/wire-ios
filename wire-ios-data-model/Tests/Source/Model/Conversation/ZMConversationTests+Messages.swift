@@ -286,8 +286,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     func testThatWeCanInsertAFileMessage() {
         // given
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
+        let fileURL = URL.documentsDirectory.appendingPathComponent("secret_file.txt")
         let data = Data.randomEncryptionKey()
         let size = data.count
         try! data.write(to: fileURL)
@@ -318,8 +317,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
 
     func testThatWeCanNotInsertAFileMessage_WhenFileSharingIsDisabled() {
         // given
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent("secret_file.txt")
+        let fileURL = URL.documentsDirectory.appendingPathComponent("secret_file.txt")
         let data = Data.randomEncryptionKey()
         try! data.write(to: fileURL)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -356,8 +354,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
     func testThatWeCanInsertAPassFileMessage() {
         // given
         let filename = "ticket.pkpass"
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(filename)
+        let fileURL = URL.documentsDirectory.appendingPathComponent(filename)
         let data = Data.randomEncryptionKey()
         let size = data.count
         try! data.write(to: fileURL)
@@ -450,8 +447,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
     func testThatWeCanInsertAVideoMessage() {
         // given
         let fileName = "video.mp4"
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(fileName)
+        let fileURL = URL.documentsDirectory.appendingPathComponent(fileName)
         let videoData = Data.secureRandomData(length: 500)
         let thumbnailData = Data.secureRandomData(length: 250)
         let duration = 12333
@@ -501,8 +497,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
 
         // given
         let fileName = "audio.m4a"
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(fileName)
+        let fileURL = URL.documentsDirectory.appendingPathComponent(fileName)
         let videoData = Data.secureRandomData(length: 500)
         let thumbnailData = Data.secureRandomData(length: 250)
         let duration = 12333

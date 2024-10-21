@@ -47,9 +47,7 @@ class FileAssetCacheTests: XCTestCase {
             self.modelHelper.createSelfClient(in: self.context)
         }
 
-        location = try XCTUnwrap(
-            FileManager.default.randomCacheURL
-        )
+        location = FileManager.default.randomCacheURL
 
         try FileManager.default.removeItemIfExists(at: location!)
         sut = FileAssetCache(location: location!)

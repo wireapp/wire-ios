@@ -21,8 +21,8 @@ import WireSystem
 
 public enum LogFileDestination: CaseIterable, FileLoggerDestination {
 
-    private static var cachesDirectory: URL? {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+    private static var cachesDirectory: URL {
+        URL.cachesDirectory
     }
 
     case nse
@@ -48,7 +48,7 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
             }
             return url.appendingPathComponent(filename)
         case .main:
-            return Self.cachesDirectory?.appendingPathComponent(filename)
+            return Self.cachesDirectory.appendingPathComponent(filename)
         }
     }
 

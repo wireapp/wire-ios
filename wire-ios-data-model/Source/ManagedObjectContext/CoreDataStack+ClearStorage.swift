@@ -24,13 +24,12 @@ extension CoreDataStack {
 
     /// Locations where Wire is or has historically been storing data.
     private var storageLocations: [URL] {
-        var locations = [.cachesDirectory,
-                         .applicationSupportDirectory,
-                         .libraryDirectory].compactMap {
-                            FileManager.default.urls(for: $0, in: .userDomainMask).first
-                         }
-
-        locations.append(applicationContainer)
+        var locations = [
+            URL.cachesDirectory,
+            URL.applicationSupportDirectory,
+            URL.libraryDirectory,
+            applicationContainer
+        ]
 
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
             locations.append(applicationContainer
