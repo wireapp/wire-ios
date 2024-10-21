@@ -235,9 +235,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        // TODO: [WPB-11606] fix accessibility
-        // newConversationBarButton.accessibilityIdentifier =
-        // newConversationBarButton.accessibilityLabel =
+        newConversationBarButton.accessibilityIdentifier = "create_group_or_search_button"
+        newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showCreateGroupConversation()
