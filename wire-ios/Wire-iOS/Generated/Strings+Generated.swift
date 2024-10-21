@@ -553,6 +553,12 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversationDetails.showParticipantsButton.hint", fallback: "Double tap to open participant list")
       }
     }
+    internal enum ConversationList {
+      internal enum StartConversationButton {
+        /// Create group or search for people
+        internal static let description = L10n.tr("Accessibility", "conversationList.startConversationButton.description", fallback: "Create group or search for people")
+      }
+    }
     internal enum ConversationSearch {
       internal enum AudioMessage {
         /// Audio message

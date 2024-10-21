@@ -42,14 +42,12 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) {
 
         accountImageView?.accountImage = accountImage
+        accountImageView?.accessibilityIdentifier = "account_profile_image_view"
 
-        // TODO: [WPB-11606] fix accessibilityIdentifier if needed
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
-            accountImageView?.accessibilityIdentifier = .none
         } else {
             accountImageView?.accessibilityValue = .none
-            accountImageView?.accessibilityIdentifier = .none
         }
     }
 
@@ -167,9 +165,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
-        // TODO: [WPB-11606] fix accessibility
-        // startConversationItem.accessibilityIdentifier =
-        // startConversationItem.accessibilityLabel =
+        startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+        startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: symbolConfiguration)!
@@ -236,9 +233,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
-        // TODO: [WPB-11606] fix accessibility
-        // newConversationBarButton.accessibilityIdentifier =
-        // newConversationBarButton.accessibilityLabel =
+        newConversationBarButton.accessibilityIdentifier = "create_group_or_search_button"
+        newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showCreateGroupConversation()
