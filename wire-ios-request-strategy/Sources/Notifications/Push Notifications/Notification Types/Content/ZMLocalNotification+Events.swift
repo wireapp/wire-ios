@@ -126,6 +126,7 @@ private class EventNotificationBuilder: NotificationBuilder {
         userInfo.senderID = event.senderUUID
         userInfo.conversationID = conversation?.remoteIdentifier
         userInfo.messageNonce = event.messageNonce
+        userInfo.eventID = event.uuid
         userInfo.eventTime = event.timestamp
         userInfo.conversationName = conversation?.displayName
         userInfo.teamName = selfUser.team?.name
