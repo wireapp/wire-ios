@@ -26,11 +26,10 @@ import XCTest
 final class ConversationDeleteEventProcessorTests: XCTestCase {
 
     private var sut: ConversationDeleteEventProcessor!
-    private var conversationRepository: MockConversationRepositoryProtocol!
+    private var repository: MockConversationRepositoryProtocol!
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
-    private var mlsService: MockMLSServiceInterface!
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -39,22 +38,18 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         modelHelper = ModelHelper()
-        mlsService = MockMLSServiceInterface()
-        conversationRepository = MockConversationRepositoryProtocol()
+        repository = MockConversationRepositoryProtocol()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = ConversationDeleteEventProcessor(
-            context: context,
-            repository: conversationRepository,
-            mlsService: mlsService
+            repository: repository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        mlsService = nil
         modelHelper = nil
-        conversationRepository = nil
+        repository = nil
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -63,21 +58,18 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Deletes_Conversation() async throws {
+    func testProcessEvent_It_Invokes_Repo_Methods() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
-            modelHelper.createMLSConversation(
-                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
-                mlsStatus: .ready,
-                conversationType: .group,
-                epoch: 0,
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID.uuid,
                 in: context
             )
         }
 
-        conversationRepository.fetchConversationWithDomain_MockValue = conversation
-        mlsService.wipeGroup_MockMethod = { _ in }
+        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.deleteConversationWithDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -85,16 +77,11 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        let isConversationDeleted = await context.perform {
-            conversation.isDeletedRemotely
-        }
-
-        XCTAssertEqual(conversationRepository.fetchConversationWithDomain_Invocations.count, 1)
-        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
-        XCTAssertEqual(isConversationDeleted, true)
+        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.deleteConversationWithDomain_Invocations.count, 1)
     }
 
-    func testProcessEvent_It_Throws_Error() async throws {
+    func testProcessEvent_It_Invokes_Repo_Methods_For_MLS_Conversation() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -107,8 +94,34 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
             )
         }
 
-        conversationRepository.fetchConversationWithDomain_MockValue = conversation
-        mlsService.wipeGroup_MockError = Scaffolding.MockMLSError.failedToWipeGroup
+        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.deleteMLSConversationWithDomain_MockMethod = { _, _ in }
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.deleteMLSConversationWithDomain_Invocations.count, 1)
+    }
+
+    func testProcessEvent_It_Throws_Error_For_MLS_Conversation() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
+                mlsStatus: .ready,
+                conversationType: .group,
+                epoch: 0,
+                in: context
+            )
+        }
+
+        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.deleteMLSConversationWithDomain_MockError = Scaffolding.MockMLSError.failedToWipeGroup
 
         do {
             // When

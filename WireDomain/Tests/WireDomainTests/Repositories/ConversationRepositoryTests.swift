@@ -32,6 +32,7 @@ final class ConversationRepositoryTests: XCTestCase {
         domain: "example.com",
         isFederationEnabled: false
     )
+    private var mlsService: MockMLSServiceInterface!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -42,12 +43,13 @@ final class ConversationRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        mlsService = MockMLSServiceInterface()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: MockMLSServiceInterface()
+            mlsService: mlsService
         )
         conversationsAPI = MockConversationsAPI()
 
@@ -60,6 +62,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
     override func tearDown() async throws {
         try await super.tearDown()
+        mlsService = nil
         conversationsLocalStore = nil
         stack = nil
         conversationsAPI = nil
@@ -333,6 +336,94 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testDeleteMLSConversation_It_Wipes_MLS_Group_And_Deletes_MLS_Conversation_Locally() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
+                mlsStatus: .ready,
+                conversationType: .group,
+                epoch: 0,
+                in: context
+            )
+        }
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+
+        // When
+
+        try await sut.deleteMLSConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(isDeletedRemotely, true)
+    }
+
+    func testDeleteMLSConversation_It_Throws_Repo_Error_When_Missing_MLS_Group_ID() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                mlsGroupID: nil,
+                mlsStatus: .ready,
+                conversationType: .group,
+                epoch: 0,
+                in: context
+            )
+        }
+
+        do {
+            // When
+            try await sut.deleteMLSConversation(
+                with: Scaffolding.conversationID,
+                domain: Scaffolding.domain
+            )
+
+        } catch {
+            // Then
+            XCTAssertTrue(error is ConversationRepositoryError)
+        }
+    }
+
+    func testDeleteConversation_It_Deletes_Conversation_Locally() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                in: context
+            )
+        }
+
+        // When
+
+        await sut.deleteConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(isDeletedRemotely, true)
     }
 
     private func checkLastMessage(

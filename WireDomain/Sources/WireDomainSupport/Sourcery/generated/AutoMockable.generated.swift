@@ -242,6 +242,26 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - wipeMLSGroup
+
+    public var wipeMLSGroupWith_Invocations: [WireDataModel.MLSGroupID] = []
+    public var wipeMLSGroupWith_MockError: Error?
+    public var wipeMLSGroupWith_MockMethod: ((WireDataModel.MLSGroupID) async throws -> Void)?
+
+    public func wipeMLSGroup(with id: WireDataModel.MLSGroupID) async throws {
+        wipeMLSGroupWith_Invocations.append(id)
+
+        if let error = wipeMLSGroupWith_MockError {
+            throw error
+        }
+
+        guard let mock = wipeMLSGroupWith_MockMethod else {
+            fatalError("no mock for `wipeMLSGroupWith`")
+        }
+
+        try await mock(id)
+    }
+
     // MARK: - removeFromConversations
 
     public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
@@ -255,6 +275,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(user, removalDate)
+    }
+
+    // MARK: - storeConversationIsDeletedRemotely
+
+    public var storeConversationIsDeletedRemotelyConversation_Invocations: [(isDeletedRemotely: Bool, conversation: ZMConversation)] = []
+    public var storeConversationIsDeletedRemotelyConversation_MockMethod: ((Bool, ZMConversation) async -> Void)?
+
+    public func storeConversationIsDeletedRemotely(_ isDeletedRemotely: Bool, conversation: ZMConversation) async {
+        storeConversationIsDeletedRemotelyConversation_Invocations.append((isDeletedRemotely: isDeletedRemotely, conversation: conversation))
+
+        guard let mock = storeConversationIsDeletedRemotelyConversation_MockMethod else {
+            fatalError("no mock for `storeConversationIsDeletedRemotelyConversation`")
+        }
+
+        await mock(isDeletedRemotely, conversation)
     }
 
 }
@@ -282,6 +317,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         } else {
             fatalError("no mock for `fetchConversationWithDomain`")
         }
+    }
+
+    // MARK: - deleteConversation
+
+    public var deleteConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var deleteConversationWithDomain_MockMethod: ((UUID, String?) async -> Void)?
+
+    public func deleteConversation(with id: UUID, domain: String?) async {
+        deleteConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        guard let mock = deleteConversationWithDomain_MockMethod else {
+            fatalError("no mock for `deleteConversationWithDomain`")
+        }
+
+        await mock(id, domain)
     }
 
     // MARK: - pullConversations
@@ -343,6 +393,26 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         } else {
             fatalError("no mock for `fetchMLSConversationWith`")
         }
+    }
+
+    // MARK: - deleteMLSConversation
+
+    public var deleteMLSConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var deleteMLSConversationWithDomain_MockError: Error?
+    public var deleteMLSConversationWithDomain_MockMethod: ((UUID, String?) async throws -> Void)?
+
+    public func deleteMLSConversation(with id: UUID, domain: String?) async throws {
+        deleteMLSConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = deleteMLSConversationWithDomain_MockError {
+            throw error
+        }
+
+        guard let mock = deleteMLSConversationWithDomain_MockMethod else {
+            fatalError("no mock for `deleteMLSConversationWithDomain`")
+        }
+
+        try await mock(id, domain)
     }
 
     // MARK: - removeFromConversations

@@ -35,6 +35,16 @@ public protocol ConversationRepositoryProtocol {
         domain: String?
     ) async -> ZMConversation?
 
+    /// Deletes a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+
+    func deleteConversation(
+        with id: UUID,
+        domain: String?
+    ) async
+
     /// Fetches and persists all conversations
 
     func pullConversations() async throws
@@ -62,6 +72,16 @@ public protocol ConversationRepositoryProtocol {
     func fetchMLSConversation(
         with groupID: String
     ) async -> ZMConversation?
+
+    /// Deletes a MLS conversation.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+
+    func deleteMLSConversation(
+        with id: UUID,
+        domain: String?
+    ) async throws
 
     /// Removes a given user from all conversations.
     ///
@@ -203,6 +223,50 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.removeFromConversations(
             user: user,
             removalDate: removalDate
+        )
+    }
+
+    public func deleteMLSConversation(
+        with id: UUID,
+        domain: String?
+    ) async throws {
+        guard let conversation = await fetchConversation(
+            with: id,
+            domain: domain
+        ) else {
+            return WireLogger.conversation.warn(
+                "Cannot delete a MLS conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
+            )
+        }
+
+        guard let mlsGroupID = conversation.mlsGroupID else {
+            throw ConversationRepositoryError.mlsConversationShouldHaveAGroupID
+        }
+
+        try await conversationsLocalStore.wipeMLSGroup(with: mlsGroupID)
+
+        await conversationsLocalStore.storeConversationIsDeletedRemotely(
+            true,
+            conversation: conversation
+        )
+    }
+
+    public func deleteConversation(
+        with id: UUID,
+        domain: String?
+    ) async {
+        guard let conversation = await fetchConversation(
+            with: id,
+            domain: domain
+        ) else {
+            return WireLogger.conversation.warn(
+                "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
+            )
+        }
+
+        await conversationsLocalStore.storeConversationIsDeletedRemotely(
+            true,
+            conversation: conversation
         )
     }
 

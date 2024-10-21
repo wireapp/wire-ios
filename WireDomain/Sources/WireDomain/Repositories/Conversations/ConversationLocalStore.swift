@@ -52,7 +52,7 @@ public protocol ConversationLocalStoreProtocol {
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsUpdate: A flag indicating whether the qualified conversation needs to be updated from backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
     func storeConversationNeedsBackendUpdate(
@@ -70,13 +70,20 @@ public protocol ConversationLocalStoreProtocol {
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:
-    ///     - groupID: The MLS group ID object.
+    ///     - groupID: The MLS group ID.
     ///
     /// - returns : A MLS conversation.
 
     func fetchMLSConversation(
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
+
+    /// Wipes MLS group conversation.
+    /// - parameter id: The MLS group ID.
+
+    func wipeMLSGroup(
+        with id: WireDataModel.MLSGroupID
+    ) async throws
 
     /// Removes a given user from all conversations.
     ///
@@ -87,6 +94,15 @@ public protocol ConversationLocalStoreProtocol {
     func removeFromConversations(
         user: ZMUser,
         removalDate: Date
+    ) async
+
+    /// Stores a flag indicating whether a conversation is deleted remotely.
+    /// - Parameter isDeletedRemotely: A flag indicating whether the conversation is deleted remotely.
+    /// - Parameter conversation: The conversation to update the `isDeletedRemotely` flag for.
+
+    func storeConversationIsDeletedRemotely(
+        _ isDeletedRemotely: Bool,
+        conversation: ZMConversation
     ) async
 }
 
@@ -99,7 +115,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: MLSServiceInterface?
+    let mlsService: any MLSServiceInterface
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -108,7 +124,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface?
+        mlsService: MLSServiceInterface
     ) {
         self.context = context
         self.mlsService = mlsService
@@ -260,6 +276,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
+        }
+    }
+
+    public func wipeMLSGroup(with id: MLSGroupID) async throws {
+        try await mlsService.wipeGroup(id)
+    }
+
+    public func storeConversationIsDeletedRemotely(
+        _ isDeletedRemotely: Bool,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.isDeletedRemotely = isDeletedRemotely
         }
     }
 

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 import WireDataModel
 import WireSystem
@@ -39,9 +38,7 @@ struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtoco
         case failedToDeleteMLSConversation(Swift.Error)
     }
 
-    let context: NSManagedObjectContext
     let repository: any ConversationRepositoryProtocol
-    let mlsService: any MLSServiceInterface
 
     func processEvent(_ event: ConversationDeleteEvent) async throws {
         let id = event.conversationID.uuid
@@ -60,31 +57,13 @@ struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtoco
 
         if conversation.messageProtocol == .mls {
             do {
-                try await wipeMLSGroup(conversation: conversation)
+                try await repository.deleteMLSConversation(with: id, domain: domain)
             } catch {
                 throw Error.failedToDeleteMLSConversation(error)
             }
+        } else {
+            await repository.deleteConversation(with: id, domain: domain)
         }
-
-        await context.perform {
-            conversation.isDeletedRemotely = true
-        }
-
-        try context.saveOrRevert()
-    }
-
-    private func wipeMLSGroup(conversation: ZMConversation) async throws {
-        let groupID = await context.perform {
-            conversation.mlsGroupID
-        }
-
-        guard let groupID else {
-            return WireLogger.mls.warn(
-                "Failed to wipe MLS conversation: missing `mlsGroupID`"
-            )
-        }
-
-        try await mlsService.wipeGroup(groupID)
     }
 
 }
