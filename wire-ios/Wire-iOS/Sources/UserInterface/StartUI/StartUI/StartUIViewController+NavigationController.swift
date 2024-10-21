@@ -50,7 +50,7 @@ extension StartUIViewController {
         // We explicitly set the font here because the font provided inside createNavigationRightBarButtonItem
         // might not reflect the required design specifications in this particular context.
         // This ensures that the button uses a custom font as needed for consistency across the app.
-        // The only change between the two is the weight. In this case is semibold.
+        // The only change between the two is the weight. In this case it's semibold.
         let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         createGroupButton.setTitleTextAttributes([.font: font], for: .normal)
 
