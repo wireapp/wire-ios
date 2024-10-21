@@ -42,14 +42,12 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     ) {
 
         accountImageView?.accountImage = accountImage
+        accountImageView?.accessibilityIdentifier = "account_profile_image_view"
 
-        // TODO: [WPB-11606] fix accessibilityIdentifier if needed
         if let userName = viewModel.userSession.selfUser.name {
             accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
-            accountImageView?.accessibilityIdentifier = .none
         } else {
             accountImageView?.accessibilityValue = .none
-            accountImageView?.accessibilityIdentifier = .none
         }
     }
 
