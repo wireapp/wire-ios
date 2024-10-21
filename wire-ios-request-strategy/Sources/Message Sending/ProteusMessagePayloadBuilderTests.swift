@@ -116,7 +116,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         }
         XCTAssertEqual(createdMessage.hasBlob, true)
 
-        let userEntry = try  XCTUnwrap(createdMessage.recipients.first { $0.user.uuid == userBID.uuid.uuidData }  )
+        let userEntry = try  XCTUnwrap(createdMessage.recipients.first { $0.user.uuid == userBID.uuid.uuidData })
 
         XCTAssertEqual(userEntry.clients.count, 1)
         let client = try XCTUnwrap(userEntry.clients.first)
