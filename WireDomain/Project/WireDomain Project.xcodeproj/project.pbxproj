@@ -35,7 +35,6 @@
 		C97C015F2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */; };
 		C97C01A52CB80F54000683C5 /* UserClientsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A42CB80F4E000683C5 /* UserClientsRepository.swift */; };
 		C97C01A82CB813C9000683C5 /* UserClientsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A72CB813C9000683C5 /* UserClientsRepositoryTests.swift */; };
-		C97C01AA2CB8264E000683C5 /* UUID+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A92CB82649000683C5 /* UUID+Mock.swift */; };
 		C97C01AC2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01AB2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
@@ -169,7 +168,6 @@
 		C97C015E2CB40EF3000683C5 /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
 		C97C01A42CB80F4E000683C5 /* UserClientsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientsRepository.swift; sourceTree = "<group>"; };
 		C97C01A72CB813C9000683C5 /* UserClientsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientsRepositoryTests.swift; sourceTree = "<group>"; };
-		C97C01A92CB82649000683C5 /* UUID+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Mock.swift"; sourceTree = "<group>"; };
 		C97C01AB2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdEnableEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
@@ -596,7 +594,6 @@
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				C97C01A92CB82649000683C5 /* UUID+Mock.swift */,
 				EE0E117D2C2C4080004BBD29 /* TestError.swift */,
 				CB7979152C738547006FBA58 /* TestSetup.swift */,
 			);
@@ -1001,7 +998,6 @@
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
-				C97C01AA2CB8264E000683C5 /* UUID+Mock.swift in Sources */,
 				C97C01522CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift in Sources */,
 				C9C8FDD02C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift in Sources */,
 				C97C01A82CB813C9000683C5 /* UserClientsRepositoryTests.swift in Sources */,

@@ -129,8 +129,6 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             }
         }
 
-        try context.save()
-
         return localUserClient
     }
 
@@ -144,7 +142,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             in: context
         ) else {
             return WireLogger.userClient.error(
-                "Failed to find existing client with id: \(id)"
+                "Failed to find existing client with id: \(id.obfuscated())"
             )
         }
 
@@ -197,8 +195,6 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             selfUser.selfClient()?.addNewClientToIgnored(localClient)
             selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
-
-        try context.save()
     }
 
     public func deleteClient(with id: String) async {
@@ -207,7 +203,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             in: context
         ) else {
             return WireLogger.userClient.error(
-                "Failed to find existing client with id: \(id)"
+                "Failed to find existing client with id: \(id.obfuscated())"
             )
         }
 
