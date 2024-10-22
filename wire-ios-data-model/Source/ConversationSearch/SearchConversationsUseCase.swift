@@ -19,7 +19,7 @@
 import WireUtilities
 
 public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
-where ConversationContainer: SearchableConversationContainer {
+where ConversationContainer: MutableConversationContainer {
 
     private let conversationContainers: [ConversationContainer]
 

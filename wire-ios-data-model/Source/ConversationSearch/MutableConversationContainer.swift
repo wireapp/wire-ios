@@ -18,7 +18,7 @@
 
 /// A mutable container of conversations used by the `ConversationSearchUseCase`.
 /// This can be interpreted as a section in a table where a row is a conversation.
-public protocol SearchableConversationContainer {
+public protocol MutableConversationContainer {
     associatedtype Conversation: SearchableConversation
 
     var conversations: [Conversation] { get }

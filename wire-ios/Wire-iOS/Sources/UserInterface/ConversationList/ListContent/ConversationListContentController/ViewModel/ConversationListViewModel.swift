@@ -708,14 +708,14 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
     }
 }
 
-// MARK: - Section + SearchableConversationContainer
+// MARK: - Section + MutableConversationContainer
 
-extension ConversationListViewModel.Section: SearchableConversationContainer {
+extension ConversationListViewModel.Section: MutableConversationContainer {
 
-    var conversations: [SearchableZMConversationWrapper] {
+    var conversations: [ZMSearchableConversationAdapter] {
         items
             .compactMap { $0.item as? ZMConversation }
-            .map(SearchableZMConversationWrapper.init(conversation:))
+            .map(ZMSearchableConversationAdapter.init(conversation:))
     }
 
     mutating func removeConversation(at index: Int) {

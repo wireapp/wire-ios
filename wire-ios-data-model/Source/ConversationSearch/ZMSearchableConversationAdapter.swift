@@ -18,7 +18,7 @@
 
 import WireUtilities
 
-public struct SearchableZMConversationWrapper: SearchableConversation {
+public struct ZMSearchableConversationAdapter: SearchableConversation {
 
     private let conversation: ZMConversation
 
