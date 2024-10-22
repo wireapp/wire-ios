@@ -21,18 +21,14 @@ import WireCommonComponents
 import WireMainNavigationUI
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = MainCoordinatorDependencies
+struct SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderProtocol {
 
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
 
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
+    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController {
         let rootViewController = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
@@ -40,6 +36,6 @@ struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerB
             accountSelector: accountSelector,
             mainCoordinator: .init(mainCoordinator: mainCoordinator)
         )
-        return .init(rootViewController: rootViewController)
+        return UINavigationController(rootViewController: rootViewController)
     }
 }

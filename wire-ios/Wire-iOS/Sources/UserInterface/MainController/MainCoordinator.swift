@@ -16,18 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireMainNavigationUI
 
-extension WireMainNavigationUI.MainCoordinator: ArchivedListViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
-
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
-    ) {
-        Task { @MainActor in
-            await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
-        }
-    }
-}
+typealias MainCoordinator = WireMainNavigationUI.AnyMainCoordinator<MainCoordinatorDependencies>

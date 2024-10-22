@@ -19,18 +19,14 @@
 import WireMainNavigationUI
 import WireSidebarUI
 
-final class SidebarViewControllerDelegate<MainCoordinator, SelfProfileUIBuilder>: WireSidebarUI.SidebarViewControllerDelegate where
-MainCoordinator: MainCoordinatorProtocol,
-MainCoordinator.Dependencies.ConversationFilter == Wire.ConversationFilter,
-SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder,
-SelfProfileUIBuilder.Dependencies == MainCoordinator.Dependencies {
+final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDelegate {
 
     let mainCoordinator: MainCoordinator
-    let selfProfileUIBuilder: SelfProfileUIBuilder
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     init(
         mainCoordinator: MainCoordinator,
-        selfProfileUIBuilder: SelfProfileUIBuilder
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder

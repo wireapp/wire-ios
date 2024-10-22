@@ -16,18 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import UIKit
 import WireMainNavigationUI
 
-extension WireMainNavigationUI.MainCoordinator: ArchivedListViewControllerDelegate where Dependencies.ConversationModel == ZMConversation {
-
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
-    ) {
-        Task { @MainActor in
-            await showConversationList(conversationFilter: .none)
-            await showConversation(conversation: conversation, message: nil)
-        }
-    }
+protocol SelfProfileViewControllerBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController
 }

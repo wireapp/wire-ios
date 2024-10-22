@@ -27,11 +27,9 @@ import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine
 
-// TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
-
 final class ZClientViewController: UIViewController {
 
-    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
+    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies> // TODO: use AnyMainCoordinator instead?
     typealias MainSplitViewController = MainCoordinator.SplitViewController
     typealias MainTabBarController = MainCoordinator.TabBarController
 
@@ -53,7 +51,7 @@ final class ZClientViewController: UIViewController {
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
-        mainCoordinator: mainCoordinator,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 

@@ -404,6 +404,8 @@
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
+		59AF779F2CC7FA8D002438D1 /* SelfProfileViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */; };
+		59AF77A12CC7FB3B002438D1 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */; };
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */; };
 		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
@@ -2397,6 +2399,8 @@
 		59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainCoordinator.swift; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
+		59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
 		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
@@ -5935,6 +5939,7 @@
 				1639A80E225F863000868AB9 /* ProfileHeaderViewController.swift */,
 				8745476A1E9E54E600C206E5 /* SelfProfileViewController.swift */,
 				5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */,
+				59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */,
 				1610366E20616EBC008AFDD0 /* SelfProfileViewController+NewDeviceAlert.swift */,
 				8758220821B6999E00D68266 /* SelfProfileViewController+SettingsChangeAlert.swift */,
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
@@ -6793,14 +6798,15 @@
 			children = (
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
 				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
+				59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */,
 				597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */,
 				59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */,
-				59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */,
 				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
 				59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */,
 				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
+				59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */,
 				59797A452C6F98880044882D /* ZClientControllerBuilder.swift */,
 				877798AB205A8EF500898A5E /* ZClientViewController.swift */,
 				1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */,
@@ -9892,6 +9898,7 @@
 				5EB45761204EA75300BA217A /* CallQualityDismissalTransition.swift in Sources */,
 				EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */,
 				BF5DF5C520F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift in Sources */,
+				59AF77A12CC7FB3B002438D1 /* MainCoordinator.swift in Sources */,
 				546EEA8F2536DFAB00195097 /* SwitchingAccountRouter.swift in Sources */,
 				8742C2E21E51BD7900329FB6 /* TextSearchInputView.swift in Sources */,
 				8711A5A21E0D395A00043ACF /* CollectionCellHeader.swift in Sources */,
@@ -10320,6 +10327,7 @@
 				BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
+				59AF779F2CC7FA8D002438D1 /* SelfProfileViewControllerBuilderProtocol.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				E9C0B3592B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,

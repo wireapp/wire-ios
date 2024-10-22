@@ -101,7 +101,7 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     private var emptyPlaceholderView: EmptyPlaceholderView!
-    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
+    let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
@@ -120,7 +120,7 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -142,7 +142,7 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
-        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
