@@ -81,7 +81,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewModel: viewModel,
             zClientViewController: .init(account: account, userSession: userSession),
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
-            selfProfileViewControllerBuilder: .mock
+            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.mainSplitViewState = .collapsed
 
@@ -282,23 +282,5 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewController.viewIfLoaded != nil
         }
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    }
-}
-
-// MARK: MainCoordinatorInjectingViewControllerBuilder + mock
-
-private extension MainCoordinatorInjectingViewControllerBuilder where Self == MockMainCoordinatorInjectingViewControllerBuilder {
-    static var mock: Self { .init() }
-}
-
-private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = Wire.MainCoordinatorDependencies
-
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UIViewController where
-    MainCoordinator.Dependencies == Dependencies {
-        .init()
     }
 }

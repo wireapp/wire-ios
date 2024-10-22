@@ -32,7 +32,7 @@ import UIKit
 
 @MainActor
 public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate
-    where Dependencies: MainCoordinatorDependencies
+    where Dependencies: MainCoordinatorDependenciesProtocol
 {
     // swiftlint:enable opening_brace
 

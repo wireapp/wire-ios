@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocolDependencies {
+public protocol MainCoordinatorProtocolDependenciesProtocol {
     associatedtype ConversationFilter: MainConversationFilterRepresentable
     associatedtype ConversationModel
     associatedtype ConversationMessageModel

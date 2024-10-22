@@ -20,7 +20,7 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+    associatedtype Dependencies: MainCoordinatorProtocolDependenciesProtocol
 
     typealias ConversationFilter = Dependencies.ConversationFilter
     typealias ConversationModel = Dependencies.ConversationModel

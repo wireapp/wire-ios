@@ -19,7 +19,7 @@
 import UIKit
 
 /// A type-erased MainCoordinator.
-public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>: MainCoordinatorProtocol {
+public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesProtocol>: MainCoordinatorProtocol {
 
     public let base: any MainCoordinatorProtocol
 

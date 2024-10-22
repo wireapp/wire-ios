@@ -18,9 +18,9 @@
 
 import UIKit
 
-public protocol MainCoordinatorInjectingViewControllerBuilder {
+public protocol MainCoordinatorInjectingViewControllerBuilder { // TODO: try to delete
 
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+    associatedtype Dependencies: MainCoordinatorProtocolDependenciesProtocol
     associatedtype ViewController: UIViewController
 
     @MainActor

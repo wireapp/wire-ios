@@ -21,16 +21,16 @@ import WireMainNavigationUI
 import WireSettingsUI
 import WireSidebarUI
 
-enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependencies {
+enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
 
-    // MainCoordinatorProtocolDependencies
+    // MainCoordinatorDependenciesProtocol
 
     typealias ConversationFilter = Wire.ConversationFilter
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
     typealias SettingsTopLevelMenuItem = WireSettingsUI.SettingsTopLevelMenuItem
 
-    // MainCoordinatorDependencies
+    // MainCoordinatorDependenciesProtocol
 
     typealias SplitViewController = MainSplitViewController<SidebarViewController, TabBarController>
     typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>

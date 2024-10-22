@@ -18,9 +18,9 @@
 
 @testable import WireMainNavigationUI
 
-enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
+enum MockMainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
 
-    // MainCoordinatorProtocolDependencies
+    // MainCoordinatorProtocolDependenciesProtocol
 
     typealias ConversationFilter = MainConversationFilter
     typealias ConversationModel = PreviewConversationModel
@@ -28,7 +28,7 @@ enum MockMainCoordinatorDependencies: MainCoordinatorDependencies {
     typealias SettingsTopLevelMenuItem = MainSettingsTopLevelMenuItem
     typealias User = MockUser
 
-    // MARK: - MainCoordinatorDependencies
+    // MARK: - MainCoordinatorDependenciesProtocol
 
     typealias SplitViewController = MockSplitViewController
     typealias ConversationUIBuilder = MockConversationBuilder
