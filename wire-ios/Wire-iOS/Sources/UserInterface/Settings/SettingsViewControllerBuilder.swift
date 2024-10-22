@@ -29,6 +29,7 @@ struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSetting
     private var settingsPropertyFactory: SettingsPropertyFactory {
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: userSession.editableSelfUser)
         settingsPropertyFactory.delegate = settingsPropertyFactoryDelegate
+        print(settingsPropertyFactory.delegate)
         return settingsPropertyFactory
     }
 

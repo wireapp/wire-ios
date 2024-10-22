@@ -254,6 +254,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
+        settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
@@ -263,7 +264,6 @@ final class ZClientViewController: UIViewController {
         archiveUI.delegate = mainCoordinator
         connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
-        settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
