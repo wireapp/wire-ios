@@ -18,6 +18,10 @@
 
 import WireUtilities
 
+/// This use case takes grouped conversations as input and returns only non-empty groups of conversations
+/// where the provided search text matches.
+///
+/// The search text is compared to the name of conversations as well as the names of the conversation's participants.
 public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
 where ConversationContainer: MutableConversationContainer {
 
@@ -38,10 +42,8 @@ where ConversationContainer: MutableConversationContainer {
             return conversationContainers
         }
 
-        // create a copy, since conversations to be filtered are removed
-        var conversationContainers = conversationContainers
-
         // iterate through all containers and all conversations and remove those who don't match the search text
+        var conversationContainers = conversationContainers
         for containerIndex in conversationContainers.indices {
         conversationLoop:
             for conversationIndex in conversationContainers[containerIndex].conversations.indices.reversed() {
