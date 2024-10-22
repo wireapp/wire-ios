@@ -307,7 +307,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            await mainCoordinator.showSelfProfile()
+            // TODO: fix
+            fatalError()
+            // await mainCoordinator.showSelfProfile()
         }
     }
 

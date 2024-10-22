@@ -374,7 +374,9 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         }
 
         Task {
-            await mainCoordinator.showSelfProfile()
+            // TODO: fix
+            fatalError()
+            //await mainCoordinator.showSelfProfile()
         }
     }
 

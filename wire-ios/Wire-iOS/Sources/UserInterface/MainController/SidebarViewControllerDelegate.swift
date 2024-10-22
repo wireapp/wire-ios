@@ -19,14 +19,23 @@
 import WireMainNavigationUI
 import WireSidebarUI
 
-// TODO: [WPB-11651] Create a dedicated delegate type for the sidebar and let it use the main coordinator.
+final class SidebarViewControllerDelegate<MainCoordinator>: WireSidebarUI.SidebarViewControllerDelegate where
+MainCoordinator: MainCoordinatorProtocol, MainCoordinator.Dependencies.ConversationFilter == Wire.ConversationFilter {
 
-extension MainCoordinator: SidebarViewControllerDelegate where Dependencies.ConversationFilter == Wire.ConversationFilter {
+    let mainCoordinator: MainCoordinator
+
+    init(mainCoordinator: MainCoordinator) {
+        self.mainCoordinator = mainCoordinator
+    }
+
+// TODO: [WPB-11651] Create a dedicated delegate type for the sidebar and let it use the main coordinator.
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            await showSelfProfile()
+            // TODO: selfProfileUIBuilder
+            fatalError()
+            //await mainCoordinator.showSelfProfile()
         }
     }
 
@@ -35,24 +44,24 @@ extension MainCoordinator: SidebarViewControllerDelegate where Dependencies.Conv
         Task {
             switch menuItem {
             case .all:
-                await showConversationList(conversationFilter: .none)
+                await mainCoordinator.showConversationList(conversationFilter: .none)
             case .favorites:
-                await showConversationList(conversationFilter: .favorites)
+                await mainCoordinator.showConversationList(conversationFilter: .favorites)
             case .groups:
-                await showConversationList(conversationFilter: .groups)
+                await mainCoordinator.showConversationList(conversationFilter: .groups)
             case .oneOnOne:
-                await showConversationList(conversationFilter: .oneOnOne)
+                await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
             case .archive:
-                await showArchive()
+                await mainCoordinator.showArchive()
             case .settings:
-                await showSettings()
+                await mainCoordinator.showSettings()
             }
         }
     }
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
         Task {
-            await showConnect()
+            await mainCoordinator.showConnect()
         }
     }
 
@@ -62,7 +71,7 @@ extension MainCoordinator: SidebarViewControllerDelegate where Dependencies.Conv
         let browser = BrowserViewController(url: url)
         browser.modalPresentationCapturesStatusBarAppearance = true
         Task {
-            await presentViewController(browser)
+            await mainCoordinator.presentViewController(browser)
         }
     }
 }

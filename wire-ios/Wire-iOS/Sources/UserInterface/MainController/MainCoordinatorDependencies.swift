@@ -29,7 +29,6 @@ enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependenci
     typealias ConversationModel = ZMConversation
     typealias ConversationMessageModel = ZMConversationMessage
     typealias SettingsTopLevelMenuItem = WireSettingsUI.SettingsTopLevelMenuItem
-    typealias User = any UserType
 
     // MainCoordinatorDependencies
 
@@ -39,5 +38,4 @@ enum MainCoordinatorDependencies: WireMainNavigationUI.MainCoordinatorDependenci
     typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
     typealias ConnectUIBuilder = StartUIViewControllerBuilder
     typealias CreateGroupConversationUIBuilder = CreateGroupConversationViewControllerBuilder
-    typealias SelfProfileUIBuilder = SelfProfileViewControllerBuilder
 }

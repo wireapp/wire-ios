@@ -52,6 +52,7 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
+    private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(mainCoordinator: mainCoordinator)
 
     private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
@@ -116,8 +117,7 @@ final class ZClientViewController: UIViewController {
         conversationUIBuilder: conversationViewControllerBuilder,
         settingsContentUIBuilder: settingsViewControllerBuilder,
         connectUIBuilder: connectBuilder,
-        createGroupConversationUIBuilder: createGroupConversationBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        createGroupConversationUIBuilder: createGroupConversationBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -236,7 +236,6 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archiveUI = ArchivedListViewController(userSession: userSession)
 
-        // TODO: [WPB-11608] the border color doesn't match on iPad (iOS 15)
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
@@ -259,7 +258,7 @@ final class ZClientViewController: UIViewController {
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
         sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
-        sidebarViewController.delegate = mainCoordinator
+        sidebarViewController.delegate = sidebarViewControllerDelegate
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {

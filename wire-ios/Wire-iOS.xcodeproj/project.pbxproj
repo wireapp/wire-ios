@@ -419,7 +419,7 @@
 		59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAF2C89DFB700201827 /* WireDomainPackage */; };
 		59BFBFC42CB68E8C005C3375 /* CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */; };
 		59BFBFC62CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */; };
-		59BFBFC92CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */; };
+		59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */; };
 		59BFBFCA2CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		59BFBFCE2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */; };
 		59C2F09F2CA54E4900B25E5D /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */; };
@@ -2403,7 +2403,7 @@
 		59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSettingsCoordinator.swift; sourceTree = "<group>"; };
 		59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+CreateGroupConversationViewControllerBuilder.swift"; sourceTree = "<group>"; };
-		59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+SidebarViewControllerDelegate.swift"; sourceTree = "<group>"; };
+		59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewControllerDelegate.swift; sourceTree = "<group>"; };
 		59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarAccountInfo+initWithUserSessionAndAccount.swift"; sourceTree = "<group>"; };
 		59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
@@ -6791,24 +6791,24 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
-				59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */,
-				59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
-				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
-				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
+				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */,
 				59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */,
+				59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */,
 				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
+				59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */,
+				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
 				59797A452C6F98880044882D /* ZClientControllerBuilder.swift */,
 				877798AB205A8EF500898A5E /* ZClientViewController.swift */,
 				1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */,
 				EE52988F26B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift */,
 				0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */,
 				EFF9404722414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift */,
-				EF46ECCC231D5B4B00D425DA /* ZClientViewController+StartUIDelegate.swift */,
 				1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */,
+				EF46ECCC231D5B4B00D425DA /* ZClientViewController+StartUIDelegate.swift */,
 			);
 			path = MainController;
 			sourceTree = "<group>";
@@ -9707,7 +9707,7 @@
 				876113EB1DD1FEC4007F5969 /* ConversationContentViewController+Forward.swift in Sources */,
 				16DD6E95228304B70090A74C /* LegalHoldDetailsViewController.swift in Sources */,
 				D550F56E204444EE009E09DD /* ConversationActionController+Leave.swift in Sources */,
-				59BFBFC92CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift in Sources */,
+				59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */,
 				59BFBFCA2CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */,
 				F15650E621DD14B300210504 /* TransformLabel.swift in Sources */,
 				87F61D1A1CD36F0900670794 /* GradientView.swift in Sources */,
