@@ -37,7 +37,6 @@
 		C97C01A82CB813C9000683C5 /* UserClientsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A72CB813C9000683C5 /* UserClientsRepositoryTests.swift */; };
 		C97C01AA2CB8264E000683C5 /* UUID+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01A92CB82649000683C5 /* UUID+Mock.swift */; };
 		C97C01AC2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01AB2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift */; };
-		C97C01AE2CB9369D000683C5 /* UserClientsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01AD2CB93697000683C5 /* UserClientsRepositoryError.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
@@ -172,7 +171,6 @@
 		C97C01A72CB813C9000683C5 /* UserClientsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientsRepositoryTests.swift; sourceTree = "<group>"; };
 		C97C01A92CB82649000683C5 /* UUID+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Mock.swift"; sourceTree = "<group>"; };
 		C97C01AB2CB92D47000683C5 /* UserLegalholdEnableEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLegalholdEnableEventProcessorTests.swift; sourceTree = "<group>"; };
-		C97C01AD2CB93697000683C5 /* UserClientsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserClientsRepositoryError.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
@@ -456,7 +454,6 @@
 			isa = PBXGroup;
 			children = (
 				C97C01A42CB80F4E000683C5 /* UserClientsRepository.swift */,
-				C97C01AD2CB93697000683C5 /* UserClientsRepositoryError.swift */,
 			);
 			path = UserClients;
 			sourceTree = "<group>";
@@ -951,7 +948,6 @@
 				EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */,
 				C99322D62C986E3A0065E10F /* UserRepository.swift in Sources */,
 				EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */,
-				C97C01AE2CB9369D000683C5 /* UserClientsRepositoryError.swift in Sources */,
 				EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */,
 				C99322DC2C986E3A0065E10F /* FeatureConfigRepository.swift in Sources */,
 				C99322E22C986E3A0065E10F /* ConversationLocalStore+Status.swift in Sources */,

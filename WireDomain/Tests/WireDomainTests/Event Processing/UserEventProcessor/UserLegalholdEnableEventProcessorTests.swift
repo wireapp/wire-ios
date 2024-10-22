@@ -27,7 +27,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
     private var sut: UserLegalholdEnableEventProcessor!
     private var userRepository: MockUserRepositoryProtocol!
-    private var clientRepository: MockUserClientsRepositoryProtocol!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -42,11 +42,11 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRepository = MockUserRepositoryProtocol()
-        clientRepository = MockUserClientsRepositoryProtocol()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
         sut = UserLegalholdEnableEventProcessor(
             context: context,
             userRepository: userRepository,
-            clientRepository: clientRepository
+            userClientsRepository: userClientsRepository
         )
     }
 
@@ -58,7 +58,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
         coreDataStackHelper = nil
         sut = nil
         userRepository = nil
-        clientRepository = nil
+        userClientsRepository = nil
     }
 
     // MARK: - Tests
@@ -82,14 +82,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
         }
 
         userRepository.fetchSelfUser_MockValue = selfUser
-        clientRepository.fetchSelfClients_MockValue = [
-            Scaffolding.userClient1,
-            Scaffolding.userClient2,
-            Scaffolding.userClient3
-        ]
-        clientRepository.updateClientWithFromIsNewClient_MockMethod = { _, _, _ in }
-        clientRepository.fetchOrCreateClientWith_MockValue = (selfClient, true)
-        clientRepository.deleteClientWith_MockMethod = { _ in }
+        userClientsRepository.pullSelfClients_MockMethod = {}
 
         // When
 
@@ -97,12 +90,8 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchSelfUser_Invocations.count, 2)
-        XCTAssertEqual(clientRepository.fetchSelfClients_Invocations.count, 1)
-        XCTAssertEqual(clientRepository.updateClientWithFromIsNewClient_Invocations.count, 3)
-        XCTAssertEqual(clientRepository.fetchOrCreateClientWith_Invocations.count, 3)
-        XCTAssertEqual(clientRepository.deleteClientWith_Invocations.count, 1)
-        XCTAssertEqual(clientRepository.deleteClientWith_Invocations, [Scaffolding.deletedUserClientID.uuidString])
+        XCTAssertEqual(userRepository.fetchSelfUser_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.pullSelfClients_Invocations.count, 1)
     }
 
     private enum Scaffolding {

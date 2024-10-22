@@ -32,7 +32,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
 
     func getSelfClients() async throws -> [SelfUserClient] {
         let components = URLComponents(string: "\(pathPrefix)/clients")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw UserClientsAPIError.invalidURL
@@ -54,16 +54,16 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
 
     func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
         let components = URLComponents(string: "/users/list-clients/v2") // v2 suffix required for api version v0 and v1, suffix removed from next versions
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw UserClientsAPIError.invalidURL
         }
-        
+
         let body = try JSONEncoder.defaultEncoder.encode(
             UserClientsRequestV0(qualifiedIDs: Array(userIDs))
         )
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)

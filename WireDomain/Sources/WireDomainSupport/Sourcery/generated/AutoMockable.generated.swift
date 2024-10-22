@@ -755,50 +755,24 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
     public init() {}
 
 
-    // MARK: - fetchSelfClients
+    // MARK: - pullSelfClients
 
-    public var fetchSelfClients_Invocations: [Void] = []
-    public var fetchSelfClients_MockError: Error?
-    public var fetchSelfClients_MockMethod: (() async throws -> [WireAPI.SelfUserClient])?
-    public var fetchSelfClients_MockValue: [WireAPI.SelfUserClient]?
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
 
-    public func fetchSelfClients() async throws -> [WireAPI.SelfUserClient] {
-        fetchSelfClients_Invocations.append(())
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
 
-        if let error = fetchSelfClients_MockError {
+        if let error = pullSelfClients_MockError {
             throw error
         }
 
-        if let mock = fetchSelfClients_MockMethod {
-            return try await mock()
-        } else if let mock = fetchSelfClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchSelfClients`")
-        }
-    }
-
-    // MARK: - fetchClients
-
-    public var fetchClientsFor_Invocations: [Set<UserID>] = []
-    public var fetchClientsFor_MockError: Error?
-    public var fetchClientsFor_MockMethod: ((Set<UserID>) async throws -> [WireAPI.OtherUserClients])?
-    public var fetchClientsFor_MockValue: [WireAPI.OtherUserClients]?
-
-    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients] {
-        fetchClientsFor_Invocations.append(userIDs)
-
-        if let error = fetchClientsFor_MockError {
-            throw error
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
         }
 
-        if let mock = fetchClientsFor_MockMethod {
-            return try await mock(userIDs)
-        } else if let mock = fetchClientsFor_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchClientsFor`")
-        }
+        try await mock()
     }
 
     // MARK: - fetchOrCreateClient

@@ -35,7 +35,7 @@ struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProto
 
     let context: NSManagedObjectContext
     let userRepository: any UserRepositoryProtocol
-    let clientRepository: any UserClientsRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
 
     func processEvent(_ event: UserLegalholdEnableEvent) async throws {
         let userID = event.userID
@@ -49,35 +49,7 @@ struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProto
             return
         }
 
-        try await processSelfUserClients()
+        try await userClientsRepository.pullSelfClients()
     }
 
-    /// Fetches, creates and updates clients for self user and removes the deleted clients locally.
-
-    private func processSelfUserClients() async throws {
-        let remoteSelfClients = try await clientRepository.fetchSelfClients()
-        let localSelfClients = await context.perform {
-            let selfUser = userRepository.fetchSelfUser()
-            return selfUser.clients
-        }
-
-        for remoteSelfClient in remoteSelfClients {
-            let localUserClient = try await clientRepository.fetchOrCreateClient(
-                with: remoteSelfClient.id
-            )
-
-            try await clientRepository.updateClient(
-                with: remoteSelfClient.id,
-                from: remoteSelfClient,
-                isNewClient: localUserClient.isNew
-            )
-        }
-
-        let deletedSelfClientsIDs = localSelfClients.compactMap(\.remoteIdentifier).filter { !remoteSelfClients.map(\.id).contains($0)
-        }
-
-        for deletedSelfClientID in deletedSelfClientsIDs {
-            await clientRepository.deleteClient(with: deletedSelfClientID)
-        }
-    }
 }

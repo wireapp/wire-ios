@@ -21,12 +21,14 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
+import WireDomainSupport
 import XCTest
 
 final class UserClientsRepositoryTests: XCTestCase {
 
     private var sut: UserClientsRepository!
     private var userClientsAPI: MockUserClientsAPI!
+    private var userRepository: MockUserRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -41,8 +43,10 @@ final class UserClientsRepositoryTests: XCTestCase {
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         userClientsAPI = MockUserClientsAPI()
+        userRepository = MockUserRepositoryProtocol()
         sut = UserClientsRepository(
             userClientsAPI: userClientsAPI,
+            userRepository: userRepository,
             context: context
         )
     }
@@ -113,32 +117,53 @@ final class UserClientsRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchSelfClients() async throws {
+    func testPullSelfClients() async throws {
         // Mock
 
-        userClientsAPI.getSelfClients_MockValue = [Scaffolding.selfUserClient]
+        let selfUser = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: UUID(), in: context)
+            modelHelper.createSelfClient(
+                id: Scaffolding.userClientID,
+                in: context
+            )
+
+            modelHelper.createSelfClient(
+                id: Scaffolding.otherUserClientID,
+                in: context
+            )
+
+            return selfUser
+        }
+
+        await context.perform {
+            let selfUserClientsIDs = selfUser.clients.map(\.remoteIdentifier)
+            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.userClientID))
+            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.otherUserClientID))
+        }
+
+        userClientsAPI.getSelfClients_MockValue = [
+            Scaffolding.selfUserClient
+        ]
+
+        userRepository.fetchSelfUser_MockValue = selfUser
 
         // When
 
-        let selfClients = try await sut.fetchSelfClients()
+        try await sut.pullSelfClients()
 
         // Then
 
-        XCTAssertEqual(selfClients, [Scaffolding.selfUserClient])
-    }
+        try await context.perform {
+            let selfUserClientsIDs = selfUser.clients.map(\.remoteIdentifier)
+            XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.userClientID))
+            XCTAssertFalse(selfUserClientsIDs.contains(Scaffolding.otherUserClientID)) // should be deleted
 
-    func testFetchClients() async throws {
-        // Mock
+            let updatedClient = try XCTUnwrap(selfUser.clients.first(where: { $0.remoteIdentifier == Scaffolding.userClientID })) // should be updated
 
-        userClientsAPI.getClientsFor_MockValue = [Scaffolding.userClients1, Scaffolding.userClients2]
-
-        // When
-
-        let userClients = try await sut.fetchClients(for: [.mockID1, .mockID2, .mockID3])
-
-        // Then
-
-        XCTAssertEqual(userClients, [Scaffolding.userClients1, Scaffolding.userClients2])
+            XCTAssertEqual(updatedClient.type.rawValue, Scaffolding.selfUserClient.type.rawValue)
+            XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClient.label)
+            XCTAssertEqual(updatedClient.model, Scaffolding.selfUserClient.model)
+        }
     }
 
     func testDeleteClients() async throws {
@@ -173,6 +198,7 @@ final class UserClientsRepositoryTests: XCTestCase {
 
     private enum Scaffolding {
         static let userClientID = UUID().uuidString
+        static let otherUserClientID = UUID().uuidString
 
         static let selfUserClient = WireAPI.SelfUserClient(
             id: userClientID,
@@ -184,17 +210,16 @@ final class UserClientsRepositoryTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClients1 = WireAPI.OtherUserClients(
-            domain: "domain.com",
-            userID: UUID(),
-            clients: [.init(id: "foo", deviceClass: .legalhold)]
+        static let selfUserOtherClient = WireAPI.SelfUserClient(
+            id: otherUserClientID,
+            type: .permanent,
+            activationDate: .now,
+            label: "test",
+            model: "test",
+            deviceClass: .phone,
+            capabilities: []
         )
 
-        static let userClients2 = WireAPI.OtherUserClients(
-            domain: "domain.com",
-            userID: UUID(),
-            clients: [.init(id: "foo", deviceClass: .phone)]
-        )
     }
 
 }

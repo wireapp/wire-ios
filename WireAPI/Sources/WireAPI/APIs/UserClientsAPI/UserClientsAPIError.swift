@@ -21,7 +21,7 @@ import Foundation
 /// Errors originating from `UserClientsAPI`.
 
 public enum UserClientsAPIError: Error {
-    
+
     /// A request url is not invalid.
 
     case invalidURL

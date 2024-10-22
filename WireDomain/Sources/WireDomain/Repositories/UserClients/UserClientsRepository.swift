@@ -29,16 +29,11 @@ import WireDataModel
 /// as well as the possible source(s) of the models.
 public protocol UserClientsRepositoryProtocol {
 
-    /// Fetches self user clients.
+    /// Pulls and stores self user clients locally.
+    /// Deletes no longer relevant clients locally.
     /// - returns : A self user clients list.
 
-    func fetchSelfClients() async throws -> [WireAPI.SelfUserClient]
-
-    /// Fetches user clients.
-    /// - parameter userIDs: A list of user qualified ids.
-    /// - returns : A list of clients for a given user on a given domain.
-
-    func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients]
+    func pullSelfClients() async throws
 
     /// Fetches or creates a client locally.
     ///
@@ -74,26 +69,48 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     // MARK: - Properties
 
     private let userClientsAPI: any UserClientsAPI
+    private let userRepository: any UserRepositoryProtocol
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
 
     init(
         userClientsAPI: any UserClientsAPI,
+        userRepository: any UserRepositoryProtocol,
         context: NSManagedObjectContext
     ) {
         self.userClientsAPI = userClientsAPI
+        self.userRepository = userRepository
         self.context = context
     }
 
     // MARK: - Public
 
-    public func fetchSelfClients() async throws -> [WireAPI.SelfUserClient] {
-        try await userClientsAPI.getSelfClients()
-    }
+    public func pullSelfClients() async throws {
+        let remoteSelfClients = try await userClientsAPI.getSelfClients()
+        let localSelfClients = await context.perform {
+            let selfUser = userRepository.fetchSelfUser()
+            return selfUser.clients
+        }
 
-    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients] {
-        try await userClientsAPI.getClients(for: userIDs)
+        for remoteSelfClient in remoteSelfClients {
+            let localUserClient = try await fetchOrCreateClient(with: remoteSelfClient.id)
+            try await updateClient(
+                with: remoteSelfClient.id,
+                from: remoteSelfClient,
+                isNewClient: localUserClient.isNew
+            )
+        }
+
+        let deletedSelfClientsIDs = localSelfClients
+            .compactMap(\.remoteIdentifier)
+            .filter {
+                !remoteSelfClients.map(\.id).contains($0)
+            }
+
+        for deletedSelfClientID in deletedSelfClientsIDs {
+            await deleteClient(with: deletedSelfClientID)
+        }
     }
 
     public func fetchOrCreateClient(

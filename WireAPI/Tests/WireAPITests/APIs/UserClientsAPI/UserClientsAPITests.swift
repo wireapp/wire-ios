@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
+import XCTest
 
 final class UserClientsAPITests: XCTestCase {
 
@@ -54,15 +54,15 @@ final class UserClientsAPITests: XCTestCase {
     func testGetSelfUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
         try await withThrowingTaskGroup(of: [SelfUserClient].self) { taskGroup in
             let testedVersions = APIVersion.v0.andNextVersions
-            
+
             for version in testedVersions {
                 // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetSelfClientsSuccessResponseV0")
                 ])
-                
+
                 let sut = version.buildAPI(apiService: apiService)
-                
+
                 taskGroup.addTask {
                     // When
                     try await sut.getSelfClients()
@@ -81,15 +81,15 @@ final class UserClientsAPITests: XCTestCase {
     func testGetUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
         try await withThrowingTaskGroup(of: [OtherUserClients].self) { taskGroup in
             let testedVersions = APIVersion.v0.andNextVersions
-            
+
             for version in testedVersions {
                 // Given
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetClientsSuccessResponseV0")
                 ])
-                
+
                 let sut = version.buildAPI(apiService: apiService)
-                
+
                 taskGroup.addTask {
                     // When
                     try await sut.getClients(for: [.mockID1, .mockID2, .mockID3])
