@@ -38,7 +38,7 @@ struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerB
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: .init(mainCoordinator: mainCoordinator)
         )
         return .init(rootViewController: rootViewController)
     }
