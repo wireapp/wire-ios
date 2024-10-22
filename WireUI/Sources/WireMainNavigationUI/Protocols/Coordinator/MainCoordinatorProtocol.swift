@@ -54,6 +54,4 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showConnect() async
-    @MainActor
-    func showCreateGroupConversation() async
 }

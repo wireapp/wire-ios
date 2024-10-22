@@ -49,8 +49,7 @@ final class MainCoordinatorTests: XCTestCase {
             mainTabBarController: tabBarController,
             conversationUIBuilder: .init(),
             settingsContentUIBuilder: .init(),
-            connectUIBuilder: .init(),
-            createGroupConversationUIBuilder: .init()
+            connectUIBuilder: .init()
         )
     }
 

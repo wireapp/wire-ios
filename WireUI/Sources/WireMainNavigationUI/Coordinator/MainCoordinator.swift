@@ -44,7 +44,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     private let conversationUIBuilder: Dependencies.ConversationUIBuilder
     private let settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
     private let connectUIBuilder: Dependencies.ConnectUIBuilder
-    private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -82,15 +81,13 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         mainTabBarController: TabBarController,
         conversationUIBuilder: Dependencies.ConversationUIBuilder,
         settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
-        connectUIBuilder: Dependencies.ConnectUIBuilder,
-        createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
+        connectUIBuilder: Dependencies.ConnectUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.conversationUIBuilder = conversationUIBuilder
         self.settingsContentUIBuilder = settingsContentUIBuilder
         self.connectUIBuilder = connectUIBuilder
-        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
 
         super.init()
 
@@ -261,16 +258,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         let connectUI = connectUIBuilder.build(mainCoordinator: self)
         connectUI.modalPresentationStyle = .formSheet
         await presentViewController(connectUI)
-    }
-
-    public func showCreateGroupConversation() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let createGroupConversationUI = createGroupConversationUIBuilder.build(mainCoordinator: self)
-        createGroupConversationUI.modalPresentationStyle = .formSheet
-        await presentViewController(createGroupConversationUI)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {
