@@ -91,12 +91,15 @@ public final class MainTabBarController<
 
     private func setupTabs() {
         let conversationListNavigationController = UINavigationController()
+        conversationListNavigationController.navigationBar.isTranslucent = false
         self.conversationListNavigationController = conversationListNavigationController
 
         let archiveNavigationController = UINavigationController()
+        archiveNavigationController.navigationBar.isTranslucent = false
         self.archiveNavigationController = archiveNavigationController
 
         let settingsNavigationController = UINavigationController()
+        settingsNavigationController.navigationBar.isTranslucent = false
         self.settingsNavigationController = settingsNavigationController
 
         viewControllers = [
