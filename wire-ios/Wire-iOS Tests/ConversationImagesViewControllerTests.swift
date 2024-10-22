@@ -42,10 +42,16 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     private var sut: ConversationImagesViewController! = nil
     private var navigatorController: UINavigationController! = nil
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: MainCoordinator!
 
     override var needsCaches: Bool { true }
 
     // MARK: - setUp
+
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
         super.setUp()
@@ -72,7 +78,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             initialMessage: initialMessage,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
@@ -85,6 +92,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }

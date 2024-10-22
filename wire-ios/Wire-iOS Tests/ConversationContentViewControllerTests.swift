@@ -23,13 +23,18 @@ import XCTest
 final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
-    var sut: ConversationContentViewController!
-    var mockConversation: ZMConversation!
-    var userSession: UserSessionMock!
-    var mockMessage: MockMessage!
+    private var sut: ConversationContentViewController!
+    private var mockConversation: ZMConversation!
+    private var userSession: UserSessionMock!
+    private var mockMessage: MockMessage!
+    private var mockMainCoordinator: MainCoordinator!
+
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
-        super.setUp()
 
         coreDataFixture = CoreDataFixture()
 
@@ -47,7 +52,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
             conversation: mockConversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
 
         // Call the setup codes in viewDidLoad
@@ -60,8 +66,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         mockMessage = nil
         userSession = nil
         coreDataFixture = nil
-
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     func testThatDeletionDialogIsCreated() throws {

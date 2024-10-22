@@ -73,7 +73,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock,
+            mainCoordinator: mockMainCoordinator,
             getUserAccountImageUseCase: mockGetUserAccountImageUseCase
         )
 

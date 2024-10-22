@@ -42,7 +42,8 @@ extension ConversationContentViewController {
             targetView: tableView.targetView(for: message, dataSource: dataSource),
             actionResponder: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 

@@ -100,6 +100,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -120,6 +121,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -147,6 +149,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -167,6 +170,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -186,6 +190,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -207,6 +212,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -226,6 +232,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -246,6 +253,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -266,6 +274,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 

@@ -760,7 +760,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     targetView: view,
                     actionResponder: self,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder
                 )
             }
 

@@ -78,7 +78,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         ).wrapInNavigationController()
 
         snapshotHelper
@@ -123,7 +124,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
 
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
@@ -138,7 +140,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: [],
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []

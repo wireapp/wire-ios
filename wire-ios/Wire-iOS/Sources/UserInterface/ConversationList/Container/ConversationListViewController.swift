@@ -141,7 +141,7 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        mainCoordinator: MainCoordinator,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
@@ -156,6 +156,7 @@ final class ConversationListViewController: UIViewController {
             userSession: viewModel.userSession,
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)

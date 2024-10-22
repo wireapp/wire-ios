@@ -50,11 +50,16 @@ final class CollectionsViewControllerTests: XCTestCase {
     private var deletedLinkMessage: ZMConversationMessage!
 
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: MainCoordinator!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         accentColor = .blue
         snapshotHelper = .init()
         userSession = UserSessionMock()
@@ -112,7 +117,7 @@ final class CollectionsViewControllerTests: XCTestCase {
         deletedLinkMessage = nil
 
         userSession = nil
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Snapshot Tests
@@ -122,7 +127,8 @@ final class CollectionsViewControllerTests: XCTestCase {
             collection: emptyCollection,
             fetchingDone: true,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
@@ -132,7 +138,8 @@ final class CollectionsViewControllerTests: XCTestCase {
             collection: emptyCollection,
             fetchingDone: false,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
@@ -228,7 +235,8 @@ final class CollectionsViewControllerTests: XCTestCase {
         let controller = CollectionsViewController(
             collection: collection,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         _ = controller.view
         delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)

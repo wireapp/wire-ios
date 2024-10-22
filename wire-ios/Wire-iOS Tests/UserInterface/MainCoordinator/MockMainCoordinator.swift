@@ -95,6 +95,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
 
 // MARK: - MainCoordinatorProtocol + MockMainCoordinator
 
-extension MainCoordinatorProtocol where Self == MockMainCoordinator {
-    static var mock: Self { .init() }
-}
+// TODO: remove
+//extension Wire.MainCoordinator {
+//    @MainActor
+//    static var mock: Self {
+//        .init(mainCoordinator: MockMainCoordinator())
+//    }
+//}

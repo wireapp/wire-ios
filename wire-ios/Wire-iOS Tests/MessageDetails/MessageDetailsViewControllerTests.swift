@@ -29,12 +29,17 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     private var mockSelfUser: MockUserType!
     private var otherUser: MockUserType!
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: MainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
@@ -48,8 +53,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         snapshotHelper = nil
         SelfUser.provider = nil
         conversation = nil
-
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Snapshot Tests
@@ -72,7 +76,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -99,7 +108,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -125,7 +139,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -152,7 +171,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -183,7 +207,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         ]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -203,7 +232,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -222,7 +256,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -241,7 +280,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -262,7 +306,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN: creating the controller
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -283,7 +332,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -299,7 +353,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -315,7 +374,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -331,7 +395,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+        let detailsViewController = MessageDetailsViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+        )
 
         // THEN
         verify(detailsViewController)
@@ -356,7 +425,12 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
-            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession, mainCoordinator: .mock)
+            let detailsViewController = MessageDetailsViewController(
+                message: message,
+                userSession: userSession,
+                mainCoordinator: mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            )
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController
         }
