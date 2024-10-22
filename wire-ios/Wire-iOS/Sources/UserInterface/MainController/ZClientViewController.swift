@@ -52,7 +52,10 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
-    private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(mainCoordinator: mainCoordinator)
+    private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
+        mainCoordinator: mainCoordinator,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
+    )
 
     private(set) lazy var mainSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,

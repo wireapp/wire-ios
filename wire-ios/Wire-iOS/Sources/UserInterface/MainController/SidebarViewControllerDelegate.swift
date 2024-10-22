@@ -19,23 +19,28 @@
 import WireMainNavigationUI
 import WireSidebarUI
 
-final class SidebarViewControllerDelegate<MainCoordinator>: WireSidebarUI.SidebarViewControllerDelegate where
-MainCoordinator: MainCoordinatorProtocol, MainCoordinator.Dependencies.ConversationFilter == Wire.ConversationFilter {
+final class SidebarViewControllerDelegate<MainCoordinator, SelfProfileUIBuilder>: WireSidebarUI.SidebarViewControllerDelegate where
+MainCoordinator: MainCoordinatorProtocol,
+MainCoordinator.Dependencies.ConversationFilter == Wire.ConversationFilter,
+SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder,
+SelfProfileUIBuilder.Dependencies == MainCoordinator.Dependencies {
 
     let mainCoordinator: MainCoordinator
+    let selfProfileUIBuilder: SelfProfileUIBuilder
 
-    init(mainCoordinator: MainCoordinator) {
+    init(
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileUIBuilder
+    ) {
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
     }
-
-// TODO: [WPB-11651] Create a dedicated delegate type for the sidebar and let it use the main coordinator.
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            // TODO: selfProfileUIBuilder
-            fatalError()
-            //await mainCoordinator.showSelfProfile()
+            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 
