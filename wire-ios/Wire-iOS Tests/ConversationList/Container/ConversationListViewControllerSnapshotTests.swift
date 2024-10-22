@@ -21,12 +21,13 @@ import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
+import WireDesign
 
 @testable import Wire
 
-// MARK: - ConversationListViewControllerTests
+// MARK: - ConversationListViewControllerSnapshotTests
 
-final class ConversationListViewControllerTests: XCTestCase {
+final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -84,6 +85,14 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfProfileViewControllerBuilder: .mock
         )
         sut.mainSplitViewState = .collapsed
+        // sut.navigationController?.navigationBar.barTintColor = SemanticColors.View.backgroundDefaultWhite
+
+        // Set the navigation bar color here
+           let navBarAppearance = UINavigationBarAppearance()
+           navBarAppearance.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+           UINavigationBar.appearance().standardAppearance = navBarAppearance
+           UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+
 
         tabBarController = MainTabBarController()
         tabBarController.conversationListUI = sut
