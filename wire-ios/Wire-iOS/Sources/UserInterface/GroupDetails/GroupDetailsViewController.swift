@@ -24,6 +24,7 @@ import WireSyncEngine
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
     private let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -47,11 +48,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -354,7 +357,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             selectedParticipants: selectedUsers,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         detailsViewController.delegate = self
@@ -379,7 +383,8 @@ extension GroupDetailsViewController {
             in: self,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -486,7 +491,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         navigationController?.pushViewController(viewController, animated: true)

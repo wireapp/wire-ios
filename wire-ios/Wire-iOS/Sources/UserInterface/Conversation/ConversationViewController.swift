@@ -25,6 +25,7 @@ import WireSyncEngine
 final class ConversationViewController: UIViewController {
 
     let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -96,6 +97,7 @@ final class ConversationViewController: UIViewController {
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -113,7 +115,8 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
@@ -122,12 +125,14 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         contentViewController = ConversationContentViewController(
             conversation: conversation,
             message: visibleMessage,
             mediaPlaybackManager: mediaPlaybackManager,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         inputBarController = ConversationInputBarViewController(
@@ -642,7 +647,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             let collections = CollectionsViewController(
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             collections.delegate = self
 

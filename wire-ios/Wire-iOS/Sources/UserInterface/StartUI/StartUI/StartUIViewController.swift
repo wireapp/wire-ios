@@ -83,7 +83,8 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
@@ -96,7 +97,10 @@ final class StartUIViewController: UIViewController {
         )
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
-        profilePresenter = .init(mainCoordinator: mainCoordinator)
+        profilePresenter = .init(
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()

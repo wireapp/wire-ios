@@ -77,7 +77,8 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let mainCoordinator: MainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -99,12 +100,14 @@ final class MessageDetailsContentViewController: UIViewController {
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.contentType = contentType
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -385,7 +388,8 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             viewer: viewer,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self

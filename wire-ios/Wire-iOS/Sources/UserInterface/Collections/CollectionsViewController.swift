@@ -55,7 +55,8 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
-    let mainCoordinator: any MainCoordinatorProtocol
+    let mainCoordinator: MainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private var fetchingDone: Bool = false {
         didSet {
@@ -77,7 +78,8 @@ final class CollectionsViewController: UIViewController {
     convenience init(
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
@@ -86,7 +88,12 @@ final class CollectionsViewController: UIViewController {
 
         let holder = AssetCollectionWrapper(conversation: conversation, matchingCategories: [matchImages, matchFiles, matchVideo, matchLink])
 
-        self.init(collection: holder, userSession: userSession, mainCoordinator: mainCoordinator)
+        self.init(
+            collection: holder,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
     }
 
     init(
@@ -95,12 +102,14 @@ final class CollectionsViewController: UIViewController {
         messages: [ZMConversationMessage] = [],
         fetchingDone: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         switch sections {
         case CollectionsSectionSet.images:
@@ -581,7 +590,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     messages: self.elements(for: section),
                     fetchingDone: self.fetchingDone,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder
                 )
                 collectionController.onDismiss = self.onDismiss
                 collectionController.delegate = self.delegate
@@ -728,7 +738,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                     collection: collection,
                     initialMessage: message,
                     userSession: userSession,
-                    mainCoordinator: mainCoordinator
+                    mainCoordinator: mainCoordinator,
+                    selfProfileUIBuilder: selfProfileUIBuilder
                 )
 
                 let backButton = CollectionsView.backButton()
@@ -786,7 +797,8 @@ extension CollectionsViewController: CollectionCellDelegate {
             let detailsViewController = MessageDetailsViewController(
                 message: message,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             present(detailsViewController, animated: true)
 

@@ -151,7 +151,8 @@ extension ConversationContentViewController {
             let detailsViewController = MessageDetailsViewController(
                 message: message,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             parent?.present(detailsViewController, animated: true)
         case .resetSession:

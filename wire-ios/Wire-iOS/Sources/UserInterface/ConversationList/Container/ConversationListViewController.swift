@@ -31,7 +31,8 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let mainCoordinator: MainCoordinator
+    let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
@@ -101,7 +102,6 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     private var emptyPlaceholderView: EmptyPlaceholderView!
-    let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()

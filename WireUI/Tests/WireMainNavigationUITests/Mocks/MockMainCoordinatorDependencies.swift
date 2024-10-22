@@ -20,7 +20,7 @@
 
 enum MockMainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
 
-    // MainCoordinatorProtocolDependenciesProtocol
+    // MARK: - MainCoordinatorProtocolDependenciesProtocol
 
     typealias ConversationFilter = MainConversationFilter
     typealias ConversationModel = PreviewConversationModel

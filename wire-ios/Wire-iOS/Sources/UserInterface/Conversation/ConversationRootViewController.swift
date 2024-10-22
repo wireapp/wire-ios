@@ -51,7 +51,8 @@ final class ConversationRootViewController: UIViewController {
         conversation: ZMConversation,
         message: ZMConversationMessage?,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        mainCoordinator: MainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?
     ) {
         let conversationController = ConversationViewController(
@@ -59,6 +60,7 @@ final class ConversationRootViewController: UIViewController {
             visibleMessage: message as? ZMMessage,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
             mediaPlaybackManager: mediaPlaybackManager,
             classificationProvider: ZMUserSession.shared(),
             networkStatusObservable: NetworkStatus.shared

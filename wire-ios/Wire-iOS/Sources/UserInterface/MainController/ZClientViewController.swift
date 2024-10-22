@@ -72,12 +72,13 @@ final class ZClientViewController: UIViewController {
 
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
         mediaPlaybackManager: mediaPlaybackManager
     )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
 
-    private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
+    var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
@@ -86,7 +87,10 @@ final class ZClientViewController: UIViewController {
         )
     }
 
-    private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
+    private lazy var connectBuilder = StartUIViewControllerBuilder(
+        userSession: userSession,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
+    )
     private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
 
     private lazy var conversationListViewController = ConversationListViewController(
@@ -365,6 +369,7 @@ final class ZClientViewController: UIViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -630,7 +635,8 @@ final class ZClientViewController: UIViewController {
                 viewer: selfUser,
                 context: .deviceList,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: .init(mainCoordinator: mainCoordinator),
+                selfProfileUIBuilder: selfProfileViewControllerBuilder
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {

@@ -25,10 +25,15 @@ final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewController
     typealias Dependencies = MainCoordinatorDependencies
 
     let userSession: UserSession
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var delegate: StartUIDelegate?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    ) {
         self.userSession = userSession
+        self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
@@ -36,7 +41,8 @@ final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewController
     ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
         let rootViewController = StartUIViewController(
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator)
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate
         return .init(rootViewController: rootViewController)
