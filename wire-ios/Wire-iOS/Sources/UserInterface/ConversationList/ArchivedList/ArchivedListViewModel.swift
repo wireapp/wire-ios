@@ -51,6 +51,13 @@ final class ArchivedListViewModel: NSObject {
     subscript(key: Int) -> ZMConversation {
         return archivedConversations[key]
     }
+
+    func unarchiveConversation(at row: Int) {
+        let conversation = self[row]
+        userSession.enqueue {
+            conversation.isArchived = false
+        }
+    }
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {
