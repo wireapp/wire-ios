@@ -27,6 +27,7 @@ import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine
 
+
 // TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
 
 final class ZClientViewController: UIViewController {
@@ -175,26 +176,42 @@ final class ZClientViewController: UIViewController {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
     }
 
-    @discardableResult
-    private func attemptToPresentInitialConversation() -> Bool {
-        var stateRestored = false
 
+    private func attemptToPresentInitialConversation() async {
+        if let conversation = conversationToRestore() {
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
+        }
+
+    }
+
+    func lastViewConversation() -> ConversationRootViewController.ConversationModel? {
+        if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
+            if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
+
+                return conversation
+            }
+        }
+
+        return nil
+    }
+
+    func conversationToRestore() ->  ConversationRootViewController.ConversationModel? {
         let lastViewedScreen: SettingsLastScreen? = Settings.shared[.lastViewedScreen]
+
         switch lastViewedScreen {
         case .list?:
 
-            transitionToList(animated: false, completion: nil)
-
             // only attempt to show content vc if it would be visible
             if isConversationViewVisible {
-                stateRestored = attemptToLoadLastViewedConversation(withFocus: false, animated: false)
+                return lastViewConversation()
             }
         case .conversation?:
-            stateRestored = attemptToLoadLastViewedConversation(withFocus: true, animated: false)
+            return lastViewConversation()
         default:
             break
         }
-        return stateRestored
+
+        return nil
     }
 
     // MARK: - Overloaded methods
@@ -205,7 +222,9 @@ final class ZClientViewController: UIViewController {
         setupSplitViewController()
 
         // TODO: [WPB-11609] fix if needed
-        // attemptToPresentInitialConversation()
+        Task {
+            await attemptToPresentInitialConversation()
+        }
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
