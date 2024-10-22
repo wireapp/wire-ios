@@ -33,9 +33,6 @@ final class SelfProfileViewController: UIViewController {
 
     let userSession: UserSession
     private let userRightInterfaceType: UserRightInterface.Type
-    // TODO: remove commented code
-    //private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
-    //let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
 
     // MARK: - Views
 
@@ -101,11 +98,8 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-        //self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
-        //self.rootGroup = rootGroup
 
         super.init(nibName: nil, bundle: nil)
-        settingsPropertyFactory.delegate = self
 
         if selfUser.isTeamMember {
             userSession.enqueue {
@@ -241,21 +235,13 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
     }
 }
 
+// TODO: move to proper file
 // MARK: - SettingsPropertyFactoryDelegate
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
     private var topViewController: UIViewController! {
         navigationController!.topViewController
-    }
-
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        // shown on SettingsTableViewController
-        activityIndicator.start()
-    }
-
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        activityIndicator.stop()
     }
 
     /// Create or delete custom passcode when appLock option did change

@@ -40,9 +40,6 @@ enum SettingsPropertyError: Error {
 }
 
 protocol SettingsPropertyFactoryDelegate: AnyObject {
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory)
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory)
-
     func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory, newValue: Bool, callback: @escaping  ResultHandler)
 }
 
