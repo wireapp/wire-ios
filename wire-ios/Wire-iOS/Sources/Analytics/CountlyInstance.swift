@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAnalytics
-import WireSyncEngine
 
 protocol CountlyInstance {
     func recordEvent(_ key: String, segmentation: [String: String]?)
@@ -28,9 +27,3 @@ protocol CountlyInstance {
 }
 
 extension WireCountly: CountlyInstance {}
-
-extension Int {
-    func logRound(factor: Double = 6) -> Int {
-        return Int(ceil(pow(2, (floor(factor * log2(Double(self))) / factor))))
-    }
-}

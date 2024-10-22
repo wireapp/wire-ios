@@ -949,7 +949,7 @@
 		A9712D5E2743C4FA0008F380 /* GiphyConfirmationViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9712D5C2743C4640008F380 /* GiphyConfirmationViewControllerSnapshotTests.swift */; };
 		A97192B3221302DD00E72AD1 /* MockUserRight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97192B2221302DD00E72AD1 /* MockUserRight.swift */; };
 		A972840A2384247D00AFEFC6 /* BackupExcluderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97284072384244E00AFEFC6 /* BackupExcluderTests.swift */; };
-		A9730DDA250274150061BF36 /* AnalyticsCountlyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9730DD9250274150061BF36 /* AnalyticsCountlyProvider.swift */; };
+		A9730DDA250274150061BF36 /* CountlyInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9730DD9250274150061BF36 /* CountlyInstance.swift */; };
 		A9730DDC250287360061BF36 /* Bundle+ThirdPartyKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9730DDB250287360061BF36 /* Bundle+ThirdPartyKeys.swift */; };
 		A97559F42729AA7100217714 /* TextSearchResultsViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97559F32729AA7100217714 /* TextSearchResultsViewSnapshotTests.swift */; };
 		A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978D992236C587B00B568AE /* ZMUserSession+Shared.swift */; };
@@ -2990,7 +2990,7 @@
 		A9712D5C2743C4640008F380 /* GiphyConfirmationViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyConfirmationViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		A97192B2221302DD00E72AD1 /* MockUserRight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserRight.swift; sourceTree = "<group>"; };
 		A97284072384244E00AFEFC6 /* BackupExcluderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExcluderTests.swift; sourceTree = "<group>"; };
-		A9730DD9250274150061BF36 /* AnalyticsCountlyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsCountlyProvider.swift; sourceTree = "<group>"; };
+		A9730DD9250274150061BF36 /* CountlyInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountlyInstance.swift; sourceTree = "<group>"; };
 		A9730DDB250287360061BF36 /* Bundle+ThirdPartyKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+ThirdPartyKeys.swift"; sourceTree = "<group>"; };
 		A97559F32729AA7100217714 /* TextSearchResultsViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSearchResultsViewSnapshotTests.swift; sourceTree = "<group>"; };
 		A978D992236C587B00B568AE /* ZMUserSession+Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Shared.swift"; sourceTree = "<group>"; };
@@ -5521,17 +5521,9 @@
 			isa = PBXGroup;
 			children = (
 				E9CD10612C66418E0060D40D /* TrackingManager */,
-				A9730DD9250274150061BF36 /* AnalyticsCountlyProvider.swift */,
-				871BBFC31D34F56300DF0793 /* Events */,
+				A9730DD9250274150061BF36 /* CountlyInstance.swift */,
 			);
 			path = Analytics;
-			sourceTree = "<group>";
-		};
-		871BBFC31D34F56300DF0793 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Events;
 			sourceTree = "<group>";
 		};
 		871BC1271D34F8F800DF0793 /* Components */ = {
@@ -9334,7 +9326,7 @@
 				871BC2871D34F8F800DF0793 /* UIFont+MonoSpaced.swift in Sources */,
 				EF298BD1228D942A0078BE68 /* ImageManagerProtocol.swift in Sources */,
 				A9C33E0023D078B80069C8BB /* ConversationListItemView.swift in Sources */,
-				A9730DDA250274150061BF36 /* AnalyticsCountlyProvider.swift in Sources */,
+				A9730DDA250274150061BF36 /* CountlyInstance.swift in Sources */,
 				2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */,
 				5E8FFC1A21EF6EB10052DF03 /* RemoveClientStepViewController.swift in Sources */,
 				87F280AA1D080E8400F813CA /* AVSMediaManager+CustomSounds.swift in Sources */,
