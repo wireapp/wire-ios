@@ -33,8 +33,9 @@ final class SelfProfileViewController: UIViewController {
 
     let userSession: UserSession
     private let userRightInterfaceType: UserRightInterface.Type
-    private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
-    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
+    // TODO: remove commented code
+    //private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
+    //let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
 
     // MARK: - Views
 
@@ -100,8 +101,8 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-        self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
-        self.rootGroup = rootGroup
+        //self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
+        //self.rootGroup = rootGroup
 
         super.init(nibName: nil, bundle: nil)
         settingsPropertyFactory.delegate = self
@@ -303,6 +304,7 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
     }
 }
 
+// TODO: is this still needed?
 extension SelfProfileViewController: PasscodeSetupViewControllerDelegate {
     func passcodeSetupControllerDidFinish() {
         // no-op
