@@ -24,13 +24,13 @@ public struct UserClientAddEvent: Equatable, Codable, Sendable {
 
     /// The new user client.
 
-    public let client: UserClient
+    public let client: SelfUserClient
 
     /// Create a new `UserClientAddEvent`.
     ///
     /// - Parameter client: The new user client.
 
-    public init(client: UserClient) {
+    public init(client: SelfUserClient) {
         self.client = client
     }
 

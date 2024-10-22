@@ -114,7 +114,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
         static let deletedUserClientID = UUID()
 
-        static let userClient1 = WireAPI.UserClient(
+        static let userClient1 = WireAPI.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -124,7 +124,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient2 = WireAPI.UserClient(
+        static let userClient2 = WireAPI.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -134,7 +134,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient3 = WireAPI.UserClient(
+        static let userClient3 = WireAPI.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,

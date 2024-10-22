@@ -282,7 +282,7 @@ final class UserEventDecodingTests: XCTestCase {
         }
 
         static let clientAddEvent = UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: "2a1fd72806d84e26",
                 type: .permanent,
                 activationDate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),

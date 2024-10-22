@@ -23,12 +23,12 @@ public protocol UserClientsAPI {
     /// Get self user registered clients
     /// - returns: A list of self user clients.
 
-    func getSelfClients() async throws -> [UserClient]
+    func getSelfClients() async throws -> [SelfUserClient]
 
     /// Get clients for qualified users.
     ///
     /// - parameter userIDs: A list of user ids.
     /// - returns: A list of clients for a given user ID on a given domain.
 
-    func getClients(for userIDs: Set<UserID>) async throws -> [UserClients]
+    func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients]
 }

@@ -24,7 +24,7 @@ class UserClientsAPIV2: UserClientsAPIV1 {
         .v2
     }
 
-    override func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
+    override func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
         let components = URLComponents(string: "/users/list-clients")
         
         guard let url = components?.url else {
@@ -47,7 +47,7 @@ class UserClientsAPIV2: UserClientsAPIV1 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: UserClientsV0.self)
+            .success(code: .ok, type: OtherUserClientsV0.self)
             .parse(code: response.statusCode, data: data)
     }
 

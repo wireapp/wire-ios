@@ -29,7 +29,7 @@ struct UserClientAddEventDecoder {
         )
 
         return UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: payload.id,
                 type: payload.type,
                 activationDate: payload.activationDate.date,

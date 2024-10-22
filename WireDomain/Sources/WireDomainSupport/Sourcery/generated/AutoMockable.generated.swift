@@ -759,10 +759,10 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
 
     public var fetchSelfClients_Invocations: [Void] = []
     public var fetchSelfClients_MockError: Error?
-    public var fetchSelfClients_MockMethod: (() async throws -> [WireAPI.UserClient])?
-    public var fetchSelfClients_MockValue: [WireAPI.UserClient]?
+    public var fetchSelfClients_MockMethod: (() async throws -> [WireAPI.SelfUserClient])?
+    public var fetchSelfClients_MockValue: [WireAPI.SelfUserClient]?
 
-    public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
+    public func fetchSelfClients() async throws -> [WireAPI.SelfUserClient] {
         fetchSelfClients_Invocations.append(())
 
         if let error = fetchSelfClients_MockError {
@@ -782,10 +782,10 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
 
     public var fetchClientsFor_Invocations: [Set<UserID>] = []
     public var fetchClientsFor_MockError: Error?
-    public var fetchClientsFor_MockMethod: ((Set<UserID>) async throws -> [WireAPI.UserClients])?
-    public var fetchClientsFor_MockValue: [WireAPI.UserClients]?
+    public var fetchClientsFor_MockMethod: ((Set<UserID>) async throws -> [WireAPI.OtherUserClients])?
+    public var fetchClientsFor_MockValue: [WireAPI.OtherUserClients]?
 
-    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
+    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients] {
         fetchClientsFor_Invocations.append(userIDs)
 
         if let error = fetchClientsFor_MockError {
@@ -826,11 +826,11 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
 
     // MARK: - updateClient
 
-    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
     public var updateClientWithFromIsNewClient_MockError: Error?
-    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.UserClient, Bool) async throws -> Void)?
+    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.SelfUserClient, Bool) async throws -> Void)?
 
-    public func updateClient(with id: String, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+    public func updateClient(with id: String, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
         updateClientWithFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
 
         if let error = updateClientWithFromIsNewClient_MockError {

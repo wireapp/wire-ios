@@ -292,7 +292,7 @@ private enum Scaffolding {
     static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)
     static let aliceID = UserID(uuid: UUID(), domain: localDomain)
 
-    static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: UserClient(
+    static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: SelfUserClient(
         id: "userClientID",
         type: .permanent,
         activationDate: .now,

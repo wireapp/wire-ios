@@ -32,13 +32,13 @@ public protocol UserClientsRepositoryProtocol {
     /// Fetches self user clients.
     /// - returns : A self user clients list.
 
-    func fetchSelfClients() async throws -> [WireAPI.UserClient]
+    func fetchSelfClients() async throws -> [WireAPI.SelfUserClient]
 
     /// Fetches user clients.
     /// - parameter userIDs: A list of user qualified ids.
     /// - returns : A list of clients for a given user on a given domain.
 
-    func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients]
+    func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients]
 
     /// Fetches or creates a client locally.
     ///
@@ -59,7 +59,7 @@ public protocol UserClientsRepositoryProtocol {
 
     func updateClient(
         with id: String,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws
 
@@ -88,11 +88,11 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     // MARK: - Public
 
-    public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
+    public func fetchSelfClients() async throws -> [WireAPI.SelfUserClient] {
         try await userClientsAPI.getSelfClients()
     }
 
-    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
+    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.OtherUserClients] {
         try await userClientsAPI.getClients(for: userIDs)
     }
 
@@ -119,7 +119,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func updateClient(
         with id: String,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         guard let localClient = UserClient.fetchExistingUserClient(

@@ -174,7 +174,7 @@ final class UserClientsRepositoryTests: XCTestCase {
     private enum Scaffolding {
         static let userClientID = UUID().uuidString
 
-        static let selfUserClient = WireAPI.UserClient(
+        static let selfUserClient = WireAPI.SelfUserClient(
             id: userClientID,
             type: .permanent,
             activationDate: .now,
@@ -184,13 +184,13 @@ final class UserClientsRepositoryTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClients1 = WireAPI.UserClients(
+        static let userClients1 = WireAPI.OtherUserClients(
             domain: "domain.com",
             userID: UUID(),
             clients: [.init(id: "foo", deviceClass: .legalhold)]
         )
 
-        static let userClients2 = WireAPI.UserClients(
+        static let userClients2 = WireAPI.OtherUserClients(
             domain: "domain.com",
             userID: UUID(),
             clients: [.init(id: "foo", deviceClass: .phone)]

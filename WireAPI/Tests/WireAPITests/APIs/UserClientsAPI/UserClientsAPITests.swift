@@ -52,7 +52,7 @@ final class UserClientsAPITests: XCTestCase {
     // MARK: - V0
 
     func testGetSelfUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
-        try await withThrowingTaskGroup(of: [UserClient].self) { taskGroup in
+        try await withThrowingTaskGroup(of: [SelfUserClient].self) { taskGroup in
             let testedVersions = APIVersion.v0.andNextVersions
             
             for version in testedVersions {
@@ -79,7 +79,7 @@ final class UserClientsAPITests: XCTestCase {
     }
 
     func testGetUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
-        try await withThrowingTaskGroup(of: [UserClients].self) { taskGroup in
+        try await withThrowingTaskGroup(of: [OtherUserClients].self) { taskGroup in
             let testedVersions = APIVersion.v0.andNextVersions
             
             for version in testedVersions {
@@ -97,17 +97,17 @@ final class UserClientsAPITests: XCTestCase {
 
                 for try await value in taskGroup {
                     // Then, ensures models are properly mapped
-                    XCTAssert(value.contains(Scaffolding.userClient1))
-                    XCTAssert(value.contains(Scaffolding.userClient2))
-                    XCTAssert(value.contains(Scaffolding.userClient3))
-                    XCTAssert(value.contains(Scaffolding.userClient4))
+                    XCTAssert(value.contains(Scaffolding.otherUserClienst1))
+                    XCTAssert(value.contains(Scaffolding.otherUserClienst2))
+                    XCTAssert(value.contains(Scaffolding.otherUserClienst3))
+                    XCTAssert(value.contains(Scaffolding.otherUserClienst4))
                 }
             }
         }
     }
 
     enum Scaffolding {
-        static let userClient = UserClient(
+        static let userClient = SelfUserClient(
             id: "string",
             type: .temporary,
             activationDate: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
@@ -120,25 +120,25 @@ final class UserClientsAPITests: XCTestCase {
             capabilities: [.legalholdConsent]
         )
 
-        static let userClient1 = UserClients(
+        static let otherUserClienst1 = OtherUserClients(
             domain: "domain1.example.com",
             userID: UUID(uuidString: "000600d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .desktop)]
         )
 
-        static let userClient2 = UserClients(
+        static let otherUserClienst2 = OtherUserClients(
             domain: "domain2.example.com",
             userID: UUID(uuidString: "000700d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .phone)]
         )
 
-        static let userClient3 = UserClients(
+        static let otherUserClienst3 = OtherUserClients(
             domain: "domain2.example.com",
             userID: UUID(uuidString: "000800d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold), .init(id: "d0", deviceClass: .tablet)]
         )
 
-        static let userClient4 = UserClients(
+        static let otherUserClienst4 = OtherUserClients(
             domain: "domain3.example.com",
             userID: UUID(uuidString: "000900d0-000b-9c1a-000d-a4130002c221")!,
             clients: [.init(id: "d0", deviceClass: .legalhold)]

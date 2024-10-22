@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct SimplifiedUserClient: Equatable, Codable, Sendable {
+/// Client device for user other than self.
+
+public struct OtherUserClient: Equatable, Codable, Sendable {
 
     /// The unique id of the client.
 

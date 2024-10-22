@@ -18,8 +18,9 @@
 
 import Foundation
 
-/// The clients for a given user on a given domain
-public struct UserClients: Equatable, Sendable {
+/// The clients for a given user (other than self) on a given domain
+
+public struct OtherUserClients: Equatable, Sendable {
 
     /// The domain of the user
 
@@ -31,6 +32,6 @@ public struct UserClients: Equatable, Sendable {
 
     /// The clients of the user
 
-    public let clients: [SimplifiedUserClient]
+    public let clients: [OtherUserClient]
 
 }

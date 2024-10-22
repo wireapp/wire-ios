@@ -30,7 +30,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
         .v0
     }
 
-    func getSelfClients() async throws -> [UserClient] {
+    func getSelfClients() async throws -> [SelfUserClient] {
         let components = URLComponents(string: "\(pathPrefix)/clients")
         
         guard let url = components?.url else {
@@ -52,8 +52,8 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
-        let components = URLComponents(string: "/users/list-clients/v2") /// v2 suffix required for api version v0 and v1, suffix removed from next versions
+    func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients] {
+        let components = URLComponents(string: "/users/list-clients/v2") // v2 suffix required for api version v0 and v1, suffix removed from next versions
         
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
@@ -75,27 +75,27 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: UserClientsV0.self)
+            .success(code: .ok, type: OtherUserClientsV0.self)
             .parse(code: response.statusCode, data: data)
     }
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {
 
-    let payload: [UserClientV0]
+    let payload: [SelfUserClientV0]
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let payload = try container.decode([UserClientV0].self)
+        let payload = try container.decode([SelfUserClientV0].self)
         self.payload = payload
     }
 
-    func toAPIModel() -> [UserClient] {
+    func toAPIModel() -> [SelfUserClient] {
         payload.map { $0.toAPIModel() }
     }
 }
 
-struct UserClientV0: Decodable, ToAPIModelConvertible {
+struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
 
     let id: String
     let type: UserClientType
@@ -129,8 +129,8 @@ struct UserClientV0: Decodable, ToAPIModelConvertible {
 
     }
 
-    func toAPIModel() -> UserClient {
-        UserClient(
+    func toAPIModel() -> SelfUserClient {
+        SelfUserClient(
             id: id,
             type: type,
             activationDate: activationDate.date,
@@ -156,32 +156,22 @@ struct UserClientsRequestV0: Encodable {
 
 }
 
-struct UserClientsV0: Decodable, ToAPIModelConvertible {
+struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
     typealias Domain = String
     typealias UserID = String
 
-    let payload: [Domain: [UserID: [SimplifiedUserClient]]]
+    let qualifiedUserMap: [Domain: [UserID: [OtherUserClient]]]
 
     enum CodingKeys: String, CodingKey {
         case qualifiedUserMap = "qualified_user_map"
     }
 
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let payload = try container.decode(
-            [Domain: [UserID: [SimplifiedUserClient]]].self,
-            forKey: .qualifiedUserMap
-        )
+    func toAPIModel() -> [OtherUserClients] {
+        let userClients = qualifiedUserMap.reduce(into: [OtherUserClients]()) { partialResult, dictionary in
+            let domain = dictionary.key
 
-        self.payload = payload
-    }
-
-    func toAPIModel() -> [UserClients] {
-        let userClients = payload.reduce(into: [UserClients]()) { partialResult, dict in
-            let domain = dict.key
-
-            for (userID, userClients) in dict.value {
-                let userClients = UserClients(
+            for (userID, userClients) in dictionary.value {
+                let userClients = OtherUserClients(
                     domain: domain,
                     userID: UUID(uuidString: userID)!,
                     clients: userClients

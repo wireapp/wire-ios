@@ -81,7 +81,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let event = UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: "94766bd92f56923d",
                 type: .permanent,
                 activationDate: .now,
