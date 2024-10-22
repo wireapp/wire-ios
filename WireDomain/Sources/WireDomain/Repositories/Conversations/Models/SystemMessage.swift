@@ -30,7 +30,7 @@ public struct SystemMessage {
     let relevantForStatus: Bool
     let removedReason: ZMParticipantsRemovedReason
     let domains: [String]?
-    
+
     public init(
         type: ZMSystemMessageType,
         sender: ZMUser,

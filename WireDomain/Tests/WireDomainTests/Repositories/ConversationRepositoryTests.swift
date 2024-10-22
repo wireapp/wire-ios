@@ -300,7 +300,7 @@ final class ConversationRepositoryTests: XCTestCase {
                 messageType: .teamMemberLeave,
                 at: timestamp
             )
-            
+
             try internalTest_checkLastMessage(
                 in: teamAnotherConversation,
                 messageType: .teamMemberLeave,
@@ -311,8 +311,7 @@ final class ConversationRepositoryTests: XCTestCase {
             XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
         }
     }
-    
-    
+
     func testFetchConversation_It_Retrieves_Conversation_Locally() async {
         // Given
 
@@ -335,43 +334,43 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversation, localConversation)
     }
-    
+
     func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
         // Mock
-        
+
         let (conversation, user) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 domain: Scaffolding.domain,
                 in: context
             )
-            
+
             let user = modelHelper.createUser(in: context)
-            
+
             return (conversation, user)
         }
-        
+
         let timestamp = Scaffolding.date(from: Scaffolding.time)
-        
+
         let systemMessage = SystemMessage(
             type: .participantsAdded,
             sender: user,
             timestamp: timestamp
         )
-        
+
         // When
-        
+
         await sut.addSystemMessage(systemMessage, to: conversation)
-        
+
         // Then
-        
+
         try internalTest_checkLastMessage(
             in: conversation,
             messageType: .participantsAdded,
             at: timestamp
         )
     }
-    
+
     private func internalTest_checkLastMessage(
         in conversation: ZMConversation,
         messageType: ZMSystemMessageType,
@@ -381,16 +380,16 @@ final class ConversationRepositoryTests: XCTestCase {
             conversation.lastMessage as? ZMSystemMessage,
             "Last message is not system message"
         )
-        
+
         XCTAssertEqual(
             lastMessage.systemMessageType,
             messageType, "System message is not \(messageType.rawValue): but '\(lastMessage.systemMessageType.rawValue)"
         )
-        
+
         let serverTimeStamp = try XCTUnwrap(
             lastMessage.serverTimestamp, "System message should have timestamp"
         )
-        
+
         XCTAssertEqual(
             serverTimeStamp.timeIntervalSince1970,
             timestamp.timeIntervalSince1970,

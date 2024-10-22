@@ -32,7 +32,7 @@ protocol ConversationReceiptModeUpdateEventProcessorProtocol {
 }
 
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
-    
+
     let userRepository: any UserRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
@@ -41,49 +41,48 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         let senderID = event.senderID
         let conversationID = event.conversationID
         let isEnabled = event.newRecieptMode == 1
-        
+
         let sender = try await userRepository.fetchUser(
             with: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         let conversation = await conversationRepository.fetchConversation(
             with: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         guard let conversation else {
             return WireLogger.eventProcessing.error(
                 "Converation receipt mode update missing conversation, aborting..."
             )
         }
-        
+
         await conversationLocalStore.storeConversationHasReadReceiptsEnabled(
             isEnabled,
             for: conversation
         )
-        
+
         let systemMessage = SystemMessage(
             type: isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: sender,
             timestamp: .now
         )
-        
+
         await conversationRepository.addSystemMessage(
             systemMessage,
             to: conversation
         )
-        
+
         let isConversationArchived = await conversationLocalStore.isConversationArchived(conversation)
         let mutedMessageTypes = await conversationLocalStore.conversationMutedMessageTypes(conversation)
-        
-        if isConversationArchived && mutedMessageTypes == .none {
+
+        if isConversationArchived, mutedMessageTypes == .none {
             await conversationLocalStore.storeConversationIsArchived(
                 false,
                 for: conversation
             )
         }
-
     }
 
 }

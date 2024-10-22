@@ -17,9 +17,9 @@
 //
 
 @testable import WireAPI
-@testable import WireDomain
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
@@ -68,14 +68,14 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
 
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
         // Mock
-        
+
         let (user, conversation) = await context.perform { [self] in
             let user = modelHelper.createUser(in: context)
             let conversation = modelHelper.createGroupConversation(in: context)
-            
+
             return (user, conversation)
         }
-    
+
         userRepository.fetchUserWithDomain_MockValue = user
         conversationRepository.fetchConversationWithDomain_MockValue = conversation
         conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
@@ -109,4 +109,3 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         )
     }
 }
-

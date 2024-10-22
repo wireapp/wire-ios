@@ -66,7 +66,7 @@ public protocol ConversationLocalStoreProtocol {
     func fetchMLSConversation(
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
-    
+
     /// Fetches a conversation locally.
     ///
     /// - parameters:
@@ -90,25 +90,25 @@ public protocol ConversationLocalStoreProtocol {
         user: ZMUser,
         removalDate: Date
     ) async
-    
-    /// Adds a system message to a given conversation.
-      /// - parameters:
-      ///     - message: The system message to add.
-      ///     - conversation: The conversation to add the system message to.
 
-      func addSystemMessage(
-          _ message: SystemMessage,
-          to conversation: ZMConversation
-      ) async
-    
+    /// Adds a system message to a given conversation.
+    /// - parameters:
+    ///     - message: The system message to add.
+    ///     - conversation: The conversation to add the system message to.
+
+    func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async
+
     /// Retrieves conversation muted message types
     /// - parameter conversation: The conversation to get the muted message types for.
     /// - returns: The muted message types.
-    
+
     func conversationMutedMessageTypes(
         _ conversation: ZMConversation
     ) async -> MutedMessageTypes
-    
+
     /// Stores a flag indicating whether a conversation is archived.
     /// - parameters:
     ///     - isArchived: Indicates whether the conversation is archived.
@@ -118,7 +118,7 @@ public protocol ConversationLocalStoreProtocol {
         _ isArchived: Bool,
         for conversation: ZMConversation
     ) async
-    
+
     /// Indicates whether a conversation is archived.
     /// - parameter conversation: The conversation to check the `isArchived` flag for.
     /// - returns: A flag indicating whether the conversation is archived.
@@ -126,7 +126,7 @@ public protocol ConversationLocalStoreProtocol {
     func isConversationArchived(
         _ conversation: ZMConversation
     ) async -> Bool
-    
+
     /// Stores a flag indicating whether a conversation has read receipts enabled.
     /// - parameters:
     ///     - hasReadReceiptsEnabled: A flag indicating whether the conversation has read receipts enabled.
@@ -264,7 +264,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func fetchConversation(
         with id: UUID,
         domain: String?
@@ -277,36 +277,36 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async {
         await context.perform { [context] in
-             let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
-             systemMessage.systemMessageType = message.type
-             systemMessage.sender = message.sender
-             systemMessage.users = message.users ?? Set()
-             systemMessage.addedUsers = message.addedUsers
-             systemMessage.clients = message.clients ?? Set()
-             systemMessage.serverTimestamp = message.timestamp
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+            systemMessage.systemMessageType = message.type
+            systemMessage.sender = message.sender
+            systemMessage.users = message.users ?? Set()
+            systemMessage.addedUsers = message.addedUsers
+            systemMessage.clients = message.clients ?? Set()
+            systemMessage.serverTimestamp = message.timestamp
 
-             if let duration = message.duration {
-                 systemMessage.duration = duration
-             }
+            if let duration = message.duration {
+                systemMessage.duration = duration
+            }
 
-             if let messageTimer = message.messageTimer {
-                 systemMessage.messageTimer = NSNumber(value: messageTimer)
-             }
+            if let messageTimer = message.messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
 
-             systemMessage.relevantForConversationStatus = message.relevantForStatus
-             systemMessage.participantsRemovedReason = message.removedReason
-             systemMessage.domains = message.domains
+            systemMessage.relevantForConversationStatus = message.relevantForStatus
+            systemMessage.participantsRemovedReason = message.removedReason
+            systemMessage.domains = message.domains
 
-             conversation.append(systemMessage)
-         }
+            conversation.append(systemMessage)
+        }
     }
-    
+
     public func isConversationArchived(
         _ conversation: ZMConversation
     ) async -> Bool {
@@ -314,7 +314,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isArchived
         }
     }
-    
+
     public func conversationMutedMessageTypes(
         _ conversation: ZMConversation
     ) async -> MutedMessageTypes {
@@ -322,7 +322,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mutedMessageTypes
         }
     }
-    
+
     public func storeConversationIsArchived(
         _ isArchived: Bool,
         for conversation: ZMConversation
@@ -331,7 +331,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isArchived = isArchived
         }
     }
-    
+
     public func storeConversationHasReadReceiptsEnabled(
         _ hasReadReceiptsEnabled: Bool,
         for conversation: ZMConversation
@@ -340,7 +340,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.hasReadReceiptsEnabled = hasReadReceiptsEnabled
         }
     }
-    
 
     public func removeFromConversations(
         user: ZMUser,
