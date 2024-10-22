@@ -109,7 +109,6 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
-    private var accountUpdatedNotificationToken: NSObjectProtocol?
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -174,10 +173,6 @@ final class ZClientViewController: UIViewController {
 
     deinit {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
-
-        if let accountUpdatedNotificationToken {
-            NotificationCenter.default.removeObserver(accountUpdatedNotificationToken)
-        }
     }
 
     @discardableResult
@@ -220,18 +215,6 @@ final class ZClientViewController: UIViewController {
                 name: .loggingRequestLoop,
                 object: nil
             )
-        }
-
-        accountUpdatedNotificationToken = NotificationCenter.default.addObserver(
-            forName: AccountManagerDidUpdateAccountsNotificationName,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            // The notification is also triggered on logout, in which case accessing the account would crash.
-            // Therefore only update the account if the accountManager's accounts still contains the instance we have.
-            if let self, let accountManager = notification.object as? AccountManager, accountManager.accounts.contains(account) {
-                sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
-            }
         }
 
         setupUserChangeInfoObserver()
