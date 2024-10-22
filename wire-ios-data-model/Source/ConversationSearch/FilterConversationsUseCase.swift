@@ -18,11 +18,11 @@
 
 import WireUtilities
 
-/// This use case takes grouped conversations as input and returns only non-empty groups of conversations
-/// where the provided search text matches.
+/// This use case takes grouped conversations as input and returns the same groups with their conversations
+/// filtered by the search text `query`.
 ///
 /// The search text is compared to the name of conversations as well as the names of the conversation's participants.
-public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
+public struct FilterConversationsUseCase<ConversationContainer>: FilterConversationsUseCaseProtocol
 where ConversationContainer: MutableConversationContainer {
 
     private let conversationContainers: [ConversationContainer]
@@ -31,18 +31,18 @@ where ConversationContainer: MutableConversationContainer {
         self.conversationContainers = conversationContainers
     }
 
-    public func invoke(searchText: String) -> [ConversationContainer] {
+    public func invoke(query: String) -> [ConversationContainer] {
 
-        let searchText = searchText
+        let query = query
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
             .normalizedForSearch() as String
 
-        if searchText.isEmpty {
+        if query.isEmpty {
             return conversationContainers
         }
 
-        // iterate through all containers and all conversations and remove those who don't match the search text
+        // iterate through all containers and all conversations and remove those who don't match the query
         var conversationContainers = conversationContainers
         for containerIndex in conversationContainers.indices {
         conversationLoop:
@@ -51,13 +51,13 @@ where ConversationContainer: MutableConversationContainer {
                 let conversation = conversationContainers[containerIndex].conversations[conversationIndex]
 
                 // check if conversation name matches
-                if (conversation.searchableName.normalizedForSearch() as String).lowercased().contains(searchText) {
+                if (conversation.searchableName.normalizedForSearch() as String).lowercased().contains(query) {
                     continue
                 }
 
                 // check if any participant's name matches
                 for participant in conversation.searchableParticipants
-                where (participant.searchableName.normalizedForSearch() as String).lowercased().contains(searchText) {
+                where (participant.searchableName.normalizedForSearch() as String).lowercased().contains(query) {
                     continue conversationLoop
                 }
 
