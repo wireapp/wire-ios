@@ -105,9 +105,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     public func showConversationList(conversationFilter: ConversationFilter?) async {
         defer {
-            // switch to the conversation list tab
-            tabBarController.selectedContent = .conversations
-
             switch mainSplitViewState {
             case .collapsed:
                 // if `showConversationList` is called while in collapsed mode, pop the conversation view controller
@@ -132,12 +129,17 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
+        await dismissPresentedViewController()
+
+        // switch to the conversation list tab
+        tabBarController.selectedContent = .conversations
+        await Task.yield() // without this line subsequent navigation controller push animations don't work
+
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
         dismissArchiveIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewController()
 
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationListUI = tabBarController.conversationListUI {
@@ -162,12 +164,13 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.conversationUI = tabBarController.conversationUI
         }
 
+        await dismissPresentedViewController()
+
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
         dismissSettingsIfNeeded()
-        await dismissPresentedViewController()
 
         // move the archive from the tab bar controller to the split view controller
         if let archiveUI = tabBarController.archiveUI {
@@ -181,14 +184,15 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.hideSidebar()
         }
 
+        await dismissPresentedViewController()
         tabBarController.selectedContent = .settings
+        await Task.yield() // without this line subsequent navigation controller push animations don't work
 
         // In collapsed state switching the tab was all we needed to do.
         guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
-        await dismissPresentedViewController()
 
         // move the settings from the tab bar controller to the split view controller
         if let settingsUI = tabBarController.settingsUI {
@@ -216,6 +220,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         )
         if mainSplitViewState == .collapsed {
             tabBarController.selectedContent = .conversations
+            await Task.yield() // without this line subsequent navigation controller push animations don't work
             tabBarController.setConversationUI(conversationUI, animated: true)
         } else {
             splitViewController.conversationUI = conversationUI
@@ -260,9 +265,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         selfProfileUI.modalPresentationStyle = .formSheet
 
         await dismissPresentedViewController()
-        await withCheckedContinuation { continuation in
-            splitViewController.present(selfProfileUI, animated: true, completion: continuation.resume)
-        }
+        await presentViewController(selfProfileUI)
     }
 
     public func showConnect() async {
