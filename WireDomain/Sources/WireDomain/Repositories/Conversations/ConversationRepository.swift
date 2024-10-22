@@ -51,6 +51,17 @@ public protocol ConversationRepositoryProtocol {
     func fetchMLSConversation(
         with groupID: String
     ) async -> ZMConversation?
+    
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
 
     /// Removes a given user from all conversations.
     ///
@@ -62,6 +73,16 @@ public protocol ConversationRepositoryProtocol {
         user: ZMUser,
         removalDate: Date
     ) async
+    
+    /// Adds a system message to a given conversation.
+     /// - parameters:
+     ///     - message: The system message to add.
+     ///     - conversation: The conversation to add the system message to.
+
+     func addSystemMessage(
+         _ message: SystemMessage,
+         to conversation: ZMConversation
+     ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -174,6 +195,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             with: mlsGroupID
         )
     }
+    
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await conversationsLocalStore.fetchConversation(
+            with: id,
+            domain: domain
+        )
+    }
 
     public func removeFromConversations(
         user: ZMUser,
@@ -184,5 +215,15 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             removalDate: removalDate
         )
     }
+    
+    public func addSystemMessage(
+         _ message: SystemMessage,
+         to conversation: ZMConversation
+     ) async {
+         await conversationsLocalStore.addSystemMessage(
+             message,
+             to: conversation
+         )
+     }
 
 }
