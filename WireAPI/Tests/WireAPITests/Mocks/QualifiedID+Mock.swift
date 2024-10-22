@@ -24,4 +24,3 @@ extension QualifiedID {
     static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
     static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
 }
-

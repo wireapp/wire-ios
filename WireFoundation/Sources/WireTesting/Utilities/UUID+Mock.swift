@@ -19,7 +19,7 @@
 import Foundation
 
 public extension UUID {
-    
+
     static let mockID1 = UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")!
     static let mockID2 = UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!
     static let mockID3 = UUID(uuidString: "7e23727b-d612-4123-88c0-57e311a7e5a3")!
@@ -30,5 +30,5 @@ public extension UUID {
     static let mockID8 = UUID(uuidString: "d902ed60-b2bf-44e9-b6f3-7281f0aaed36")!
     static let mockID9 = UUID(uuidString: "2fa94c25-2725-4bcb-bcda-ad5a89e62d96")!
     static let mockID10 = UUID(uuidString: "0f970654-995c-4ac6-ae67-a6aafd420b9f")!
-    
+
 }
