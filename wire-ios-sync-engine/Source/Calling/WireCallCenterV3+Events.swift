@@ -209,6 +209,7 @@ extension WireCallCenterV3 {
 
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
+<<<<<<< HEAD
         do {
             let metricsData = Data(metrics.utf8)
             let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
@@ -218,6 +219,9 @@ extension WireCallCenterV3 {
         } catch {
             WireLogger.calling.error("Unable to parse call metrics JSON: \(error)")
         }
+=======
+        // Note: this will be replaced in develop by Wirelogger to upload metrics there
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
     }
 
     /// Handle requests for refreshing the calling configuration.

@@ -124,9 +124,8 @@ import Foundation
                 if result == .failed {
                     Logging.push.safePublic("failed to reply via push notification action")
                     self.localNotificationDispatcher?.didFailToSendMessage(in: conversationOnSyncContext!)
-                } else {
-                    self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationOnSyncContext, action: .text)
                 }
+
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completionHandler()
             }
@@ -158,29 +157,6 @@ import Foundation
             try conversation.appendClientMessage(with: confirmation)
         } catch {
             Logging.messageProcessing.warn("Failed to append read receipt from user notification. Reason: \(error.localizedDescription)")
-        }
-    }
-
-    public func handleTrackingOnCallNotification(with userInfo: NotificationUserInfo) {
-
-        guard
-            let conversation = userInfo.conversation(in: managedObjectContext),
-            let conversationId = conversation.avsIdentifier,
-            let callState = conversation.voiceChannel?.state,
-            case .incoming = callState,
-            let callCenter = self.callCenter,
-            callCenter.activeCallConversations(in: self).count == 0
-        else { return }
-
-        let type: ConversationMediaAction = callCenter.isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
-
-        self.syncManagedObjectContext.performGroupedBlock { [weak self] in
-            guard
-                let self,
-                let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
-                else { return }
-
-            self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationInSyncContext, action: type)
         }
     }
 

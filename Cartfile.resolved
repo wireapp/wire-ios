@@ -1,7 +1,11 @@
 binary "wire-avs.json" "9.9.5"
 github "wireapp/ZipArchive" "v2.4.2"
+<<<<<<< HEAD
 github "wireapp/core-crypto" "v1.0.2"
 github "wireapp/countly-sdk-ios" "23.02.3"
+=======
+github "wireapp/core-crypto" "v1.0.0-rc.56-hotfix.2"
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/generic-message-proto" "v1.44.0"
 github "wireapp/libPhoneNumber-iOS" "1.1"

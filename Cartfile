@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 github "wireapp/countly-sdk-ios" "23.02.3"
+=======
+github "wireapp/Down" "v2.3.4_xcframework"
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/libsodium" "1.0.14"
 github "wireapp/ZipArchive" "v2.4.2"

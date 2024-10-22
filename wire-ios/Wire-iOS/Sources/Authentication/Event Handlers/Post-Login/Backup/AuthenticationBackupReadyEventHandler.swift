@@ -28,12 +28,15 @@ final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: Bool) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: Bool
+    ) -> [AuthenticationCoordinatorAction]? {
         let existingAccount = context
 
         // Automatically complete the backup for @fastLogin automation
         guard AutomationHelper.sharedHelper.automationEmailCredentials == nil else {
-            return [.showLoadingView, .configureNotifications, .completeBackupStep]
+            return [.showLoadingView, .configureNotifications, .completeBackupStep(didSucceed: nil)]
         }
 
         // Get the signed-in user credentials

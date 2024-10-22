@@ -16,22 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSyncEngine
 
 extension ConversationContentViewController: CanvasViewControllerDelegate {
-    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+
+    func canvasViewController(
+        _ canvasViewController: CanvasViewController,
+        didExportImage image: UIImage
+    ) {
         parent?.dismiss(animated: true) {
             if let imageData = image.pngData() {
 
                 self.userSession.enqueue({
                     do {
-                        try self.conversation.appendImage(from: imageData)
+                        let useCase = self.userSession.makeAppendImageMessageUseCase()
+                        try useCase.invoke(withImageData: imageData, in: self.conversation)
                     } catch {
                         WireLogger.messageProcessing.warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
                     }
-                }, completionHandler: {
-                    Analytics.shared.tagMediaActionCompleted(.photo, inConversation: self.conversation)
                 })
             }
         }

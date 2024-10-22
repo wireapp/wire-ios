@@ -90,7 +90,12 @@ where TopOverlayPresenter: TopOverlayPresenting {
 
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
+<<<<<<< HEAD
         callQualityController = CallQualityController(mainWindow: mainWindow)
+=======
+
+        callQualityController = CallQualityController(rootViewController: rootViewController, callQualitySurvey: userSession.makeCallQualitySurveyUseCase())
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
         transitioningDelegate = CallQualityAnimator()
 
         callController.router = self
@@ -348,7 +353,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     private func buildCallQualitySurvey(with callDuration: TimeInterval) -> CallQualityViewController {
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         let qualityController = CallQualityViewController(questionLabelText: questionLabelText,
-                                                          callDuration: Int(callDuration))
+                                                          callDuration: callDuration)
         qualityController.delegate = callQualityController
 
         qualityController.modalPresentationCapturesStatusBarAppearance = true

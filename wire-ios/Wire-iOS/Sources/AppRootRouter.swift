@@ -18,6 +18,7 @@
 
 import avs
 import UIKit
+import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
@@ -25,19 +26,24 @@ import WireSyncEngine
 // MARK: - AppRootRouter
 final class AppRootRouter {
 
-    // MARK: - Private Property
+    // MARK: - Private Properties
 
-    private let appStateCalculator: AppStateCalculator
-    private let urlActionRouter: URLActionRouter
-
+    private var appStateCalculator: AppStateCalculator
+    private var urlActionRouter: URLActionRouter
+    private let trackingManager: TrackingManager
     private var authenticationCoordinator: AuthenticationCoordinator?
     private let switchingAccountRouter: SwitchingAccountRouter
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
+<<<<<<< HEAD
     private let quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter? {
         didSet { setupAnalyticsSharing() }
     }
+=======
+    private var quickActionsManager: QuickActionsManager
+    private var authenticatedRouter: AuthenticatedRouter?
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -66,7 +72,8 @@ final class AppRootRouter {
     init(
         mainWindow: UIWindow,
         sessionManager: SessionManager,
-        appStateCalculator: AppStateCalculator
+        appStateCalculator: AppStateCalculator,
+        trackingManager: TrackingManager
     ) {
         self.mainWindow = mainWindow
         self.sessionManager = sessionManager
@@ -79,6 +86,7 @@ final class AppRootRouter {
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
+        self.trackingManager = trackingManager
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
@@ -231,6 +239,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 userSession: userSession,
                 completion: completion
             )
+
         case .headless:
             showLaunchScreen(completion: completion)
         case .loading:
@@ -274,7 +283,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            Analytics.shared.tagEvent("app.open")
             self?.sessionManager.start(launchOptions: launchOptions)
         }
     }
@@ -366,7 +374,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession
+                userSession: userSession,
+                trackingManager: trackingManager
             )
         else {
             completion()
@@ -402,22 +411,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         UIColor.setAccentOverride(nil)
     }
 
-    private func setupAnalyticsSharing() {
-        guard
-            let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.isTeamMember
-        else {
-            return
-        }
-
-        TrackingManager.shared.disableAnalyticsSharing = false
-        Analytics.shared.provider?.selfUser = selfUser
-    }
-
     @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return nil }
 
@@ -425,6 +423,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             mainWindow: mainWindow,
             account: account,
             userSession: userSession,
+            trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,

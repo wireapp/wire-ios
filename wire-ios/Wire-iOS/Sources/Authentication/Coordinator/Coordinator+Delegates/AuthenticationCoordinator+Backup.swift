@@ -20,8 +20,14 @@ import Foundation
 
 extension AuthenticationCoordinator: BackupRestoreControllerDelegate {
 
-    func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController) {
-        self.executeActions([.configureNotifications, .completeBackupStep])
+    func backupResoreControllerDidFinishRestoring(
+        _ controller: BackupRestoreController,
+        didSucceed: Bool
+    ) {
+        self.executeActions([
+            .configureNotifications,
+            .completeBackupStep(didSucceed: didSucceed)
+        ])
     }
 
 }

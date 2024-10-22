@@ -108,10 +108,6 @@ extension ZMConversation {
 
                 try await service.removeParticipant(user, from: conversation)
 
-                if await syncContext.perform({ user.isServiceUser }) {
-                    Analytics.shared.tagDidRemoveService(user as ServiceUser)
-                }
-
                 await MainActor.run {
                     completion?(.success(()))
                 }

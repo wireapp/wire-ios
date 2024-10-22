@@ -50,11 +50,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
 
     private let pushTokenService = PushTokenService()
-
     private var launchOperations: [LaunchSequenceOperation] = [
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
-        TrackingOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -131,7 +129,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         WireLogger.push.info(
-"application did register for remote notifications, storing standard token",
+            "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
@@ -178,7 +176,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch launchType {
         case .url,
-             .push:
+                .push:
             break
         default:
             launchType = .direct
@@ -302,7 +300,8 @@ private extension AppDelegate {
         appRootRouter = AppRootRouter(
             mainWindow: mainWindow,
             sessionManager: sessionManager,
-            appStateCalculator: appStateCalculator
+            appStateCalculator: appStateCalculator,
+            trackingManager: TrackingManager(sessionManager: sessionManager)
         )
     }
 
@@ -326,7 +325,6 @@ private extension AppDelegate {
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
             mediaManager: mediaManager,
-            analytics: Analytics.shared,
             delegate: appStateCalculator,
             application: UIApplication.shared,
             environment: BackendEnvironment.shared,
@@ -338,7 +336,8 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs
+            deleteUserLogs: LogFileDestination.deleteAllLogs,
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build()
         )
 
         voIPPushManager.delegate = sessionManager

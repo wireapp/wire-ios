@@ -19,7 +19,9 @@
 final class UserSessionDependencies {
     var caches: Caches
 
-    init(caches: Caches) {
+    init(
+        caches: Caches
+    ) {
         self.caches = caches
     }
 }

@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "Countly",
+        "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
+          "version": "24.4.2"
+        }
+      },
+      {
         "package": "Datadog",
         "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
         "state": {
@@ -56,6 +65,7 @@
         }
       },
       {
+<<<<<<< HEAD
         "package": "HTMLString",
         "repositoryURL": "https://github.com/wireapp/HTMLString",
         "state": {
@@ -83,6 +93,8 @@
         }
       },
       {
+=======
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
@@ -177,8 +189,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "82a453c2dfa335c7e778695762438dfe72b328d2",
-          "version": "600.0.0-prerelease-2024-07-24"
+          "revision": "303e5c5c36d6a558407d364878df131c3546fad8",
+          "version": "510.0.2"
         }
       }
     ]

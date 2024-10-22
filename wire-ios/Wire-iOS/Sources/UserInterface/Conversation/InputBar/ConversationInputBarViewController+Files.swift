@@ -84,23 +84,16 @@ extension ConversationInputBarViewController {
             let metadata = await fileMetaDataGenerator.metadataForFile(at: url)
 
             impactFeedbackGenerator.prepare()
-            ZMUserSession.shared()?.perform {
+
+            userSession.perform { [weak self] in
+
+                guard let self else { return }
 
                 self.impactFeedbackGenerator.impactOccurred()
 
-                var conversationMediaAction: ConversationMediaAction = .fileTransfer
-
                 do {
-                    let message = try conversation.appendFile(with: metadata)
-                    if let fileMessageData = message.fileMessageData {
-                        if fileMessageData.isVideo {
-                            conversationMediaAction = .videoMessage
-                        } else if fileMessageData.isAudio {
-                            conversationMediaAction = .audioMessage
-                        }
-                    }
-
-                    Analytics.shared.tagMediaActionCompleted(conversationMediaAction, inConversation: conversation)
+                    let useCase = self.userSession.makeAppendFileMessageUseCase()
+                    try useCase.invoke(with: metadata, in: conversation)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }

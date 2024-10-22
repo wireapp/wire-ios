@@ -1158,6 +1158,18 @@
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
 
+<<<<<<< HEAD
+=======
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
+
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Decline";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Privacy Policy";
+
+>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 // Change Username
 
 "self.settings.account_section.handle.change.title" = "Username";
