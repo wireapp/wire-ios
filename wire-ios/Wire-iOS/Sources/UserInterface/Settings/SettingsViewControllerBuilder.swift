@@ -24,9 +24,12 @@ import WireSyncEngine
 struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
     var userSession: UserSession
+    var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
-        .init(userSession: userSession, selfUser: userSession.editableSelfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: userSession.editableSelfUser)
+        settingsPropertyFactory.delegate = settingsPropertyFactoryDelegate
+        return settingsPropertyFactory
     }
 
     private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator) -> SettingsCellDescriptorFactory {

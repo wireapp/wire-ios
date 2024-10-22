@@ -73,7 +73,11 @@ final class ZClientViewController: UIViewController {
         mediaPlaybackManager: mediaPlaybackManager
     )
 
-    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
+    private lazy var settingsViewControllerBuilder = {
+        var builder = SettingsViewControllerBuilder(userSession: userSession)
+        builder.settingsPropertyFactoryDelegate = nil // TODO: fix
+        return builder
+    }()
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(

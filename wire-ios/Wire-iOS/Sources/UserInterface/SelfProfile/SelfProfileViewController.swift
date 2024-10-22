@@ -47,9 +47,6 @@ final class SelfProfileViewController: UIViewController {
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
-    // MARK: - AppLock
-    private var callback: ResultHandler?
-
     // MARK: - Configuration
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -251,9 +248,11 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
     ///   - settingsPropertyFactory: caller of this delegate method
     ///   - newValue: new value of app lock option
     ///   - callback: callback for PasscodeSetupViewController
-    func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory,
-                                newValue: Bool,
-                                callback: @escaping ResultHandler) {
+    func appLockOptionDidChange(
+        _ settingsPropertyFactory: SettingsPropertyFactory,
+        newValue: Bool,
+        callback: @escaping ResultHandler
+    ) {
         // There is an additional check for the simulator because there's no way to disable the device passcode on the simulator. We need it for testing.
         guard AuthenticationType.current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
             callback(newValue)
@@ -266,9 +265,7 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
             return
         }
 
-        self.callback = callback
-        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode,
-                                                                      callback: callback)
+        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode, callback: callback)
         passcodeSetupViewController.passcodeSetupViewControllerDelegate = self
 
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: passcodeSetupViewController)
