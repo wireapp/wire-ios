@@ -64,11 +64,6 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
         showSelfProfile_Invocations.append(())
     }
 
-    var showUserProfile_Invocations: [User] = []
-    func showUserProfile(user: User) async {
-        showUserProfile_Invocations += [user]
-    }
-
     var showConnect_Invocations: [Void] = []
     func showConnect() async {
         showConnect_Invocations.append(())
