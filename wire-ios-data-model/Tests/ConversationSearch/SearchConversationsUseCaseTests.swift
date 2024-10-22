@@ -161,7 +161,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: SearchableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
 
     private(set) var conversations: [MockConversation]
 

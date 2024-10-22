@@ -23,7 +23,7 @@ import WireUtilities
 ///
 /// The search text is compared to the name of conversations as well as the names of the conversation's participants.
 public struct SearchConversationsUseCase<ConversationContainer>: SearchConversationsUseCaseProtocol
-where ConversationContainer: SearchableConversationContainer {
+where ConversationContainer: MutableConversationContainer {
 
     private let conversationContainers: [ConversationContainer]
 

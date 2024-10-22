@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Declares a contract for conversation participants which can be searched for.
 public protocol SearchableConversationParticipant {
 
     var searchableName: String { get }
