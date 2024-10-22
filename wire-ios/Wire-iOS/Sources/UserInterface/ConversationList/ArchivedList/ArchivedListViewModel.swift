@@ -48,7 +48,7 @@ final class ArchivedListViewModel: NSObject {
         return archivedConversations.count
     }
 
-    subscript(key: Int) -> ZMConversation? {
+    subscript(key: Int) -> ZMConversation {
         return archivedConversations[key]
     }
 }
