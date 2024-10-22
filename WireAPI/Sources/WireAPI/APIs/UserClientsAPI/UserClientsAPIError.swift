@@ -18,6 +18,11 @@
 
 import Foundation
 
-/// Errors originating from `ClientAPI`.
+/// Errors originating from `UserClientsAPI`.
 
-public enum ClientAPIError: Error {}
+public enum UserClientsAPIError: Error {
+    
+    /// A request url is not invalid.
+
+    case invalidURL
+}

@@ -18,25 +18,37 @@
 
 import Foundation
 
-class ClientAPIV2: ClientAPIV1 {
+class UserClientsAPIV2: UserClientsAPIV1 {
 
     override var apiVersion: APIVersion {
         .v2
     }
 
     override func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
-        let body = try JSONEncoder.defaultEncoder.encode(UserClientsRequestV0(qualifiedIDs: Array(userIDs)))
-        let request = HTTPRequest(
-            path: "/users/list-clients",
-            method: .post,
-            body: body
+        let components = URLComponents(string: "/users/list-clients")
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UserClientsAPIError.invalidURL
+        }
+        
+        let body = try JSONEncoder.defaultEncoder.encode(
+            UserClientsRequestV0(qualifiedIDs: Array(userIDs))
         )
+        
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: UserClientsV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
 }

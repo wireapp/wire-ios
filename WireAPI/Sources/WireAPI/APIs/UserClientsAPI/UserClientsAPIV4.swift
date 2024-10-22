@@ -16,6 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ClientRepository`.
+import Foundation
 
-enum ClientRepositoryError: Error {}
+class UserClientsAPIV4: UserClientsAPIV3 {
+
+    override var apiVersion: APIVersion {
+        .v4
+    }
+
+}

@@ -16,12 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `UserClientsRepository`.
 
-class ClientAPIV3: ClientAPIV2 {
-
-    override var apiVersion: APIVersion {
-        .v3
-    }
-
-}
+enum UserClientsRepositoryError: Error {}

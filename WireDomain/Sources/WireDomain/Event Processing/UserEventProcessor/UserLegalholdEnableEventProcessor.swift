@@ -35,7 +35,7 @@ struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProto
 
     let context: NSManagedObjectContext
     let userRepository: any UserRepositoryProtocol
-    let clientRepository: any ClientRepositoryProtocol
+    let clientRepository: any UserClientsRepositoryProtocol
 
     func processEvent(_ event: UserLegalholdEnableEvent) async throws {
         let userID = event.userID

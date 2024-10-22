@@ -1,4 +1,0 @@
-- HTTPRequest
-  - path: "/v6/clients"
-  - method: get
-  - body: none

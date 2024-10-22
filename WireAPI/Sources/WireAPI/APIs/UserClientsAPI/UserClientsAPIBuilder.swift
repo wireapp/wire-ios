@@ -18,18 +18,18 @@
 
 import Foundation
 
-/// A builder of `ClientAPI`.
+/// A builder of `UserClientsAPI`.
 
-public struct ClientAPIBuilder {
+public struct UserClientsAPIBuilder {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter APIService: An api service.
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a versioned `ClientAPI`.
@@ -37,22 +37,22 @@ public struct ClientAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `UsersAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any ClientAPI {
+    public func makeAPI(for version: APIVersion) -> any UserClientsAPI {
         switch version {
         case .v0:
-            ClientAPIV0(httpClient: httpClient)
+            UserClientsAPIV0(apiService: apiService)
         case .v1:
-            ClientAPIV1(httpClient: httpClient)
+            UserClientsAPIV1(apiService: apiService)
         case .v2:
-            ClientAPIV2(httpClient: httpClient)
+            UserClientsAPIV2(apiService: apiService)
         case .v3:
-            ClientAPIV3(httpClient: httpClient)
+            UserClientsAPIV3(apiService: apiService)
         case .v4:
-            ClientAPIV4(httpClient: httpClient)
+            UserClientsAPIV4(apiService: apiService)
         case .v5:
-            ClientAPIV5(httpClient: httpClient)
+            UserClientsAPIV5(apiService: apiService)
         case .v6:
-            ClientAPIV6(httpClient: httpClient)
+            UserClientsAPIV6(apiService: apiService)
         }
     }
 

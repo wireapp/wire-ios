@@ -1,0 +1,2 @@
+curl \
+	"/v3/clients"

@@ -22,12 +22,12 @@ import WireAPI
 import WireDataModel
 
 // sourcery: AutoMockable
-/// Facilitate access to clients related domain objects.
+/// Facilitate access to user clients related domain objects.
 ///
 /// A repository provides an abstraction for the access and storage
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
-public protocol ClientRepositoryProtocol {
+public protocol UserClientsRepositoryProtocol {
 
     /// Fetches self user clients.
     /// - returns : A self user clients list.
@@ -69,31 +69,31 @@ public protocol ClientRepositoryProtocol {
     func deleteClient(with id: String) async
 }
 
-public struct ClientRepository: ClientRepositoryProtocol {
+public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     // MARK: - Properties
 
-    private let clientAPI: any ClientAPI
+    private let userClientsAPI: any UserClientsAPI
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
 
     init(
-        clientAPI: any ClientAPI,
+        userClientsAPI: any UserClientsAPI,
         context: NSManagedObjectContext
     ) {
-        self.clientAPI = clientAPI
+        self.userClientsAPI = userClientsAPI
         self.context = context
     }
 
     // MARK: - Public
 
     public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
-        try await clientAPI.getSelfClients()
+        try await userClientsAPI.getSelfClients()
     }
 
     public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
-        try await clientAPI.getClients(for: userIDs)
+        try await userClientsAPI.getClients(for: userIDs)
     }
 
     public func fetchOrCreateClient(

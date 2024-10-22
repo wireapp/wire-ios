@@ -17,19 +17,19 @@
 //
 
 import XCTest
-
+@testable import WireAPISupport
 @testable import WireAPI
 
-final class ClientAPITests: XCTestCase {
+final class UserClientsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<any ClientAPI>!
+    private var apiSnapshotHelper: APIServiceSnapshotHelper<any UserClientsAPI>!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
-            let builder = ClientAPIBuilder(httpClient: httpClient)
+        apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
+            let builder = UserClientsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -52,17 +52,17 @@ final class ClientAPITests: XCTestCase {
     // MARK: - V0
 
     func testGetSelfUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
-        // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetSelfClientsSuccessResponseV0"
-        )
-
-        let versions = APIVersion.v0.andNextVersions
-        let suts = versions.map { $0.buildAPI(client: httpClient) }
-
         try await withThrowingTaskGroup(of: [UserClient].self) { taskGroup in
-            for sut in suts {
+            let testedVersions = APIVersion.v0.andNextVersions
+            
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.ok, "GetSelfClientsSuccessResponseV0")
+                ])
+                
+                let sut = version.buildAPI(apiService: apiService)
+                
                 taskGroup.addTask {
                     // When
                     try await sut.getSelfClients()
@@ -70,6 +70,7 @@ final class ClientAPITests: XCTestCase {
 
                 for try await value in taskGroup {
                     for item in value {
+                        // Then
                         XCTAssertEqual(item, Scaffolding.userClient)
                     }
                 }
@@ -78,17 +79,17 @@ final class ClientAPITests: XCTestCase {
     }
 
     func testGetUserClients_SuccessResponse_200_V0_And_Next_Versions() async throws {
-        // Given
-        let httpClient = try HTTPClientMock(
-            code: .ok,
-            payloadResourceName: "GetClientsSuccessResponseV0"
-        )
-
-        let versions = APIVersion.v0.andNextVersions
-        let suts = versions.map { $0.buildAPI(client: httpClient) }
-
         try await withThrowingTaskGroup(of: [UserClients].self) { taskGroup in
-            for sut in suts {
+            let testedVersions = APIVersion.v0.andNextVersions
+            
+            for version in testedVersions {
+                // Given
+                let apiService = MockAPIServiceProtocol.withResponses([
+                    (.ok, "GetClientsSuccessResponseV0")
+                ])
+                
+                let sut = version.buildAPI(apiService: apiService)
+                
                 taskGroup.addTask {
                     // When
                     try await sut.getClients(for: [.mockID1, .mockID2, .mockID3])
@@ -148,8 +149,8 @@ final class ClientAPITests: XCTestCase {
 }
 
 private extension APIVersion {
-    func buildAPI(client: any HTTPClient) -> any ClientAPI {
-        let builder = ClientAPIBuilder(httpClient: client)
+    func buildAPI(apiService: any APIServiceProtocol) -> any UserClientsAPI {
+        let builder = UserClientsAPIBuilder(apiService: apiService)
         return builder.makeAPI(for: self)
     }
 }

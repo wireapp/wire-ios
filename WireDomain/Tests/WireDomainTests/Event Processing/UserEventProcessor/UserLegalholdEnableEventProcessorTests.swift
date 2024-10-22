@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
@@ -27,7 +27,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
     private var sut: UserLegalholdEnableEventProcessor!
     private var userRepository: MockUserRepositoryProtocol!
-    private var clientRepository: MockClientRepositoryProtocol!
+    private var clientRepository: MockUserClientsRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -42,7 +42,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRepository = MockUserRepositoryProtocol()
-        clientRepository = MockClientRepositoryProtocol()
+        clientRepository = MockUserClientsRepositoryProtocol()
         sut = UserLegalholdEnableEventProcessor(
             context: context,
             userRepository: userRepository,

@@ -56,119 +56,6 @@ import WireDataModel
 
 
 
-public class MockClientRepositoryProtocol: ClientRepositoryProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchSelfClients
-
-    public var fetchSelfClients_Invocations: [Void] = []
-    public var fetchSelfClients_MockError: Error?
-    public var fetchSelfClients_MockMethod: (() async throws -> [WireAPI.UserClient])?
-    public var fetchSelfClients_MockValue: [WireAPI.UserClient]?
-
-    public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
-        fetchSelfClients_Invocations.append(())
-
-        if let error = fetchSelfClients_MockError {
-            throw error
-        }
-
-        if let mock = fetchSelfClients_MockMethod {
-            return try await mock()
-        } else if let mock = fetchSelfClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchSelfClients`")
-        }
-    }
-
-    // MARK: - fetchClients
-
-    public var fetchClientsFor_Invocations: [Set<UserID>] = []
-    public var fetchClientsFor_MockError: Error?
-    public var fetchClientsFor_MockMethod: ((Set<UserID>) async throws -> [WireAPI.UserClients])?
-    public var fetchClientsFor_MockValue: [WireAPI.UserClients]?
-
-    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
-        fetchClientsFor_Invocations.append(userIDs)
-
-        if let error = fetchClientsFor_MockError {
-            throw error
-        }
-
-        if let mock = fetchClientsFor_MockMethod {
-            return try await mock(userIDs)
-        } else if let mock = fetchClientsFor_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchClientsFor`")
-        }
-    }
-
-    // MARK: - fetchOrCreateClient
-
-    public var fetchOrCreateClientWith_Invocations: [String] = []
-    public var fetchOrCreateClientWith_MockError: Error?
-    public var fetchOrCreateClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
-    public var fetchOrCreateClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
-
-    public func fetchOrCreateClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
-        fetchOrCreateClientWith_Invocations.append(id)
-
-        if let error = fetchOrCreateClientWith_MockError {
-            throw error
-        }
-
-        if let mock = fetchOrCreateClientWith_MockMethod {
-            return try await mock(id)
-        } else if let mock = fetchOrCreateClientWith_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchOrCreateClientWith`")
-        }
-    }
-
-    // MARK: - updateClient
-
-    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
-    public var updateClientWithFromIsNewClient_MockError: Error?
-    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.UserClient, Bool) async throws -> Void)?
-
-    public func updateClient(with id: String, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
-        updateClientWithFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
-
-        if let error = updateClientWithFromIsNewClient_MockError {
-            throw error
-        }
-
-        guard let mock = updateClientWithFromIsNewClient_MockMethod else {
-            fatalError("no mock for `updateClientWithFromIsNewClient`")
-        }
-
-        try await mock(id, remoteClient, isNewClient)
-    }
-
-    // MARK: - deleteClient
-
-    public var deleteClientWith_Invocations: [String] = []
-    public var deleteClientWith_MockMethod: ((String) async -> Void)?
-
-    public func deleteClient(with id: String) async {
-        deleteClientWith_Invocations.append(id)
-
-        guard let mock = deleteClientWith_MockMethod else {
-            fatalError("no mock for `deleteClientWith`")
-        }
-
-        await mock(id)
-    }
-
-}
-
 public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
     // MARK: - Life cycle
@@ -857,6 +744,119 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchSelfClients
+
+    public var fetchSelfClients_Invocations: [Void] = []
+    public var fetchSelfClients_MockError: Error?
+    public var fetchSelfClients_MockMethod: (() async throws -> [WireAPI.UserClient])?
+    public var fetchSelfClients_MockValue: [WireAPI.UserClient]?
+
+    public func fetchSelfClients() async throws -> [WireAPI.UserClient] {
+        fetchSelfClients_Invocations.append(())
+
+        if let error = fetchSelfClients_MockError {
+            throw error
+        }
+
+        if let mock = fetchSelfClients_MockMethod {
+            return try await mock()
+        } else if let mock = fetchSelfClients_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSelfClients`")
+        }
+    }
+
+    // MARK: - fetchClients
+
+    public var fetchClientsFor_Invocations: [Set<UserID>] = []
+    public var fetchClientsFor_MockError: Error?
+    public var fetchClientsFor_MockMethod: ((Set<UserID>) async throws -> [WireAPI.UserClients])?
+    public var fetchClientsFor_MockValue: [WireAPI.UserClients]?
+
+    public func fetchClients(for userIDs: Set<UserID>) async throws -> [WireAPI.UserClients] {
+        fetchClientsFor_Invocations.append(userIDs)
+
+        if let error = fetchClientsFor_MockError {
+            throw error
+        }
+
+        if let mock = fetchClientsFor_MockMethod {
+            return try await mock(userIDs)
+        } else if let mock = fetchClientsFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchClientsFor`")
+        }
+    }
+
+    // MARK: - fetchOrCreateClient
+
+    public var fetchOrCreateClientWith_Invocations: [String] = []
+    public var fetchOrCreateClientWith_MockError: Error?
+    public var fetchOrCreateClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
+
+    public func fetchOrCreateClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        fetchOrCreateClientWith_Invocations.append(id)
+
+        if let error = fetchOrCreateClientWith_MockError {
+            throw error
+        }
+
+        if let mock = fetchOrCreateClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateClientWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateClientWith`")
+        }
+    }
+
+    // MARK: - updateClient
+
+    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateClientWithFromIsNewClient_MockError: Error?
+    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.UserClient, Bool) async throws -> Void)?
+
+    public func updateClient(with id: String, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+        updateClientWithFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateClientWithFromIsNewClient_MockError {
+            throw error
+        }
+
+        guard let mock = updateClientWithFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateClientWithFromIsNewClient`")
+        }
+
+        try await mock(id, remoteClient, isNewClient)
+    }
+
+    // MARK: - deleteClient
+
+    public var deleteClientWith_Invocations: [String] = []
+    public var deleteClientWith_MockMethod: ((String) async -> Void)?
+
+    public func deleteClient(with id: String) async {
+        deleteClientWith_Invocations.append(id)
+
+        guard let mock = deleteClientWith_MockMethod else {
+            fatalError("no mock for `deleteClientWith`")
+        }
+
+        await mock(id)
     }
 
 }

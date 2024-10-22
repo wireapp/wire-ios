@@ -18,10 +18,10 @@
 
 import Foundation
 
-class ClientAPIV5: ClientAPIV4 {
+class UserClientsAPIV6: UserClientsAPIV5 {
 
     override var apiVersion: APIVersion {
-        .v5
+        .v6
     }
 
 }

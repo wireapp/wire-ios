@@ -36,7 +36,7 @@ struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
         case failedToUpdateUserClient(Swift.Error)
     }
 
-    let repository: any ClientRepositoryProtocol
+    let repository: any UserClientsRepositoryProtocol
 
     func processEvent(_ event: UserClientAddEvent) async throws {
         do {

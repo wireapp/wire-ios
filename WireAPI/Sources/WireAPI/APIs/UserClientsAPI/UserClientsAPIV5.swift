@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning clients.
-public protocol ClientAPI {
+import Foundation
 
-    /// Get self user registered clients
-    /// - returns: A list of self user clients.
+class UserClientsAPIV5: UserClientsAPIV4 {
 
-    func getSelfClients() async throws -> [UserClient]
+    override var apiVersion: APIVersion {
+        .v5
+    }
 
-    /// Get clients for qualified users.
-    ///
-    /// - parameter userIDs: A list of user ids.
-    /// - returns: A list of clients for a given user ID on a given domain.
-
-    func getClients(for userIDs: Set<UserID>) async throws -> [UserClients]
 }

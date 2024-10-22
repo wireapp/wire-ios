@@ -23,10 +23,10 @@ import WireDataModelSupport
 @testable import WireDomain
 import XCTest
 
-final class ClientRepositoryTests: XCTestCase {
+final class UserClientsRepositoryTests: XCTestCase {
 
-    private var sut: ClientRepository!
-    private var clientAPI: MockClientAPI!
+    private var sut: UserClientsRepository!
+    private var userClientsAPI: MockUserClientsAPI!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -40,9 +40,9 @@ final class ClientRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        clientAPI = MockClientAPI()
-        sut = ClientRepository(
-            clientAPI: clientAPI,
+        userClientsAPI = MockUserClientsAPI()
+        sut = UserClientsRepository(
+            userClientsAPI: userClientsAPI,
             context: context
         )
     }
@@ -50,7 +50,7 @@ final class ClientRepositoryTests: XCTestCase {
     override func tearDown() async throws {
         try await super.tearDown()
         stack = nil
-        clientAPI = nil
+        userClientsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
@@ -116,7 +116,7 @@ final class ClientRepositoryTests: XCTestCase {
     func testFetchSelfClients() async throws {
         // Mock
 
-        clientAPI.getSelfClients_MockValue = [Scaffolding.selfUserClient]
+        userClientsAPI.getSelfClients_MockValue = [Scaffolding.selfUserClient]
 
         // When
 
@@ -130,7 +130,7 @@ final class ClientRepositoryTests: XCTestCase {
     func testFetchClients() async throws {
         // Mock
 
-        clientAPI.getClientsFor_MockValue = [Scaffolding.userClients1, Scaffolding.userClients2]
+        userClientsAPI.getClientsFor_MockValue = [Scaffolding.userClients1, Scaffolding.userClients2]
 
         // When
 

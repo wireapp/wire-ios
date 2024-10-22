@@ -18,12 +18,12 @@
 
 import Foundation
 
-class ClientAPIV0: ClientAPI, VersionedAPI {
+class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -31,31 +31,52 @@ class ClientAPIV0: ClientAPI, VersionedAPI {
     }
 
     func getSelfClients() async throws -> [UserClient] {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/clients",
-            method: .get
-        )
+        let components = URLComponents(string: "\(pathPrefix)/clients")
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UserClientsAPIError.invalidURL
+        }
 
-        let response = try await httpClient.executeRequest(request)
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: ListUserClientV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     func getClients(for userIDs: Set<UserID>) async throws -> [UserClients] {
-        let body = try JSONEncoder.defaultEncoder.encode(UserClientsRequestV0(qualifiedIDs: Array(userIDs)))
-        let request = HTTPRequest(
-            path: "/users/list-clients/v2", /// v2 suffix required for api version v0 and v1, suffix removed from next versions
-            method: .post,
-            body: body
+        let components = URLComponents(string: "/users/list-clients/v2") /// v2 suffix required for api version v0 and v1, suffix removed from next versions
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UserClientsAPIError.invalidURL
+        }
+        
+        let body = try JSONEncoder.defaultEncoder.encode(
+            UserClientsRequestV0(qualifiedIDs: Array(userIDs))
         )
+        
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: UserClientsV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 }
 
