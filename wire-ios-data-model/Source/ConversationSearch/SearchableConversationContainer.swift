@@ -17,7 +17,7 @@
 //
 
 /// A mutable container of conversations used by the `ConversationSearchUseCase`.
-/// This can be interpreted as a section in a table where a row is a conversation.
+/// This can be interpreted as a section in a table where rows are conversations.
 public protocol SearchableConversationContainer {
     associatedtype Conversation: SearchableConversation
 
