@@ -113,14 +113,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.hideSettingsContent_Invocations.count, 1)
     }
 
-    func testShowSelfProfileIsInvoked() async {
-        // When
-        await sut.showSelfProfile()
-
-        // Then
-        XCTAssertEqual(mockMainCoordinator.showSelfProfile_Invocations.count, 1)
-    }
-
     func testShowConnectIsInvoked() async {
         // When
         await sut.showConnect()

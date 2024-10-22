@@ -45,7 +45,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     private let settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
     private let connectUIBuilder: Dependencies.ConnectUIBuilder
     private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
-    private var selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -84,8 +83,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         conversationUIBuilder: Dependencies.ConversationUIBuilder,
         settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
         connectUIBuilder: Dependencies.ConnectUIBuilder,
-        createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder,
-        selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
+        createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
@@ -93,7 +91,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         self.settingsContentUIBuilder = settingsContentUIBuilder
         self.connectUIBuilder = connectUIBuilder
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
-        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init()
 
@@ -254,18 +251,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     public func hideSettingsContent() {
         tabBarController.setSettingsContentUI(nil, animated: true)
         splitViewController.settingsContentUI = nil
-    }
-
-    public func showSelfProfile() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: self)
-        selfProfileUI.modalPresentationStyle = .formSheet
-
-        await dismissPresentedViewController()
-        await presentViewController(selfProfileUI)
     }
 
     public func showConnect() async {

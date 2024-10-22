@@ -27,5 +27,4 @@ public extension MainCoordinator {
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
 
     typealias ConnectUI = Dependencies.ConnectUIBuilder.ViewController
-    typealias SelfProfileUI = Dependencies.SelfProfileUIBuilder.ViewController
 }

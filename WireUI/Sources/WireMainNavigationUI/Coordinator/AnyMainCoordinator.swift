@@ -30,7 +30,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     private let _hideConversation: @MainActor () -> Void
     private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
     private let _hideSettingsContent: @MainActor () -> Void
-    private let _showSelfProfile: @MainActor () async -> Void
     private let _showConnect: @MainActor () async -> Void
     private let _showCreateGroupConversation: @MainActor () async -> Void
     private let _presentViewController: @MainActor (_ viewController: UIViewController) async -> Void
@@ -61,9 +60,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
         }
         _hideSettingsContent = {
             mainCoordinator.hideSettingsContent()
-        }
-        _showSelfProfile = {
-            await mainCoordinator.showSelfProfile()
         }
         _showConnect = {
             await mainCoordinator.showConnect()
@@ -112,11 +108,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     @MainActor
     public func hideSettingsContent() {
         _hideSettingsContent()
-    }
-
-    @MainActor
-    public func showSelfProfile() async {
-        await _showSelfProfile()
     }
 
     @MainActor

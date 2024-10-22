@@ -50,8 +50,7 @@ final class MainCoordinatorTests: XCTestCase {
             conversationUIBuilder: .init(),
             settingsContentUIBuilder: .init(),
             connectUIBuilder: .init(),
-            createGroupConversationUIBuilder: .init(),
-            selfProfileUIBuilder: .init()
+            createGroupConversationUIBuilder: .init()
         )
     }
 

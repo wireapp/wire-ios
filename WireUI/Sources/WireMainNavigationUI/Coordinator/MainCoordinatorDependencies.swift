@@ -34,7 +34,4 @@ public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies
 
     associatedtype CreateGroupConversationUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
         CreateGroupConversationUIBuilder.Dependencies == Self
-
-    associatedtype SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        SelfProfileUIBuilder.Dependencies == Self
 }

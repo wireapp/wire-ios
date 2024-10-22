@@ -53,8 +53,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
 
     @MainActor
-    func showSelfProfile() async
-    @MainActor
     func showConnect() async
     @MainActor
     func showCreateGroupConversation() async
