@@ -460,6 +460,14 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
 
 }
 
+class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+}
+
 class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkViewModelDelegate {
 
     // MARK: - Life cycle

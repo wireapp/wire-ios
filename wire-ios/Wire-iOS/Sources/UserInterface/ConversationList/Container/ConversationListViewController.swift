@@ -33,6 +33,7 @@ final class ConversationListViewController: UIViewController {
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinator
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
+    let createGroupConversationViewControllerBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
@@ -120,7 +121,8 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -134,7 +136,8 @@ final class ConversationListViewController: UIViewController {
             viewModel: viewModel,
             zClientViewController: zClientViewController,
             mainCoordinator: mainCoordinator,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder
         )
     }
 
@@ -142,12 +145,14 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinator,
-        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.createGroupConversationViewControllerBuilder = createGroupConversationViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
         self.conversationListCoordinator = conversationListCoordinator
 

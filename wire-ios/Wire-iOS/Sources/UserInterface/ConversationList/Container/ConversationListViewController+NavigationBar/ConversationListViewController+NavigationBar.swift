@@ -237,7 +237,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
         newConversationBarButton.addAction(.init { [weak self] _ in
             Task {
-                await self?.mainCoordinator.showCreateGroupConversation()
+                // TODO: fix
+                fatalError()
+                // createGroupConversationViewControllerBuilder
+                await self?.mainCoordinator.presentViewController(.init())
             }
         }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
@@ -307,9 +310,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            // TODO: fix
-            fatalError()
-            // await mainCoordinator.showSelfProfile()
+            let selfProfileUI = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 

@@ -434,6 +434,7 @@
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
+		59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */; };
 		59E67CAE2CA8B3A6000F1C17 /* ConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */; };
 		59E67CB22CA8C35E000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
@@ -2415,6 +2416,7 @@
 		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
+		59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
 		59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationRootViewController+MainConversationProtocol.swift"; sourceTree = "<group>"; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
@@ -8390,6 +8392,7 @@
 			isa = PBXGroup;
 			children = (
 				59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */,
+				59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */,
 				F10F46D320288CEB00261449 /* ConversationCreationController.swift */,
 				EE6CA1822A8BBDDB006725CE /* ConversationCreationValues.swift */,
 				EEFF3E7321B6755D000834A6 /* Sections */,
@@ -9417,6 +9420,7 @@
 				E9D141622AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift in Sources */,
 				D58192002091CEBF003BA7EC /* UIStackView+Helper.swift in Sources */,
 				EF20BE4322CB57B1004F8910 /* UIViewController+Present.swift in Sources */,
+				59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */,
 				EF2A8DED214AA36E002C9058 /* SeparatorViewProtocol.swift in Sources */,
 				EECDB2562029F5AB00D0D268 /* MarkdownTextStorage.swift in Sources */,
 				5EFD4526215A78E800BEE703 /* IndexedListView.swift in Sources */,

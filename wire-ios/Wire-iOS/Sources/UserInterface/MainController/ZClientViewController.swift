@@ -100,7 +100,8 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -121,8 +122,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController: mainTabBarController,
         conversationUIBuilder: conversationViewControllerBuilder,
         settingsContentUIBuilder: settingsViewControllerBuilder,
-        connectUIBuilder: connectBuilder,
-        createGroupConversationUIBuilder: createGroupConversationBuilder
+        connectUIBuilder: connectBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -252,7 +252,6 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
         connectBuilder.delegate = self
-        createGroupConversationBuilder.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false

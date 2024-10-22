@@ -81,7 +81,8 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewModel: viewModel,
             zClientViewController: .init(account: account, userSession: userSession),
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
-            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol()
+            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
         )
         sut.mainSplitViewState = .collapsed
 
@@ -112,8 +113,6 @@ final class ConversationListViewControllerTests: XCTestCase {
         modelHelper = nil
         mockMainCoordinator = nil
         mockGetUserAccountImageUseCase = nil
-
-        super.tearDown()
     }
 
     // MARK: - View Controller
