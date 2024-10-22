@@ -45,8 +45,6 @@ final class SelfProfileViewController: UIViewController {
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
 
-    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
-
     // MARK: - Configuration
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -232,13 +230,22 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
     }
 }
 
-// TODO: move to proper file
-// MARK: - SettingsPropertyFactoryDelegate
+// TODO: move to separate file
 
-extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
+final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate, PasscodeSetupViewControllerDelegate {
 
-    private var topViewController: UIViewController! {
-        navigationController!.topViewController
+    var userSession: any UserSession
+    var settingsTableViewController: () -> SettingsTableViewController?
+    var mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+
+    init(
+        userSession: any UserSession,
+        settingsTableViewController: @escaping () -> SettingsTableViewController?,
+        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    ) {
+        self.userSession = userSession
+        self.settingsTableViewController = settingsTableViewController
+        self.mainCoordinator = mainCoordinator
     }
 
     /// Create or delete custom passcode when appLock option did change
@@ -278,23 +285,20 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
         wrappedViewController.presentationController?.delegate = passcodeSetupViewController
 
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            wrappedViewController.modalPresentationStyle = .popover
-            present(wrappedViewController, animated: true)
-        } else {
-            UIApplication.shared.topmostViewController()?.present(wrappedViewController, animated: true)
+        Task {
+            // TODO: test on iPad and iPhone
+            await mainCoordinator.presentViewController(wrappedViewController)
         }
     }
-}
 
-// TODO: is this still needed?
-extension SelfProfileViewController: PasscodeSetupViewControllerDelegate {
+    // MARK: - PasscodeSetupViewControllerDelegate
+
     func passcodeSetupControllerDidFinish() {
         // no-op
     }
 
     func passcodeSetupControllerWasDismissed() {
         // refresh options applock switch
-        (topViewController as? SettingsTableViewController)?.refreshData()
+        settingsTableViewController()?.refreshData()
     }
 }

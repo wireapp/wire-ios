@@ -73,10 +73,20 @@ final class ZClientViewController: UIViewController {
         mediaPlaybackManager: mediaPlaybackManager
     )
 
-    private lazy var settingsViewControllerBuilder = {
-        var builder = SettingsViewControllerBuilder(userSession: userSession)
-        builder.settingsPropertyFactoryDelegate = nil // TODO: fix
-        return builder
+    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
+
+    private lazy var defaultSettingsPropertyFactoryDelegate = {
+        var settingsTableViewController = { [weak self] in
+            self?.mainSplitViewController.settingsContentUI as? SettingsTableViewController ??
+            self?.mainTabBarController.settingsContentUI as? SettingsTableViewController ??
+            self?.mainSplitViewController.settingsUI as? SettingsTableViewController ??
+            self?.mainTabBarController.settingsUI as? SettingsTableViewController
+        }
+        return DefaultSettingsPropertyFactoryDelegate(
+            userSession: userSession,
+            settingsTableViewController: settingsTableViewController,
+            mainCoordinator: AnyMainCoordinator(mainCoordinator: mainCoordinator)
+        )
     }()
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
@@ -253,6 +263,7 @@ final class ZClientViewController: UIViewController {
         archiveUI.delegate = mainCoordinator
         connectBuilder.delegate = self
         createGroupConversationBuilder.delegate = mainCoordinator
+        settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
