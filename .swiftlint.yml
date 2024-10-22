@@ -93,6 +93,7 @@ excluded:
   - "wire-ios-protos/Protos/mls.pb.swift"
   - "wire-ios-protos/Protos/otr.pb.swift"
   - "wire-ios-protos/Scripts/generate_header.swift"
+  - "wire-ios-sync-engine/Support/Sourcery/generated/AutoMockable.manual.swift"
   - "wire-ios/Wire-iOS Share Extension/Generated/Strings+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
   - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
