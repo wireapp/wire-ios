@@ -21,12 +21,12 @@ import SwiftUI
 
 extension SettingsCellDescriptorFactory {
 
-    var developerGroup: SettingsCellDescriptorType {
+    var developerGroup: any SettingsCellDescriptorType {
         typealias ExternalScreen = SettingsExternalScreenCellDescriptor
         typealias Toggle = SettingsPropertyToggleCellDescriptor
         typealias Button = SettingsButtonCellDescriptor
 
-        var developerCellDescriptors: [SettingsCellDescriptorType] = []
+        var developerCellDescriptors: [any SettingsCellDescriptorType] = []
 
         developerCellDescriptors.append(
             ExternalScreen(title: "Logging") { DeveloperOptionsController() }
@@ -98,13 +98,11 @@ extension SettingsCellDescriptorFactory {
                            presentationAction: { DatabaseStatisticsController() })
         )
 
-        if !Analytics.shared.isOptedOut && !TrackingManager.shared.disableAnalyticsSharing {
             developerCellDescriptors.append(
                 Button(title: "Reset call quality survey",
                        isDestructive: false,
                        selectAction: DebugActions.resetCallQualitySurveyMuteFilter)
             )
-        }
 
         developerCellDescriptors.append(
             Button(title: "Trigger slow sync",

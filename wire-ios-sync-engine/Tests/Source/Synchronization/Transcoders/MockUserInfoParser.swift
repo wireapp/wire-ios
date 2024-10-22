@@ -40,4 +40,9 @@
         return userId
     }
 
+    public var reportBackupImportDidSucceedCalled = 0
+    public func reportBackupImportDidSucceed(_ didSucceed: Bool) {
+        reportBackupImportDidSucceedCalled += 1
+    }
+
 }

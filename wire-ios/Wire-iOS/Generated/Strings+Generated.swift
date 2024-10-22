@@ -5560,6 +5560,20 @@ internal enum L10n {
         internal enum PrivacyAnalytics {
           /// Send anonymous usage data
           internal static let title = L10n.tr("Localizable", "self.settings.privacy_analytics.title", fallback: "Send anonymous usage data")
+          internal enum Alert {
+            /// Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.
+            internal static let message = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.message", fallback: "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.")
+            /// Consent to share user data
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.title", fallback: "Consent to share user data")
+            internal enum Button {
+              /// Agree
+              internal static let agree = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.agree", fallback: "Agree")
+              /// Decline
+              internal static let decline = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.decline", fallback: "Decline")
+              /// Privacy Policy
+              internal static let privacyPolicy = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.privacyPolicy", fallback: "Privacy Policy")
+            }
+          }
         }
         internal enum PrivacyAnalyticsMenu {
           internal enum Description {

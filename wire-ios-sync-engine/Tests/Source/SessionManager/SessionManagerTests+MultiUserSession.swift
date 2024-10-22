@@ -108,7 +108,6 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             environment: sessionManager.environment,
@@ -118,7 +117,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             isUnauthenticatedTransportSessionReady: true,
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()
@@ -133,6 +133,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
+
         testSessionManager.start(launchOptions: [:])
 
         testSessionManager.loadSession(for: account) { userSession in
@@ -168,7 +169,6 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            analytics: nil,
             delegate: nil,
             application: application,
             environment: sessionManager!.environment,
@@ -177,7 +177,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             callKitManager: MockCallKitManager(),
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: nil,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         let environment = MockEnvironment()
