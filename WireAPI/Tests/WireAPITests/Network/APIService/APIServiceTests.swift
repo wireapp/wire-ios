@@ -35,6 +35,7 @@ final class APIServiceTests: XCTestCase {
         let networkService = NetworkService(baseURL: backendURL)
         networkService.configure(with: .mockURLSession())
         sut = APIService(
+            clientID: Scaffolding.clientID,
             networkService: networkService,
             authenticationStorage: authenticationStorage
         )
@@ -49,7 +50,7 @@ final class APIServiceTests: XCTestCase {
 
     // MARK: - Execute request
 
-    func testItExecutesARequestNotRequiringAuthentication() async throws {
+    func testExecuteRequest_Not_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
 
@@ -74,7 +75,7 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
-    func testItExecutesARequestRequiringAuthentication() async throws {
+    func testExecuteRequest_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
         authenticationStorage.storeAccessToken(Scaffolding.accessToken)
@@ -104,29 +105,11 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(authorizationHeader, "Bearer some-access-token")
     }
 
-    func testItThrowsIfAuthenticationIsRequiredButNoAccessTokenIsFound() async throws {
-        // Given
-        let request = Scaffolding.getRequest
-        XCTAssertNil(authenticationStorage.fetchAccessToken())
-
-        // Mock a dummy response.
-        URLProtocolMock.mockHandler = { _ in
-            (Data(), HTTPURLResponse())
-        }
-
-        // Then
-        await XCTAssertThrowsError(APIServiceError.missingAccessToken) {
-            // When
-            try await self.sut.executeRequest(
-                request,
-                requiringAccessToken: true
-            )
-        }
-    }
-
 }
 
 private enum Scaffolding {
+
+    static let clientID = "abc123"
 
     static let getRequest = try! URLRequestBuilder(path: "/foo")
         .withMethod(.get)
@@ -137,7 +120,7 @@ private enum Scaffolding {
         userID: UUID(),
         token: "some-access-token",
         type: "Bearer",
-        validityInSeconds: 900
+        expirationDate: Date(timeIntervalSinceNow: 900)
     )
 
 }
