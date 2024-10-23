@@ -21,9 +21,9 @@ import XCTest
 
 @testable import WireDataModel
 
-final class SearchConversationsUseCaseTests: XCTestCase {
+final class FilterConversationsUseCaseTests: XCTestCase {
 
-    private var sut: SearchConversationsUseCase<MockContainer>!
+    private var sut: FilterConversationsUseCase<MockContainer>!
 
     override func tearDown() {
         sut = nil
@@ -35,7 +35,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "")
+        let filtered = sut.invoke(query: "")
 
         // Then
         XCTAssertEqual(filtered, conversationContainers)
@@ -47,7 +47,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "y")
+        let filtered = sut.invoke(query: "y")
 
         // Then
         XCTAssertEqual(filtered, [[], [], []])
@@ -59,7 +59,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "wire team")
+        let filtered = sut.invoke(query: "wire team")
 
         // Then matches
         // - only the "Wire Team" conversation
@@ -72,7 +72,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "rifka")
+        let filtered = sut.invoke(query: "rifka")
 
         // Then matches
         // - the "Announcements" conversation, since Rifka is a participant
@@ -86,7 +86,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ö")
+        let filtered = sut.invoke(query: "ö")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
@@ -102,7 +102,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ß")
+        let filtered = sut.invoke(query: "ß")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
@@ -117,7 +117,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ß")
+        let filtered = sut.invoke(query: "ß")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
