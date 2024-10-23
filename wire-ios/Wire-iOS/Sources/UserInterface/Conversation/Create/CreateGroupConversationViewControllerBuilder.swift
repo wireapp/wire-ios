@@ -33,12 +33,12 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator _: MainCoordinator
-    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
+    ) -> UIViewController where MainCoordinator.Dependencies == Dependencies {
         let rootViewController = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession
         )
         rootViewController.delegate = delegate
-        return .init(rootViewController: rootViewController)
+        return rootViewController
     }
 }

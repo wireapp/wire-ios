@@ -38,11 +38,7 @@ extension StartUIViewController {
             title: L10n.Localizable.Peoplepicker.Button.createConversation,
             action: UIAction { [weak self] _ in
                 guard let self else { return }
-                let conversationCreationController = ConversationCreationController(
-                    preSelectedParticipants: nil,
-                    userSession: userSession
-                )
-                conversationCreationController.delegate = conversationCreationControllerDelegate
+                let conversationCreationController = createGroupConversationUIBuilder.build(mainCoordinator: mainCoordinator)
                 navigationController?.pushViewController(conversationCreationController, animated: true)
             })
 

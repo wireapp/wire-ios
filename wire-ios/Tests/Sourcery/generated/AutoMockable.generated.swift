@@ -495,11 +495,11 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
     // MARK: - build
 
     var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
-    var buildMainCoordinator_MockValue: UINavigationController?
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UIViewController)?
+    var buildMainCoordinator_MockValue: UIViewController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
