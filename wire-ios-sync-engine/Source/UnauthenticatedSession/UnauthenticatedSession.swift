@@ -27,7 +27,7 @@ import WireUtilities
     @objc(upgradeToAuthenticatedSessionWithUserInfo:)
     func upgradeToAuthenticatedSession(with userInfo: UserInfo)
 
-    @objc (reportBackupImportDidSucceed:)
+    @objc(reportBackupImportDidSucceed:)
     func reportBackupImportDidSucceed(_ didSucceed: Bool)
 }
 
