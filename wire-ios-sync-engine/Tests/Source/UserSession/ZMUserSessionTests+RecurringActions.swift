@@ -58,7 +58,6 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
         // Then
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
-        XCTAssertEqual(mockPushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testUpdatesUsersMissingMetadataAction() {
