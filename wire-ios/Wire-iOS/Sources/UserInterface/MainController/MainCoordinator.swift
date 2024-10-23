@@ -19,3 +19,24 @@
 import WireMainNavigationUI
 
 typealias MainCoordinator = WireMainNavigationUI.AnyMainCoordinator<MainCoordinatorDependencies>
+
+extension MainCoordinator {
+
+    typealias Dependencies = MainCoordinatorDependencies
+
+    @MainActor
+    convenience init(
+        mainSplitViewController: Dependencies.SplitViewController,
+        mainTabBarController: Dependencies.TabBarController,
+        conversationUIBuilder: Dependencies.ConversationUIBuilder,
+        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
+    ) {
+        let mainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>(
+            mainSplitViewController: mainSplitViewController,
+            mainTabBarController: mainTabBarController,
+            conversationUIBuilder: conversationUIBuilder,
+            settingsContentUIBuilder: settingsContentUIBuilder
+        )
+        self.init(mainCoordinator: mainCoordinator)
+    }
+}

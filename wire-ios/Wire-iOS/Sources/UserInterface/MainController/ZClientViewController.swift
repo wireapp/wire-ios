@@ -29,9 +29,7 @@ import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
-    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies> // TODO: use AnyMainCoordinator instead?
-    typealias MainSplitViewController = MainCoordinator.SplitViewController
-    typealias MainTabBarController = MainCoordinator.TabBarController
+    typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
 
     // MARK: - Private Members
 
@@ -56,7 +54,7 @@ final class ZClientViewController: UIViewController {
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
-    private(set) lazy var mainSplitViewController = MainSplitViewController(
+    private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabController: mainTabBarController
@@ -66,7 +64,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainTabBarController()
+        let tabBarController = MainCoordinator.TabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
