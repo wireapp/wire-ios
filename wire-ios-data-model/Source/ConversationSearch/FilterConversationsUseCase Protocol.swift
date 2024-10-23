@@ -20,6 +20,6 @@
 public protocol FilterConversationsUseCaseProtocol {
     associatedtype ConversationContainer: MutableConversationContainer
 
-    /// Returns conversations which match the `searchText`.
+    /// Returns conversations which match the `query`.
     func invoke(query: String) -> [ConversationContainer]
 }
