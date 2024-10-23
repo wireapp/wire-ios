@@ -31,19 +31,12 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-<<<<<<< HEAD
     private let mainWindow: UIWindow
-
-    init(mainWindow: UIWindow) {
-        self.mainWindow = mainWindow
-=======
-    private let rootViewController: UIViewController
     private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(rootViewController: UIViewController, callQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
-        self.rootViewController = rootViewController
-        self.submitCallQualitySurvey = callQualitySurvey
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
+    init(mainWindow: UIWindow, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
+        self.mainWindow = mainWindow
+        self.submitCallQualitySurvey = submitCallQualitySurvey
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -71,20 +64,13 @@ class CallQualityController: NSObject {
     var canPresentCallQualitySurvey: Bool {
 #if DISABLE_CALL_QUALITY_SURVEY
         return false
-<<<<<<< HEAD
-        #else
+#else
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return false
         }
         return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && appDelegate.launchType != .unknown
-        #endif
-=======
-#else
-        return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-        && AppDelegate.shared.launchType != .unknown
+        && appDelegate.launchType != .unknown
 #endif
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
     }
 
     // MARK: - Events

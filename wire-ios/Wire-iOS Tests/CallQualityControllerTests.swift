@@ -48,28 +48,19 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
             otherUser: otherUser
         )
         callConversationProvider = MockCallConversationProvider()
-<<<<<<< HEAD
-        sut = MockCallQualityController(mainWindow: .init())
-=======
 
         callQualitySurvey = MockSubmitCallQualitySurveyUseCaseProtocol()
         callQualitySurvey.invoke_MockMethod = { _ in }
 
         // NOTE: the sut is not really a mock it's just the real implementation
         // but with canPresentCallQualitySurvey set to true for testing the callQualitySurvey
-        sut = MockCallQualityController(rootViewController: .init(), callQualitySurvey: callQualitySurvey)
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
+        sut = MockCallQualityController(mainWindow: .init(), submitCallQualitySurvey: callQualitySurvey)
         sut.router = router
         sut.usesCallSurveyBudget = false
 
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
-<<<<<<< HEAD
-
-        Analytics.shared = Analytics(optedOut: true)
-=======
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
     }
 
     // MARK: - teardown

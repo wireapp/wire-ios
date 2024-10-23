@@ -5651,6 +5651,14 @@ internal enum L10n {
             }
           }
         }
+        internal enum ReceiveNewsAndOffers {
+          /// Receive Newsletter
+          internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.title", fallback: "Receive Newsletter")
+          internal enum Description {
+            /// Receive news and product updates from Wire via email.
+            internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
+          }
+        }
         internal enum SoundMenu {
           /// Sound Alerts
           internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.title", fallback: "Sound Alerts")

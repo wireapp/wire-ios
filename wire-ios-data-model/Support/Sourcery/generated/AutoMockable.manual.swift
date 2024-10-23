@@ -95,7 +95,7 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 
     // MARK: - textMessageData
 
-    public var textMessageData: ZMTextMessageData?
+    public var textMessageData: TextMessageData?
 
     // MARK: - imageMessageData
 

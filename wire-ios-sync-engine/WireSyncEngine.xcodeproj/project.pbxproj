@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,12 +12,8 @@
 		014813402CC0522500F36DAA /* CallQualitySurveyUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0148133F2CC0522500F36DAA /* CallQualitySurveyUseCase.swift */; };
 		015519462C20D20800037358 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015519452C20D20800037358 /* WireDomain.framework */; };
 		0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0155194D2C20D29400037358 /* WireDomainSupport.framework */; };
-<<<<<<< HEAD
-=======
 		017704E42CA4503C00BE69ED /* EnableAnalyticsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017704D92CA44C0D00BE69ED /* EnableAnalyticsUseCaseTests.swift */; };
 		017704E52CA4505A00BE69ED /* DisableAnalyticsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017704DB2CA44C0D00BE69ED /* DisableAnalyticsUseCaseTests.swift */; };
-		017ABBB62995278C0004C243 /* SlowSyncTests+NotificationsV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		018A3DBC2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */; };
 		018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
@@ -159,16 +155,6 @@
 		169BA1FF25ED0DAD00374343 /* ZMUserSession+Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1FE25ED0DAD00374343 /* ZMUserSession+Messages.swift */; };
 		169BA23D25EF6E2A00374343 /* MockRegistrationStatusDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA23C25EF6E2A00374343 /* MockRegistrationStatusDelegate.swift */; };
 		169BA24125EF6F6700374343 /* ZMConversation+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA24025EF6F6700374343 /* ZMConversation+Testing.swift */; };
-<<<<<<< HEAD
-		169BA24425EF6FFA00374343 /* MockAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA24325EF6FFA00374343 /* MockAnalytics.swift */; };
-=======
-		169BA24225EF6F6700374343 /* ZMConversation+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA24025EF6F6700374343 /* ZMConversation+Testing.swift */; };
-		169BA24625EF73B100374343 /* EventProcessingPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169E55F52518FF810092CD53 /* EventProcessingPerformanceTests.swift */; };
-		169BA24725EF73DD00374343 /* ServiceUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE71FFFBC3900900B22 /* ServiceUserTests.swift */; };
-		169BA24825EF743700374343 /* SessionManagerTests+MessageRetention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166D191C231569DD001288CD /* SessionManagerTests+MessageRetention.swift */; };
-		169BA24925EF743F00374343 /* SessionManagerTests+Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */; };
-		169BA24A25EF744400374343 /* SessionManagerTests+URLActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3B23F6BE7F00ABFF33 /* SessionManagerTests+URLActions.swift */; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		169BA24C25EF753100374343 /* MockReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA24B25EF753100374343 /* MockReachability.swift */; };
 		169BA25225EF778E00374343 /* TestUserProfileUpdateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA25125EF778E00374343 /* TestUserProfileUpdateObserver.swift */; };
 		169BC10F22BD17FF0003159B /* LegalHoldRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BC10E22BD17FF0003159B /* LegalHoldRequestStrategyTests.swift */; };
@@ -293,30 +279,18 @@
 		591B6E0C2C8B091A009F8A7B /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549815931A43232400A7CE2E /* WireSyncEngine.framework */; };
 		591B6E102C8B0926009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BB92954AA9300D939E7 /* WireMockTransport.framework */; };
 		591B6E132C8B092B009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
-		591B6E152C8B092F009F8A7B /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6C7296F0622001D7C88 /* avs.xcframework */; };
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
-<<<<<<< HEAD
 		598D04362C89C6FB00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04352C89C6FB00B64D71 /* WireFoundation */; };
 		598D04392C89C70500B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04382C89C70500B64D71 /* WireFoundation */; };
-		59909A612C5BBF13009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A602C5BBF13009C41DE /* WireAPI */; };
-=======
-		598E87022BF4DE9600FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */; };
-		598E87052BF4E01300FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
-		59909A652C5BBFCC009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A642C5BBFCC009C41DE /* WireAPI */; };
+		59909A652C5BBFCC009C41DE /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */; };
 		5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; };
 		5996E89E2C19CF54007A52F0 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5996E89B2C19CF54007A52F0 /* AutoMockable.generated.swift */; };
 		5996E89F2C19CF54007A52F0 /* AutoMockable.manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5996E89C2C19CF54007A52F0 /* AutoMockable.manual.swift */; };
-<<<<<<< HEAD
 		59B99FAE2C89DF7B00201827 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAD2C89DF7B00201827 /* WireDomainPackage */; };
-=======
-		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59D5C2312C35846600CE1D5E /* AppendTextMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D5C2302C35846600CE1D5E /* AppendTextMessageUseCaseTests.swift */; };
-		59DA04A32BD25486003F9195 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
 		59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */; };
@@ -489,6 +463,8 @@
 		E96970592C8F354F009F037C /* AppendFileMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */; };
 		E97296252C4A784300C4F1DB /* MessageAppendableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */; };
 		E97296282C4AA7D300C4F1DB /* AppendImageMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */; };
+		E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A602C5BBF13009C41DE /* WireAPI */; };
+		E9816C942CC925C400D77F22 /* AnalyticsEventTrackerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = E998FE8D2C184C9800EAA672 /* UserCredentials.swift */; };
 		E9A71BD32C32EA8B0027EC01 /* AppendTextMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */; };
@@ -501,7 +477,6 @@
 		E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E9C60E912C259F3C004E5F13 /* WireAnalytics */; };
 		E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */; };
 		E9EAEAA72BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */; };
-		E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */; };
 		E9F403152C5B96CD00F81366 /* EnableAnalyticsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */; };
 		E9F403172C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F403162C5BD26C00F81366 /* SessionManager+AnalyticsUseCases.swift */; };
 		E9F627B32BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F627B22BE4BF4A008C2B1C /* CreateConversationGuestLinkUseCaseTests.swift */; };
@@ -555,7 +530,7 @@
 		EE9CDE9027DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */; };
 		EE9CDE9227DA05D100C4DAC8 /* APIVersionResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */; };
 		EEA58F102B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */; };
-		EEC6499B2CAFFA1600153927 /* AnalyticsEventTrackerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC6499A2CAFFA1500153927 /* AnalyticsEventTrackerProvider.swift */; };
+		EEC6499B2CAFFA1600153927 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		EEC7AB0C2A08F3DF005614BE /* OperationStateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC7AB0B2A08F3DF005614BE /* OperationStateProvider.swift */; };
 		EECE27C429435FFE00419A8B /* PushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C329435FFE00419A8B /* PushTokenService.swift */; };
 		EECE27C6294362F100419A8B /* MockPushTokenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE27C5294362F100419A8B /* MockPushTokenService.swift */; };
@@ -690,12 +665,8 @@
 		014813412CC0551500F36DAA /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		015519452C20D20800037358 /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0155194D2C20D29400037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-<<<<<<< HEAD
-=======
 		017704D92CA44C0D00BE69ED /* EnableAnalyticsUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnableAnalyticsUseCaseTests.swift; sourceTree = "<group>"; };
 		017704DB2CA44C0D00BE69ED /* DisableAnalyticsUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisableAnalyticsUseCaseTests.swift; sourceTree = "<group>"; };
-		017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SlowSyncTests+NotificationsV3.swift"; sourceTree = "<group>"; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
@@ -1151,11 +1122,6 @@
 		BF2AD9FF1F41A3DF000980E8 /* SessionFactories.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionFactories.swift; sourceTree = "<group>"; };
 		BF2ADA011F41A450000980E8 /* BackendEnvironmentProvider+Cookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BackendEnvironmentProvider+Cookie.swift"; sourceTree = "<group>"; };
 		BF3C1B1620DBE254001CE126 /* Conversation+MessageDestructionTimeout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+MessageDestructionTimeout.swift"; sourceTree = "<group>"; };
-<<<<<<< HEAD
-		BF40AC711D096A0E00287E29 /* AnalyticsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTests.swift; sourceTree = "<group>"; };
-=======
-		BF3C1B1820DBE3B2001CE126 /* ConversationTests+MessageTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationTests+MessageTimer.swift"; sourceTree = "<group>"; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		BF44A3501C71D5FC00C6928E /* store127.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = store127.wiredatabase; sourceTree = "<group>"; };
 		BF491CD01F03D7CF0055EE44 /* PermissionsDownloadRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionsDownloadRequestStrategy.swift; sourceTree = "<group>"; };
 		BF491CD41F03E0FC0055EE44 /* PermissionsDownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionsDownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1210,6 +1176,7 @@
 		E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendFileMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppendableConversation.swift; sourceTree = "<group>"; };
 		E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendImageMessageUseCaseTests.swift; sourceTree = "<group>"; };
+		E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerProvider.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
 		E998FE8D2C184C9800EAA672 /* UserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCredentials.swift; sourceTree = "<group>"; };
 		E9A71BD22C32EA8B0027EC01 /* AppendTextMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendTextMessageUseCase.swift; sourceTree = "<group>"; };
@@ -1277,11 +1244,6 @@
 		EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+APIVersionResolver.swift"; sourceTree = "<group>"; };
 		EE9CDE9127DA05D100C4DAC8 /* APIVersionResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIVersionResolverTests.swift; sourceTree = "<group>"; };
 		EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTeamOneOnOneConversationUseCaseTests.swift; sourceTree = "<group>"; };
-<<<<<<< HEAD
-=======
-		EEC0A2D229433D360032C1C9 /* SessionManagerTests+PushToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+PushToken.swift"; sourceTree = "<group>"; };
-		EEC6499A2CAFFA1500153927 /* AnalyticsEventTrackerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerProvider.swift; sourceTree = "<group>"; };
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		EEC7AB0B2A08F3DF005614BE /* OperationStateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationStateProvider.swift; sourceTree = "<group>"; };
 		EECE27C329435FFE00419A8B /* PushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenService.swift; sourceTree = "<group>"; };
 		EECE27C5294362F100419A8B /* MockPushTokenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushTokenService.swift; sourceTree = "<group>"; };
@@ -1418,7 +1380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				591B6E0C2C8B091A009F8A7B /* WireSyncEngine.framework in Frameworks */,
-				59909A652C5BBFCC009C41DE /* WireAPI in Frameworks */,
+				59909A652C5BBFCC009C41DE /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1439,11 +1401,6 @@
 				5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				59FFADA02C8229BB000C8085 /* WireTransportSupport.framework in Frameworks */,
 				5996E8952C19CB36007A52F0 /* WireUtilitiesSupport.framework in Frameworks */,
-<<<<<<< HEAD
-=======
-				E9EB58202C357FDE00A2325E /* WireAnalyticsSupport in Frameworks */,
-				CB79AC7F2C6DFAC2003CF5F4 /* WireTransportSupport.framework in Frameworks */,
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 				CB4895532C4FB77C00CA2C25 /* WireTesting.framework in Frameworks */,
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				598D04392C89C70500B64D71 /* WireFoundation in Frameworks */,
@@ -1457,14 +1414,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
-				591B6E152C8B092F009F8A7B /* avs.xcframework in Frameworks */,
-				59909A612C5BBF13009C41DE /* WireAPI in Frameworks */,
-=======
+				E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */,
 				661A37632C5C0E6100FD511C /* WireAPI in Frameworks */,
 				E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */,
-				EE67F6CC296F0622001D7C88 /* avs.xcframework in Frameworks */,
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				015519462C20D20800037358 /* WireDomain.framework in Frameworks */,
 				59B99FAE2C89DF7B00201827 /* WireDomainPackage in Frameworks */,
@@ -2144,7 +2096,6 @@
 				E60579D52C1C3E3D003D4A98 /* ZMNetworkAvailabilityChangeNotification.swift */,
 				5458AF831F7021B800E45977 /* PreLoginAuthenticationNotification.swift */,
 				E9AD0A352C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift */,
-				EEC6499A2CAFFA1500153927 /* AnalyticsEventTrackerProvider.swift */,
 			);
 			path = UserSession;
 			sourceTree = "<group>";
@@ -2576,6 +2527,7 @@
 		E6C983EF2B986B2900D55177 /* ZMUserSession */ = {
 			isa = PBXGroup;
 			children = (
+				E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */,
 				E623B6362BD688A100F91B37 /* Dependencies */,
 				E6BD767E2BDBAAE300FB1F8B /* CoreDataStack+Caches.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
@@ -2863,7 +2815,6 @@
 			);
 			name = WireSyncEngineSupport;
 			packageProductDependencies = (
-				59909A642C5BBFCC009C41DE /* WireAPI */,
 			);
 			productName = WireSyncEngineSupport;
 			productReference = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */;
@@ -2904,11 +2855,7 @@
 			);
 			name = UnitTests;
 			packageProductDependencies = (
-<<<<<<< HEAD
 				598D04382C89C70500B64D71 /* WireFoundation */,
-=======
-				E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */,
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 			);
 			productName = "WireSyncEngine-iOS-Tests";
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
@@ -2929,14 +2876,10 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
-<<<<<<< HEAD
 				59909A602C5BBF13009C41DE /* WireAPI */,
 				598D04352C89C6FB00B64D71 /* WireFoundation */,
 				59B99FAD2C89DF7B00201827 /* WireDomainPackage */,
-=======
-				EE88B0242BF4D8060013F0BD /* WireAPI */,
 				E9C60E912C259F3C004E5F13 /* WireAnalytics */,
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -3010,8 +2953,6 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
-				EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */,
-				E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -3114,123 +3055,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-<<<<<<< HEAD
-=======
-		169BA1CE25ECDBA300374343 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E666EDE82B74E8CE00C03E2B /* SessionManagerTests+EncryptionAtRestDefaults.swift in Sources */,
-				169BA23A25EF6D4F00374343 /* MockLinkPreviewDetector.swift in Sources */,
-				169BA23025ED100100374343 /* ConversationsTests.m in Sources */,
-				169BA24E25EF765D00374343 /* ConnectToBotURLActionProcessorTests.swift in Sources */,
-				169BA22925ED0FDF00374343 /* ConversationTests+Ephemeral.swift in Sources */,
-				169BA23E25EF6E2A00374343 /* MockRegistrationStatusDelegate.swift in Sources */,
-				169BA22725ED0FD700374343 /* ConversationTests+MessageTimer.swift in Sources */,
-				169BA21825ED0F9500374343 /* SendAndReceiveMessagesTests+Swift.swift in Sources */,
-				169BA20425ED0F1E00374343 /* TeamTests.swift in Sources */,
-				169BA20025ED0DAD00374343 /* ZMUserSession+Messages.swift in Sources */,
-				169BA21325ED0F7A00374343 /* UserTests.swift in Sources */,
-				169BA21725ED0F8E00374343 /* SearchTests.swift in Sources */,
-				63E69AEA27EA293900D6CE88 /* ConnectionTests+Swift.swift in Sources */,
-				169BA1F925ECF8F700374343 /* MockAppLock.swift in Sources */,
-				169BA20825ED0F4400374343 /* GiphyTests.m in Sources */,
-				169BA20F25ED0F6900374343 /* APNSTestsBase.m in Sources */,
-				169BA22E25ED0FF400374343 /* TextSearchTests.swift in Sources */,
-				169BA26125EFA23200374343 /* ZMConversation+Testing.m in Sources */,
-				169BA21F25ED0FB400374343 /* ConversationTests+Deletion.swift in Sources */,
-				169BA1FC25ED0CBD00374343 /* MockSessionManager.swift in Sources */,
-				169BA20525ED0F2D00374343 /* LinkPreviewTests.swift in Sources */,
-				169BA24225EF6F6700374343 /* ZMConversation+Testing.swift in Sources */,
-				169BA24625EF73B100374343 /* EventProcessingPerformanceTests.swift in Sources */,
-				169BA23625ED101C00374343 /* LoginFlowTests.m in Sources */,
-				169BA21225ED0F7600374343 /* UserTests+AccountDeletion.swift in Sources */,
-				E6A6FE292C4175DE001407E8 /* IntegrationTest+BackendInfo.swift in Sources */,
-				E666EDEA2B74E9EF00C03E2B /* SessionManagerTests+Teams.swift in Sources */,
-				169BA1DF25ECE4D000374343 /* IntegrationTest.m in Sources */,
-				169BA1F125ECEB2900374343 /* FlowManagerMock.swift in Sources */,
-				169BA21C25ED0FA700374343 /* ConversationTests+LegalHold.swift in Sources */,
-				169BA20725ED0F3E00374343 /* OTRTests.swift in Sources */,
-				169BA21025ED0F6D00374343 /* PushChannelTests.swift in Sources */,
-				169BA21A25ED0F9E00374343 /* FileTransferTests+Swift.swift in Sources */,
-				169BA1E125ECE4EC00374343 /* AppLockIntegrationTests.swift in Sources */,
-				169BA22C25ED0FEB00374343 /* ConversationTests+MessageEditing.m in Sources */,
-				169BA22A25ED0FE300374343 /* ConversationTests+DeliveryConfirmation.swift in Sources */,
-				169BA1F225ECEB3300374343 /* MockMediaManager.swift in Sources */,
-				169BA23925ED103900374343 /* IntegrationTest+Messages.swift in Sources */,
-				169BA24D25EF753100374343 /* MockReachability.swift in Sources */,
-				169BA24F25EF76A400374343 /* NetworkStateRecorder.swift in Sources */,
-				169BA21D25ED0FAC00374343 /* ConversationTests+OTR.swift in Sources */,
-				169BA20125ED0EFE00374343 /* ZMUserSessionLegalHoldTests.swift in Sources */,
-				169BA21925ED0F9900374343 /* SendAndReceiveMessagesTests.m in Sources */,
-				169BA22625ED0FD300374343 /* ConversationTests+ReceiptMode.swift in Sources */,
-				E666EDF22B74ED2F00C03E2B /* MockSessionManagerObserver.swift in Sources */,
-				E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */,
-				169BA21625ED0F8900374343 /* UserProfileTests.m in Sources */,
-				169BA20D25ED0F5E00374343 /* APNSTests+Swift.swift in Sources */,
-				E666EDEC2B74EA5000C03E2B /* SessionManagerTests+MultiUserSession.swift in Sources */,
-				169BA24925EF743F00374343 /* SessionManagerTests+Backup.swift in Sources */,
-				169BA26225EFA32000374343 /* ZMUser+Testing.m in Sources */,
-				169BA22D25ED0FEF00374343 /* AvailabilityTests.swift in Sources */,
-				E666EDEE2B74EAC300C03E2B /* SessionManagerTests+AppLock.swift in Sources */,
-				169BA1F025ECEB0E00374343 /* SessionManagerTests.swift in Sources */,
-				EE0BA29029D5DBD6004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
-				EECE27C729436CF900419A8B /* MockPushTokenService.swift in Sources */,
-				169BA21425ED0F8000374343 /* UserTests.m in Sources */,
-				169BA21E25ED0FB000374343 /* ConversationTests+OTR.m in Sources */,
-				169BA23325ED100F00374343 /* SlowSyncTests+Teams.swift in Sources */,
-				169BA21125ED0F7100374343 /* UserHandleTests.swift in Sources */,
-				169BA23125ED100500374343 /* ConversationTestsBase.m in Sources */,
-				169BA24825EF743700374343 /* SessionManagerTests+MessageRetention.swift in Sources */,
-				169BA1E025ECE4D800374343 /* IntegrationTest.swift in Sources */,
-				169BA25325EF778E00374343 /* TestUserProfileUpdateObserver.swift in Sources */,
-				01300E62296838CE00D18B2E /* SessionManagerTests+Proxy.swift in Sources */,
-				169BA22425ED0FC900374343 /* ConversationTests+Participants.swift in Sources */,
-				169BA23825ED103500374343 /* IntegrationTest+Search.swift in Sources */,
-				63F376E12835644800FE1F05 /* SessionManagerTests+APIVersionResolver.swift in Sources */,
-				169BA1EC25ECEA9600374343 /* MockUser+LoginCredentials.swift in Sources */,
-				169BA1F525ECF05000374343 /* IntegrationTest+Encryption.swift in Sources */,
-				169BA21B25ED0FA200374343 /* FileTransferTests.m in Sources */,
-				169BA1EA25ECEA5400374343 /* ApplicationMock.swift in Sources */,
-				169BA24725EF73DD00374343 /* ServiceUserTests.swift in Sources */,
-				169BA23525ED101700374343 /* SlowSyncTests.m in Sources */,
-				E666EDE62B74E85300C03E2B /* SessionManagerTests+EncryptionAtRestMigration.swift in Sources */,
-				169BA22125ED0FBD00374343 /* ConversationTests+LastRead.swift in Sources */,
-				169BA1E925ECEA1C00374343 /* PushRegistryMock.swift in Sources */,
-				169BA1EF25ECEAD200374343 /* WireCallCenterV3Mock.swift in Sources */,
-				169BA22025ED0FB900374343 /* ConversationTests+ClearingHistory.swift in Sources */,
-				169BA22B25ED0FE700374343 /* ConversationTests+MessageEditing.swift in Sources */,
-				169BA1FD25ED0CCD00374343 /* MockStrategyDirectory.swift in Sources */,
-				169BA20E25ED0F6200374343 /* APNSTests.m in Sources */,
-				E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */,
-				169BA1F425ECEFB400374343 /* MockPresentationDelegate.swift in Sources */,
-				169BA22525ED0FCE00374343 /* ConversationTests+List.swift in Sources */,
-				169BA21525ED0F8500374343 /* UserProfileImageV3Tests.swift in Sources */,
-				06EB24FE27D6576500094E6E /* LoginFlowTests+PushToken.swift in Sources */,
-				169BA22F25ED0FFB00374343 /* DeleteMessagesTests.swift in Sources */,
-				169BA23725ED102500374343 /* NotificationObservers.m in Sources */,
-				169BA22825ED0FDB00374343 /* ConversationTests+Guests.swift in Sources */,
-				169BA20225ED0F0600374343 /* UserRichProfileIntegrationTests.swift in Sources */,
-				017ABBB62995278C0004C243 /* SlowSyncTests+NotificationsV3.swift in Sources */,
-				169BA20925ED0F4A00374343 /* IsTypingTests.swift in Sources */,
-				169BA20A25ED0F5000374343 /* BackgroundTests.m in Sources */,
-				169BA22225ED0FC100374343 /* ConversationTests+Reactions.swift in Sources */,
-				169BA1ED25ECEA9A00374343 /* OperationLoopNewRequestObserver.swift in Sources */,
-				169BA1FB25ED0CB200374343 /* MockPushChannel.swift in Sources */,
-				CBD3AED12C4A742B007643A0 /* TestSetup.swift in Sources */,
-				169BA20625ED0F3800374343 /* ClientManagementTests.m in Sources */,
-				EECE27C829436DC000419A8B /* SessionManagerTests+PushToken.swift in Sources */,
-				169BA24A25EF744400374343 /* SessionManagerTests+URLActions.swift in Sources */,
-				169BA22325ED0FC400374343 /* ConversationTests+Archiving.swift in Sources */,
-				169BA20B25ED0F5400374343 /* ConnectionTests.m in Sources */,
-				E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */,
-				169BA23425ED101300374343 /* SlowSyncTests+ExistingData.swift in Sources */,
-				169BA23225ED100B00374343 /* SlowSyncTests+Swift.swift in Sources */,
-				169BA23F25EF6F0B00374343 /* TypingChange.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 		3E186084191A56F6000FE027 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3594,6 +3418,7 @@
 				16F5F16C1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift in Sources */,
 				09531F181AE960E300B8556A /* ZMLoginCodeRequestTranscoder.m in Sources */,
 				06D16AB52BA0624800D5A28A /* IsE2EICertificateEnrollmentRequiredUseCase.swift in Sources */,
+				E9816C942CC925C400D77F22 /* AnalyticsEventTrackerProvider.swift in Sources */,
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				09BCDB8F1BCE7F000020DCC7 /* ZMAPSMessageDecoder.m in Sources */,
@@ -3611,7 +3436,7 @@
 				E91180DF2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift in Sources */,
 				F9B171F61C0EF21100E6EEC6 /* ClientUpdateStatus.swift in Sources */,
 				EEC7AB0C2A08F3DF005614BE /* OperationStateProvider.swift in Sources */,
-				EEC6499B2CAFFA1600153927 /* AnalyticsEventTrackerProvider.swift in Sources */,
+				EEC6499B2CAFFA1600153927 /* (null) in Sources */,
 				549816351A432BC800A7CE2E /* ZMLoginTranscoder.m in Sources */,
 				5E8BB89C2147CE1600EEA64B /* AVSCallMember.swift in Sources */,
 				166D18A4230EBFFA001288CD /* MediaManager.swift in Sources */,
@@ -4269,19 +4094,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../WireAnalytics;
-		};
-		EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../WireAPI;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-<<<<<<< HEAD
 		598D04352C89C6FB00B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
@@ -4291,28 +4104,20 @@
 			productName = WireFoundation;
 		};
 		59909A602C5BBF13009C41DE /* WireAPI */ = {
-=======
-		59909A642C5BBFCC009C41DE /* WireAPI */ = {
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAPI;
-		};
-		E9C60E912C259F3C004E5F13 /* WireAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireAnalytics;
-		};
-		E9EB581F2C357FDE00A2325E /* WireAnalyticsSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E9C60E902C259F3C004E5F13 /* XCLocalSwiftPackageReference "../WireAnalytics" */;
-			productName = WireAnalyticsSupport;
-		};
-		EE88B0242BF4D8060013F0BD /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
 		};
 		59B99FAD2C89DF7B00201827 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
+		};
+		E9C60E912C259F3C004E5F13 /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
+		};
+		EE88B0242BF4D8060013F0BD /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireAPI/Sources/WireAPI/APIs/FeatureConfigsAPI/FeatureConfigsAPIV2.swift
 import Foundation
 
 class FeatureConfigsAPIV2: FeatureConfigsAPIV1 {
 
     override var apiVersion: APIVersion {
         .v2
-========
-extension ProcessInfo {
 
-    var isRunningTests: Bool {
-        return environment["XCTestConfigurationFilePath"] != nil
->>>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825)):wire-ios-sync-engine/Source/ProcessInfo+Tests.swift
     }
-
 }

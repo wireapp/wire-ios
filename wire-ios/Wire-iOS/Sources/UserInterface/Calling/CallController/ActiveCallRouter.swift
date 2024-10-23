@@ -90,12 +90,8 @@ where TopOverlayPresenter: TopOverlayPresenting {
 
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
-<<<<<<< HEAD
-        callQualityController = CallQualityController(mainWindow: mainWindow)
-=======
 
-        callQualityController = CallQualityController(rootViewController: rootViewController, callQualitySurvey: userSession.makeCallQualitySurveyUseCase())
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
+        callQualityController = CallQualityController(mainWindow: mainWindow, submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase())
         transitioningDelegate = CallQualityAnimator()
 
         callController.router = self

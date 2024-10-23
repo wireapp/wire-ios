@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-class FeatureConfigsAPIV2: FeatureConfigsAPIV1 {
+final class LaunchScreenViewController: UIViewController {
 
-    override var apiVersion: APIVersion {
-        .v2
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
+        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
+        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        view.backgroundColor = .black
+        view.addSubview(shieldImageView)
+        NSLayoutConstraint.activate([
+            shieldImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            shieldImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
     }
-
 }

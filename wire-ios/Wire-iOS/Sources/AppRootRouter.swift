@@ -35,15 +35,8 @@ final class AppRootRouter {
     private let switchingAccountRouter: SwitchingAccountRouter
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
-<<<<<<< HEAD
-    private let quickActionsManager: QuickActionsManager
-    private var authenticatedRouter: AuthenticatedRouter? {
-        didSet { setupAnalyticsSharing() }
-    }
-=======
     private var quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter?
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []

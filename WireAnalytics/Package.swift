@@ -19,14 +19,9 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-<<<<<<< HEAD
-            dependencies: resolveWireAnalyticsDependencies()
-=======
             dependencies: resolveWireAnalyticsDependencies() + [
                 .product(name: "Countly", package: "countly-sdk-ios")
-            ],
-            swiftSettings: swiftSettings
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
+            ]
         ),
         .target(
             name: "WireDatadog",
@@ -36,11 +31,7 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-<<<<<<< HEAD
             ]
-=======
-            ],
-            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireAnalyticsSupport",
@@ -55,7 +46,6 @@ let package = Package(
         .testTarget(
             name: "WireAnalyticsTests",
             dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
         )
     ]
 )
@@ -63,17 +53,17 @@ let package = Package(
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        ["WireDatadog"]
+        return ["WireDatadog"]
     } else {
-        []
+        return []
     }
 }
 
 func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     if let value {
-        ProcessInfo.processInfo.environment[name] == value
+        return ProcessInfo.processInfo.environment[name] == value
     } else {
-        ProcessInfo.processInfo.environment[name] != nil
+        return ProcessInfo.processInfo.environment[name] != nil
     }
 }
 

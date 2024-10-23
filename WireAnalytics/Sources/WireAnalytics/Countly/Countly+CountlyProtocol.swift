@@ -19,6 +19,10 @@
 import Countly
 
 extension Countly: CountlyProtocol {
+    func resetInstance() {
+        
+    }
+    
 
     func start(
         appKey: String,

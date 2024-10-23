@@ -17,12 +17,12 @@
 //
 
 import Foundation
+import WireAnalytics
 
-class FeatureConfigsAPIV2: FeatureConfigsAPIV1 {
+protocol AnalyticsEventTrackerProvider: AnyObject {
 
-    override var apiVersion: APIVersion {
-        .v2
-
-    }
+    var analyticsEventTracker: (any AnalyticsEventTracker)? { get }
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?)
+    func createAnalyticsUser() async throws -> AnalyticsUser
 
 }

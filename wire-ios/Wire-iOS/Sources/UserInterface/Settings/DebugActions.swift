@@ -59,8 +59,6 @@ enum DebugActions {
         }
     }
 
-<<<<<<< HEAD
-=======
     /// Shows the user ID of the self user
     static func showUserId(_ type: any SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
@@ -74,7 +72,6 @@ enum DebugActions {
         )
     }
 
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBackArrowDot(_ type: any SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
@@ -157,9 +154,6 @@ enum DebugActions {
         }
     }
 
-<<<<<<< HEAD
-    static func reloadUserInterface(_ type: SettingsCellDescriptorType) {
-=======
     static func showAnalyticsIdentifier(_ type: any SettingsCellDescriptorType) {
         guard
             let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
@@ -209,7 +203,6 @@ enum DebugActions {
     }
 
     static func reloadUserInterface(_ type: any SettingsCellDescriptorType) {
->>>>>>> aba5b2dca4 (feat: analytics milestone 1 - WPB-8911 (#1825))
         guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
             return
         }
