@@ -7,4 +7,4 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["Wire", "WireCommonComponents"]
-  autoMockableImports: ["CoreLocation", "WireDataModel", "WireMainNavigationUI", "WireSyncEngine"]
+  autoMockableImports: ["CoreLocation", "WireDataModel", "WireSyncEngine"]

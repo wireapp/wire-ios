@@ -90,7 +90,10 @@ final class ZClientViewController: UIViewController {
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
-    private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
+
+    private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
+        userSession: userSession
+    )
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -250,7 +253,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
-        //connectBuilder.delegate = self // TODO: create dedicated type
+        connectBuilder.delegate = self
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false

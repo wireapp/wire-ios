@@ -17,10 +17,9 @@
 //
 
 import UIKit
-import WireMainNavigationUI
 
 // sourcery: AutoMockable
 protocol SelfProfileViewControllerBuilderProtocol {
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController
+    func build(mainCoordinator: MainCoordinator) -> UINavigationController
 }

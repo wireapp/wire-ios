@@ -33,7 +33,6 @@ import AppKit
 
 import CoreLocation
 import WireDataModel
-import WireMainNavigationUI
 import WireSyncEngine
 
 @testable import Wire
@@ -314,12 +313,12 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [AnyMainCoordinator<MainCoordinatorDependencies>] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [MainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController {
+    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
@@ -495,12 +494,12 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [AnyMainCoordinator<MainCoordinatorDependencies>] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [MainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController {
+    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
@@ -1429,12 +1428,12 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [AnyMainCoordinator<MainCoordinatorDependencies>] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [MainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController {
+    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
