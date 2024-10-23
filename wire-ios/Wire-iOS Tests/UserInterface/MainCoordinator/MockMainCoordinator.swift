@@ -92,13 +92,3 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 }
-
-// MARK: - MainCoordinatorProtocol + MockMainCoordinator
-
-// TODO: remove
-//extension Wire.MainCoordinator {
-//    @MainActor
-//    static var mock: Self {
-//        .init(mainCoordinator: MockMainCoordinator())
-//    }
-//}

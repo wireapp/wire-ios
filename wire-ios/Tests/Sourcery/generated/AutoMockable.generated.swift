@@ -466,6 +466,25 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
 
 
 
+    // MARK: - build
+
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator<MainCoordinatorDependencies>] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
+
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
+
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildMainCoordinator`")
+        }
+    }
+
 }
 
 class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkViewModelDelegate {

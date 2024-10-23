@@ -235,14 +235,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         newConversationBarButton.accessibilityIdentifier = "create_group_or_search_button"
         newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
-        newConversationBarButton.addAction(.init { [weak self] _ in
-            Task {
-                // TODO: fix
-                fatalError()
-                // createGroupConversationViewControllerBuilder
-                await self?.mainCoordinator.presentViewController(.init())
-            }
-        }, for: .primaryActionTriggered)
+        newConversationBarButton.addTarget(self, action: #selector(presentCreateConversationUI), for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
         newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         newConversationBarButton.layer.borderWidth = 1
@@ -312,6 +305,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         Task {
             let selfProfileUI = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
             await mainCoordinator.presentViewController(selfProfileUI)
+        }
+    }
+
+    @objc
+    private func presentCreateConversationUI() {
+        Task {
+            let createConversationUI = createGroupConversationViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            await mainCoordinator.presentViewController(createConversationUI)
         }
     }
 
