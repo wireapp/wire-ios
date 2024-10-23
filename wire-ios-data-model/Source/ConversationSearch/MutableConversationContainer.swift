@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A mutable container of conversations used by the `ConversationSearchUseCase`.
+/// A mutable container of conversations used by the `FilterConversationsUseCase`.
 /// This can be interpreted as a section in a table where a row is a conversation.
 public protocol MutableConversationContainer {
-    associatedtype Conversation: SearchableConversation
+    associatedtype Conversation: FilterableConversation
 
     var conversations: [Conversation] { get }
 

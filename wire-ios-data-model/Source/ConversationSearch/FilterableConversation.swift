@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A protocol which represents a conversation that can be searched for.
-public protocol SearchableConversation {
-    associatedtype SearchableParticipant: SearchableConversationParticipant
+/// A protocol which represents a conversation that can be filtered by query.
+public protocol FilterableConversation {
+    associatedtype Participant: FilterableConversationParticipant
 
-    var searchableName: String { get }
-    var searchableParticipants: [SearchableParticipant] { get }
+    var name: String { get }
+    var participants: [Participant] { get }
 }

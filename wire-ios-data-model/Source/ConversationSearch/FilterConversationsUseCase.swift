@@ -52,15 +52,15 @@ where ConversationContainer: MutableConversationContainer {
                 let conversation = containers[containerIndex].conversations[conversationIndex]
 
                 // don't remove the conversation from the results if conversation name matches
-                let conversationSearchableName = conversation.searchableName.normalizedForSearch() as String
-                if conversationSearchableName.lowercased().contains(query) {
+                let conversationName = conversation.name.normalizedForSearch() as String
+                if conversationName.lowercased().contains(query) {
                     continue
                 }
 
                 // don't remove the conversation from the results if any participant's name matches
-                for participant in conversation.searchableParticipants {
-                    let participantSearchableName = participant.searchableName.normalizedForSearch() as String
-                    if participantSearchableName.lowercased().contains(query) {
+                for participant in conversation.participants {
+                    let participantName = participant.name.normalizedForSearch() as String
+                    if participantName.lowercased().contains(query) {
                         continue conversationLoop
                     }
                 }
