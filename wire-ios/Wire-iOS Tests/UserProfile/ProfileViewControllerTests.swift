@@ -30,7 +30,7 @@ final class ProfileViewControllerTests: XCTestCase {
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var mockViewModel: MockProfileViewControllerViewModeling!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp

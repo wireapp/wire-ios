@@ -31,7 +31,7 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     let createGroupConversationViewControllerBuilder: any CreateGroupConversationViewControllerBuilderProtocol
@@ -120,7 +120,7 @@ final class ConversationListViewController: UIViewController {
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
@@ -147,7 +147,7 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol

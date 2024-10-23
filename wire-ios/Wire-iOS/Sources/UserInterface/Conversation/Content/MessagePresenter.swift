@@ -177,7 +177,7 @@ final class MessagePresenter: NSObject {
         targetView: UIView,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         fileAvailabilityObserver = nil
@@ -206,7 +206,7 @@ final class MessagePresenter: NSObject {
         _ message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         let imageViewController = viewController(
@@ -227,7 +227,7 @@ final class MessagePresenter: NSObject {
         forImageMessage message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
@@ -249,7 +249,7 @@ final class MessagePresenter: NSObject {
         forImageMessagePreview message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),

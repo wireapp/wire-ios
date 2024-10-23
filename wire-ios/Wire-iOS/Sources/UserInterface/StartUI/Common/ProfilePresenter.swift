@@ -26,7 +26,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
@@ -34,7 +34,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     private var onDismiss: (() -> Void)?
 
     init(
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.mainCoordinator = mainCoordinator

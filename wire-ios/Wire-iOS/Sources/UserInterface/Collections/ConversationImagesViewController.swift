@@ -78,7 +78,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     var dismissAction: DismissAction? = .none {
@@ -94,7 +94,7 @@ final class ConversationImagesViewController: UIViewController {
         initialMessage: ZMConversationMessage,
         inverse: Bool = false,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         assert(initialMessage.isImage)

@@ -35,7 +35,7 @@ extension MessagePresenter {
         actionResponder: MessageActionResponder,
         isPreviewing: Bool,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 

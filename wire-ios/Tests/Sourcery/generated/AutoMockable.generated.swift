@@ -313,12 +313,12 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [MainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
@@ -494,12 +494,12 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [MainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {
@@ -1428,12 +1428,12 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [MainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((MainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
     var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         buildMainCoordinator_Invocations.append(mainCoordinator)
 
         if let mock = buildMainCoordinator_MockMethod {

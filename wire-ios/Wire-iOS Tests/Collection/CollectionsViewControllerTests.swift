@@ -50,7 +50,7 @@ final class CollectionsViewControllerTests: XCTestCase {
     private var deletedLinkMessage: ZMConversationMessage!
 
     private var userSession: UserSessionMock!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     // MARK: - setUp
 

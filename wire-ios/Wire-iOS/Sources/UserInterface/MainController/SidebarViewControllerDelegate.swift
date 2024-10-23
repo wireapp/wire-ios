@@ -21,12 +21,12 @@ import WireSidebarUI
 
 final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDelegate {
 
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     init(
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {

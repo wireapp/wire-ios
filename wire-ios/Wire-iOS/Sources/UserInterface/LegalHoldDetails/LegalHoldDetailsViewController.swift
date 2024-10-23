@@ -28,13 +28,13 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     convenience init?(
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         guard let conversation = user.oneToOneConversation else { return nil }
@@ -49,7 +49,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     init(
         conversation: LegalHoldDetailsConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.conversation = conversation
@@ -77,7 +77,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UINavigationController? {
         let legalHoldDetailsViewController = LegalHoldDetailsViewController(
@@ -96,7 +96,7 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) -> UINavigationController {
         let legalHoldDetailsViewController = LegalHoldDetailsViewController(

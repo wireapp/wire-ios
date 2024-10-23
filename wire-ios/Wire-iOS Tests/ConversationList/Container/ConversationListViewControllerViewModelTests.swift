@@ -30,7 +30,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     @MainActor
     override func setUp() async throws {

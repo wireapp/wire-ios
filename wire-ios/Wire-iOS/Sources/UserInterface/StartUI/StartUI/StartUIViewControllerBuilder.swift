@@ -34,7 +34,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
-    func build(mainCoordinator: MainCoordinator) -> UINavigationController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),

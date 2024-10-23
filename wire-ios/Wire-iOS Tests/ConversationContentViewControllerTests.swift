@@ -27,7 +27,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
     private var mockMessage: MockMessage!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     @MainActor
     override func setUp() async throws {

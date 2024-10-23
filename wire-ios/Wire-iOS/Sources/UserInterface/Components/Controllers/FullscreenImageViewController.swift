@@ -79,7 +79,7 @@ final class FullscreenImageViewController: UIViewController {
     private var isShowingChrome = true
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private var messageObserverToken: NSObjectProtocol?
@@ -93,7 +93,7 @@ final class FullscreenImageViewController: UIViewController {
     init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.message = message

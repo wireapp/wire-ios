@@ -92,7 +92,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     convenience init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.init(
@@ -116,7 +116,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.message = message

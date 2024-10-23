@@ -96,7 +96,7 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
@@ -117,7 +117,7 @@ final class ConversationContentViewController: UIViewController {
         message: ZMConversationMessage? = nil,
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)

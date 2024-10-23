@@ -43,7 +43,7 @@ final class StartUIViewController: UIViewController {
 
     let userSession: UserSession
 
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
 
     let isFederationEnabled: Bool
 
@@ -83,7 +83,7 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled

@@ -27,7 +27,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     private var mockView: UIView!
     private var mockViewController: MockConversationListContainer!
     private var userSession: UserSessionMock!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
     private var window: UIWindow!

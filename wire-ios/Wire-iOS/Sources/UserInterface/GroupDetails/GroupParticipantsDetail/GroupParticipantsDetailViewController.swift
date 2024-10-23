@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
@@ -47,7 +47,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.mainCoordinator = mainCoordinator

@@ -55,7 +55,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
 
     // MARK: - init
@@ -68,7 +68,7 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
@@ -107,7 +107,7 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: MainCoordinator, // TODO: maybe the MainCoordinator can be injected into the builder instead, but maybe not (how to present anything then?)
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel

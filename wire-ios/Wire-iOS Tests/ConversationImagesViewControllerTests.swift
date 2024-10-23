@@ -42,7 +42,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     private var sut: ConversationImagesViewController! = nil
     private var navigatorController: UINavigationController! = nil
     private var userSession: UserSessionMock!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     override var needsCaches: Bool { true }
 

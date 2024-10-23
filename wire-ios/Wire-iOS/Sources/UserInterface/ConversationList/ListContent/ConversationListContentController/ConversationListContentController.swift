@@ -34,7 +34,7 @@ final class ConversationListContentController: UICollectionViewController {
         ZMConversationMessage
     >
     private let conversationListCoordinator: ConversationListCoordinator
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
@@ -54,7 +54,7 @@ final class ConversationListContentController: UICollectionViewController {
     init<ConversationListCoordinator>(
         userSession: UserSession,
         conversationListCoordinator: ConversationListCoordinator,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         zClientViewController: ZClientViewController?
     ) where

@@ -18,11 +18,9 @@
 
 import WireMainNavigationUI
 
-typealias MainCoordinator = WireMainNavigationUI.AnyMainCoordinator<MainCoordinatorDependencies>
+typealias AnyMainCoordinator = WireMainNavigationUI.AnyMainCoordinator<MainCoordinatorDependencies>
 
-extension MainCoordinator {
-
-    typealias Dependencies = MainCoordinatorDependencies
+extension AnyMainCoordinator {
 
     @MainActor
     convenience init(

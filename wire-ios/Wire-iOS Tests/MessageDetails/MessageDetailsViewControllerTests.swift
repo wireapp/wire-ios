@@ -29,7 +29,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     private var mockSelfUser: MockUserType!
     private var otherUser: MockUserType!
     private var userSession: UserSessionMock!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method

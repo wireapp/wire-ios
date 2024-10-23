@@ -405,7 +405,7 @@
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AF779F2CC7FA8D002438D1 /* SelfProfileViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */; };
-		59AF77A12CC7FB3B002438D1 /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */; };
+		59AF77A12CC7FB3B002438D1 /* AnyMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */; };
 		59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */; };
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */; };
@@ -2403,7 +2403,7 @@
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
-		59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinator.swift; sourceTree = "<group>"; };
+		59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyMainCoordinator.swift; sourceTree = "<group>"; };
 		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
@@ -6803,9 +6803,9 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
+				59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */,
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
 				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
-				59AF77A02CC7FB39002438D1 /* MainCoordinator.swift */,
 				597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */,
 				59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */,
 				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
@@ -9909,7 +9909,7 @@
 				5EB45761204EA75300BA217A /* CallQualityDismissalTransition.swift in Sources */,
 				EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */,
 				BF5DF5C520F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift in Sources */,
-				59AF77A12CC7FB3B002438D1 /* MainCoordinator.swift in Sources */,
+				59AF77A12CC7FB3B002438D1 /* AnyMainCoordinator.swift in Sources */,
 				546EEA8F2536DFAB00195097 /* SwitchingAccountRouter.swift in Sources */,
 				8742C2E21E51BD7900329FB6 /* TextSearchInputView.swift in Sources */,
 				8711A5A21E0D395A00043ACF /* CollectionCellHeader.swift in Sources */,

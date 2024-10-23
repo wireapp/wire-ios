@@ -28,7 +28,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
-    private var mockMainCoordinator: MainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp

@@ -77,7 +77,7 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinator
+    private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     /// The displayed sections.
@@ -100,7 +100,7 @@ final class MessageDetailsContentViewController: UIViewController {
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.contentType = contentType

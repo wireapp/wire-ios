@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigationUI
 import WireTestingPackage
 import XCTest
 
@@ -42,7 +41,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 

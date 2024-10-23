@@ -37,7 +37,7 @@ enum UserDetailViewControllerFactory {
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         viewControllerDismisser: ViewControllerDismisser,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 

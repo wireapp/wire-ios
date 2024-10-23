@@ -55,7 +55,7 @@ final class CollectionsViewController: UIViewController {
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
     let userSession: UserSession
-    let mainCoordinator: MainCoordinator
+    let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private var fetchingDone: Bool = false {
@@ -78,7 +78,7 @@ final class CollectionsViewController: UIViewController {
     convenience init(
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
@@ -102,7 +102,7 @@ final class CollectionsViewController: UIViewController {
         messages: [ZMConversationMessage] = [],
         fetchingDone: Bool = false,
         userSession: UserSession,
-        mainCoordinator: MainCoordinator,
+        mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.collection = collection
