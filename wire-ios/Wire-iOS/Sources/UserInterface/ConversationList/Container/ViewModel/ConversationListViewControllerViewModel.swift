@@ -178,7 +178,10 @@ extension ConversationListViewController.ViewModel {
         ) { [weak self] notification in
             // The notification is also triggered on logout, in which case accessing the account would crash.
             // Therefore only update the account if the accountManager's accounts still contains the instance we have.
-            if let self, let accountManager = notification.object as? AccountManager, accountManager.accounts.contains(account) {
+            if let self,
+               let accountManager = notification.object as? AccountManager,
+               accountManager.accounts.contains(account),
+               accountManager.selectedAccount == account {
                 updateAccountImage()
             }
         }
