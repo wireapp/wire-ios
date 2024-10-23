@@ -45,6 +45,7 @@ extension ZMConversationType {
 
 final class ProfileViewController: UIViewController {
 
+    // TODO: delete both properties, use mainCoordinator
     weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
@@ -139,6 +140,7 @@ final class ProfileViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     private func bringUpConversationCreationFlow() {
 
         let controller = ConversationCreationController(
@@ -524,7 +526,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
 }
 
-extension ProfileViewController: ConversationCreationControllerDelegate {
+extension ProfileViewController: ConversationCreationControllerDelegate { // TODO: remove, use mainCoordinator
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
