@@ -29,6 +29,7 @@
 		54DB81671DBFB16700AF495D /* CircularArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DB81661DBFB16700AF495D /* CircularArrayTests.swift */; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
 		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
+		59094BA82CC2BF8400488181 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59094BA72CC2BF8400488181 /* WireSystemPackage */; };
 		591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
 		591B6E8C2C8B0A37009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		591B6E8F2C8B0A3A009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
@@ -165,6 +166,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59094BA82CC2BF8400488181 /* WireSystemPackage in Frameworks */,
 				591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
 			);
@@ -445,6 +447,7 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
+				59094BA72CC2BF8400488181 /* WireSystemPackage */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -975,6 +978,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
 			productName = CocoaLumberjackSwift;
+		};
+		59094BA72CC2BF8400488181 /* WireSystemPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
