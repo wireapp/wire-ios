@@ -44,12 +44,12 @@ where ConversationContainer: MutableConversationContainer {
 
         // Iterate through the grouped conversations and remove the conversations which don't match the query.
         // Empty containers (conversation groups) will be kept in the result.
-        var conversationContainers = conversationContainers
-        for containerIndex in conversationContainers.indices {
+        var containers = conversationContainers
+        for containerIndex in containers.indices {
         conversationLoop:
-            for conversationIndex in conversationContainers[containerIndex].conversations.indices.reversed() {
+            for conversationIndex in containers[containerIndex].conversations.indices.reversed() {
 
-                let conversation = conversationContainers[containerIndex].conversations[conversationIndex]
+                let conversation = containers[containerIndex].conversations[conversationIndex]
 
                 // don't remove the conversation from the results if conversation name matches
                 let conversationSearchableName = conversation.searchableName.normalizedForSearch() as String
@@ -66,9 +66,9 @@ where ConversationContainer: MutableConversationContainer {
                 }
 
                 // no match, remove conversation from results
-                conversationContainers[containerIndex].removeConversation(at: conversationIndex)
+                containers[containerIndex].removeConversation(at: conversationIndex)
             }
         }
-        return conversationContainers
+        return containers
     }
 }
