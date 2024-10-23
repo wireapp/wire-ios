@@ -52,6 +52,7 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
+        connectUIBuilder: connectBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
 
@@ -100,6 +101,7 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+        connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder
     )
@@ -121,8 +123,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController: mainSplitViewController,
         mainTabBarController: mainTabBarController,
         conversationUIBuilder: conversationViewControllerBuilder,
-        settingsContentUIBuilder: settingsViewControllerBuilder,
-        connectUIBuilder: connectBuilder
+        settingsContentUIBuilder: settingsViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -251,7 +252,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
-        connectBuilder.delegate = self
+        //connectBuilder.delegate = self // TODO: create dedicated type
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -305,7 +306,9 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            await mainCoordinator.showConnect()
+            let connectUI = connectBuilder.build(mainCoordinator: .init(mainCoordinator: mainCoordinator))
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
         }
     }
 

@@ -435,6 +435,7 @@
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
 		59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */; };
+		59E12BFE2CC8EDF400E687CE /* ConnectViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */; };
 		59E67CAE2CA8B3A6000F1C17 /* ConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */; };
 		59E67CB22CA8C35E000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
@@ -2417,6 +2418,7 @@
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
 		59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
+		59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
 		59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationRootViewController+MainConversationProtocol.swift"; sourceTree = "<group>"; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
@@ -6282,6 +6284,7 @@
 		87DCF4D41D34EA4500BB420F /* StartUI */ = {
 			isa = PBXGroup;
 			children = (
+				59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */,
 				87DCF4D71D34EA4500BB420F /* StartUIInviteActionBar.swift */,
 				A97FA6FD23B5883A005257A8 /* StartUIDelegate.swift */,
 				A97FA6FB23B57067005257A8 /* StartUIViewController.swift */,
@@ -9284,6 +9287,7 @@
 				EF883F292151190900B440CC /* UserCellSubtitleProtocol.swift in Sources */,
 				EFDC36DB2257A8F300F916F3 /* CollectionViewContainerCell.swift in Sources */,
 				A98CF97425A47295008818D8 /* ConversationProtocol.swift in Sources */,
+				59E12BFE2CC8EDF400E687CE /* ConnectViewControllerBuilderProtocol.swift in Sources */,
 				D518947B20504C6A00C095C1 /* LoadingIndicatorCell.swift in Sources */,
 				599EA3C82C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift in Sources */,
 				EF4795AD2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift in Sources */,

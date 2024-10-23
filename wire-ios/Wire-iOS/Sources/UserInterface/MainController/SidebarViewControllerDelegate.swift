@@ -22,13 +22,16 @@ import WireSidebarUI
 final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDelegate {
 
     let mainCoordinator: MainCoordinator
+    let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     init(
         mainCoordinator: MainCoordinator,
+        connectUIBuilder: ConnectViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.mainCoordinator = mainCoordinator
+        self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
@@ -62,7 +65,9 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
         Task {
-            await mainCoordinator.showConnect()
+            let connectUI = connectUIBuilder.build(mainCoordinator: mainCoordinator)
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
         }
     }
 

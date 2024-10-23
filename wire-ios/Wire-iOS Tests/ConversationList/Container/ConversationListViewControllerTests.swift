@@ -81,6 +81,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewModel: viewModel,
             zClientViewController: .init(account: account, userSession: userSession),
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
+            connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
         )

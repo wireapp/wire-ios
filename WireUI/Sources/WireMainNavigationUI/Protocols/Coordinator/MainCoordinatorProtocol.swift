@@ -49,9 +49,4 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func presentViewController(_ viewController: UIViewController) async
     @MainActor
     func dismissPresentedViewController() async
-
-    // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
-
-    @MainActor
-    func showConnect() async
 }

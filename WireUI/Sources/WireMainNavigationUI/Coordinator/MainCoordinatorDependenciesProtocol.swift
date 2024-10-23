@@ -28,7 +28,4 @@ public protocol MainCoordinatorDependenciesProtocol: MainCoordinatorProtocolDepe
 
     associatedtype SettingsContentUIBuilder: MainSettingsContentUIBuilderProtocol where
         SettingsContentUIBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
-
-    associatedtype ConnectUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        ConnectUIBuilder.Dependencies == Self
 }

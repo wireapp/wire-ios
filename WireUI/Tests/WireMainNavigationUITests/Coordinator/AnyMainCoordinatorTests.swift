@@ -113,14 +113,6 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.hideSettingsContent_Invocations.count, 1)
     }
 
-    func testShowConnectIsInvoked() async {
-        // When
-        await sut.showConnect()
-
-        // Then
-        XCTAssertEqual(mockMainCoordinator.showConnect_Invocations.count, 1)
-    }
-
     func testPresentViewControllerIsInvoked() async {
         // Given
         let viewController = UIViewController()

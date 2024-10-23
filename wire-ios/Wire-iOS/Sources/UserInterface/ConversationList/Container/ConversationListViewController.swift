@@ -32,6 +32,7 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinator
+    let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     let createGroupConversationViewControllerBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
@@ -121,6 +122,7 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
@@ -136,6 +138,7 @@ final class ConversationListViewController: UIViewController {
             viewModel: viewModel,
             zClientViewController: zClientViewController,
             mainCoordinator: mainCoordinator,
+            connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
             createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder
         )
@@ -145,12 +148,14 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinator,
+        connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
+        self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
         self.createGroupConversationViewControllerBuilder = createGroupConversationViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
@@ -317,10 +322,8 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        let connectWithPeopleAction: UIAction = .init { [weak self] _ in
-            Task {
-                await self?.mainCoordinator.showConnect()
-            }
+        let connectWithPeopleAction = UIAction { [weak self] _ in
+            self?.presentConnectUI()
         }
         emptyPlaceholderView = EmptyPlaceholderView(
             content: emptyPlaceholderForSelectedFilter,
@@ -489,6 +492,14 @@ final class ConversationListViewController: UIViewController {
     }
 
     // MARK: - Presentation
+
+    private func presentConnectUI() {
+        Task {
+            let connectUI = connectViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
+        }
+    }
 
     /// Select the inbox and focus on the view
     /// - Parameter focus: Boolean to indicate if the view should focus

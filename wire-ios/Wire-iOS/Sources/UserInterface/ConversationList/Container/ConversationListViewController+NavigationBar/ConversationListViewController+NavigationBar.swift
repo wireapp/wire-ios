@@ -158,11 +158,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // New Conversation Button
         let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
         let newConversationImage = UIImage(systemName: "plus.circle.fill", withConfiguration: symbolConfiguration)!
-        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            Task {
-                await self?.mainCoordinator.showConnect()
-            }
-        }
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in self?.presentConnectUI() }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
         startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
@@ -301,9 +297,19 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     @objc
+    private func presentConnectUI() {
+        Task {
+            let connectUI = connectViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
+        }
+    }
+
+    @objc
     private func presentProfile() {
         Task {
             let selfProfileUI = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
@@ -312,6 +318,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     private func presentCreateConversationUI() {
         Task {
             let createConversationUI = createGroupConversationViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            createConversationUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(createConversationUI)
         }
     }

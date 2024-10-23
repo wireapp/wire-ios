@@ -43,7 +43,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     private let conversationUIBuilder: Dependencies.ConversationUIBuilder
     private let settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
-    private let connectUIBuilder: Dependencies.ConnectUIBuilder
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -80,14 +79,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
         conversationUIBuilder: Dependencies.ConversationUIBuilder,
-        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
-        connectUIBuilder: Dependencies.ConnectUIBuilder
+        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.conversationUIBuilder = conversationUIBuilder
         self.settingsContentUIBuilder = settingsContentUIBuilder
-        self.connectUIBuilder = connectUIBuilder
 
         super.init()
 
@@ -248,16 +245,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     public func hideSettingsContent() {
         tabBarController.setSettingsContentUI(nil, animated: true)
         splitViewController.settingsContentUI = nil
-    }
-
-    public func showConnect() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let connectUI = connectUIBuilder.build(mainCoordinator: self)
-        connectUI.modalPresentationStyle = .formSheet
-        await presentViewController(connectUI)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {

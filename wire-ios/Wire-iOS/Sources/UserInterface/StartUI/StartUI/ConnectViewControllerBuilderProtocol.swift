@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension MainCoordinator {
+import UIKit
+import WireMainNavigationUI
 
-    typealias SplitViewController = Dependencies.SplitViewController
-    typealias ConversationListUI = Dependencies.SplitViewController.ConversationListUI
-    typealias SettingsUI = Dependencies.SplitViewController.SettingsUI
-    typealias TabBarController = Dependencies.SplitViewController.TabBarController
-
-    typealias ConversationModel = Dependencies.ConversationModel
-    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+// sourcery: AutoMockable
+protocol ConnectViewControllerBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>) -> UINavigationController
 }
