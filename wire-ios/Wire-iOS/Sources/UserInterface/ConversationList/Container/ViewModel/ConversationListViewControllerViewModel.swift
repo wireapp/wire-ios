@@ -171,6 +171,11 @@ extension ConversationListViewController.ViewModel {
             self?.updateE2EICertifiedStatus()
         }
 
+        // This is a workaround:
+        // When logging in the account image is generated before the account's
+        // `userName` property is set. Therefore this observer listens for
+        // account changes and once the userName is not empty, the image is
+        // updated and the observation stopped.
         accountUpdatedNotificationToken = notificationCenter.addObserver(
             forName: AccountManagerDidUpdateAccountsNotificationName,
             object: nil,
@@ -181,8 +186,12 @@ extension ConversationListViewController.ViewModel {
             if let self,
                let accountManager = notification.object as? AccountManager,
                accountManager.accounts.contains(account),
-               accountManager.selectedAccount == account {
+               accountManager.selectedAccount == account,
+               !account.userName.isEmpty {
                 updateAccountImage()
+                if let accountUpdatedNotificationToken {
+                    notificationCenter.removeObserver(accountUpdatedNotificationToken)
+                }
             }
         }
 
