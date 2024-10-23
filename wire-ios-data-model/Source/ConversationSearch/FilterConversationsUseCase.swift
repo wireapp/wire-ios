@@ -44,28 +44,31 @@ where ConversationContainer: MutableConversationContainer {
 
         // Iterate through the grouped conversations and remove the conversations which don't match the query.
         // Empty containers (conversation groups) will be kept in the result.
-        var conversationContainers = conversationContainers
-        for containerIndex in conversationContainers.indices {
+        var containers = conversationContainers
+        for containerIndex in containers.indices {
         conversationLoop:
-            for conversationIndex in conversationContainers[containerIndex].conversations.indices.reversed() {
+            for conversationIndex in containers[containerIndex].conversations.indices.reversed() {
 
-                let conversation = conversationContainers[containerIndex].conversations[conversationIndex]
+                let conversation = containers[containerIndex].conversations[conversationIndex]
 
                 // don't remove the conversation from the results if conversation name matches
-                if (conversation.searchableName.normalizedForSearch() as String).lowercased().contains(query) {
+                let conversationSearchableName = conversation.searchableName.normalizedForSearch() as String
+                if conversationSearchableName.lowercased().contains(query) {
                     continue
                 }
 
                 // don't remove the conversation from the results if any participant's name matches
-                for participant in conversation.searchableParticipants
-                where (participant.searchableName.normalizedForSearch() as String).lowercased().contains(query) {
-                    continue conversationLoop
+                for participant in conversation.searchableParticipants {
+                    let participantSearchableName = participant.searchableName.normalizedForSearch() as String
+                    if participantSearchableName.lowercased().contains(query) {
+                        continue conversationLoop
+                    }
                 }
 
                 // no match, remove conversation from results
-                conversationContainers[containerIndex].removeConversation(at: conversationIndex)
+                containers[containerIndex].removeConversation(at: conversationIndex)
             }
         }
-        return conversationContainers
+        return containers
     }
 }
