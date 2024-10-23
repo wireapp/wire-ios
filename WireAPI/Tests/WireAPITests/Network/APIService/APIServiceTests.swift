@@ -78,7 +78,7 @@ final class APIServiceTests: XCTestCase {
     func testExecuteRequest_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
-        authenticationStorage.storeAccessToken(Scaffolding.accessToken)
+        authenticationStorage.storeAccessToken(Scaffolding.validAccessToken)
 
         // Mock a dummy response.
         var receivedRequests = [URLRequest]()
@@ -102,13 +102,157 @@ final class APIServiceTests: XCTestCase {
 
         // Then the request has an access token attached.
         let authorizationHeader = receivedRequest.value(forHTTPHeaderField: "Authorization")
-        XCTAssertEqual(authorizationHeader, "Bearer some-access-token")
+        XCTAssertEqual(authorizationHeader, "Bearer a-valid-access-token")
+    }
+
+    func testExecuteRequest_Requiring_Access_Token_But_None_Exists() async throws {
+        // Given no existing access token.
+        let request = Scaffolding.getRequest
+        XCTAssertNil(authenticationStorage.fetchAccessToken())
+
+        // Mock responses.
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            switch receivedRequests.count {
+            case 1:
+                // The first request should be to renew the access token.
+                return try $0.mockResponse(
+                    statusCode: .ok,
+                    jsonResourceName: "PostAccessSuccessResponse200"
+                )
+
+            case 2:
+                // The second request is just a dummy request.
+                return try $0.mockResponse(statusCode: .ok)
+
+            default:
+                throw "unexpected request: \($0)"
+            }
+        }
+
+        // When
+        _ = try await sut.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        // Then there are two requests.
+        try XCTAssertCount(receivedRequests, count: 2)
+        let snapshotter = HTTPRequestSnapshotHelper()
+
+        // The first is for the access token.
+        let accessTokenRequest = receivedRequests[0]
+        await snapshotter.verifyRequest(request: accessTokenRequest)
+
+        // The new access token was stored.
+        let storedAccessToken = try XCTUnwrap(authenticationStorage.fetchAccessToken())
+        XCTAssertEqual(storedAccessToken.userID, Scaffolding.newAccessToken.userID)
+        XCTAssertEqual(storedAccessToken.token, Scaffolding.newAccessToken.token)
+        XCTAssertEqual(storedAccessToken.type, Scaffolding.newAccessToken.type)
+
+        // The second is for the original request.
+        let originalRequest = receivedRequests[1]
+        await snapshotter.verifyRequest(request: originalRequest)
+    }
+
+    func testExecuteRequest_Requiring_Access_Token_But_Existing_Token_Is_Expiring() async throws {
+        // Given an expiring token.
+        let request = Scaffolding.getRequest
+        authenticationStorage.storeAccessToken(Scaffolding.expiringAccessToken)
+
+        // Mock responses.
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            switch receivedRequests.count {
+            case 1:
+                // The first request should be to renew the access token.
+                return try $0.mockResponse(
+                    statusCode: .ok,
+                    jsonResourceName: "PostAccessSuccessResponse200"
+                )
+
+            case 2:
+                // The second request is just a dummy request.
+                return try $0.mockResponse(statusCode: .ok)
+
+            default:
+                throw "unexpected request: \($0)"
+            }
+        }
+
+        // When
+        _ = try await sut.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        // Then there are two requests.
+        try XCTAssertCount(receivedRequests, count: 2)
+        let snapshotter = HTTPRequestSnapshotHelper()
+
+        // The first is for the access token.
+        let accessTokenRequest = receivedRequests[0]
+        await snapshotter.verifyRequest(request: accessTokenRequest)
+
+        // The new access token was stored.
+        let storedAccessToken = try XCTUnwrap(authenticationStorage.fetchAccessToken())
+        XCTAssertEqual(storedAccessToken.userID, Scaffolding.newAccessToken.userID)
+        XCTAssertEqual(storedAccessToken.token, Scaffolding.newAccessToken.token)
+        XCTAssertEqual(storedAccessToken.type, Scaffolding.newAccessToken.type)
+
+        // The second is for the original request.
+        let originalRequest = receivedRequests[1]
+        await snapshotter.verifyRequest(request: originalRequest)
+    }
+
+    func testExecuteRequest_Requiring_Access_Token_But_Invalid_Credentials() async throws {
+        // Given an expiring token.
+        let request = Scaffolding.getRequest
+        authenticationStorage.storeAccessToken(Scaffolding.expiringAccessToken)
+
+        // Mock responses.
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            switch receivedRequests.count {
+            case 1:
+                // The first request should be to renew the access token.
+                return try $0.mockErrorResponse(
+                    statusCode: .forbidden,
+                    label: "invalid-credentials"
+                )
+
+            case 2:
+                // The second request is just a dummy request.
+                return try $0.mockResponse(statusCode: .ok)
+
+            default:
+                throw "unexpected request: \($0)"
+            }
+        }
+
+        // Then
+        await XCTAssertThrowsError(APIServiceError.invalidCredentials) {
+            // When
+            try await self.sut.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
+        }
+
+        // Then there is only one request for the access token renewal
+        try XCTAssertCount(receivedRequests, count: 1)
+        let accessTokenRequest = receivedRequests[0]
+        await HTTPRequestSnapshotHelper().verifyRequest(request: accessTokenRequest)        
     }
 
 }
 
 private enum Scaffolding {
 
+    static let userID = UUID(uuidString: "70aa272d-3413-4cda-9059-64c097956583")!
     static let clientID = "abc123"
 
     static let getRequest = try! URLRequestBuilder(path: "/foo")
@@ -116,9 +260,23 @@ private enum Scaffolding {
         .withAcceptType(.json)
         .build()
 
-    static let accessToken = AccessToken(
-        userID: UUID(),
-        token: "some-access-token",
+    static let validAccessToken = AccessToken(
+        userID: userID,
+        token: "a-valid-access-token",
+        type: "Bearer",
+        expirationDate: Date(timeIntervalSinceNow: 900)
+    )
+
+    static let expiringAccessToken = AccessToken(
+        userID: userID,
+        token: "an-expiring-access-token",
+        type: "Bearer",
+        expirationDate: Date(timeIntervalSinceNow: 10)
+    )
+
+    static let newAccessToken = AccessToken(
+        userID: userID,
+        token: "a-new-access-token",
         type: "Bearer",
         expirationDate: Date(timeIntervalSinceNow: 900)
     )
