@@ -37,7 +37,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         let rootViewController = StartUIViewController(
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate

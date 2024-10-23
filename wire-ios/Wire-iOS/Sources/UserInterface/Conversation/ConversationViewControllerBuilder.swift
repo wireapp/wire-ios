@@ -41,7 +41,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             conversation: conversation,
             message: message,
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            mainCoordinator: .init(mainCoordinator: mainCoordinator), // TODO: try to fix
             selfProfileUIBuilder: selfProfileUIBuilder,
             mediaPlaybackManager: mediaPlaybackManager
         )

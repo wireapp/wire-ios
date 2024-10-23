@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -33,7 +32,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
+    private var tabBarController: MainCoordinatorDependencies.TabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -87,7 +86,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         )
         sut.mainSplitViewState = .collapsed
 
-        tabBarController = MainTabBarController()
+        tabBarController = .init()
         tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)

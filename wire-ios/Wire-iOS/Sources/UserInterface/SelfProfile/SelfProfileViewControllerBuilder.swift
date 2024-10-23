@@ -34,7 +34,7 @@ struct SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderProtoco
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator)
+            mainCoordinator: mainCoordinator
         )
         return UINavigationController(rootViewController: rootViewController)
     }

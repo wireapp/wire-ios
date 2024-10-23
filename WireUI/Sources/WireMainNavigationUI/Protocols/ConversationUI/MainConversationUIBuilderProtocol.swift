@@ -33,5 +33,5 @@ public protocol MainConversationUIBuilderProtocol {
         conversation: ConversationModel,
         message: ConversationMessageModel?,
         mainCoordinator: MainCoordinator
-    ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies
+    ) -> ConversationUI where MainCoordinator.Dependencies == Dependencies // TODO: can the condition be moved to an associatedtype?
 }
