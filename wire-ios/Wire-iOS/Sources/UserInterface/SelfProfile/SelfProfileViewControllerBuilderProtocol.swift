@@ -18,16 +18,8 @@
 
 import UIKit
 
-@testable import WireMainNavigationUI
-
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = MockMainCoordinatorDependencies
-
+// sourcery: AutoMockable
+protocol SelfProfileViewControllerBuilderProtocol {
     @MainActor
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UIViewController where MainCoordinator.Dependencies == Dependencies {
-        .init()
-    }
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
 }

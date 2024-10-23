@@ -28,6 +28,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
     typealias ConversationUI = ConversationRootViewController
 
     var userSession: UserSession
+    var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
@@ -41,6 +42,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             message: message,
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileUIBuilder,
             mediaPlaybackManager: mediaPlaybackManager
         )
         viewController.hidesBottomBarWhenPushed = true

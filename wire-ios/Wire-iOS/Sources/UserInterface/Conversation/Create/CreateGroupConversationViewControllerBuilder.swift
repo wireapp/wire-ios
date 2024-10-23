@@ -20,7 +20,7 @@ import UIKit
 import WireMainNavigationUI
 import WireSyncEngine
 
-final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
     typealias Dependencies = MainCoordinatorDependencies
 

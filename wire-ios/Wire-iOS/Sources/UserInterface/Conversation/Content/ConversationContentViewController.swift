@@ -96,7 +96,8 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
-    let mainCoordinator: any MainCoordinatorProtocol
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -116,11 +117,13 @@ final class ConversationContentViewController: UIViewController {
         message: ZMConversationMessage? = nil,
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
         messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 

@@ -55,7 +55,8 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
 
     // MARK: - init
 
@@ -67,7 +68,8 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -96,7 +98,8 @@ final class ProfileViewController: UIViewController {
 
         self.init(
             viewModel: viewModel,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         self.viewControllerDismisser = viewControllerDismisser
@@ -104,10 +107,12 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -365,16 +370,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 
     private func openSelfProfile() {
-        // Do not reveal list view for iPad regular mode
-        let leftViewControllerRevealed: Bool
-        if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
-        } else {
-            leftViewControllerRevealed = true
-        }
-
         Task {
-            await mainCoordinator.showSelfProfile()
+            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            selfProfileUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 
@@ -402,7 +401,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             in: self,
             user: user,
             userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 

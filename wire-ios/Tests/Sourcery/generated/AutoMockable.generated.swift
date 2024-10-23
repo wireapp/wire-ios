@@ -305,6 +305,33 @@ class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
 }
 
+class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
+
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
+
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildMainCoordinator`")
+        }
+    }
+
+}
+
 class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsViewModelDelegate {
 
     // MARK: - Life cycle
@@ -455,6 +482,33 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
         }
 
         mock()
+    }
+
+}
+
+class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
+
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
+
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildMainCoordinator`")
+        }
     }
 
 }
@@ -1362,6 +1416,33 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(delegate)
+    }
+
+}
+
+class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
+
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
+
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `buildMainCoordinator`")
+        }
     }
 
 }

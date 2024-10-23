@@ -17,7 +17,6 @@
 //
 
 import WireDataModelSupport
-import WireMainNavigationUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -33,7 +32,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
+    private var tabBarController: MainCoordinatorDependencies.TabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -73,7 +72,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock,
+            mainCoordinator: mockMainCoordinator,
             getUserAccountImageUseCase: mockGetUserAccountImageUseCase
         )
 
@@ -81,11 +80,13 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewModel: viewModel,
             zClientViewController: .init(account: account, userSession: userSession),
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
-            selfProfileViewControllerBuilder: .mock
+            connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
+            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
         )
         sut.mainSplitViewState = .collapsed
 
-        tabBarController = MainTabBarController()
+        tabBarController = .init()
         tabBarController.conversationListUI = sut
 
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -112,8 +113,6 @@ final class ConversationListViewControllerTests: XCTestCase {
         modelHelper = nil
         mockMainCoordinator = nil
         mockGetUserAccountImageUseCase = nil
-
-        super.tearDown()
     }
 
     // MARK: - View Controller
@@ -282,23 +281,5 @@ final class ConversationListViewControllerTests: XCTestCase {
             viewController.viewIfLoaded != nil
         }
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    }
-}
-
-// MARK: MainCoordinatorInjectingViewControllerBuilder + mock
-
-private extension MainCoordinatorInjectingViewControllerBuilder where Self == MockMainCoordinatorInjectingViewControllerBuilder {
-    static var mock: Self { .init() }
-}
-
-private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = Wire.MainCoordinatorDependencies
-
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UIViewController where
-    MainCoordinator.Dependencies == Dependencies {
-        .init()
     }
 }

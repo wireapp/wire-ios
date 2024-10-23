@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A use case which returns a collection of grouped conversations which match the provided search text.
-public protocol SearchConversationsUseCaseProtocol {
-    associatedtype ConversationContainer: MutableConversationContainer
+import UIKit
 
-    /// Returns conversations which match the `searchText`.
-    func invoke(searchText: String) -> [ConversationContainer]
+// sourcery: AutoMockable
+protocol CreateGroupConversationViewControllerBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
 }

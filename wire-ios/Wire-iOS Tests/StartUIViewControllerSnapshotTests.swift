@@ -17,7 +17,6 @@
 //
 
 import WireDesign
-import WireMainNavigationUI
 import WireTestingPackage
 import XCTest
 
@@ -54,7 +53,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: StartUIViewController!
     private var mockAddressBookHelper: MockAddressBookHelper!
     private var userSession: UserSessionMock!
@@ -94,7 +93,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         sut = StartUIViewController(
             addressBookHelperType: MockAddressBookHelper.self,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
 

@@ -32,7 +32,8 @@ final class SearchUserViewController: UIViewController {
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
     private let userSession: UserSession
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
@@ -45,12 +46,14 @@ final class SearchUserViewController: UIViewController {
         userId: UUID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -123,7 +126,8 @@ final class SearchUserViewController: UIViewController {
                 viewer: selfUser,
                 context: .profileViewer,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = profileViewControllerDelegate
 

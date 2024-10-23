@@ -32,7 +32,7 @@ import UIKit
 
 @MainActor
 public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate
-    where Dependencies: MainCoordinatorDependencies
+    where Dependencies: MainCoordinatorDependenciesProtocol
 {
     // swiftlint:enable opening_brace
 
@@ -43,9 +43,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     private let conversationUIBuilder: Dependencies.ConversationUIBuilder
     private let settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
-    private let connectUIBuilder: Dependencies.ConnectUIBuilder
-    private let createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder
-    private var selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
 
     public private(set) var mainSplitViewState: MainSplitViewState = .expanded
 
@@ -82,18 +79,12 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
         conversationUIBuilder: Dependencies.ConversationUIBuilder,
-        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder,
-        connectUIBuilder: Dependencies.ConnectUIBuilder,
-        createGroupConversationUIBuilder: Dependencies.CreateGroupConversationUIBuilder,
-        selfProfileUIBuilder: Dependencies.SelfProfileUIBuilder
+        settingsContentUIBuilder: Dependencies.SettingsContentUIBuilder
     ) {
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.conversationUIBuilder = conversationUIBuilder
         self.settingsContentUIBuilder = settingsContentUIBuilder
-        self.connectUIBuilder = connectUIBuilder
-        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
-        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init()
 
@@ -254,38 +245,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     public func hideSettingsContent() {
         tabBarController.setSettingsContentUI(nil, animated: true)
         splitViewController.settingsContentUI = nil
-    }
-
-    public func showSelfProfile() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: self)
-        selfProfileUI.modalPresentationStyle = .formSheet
-
-        await dismissPresentedViewController()
-        await presentViewController(selfProfileUI)
-    }
-
-    public func showConnect() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let connectUI = connectUIBuilder.build(mainCoordinator: self)
-        connectUI.modalPresentationStyle = .formSheet
-        await presentViewController(connectUI)
-    }
-
-    public func showCreateGroupConversation() async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
-
-        let createGroupConversationUI = createGroupConversationUIBuilder.build(mainCoordinator: self)
-        createGroupConversationUI.modalPresentationStyle = .formSheet
-        await presentViewController(createGroupConversationUI)
     }
 
     public func presentViewController(_ viewController: UIViewController) async {

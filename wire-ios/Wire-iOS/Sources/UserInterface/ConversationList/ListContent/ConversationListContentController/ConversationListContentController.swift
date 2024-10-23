@@ -34,7 +34,8 @@ final class ConversationListContentController: UICollectionViewController {
         ZMConversationMessage
     >
     private let conversationListCoordinator: ConversationListCoordinator
-    private let mainCoordinator: any MainCoordinatorProtocol
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -53,7 +54,8 @@ final class ConversationListContentController: UICollectionViewController {
     init<ConversationListCoordinator>(
         userSession: UserSession,
         conversationListCoordinator: ConversationListCoordinator,
-        mainCoordinator: any MainCoordinatorProtocol,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         zClientViewController: ZClientViewController?
     ) where
     ConversationListCoordinator: ConversationListCoordinatorProtocol,
@@ -63,6 +65,7 @@ final class ConversationListContentController: UICollectionViewController {
         self.userSession = userSession
         self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.zClientViewController = zClientViewController
 
         let flowLayout = BoundsAwareFlowLayout()
@@ -283,7 +286,8 @@ final class ConversationListContentController: UICollectionViewController {
                 presentingViewController: self,
                 sourceView: collectionView.cellForItem(at: indexPath)!,
                 userSession: self.userSession,
-                mainCoordinator: self.mainCoordinator
+                mainCoordinator: self.mainCoordinator,
+                selfProfileUIBuilder: self.selfProfileUIBuilder
             )
         }
 
@@ -472,7 +476,8 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             presentingViewController: self,
             sourceView: collectionView.cellForItem(at: indexPath)!,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 }

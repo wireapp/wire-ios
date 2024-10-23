@@ -27,11 +27,17 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     private var mockView: UIView!
     private var mockViewController: MockConversationListContainer!
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
     private var window: UIWindow!
 
     private var coreDataFixture: CoreDataFixture!
+
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
         coreDataFixture = CoreDataFixture()
@@ -51,7 +57,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock,
+            mainCoordinator: mockMainCoordinator,
             getUserAccountImageUseCase: mockGetUserAccountImageUseCase
         )
 
@@ -73,6 +79,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         userSession = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         mockGetUserAccountImageUseCase = nil
+        mockMainCoordinator = nil
     }
 
     // MARK: - Action menu

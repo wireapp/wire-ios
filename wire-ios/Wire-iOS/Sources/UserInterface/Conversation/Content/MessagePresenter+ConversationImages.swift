@@ -35,7 +35,8 @@ extension MessagePresenter {
         actionResponder: MessageActionResponder,
         isPreviewing: Bool,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {
@@ -56,7 +57,8 @@ extension MessagePresenter {
             initialMessage: message,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         imagesController.isPreviewing = isPreviewing
 
