@@ -53,17 +53,17 @@ let package = Package(
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        return ["WireDatadog"]
+        ["WireDatadog"]
     } else {
-        return []
+        []
     }
 }
 
 func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     if let value {
-        return ProcessInfo.processInfo.environment[name] == value
+        ProcessInfo.processInfo.environment[name] == value
     } else {
-        return ProcessInfo.processInfo.environment[name] != nil
+        ProcessInfo.processInfo.environment[name] != nil
     }
 }
 
