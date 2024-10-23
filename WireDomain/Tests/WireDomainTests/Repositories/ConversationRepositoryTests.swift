@@ -312,6 +312,55 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testPullConversation_It_Retrieves_Conversation_Locally() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [Scaffolding.conversationGroupType],
+            notFound: [],
+            failed: []
+        )
+
+        // When
+
+        try await sut.pullConversation(with: conversationID)
+
+        // Then
+
+        await context.perform { [context] in
+            let localConversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+
+            XCTAssertNotNil(localConversation)
+            XCTAssertEqual(localConversation?.remoteIdentifier, conversationID.uuid)
+        }
+    }
+
+    func testPullConversation_It_Throws_Error() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [],
+            notFound: [],
+            failed: []
+        )
+
+        do {
+            // When
+            try await sut.pullConversation(with: conversationID)
+        } catch {
+            // Then
+            XCTAssertTrue(error is ConversationRepositoryError)
+        }
+    }
+
     private func checkLastMessage(
         in conversation: ZMConversation,
         isLeaveMessageFor user: ZMUser,
