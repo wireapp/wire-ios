@@ -24,7 +24,7 @@ import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let mainCoordinator: MainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
 

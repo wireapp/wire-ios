@@ -45,7 +45,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileImagePicker = ProfileImagePickerManager()
 
     private let accountSelector: AccountSelector?
-    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let mainCoordinator: MainCoordinator
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
@@ -65,7 +65,7 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+        mainCoordinator: MainCoordinator
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator

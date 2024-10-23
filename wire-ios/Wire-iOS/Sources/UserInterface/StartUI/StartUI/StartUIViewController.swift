@@ -43,7 +43,7 @@ final class StartUIViewController: UIViewController {
 
     let userSession: UserSession
 
-    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let mainCoordinator: MainCoordinator
 
     let isFederationEnabled: Bool
 

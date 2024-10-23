@@ -23,7 +23,7 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    private let mainCoordinator: MainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
@@ -47,7 +47,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        mainCoordinator: MainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {

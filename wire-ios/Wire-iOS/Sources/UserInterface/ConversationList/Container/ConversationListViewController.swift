@@ -120,7 +120,7 @@ final class ConversationListViewController: UIViewController {
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>,
+        mainCoordinator: MainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
