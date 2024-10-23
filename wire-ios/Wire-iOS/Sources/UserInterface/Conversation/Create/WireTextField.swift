@@ -87,6 +87,7 @@ class WireTextField: UITextField {
         returnKeyType = .next
         autocapitalizationType = .words
         accessibilityIdentifier = "NameField"
+        clearButtonMode = .whileEditing
         autocorrectionType = .no
         contentVerticalAlignment = .center
         font = .font(for: .body1)
