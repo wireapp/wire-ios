@@ -17,9 +17,9 @@
 //
 
 /// A use case which returns a collection of grouped conversations which match the provided search text.
-public protocol SearchConversationsUseCaseProtocol {
+public protocol FilterConversationsUseCaseProtocol {
     associatedtype ConversationContainer: MutableConversationContainer
 
     /// Returns conversations which match the `searchText`.
-    func invoke(searchText: String) -> [ConversationContainer]
+    func invoke(query: String) -> [ConversationContainer]
 }

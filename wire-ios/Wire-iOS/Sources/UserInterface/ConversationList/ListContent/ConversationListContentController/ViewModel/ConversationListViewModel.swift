@@ -445,8 +445,8 @@ final class ConversationListViewModel: NSObject {
                 collapsed: state.collapsed.contains(kind.identifier)
             )
         }
-        let searchUseCase = SearchConversationsUseCase(conversationContainers: sections)
-        return searchUseCase.invoke(searchText: appliedSearchText)
+        let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
+        return filterUseCase.invoke(query: appliedSearchText)
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
