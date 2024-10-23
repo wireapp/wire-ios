@@ -33,6 +33,8 @@ final class StartUIViewController: UIViewController {
 
     weak var delegate: StartUIDelegate?
 
+    weak var conversationCreationControllerDelegate: ConversationCreationControllerDelegate?
+
     let searchController = UISearchController(searchResultsController: nil)
 
     let groupSelector = SearchGroupSelector()

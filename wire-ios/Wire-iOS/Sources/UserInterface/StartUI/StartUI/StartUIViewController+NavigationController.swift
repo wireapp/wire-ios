@@ -42,6 +42,7 @@ extension StartUIViewController {
                     preSelectedParticipants: nil,
                     userSession: userSession
                 )
+                conversationCreationController.delegate = conversationCreationControllerDelegate
                 navigationController?.pushViewController(conversationCreationController, animated: true)
             })
 

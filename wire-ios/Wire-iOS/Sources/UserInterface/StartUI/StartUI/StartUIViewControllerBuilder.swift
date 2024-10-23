@@ -25,6 +25,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
     let userSession: UserSession
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var delegate: StartUIDelegate?
+    weak var conversationCreationControllerDelegate: ConversationCreationControllerDelegate?
 
     init(
         userSession: UserSession,
@@ -41,6 +42,7 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate
+        rootViewController.conversationCreationControllerDelegate = conversationCreationControllerDelegate
         return .init(rootViewController: rootViewController)
     }
 }

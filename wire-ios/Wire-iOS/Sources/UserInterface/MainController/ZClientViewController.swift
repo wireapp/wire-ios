@@ -254,6 +254,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.delegate = mainCoordinator
         archiveUI.delegate = mainCoordinator
         connectBuilder.delegate = self
+        connectBuilder.conversationCreationControllerDelegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
