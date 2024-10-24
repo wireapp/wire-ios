@@ -72,6 +72,13 @@ on:
         required: true
       COUNTLY_INTERNAL_KEY:
         required: true  
+      # this key can be removed after 3.112.X is not maintained anymore
+      OLD_COUNTLY_PRODUCTION_KEY:
+        required: true
+      # this key can be removed after 3.112.X is not maintained anymore
+      OLD_COUNTLY_INTERNAL_KEY:
+          required: true  
+
       SUBMODULE_PAT:
         required: true
 
@@ -121,8 +128,8 @@ jobs:
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
       PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
+      COUNTLY_PRODUCTION_KEY: ${{ secrets.OLD_COUNTLY_PRODUCTION_KEY }}
+      COUNTLY_INTERNAL_KEY: ${{ secrets.OLD_COUNTLY_INTERNAL_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
