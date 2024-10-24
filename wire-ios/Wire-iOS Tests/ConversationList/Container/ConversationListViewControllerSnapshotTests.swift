@@ -17,10 +17,10 @@
 //
 
 import WireDataModelSupport
+import WireDesign
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
-import WireDesign
 
 @testable import Wire
 
