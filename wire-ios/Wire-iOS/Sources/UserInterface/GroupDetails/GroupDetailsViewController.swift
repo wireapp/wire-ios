@@ -473,6 +473,7 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+        // TODO: create a `GroupDetailsViewControllerDelegate` which has a `didOpenConversation` method and don't use the main coordinator directly
         Task {
             await mainCoordinator.showConversationList(conversationFilter: .none)
             await mainCoordinator.showConversation(conversation: conversation, message: nil)

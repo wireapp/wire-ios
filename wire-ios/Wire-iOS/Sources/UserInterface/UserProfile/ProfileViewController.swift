@@ -28,7 +28,7 @@ enum ProfileViewControllerTabBarIndex: Int {
 }
 
 @MainActor
-protocol ProfileViewControllerDelegate: AnyObject { // TODO: delete
+protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
 }
 
@@ -526,7 +526,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
 }
 
-extension ProfileViewController: ConversationCreationControllerDelegate { // TODO: remove, use mainCoordinator
+extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
