@@ -45,6 +45,6 @@ public protocol GetAccountImageUseCaseAccountProtocol: Sendable {
     var teamImageSource: AccountImageSource? { get }
 }
 
-public protocol GetAccountImageUseCaseInitialsProvider: Sendable {
+public protocol GetAccountImageUseCaseInitialsProvider: Sendable { // TODO: remove
     func initials(from fullName: String) async -> String
 }

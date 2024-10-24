@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireAccountImageUI
 
 @testable import Wire
 
@@ -95,7 +96,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate accountImage: UIImage
+        didUpdate accountImage: AccountImageView.Content
     ) {
         // no-op
     }

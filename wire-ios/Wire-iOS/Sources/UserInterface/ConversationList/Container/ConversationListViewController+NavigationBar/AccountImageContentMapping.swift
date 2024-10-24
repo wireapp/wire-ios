@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireDataModel
 import WireSidebarUI
+import WireAccountImageUI
 
-extension SidebarAccountInfo {
+extension WireSidebarUI.SidebarAccountInfo.AccountImageContent {
 
-    init(_ user: some UserType, _ accountImage: SidebarAccountInfo.AccountImageContent) {
-        self.init(
-            displayName: user.name ?? "",
-            username: user.handle ?? "",
-            accountImage: accountImage,
-            availability: user.availability.mapToSidebarAccountInfoAvailability()
-        )
+    /// Since `WireAccountImageUI.AccountImageView.Content` does not know about the type `WireSidebarUI`,
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.AccountImageContent` to `WireAccountImageUI.AccountImageView.Content`.
+
+    func mapToAccountImageViewContent() -> WireAccountImageUI.AccountImageView.Content {
+        switch self {
+        case .image(let image):
+                .image(image)
+        case .text(let text):
+                .text(text)
+        }
     }
 }

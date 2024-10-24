@@ -35,7 +35,7 @@ final class ZClientViewController: UIViewController {
 
     let account: Account
     let userSession: UserSession
-    private(set) var cachedAccountImage = UIImage() {
+    private(set) var cachedAccountImage: SidebarAccountInfo.AccountImageContent = .text("") {
         didSet { sidebarViewController.accountInfo.accountImage = cachedAccountImage }
     }
 
@@ -293,21 +293,17 @@ final class ZClientViewController: UIViewController {
         }
 
         Task {
-            do {
-                cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
-            } catch {
-                WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
-            }
+            await updateCachedAccountImage()
         }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-          if let viewController = presentedViewController,
-             viewController is ModalPresentationViewController,
-             !viewController.isBeingDismissed {
-              return viewController.supportedInterfaceOrientations
-          }
-          return wr_supportedInterfaceOrientations
+        if let viewController = presentedViewController,
+           viewController is ModalPresentationViewController,
+           !viewController.isBeingDismissed {
+            return viewController.supportedInterfaceOrientations
+        }
+        return wr_supportedInterfaceOrientations
     }
 
     // MARK: keyboard shortcut
@@ -727,6 +723,19 @@ final class ZClientViewController: UIViewController {
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
     }
+
+    private func updateCachedAccountImage() async {
+        do {
+            if let accountImage = try await GetUserAccountImageUseCase().invoke(account: account) {
+                cachedAccountImage = .image(accountImage)
+            } else {
+                let initials = PersonName.person(withName: account.userName, schemeTagger: nil).initials
+                cachedAccountImage = .text(initials)
+            }
+        } catch {
+            WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+        }
+    }
 }
 
 // MARK: - ZClientViewController + UserObserving
@@ -750,11 +759,7 @@ extension ZClientViewController: UserObserving {
 
             if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
                 sidebarUpdateNeeded = true
-                do {
-                    cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
-                } catch {
-                    WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
-                }
+                await updateCachedAccountImage()
             }
 
             if sidebarUpdateNeeded {
