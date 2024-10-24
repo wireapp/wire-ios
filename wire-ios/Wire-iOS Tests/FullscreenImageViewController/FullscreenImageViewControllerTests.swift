@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class FullscreenImageViewControllerTests: XCTestCase {
 
@@ -25,7 +26,6 @@ final class FullscreenImageViewControllerTests: XCTestCase {
     var userSession: UserSessionMock!
 
     override func setUp() {
-        super.setUp()
         userSession = UserSessionMock()
         UIView.setAnimationsEnabled(false)
     }
@@ -34,8 +34,6 @@ final class FullscreenImageViewControllerTests: XCTestCase {
         sut = nil
         userSession = nil
         UIView.setAnimationsEnabled(true)
-
-        super.tearDown()
     }
 
     func testThatScrollViewMinimumZoomScaleAndZoomScaleAreSet() {

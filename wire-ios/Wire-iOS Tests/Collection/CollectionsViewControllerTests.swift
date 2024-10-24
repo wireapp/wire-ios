@@ -218,13 +218,9 @@ final class CollectionsViewControllerTests: XCTestCase {
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
-}
-
-extension CollectionsViewControllerTests {
-
     // MARK: - Helper method
 
-    func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
+    private func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
         let conversation = MockGroupDetailsConversation()
         let delegate = AssetCollectionMulticastDelegate()
         let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])

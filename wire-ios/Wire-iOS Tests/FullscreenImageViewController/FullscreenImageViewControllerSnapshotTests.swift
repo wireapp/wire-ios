@@ -32,7 +32,6 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
     // MARK: - setup
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
     }
@@ -43,7 +42,6 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = nil
         sut = nil
         userSession = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests

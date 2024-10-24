@@ -35,7 +35,6 @@
 		592CC3F22C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */; };
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
-		595046822C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */; };
 		595046842C6F47D2005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595046832C6F475F005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift */; };
 		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
 		597D26052C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D26032C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift */; };
@@ -45,7 +44,6 @@
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
-		5993B5502C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5993B54F2C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift */; };
 		599C83222C453FF600D33A0D /* ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599C83212C453FF600D33A0D /* ZMSDispatchGroup.swift */; };
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
 		59C39F092C21E9480087300D /* TimePointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F082C21E9480087300D /* TimePointTests.swift */; };
@@ -128,7 +126,6 @@
 		592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverPresentationControllerConfigurationTests.swift; sourceTree = "<group>"; };
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
-		595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift; sourceTree = "<group>"; };
 		595046832C6F475F005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift; sourceTree = "<group>"; };
 		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
 		597D26032C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingNavigationControllerDelegate.swift; sourceTree = "<group>"; };
@@ -140,7 +137,6 @@
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		598E86E72BF4DBC900FC5438 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		598E86E82BF4DBC900FC5438 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
-		5993B54F2C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingSplitViewControllerDelegate.swift; sourceTree = "<group>"; };
 		599C83212C453FF600D33A0D /* ZMSDispatchGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSDispatchGroup.swift; sourceTree = "<group>"; };
 		59C39F062C21E9390087300D /* DispatchGroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchGroupTests.swift; sourceTree = "<group>"; };
 		59C39F082C21E9480087300D /* TimePointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePointTests.swift; sourceTree = "<group>"; };
@@ -260,7 +256,6 @@
 				59D985EE2B5FCE1A009B99F0 /* Extensions */,
 				01CB030B2A0CED010000CFF2 /* Logging */,
 				597D26042C6E019600D8AF15 /* NavigationControllerDelegate */,
-				5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */,
 				F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */,
 				F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */,
 				594450552BDFE8BF003ACC98 /* TimePoint.swift */,
@@ -306,7 +301,6 @@
 			isa = PBXGroup;
 			children = (
 				5950467F2C6F44DD005315DE /* NavigationControllerDelegate */,
-				595046802C6F44E2005315DE /* SplitViewControllerDelegate */,
 				8701221720F641A4001E6342 /* CacheTests.swift */,
 				54DB81661DBFB16700AF495D /* CircularArrayTests.swift */,
 				D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */,
@@ -348,14 +342,6 @@
 			path = NavigationControllerDelegate;
 			sourceTree = "<group>";
 		};
-		595046802C6F44E2005315DE /* SplitViewControllerDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */,
-			);
-			path = SplitViewControllerDelegate;
-			sourceTree = "<group>";
-		};
 		597D26042C6E019600D8AF15 /* NavigationControllerDelegate */ = {
 			isa = PBXGroup;
 			children = (
@@ -389,14 +375,6 @@
 				598E86E82BF4DBC900FC5438 /* config.yml */,
 			);
 			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				5993B54F2C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift */,
-			);
-			path = SplitViewControllerDelegate;
 			sourceTree = "<group>";
 		};
 		59D985EE2B5FCE1A009B99F0 /* Extensions */ = {
@@ -627,7 +605,6 @@
 				594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */,
 				59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */,
 				01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */,
-				5993B5502C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift in Sources */,
 				8701221620F64171001E6342 /* Cache.swift in Sources */,
 				01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */,
 				597D26052C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift in Sources */,
@@ -666,7 +643,6 @@
 			files = (
 				8701221920F641BE001E6342 /* CacheTests.swift in Sources */,
 				598368A82C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift in Sources */,
-				595046822C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift in Sources */,
 				F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */,
 				54A3273C1B99C04F0004EB95 /* ZMLogTests.swift in Sources */,
 				D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */,
@@ -815,7 +791,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
