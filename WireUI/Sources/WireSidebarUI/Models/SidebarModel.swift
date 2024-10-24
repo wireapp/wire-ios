@@ -16,30 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireFoundation
 
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.
 /// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a reference.
 final class SidebarModel: ObservableObject {
 
+    @Published var wireAccentColor: WireAccentColor = .default
+    @Published var wireAccentColorMapping: WireAccentColorMapping?
     @Published var wireTextStyleMapping: WireTextStyleMapping?
+    @Published var sidebarBackgroundColor: UIColor = .systemGray5
+    @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = defaultTextColor
+    @Published var sidebarAccountInfoViewUsernameColor: UIColor = .gray
+    @Published var sidebarMenuHeaderForegroundColor: UIColor = defaultTextColor
+    @Published var sidebarMenuItemTitleForegroundColor: UIColor = defaultTextColor
+    @Published var sidebarMenuItemLinkIconForegroundColor: UIColor = .systemGray
+    @Published var sidebarMenuItemIsSelectedTitleForegroundColor: UIColor = .systemBackground
+
     @Published var accountInfo = SidebarAccountInfo()
-    @Published var selectedMenuItem: SidebarMenuItem = .all {
+    @Published var selectedMenuItem: SidebarSelectableMenuItem = .all {
         didSet { menuItemAction(selectedMenuItem) }
     }
 
     let accountImageAction: () -> Void
-    let menuItemAction: (_ selectedMenuItem: SidebarMenuItem) -> Void
+    let menuItemAction: (_ selectedMenuItem: SidebarSelectableMenuItem) -> Void
+    let connectAction: () -> Void
     let supportAction: () -> Void
 
     init(
         accountImageAction: @escaping () -> Void,
-        menuItemAction: @escaping (_: SidebarMenuItem) -> Void,
+        menuItemAction: @escaping (_: SidebarSelectableMenuItem) -> Void,
+        connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void
     ) {
         self.accountImageAction = accountImageAction
         self.menuItemAction = menuItemAction
+        self.connectAction = connectAction
         self.supportAction = supportAction
     }
+}
+
+private let defaultTextColor = UIColor {
+    $0.userInterfaceStyle == .dark ? .white : .darkText
 }

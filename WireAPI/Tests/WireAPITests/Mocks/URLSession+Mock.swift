@@ -25,10 +25,10 @@ extension URLSession {
     /// Set `URLProtocolMock.mockHandler` with a mocking function to
     /// control how request received by this URL session are handled.
 
-    static let mock: URLSession = {
+    static func mockURLSession() -> URLSession {
         let config = URLSessionConfiguration.default
         config.protocolClasses = [URLProtocolMock.self]
         return URLSession(configuration: config)
-    }()
+    }
 
 }

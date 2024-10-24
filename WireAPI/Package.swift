@@ -4,13 +4,13 @@ import PackageDescription
 
 let package = Package(
     name: "WireAPI",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAPI", targets: ["WireAPI"]),
         .library(name: "WireAPISupport", targets: ["WireAPISupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin"),
         .package(name: "WireFoundation", path: "../WireFoundation")

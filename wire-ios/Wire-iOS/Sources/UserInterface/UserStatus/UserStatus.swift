@@ -22,7 +22,7 @@ import WireDataModel
 /// handle, availability and verification status.
 struct UserStatus {
 
-    var name = ""
+    var displayName = ""
 
     var availability = Availability.none
 
@@ -35,12 +35,12 @@ struct UserStatus {
     var isProteusVerified = false
 
     init(
-        name: String,
+        displayName: String,
         availability: Availability,
         isE2EICertified: Bool,
         isProteusVerified: Bool
     ) {
-        self.name = name
+        self.displayName = displayName
         self.availability = availability
         self.isE2EICertified = isE2EICertified
         self.isProteusVerified = isProteusVerified

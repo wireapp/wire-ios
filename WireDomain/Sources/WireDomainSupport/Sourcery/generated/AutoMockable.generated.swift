@@ -907,6 +907,39 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - updateUser
+
+    public var updateUserFrom_Invocations: [UserUpdateEvent] = []
+    public var updateUserFrom_MockMethod: ((UserUpdateEvent) async -> Void)?
+
+    public func updateUser(from event: UserUpdateEvent) async {
+        updateUserFrom_Invocations.append(event)
+
+        guard let mock = updateUserFrom_MockMethod else {
+            fatalError("no mock for `updateUserFrom`")
+        }
+
+        await mock(event)
+    }
+
+    // MARK: - fetchOrCreateUser
+
+    public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
+    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
+
+    public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
+        fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
+
+        if let mock = fetchOrCreateUserWithDomain_MockMethod {
+            return mock(uuid, domain)
+        } else if let mock = fetchOrCreateUserWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUserWithDomain`")
+        }
+    }
+
     // MARK: - removePushToken
 
     public var removePushToken_Invocations: [Void] = []
@@ -1037,17 +1070,22 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - deleteUserAccount
 
-    public var deleteUserAccountForAt_Invocations: [(user: ZMUser, date: Date)] = []
-    public var deleteUserAccountForAt_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var deleteUserAccountWithDomainAt_Invocations: [(id: UUID, domain: String?, date: Date)] = []
+    public var deleteUserAccountWithDomainAt_MockError: Error?
+    public var deleteUserAccountWithDomainAt_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
-    public func deleteUserAccount(for user: ZMUser, at date: Date) async {
-        deleteUserAccountForAt_Invocations.append((user: user, date: date))
+    public func deleteUserAccount(with id: UUID, domain: String?, at date: Date) async throws {
+        deleteUserAccountWithDomainAt_Invocations.append((id: id, domain: domain, date: date))
 
-        guard let mock = deleteUserAccountForAt_MockMethod else {
-            fatalError("no mock for `deleteUserAccountForAt`")
+        if let error = deleteUserAccountWithDomainAt_MockError {
+            throw error
         }
 
-        await mock(user, date)
+        guard let mock = deleteUserAccountWithDomainAt_MockMethod else {
+            fatalError("no mock for `deleteUserAccountWithDomainAt`")
+        }
+
+        try await mock(id, domain, date)
     }
 
 }

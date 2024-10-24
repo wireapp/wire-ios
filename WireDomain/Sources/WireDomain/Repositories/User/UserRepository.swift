@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
@@ -61,6 +62,26 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
+
+    /// Updates a user.
+    ///
+    /// - parameters:
+    ///     - event: The event to update the user locally from.
+
+    func updateUser(
+        from event: UserUpdateEvent
+    ) async
+
+    /// Fetches or creates a user locally.
+    ///
+    /// - parameters:
+    ///     - uuid: The user id to fetch or create locally.
+    ///     - domain: The user domain when federated.
+
+    func fetchOrCreateUser(
+        with uuid: UUID,
+        domain: String?
+    ) -> ZMUser
 
     /// Removes user push token from storage.
 
@@ -134,8 +155,11 @@ public protocol UserRepositoryProtocol {
     ///     - user: The user to delete the account for.
     ///     - date: The date the user was deleted.
 
-    func deleteUserAccount(for user: ZMUser, at date: Date) async
-
+    func deleteUserAccount(
+        with id: UUID,
+        domain: String?,
+        at date: Date
+    ) async throws
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -177,12 +201,27 @@ public final class UserRepository: UserRepositoryProtocol {
         ZMUser.selfUser(in: context)
     }
 
+    public func fetchOrCreateUser(
+        with id: UUID,
+        domain: String? = nil
+    ) -> ZMUser {
+        ZMUser.fetchOrCreate(
+            with: id,
+            domain: domain,
+            in: context
+        )
+    }
+
     public func fetchUser(
         with id: UUID,
         domain: String?
     ) async throws -> ZMUser {
         try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
+            guard let user = ZMUser.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            ) else {
                 throw UserRepositoryError.failedToFetchUser(id)
             }
 
@@ -226,21 +265,68 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
+    public func updateUser(
+        from event: UserUpdateEvent
+    ) async {
+        await context.perform { [self] in
+
+            let user = fetchOrCreateUser(
+                with: event.userID
+            )
+
+            if let name = event.name {
+                user.name = name
+            }
+
+            if let email = event.email {
+                user.emailAddress = email
+            }
+
+            if let handle = event.handle {
+                user.handle = handle
+            }
+
+            if let accentColor = event.accentColorID {
+                user.accentColorValue = Int16(accentColor)
+            }
+
+            let assetKeys: Set<String> = [
+                ZMUser.previewProfileAssetIdentifierKey,
+                ZMUser.completeProfileAssetIdentifierKey
+            ]
+
+            /// Do not update assets if user has local modifications: a possible explanation is that if user has local changes to its assets
+            /// we don't want to update them and keep these changes as is until they're synced.
+            if !user.hasLocalModifications(forKeys: assetKeys) {
+                let previewAssetKey = event.assets?
+                    .first(where: { $0.size == .preview })
+                    .map(\.key)
+
+                let completeAssetKey = event.assets?
+                    .first(where: { $0.size == .complete })
+                    .map(\.key)
+
+                if let previewAssetKey {
+                    user.previewProfileAssetIdentifier = previewAssetKey
+                }
+
+                if let completeAssetKey {
+                    user.completeProfileAssetIdentifier = completeAssetKey
+                }
+            }
+
+            user.supportedProtocols = event.supportedProtocols?.toDomainModel() ?? [.proteus]
+
+            user.isPendingMetadataRefresh = false
+        }
+    }
+
     public func removePushToken() {
         storage.set(
             nil,
             forKey: DefaultsKeys.pushToken.rawValue
         )
-    }
-
-    public func fetchUser(with id: UUID) async throws -> ZMUser {
-        try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
-                throw UserRepositoryError.failedToFetchUser(id)
-            }
-
-            return user
-        }
     }
 
     public func fetchOrCreateUserClient(
@@ -348,8 +434,9 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func disableUserLegalHold() async throws {
+        let selfUser = fetchSelfUser()
+
         try await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
@@ -400,9 +487,12 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func deleteUserAccount(
-        for user: ZMUser,
+        with id: UUID,
+        domain: String?,
         at date: Date
-    ) async {
+    ) async throws {
+        let user = try await fetchUser(with: id, domain: domain)
+
         let isSelfUser = await context.perform {
             user.isSelfUser
         }
@@ -425,7 +515,10 @@ public final class UserRepository: UserRepositoryProtocol {
     // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
-        let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
+        let persistedUser = fetchOrCreateUser(
+            with: user.id.uuid,
+            domain: user.id.domain
+        )
 
         guard user.deleted == false else {
             return persistedUser.markAccountAsDeleted(at: Date())

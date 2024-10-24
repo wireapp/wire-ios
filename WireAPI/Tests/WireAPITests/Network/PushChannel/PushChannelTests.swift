@@ -33,11 +33,7 @@ final class PushChannelTests: XCTestCase {
         request = URLRequest(url: url)
         webSocket = MockWebSocketProtocol()
         webSocket.close_MockMethod = {}
-
-        sut = PushChannel(
-            request: request,
-            webSocket: webSocket
-        )
+        sut = PushChannel(webSocket: webSocket)
     }
 
     override func tearDown() async throws {

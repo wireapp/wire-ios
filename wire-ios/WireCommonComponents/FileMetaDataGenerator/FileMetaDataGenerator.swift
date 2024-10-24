@@ -42,7 +42,7 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
 
         let thumbnail: Data?
         do {
-            thumbnail = try await previewGenerator.generatePreviewForFile(at: url)
+            thumbnail = try previewGenerator.generatePreviewForFile(at: url)
                 .jpegData(compressionQuality: 0.9)
         } catch {
             thumbnail = nil

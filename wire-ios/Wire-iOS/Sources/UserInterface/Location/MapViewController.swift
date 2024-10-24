@@ -40,7 +40,7 @@ final class MapViewController: UIViewController {
     let mapView = MKMapView()
     weak var delegate: MapViewControllerDelegate?
     private let pointAnnotation = MKPointAnnotation()
-    private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(
+    private lazy var annotationView: MKMarkerAnnotationView = MKMarkerAnnotationView(
         annotation: pointAnnotation,
         reuseIdentifier: String(describing: type(of: self)
         )

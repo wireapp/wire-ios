@@ -131,8 +131,9 @@ public class TeamRepository: TeamRepositoryProtocol {
             return member
         }
 
-        await userRepository.deleteUserAccount(
-            for: user,
+        try await userRepository.deleteUserAccount(
+            with: userID,
+            domain: user.domain,
             at: time
         )
 
