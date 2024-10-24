@@ -209,7 +209,14 @@ extension WireCallCenterV3 {
 
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
-        // Note: this will be replaced in develop by Wirelogger to upload metrics there
+        do {
+            let metricsData = Data(metrics.utf8)
+            let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
+            guard let attributes = jsonObject as? [String: NSObject] else { return }
+            WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self) )")
+        } catch {
+            WireLogger.avs.error("Unable to parse call metrics JSON: \(error)")
+        }
     }
 
     /// Handle requests for refreshing the calling configuration.
