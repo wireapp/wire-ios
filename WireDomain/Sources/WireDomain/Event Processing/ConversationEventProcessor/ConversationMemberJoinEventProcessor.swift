@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
+import WireDataModel
+import WireSystem
 
 /// Process conversation member join events.
 
@@ -32,9 +35,104 @@ protocol ConversationMemberJoinEventProcessorProtocol {
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
 
-    func processEvent(_: ConversationMemberJoinEvent) async throws {
-        // TODO: [WPB-10168]
-        assertionFailure("not implemented yet")
+    let context: NSManagedObjectContext
+    let conversationRepository: any ConversationRepositoryProtocol
+    let userRepository: any UserRepositoryProtocol
+
+    func processEvent(_ event: ConversationMemberJoinEvent) async throws {
+        let conversationID = event.conversationID
+        let id = conversationID.uuid
+        let domain = conversationID.domain
+
+        var conversation = await conversationRepository.fetchConversation(
+            with: id,
+            domain: domain
+        )
+
+        if conversation == nil {
+            // Sync conversation
+            try await conversationRepository.pullConversation(with: conversationID)
+            conversation = await conversationRepository.fetchConversation(
+                with: id,
+                domain: domain
+            )
+        }
+
+        guard let conversation else {
+            return WireLogger.eventProcessing.error(
+                "Member join update missing conversation, aborting..."
+            )
+        }
+
+        try await addParticipants(
+            event.members,
+            to: conversation,
+            senderID: event.senderID,
+            timestamp: event.timestamp
+        )
+    }
+
+    private func addParticipants(
+        _ members: [WireAPI.Conversation.Member],
+        to conversation: ZMConversation,
+        senderID: UserID,
+        timestamp: Date
+    ) async throws {
+        let usersAndRoles = members.compactMap {
+            fetchUserAndRole(from: $0, for: conversation)
+        }
+
+        let users = Set(usersAndRoles.map(\.user))
+        let existingUsers = await context.perform {
+            conversation.localParticipants
+        }
+
+        let newUsers = users.subtracting(existingUsers)
+
+        if !newUsers.isEmpty, conversation.conversationType == .group {
+            let sender = try await userRepository.fetchUser(
+                with: senderID.uuid,
+                domain: senderID.domain
+            )
+
+            let systemMessage = SystemMessage(
+                type: .participantsAdded,
+                sender: sender,
+                users: newUsers,
+                clients: nil,
+                timestamp: timestamp
+            )
+
+            await conversationRepository.addSystemMessage(systemMessage, to: conversation)
+        }
+
+        conversation.addParticipantsAndUpdateConversationState(
+            usersAndRoles: usersAndRoles
+        )
+    }
+
+    private func fetchUserAndRole(
+        from member: WireAPI.Conversation.Member,
+        for conversation: ZMConversation
+    ) -> (user: ZMUser, role: Role?)? {
+        guard let userID = member.id ?? member.qualifiedID?.uuid else {
+            return nil
+        }
+
+        let user = userRepository.fetchOrCreateUser(
+            with: userID,
+            domain: member.qualifiedID?.domain
+        )
+
+        let role = member.conversationRole.map {
+            Role.fetchOrCreateRole(
+                with: $0,
+                teamOrConversation: TeamOrConversation.matching(conversation),
+                in: context
+            )
+        }
+
+        return (user, role)
     }
 
 }

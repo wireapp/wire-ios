@@ -295,15 +295,15 @@ final class ConversationRepositoryTests: XCTestCase {
 
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
 
-            try checkLastMessage(
+            try internalTest_checkLastMessage(
                 in: teamConversation,
-                isLeaveMessageFor: user,
+                messageType: .teamMemberLeave,
                 at: timestamp
             )
 
-            try checkLastMessage(
+            try internalTest_checkLastMessage(
                 in: teamAnotherConversation,
-                isLeaveMessageFor: user,
+                messageType: .teamMemberLeave,
                 at: timestamp
             )
 
@@ -312,16 +312,128 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    private func checkLastMessage(
+    func testFetchConversation_It_Retrieves_Conversation_Locally() async {
+        // Given
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
+
+        // When
+
+        let localConversation = await sut.fetchConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testPullConversation_It_Retrieves_Conversation_Locally() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [Scaffolding.conversationGroupType],
+            notFound: [],
+            failed: []
+        )
+
+        // When
+
+        try await sut.pullConversation(with: conversationID)
+
+        // Then
+
+        let storedConversation = await sut.fetchConversation(
+            with: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        XCTAssertEqual(storedConversation?.remoteIdentifier, conversationID.uuid)
+    }
+
+    func testPullConversation_It_Throws_Error() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [],
+            notFound: [],
+            failed: []
+        )
+
+        do {
+            // When
+            try await sut.pullConversation(with: conversationID)
+        } catch {
+            // Then
+            XCTAssertTrue(error is ConversationRepositoryError)
+        }
+    }
+
+    func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
+        // Mock
+
+        let (conversation, user) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+
+            let user = modelHelper.createUser(in: context)
+
+            return (conversation, user)
+        }
+
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
+
+        let systemMessage = SystemMessage(
+            type: .participantsAdded,
+            sender: user,
+            timestamp: timestamp
+        )
+
+        // When
+
+        await sut.addSystemMessage(systemMessage, to: conversation)
+
+        // Then
+
+        try internalTest_checkLastMessage(
+            in: conversation,
+            messageType: .participantsAdded,
+            at: timestamp
+        )
+    }
+
+    private func internalTest_checkLastMessage(
         in conversation: ZMConversation,
-        isLeaveMessageFor user: ZMUser,
+        messageType: ZMSystemMessageType,
         at timestamp: Date
     ) throws {
-        let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage, "Last message is not system message")
+        let lastMessage = try XCTUnwrap(
+            conversation.lastMessage as? ZMSystemMessage,
+            "Last message is not system message"
+        )
 
-        XCTAssertEqual(lastMessage.systemMessageType, .teamMemberLeave, "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)")
+        XCTAssertEqual(
+            lastMessage.systemMessageType,
+            messageType, "System message is not \(messageType.rawValue): but '\(lastMessage.systemMessageType.rawValue)"
+        )
 
-        let serverTimeStamp = try XCTUnwrap(lastMessage.serverTimestamp, "System message should have timestamp")
+        let serverTimeStamp = try XCTUnwrap(
+            lastMessage.serverTimestamp, "System message should have timestamp"
+        )
 
         XCTAssertEqual(
             serverTimeStamp.timeIntervalSince1970,
@@ -351,7 +463,7 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: [conversationFailed]
         )
 
-        nonisolated(unsafe) static let conversationListError = ConversationList(
+        static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
