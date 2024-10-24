@@ -21,8 +21,6 @@ import WireFoundation
 
 public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider>: GetUserAccountImageUseCaseProtocol {
 
-    typealias Error = GetUserAccountImageUseCaseError
-
     // MARK: - Internal Properties
 
     var initalsProvider: InitalsProvider
@@ -50,9 +48,4 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
 //        guard !initials.isEmpty else { throw Error.invalidImageSource }
 //        return await accountImageGenerator.createImage(initials: initials)
     }
-}
-
-enum GetUserAccountImageUseCaseError: Error {
-    /// Neither valid image data nor a non-empty string has been provided for getting an account image.
-    case invalidImageSource
 }

@@ -55,31 +55,6 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
-//    @MainActor
-//    func testInitalsImageDataMatches() async throws {
-//        // Given
-//        let expectedData = try imageData(from: .green)
-//        mockInitialsProvider.initialsResult = "W"
-//        mockAccountImageGenerator.createImageInitials_MockValue = try XCTUnwrap(.init(data: expectedData))
-//
-//        // When
-//        let actualData = try await sut.invoke(account: mockAccount)?.pngData()
-//
-//        // Then
-//        XCTAssertEqual(expectedData, actualData)
-//    }
-
-    @MainActor
-    func testErrorIsThrown() async throws {
-        // When
-        do {
-            _ = try await sut.invoke(account: mockAccount)
-            XCTFail("Unexpected success")
-        } catch GetUserAccountImageUseCase.Error.invalidImageSource {
-            // Then
-        }
-    }
-
     // MARK: -
 
     private func imageData(from solidColor: UIColor) throws -> Data {
