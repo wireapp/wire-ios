@@ -16,19 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-@MainActor
-func AccountImageGeneratorPreview(_ initials: String) -> UINavigationController {
-    let accountImageGenerator = AccountImageGenerator()
-
-    let accountImageView = AccountImageView()
-    Task {
-        accountImageView.accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
-    }
-
-    let viewController = UIViewController()
-    viewController.navigationItem.leftBarButtonItem = .init(customView: accountImageView)
-    let navigationController = UINavigationController(rootViewController: viewController)
-    return navigationController
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script

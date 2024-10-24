@@ -36,13 +36,34 @@ final class AccountImageViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testAllAccountTypesAndAvailabilities() {
+    func testImageModeAllAccountTypesAndAvailabilities() {
+        typealias Previews = AccountImageView_Previews
         for availability in Availability.allCases + [Availability?.none] {
             // Given
-            let rootView = AccountImageView_Previews.previewWithNavigationBar(availability)
+            let rootView = Previews.previewWithNavigationBar(.image(Previews.accountImage), availability)
             let hostingControllerView = UIHostingController(rootView: rootView).view!
             hostingControllerView.frame = UIScreen.main.bounds
-            let testName = if let availability { "\(availability)" } else { "none" }
+            let testName = if let availability { "imageMode_\(availability)" } else { "imageMode_noAvailability" }
+
+            // Then
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: hostingControllerView, named: "light", testName: testName)
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: hostingControllerView, named: "dark", testName: testName)
+        }
+    }
+
+    @MainActor
+    func testTextModeAllAccountTypesAndAvailabilities() {
+        typealias Previews = AccountImageView_Previews
+        for availability in Availability.allCases + [Availability?.none] {
+            // Given
+            let rootView = Previews.previewWithNavigationBar(.text("CA"), availability)
+            let hostingControllerView = UIHostingController(rootView: rootView).view!
+            hostingControllerView.frame = UIScreen.main.bounds
+            let testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
 
             // Then
             snapshotHelper

@@ -19,37 +19,28 @@
 import UIKit
 import WireFoundation
 
-public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol>: GetUserAccountImageUseCaseProtocol {
+public struct GetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
 
-    typealias Error = GetUserAccountImageUseCaseError
+    // MARK: - Life Cycle
 
-    var initalsProvider: InitalsProvider
-    var accountImageGenerator: AccountImageGenerator
+    public init() {}
 
-    public init(
-        initalsProvider: InitalsProvider,
-        accountImageGenerator: AccountImageGenerator
-    ) {
-        self.initalsProvider = initalsProvider
-        self.accountImageGenerator = accountImageGenerator
-    }
+    // MARK: - Methods
 
     public func invoke(
         account: some GetAccountImageUseCaseAccountProtocol
-    ) async throws -> UIImage {
+    ) async throws -> UIImage? {
         // user's custom image
         if let data = await account.imageData, let accountImage = UIImage(data: data) {
             return accountImage
         }
+        return nil
 
         // image base on user's initials
-        let initials = await initalsProvider.initials(from: account.userName).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !initials.isEmpty else { throw Error.invalidImageSource }
-        return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
+        // TODO: clean up
+//        let initials = await initalsProvider.initials(from: account.userName)
+//            .trimmingCharacters(in: .whitespacesAndNewlines)
+//        guard !initials.isEmpty else { throw Error.invalidImageSource }
+//        return await accountImageGenerator.createImage(initials: initials)
     }
-}
-
-enum GetUserAccountImageUseCaseError: Error {
-    /// Neither valid image data nor a non-empty string has been provided for getting an account image.
-    case invalidImageSource
 }

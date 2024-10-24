@@ -20,60 +20,37 @@ import WireFoundation
 import XCTest
 
 @testable import WireAccountImageUI
+@testable import WireAccountImageUISupport
 
 final class GetUserAccountImageUseCaseTests: XCTestCase {
 
-    private var mockAccountImageGenerator: MockAccountImageGenerator!
-    private var mockInitialsProvider: MockInitialsProvider!
+    @MainActor
     private var mockAccount: MockAccount!
-    private var sut: GetUserAccountImageUseCase<MockInitialsProvider, MockAccountImageGenerator>!
+    private var sut: GetUserAccountImageUseCase!
 
-    override func setUp() {
-        mockAccountImageGenerator = .init()
-        mockInitialsProvider = .init()
-        sut = .init(initalsProvider: mockInitialsProvider, accountImageGenerator: mockAccountImageGenerator)
+    @MainActor
+    override func setUp() async throws {
+        sut = .init()
         mockAccount = .init()
     }
 
-    override func tearDown() {
+    @MainActor
+    override func tearDown() async throws {
         mockAccount = nil
         sut = nil
-        mockAccountImageGenerator = nil
     }
 
+    @MainActor
     func testUserImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
         mockAccount.imageData = expectedData
 
         // When
-        let actualData = try await sut.invoke(account: mockAccount).pngData()
+        let actualData = try await sut.invoke(account: mockAccount)?.pngData()
 
         // Then
         XCTAssertEqual(expectedData, actualData)
-    }
-
-    func testInitalsImageDataMatches() async throws {
-        // Given
-        let expectedData = try imageData(from: .green)
-        mockInitialsProvider.initialsResult = "W"
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
-
-        // When
-        let actualData = try await sut.invoke(account: mockAccount).pngData()
-
-        // Then
-        XCTAssertEqual(expectedData, actualData)
-    }
-
-    func testErrorIsThrown() async throws {
-        // When
-        do {
-            _ = try await sut.invoke(account: mockAccount)
-            XCTFail("Unexpected success")
-        } catch GetUserAccountImageUseCase.Error.invalidImageSource {
-            // Then
-        }
     }
 
     // MARK: -

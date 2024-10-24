@@ -20,7 +20,7 @@ import UIKit
 
 /// If the team has an image set, this use cases retrieves it.
 /// If no team image data is available, an image will be generated using the team name's initials.
-public protocol GetTeamAccountImageUseCaseProtocol {
+public protocol GetTeamAccountImageUseCaseProtocol: Sendable {
 
     func invoke(
         user: some GetAccountImageUseCaseUserProtocol,

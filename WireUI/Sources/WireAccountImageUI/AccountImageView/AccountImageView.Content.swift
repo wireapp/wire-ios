@@ -18,7 +18,19 @@
 
 import UIKit
 
-/// Creates an image based on a user's or team's initials.
-public protocol AccountImageGeneratorProtocol {
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage
+extension AccountImageView {
+    public enum Content {
+
+        case image(UIImage), text(String)
+
+        var image: UIImage? {
+            guard case .image(let image) = self else { return nil }
+            return image
+        }
+
+        var text: String? {
+            guard case .text(let value) = self else { return nil }
+            return value
+        }
+    }
 }

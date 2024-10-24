@@ -44,12 +44,3 @@ final class MockInitialsProvider: GetAccountImageUseCaseInitialsProvider {
     var initialsResult = ""
     func initials(from userName: String) -> String { initialsResult }
 }
-
-final class MockAccountImageGenerator: AccountImageGeneratorProtocol {
-    var createImage_Invocations = [(initials: String, backgroundColor: UIColor)]()
-    var resultImage = UIImage()
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage {
-        createImage_Invocations += [(initials, backgroundColor)]
-        return resultImage
-    }
-}
