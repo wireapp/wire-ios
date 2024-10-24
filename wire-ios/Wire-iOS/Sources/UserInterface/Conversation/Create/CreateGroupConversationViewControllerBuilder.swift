@@ -30,11 +30,11 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
     }
 
     func build() -> UIViewController {
-        let rootViewController = ConversationCreationController(
+        let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession
         )
-        rootViewController.delegate = delegate
-        return rootViewController
+        viewController.delegate = delegate
+        return viewController
     }
 }

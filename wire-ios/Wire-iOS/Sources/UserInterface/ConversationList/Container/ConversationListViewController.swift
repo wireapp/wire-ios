@@ -34,7 +34,7 @@ final class ConversationListViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
-    let createGroupConversationViewControllerBuilder: any CreateGroupConversationViewControllerBuilderProtocol
+    let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
@@ -157,7 +157,7 @@ final class ConversationListViewController: UIViewController {
         self.zClientViewController = zClientViewController
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.createGroupConversationViewControllerBuilder = createGroupConversationViewControllerBuilder
+        self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
         self.conversationListCoordinator = conversationListCoordinator
 
