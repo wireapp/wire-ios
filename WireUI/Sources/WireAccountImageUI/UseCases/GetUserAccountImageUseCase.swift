@@ -37,6 +37,7 @@ public struct GetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
         return nil
 
         // image base on user's initials
+        // TODO: clean up
 //        let initials = await initalsProvider.initials(from: account.userName)
 //            .trimmingCharacters(in: .whitespacesAndNewlines)
 //        guard !initials.isEmpty else { throw Error.invalidImageSource }

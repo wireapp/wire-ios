@@ -65,6 +65,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
+    // TODO: clean up
 //    @MainActor
 //    func testAccountTeamNameInitalsImageDataMatches() async throws {
 //        // Given
