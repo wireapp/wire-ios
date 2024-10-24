@@ -27,15 +27,15 @@ struct SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderProtoco
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
+    var mainCoordinator: AnyMainCoordinator
 
-    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
-        let rootViewController = SelfProfileViewController(
+    func build() -> UIViewController {
+        SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator
         )
-        return UINavigationController(rootViewController: rootViewController)
     }
 }

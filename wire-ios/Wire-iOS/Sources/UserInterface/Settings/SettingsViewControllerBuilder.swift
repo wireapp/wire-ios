@@ -24,6 +24,7 @@ import WireSyncEngine
 struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
     var userSession: UserSession
+    //var settingsCoordinator: SettingsCoordinatorProtocol
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
         .init(userSession: userSession, selfUser: userSession.editableSelfUser)
@@ -37,7 +38,7 @@ struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSetting
         )
     }
 
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController { // TODO: let the main coordinator use the settings coordinator
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.settingsGroup(

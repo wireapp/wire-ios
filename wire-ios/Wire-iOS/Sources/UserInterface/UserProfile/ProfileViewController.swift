@@ -28,7 +28,7 @@ enum ProfileViewControllerTabBarIndex: Int {
 }
 
 @MainActor
-protocol ProfileViewControllerDelegate: AnyObject {
+protocol ProfileViewControllerDelegate: AnyObject { // TODO: delete
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
 }
 
@@ -373,7 +373,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func openSelfProfile() {
         Task {
-            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
