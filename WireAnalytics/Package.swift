@@ -21,7 +21,8 @@ let package = Package(
             name: "WireAnalytics",
             dependencies: resolveWireAnalyticsDependencies() + [
                 .product(name: "Countly", package: "countly-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
@@ -31,7 +32,8 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireAnalyticsSupport",
@@ -67,10 +69,8 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     }
 }
 
-for target in package.targets {
-    target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
-    ]
-}
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
+]
