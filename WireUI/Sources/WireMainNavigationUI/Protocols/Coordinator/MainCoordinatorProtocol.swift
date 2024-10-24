@@ -20,13 +20,12 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+    associatedtype Dependencies: MainCoordinatorProtocolDependenciesProtocol
 
     typealias ConversationFilter = Dependencies.ConversationFilter
     typealias ConversationModel = Dependencies.ConversationModel
     typealias ConversationMessageModel = Dependencies.ConversationMessageModel
     typealias SettingsTopLevelMenuItem = Dependencies.SettingsTopLevelMenuItem
-    typealias User = Dependencies.User
 
     @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async
@@ -45,15 +44,6 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
     @MainActor
     func hideSettingsContent()
-
-    @MainActor
-    func showSelfProfile() async
-    @MainActor
-    func showUserProfile(user: User) async
-    @MainActor
-    func showConnect() async
-    @MainActor
-    func showCreateGroupConversation() async
 
     @MainActor
     func presentViewController(_ viewController: UIViewController) async

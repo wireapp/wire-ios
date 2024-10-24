@@ -21,7 +21,7 @@ import UIKit
 @MainActor
 public protocol MainConversationUIBuilderProtocol {
 
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+    associatedtype Dependencies: MainCoordinatorProtocolDependenciesProtocol
 
     associatedtype ConversationUI: MainConversationUIProtocol where
         ConversationUI.ConversationModel == Dependencies.ConversationModel

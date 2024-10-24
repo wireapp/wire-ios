@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies {
+public protocol MainCoordinatorDependenciesProtocol: MainCoordinatorProtocolDependenciesProtocol {
 
     associatedtype SplitViewController: MainSplitViewControllerProtocol where
         SplitViewController.TabBarController.ConversationListUI.ConversationFilter == ConversationFilter,
@@ -28,16 +28,4 @@ public protocol MainCoordinatorDependencies: MainCoordinatorProtocolDependencies
 
     associatedtype SettingsContentUIBuilder: MainSettingsContentUIBuilderProtocol where
         SettingsContentUIBuilder.TopLevelMenuItem == SettingsTopLevelMenuItem
-
-    associatedtype ConnectUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        ConnectUIBuilder.Dependencies == Self
-
-    associatedtype CreateGroupConversationUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        CreateGroupConversationUIBuilder.Dependencies == Self
-
-    associatedtype SelfProfileUIBuilder: MainCoordinatorInjectingViewControllerBuilder where
-        SelfProfileUIBuilder.Dependencies == Self
-
-    associatedtype UserProfileUIBuilder: MainUserProfileUIBuilderProtocol where
-        UserProfileUIBuilder.User == User
 }
