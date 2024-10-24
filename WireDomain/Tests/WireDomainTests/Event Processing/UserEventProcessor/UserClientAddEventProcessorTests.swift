@@ -61,7 +61,9 @@ final class UserClientAddEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_User_Repo_Methods() async throws {
         // Mock
 
-        let userClient = modelHelper.createSelfClient(in: context)
+        let userClient = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
+        }
 
         userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in
             (userClient, true)

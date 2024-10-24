@@ -16,30 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-/// An event where some participants were removed from a conversation.
+public struct MLSProvider {
+    let service: any MLSServiceInterface
+    let isMLSEnabled: Bool
 
-public struct ConversationMemberLeaveEvent: Equatable, Codable, Sendable {
-
-    /// The id of the conversation.
-
-    public let conversationID: ConversationID
-
-    /// The id of the user who removed the members.
-
-    public let senderID: UserID
-
-    /// When the members were removed.
-
-    public let timestamp: Date
-
-    /// The ids of the members who were removed.
-
-    public let removedUserIDs: Set<UserID>
-
-    /// The reason why the members were removed.
-
-    public let reason: ConversationMemberLeaveReason
-
+    public init(
+        service: any MLSServiceInterface,
+        isMLSEnabled: Bool
+    ) {
+        self.service = service
+        self.isMLSEnabled = isMLSEnabled
+    }
 }
