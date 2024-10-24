@@ -42,6 +42,8 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     // MARK: - Properties
 
     private let userPropertiesAPI: any UserPropertiesAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create ConversationLabelsLocalStore
     private let context: NSManagedObjectContext
     private let logger = WireLogger(tag: "conversation-labels")
 
