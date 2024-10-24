@@ -147,7 +147,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
-                notificationsTracker: nil,
                 eventProcessor: updateEventProcessor,
                 applicationStatus: applicationStatusDirectory,
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,

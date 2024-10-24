@@ -22,7 +22,12 @@ import WireSyncEngine
 import WireUtilities
 
 protocol TrackingInterface {
-    var disableAnalyticsSharing: Bool { get set }
+
+    var isAnalyticsDisabled: Bool { get }
+    func requestAnalyticsConsent() async throws -> Bool
+    func disableAnalytics() throws
+    func enableAnalytics() async throws
+
 }
 
 protocol AVSMediaManagerInterface {
@@ -70,10 +75,14 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate
     ]
 
-    convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {
+    convenience init(
+        userSession: UserSession?,
+        trackingManager: TrackingManager?,
+        selfUser: SettingsSelfUser?
+    ) {
         self.init(
             userDefaults: UserDefaults.standard,
-            tracking: TrackingManager.shared,
+            tracking: trackingManager,
             mediaManager: AVSMediaManager.sharedInstance(),
             userSession: userSession,
             selfUser: selfUser
@@ -99,7 +108,7 @@ final class SettingsPropertyFactory {
         let getAction: GetAction = { _ in
             SettingsPropertyValue.string(value: value ?? "")
         }
-        let setAction: SetAction = { _, _ in }
+        let setAction: SetAction = { _, _, _  in }
         return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
     }
 
@@ -112,7 +121,7 @@ final class SettingsPropertyFactory {
                 return SettingsPropertyValue.string(value: self.selfUser?.name ?? "")
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .string(let stringValue):
                     guard let selfUser = self.selfUser else { requireInternal(false, "Attempt to modify a user property without a self user"); break }
@@ -145,7 +154,7 @@ final class SettingsPropertyFactory {
                 SettingsPropertyValue(self.selfUser?.accentColorValue ?? 0)
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .number(let number):
                     self.userSession?.enqueue({
@@ -165,7 +174,7 @@ final class SettingsPropertyFactory {
                 return SettingsPropertyValue(settingsColorScheme.rawValue)
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .number(let number):
                     if let settingsColorScheme = SettingsColorScheme(rawValue: Int(number.int64Value)) {
@@ -193,7 +202,7 @@ final class SettingsPropertyFactory {
                 }
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .number(let intValue):
                     if let intensivityLevel = AVSIntensityLevel(rawValue: UInt(truncating: intValue)),
@@ -211,22 +220,40 @@ final class SettingsPropertyFactory {
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
                 if let tracking = self.tracking {
-                    return SettingsPropertyValue(tracking.disableAnalyticsSharing)
+                    return SettingsPropertyValue(tracking.isAnalyticsDisabled)
                 } else {
                     return SettingsPropertyValue(false)
                 }
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
-                if var tracking = self.tracking {
-                    switch value {
-                    case .number(let number):
-                        tracking.disableAnalyticsSharing = number.boolValue
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+            let setAction: SetAction = { [unowned self] _, value, resultHandler in
+                guard let tracking else {
+                    return
+                }
+
+                guard case .number(let shouldDisable) = value else {
+                    throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                }
+
+                Task { @MainActor in
+                    do {
+                        if shouldDisable.boolValue {
+                            try tracking.disableAnalytics()
+                        } else {
+                            guard try await tracking.requestAnalyticsConsent() else {
+                                throw TrackingManagerError.userConsentDenied
+                            }
+
+                            try await tracking.enableAnalytics()
+                        }
+                    } catch {
+                        resultHandler(.failure(error))
                     }
+
+                    resultHandler(.success(()))
                 }
             }
+
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
 
         case .notificationContentVisible:
@@ -238,7 +265,7 @@ final class SettingsPropertyFactory {
                 }
             }
 
-            let setAction: SetAction = { [unowned self] _, value in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .number(let number):
                     self.userSession?.perform {
@@ -258,7 +285,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
                     return SettingsPropertyValue(disableSendButton ?? false) },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     switch value {
                     case .number(value: let number):
                         Settings.shared[.sendButtonDisabled] = number.boolValue
@@ -272,7 +299,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     return SettingsPropertyValue(self.isAppLockActive)
             },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     switch value {
                     case .number(value: let lockApp):
                         self.delegate?.appLockOptionDidChange(self,
@@ -294,7 +321,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let callingConstantBitRate: Bool = Settings.shared[.callingConstantBitRate] ?? false
                     return SettingsPropertyValue(callingConstantBitRate) },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     if case .number(let enabled) = value {
                         Settings.shared[.callingConstantBitRate] = enabled.boolValue
                     }
@@ -304,7 +331,7 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(
                 propertyName: propertyName,
                 getAction: { _ in return SettingsPropertyValue(Settings.disableLinkPreviews) },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     switch value {
                     case .number(value: let number):
                         Settings.disableLinkPreviews = number.boolValue
@@ -318,7 +345,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let disableCallKit: Bool = Settings.shared[.disableCallKit] ?? false
                     return SettingsPropertyValue(disableCallKit) },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     if case .number(let disabled) = value {
                         Settings.shared[.disableCallKit] = disabled.boolValue
                     }
@@ -329,7 +356,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let muteIncomingCallsWhileInACall: Bool = Settings.shared[.muteIncomingCallsWhileInACall] ?? false
                     return SettingsPropertyValue(muteIncomingCallsWhileInACall) },
-                setAction: { _, value in
+                setAction: { _, value, _  in
                     if case .number(let shouldMute) = value {
                         Settings.shared[.muteIncomingCallsWhileInACall] = shouldMute.boolValue
                     }
@@ -341,7 +368,7 @@ final class SettingsPropertyFactory {
                     let value = self.selfUser?.readReceiptsEnabled ?? false
                     return SettingsPropertyValue(value)
             },
-                setAction: { _, value in
+                setAction: { _, value, _ in
                     if case .number(let enabled) = value,
                         let userSession = self.userSession {
                             userSession.perform {
@@ -356,7 +383,7 @@ final class SettingsPropertyFactory {
                     let value = self?.userSession?.encryptMessagesAtRest ?? false
                     return SettingsPropertyValue(value)
             },
-                setAction: { [weak self] _, value in
+                setAction: { [weak self] _, value, _  in
                     guard case .number(let enabled) = value else { return }
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
             })

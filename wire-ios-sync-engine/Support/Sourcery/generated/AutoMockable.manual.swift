@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2024 Wire Swiss GmbH
 //
@@ -22,6 +22,8 @@ import UIKit
 #elseif os(OSX)
 import AppKit
 #endif
+
+import WireAnalytics
 
 @testable import WireSyncEngine
 
@@ -97,6 +99,180 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
         }
 
         try await mock(clients, apiVersion)
+    }
+
+}
+
+public class MockMessageAppendableConversation: MessageAppendableConversation {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - conversationType
+
+    public var conversationType: ZMConversationType {
+        get { return underlyingConversationType }
+        set(value) { underlyingConversationType = value }
+    }
+
+    public var underlyingConversationType: ZMConversationType!
+
+    // MARK: - localParticipants
+
+    public var localParticipants: Set<ZMUser> {
+        get { return underlyingLocalParticipants }
+        set(value) { underlyingLocalParticipants = value }
+    }
+
+    public var underlyingLocalParticipants: Set<ZMUser>!
+
+    // MARK: - draftMessage
+
+    public var draftMessage: DraftMessage?
+
+    // MARK: - appendText
+
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations: [(content: String, mentions: [Mention], quotedMessage: (any ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID)] = []
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockError: Error?
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod: ((String, [Mention], (any ZMConversationMessage)?, Bool, UUID) throws -> any ZMConversationMessage)?
+    public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendText(content: String, mentions: [Mention], replyingTo quotedMessage: (any ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID) throws -> any ZMConversationMessage {
+        appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.append((content: content, mentions: mentions, quotedMessage: quotedMessage, fetchLinkPreview: fetchLinkPreview, nonce: nonce))
+
+        if let error = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockError {
+            throw error
+        }
+
+        if let mock = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod {
+            return try mock(content, mentions, quotedMessage, fetchLinkPreview, nonce)
+        } else if let mock = appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendTextContentMentionsReplyingToFetchLinkPreviewNonce`")
+        }
+    }
+
+    // MARK: - appendKnock
+
+    public var appendKnock_Invocations: [UUID] = []
+    public var appendKnock_MockError: Error?
+    public var appendKnock_MockMethod: ((UUID) throws -> any ZMConversationMessage)?
+    public var appendKnock_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendKnock(nonce: UUID) throws -> any ZMConversationMessage {
+        appendKnock_Invocations.append(nonce)
+
+        if let error = appendKnock_MockError {
+            throw error
+        }
+
+        if let mock = appendKnock_MockMethod {
+            return try mock(nonce)
+        } else if let mock = appendKnock_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendKnock`")
+        }
+    }
+
+    // MARK: - appendImage
+
+    public var appendImage_Invocations: [(imageData: Data, nonce: UUID)] = []
+    public var appendImage_MockError: Error?
+    public var appendImage_MockMethod: ((Data, UUID) throws -> any ZMConversationMessage)?
+    public var appendImage_MockValue: (any ZMConversationMessage)?
+
+    @discardableResult
+    public func appendImage(from imageData: Data, nonce: UUID) throws -> any ZMConversationMessage {
+        appendImage_Invocations.append((imageData: imageData, nonce: nonce))
+
+        if let error = appendImage_MockError {
+            throw error
+        }
+
+        if let mock = appendImage_MockMethod {
+            return try mock(imageData, nonce)
+        } else if let mock = appendImage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendImage`")
+        }
+    }
+
+    // MARK: - appendLocation
+
+    public var appendLocation_Invocations: [(locationData: LocationData, nonce: UUID)] = []
+    public var appendLocation_MockError: Error?
+    public var appendLocation_MockMethod: ((LocationData, UUID) throws -> any ZMConversationMessage)?
+    public var appendLocation_MockValue: (any WireDataModel.ZMConversationMessage)?
+
+    @discardableResult
+    public func appendLocation(with locationData: LocationData, nonce: UUID) throws -> any ZMConversationMessage {
+        appendLocation_Invocations.append((locationData: locationData, nonce: nonce))
+
+        if let error = appendLocation_MockError {
+            throw error
+        }
+
+        if let mock = appendLocation_MockMethod {
+            return try mock(locationData, nonce)
+        } else if let mock = appendLocation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendLocation`")
+        }
+    }
+
+    // MARK: - appendFile
+
+       public var appendFile_Invocations: [(fileMetadata: ZMFileMetadata, nonce: UUID)] = []
+       public var appendFile_MockError: Error?
+       public var appendFile_MockMethod: ((ZMFileMetadata, UUID) throws -> ZMConversationMessage)?
+       public var appendFile_MockValue: ZMConversationMessage?
+
+       @discardableResult
+       public func appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID) throws -> ZMConversationMessage {
+           appendFile_Invocations.append((fileMetadata: fileMetadata, nonce: nonce))
+
+           if let error = appendFile_MockError {
+               throw error
+           }
+
+           if let mock = appendFile_MockMethod {
+               return try mock(fileMetadata, nonce)
+           } else if let mock = appendFile_MockValue {
+               return mock
+           } else {
+               fatalError("no mock for `appendFile`")
+           }
+       }
+}
+
+// this mocks has issues with Undefined symbol: nominal type descriptor for WireAnalytics.CallQualitySurveyReview
+public class MockSubmitCallQualitySurveyUseCaseProtocol: SubmitCallQualitySurveyUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [WireAnalytics.CallQualitySurveyReview] = []
+    public var invoke_MockMethod: ((WireAnalytics.CallQualitySurveyReview) -> Void)?
+
+    public func invoke(_ review: WireAnalytics.CallQualitySurveyReview) {
+        invoke_Invocations.append(review)
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock(review)
     }
 
 }

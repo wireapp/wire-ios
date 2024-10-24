@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
@@ -330,6 +331,35 @@ extension ZMUserSession: UserSession {
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
     }
+
+    public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
+        return AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
+        return AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
+        return AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+        return AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
+        return AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
+        return ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {
+        return CallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
 }
 
 extension UInt64 {
