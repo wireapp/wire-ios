@@ -29,8 +29,6 @@ final class ArchivedListViewModelTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        try await super.setUp()
-
         let modelHelper = ModelHelper()
         stack = try await CoreDataStackHelper().createStack()
         userSession = UserSessionMock()
@@ -52,8 +50,6 @@ final class ArchivedListViewModelTests: XCTestCase {
         stack = nil
         userSession = nil
         sut = nil
-
-        try await super.tearDown()
     }
 
     func testUnarchiveConversation() throws {
