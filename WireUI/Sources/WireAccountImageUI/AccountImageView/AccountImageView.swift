@@ -214,9 +214,9 @@ public final class AccountImageView: UIView {
 
     private func updateAccountImage() {
         switch source {
-        case .data(let data):
+        case .image(let image):
             initialsLabel.text = nil
-            accountImageView.image = UIImage(data: data)
+            accountImageView.image = image
         case .text(let initials):
             initialsLabel.text = initials
             accountImageView.image = nil
@@ -249,24 +249,24 @@ public final class AccountImageView: UIView {
 // MARK: - Convenience Init
 
 // TODO: is this used?
-public extension AccountImageView {
-
-    convenience init(
-        accountImage: UIImage,
-        isTeamAccount: Bool,
-        availability: Availability?
-    ) {
-        self.init()
-
-        self.source = .data(accountImage.pngData() ?? .init())
-        self.isTeamAccount = isTeamAccount
-        self.availability = availability
-
-        updateAccountImage()
-        updateShape()
-        updateAvailabilityIndicator()
-    }
-}
+//public extension AccountImageView {
+//
+//    convenience init(
+//        accountImage: UIImage,
+//        isTeamAccount: Bool,
+//        availability: Availability?
+//    ) {
+//        self.init()
+//
+//        self.source = .data(accountImage.pngData() ?? .init())
+//        self.isTeamAccount = isTeamAccount
+//        self.availability = availability
+//
+//        updateAccountImage()
+//        updateShape()
+//        updateAvailabilityIndicator()
+//    }
+//}
 
 // MARK: - Previews
 
@@ -277,15 +277,15 @@ struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            previewWithNavigationBar(.data(accountImage.pngData()!), .none)
+            previewWithNavigationBar(.image(accountImage), .none)
                 .previewDisplayName("image")
-            previewWithNavigationBar(.text(initials: initials), .none)
+            previewWithNavigationBar(.text(initials), .none)
                 .previewDisplayName("text")
 
             ForEach(Availability.allCases, id: \.self) { availability in
-                previewWithNavigationBar(.data(accountImage.pngData()!), availability)
+                previewWithNavigationBar(.image(accountImage), availability)
                     .previewDisplayName("image \(availability)")
-                previewWithNavigationBar(.text(initials: initials), availability)
+                previewWithNavigationBar(.text(initials), availability)
                     .previewDisplayName("text \(availability)")
             }
         }

@@ -43,7 +43,8 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testTeamImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockUser.membership?.team?.teamImageSource = .data(expectedData)
+        let image = try XCTUnwrap(UIImage(data: expectedData))
+        mockUser.membership?.team?.teamImageSource = .image(image)
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
@@ -56,7 +57,8 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testAccountImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockAccount.teamImageSource = .data(expectedData)
+        let image = try XCTUnwrap(UIImage(data: expectedData))
+        mockAccount.teamImageSource = .image(image)
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
@@ -64,23 +66,6 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
         // Then
         XCTAssertEqual(expectedData, actualData)
     }
-
-    // TODO: clean up
-//    @MainActor
-//    func testAccountTeamNameInitalsImageDataMatches() async throws {
-//        // Given
-//        let expectedData = try imageData(from: .green)
-//        mockAccount.teamName = " Wire Team "
-//        mockAccountImageGenerator.createImageInitials_MockValue = try XCTUnwrap(.init(data: expectedData))
-//
-//        // When
-//        let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
-//
-//        // Then
-//        XCTAssertEqual(mockAccountImageGenerator.createImageInitials_Invocations.count, 1)
-//        XCTAssertEqual(mockAccountImageGenerator.createImageInitials_Invocations.first, "W")
-//        XCTAssertEqual(expectedData, actualData)
-//    }
 
     func testErrorIsThrown() async throws {
         // When

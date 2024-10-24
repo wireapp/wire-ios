@@ -36,7 +36,7 @@ public struct GetTeamAccountImageUseCase: GetTeamAccountImageUseCaseProtocol {
         }
         if let teamImageSource {
             // team image
-            if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
+            if case .image(let accountImage) = teamImageSource {
                 return accountImage
             }
 
