@@ -21,12 +21,15 @@ import WireSettingsUI
 import WireSyncEngine
 
 @MainActor
-struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
+final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
-    var userSession: UserSession
+    let userSession: UserSession
+    weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
-        .init(userSession: userSession, selfUser: userSession.editableSelfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: userSession.editableSelfUser)
+        settingsPropertyFactory.delegate = settingsPropertyFactoryDelegate
+        return settingsPropertyFactory
     }
 
     private func settingsCellDescriptorFactory(settingsCoordinator: AnySettingsCoordinator) -> SettingsCellDescriptorFactory {
@@ -35,6 +38,10 @@ struct SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSetting
             userRightInterfaceType: UserRight.self,
             settingsCoordinator: settingsCoordinator
         )
+    }
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
     }
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
