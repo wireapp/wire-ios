@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
@@ -39,7 +40,7 @@ public final class AccountImageView: UIView {
 
     // MARK: - Public Properties
 
-    public var content: Content = .text("") {
+    public var source = AccountImageSource() {
         didSet { updateAccountImage() }
     }
 
@@ -213,8 +214,14 @@ public final class AccountImageView: UIView {
     }
 
     private func updateAccountImage() {
-        initialsLabel.text = content.text
-        accountImageView.image = content.image
+        switch source {
+        case .image(let image):
+            initialsLabel.text = nil
+            accountImageView.image = image
+        case .text(let initials):
+            initialsLabel.text = initials
+            accountImageView.image = nil
+        }
     }
 
     private func updateShape() {
@@ -237,27 +244,6 @@ public final class AccountImageView: UIView {
             accountImageView.superview?.layer.mask = .none
             return
         }
-    }
-}
-
-// MARK: - Convenience Init
-
-public extension AccountImageView {
-
-    convenience init(
-        accountImage: UIImage,
-        isTeamAccount: Bool,
-        availability: Availability?
-    ) {
-        self.init()
-
-        self.content = .image(accountImage)
-        self.isTeamAccount = isTeamAccount
-        self.availability = availability
-
-        updateAccountImage()
-        updateShape()
-        updateAvailabilityIndicator()
     }
 }
 
@@ -286,11 +272,11 @@ struct AccountImageView_Previews: PreviewProvider {
 
     @ViewBuilder
     static func previewWithNavigationBar(
-        _ content: AccountImageView.Content,
+        _ source: AccountImageSource,
         _ availability: Availability?
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(content, availability)
+            AccountImageViewRepresentable(source, availability)
                 // slightly differnet colors so that we can verify that the view modifiers work
                 .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
                 .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
@@ -313,7 +299,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(content, availability)
+                            AccountImageViewRepresentable(source, availability)
                                 .padding(.horizontal)
                         }
                     }
