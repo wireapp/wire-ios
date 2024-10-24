@@ -317,10 +317,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentCreateConversationUI() {
         Task {
-            let createConversationUI = createGroupConversationViewControllerBuilder.build()
-            let navigationController = UINavigationController(rootViewController: createConversationUI)
-            navigationController.modalPresentationStyle = .formSheet
-            await mainCoordinator.presentViewController(navigationController)
+            let createConversationUI = UINavigationController(rootViewController: createGroupConversationUIBuilder.build())
+            createConversationUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(createConversationUI)
         }
     }
 
