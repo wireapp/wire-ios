@@ -63,6 +63,9 @@ enum CoreDataMigrationActionFactory {
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
+        case .v119:
+            return FixDuplicateOneOnOneConversationsAction()
+
         case .v116:
             return IsPendingInitialFetchMigrationAction()
 

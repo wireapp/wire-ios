@@ -97,6 +97,10 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             sameParticipant
         ])
 
+        //  4. sort by their fully qualified conversation ID in ascending oder, and use the first one.
+        // primary_key is basically the qualified id
+        request.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
+
         guard
             let conversation = try context.fetch(request).first
         else {

@@ -549,7 +549,8 @@ struct ConversationEventPayloadProcessor {
     private func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
         guard
             conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first
+            let otherUser = conversation.localParticipantsExcludingSelf.first,
+            otherUser.oneOnOneConversation == nil
         else {
             return
         }
