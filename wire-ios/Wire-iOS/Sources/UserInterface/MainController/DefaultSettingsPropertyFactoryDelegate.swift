@@ -71,9 +71,9 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
         keyboardAvoidingViewController.navigationItem.leftBarButtonItem = closeItem
 
         wrappedViewController.presentationController?.delegate = passcodeSetupViewController
+        wrappedViewController.modalPresentationStyle = .formSheet
 
         Task {
-            // TODO: [WPB-11836] test on iPad and iPhone and also fix issues with large font sizes
             await mainCoordinator.presentViewController(wrappedViewController)
         }
     }
