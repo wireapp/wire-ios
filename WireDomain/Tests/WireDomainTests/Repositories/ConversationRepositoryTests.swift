@@ -330,7 +330,7 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchConversation_It_Retrieves_Conversation_Locally() async throws {
+    func testFetchConversation_It_Retrieves_Conversation_Locally() async {
         // Given
 
         let conversation = await context.perform { [self] in
@@ -343,14 +343,41 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        let localConversation = await sut.fetchOrCreateConversation(
+        let localConversation = await sut.fetchConversation(
             with: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )
 
         // Then
 
-        XCTAssertEqual(localConversation, conversation)
+        XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testStoreConversation_It_Stores_Conversation_Locally() async throws {
+        // Given
+
+        let groupConversation = Scaffolding.conversationGroupType
+        let id = try XCTUnwrap(groupConversation.qualifiedID?.uuid)
+        let domain = try XCTUnwrap(groupConversation.qualifiedID?.domain)
+
+        // When
+
+        await sut.storeConversation(Scaffolding.conversationGroupType, timestamp: .now)
+
+        // Then
+
+        let localConversation = await sut.fetchConversation(with: id, domain: domain)
+
+        await context.perform {
+            XCTAssertEqual(localConversation?.remoteIdentifier, id)
+            XCTAssertEqual(localConversation?.teamRemoteIdentifier, groupConversation.teamID)
+            XCTAssertEqual(localConversation?.conversationType, .group)
+            XCTAssertEqual(localConversation?.messageProtocol, .proteus)
+            XCTAssertEqual(localConversation?.epoch, 0)
+            XCTAssertEqual(localConversation?.hasReadReceiptsEnabled, false)
+            XCTAssertEqual(localConversation?.accessMode, [.invite])
+            XCTAssertEqual(localConversation?.accessRoles, [.teamMember])
+        }
     }
 
     func testRemoveMembers() async throws {
