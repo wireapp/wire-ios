@@ -24,6 +24,27 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
+    /// Stores a conversation locally.
+    /// - Parameters:
+    ///     - conversation: The conversation to update or create locally.
+    ///     - timestamp: The date the conversation was created or last modified.
+
+    func storeConversation(
+        _ conversation: WireAPI.Conversation,
+        timestamp: Date
+    ) async
+
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -138,11 +159,15 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     // MARK: - Public
 
-    /// Fetches or creates a conversation locally.
-    /// - parameter id: The ID of the conversation.
-    /// - parameter domain: The domain of the conversation if any.
-    ///
-    /// - returns: The `ZMConversation` found or created locally.
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await conversationsLocalStore.fetchConversation(
+            with: id,
+            domain: domain
+        )
+    }
 
     public func fetchOrCreateConversation(
         with id: UUID,
@@ -151,6 +176,17 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.fetchOrCreateConversation(
             with: id,
             domain: domain
+        )
+    }
+
+    public func storeConversation(
+        _ conversation: WireAPI.Conversation,
+        timestamp: Date
+    ) async {
+        await conversationsLocalStore.storeConversation(
+            conversation,
+            timestamp: timestamp,
+            isFederationEnabled: backendInfo.isFederationEnabled
         )
     }
 
@@ -179,9 +215,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             for conversation in foundConversations {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversation(
+                    await storeConversation(
                         conversation,
-                        isFederationEnabled: backendInfo.isFederationEnabled
+                        timestamp: .now
                     )
                 }
             }
@@ -220,6 +256,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         await conversationsLocalStore.storeConversation(
             mlsConversation,
+            timestamp: .now,
             isFederationEnabled: backendInfo.isFederationEnabled
         )
 
