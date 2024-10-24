@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
@@ -245,28 +246,6 @@ public final class AccountImageView: UIView {
         }
     }
 }
-
-// MARK: - Convenience Init
-
-// TODO: is this used?
-//public extension AccountImageView {
-//
-//    convenience init(
-//        accountImage: UIImage,
-//        isTeamAccount: Bool,
-//        availability: Availability?
-//    ) {
-//        self.init()
-//
-//        self.source = .data(accountImage.pngData() ?? .init())
-//        self.isTeamAccount = isTeamAccount
-//        self.availability = availability
-//
-//        updateAccountImage()
-//        updateShape()
-//        updateAvailabilityIndicator()
-//    }
-//}
 
 // MARK: - Previews
 
