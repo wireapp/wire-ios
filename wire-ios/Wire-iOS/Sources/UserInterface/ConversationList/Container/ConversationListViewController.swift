@@ -216,7 +216,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        configureNavigationBarAppearance()
         viewModel.savePendingLastRead()
         configureEmptyPlaceholder()
     }
@@ -280,6 +280,17 @@ final class ConversationListViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     func setupFilterContainerView() {
