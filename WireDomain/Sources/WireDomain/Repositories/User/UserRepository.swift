@@ -161,10 +161,10 @@ public protocol UserRepositoryProtocol {
         at date: Date
     ) async throws
 
-    /// Whether a given user is a self user.
+    /// Indicates whether a given user is a self user.
     /// - Parameters:
-    ///     - id: The user id to fetch or create locally.
-    ///     - domain: The user domain when federated.
+    ///     - id: The user id.
+    ///     - domain: The user domain if any.
     /// - Returns: Whether the user is self user.
 
     func isSelfUser(
