@@ -24,5 +24,9 @@ public enum AccountImageSource: Sendable {
     case data(Data)
 
     /// An account image based on the provided initials is generated.
-    case text(initials: String)
+    case text(initials: String) // TODO: remove "initials" label
+
+    public init() {
+        self = .text(initials: "")
+    }
 }

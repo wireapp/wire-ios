@@ -40,7 +40,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
         typealias Previews = AccountImageView_Previews
         for availability in Availability.allCases + [Availability?.none] {
             // Given
-            let rootView = Previews.previewWithNavigationBar(.image(Previews.accountImage), availability)
+            let rootView = Previews.previewWithNavigationBar(.data(Previews.accountImage.pngData()!), availability)
             let hostingControllerView = UIHostingController(rootView: rootView).view!
             hostingControllerView.frame = UIScreen.main.bounds
             let testName = if let availability { "imageMode_\(availability)" } else { "imageMode_noAvailability" }
@@ -60,7 +60,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
         typealias Previews = AccountImageView_Previews
         for availability in Availability.allCases + [Availability?.none] {
             // Given
-            let rootView = Previews.previewWithNavigationBar(.text("CA"), availability)
+            let rootView = Previews.previewWithNavigationBar(.text(initials: "CA"), availability)
             let hostingControllerView = UIHostingController(rootView: rootView).view!
             hostingControllerView.frame = UIScreen.main.bounds
             let testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
