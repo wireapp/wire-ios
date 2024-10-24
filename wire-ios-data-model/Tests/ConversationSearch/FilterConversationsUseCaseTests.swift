@@ -41,7 +41,7 @@ final class FilterConversationsUseCaseTests: XCTestCase {
         XCTAssertEqual(filtered, conversationContainers)
     }
 
-    func testSingleCharacterSearchTextReturnsNoConversations() {
+    func testSearchTextReturnsNoConversations() {
 
         // Given
         sut = .init(conversationContainers: conversationContainers)
