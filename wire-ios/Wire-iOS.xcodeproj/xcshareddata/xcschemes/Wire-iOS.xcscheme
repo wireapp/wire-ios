@@ -20,6 +20,244 @@
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "165EA0CB1DB67C3B008ECC60"
+               BuildableName = "WireCanvasTests.xctest"
+               BlueprintName = "WireCanvasTests"
+               ReferencedContainer = "container:../wire-ios-canvas/WireCanvas.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BA7EF9681B7109B600204A8E"
+               BuildableName = "WireCryptoboxTests.xctest"
+               BlueprintName = "WireCryptoboxTests"
+               ReferencedContainer = "container:../wire-ios-cryptobox/WireCryptobox.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BFF057931D25434E004A2C29"
+               BuildableName = "WireLinkPreviewTests.xctest"
+               BlueprintName = "WireLinkPreviewTests"
+               ReferencedContainer = "container:../wire-ios-link-preview/WireLinkPreview.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "090838081B872DBF00629095"
+               BuildableName = "WireProtosTests.xctest"
+               BlueprintName = "WireProtosTests"
+               ReferencedContainer = "container:../wire-ios-protos/WireProtos.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "166901731D707509000FE4AF"
+               BuildableName = "WireRequestStrategyTests.xctest"
+               BlueprintName = "WireRequestStrategyTests"
+               ReferencedContainer = "container:../wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3E88BD421B1F3EA300232589"
+               BuildableName = "WireUtilities-Tests.xctest"
+               BlueprintName = "WireUtilities-Tests"
+               ReferencedContainer = "container:../wire-ios-utilities/WireUtilities.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EE761664299E60C9005DB75F"
+               BuildableName = "WireNotificationEngineTests.xctest"
+               BlueprintName = "WireNotificationEngineTests"
+               ReferencedContainer = "container:../wire-ios-notification-engine/WireNotificationEngine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3E1860C2191A649D000FE027"
+               BuildableName = "UnitTests.xctest"
+               BlueprintName = "UnitTests"
+               ReferencedContainer = "container:../wire-ios-sync-engine/WireSyncEngine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "096AD7C51B68D41D00E007A8"
+               BuildableName = "WireTesting-Tests.xctest"
+               BlueprintName = "WireTesting-Tests"
+               ReferencedContainer = "container:../wire-ios-testing/WireTesting.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DBF380631B15C0B800369FB7"
+               BuildableName = "ZiphyTests.xctest"
+               BlueprintName = "ZiphyTests"
+               ReferencedContainer = "container:../wire-ios-ziphy/Ziphy.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "096960151B663E7C006DF53B"
+               BuildableName = "WireImages-iosTests.xctest"
+               BlueprintName = "WireImages-iosTests"
+               ReferencedContainer = "container:../wire-ios-images/WireImages.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "54C9023D1B7532DD007162A8"
+               BuildableName = "WireMockTransportTests.xctest"
+               BlueprintName = "WireMockTransportTests"
+               ReferencedContainer = "container:../wire-ios-mocktransport/WireMockTransport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "169BA1D125ECDBA300374343"
+               BuildableName = "IntegrationTests.xctest"
+               BlueprintName = "IntegrationTests"
+               ReferencedContainer = "container:../wire-ios-sync-engine/WireSyncEngine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5470D3F11D76E1B000FDE440"
+               BuildableName = "WireShareEngineTests.xctest"
+               BlueprintName = "WireShareEngineTests"
+               ReferencedContainer = "container:../wire-ios-share-engine/WireShareEngine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F9C9A5051CAD5DF10039E10C"
+               BuildableName = "WireDataModelTests.xctest"
+               BlueprintName = "WireDataModelTests"
+               ReferencedContainer = "container:../wire-ios-data-model/WireDataModel.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3E88BCB11B1F35DF00232589"
+               BuildableName = "WireTransport-ios-tests.xctest"
+               BlueprintName = "WireTransport-ios-tests"
+               ReferencedContainer = "container:../wire-ios-transport/WireTransport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "54A3272B1B99A3190004EB95"
+               BuildableName = "WireSystem Tests.xctest"
+               BlueprintName = "WireSystem Tests"
+               ReferencedContainer = "container:../wire-ios-system/WireSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
