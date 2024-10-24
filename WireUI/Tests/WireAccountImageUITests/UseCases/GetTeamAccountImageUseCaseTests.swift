@@ -20,13 +20,14 @@ import WireFoundation
 import XCTest
 
 @testable import WireAccountImageUI
+@testable import WireAccountImageUISupport
 
 final class GetTeamAccountImageUseCaseTests: XCTestCase {
 
-    private var mockAccountImageGenerator: MockAccountImageGenerator!
+    private var mockAccountImageGenerator: MockAccountImageGeneratorProtocol!
     private var mockUser: MockUser!
     private var mockAccount: MockAccount!
-    private var sut: GetTeamAccountImageUseCase<MockAccountImageGenerator>!
+    private var sut: GetTeamAccountImageUseCase<MockAccountImageGeneratorProtocol>!
 
     override func setUp() {
         mockAccountImageGenerator = .init()
@@ -57,7 +58,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testTeamNameImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
+        mockAccountImageGenerator.createImageInitials_MockValue = try XCTUnwrap(.init(data: expectedData))
         mockUser.membership?.team?.teamImageSource = .text(initials: "W")
 
         // When
@@ -83,14 +84,14 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
         // Given
         let expectedData = try imageData(from: .green)
         mockAccount.teamName = " Wire Team "
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
+        mockAccountImageGenerator.createImageInitials_MockValue = try XCTUnwrap(.init(data: expectedData))
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
 
         // Then
-        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.count, 1)
-        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.first?.initials, "W")
+        XCTAssertEqual(mockAccountImageGenerator.createImageInitials_Invocations.count, 1)
+        XCTAssertEqual(mockAccountImageGenerator.createImageInitials_Invocations.first, "W")
         XCTAssertEqual(expectedData, actualData)
     }
 

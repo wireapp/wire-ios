@@ -20,13 +20,14 @@ import WireFoundation
 import XCTest
 
 @testable import WireAccountImageUI
+@testable import WireAccountImageUISupport
 
 final class GetUserAccountImageUseCaseTests: XCTestCase {
 
-    private var mockAccountImageGenerator: MockAccountImageGenerator!
+    private var mockAccountImageGenerator: MockAccountImageGeneratorProtocol!
     private var mockInitialsProvider: MockInitialsProvider!
     private var mockAccount: MockAccount!
-    private var sut: GetUserAccountImageUseCase<MockInitialsProvider, MockAccountImageGenerator>!
+    private var sut: GetUserAccountImageUseCase<MockInitialsProvider, MockAccountImageGeneratorProtocol>!
 
     override func setUp() {
         mockAccountImageGenerator = .init()
@@ -57,7 +58,7 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
         // Given
         let expectedData = try imageData(from: .green)
         mockInitialsProvider.initialsResult = "W"
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
+        mockAccountImageGenerator.createImageInitials_MockValue = try XCTUnwrap(.init(data: expectedData))
 
         // When
         let actualData = try await sut.invoke(account: mockAccount).pngData()
