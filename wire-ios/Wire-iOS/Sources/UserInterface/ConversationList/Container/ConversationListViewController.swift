@@ -376,7 +376,7 @@ final class ConversationListViewController: UIViewController {
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
         ? ColorTheme.Backgrounds.backgroundVariant
-        : ColorTheme.Backgrounds.onInverted
+        : ColorTheme.Backgrounds.surface
     }
 
     private func setupSearchController() {
