@@ -19,52 +19,36 @@
 import UIKit
 import WireFoundation
 
-public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol>: GetUserAccountImageUseCaseProtocol {
+public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider>: GetUserAccountImageUseCaseProtocol {
 
     typealias Error = GetUserAccountImageUseCaseError
-
-    // MARK: - Public Properties
-
-    public var textColor: UIColor {
-        get { accountImageGenerator.textColor }
-        set { accountImageGenerator.textColor = newValue }
-    }
-
-    public var backgroundColor: UIColor {
-        get { accountImageGenerator.backgroundColor }
-        set { accountImageGenerator.backgroundColor = newValue }
-    }
 
     // MARK: - Internal Properties
 
     var initalsProvider: InitalsProvider
-    var accountImageGenerator: AccountImageGenerator
 
     // MARK: - Life Cycle
 
-    public init(
-        initalsProvider: InitalsProvider,
-        accountImageGenerator: AccountImageGenerator
-    ) {
+    public init(initalsProvider: InitalsProvider) {
         self.initalsProvider = initalsProvider
-        self.accountImageGenerator = accountImageGenerator
     }
 
     // MARK: - Methods
 
     public func invoke(
         account: some GetAccountImageUseCaseAccountProtocol
-    ) async throws -> UIImage {
+    ) async throws -> UIImage? {
         // user's custom image
         if let data = await account.imageData, let accountImage = UIImage(data: data) {
             return accountImage
         }
+        return nil
 
         // image base on user's initials
-        let initials = await initalsProvider.initials(from: account.userName)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !initials.isEmpty else { throw Error.invalidImageSource }
-        return await accountImageGenerator.createImage(initials: initials)
+//        let initials = await initalsProvider.initials(from: account.userName)
+//            .trimmingCharacters(in: .whitespacesAndNewlines)
+//        guard !initials.isEmpty else { throw Error.invalidImageSource }
+//        return await accountImageGenerator.createImage(initials: initials)
     }
 }
 

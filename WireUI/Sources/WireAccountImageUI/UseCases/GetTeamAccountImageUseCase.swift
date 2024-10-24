@@ -19,15 +19,11 @@
 import UIKit
 import WireFoundation
 
-public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGeneratorProtocol>: GetTeamAccountImageUseCaseProtocol {
+public struct GetTeamAccountImageUseCase: GetTeamAccountImageUseCaseProtocol {
 
     typealias Error = GetTeamAccountImageUseCaseError
 
-    var accountImageGenerator: AccountImageGenerator
-
-    public init(accountImageGenerator: AccountImageGenerator) {
-        self.accountImageGenerator = accountImageGenerator
-    }
+    public init() {}
 
     public func invoke(
         user: some GetAccountImageUseCaseUserProtocol,
@@ -50,17 +46,18 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
             }
         }
 
-        var alternativeTeamName = await user.membership?.team?.name
-        if alternativeTeamName == nil {
-            alternativeTeamName = await account.teamName
-        }
-        if teamName.isEmpty, let alternativeTeamName {
-            teamName = alternativeTeamName.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-
-        if !teamName.isEmpty, let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map({ "\($0)" }), !initials.isEmpty {
-            return await accountImageGenerator.createImage(initials: initials)
-        }
+        // TODO: move into separate use case
+//        var alternativeTeamName = await user.membership?.team?.name
+//        if alternativeTeamName == nil {
+//            alternativeTeamName = await account.teamName
+//        }
+//        if teamName.isEmpty, let alternativeTeamName {
+//            teamName = alternativeTeamName.trimmingCharacters(in: .whitespacesAndNewlines)
+//        }
+//
+//        if !teamName.isEmpty, let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map({ "\($0)" }), !initials.isEmpty {
+//            return await accountImageGenerator.createImage(initials: initials)
+//        }
 
         throw Error.invalidImageSource
     }

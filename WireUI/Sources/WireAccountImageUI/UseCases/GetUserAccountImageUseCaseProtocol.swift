@@ -22,5 +22,5 @@ import UIKit
 /// Otherwise an image will be generated using the initials of the person's name.
 public protocol GetUserAccountImageUseCaseProtocol: Sendable {
 
-    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage
+    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage?
 }
