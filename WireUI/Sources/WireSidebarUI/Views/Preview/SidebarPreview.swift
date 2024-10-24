@@ -28,7 +28,7 @@ struct SidebarPreview: View {
     @State private var accountInfo = SidebarAccountInfo(
         displayName: "Firstname Lastname",
         username: "@username",
-        accountImage: .from(solidColor: .brown),
+        accountImage: .image(.from(solidColor: .brown)),
         availability: .away
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
@@ -47,8 +47,8 @@ struct SidebarPreview: View {
                     accountImageAction: {},
                     connectAction: {},
                     supportAction: {},
-                    accountImageView: { uiImage, availability in
-                        MockAccountImageView(uiImage: uiImage, availability: availability)
+                    accountImageView: { accountImage, availability in
+                        MockAccountImageView(accountImage: accountImage, availability: availability)
                     }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)
@@ -63,7 +63,7 @@ struct SidebarPreview: View {
 }
 
 struct MockAccountImageView: View {
-    @State private(set) var uiImage: UIImage
+    @State private(set) var accountImage: SidebarAccountInfo.AccountImageContent
     @State private(set) var availability: SidebarAccountInfo.Availability?
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
