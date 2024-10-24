@@ -63,7 +63,7 @@ struct SidebarPreview: View {
 }
 
 struct MockAccountImageView: View {
-    @State private(set) var accountImage: SidebarAccountInfo.AccountImageContent
+    @State private(set) var accountImage: SidebarAccountInfo.AccountImageSource
     @State private(set) var availability: SidebarAccountInfo.Availability?
     var body: some View {
         ZStack(alignment: .bottomTrailing) {

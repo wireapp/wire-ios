@@ -101,7 +101,7 @@ public final class SidebarViewController: UIViewController {
     // MARK: - Life Cycle
 
     public typealias AccountImageViewBuilder<AccountImageView> = (
-        _ accountImage: SidebarAccountInfo.AccountImageContent,
+        _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
@@ -157,7 +157,7 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
     @ObservedObject fileprivate var model: SidebarModel
 
     private(set) var accountImageView: (
-        _ accountImage: SidebarAccountInfo.AccountImageContent,
+        _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
