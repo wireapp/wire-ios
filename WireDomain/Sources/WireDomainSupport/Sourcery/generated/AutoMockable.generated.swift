@@ -248,6 +248,26 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
     public init() {}
 
 
+    // MARK: - pullConversation
+
+    public var pullConversationWith_Invocations: [ConversationID] = []
+    public var pullConversationWith_MockError: Error?
+    public var pullConversationWith_MockMethod: ((ConversationID) async throws -> Void)?
+
+    public func pullConversation(with id: ConversationID) async throws {
+        pullConversationWith_Invocations.append(id)
+
+        if let error = pullConversationWith_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversationWith_MockMethod else {
+            fatalError("no mock for `pullConversationWith`")
+        }
+
+        try await mock(id)
+    }
+
     // MARK: - pullConversations
 
     public var pullConversations_Invocations: [Void] = []
