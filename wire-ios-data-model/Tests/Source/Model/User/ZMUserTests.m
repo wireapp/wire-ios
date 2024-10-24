@@ -837,7 +837,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     //given
     NSString *name = @"Jean of Arc";
     NSString *email = @"jj@arc.example.com";
-    NSString *phone = @"+33 11111111111";
     NSString *handle = @"st_jean";
     
     NSUUID *uuid = [NSUUID createUUID];

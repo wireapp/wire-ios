@@ -579,7 +579,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         let user = ZMUser.selfUser(in: uiMOC)
         user.acknowledgeLegalHoldStatus()
 
-        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
+        let _ = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
 
         let modifier: (ZMUser) -> Void = { _ in
             self.performPretendingUiMocIsSyncMoc {
