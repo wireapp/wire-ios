@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum AccountImageSource {
+public enum AccountImageSource: Sendable {
 
     /// An image based on the provided image data is displayed.
     case data(Data)

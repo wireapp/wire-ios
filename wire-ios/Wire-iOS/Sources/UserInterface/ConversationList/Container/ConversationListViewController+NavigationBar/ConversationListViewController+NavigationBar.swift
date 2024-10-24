@@ -158,11 +158,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // New Conversation Button
         let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
         let newConversationImage = UIImage(systemName: "plus.circle.fill", withConfiguration: symbolConfiguration)!
-        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            Task {
-                await self?.mainCoordinator.showConnect()
-            }
-        }
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in self?.presentConnectUI() }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
         startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
@@ -235,11 +231,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         newConversationBarButton.accessibilityIdentifier = "create_group_or_search_button"
         newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
-        newConversationBarButton.addAction(.init { [weak self] _ in
-            Task {
-                await self?.mainCoordinator.showCreateGroupConversation()
-            }
-        }, for: .primaryActionTriggered)
+        newConversationBarButton.addTarget(self, action: #selector(presentCreateConversationUI), for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
         newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         newConversationBarButton.layer.borderWidth = 1
@@ -305,9 +297,29 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     @objc
+    private func presentConnectUI() {
+        Task {
+            let connectUI = connectViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
+        }
+    }
+
+    @objc
     private func presentProfile() {
         Task {
-            await mainCoordinator.showSelfProfile()
+            let selfProfileUI = selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            selfProfileUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(selfProfileUI)
+        }
+    }
+
+    @objc
+    private func presentCreateConversationUI() {
+        Task {
+            let createConversationUI = UINavigationController(rootViewController: createGroupConversationUIBuilder.build())
+            createConversationUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(createConversationUI)
         }
     }
 
@@ -373,7 +385,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             in: self,
             user: selfUser,
             userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileViewControllerBuilder
         )
     }
 

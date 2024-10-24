@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigationUI
 import WireTestingPackage
 import XCTest
 
@@ -24,7 +23,7 @@ import XCTest
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
-    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: GroupDetailsViewController!
     private var mockConversation: MockGroupDetailsConversation!
     private var mockSelfUser: MockUserType!
@@ -100,6 +99,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -120,6 +120,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -147,6 +148,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -167,6 +169,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -186,6 +189,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -207,6 +211,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -226,6 +231,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -246,6 +252,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
@@ -266,6 +273,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversation: mockConversation,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 

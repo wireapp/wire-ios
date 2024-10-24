@@ -111,7 +111,8 @@ extension ConversationLegalHoldSystemMessageCell {
                 in: clientViewController,
                 conversation: conversation,
                 userSession: clientViewController.userSession,
-                mainCoordinator: clientViewController.mainCoordinator
+                mainCoordinator: .init(mainCoordinator: clientViewController.mainCoordinator),
+                selfProfileUIBuilder: clientViewController.selfProfileViewControllerBuilder
             )
 
             return true

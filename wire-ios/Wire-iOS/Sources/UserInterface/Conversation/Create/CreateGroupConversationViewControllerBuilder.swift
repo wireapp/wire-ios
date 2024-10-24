@@ -20,9 +20,7 @@ import UIKit
 import WireMainNavigationUI
 import WireSyncEngine
 
-final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = MainCoordinatorDependencies
+final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
     let userSession: UserSession
     var delegate: ConversationCreationControllerDelegate?
@@ -31,14 +29,12 @@ final class CreateGroupConversationViewControllerBuilder: MainCoordinatorInjecti
         self.userSession = userSession
     }
 
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator _: MainCoordinator
-    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
-        let rootViewController = ConversationCreationController(
+    func build() -> UIViewController {
+        let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession
         )
-        rootViewController.delegate = delegate
-        return .init(rootViewController: rootViewController)
+        viewController.delegate = delegate
+        return viewController
     }
 }

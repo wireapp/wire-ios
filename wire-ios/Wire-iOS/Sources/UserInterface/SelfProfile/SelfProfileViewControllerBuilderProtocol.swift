@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A protocol which represents a conversation that can be searched for.
-public protocol SearchableConversation {
-    associatedtype SearchableParticipant: SearchableConversationParticipant
+import UIKit
 
-    var searchableName: String { get }
-    var searchableParticipants: [SearchableParticipant] { get }
+// sourcery: AutoMockable
+protocol SelfProfileViewControllerBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
 }

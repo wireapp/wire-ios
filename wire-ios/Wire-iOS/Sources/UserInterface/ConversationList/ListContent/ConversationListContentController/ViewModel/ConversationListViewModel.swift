@@ -445,8 +445,8 @@ final class ConversationListViewModel: NSObject {
                 collapsed: state.collapsed.contains(kind.identifier)
             )
         }
-        let searchUseCase = SearchConversationsUseCase(conversationContainers: sections)
-        return searchUseCase.invoke(searchText: appliedSearchText)
+        let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
+        return filterUseCase.invoke(query: appliedSearchText)
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -708,14 +708,14 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
     }
 }
 
-// MARK: - Section + SearchableConversationContainer
+// MARK: - Section + MutableConversationContainer
 
-extension ConversationListViewModel.Section: SearchableConversationContainer {
+extension ConversationListViewModel.Section: MutableConversationContainer {
 
-    var conversations: [SearchableZMConversationWrapper] {
+    var conversations: [ZMFilterableConversationAdapter] {
         items
             .compactMap { $0.item as? ZMConversation }
-            .map(SearchableZMConversationWrapper.init(conversation:))
+            .map(ZMFilterableConversationAdapter.init(conversation:))
     }
 
     mutating func removeConversation(at index: Int) {

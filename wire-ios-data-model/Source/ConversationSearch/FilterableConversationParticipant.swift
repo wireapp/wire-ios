@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol SearchableConversationParticipant {
-
-    var searchableName: String { get }
+/// Declares a contract for participants of a conversation which can be filtered.
+public protocol FilterableConversationParticipant {
+    var name: String { get }
 }

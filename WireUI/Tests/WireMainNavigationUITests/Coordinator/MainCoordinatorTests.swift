@@ -48,10 +48,7 @@ final class MainCoordinatorTests: XCTestCase {
             mainSplitViewController: splitViewController,
             mainTabBarController: tabBarController,
             conversationUIBuilder: .init(),
-            settingsContentUIBuilder: .init(),
-            connectUIBuilder: .init(),
-            createGroupConversationUIBuilder: .init(),
-            selfProfileUIBuilder: .init()
+            settingsContentUIBuilder: .init()
         )
     }
 

@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+/// A use case which returns a collection of grouped conversations which match the provided search text.
+public protocol FilterConversationsUseCaseProtocol {
+    associatedtype ConversationContainer: MutableConversationContainer
 
-public protocol MainCoordinatorInjectingViewControllerBuilder {
-
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
-    associatedtype ViewController: UIViewController
-
-    @MainActor
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> ViewController where MainCoordinator.Dependencies == Dependencies
+    /// Returns conversations which match the `query`.
+    func invoke(query: String) -> [ConversationContainer]
 }

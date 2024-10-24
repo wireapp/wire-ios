@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension MainCoordinator {
-
-    typealias SplitViewController = Dependencies.SplitViewController
-    typealias ConversationListUI = Dependencies.SplitViewController.ConversationListUI
-    typealias SettingsUI = Dependencies.SplitViewController.SettingsUI
-    typealias TabBarController = Dependencies.SplitViewController.TabBarController
-
-    typealias ConversationModel = Dependencies.ConversationModel
-    typealias ConversationMessageModel = Dependencies.ConversationMessageModel
+public protocol MainCoordinatorProtocolDependenciesProtocol {
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
 }

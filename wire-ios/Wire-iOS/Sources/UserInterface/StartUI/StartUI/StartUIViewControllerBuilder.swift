@@ -20,25 +20,31 @@ import UIKit
 import WireMainNavigationUI
 import WireSyncEngine
 
-final class StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = MainCoordinatorDependencies
+final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
 
     let userSession: UserSession
+    let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var delegate: StartUIDelegate?
 
-    init(userSession: UserSession) {
+    init(
+        userSession: UserSession,
+        createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    ) {
         self.userSession = userSession
+        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
+        self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UINavigationController where MainCoordinator.Dependencies == Dependencies {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         let rootViewController = StartUIViewController(
             userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator)
+            mainCoordinator: mainCoordinator,
+            createGroupConversationUIBuilder: createGroupConversationUIBuilder,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate
-        return .init(rootViewController: rootViewController)
+        return UINavigationController(rootViewController: rootViewController)
     }
 }

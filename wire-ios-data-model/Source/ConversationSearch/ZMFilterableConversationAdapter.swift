@@ -18,18 +18,18 @@
 
 import WireUtilities
 
-public struct SearchableZMConversationWrapper: SearchableConversation {
+public struct ZMFilterableConversationAdapter: FilterableConversation {
 
     private let conversation: ZMConversation
 
-    public var searchableName: String {
+    public var name: String {
         conversation.normalizedUserDefinedName ?? conversation.displayName?.normalizedForSearch() as String? ?? ""
     }
 
-    public var searchableParticipants: [Participant] {
+    public var participants: [Participant] {
         conversation.localParticipants
             .map { localParticipant in
-                .init(searchableName: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
+                .init(name: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
             }
     }
 
@@ -39,7 +39,7 @@ public struct SearchableZMConversationWrapper: SearchableConversation {
 
     // MARK: - Nested Types
 
-    public struct Participant: SearchableConversationParticipant {
-        public var searchableName: String
+    public struct Participant: FilterableConversationParticipant {
+        public var name: String
     }
 }

@@ -27,13 +27,9 @@ import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine
 
-// TODO: [WPB-11602] after logging in and getting certificate, the account image is blank instead of showing initials
-
 final class ZClientViewController: UIViewController {
 
     typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
-    typealias MainSplitViewController = MainCoordinator.SplitViewController
-    typealias MainTabBarController = MainCoordinator.TabBarController
 
     // MARK: - Private Members
 
@@ -52,8 +48,13 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build()
+    private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
+        connectUIBuilder: connectBuilder,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
+    )
 
-    private(set) lazy var mainSplitViewController = MainSplitViewController(
+    private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabController: mainTabBarController
@@ -63,19 +64,20 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainTabBarController()
+        let tabBarController = MainCoordinator.TabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()
 
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
         mediaPlaybackManager: mediaPlaybackManager
     )
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
 
-    private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
+    var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
@@ -84,8 +86,15 @@ final class ZClientViewController: UIViewController {
         )
     }
 
-    private lazy var connectBuilder = StartUIViewControllerBuilder(userSession: userSession)
-    private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(userSession: userSession)
+    private lazy var connectBuilder = StartUIViewControllerBuilder(
+        userSession: userSession,
+        createGroupConversationUIBuilder: createGroupConversationBuilder,
+        selfProfileUIBuilder: selfProfileViewControllerBuilder
+    )
+
+    private lazy var createGroupConversationBuilder = CreateGroupConversationViewControllerBuilder(
+        userSession: userSession
+    )
 
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
@@ -94,7 +103,9 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        connectViewControllerBuilder: connectBuilder,
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -114,10 +125,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController: mainSplitViewController,
         mainTabBarController: mainTabBarController,
         conversationUIBuilder: conversationViewControllerBuilder,
-        settingsContentUIBuilder: settingsViewControllerBuilder,
-        connectUIBuilder: connectBuilder,
-        createGroupConversationUIBuilder: createGroupConversationBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        settingsContentUIBuilder: settingsViewControllerBuilder
     )
 
     /// init method for testing allows injecting an Account object and self user
@@ -236,7 +244,6 @@ final class ZClientViewController: UIViewController {
     private func setupSplitViewController() {
         let archiveUI = ArchivedListViewController(userSession: userSession)
 
-        // TODO: [WPB-11608] the border color doesn't match on iPad (iOS 15)
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
@@ -259,7 +266,7 @@ final class ZClientViewController: UIViewController {
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
         sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
-        sidebarViewController.delegate = mainCoordinator
+        sidebarViewController.delegate = sidebarViewControllerDelegate
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {
@@ -280,11 +287,12 @@ final class ZClientViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        return presentedViewController?.shouldAutorotate ?? true
+          if let viewController = presentedViewController,
+             viewController is ModalPresentationViewController,
+             !viewController.isBeingDismissed {
+              return viewController.supportedInterfaceOrientations
+          }
+          return wr_supportedInterfaceOrientations
     }
 
     // MARK: keyboard shortcut
@@ -302,7 +310,9 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            await mainCoordinator.showConnect()
+            let connectUI = connectBuilder.build(mainCoordinator: .init(mainCoordinator: mainCoordinator))
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
         }
     }
 
@@ -365,6 +375,7 @@ final class ZClientViewController: UIViewController {
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -630,7 +641,8 @@ final class ZClientViewController: UIViewController {
                 viewer: selfUser,
                 context: .deviceList,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: .init(mainCoordinator: mainCoordinator),
+                selfProfileUIBuilder: selfProfileViewControllerBuilder
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
