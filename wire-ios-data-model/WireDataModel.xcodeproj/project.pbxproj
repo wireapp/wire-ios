@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1860,6 +1860,11 @@
 		F9FD75791E2FB60000B4558B /* SearchUserObserverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchUserObserverTests.swift; path = ../SearchUserObserverTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		594C4E2D2CCAAB6900F13D03 /* AccountImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImage; sourceTree = "<group>"; };
+		594C4E382CCAAB9B00F13D03 /* AccountImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImage; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		59D1C2FD2B1DE6FF0016F6B2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -2302,6 +2307,7 @@
 		638941EC2AF4FD170051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				594C4E2D2CCAAB6900F13D03 /* AccountImage */,
 				591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */,
 				591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */,
 				59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */,
@@ -2315,6 +2321,7 @@
 		638941F42AF521050051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				594C4E382CCAAB9B00F13D03 /* AccountImage */,
 				591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */,
 				59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
@@ -3822,6 +3829,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				594C4E2D2CCAAB6900F13D03 /* AccountImage */,
+			);
 			name = WireDataModel;
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
@@ -3844,6 +3854,9 @@
 			dependencies = (
 				F991CE201CB7E5FD004D8465 /* PBXTargetDependency */,
 				F9C9A5091CAD5DF10039E10C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				594C4E382CCAAB9B00F13D03 /* AccountImage */,
 			);
 			name = WireDataModelTests;
 			productName = WireDataModelTests;
