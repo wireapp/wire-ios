@@ -30,7 +30,6 @@ final class IncomingRequestFooterTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         UIColor.setAccentOverride(.blue)
     }
@@ -40,7 +39,6 @@ final class IncomingRequestFooterTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         UIColor.setAccentOverride(nil)
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
