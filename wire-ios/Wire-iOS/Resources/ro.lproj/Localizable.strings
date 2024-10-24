@@ -1032,8 +1032,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Setări";
 "self.profile" = "Profil";
 "self.account" = "Cont";

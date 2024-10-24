@@ -1032,8 +1032,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Поделиться профилем";
+"qrcode.share_message" = "Поделитесь своим профилем, чтобы было проще связаться с другими людьми. Вы должны принять запрос на подключение, прежде чем начнете общаться.";
+"qrcode.share_profile_link.button.title" = "Поделиться ссылкой на профиль";
+"qrcode.share_qrcode.button.title" = "Поделиться QR-кодом";
+
+// Options menu contents
 "self.settings" = "Настройки";
 "self.profile" = "Профиль";
 "self.account" = "Аккаунт";
