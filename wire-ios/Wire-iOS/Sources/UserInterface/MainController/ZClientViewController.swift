@@ -285,11 +285,12 @@ final class ZClientViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        return presentedViewController?.shouldAutorotate ?? true
+          if let viewController = presentedViewController,
+             viewController is ModalPresentationViewController,
+             !viewController.isBeingDismissed {
+              return viewController.supportedInterfaceOrientations
+          }
+          return wr_supportedInterfaceOrientations
     }
 
     // MARK: keyboard shortcut
