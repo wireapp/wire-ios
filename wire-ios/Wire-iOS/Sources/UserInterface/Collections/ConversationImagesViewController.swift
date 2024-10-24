@@ -78,7 +78,8 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     let userSession: UserSession
-    let mainCoordinator: any MainCoordinatorProtocol
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     var dismissAction: DismissAction? = .none {
         didSet {
@@ -93,7 +94,8 @@ final class ConversationImagesViewController: UIViewController {
         initialMessage: ZMConversationMessage,
         inverse: Bool = false,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         assert(initialMessage.isImage)
 
@@ -102,6 +104,7 @@ final class ConversationImagesViewController: UIViewController {
         self.currentMessage = initialMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: .none, bundle: .none)
         let imagesMatch = CategoryMatch(including: .image, excluding: .GIF)
@@ -347,7 +350,8 @@ final class ConversationImagesViewController: UIViewController {
         let imageViewController = FullscreenImageViewController(
             message: message,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = self.swipeToDismiss

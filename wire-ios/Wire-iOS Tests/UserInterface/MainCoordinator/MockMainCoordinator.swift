@@ -92,9 +92,3 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
         fatalError("Mock method not implemented")
     }
 }
-
-// MARK: - MainCoordinatorProtocol + MockMainCoordinator
-
-extension MainCoordinatorProtocol where Self == MockMainCoordinator {
-    static var mock: Self { .init() }
-}

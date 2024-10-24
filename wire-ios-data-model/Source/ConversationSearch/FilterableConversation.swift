@@ -16,18 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+/// A protocol which represents a conversation that can be filtered by query.
+public protocol FilterableConversation {
+    associatedtype Participant: FilterableConversationParticipant
 
-@testable import WireMainNavigationUI
-
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-
-    typealias Dependencies = MockMainCoordinatorDependencies
-
-    @MainActor
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> UIViewController where MainCoordinator.Dependencies == Dependencies {
-        .init()
-    }
+    var name: String { get }
+    var participants: [Participant] { get }
 }

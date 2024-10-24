@@ -28,6 +28,7 @@ extension XCTestCase {
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
+    @MainActor
     func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
         let image = self.image(inTestBundleNamed: imageFileName)
 
@@ -36,7 +37,8 @@ extension XCTestCase {
         let sut = FullscreenImageViewController(
             message: message,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.setBoundsSizeAsIPhone4_7Inch()
         sut.viewDidLoad()

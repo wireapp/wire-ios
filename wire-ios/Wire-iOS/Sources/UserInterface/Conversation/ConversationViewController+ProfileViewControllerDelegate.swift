@@ -31,7 +31,8 @@ extension ConversationViewController {
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 }

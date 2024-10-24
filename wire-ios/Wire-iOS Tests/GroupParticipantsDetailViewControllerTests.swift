@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMainNavigationUI
 import WireTestingPackage
 import XCTest
 
@@ -42,7 +41,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
-    private var mockMainCoordinator: AnyMainCoordinator<Wire.MainCoordinatorDependencies>!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
@@ -78,7 +77,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         ).wrapInNavigationController()
 
         snapshotHelper
@@ -123,7 +123,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: selected,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
 
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
@@ -138,7 +139,8 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
             selectedParticipants: [],
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.viewModel.admins = []
         sut.viewModel.members = []

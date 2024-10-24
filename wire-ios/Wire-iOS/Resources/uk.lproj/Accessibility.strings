@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Учасник";
 "contactsList.userCell.hint" = "Торкніться двічі, щоб відкрити розмову";
 "contactsList.pendingConnection.hint" = "Подвійний дотик для відкриття профілю";
-"contactsList.closeButton.description" = "Закрити список контактів";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Торкніться двічі, щоб відкрити детальну інформацію про сервіс";
 
@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Мінімізувати екран дзвінка";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Контакти";
-"tabBar.contacts.hint" = "Торкніться двічі для пошуку людей та відкриття списку контактів";
-"tabBar.conversations.description" = "Список недавніх розмов";
-"tabBar.conversations.hint" = "Торкніться двічі, щоб відкрити список недавніх розмов";
-"tabBar.folders.description" = "Список розмов організованих у директорії";
-"tabBar.folders.hint" = "Торкніться двічі, щоб відкрити список розмов, організованих у директорії";
-"tabBar.archived.description" = "Архівувати";
-"tabBar.archived.hint" = "Торкніться двічі, щоб відкрити список заархівованих розмов";
 "tabBar.item.value" = "Вибрано";
 
 "landing.loginEnterpriseButton.description" = "Увійти через SSO";

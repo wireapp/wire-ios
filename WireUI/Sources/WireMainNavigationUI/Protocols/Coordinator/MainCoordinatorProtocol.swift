@@ -20,7 +20,7 @@ import UIKit
 
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
+    associatedtype Dependencies: MainCoordinatorProtocolDependenciesProtocol
 
     typealias ConversationFilter = Dependencies.ConversationFilter
     typealias ConversationModel = Dependencies.ConversationModel
@@ -49,13 +49,4 @@ public protocol MainCoordinatorProtocol: AnyObject {
     func presentViewController(_ viewController: UIViewController) async
     @MainActor
     func dismissPresentedViewController() async
-
-    // TODO: [WPB-11651] Move theses methods out of the protocol. The `presentViewController(_:)` method should be used.
-
-    @MainActor
-    func showSelfProfile() async
-    @MainActor
-    func showConnect() async
-    @MainActor
-    func showCreateGroupConversation() async
 }

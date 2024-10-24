@@ -21,9 +21,9 @@ import XCTest
 
 @testable import WireDataModel
 
-final class SearchConversationsUseCaseTests: XCTestCase {
+final class FilterConversationsUseCaseTests: XCTestCase {
 
-    private var sut: SearchConversationsUseCase<MockContainer>!
+    private var sut: FilterConversationsUseCase<MockContainer>!
 
     override func tearDown() {
         sut = nil
@@ -35,7 +35,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "")
+        let filtered = sut.invoke(query: "")
 
         // Then
         XCTAssertEqual(filtered, conversationContainers)
@@ -47,7 +47,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "y")
+        let filtered = sut.invoke(query: "y")
 
         // Then
         XCTAssertEqual(filtered, [[], [], []])
@@ -59,7 +59,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "wire team")
+        let filtered = sut.invoke(query: "wire team")
 
         // Then matches
         // - only the "Wire Team" conversation
@@ -72,7 +72,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "rifka")
+        let filtered = sut.invoke(query: "rifka")
 
         // Then matches
         // - the "Announcements" conversation, since Rifka is a participant
@@ -86,7 +86,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ö")
+        let filtered = sut.invoke(query: "ö")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
@@ -102,7 +102,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ß")
+        let filtered = sut.invoke(query: "ß")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
@@ -117,7 +117,7 @@ final class SearchConversationsUseCaseTests: XCTestCase {
         sut = .init(conversationContainers: conversationContainers)
 
         // When
-        let filtered = sut.invoke(searchText: "ß")
+        let filtered = sut.invoke(query: "ß")
 
         // Then matches
         // - the "Wire Team" conversation, because at least one participant's name contains "o"
@@ -138,30 +138,30 @@ final class SearchConversationsUseCaseTests: XCTestCase {
 
     private let groupConversations = [
         MockConversation(
-            searchableName: "Wire Team",
-            searchableParticipants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+            name: "Wire Team",
+            participants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
         ),
         MockConversation(
-            searchableName: "Announcements",
-            searchableParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
+            name: "Announcements",
+            participants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
         )
     ]
 
     private let oneOnOneConversations = [
-        MockConversation(searchableName: "Pipaluk Bróðir", searchableParticipants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
-        MockConversation(searchableName: "Mariele", searchableParticipants: ["Mariele", "Mneme Tiedemann"])
+        MockConversation(name: "Pipaluk Bróðir", participants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
+        MockConversation(name: "Mariele", participants: ["Mariele", "Mneme Tiedemann"])
     ]
 
     private let otherGroupConversations = [
-        MockConversation(searchableName: "Guests", searchableParticipants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
-        MockConversation(searchableName: "Spaß", searchableParticipants: ["Mneme Tiedemann"]),
-        MockConversation(searchableName: "Essen", searchableParticipants: ["Mneme Tiedemann"])
+        MockConversation(name: "Guests", participants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
+        MockConversation(name: "Spaß", participants: ["Mneme Tiedemann"]),
+        MockConversation(name: "Essen", participants: ["Mneme Tiedemann"])
     ]
 }
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: SearchableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
 
     private(set) var conversations: [MockConversation]
 
@@ -180,26 +180,26 @@ private struct MockContainer: SearchableConversationContainer, CustomDebugString
     }
 }
 
-private struct MockConversation: SearchableConversation, CustomDebugStringConvertible, Equatable {
+private struct MockConversation: FilterableConversation, CustomDebugStringConvertible, Equatable {
 
-    private(set) var searchableName: String
-    private(set) var searchableParticipants: [MockParticipant]
+    private(set) var name: String
+    private(set) var participants: [MockParticipant]
 
     var debugDescription: String {
-        let participants = searchableParticipants
+        let participants = participants
             .map(String.init(reflecting:))
             .joined(separator: ", ")
-        return "\(searchableName)(\(participants))"
+        return "\(name)(\(participants))"
     }
 }
 
-private struct MockParticipant: SearchableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
+private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
 
-    private(set) var searchableName: String
+    private(set) var name: String
 
-    var debugDescription: String { searchableName }
+    var debugDescription: String { name }
 
     init(stringLiteral value: String) {
-        searchableName = value
+        name = value
     }
 }

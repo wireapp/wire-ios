@@ -34,7 +34,8 @@ extension ZClientViewController {
             userId: userId,
             profileViewControllerDelegate: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder
         )
 
         Task {
@@ -53,7 +54,8 @@ extension ZClientViewController {
             viewer: selfUser,
             context: .profileViewer,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
+            selfProfileUIBuilder: selfProfileViewControllerBuilder
         )
         profileViewController.delegate = self
 

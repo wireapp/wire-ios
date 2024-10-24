@@ -405,6 +405,9 @@
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
+		59AF779F2CC7FA8D002438D1 /* SelfProfileViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */; };
+		59AF77A12CC7FB3B002438D1 /* AnyMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */; };
+		59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */; };
 		59B404512CAA937400CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */; };
 		59B404652CAAC3AC00CC33BF /* SettingsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */; };
 		59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */; };
@@ -420,7 +423,7 @@
 		59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FAF2C89DFB700201827 /* WireDomainPackage */; };
 		59BFBFC42CB68E8C005C3375 /* CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */; };
 		59BFBFC62CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */; };
-		59BFBFC92CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */; };
+		59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */; };
 		59BFBFCA2CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		59BFBFCE2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */; };
 		59C2F09F2CA54E4900B25E5D /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */; };
@@ -432,6 +435,8 @@
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
+		59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */; };
+		59E12BFE2CC8EDF400E687CE /* ConnectViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */; };
 		59E67CAE2CA8B3A6000F1C17 /* ConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */; };
 		59E67CB22CA8C35E000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
@@ -2399,19 +2404,23 @@
 		59A27BB52C2ADA0F00195393 /* MockMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMainCoordinator.swift; sourceTree = "<group>"; };
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
+		59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyMainCoordinator.swift; sourceTree = "<group>"; };
 		59B404502CAA936E00CC33BF /* SettingsContent+MainSettingsContentRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsContent+MainSettingsContentRepresentable.swift"; sourceTree = "<group>"; };
 		59B404642CAAC3A700CC33BF /* SettingsViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59B404662CAB05C900CC33BF /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		59B404682CAB13CF00CC33BF /* MockSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSettingsCoordinator.swift; sourceTree = "<group>"; };
 		59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+CreateGroupConversationViewControllerBuilder.swift"; sourceTree = "<group>"; };
-		59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainCoordinator+SidebarViewControllerDelegate.swift"; sourceTree = "<group>"; };
+		59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewControllerDelegate.swift; sourceTree = "<group>"; };
 		59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarAccountInfo+initWithUserSessionAndAccount.swift"; sourceTree = "<group>"; };
 		59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
+		59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
+		59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
 		59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewControllerBuilder.swift; sourceTree = "<group>"; };
 		59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationRootViewController+MainConversationProtocol.swift"; sourceTree = "<group>"; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
@@ -4030,6 +4039,7 @@
 				59B48C602C89CCCC00EA7999 /* WireFoundation in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
+				59AF77A32CC7FF89002438D1 /* WireMainNavigationUI in Frameworks */,
 				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5937,6 +5947,7 @@
 				1639A80E225F863000868AB9 /* ProfileHeaderViewController.swift */,
 				8745476A1E9E54E600C206E5 /* SelfProfileViewController.swift */,
 				5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */,
+				59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */,
 				1610366E20616EBC008AFDD0 /* SelfProfileViewController+NewDeviceAlert.swift */,
 				8758220821B6999E00D68266 /* SelfProfileViewController+SettingsChangeAlert.swift */,
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
@@ -6275,6 +6286,7 @@
 		87DCF4D41D34EA4500BB420F /* StartUI */ = {
 			isa = PBXGroup;
 			children = (
+				59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */,
 				87DCF4D71D34EA4500BB420F /* StartUIInviteActionBar.swift */,
 				A97FA6FD23B5883A005257A8 /* StartUIDelegate.swift */,
 				A97FA6FB23B57067005257A8 /* StartUIViewController.swift */,
@@ -6793,25 +6805,30 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
+				59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */,
 				596184AC2CC7B5F600787AF0 /* DefaultSettingsPropertyFactoryDelegate.swift */,
 				59BFBFC72CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift */,
 				59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
 				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
+				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */,
 				59BFBFC52CB690D7005C3375 /* MainCoordinator+CreateGroupConversationViewControllerBuilder.swift */,
 				591C22E32CB949C6009EEB0D /* MainCoordinatorDependencies.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
+				59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */,
+				59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */,
+				59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */,
 				59797A452C6F98880044882D /* ZClientControllerBuilder.swift */,
 				877798AB205A8EF500898A5E /* ZClientViewController.swift */,
 				1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */,
 				EE52988F26B7FB21001A6D03 /* ZClientViewController+ConferenceCallingAvailabilty.swift */,
 				0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */,
 				EFF9404722414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift */,
-				EF46ECCC231D5B4B00D425DA /* ZClientViewController+StartUIDelegate.swift */,
 				1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */,
+				EF46ECCC231D5B4B00D425DA /* ZClientViewController+StartUIDelegate.swift */,
 			);
 			path = MainController;
 			sourceTree = "<group>";
@@ -8385,6 +8402,7 @@
 			isa = PBXGroup;
 			children = (
 				59BFBFC32CB68E8B005C3375 /* CreateGroupConversationViewControllerBuilder.swift */,
+				59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */,
 				F10F46D320288CEB00261449 /* ConversationCreationController.swift */,
 				EE6CA1822A8BBDDB006725CE /* ConversationCreationValues.swift */,
 				EEFF3E7321B6755D000834A6 /* Sections */,
@@ -8732,6 +8750,7 @@
 			packageProductDependencies = (
 				59B48C5F2C89CCCC00EA7999 /* WireFoundation */,
 				59B4046B2CAB140A00CC33BF /* WireSettingsUI */,
+				59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -9275,6 +9294,7 @@
 				EF883F292151190900B440CC /* UserCellSubtitleProtocol.swift in Sources */,
 				EFDC36DB2257A8F300F916F3 /* CollectionViewContainerCell.swift in Sources */,
 				A98CF97425A47295008818D8 /* ConversationProtocol.swift in Sources */,
+				59E12BFE2CC8EDF400E687CE /* ConnectViewControllerBuilderProtocol.swift in Sources */,
 				D518947B20504C6A00C095C1 /* LoadingIndicatorCell.swift in Sources */,
 				599EA3C82C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift in Sources */,
 				EF4795AD2077847E00334E32 /* ConversationInputBarViewController+UITextViewDelegate.swift in Sources */,
@@ -9411,6 +9431,7 @@
 				E9D141622AC704DF005EE75D /* CreateSecureConversationGuestLinkViewModel.swift in Sources */,
 				D58192002091CEBF003BA7EC /* UIStackView+Helper.swift in Sources */,
 				EF20BE4322CB57B1004F8910 /* UIViewController+Present.swift in Sources */,
+				59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */,
 				EF2A8DED214AA36E002C9058 /* SeparatorViewProtocol.swift in Sources */,
 				EECDB2562029F5AB00D0D268 /* MarkdownTextStorage.swift in Sources */,
 				5EFD4526215A78E800BEE703 /* IndexedListView.swift in Sources */,
@@ -9711,7 +9732,7 @@
 				876113EB1DD1FEC4007F5969 /* ConversationContentViewController+Forward.swift in Sources */,
 				16DD6E95228304B70090A74C /* LegalHoldDetailsViewController.swift in Sources */,
 				D550F56E204444EE009E09DD /* ConversationActionController+Leave.swift in Sources */,
-				59BFBFC92CB7E0F7005C3375 /* MainCoordinator+SidebarViewControllerDelegate.swift in Sources */,
+				59BFBFC92CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift in Sources */,
 				59BFBFCA2CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */,
 				F15650E621DD14B300210504 /* TransformLabel.swift in Sources */,
 				87F61D1A1CD36F0900670794 /* GradientView.swift in Sources */,
@@ -9896,6 +9917,7 @@
 				5EB45761204EA75300BA217A /* CallQualityDismissalTransition.swift in Sources */,
 				EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */,
 				BF5DF5C520F4B0B8002BCB67 /* UICollectionView+GroupedSections.swift in Sources */,
+				59AF77A12CC7FB3B002438D1 /* AnyMainCoordinator.swift in Sources */,
 				546EEA8F2536DFAB00195097 /* SwitchingAccountRouter.swift in Sources */,
 				8742C2E21E51BD7900329FB6 /* TextSearchInputView.swift in Sources */,
 				8711A5A21E0D395A00043ACF /* CollectionCellHeader.swift in Sources */,
@@ -10324,6 +10346,7 @@
 				BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
+				59AF779F2CC7FA8D002438D1 /* SelfProfileViewControllerBuilderProtocol.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				E9C0B3592B558CAB00BC80E8 /* ConversationWarningSystemMessageCell.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
@@ -11808,6 +11831,10 @@
 		5965B4782C57BF59000DBF91 /* WireAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalytics;
+		};
+		59AF77A22CC7FF89002438D1 /* WireMainNavigationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMainNavigationUI;
 		};
 		59B4046B2CAB140A00CC33BF /* WireSettingsUI */ = {
 			isa = XCSwiftPackageProductDependency;

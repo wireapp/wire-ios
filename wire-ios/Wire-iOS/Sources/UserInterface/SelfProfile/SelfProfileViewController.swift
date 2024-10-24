@@ -43,7 +43,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileImagePicker = ProfileImagePickerManager()
 
     private let accountSelector: AccountSelector?
-    let mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    let mainCoordinator: AnyMainCoordinator
 
     // MARK: - Configuration
 
@@ -58,7 +58,7 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+        mainCoordinator: AnyMainCoordinator
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator

@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocolDependencies {
-    associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
-    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
+import UIKit
+import WireMainNavigationUI
+
+// sourcery: AutoMockable
+protocol ConnectViewControllerBuilderProtocol {
+    @MainActor
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
 }
