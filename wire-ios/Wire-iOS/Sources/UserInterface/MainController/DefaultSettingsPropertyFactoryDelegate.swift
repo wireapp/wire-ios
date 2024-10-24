@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import WireMainNavigationUI
+import WireSyncEngine
 
 final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate, PasscodeSetupViewControllerDelegate {
 
@@ -73,7 +73,7 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
         wrappedViewController.presentationController?.delegate = passcodeSetupViewController
 
         Task {
-            // TODO: test on iPad and iPhone
+            // TODO: [WPB-11836] test on iPad and iPhone and also fix issues with large font sizes
             await mainCoordinator.presentViewController(wrappedViewController)
         }
     }
