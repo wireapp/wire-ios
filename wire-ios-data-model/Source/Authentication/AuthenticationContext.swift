@@ -22,13 +22,11 @@ import LocalAuthentication
 // sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.
 public protocol AuthenticationContextProtocol {
-    typealias PolicyReply = (Bool, Error?) -> Void
-    
     var laContext: LAContext { get }
     var evaluatedPolicyDomainState: Data? { get }
 
     func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping PolicyReply)
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
 }
 
 public struct AuthenticationContext: AuthenticationContextProtocol {

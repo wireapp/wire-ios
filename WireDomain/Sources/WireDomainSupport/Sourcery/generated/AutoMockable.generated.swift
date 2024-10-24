@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.5 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -21,9 +21,6 @@
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable vertical_whitespace
-// swiftlint:disable line_length
-// swiftlint:disable variable_name
-
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -59,1000 +56,989 @@ import WireDataModel
 
 
 
+public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
-
-
-public class ConnectionsRepositoryProtocolMock: ConnectionsRepositoryProtocol {
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - pullConnections
 
-    //MARK: - pullConnections
-
-    public var pullConnectionsVoidThrowableError: (any Error)?
-    public var pullConnectionsVoidCallsCount = 0
-    public var pullConnectionsVoidCalled: Bool {
-        return pullConnectionsVoidCallsCount > 0
-    }
-    public var pullConnectionsVoidClosure: (() async throws -> Void)?
+    public var pullConnections_Invocations: [Void] = []
+    public var pullConnections_MockError: Error?
+    public var pullConnections_MockMethod: (() async throws -> Void)?
 
     public func pullConnections() async throws {
-        pullConnectionsVoidCallsCount += 1
-        if let error = pullConnectionsVoidThrowableError {
+        pullConnections_Invocations.append(())
+
+        if let error = pullConnections_MockError {
             throw error
         }
-        try await pullConnectionsVoidClosure?()
+
+        guard let mock = pullConnections_MockMethod else {
+            fatalError("no mock for `pullConnections`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - updateConnection
+    // MARK: - updateConnection
 
-    public var updateConnectionConnectionConnectionVoidThrowableError: (any Error)?
-    public var updateConnectionConnectionConnectionVoidCallsCount = 0
-    public var updateConnectionConnectionConnectionVoidCalled: Bool {
-        return updateConnectionConnectionConnectionVoidCallsCount > 0
-    }
-    public var updateConnectionConnectionConnectionVoidReceivedConnection: (Connection)?
-    public var updateConnectionConnectionConnectionVoidReceivedInvocations: [(Connection)] = []
-    public var updateConnectionConnectionConnectionVoidClosure: ((Connection) async throws -> Void)?
+    public var updateConnection_Invocations: [Connection] = []
+    public var updateConnection_MockError: Error?
+    public var updateConnection_MockMethod: ((Connection) async throws -> Void)?
 
     public func updateConnection(_ connection: Connection) async throws {
-        updateConnectionConnectionConnectionVoidCallsCount += 1
-        updateConnectionConnectionConnectionVoidReceivedConnection = connection
-        updateConnectionConnectionConnectionVoidReceivedInvocations.append(connection)
-        if let error = updateConnectionConnectionConnectionVoidThrowableError {
+        updateConnection_Invocations.append(connection)
+
+        if let error = updateConnection_MockError {
             throw error
         }
-        try await updateConnectionConnectionConnectionVoidClosure?(connection)
+
+        guard let mock = updateConnection_MockMethod else {
+            fatalError("no mock for `updateConnection`")
+        }
+
+        try await mock(connection)
     }
 
-
 }
-public class ConversationLabelsRepositoryProtocolMock: ConversationLabelsRepositoryProtocol {
+
+public class MockConversationLabelsRepositoryProtocol: ConversationLabelsRepositoryProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - pullConversationLabels
 
-    //MARK: - pullConversationLabels
-
-    public var pullConversationLabelsVoidThrowableError: (any Error)?
-    public var pullConversationLabelsVoidCallsCount = 0
-    public var pullConversationLabelsVoidCalled: Bool {
-        return pullConversationLabelsVoidCallsCount > 0
-    }
-    public var pullConversationLabelsVoidClosure: (() async throws -> Void)?
+    public var pullConversationLabels_Invocations: [Void] = []
+    public var pullConversationLabels_MockError: Error?
+    public var pullConversationLabels_MockMethod: (() async throws -> Void)?
 
     public func pullConversationLabels() async throws {
-        pullConversationLabelsVoidCallsCount += 1
-        if let error = pullConversationLabelsVoidThrowableError {
+        pullConversationLabels_Invocations.append(())
+
+        if let error = pullConversationLabels_MockError {
             throw error
         }
-        try await pullConversationLabelsVoidClosure?()
+
+        guard let mock = pullConversationLabels_MockMethod else {
+            fatalError("no mock for `pullConversationLabels`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - updateConversationLabels
+    // MARK: - updateConversationLabels
 
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidThrowableError: (any Error)?
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidCallsCount = 0
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidCalled: Bool {
-        return updateConversationLabelsConversationLabelsConversationLabelVoidCallsCount > 0
-    }
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidReceivedConversationLabels: ([ConversationLabel])?
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidReceivedInvocations: [([ConversationLabel])] = []
-    public var updateConversationLabelsConversationLabelsConversationLabelVoidClosure: (([ConversationLabel]) async throws -> Void)?
+    public var updateConversationLabels_Invocations: [[ConversationLabel]] = []
+    public var updateConversationLabels_MockError: Error?
+    public var updateConversationLabels_MockMethod: (([ConversationLabel]) async throws -> Void)?
 
     public func updateConversationLabels(_ conversationLabels: [ConversationLabel]) async throws {
-        updateConversationLabelsConversationLabelsConversationLabelVoidCallsCount += 1
-        updateConversationLabelsConversationLabelsConversationLabelVoidReceivedConversationLabels = conversationLabels
-        updateConversationLabelsConversationLabelsConversationLabelVoidReceivedInvocations.append(conversationLabels)
-        if let error = updateConversationLabelsConversationLabelsConversationLabelVoidThrowableError {
+        updateConversationLabels_Invocations.append(conversationLabels)
+
+        if let error = updateConversationLabels_MockError {
             throw error
         }
-        try await updateConversationLabelsConversationLabelsConversationLabelVoidClosure?(conversationLabels)
+
+        guard let mock = updateConversationLabels_MockMethod else {
+            fatalError("no mock for `updateConversationLabels`")
+        }
+
+        try await mock(conversationLabels)
     }
 
-
 }
-public class ConversationLocalStoreProtocolMock: ConversationLocalStoreProtocol {
+
+public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - storeConversation
 
-    //MARK: - storeConversation
-
-    public var storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidCallsCount = 0
-    public var storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidCalled: Bool {
-        return storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidCallsCount > 0
-    }
-    public var storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidReceivedArguments: (conversation: WireAPI.Conversation, isFederationEnabled: Bool)?
-    public var storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidReceivedInvocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
-    public var storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidClosure: ((WireAPI.Conversation, Bool) async -> Void)?
+    public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
+    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async -> Void)?
 
     public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async {
-        storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidCallsCount += 1
-        storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidReceivedArguments = (conversation: conversation, isFederationEnabled: isFederationEnabled)
-        storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidReceivedInvocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
-        await storeConversationConversationWireAPIConversationIsFederationEnabledBoolVoidClosure?(conversation, isFederationEnabled)
+        storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
+
+        guard let mock = storeConversationIsFederationEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationIsFederationEnabled`")
+        }
+
+        await mock(conversation, isFederationEnabled)
     }
 
-    //MARK: - storeConversationNeedsBackendUpdate
+    // MARK: - storeConversationNeedsBackendUpdate
 
-    public var storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidCallsCount = 0
-    public var storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidCalled: Bool {
-        return storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidCallsCount > 0
-    }
-    public var storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidReceivedArguments: (needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)?
-    public var storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidReceivedInvocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
-    public var storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidClosure: ((Bool, WireAPI.QualifiedID) async -> Void)?
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
 
     public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
-        storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidCallsCount += 1
-        storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidReceivedArguments = (needsUpdate: needsUpdate, qualifiedId: qualifiedId)
-        storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidReceivedInvocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
-        await storeConversationNeedsBackendUpdateNeedsUpdateBoolQualifiedIdWireAPIQualifiedIDVoidClosure?(needsUpdate, qualifiedId)
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+
+        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        }
+
+        await mock(needsUpdate, qualifiedId)
     }
 
-    //MARK: - storeFailedConversation
+    // MARK: - storeFailedConversation
 
-    public var storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidCallsCount = 0
-    public var storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidCalled: Bool {
-        return storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidCallsCount > 0
-    }
-    public var storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidReceivedQualifiedId: (WireAPI.QualifiedID)?
-    public var storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidReceivedInvocations: [(WireAPI.QualifiedID)] = []
-    public var storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidClosure: ((WireAPI.QualifiedID) async -> Void)?
+    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
 
     public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
-        storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidCallsCount += 1
-        storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidReceivedQualifiedId = qualifiedId
-        storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidReceivedInvocations.append(qualifiedId)
-        await storeFailedConversationWithQualifiedIdQualifiedIdWireAPIQualifiedIDVoidClosure?(qualifiedId)
+        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        }
+
+        await mock(qualifiedId)
     }
 
-    //MARK: - fetchMLSConversation
+    // MARK: - fetchMLSConversation
 
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationCallsCount = 0
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationCalled: Bool {
-        return fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationCallsCount > 0
-    }
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReceivedGroupID: (WireDataModel.MLSGroupID)?
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReceivedInvocations: [(WireDataModel.MLSGroupID)] = []
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReturnValue: ZMConversation?
-    public var fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationClosure: ((WireDataModel.MLSGroupID) async -> ZMConversation?)?
+    public var fetchMLSConversationWith_Invocations: [WireDataModel.MLSGroupID] = []
+    public var fetchMLSConversationWith_MockMethod: ((WireDataModel.MLSGroupID) async -> ZMConversation?)?
+    public var fetchMLSConversationWith_MockValue: ZMConversation??
 
     public func fetchMLSConversation(with groupID: WireDataModel.MLSGroupID) async -> ZMConversation? {
-        fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationCallsCount += 1
-        fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReceivedGroupID = groupID
-        fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReceivedInvocations.append(groupID)
-        if let fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationClosure = fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationClosure {
-            return await fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationClosure(groupID)
+        fetchMLSConversationWith_Invocations.append(groupID)
+
+        if let mock = fetchMLSConversationWith_MockMethod {
+            return await mock(groupID)
+        } else if let mock = fetchMLSConversationWith_MockValue {
+            return mock
         } else {
-            return fetchMLSConversationWithGroupIDWireDataModelMLSGroupIDZMConversationReturnValue
+            fatalError("no mock for `fetchMLSConversationWith`")
         }
     }
 
-    //MARK: - removeFromConversations
+    // MARK: - removeFromConversations
 
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount = 0
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidCalled: Bool {
-        return removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount > 0
-    }
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidReceivedArguments: (user: ZMUser, removalDate: Date)?
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidReceivedInvocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidClosure: ((ZMUser, Date) async -> Void)?
+    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
 
     public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount += 1
-        removeFromConversationsUserZMUserRemovalDateDateVoidReceivedArguments = (user: user, removalDate: removalDate)
-        removeFromConversationsUserZMUserRemovalDateDateVoidReceivedInvocations.append((user: user, removalDate: removalDate))
-        await removeFromConversationsUserZMUserRemovalDateDateVoidClosure?(user, removalDate)
+        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+
+        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        }
+
+        await mock(user, removalDate)
     }
 
-
 }
-public class ConversationRepositoryProtocolMock: ConversationRepositoryProtocol {
+
+public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - pullConversations
 
-    //MARK: - pullConversations
-
-    public var pullConversationsVoidThrowableError: (any Error)?
-    public var pullConversationsVoidCallsCount = 0
-    public var pullConversationsVoidCalled: Bool {
-        return pullConversationsVoidCallsCount > 0
-    }
-    public var pullConversationsVoidClosure: (() async throws -> Void)?
+    public var pullConversations_Invocations: [Void] = []
+    public var pullConversations_MockError: Error?
+    public var pullConversations_MockMethod: (() async throws -> Void)?
 
     public func pullConversations() async throws {
-        pullConversationsVoidCallsCount += 1
-        if let error = pullConversationsVoidThrowableError {
+        pullConversations_Invocations.append(())
+
+        if let error = pullConversations_MockError {
             throw error
         }
-        try await pullConversationsVoidClosure?()
+
+        guard let mock = pullConversations_MockMethod else {
+            fatalError("no mock for `pullConversations`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - pullMLSOneToOneConversation
+    // MARK: - pullMLSOneToOneConversation
 
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringThrowableError: (any Error)?
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringCallsCount = 0
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringCalled: Bool {
-        return pullMLSOneToOneConversationUserIDStringDomainStringStringCallsCount > 0
-    }
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringReceivedArguments: (userID: String, domain: String)?
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringReceivedInvocations: [(userID: String, domain: String)] = []
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringReturnValue: String!
-    public var pullMLSOneToOneConversationUserIDStringDomainStringStringClosure: ((String, String) async throws -> String)?
+    public var pullMLSOneToOneConversationUserIDDomain_Invocations: [(userID: String, domain: String)] = []
+    public var pullMLSOneToOneConversationUserIDDomain_MockError: Error?
+    public var pullMLSOneToOneConversationUserIDDomain_MockMethod: ((String, String) async throws -> String)?
+    public var pullMLSOneToOneConversationUserIDDomain_MockValue: String?
 
     public func pullMLSOneToOneConversation(userID: String, domain: String) async throws -> String {
-        pullMLSOneToOneConversationUserIDStringDomainStringStringCallsCount += 1
-        pullMLSOneToOneConversationUserIDStringDomainStringStringReceivedArguments = (userID: userID, domain: domain)
-        pullMLSOneToOneConversationUserIDStringDomainStringStringReceivedInvocations.append((userID: userID, domain: domain))
-        if let error = pullMLSOneToOneConversationUserIDStringDomainStringStringThrowableError {
+        pullMLSOneToOneConversationUserIDDomain_Invocations.append((userID: userID, domain: domain))
+
+        if let error = pullMLSOneToOneConversationUserIDDomain_MockError {
             throw error
         }
-        if let pullMLSOneToOneConversationUserIDStringDomainStringStringClosure = pullMLSOneToOneConversationUserIDStringDomainStringStringClosure {
-            return try await pullMLSOneToOneConversationUserIDStringDomainStringStringClosure(userID, domain)
+
+        if let mock = pullMLSOneToOneConversationUserIDDomain_MockMethod {
+            return try await mock(userID, domain)
+        } else if let mock = pullMLSOneToOneConversationUserIDDomain_MockValue {
+            return mock
         } else {
-            return pullMLSOneToOneConversationUserIDStringDomainStringStringReturnValue
+            fatalError("no mock for `pullMLSOneToOneConversationUserIDDomain`")
         }
     }
 
-    //MARK: - fetchMLSConversation
+    // MARK: - fetchMLSConversation
 
-    public var fetchMLSConversationWithGroupIDStringZMConversationCallsCount = 0
-    public var fetchMLSConversationWithGroupIDStringZMConversationCalled: Bool {
-        return fetchMLSConversationWithGroupIDStringZMConversationCallsCount > 0
-    }
-    public var fetchMLSConversationWithGroupIDStringZMConversationReceivedGroupID: (String)?
-    public var fetchMLSConversationWithGroupIDStringZMConversationReceivedInvocations: [(String)] = []
-    public var fetchMLSConversationWithGroupIDStringZMConversationReturnValue: ZMConversation?
-    public var fetchMLSConversationWithGroupIDStringZMConversationClosure: ((String) async -> ZMConversation?)?
+    public var fetchMLSConversationWith_Invocations: [String] = []
+    public var fetchMLSConversationWith_MockMethod: ((String) async -> ZMConversation?)?
+    public var fetchMLSConversationWith_MockValue: ZMConversation??
 
     public func fetchMLSConversation(with groupID: String) async -> ZMConversation? {
-        fetchMLSConversationWithGroupIDStringZMConversationCallsCount += 1
-        fetchMLSConversationWithGroupIDStringZMConversationReceivedGroupID = groupID
-        fetchMLSConversationWithGroupIDStringZMConversationReceivedInvocations.append(groupID)
-        if let fetchMLSConversationWithGroupIDStringZMConversationClosure = fetchMLSConversationWithGroupIDStringZMConversationClosure {
-            return await fetchMLSConversationWithGroupIDStringZMConversationClosure(groupID)
+        fetchMLSConversationWith_Invocations.append(groupID)
+
+        if let mock = fetchMLSConversationWith_MockMethod {
+            return await mock(groupID)
+        } else if let mock = fetchMLSConversationWith_MockValue {
+            return mock
         } else {
-            return fetchMLSConversationWithGroupIDStringZMConversationReturnValue
+            fatalError("no mock for `fetchMLSConversationWith`")
         }
     }
 
-    //MARK: - removeFromConversations
+    // MARK: - removeFromConversations
 
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount = 0
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidCalled: Bool {
-        return removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount > 0
-    }
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidReceivedArguments: (user: ZMUser, removalDate: Date)?
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidReceivedInvocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserZMUserRemovalDateDateVoidClosure: ((ZMUser, Date) async -> Void)?
+    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
 
     public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserZMUserRemovalDateDateVoidCallsCount += 1
-        removeFromConversationsUserZMUserRemovalDateDateVoidReceivedArguments = (user: user, removalDate: removalDate)
-        removeFromConversationsUserZMUserRemovalDateDateVoidReceivedInvocations.append((user: user, removalDate: removalDate))
-        await removeFromConversationsUserZMUserRemovalDateDateVoidClosure?(user, removalDate)
+        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+
+        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        }
+
+        await mock(user, removalDate)
     }
 
-
 }
-public class OneOnOneResolverProtocolMock: OneOnOneResolverProtocol {
+
+public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - invoke
 
-    //MARK: - invoke
-
-    public var invokeVoidThrowableError: (any Error)?
-    public var invokeVoidCallsCount = 0
-    public var invokeVoidCalled: Bool {
-        return invokeVoidCallsCount > 0
-    }
-    public var invokeVoidClosure: (() async throws -> Void)?
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Void)?
 
     public func invoke() async throws {
-        invokeVoidCallsCount += 1
-        if let error = invokeVoidThrowableError {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
             throw error
         }
-        try await invokeVoidClosure?()
-    }
 
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
+    }
 
 }
-class ProteusMessageDecryptorProtocolMock: ProteusMessageDecryptorProtocol {
+
+class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
+
+    // MARK: - Life cycle
 
 
 
+    // MARK: - decryptedEventData
 
-    //MARK: - decryptedEventData
-
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventThrowableError: (any Error)?
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventCallsCount = 0
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventCalled: Bool {
-        return decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventCallsCount > 0
-    }
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReceivedEventData: (ConversationProteusMessageAddEvent)?
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReceivedInvocations: [(ConversationProteusMessageAddEvent)] = []
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReturnValue: ConversationProteusMessageAddEvent!
-    var decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventClosure: ((ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent)?
+    var decryptedEventDataFrom_Invocations: [ConversationProteusMessageAddEvent] = []
+    var decryptedEventDataFrom_MockError: Error?
+    var decryptedEventDataFrom_MockMethod: ((ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent)?
+    var decryptedEventDataFrom_MockValue: ConversationProteusMessageAddEvent?
 
     func decryptedEventData(from eventData: ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent {
-        decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventCallsCount += 1
-        decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReceivedEventData = eventData
-        decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReceivedInvocations.append(eventData)
-        if let error = decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventThrowableError {
+        decryptedEventDataFrom_Invocations.append(eventData)
+
+        if let error = decryptedEventDataFrom_MockError {
             throw error
         }
-        if let decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventClosure = decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventClosure {
-            return try await decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventClosure(eventData)
+
+        if let mock = decryptedEventDataFrom_MockMethod {
+            return try await mock(eventData)
+        } else if let mock = decryptedEventDataFrom_MockValue {
+            return mock
         } else {
-            return decryptedEventDataFromEventDataConversationProteusMessageAddEventConversationProteusMessageAddEventReturnValue
+            fatalError("no mock for `decryptedEventDataFrom`")
         }
     }
 
-
 }
-public class SelfUserProviderProtocolMock: SelfUserProviderProtocol {
+
+public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - fetchSelfUser
 
-    //MARK: - fetchSelfUser
-
-    public var fetchSelfUserZMUserCallsCount = 0
-    public var fetchSelfUserZMUserCalled: Bool {
-        return fetchSelfUserZMUserCallsCount > 0
-    }
-    public var fetchSelfUserZMUserReturnValue: ZMUser!
-    public var fetchSelfUserZMUserClosure: (() -> ZMUser)?
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
 
     public func fetchSelfUser() -> ZMUser {
-        fetchSelfUserZMUserCallsCount += 1
-        if let fetchSelfUserZMUserClosure = fetchSelfUserZMUserClosure {
-            return fetchSelfUserZMUserClosure()
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
         } else {
-            return fetchSelfUserZMUserReturnValue
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 
-
 }
-public class TeamRepositoryProtocolMock: TeamRepositoryProtocol {
+
+public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - pullSelfTeam
 
-    //MARK: - pullSelfTeam
-
-    public var pullSelfTeamVoidThrowableError: (any Error)?
-    public var pullSelfTeamVoidCallsCount = 0
-    public var pullSelfTeamVoidCalled: Bool {
-        return pullSelfTeamVoidCallsCount > 0
-    }
-    public var pullSelfTeamVoidClosure: (() async throws -> Void)?
+    public var pullSelfTeam_Invocations: [Void] = []
+    public var pullSelfTeam_MockError: Error?
+    public var pullSelfTeam_MockMethod: (() async throws -> Void)?
 
     public func pullSelfTeam() async throws {
-        pullSelfTeamVoidCallsCount += 1
-        if let error = pullSelfTeamVoidThrowableError {
+        pullSelfTeam_Invocations.append(())
+
+        if let error = pullSelfTeam_MockError {
             throw error
         }
-        try await pullSelfTeamVoidClosure?()
+
+        guard let mock = pullSelfTeam_MockMethod else {
+            fatalError("no mock for `pullSelfTeam`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - pullSelfTeamRoles
+    // MARK: - pullSelfTeamRoles
 
-    public var pullSelfTeamRolesVoidThrowableError: (any Error)?
-    public var pullSelfTeamRolesVoidCallsCount = 0
-    public var pullSelfTeamRolesVoidCalled: Bool {
-        return pullSelfTeamRolesVoidCallsCount > 0
-    }
-    public var pullSelfTeamRolesVoidClosure: (() async throws -> Void)?
+    public var pullSelfTeamRoles_Invocations: [Void] = []
+    public var pullSelfTeamRoles_MockError: Error?
+    public var pullSelfTeamRoles_MockMethod: (() async throws -> Void)?
 
     public func pullSelfTeamRoles() async throws {
-        pullSelfTeamRolesVoidCallsCount += 1
-        if let error = pullSelfTeamRolesVoidThrowableError {
+        pullSelfTeamRoles_Invocations.append(())
+
+        if let error = pullSelfTeamRoles_MockError {
             throw error
         }
-        try await pullSelfTeamRolesVoidClosure?()
+
+        guard let mock = pullSelfTeamRoles_MockMethod else {
+            fatalError("no mock for `pullSelfTeamRoles`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - pullSelfTeamMembers
+    // MARK: - pullSelfTeamMembers
 
-    public var pullSelfTeamMembersVoidThrowableError: (any Error)?
-    public var pullSelfTeamMembersVoidCallsCount = 0
-    public var pullSelfTeamMembersVoidCalled: Bool {
-        return pullSelfTeamMembersVoidCallsCount > 0
-    }
-    public var pullSelfTeamMembersVoidClosure: (() async throws -> Void)?
+    public var pullSelfTeamMembers_Invocations: [Void] = []
+    public var pullSelfTeamMembers_MockError: Error?
+    public var pullSelfTeamMembers_MockMethod: (() async throws -> Void)?
 
     public func pullSelfTeamMembers() async throws {
-        pullSelfTeamMembersVoidCallsCount += 1
-        if let error = pullSelfTeamMembersVoidThrowableError {
+        pullSelfTeamMembers_Invocations.append(())
+
+        if let error = pullSelfTeamMembers_MockError {
             throw error
         }
-        try await pullSelfTeamMembersVoidClosure?()
+
+        guard let mock = pullSelfTeamMembers_MockMethod else {
+            fatalError("no mock for `pullSelfTeamMembers`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - fetchSelfLegalholdStatus
+    // MARK: - fetchSelfLegalholdStatus
 
-    public var fetchSelfLegalholdStatusLegalholdStatusThrowableError: (any Error)?
-    public var fetchSelfLegalholdStatusLegalholdStatusCallsCount = 0
-    public var fetchSelfLegalholdStatusLegalholdStatusCalled: Bool {
-        return fetchSelfLegalholdStatusLegalholdStatusCallsCount > 0
-    }
-    public var fetchSelfLegalholdStatusLegalholdStatusReturnValue: LegalholdStatus!
-    public var fetchSelfLegalholdStatusLegalholdStatusClosure: (() async throws -> LegalholdStatus)?
+    public var fetchSelfLegalholdStatus_Invocations: [Void] = []
+    public var fetchSelfLegalholdStatus_MockError: Error?
+    public var fetchSelfLegalholdStatus_MockMethod: (() async throws -> LegalholdStatus)?
+    public var fetchSelfLegalholdStatus_MockValue: LegalholdStatus?
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
-        fetchSelfLegalholdStatusLegalholdStatusCallsCount += 1
-        if let error = fetchSelfLegalholdStatusLegalholdStatusThrowableError {
+        fetchSelfLegalholdStatus_Invocations.append(())
+
+        if let error = fetchSelfLegalholdStatus_MockError {
             throw error
         }
-        if let fetchSelfLegalholdStatusLegalholdStatusClosure = fetchSelfLegalholdStatusLegalholdStatusClosure {
-            return try await fetchSelfLegalholdStatusLegalholdStatusClosure()
+
+        if let mock = fetchSelfLegalholdStatus_MockMethod {
+            return try await mock()
+        } else if let mock = fetchSelfLegalholdStatus_MockValue {
+            return mock
         } else {
-            return fetchSelfLegalholdStatusLegalholdStatusReturnValue
+            fatalError("no mock for `fetchSelfLegalholdStatus`")
         }
     }
 
-    //MARK: - deleteMembership
+    // MARK: - deleteMembership
 
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidThrowableError: (any Error)?
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidCallsCount = 0
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidCalled: Bool {
-        return deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidCallsCount > 0
-    }
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidReceivedArguments: (userID: UUID, teamID: UUID, time: Date)?
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidReceivedInvocations: [(userID: UUID, teamID: UUID, time: Date)] = []
-    public var deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidClosure: ((UUID, UUID, Date) async throws -> Void)?
+    public var deleteMembershipForUserFromTeamAt_Invocations: [(userID: UUID, teamID: UUID, time: Date)] = []
+    public var deleteMembershipForUserFromTeamAt_MockError: Error?
+    public var deleteMembershipForUserFromTeamAt_MockMethod: ((UUID, UUID, Date) async throws -> Void)?
 
     public func deleteMembership(forUser userID: UUID, fromTeam teamID: UUID, at time: Date) async throws {
-        deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidCallsCount += 1
-        deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidReceivedArguments = (userID: userID, teamID: teamID, time: time)
-        deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidReceivedInvocations.append((userID: userID, teamID: teamID, time: time))
-        if let error = deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidThrowableError {
+        deleteMembershipForUserFromTeamAt_Invocations.append((userID: userID, teamID: teamID, time: time))
+
+        if let error = deleteMembershipForUserFromTeamAt_MockError {
             throw error
         }
-        try await deleteMembershipForUserUserIDUUIDFromTeamTeamIDUUIDAtTimeDateVoidClosure?(userID, teamID, time)
+
+        guard let mock = deleteMembershipForUserFromTeamAt_MockMethod else {
+            fatalError("no mock for `deleteMembershipForUserFromTeamAt`")
+        }
+
+        try await mock(userID, teamID, time)
     }
 
-    //MARK: - storeTeamMemberNeedsBackendUpdate
+    // MARK: - storeTeamMemberNeedsBackendUpdate
 
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidThrowableError: (any Error)?
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidCallsCount = 0
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidCalled: Bool {
-        return storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidCallsCount > 0
-    }
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidReceivedMembershipID: (UUID)?
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidReceivedInvocations: [(UUID)] = []
-    public var storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidClosure: ((UUID) async throws -> Void)?
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_Invocations: [UUID] = []
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_MockError: Error?
+    public var storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod: ((UUID) async throws -> Void)?
 
     public func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
-        storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidCallsCount += 1
-        storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidReceivedMembershipID = membershipID
-        storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidReceivedInvocations.append(membershipID)
-        if let error = storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidThrowableError {
+        storeTeamMemberNeedsBackendUpdateMembershipID_Invocations.append(membershipID)
+
+        if let error = storeTeamMemberNeedsBackendUpdateMembershipID_MockError {
             throw error
         }
-        try await storeTeamMemberNeedsBackendUpdateMembershipIDUUIDVoidClosure?(membershipID)
-    }
 
+        guard let mock = storeTeamMemberNeedsBackendUpdateMembershipID_MockMethod else {
+            fatalError("no mock for `storeTeamMemberNeedsBackendUpdateMembershipID`")
+        }
+
+        try await mock(membershipID)
+    }
 
 }
-class UpdateEventDecryptorProtocolMock: UpdateEventDecryptorProtocol {
+
+class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
+
+    // MARK: - Life cycle
 
 
 
+    // MARK: - decryptEvents
 
-    //MARK: - decryptEvents
-
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventThrowableError: (any Error)?
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventCallsCount = 0
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventCalled: Bool {
-        return decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventCallsCount > 0
-    }
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReceivedEventEnvelope: (UpdateEventEnvelope)?
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReceivedInvocations: [(UpdateEventEnvelope)] = []
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReturnValue: [UpdateEvent]!
-    var decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventClosure: ((UpdateEventEnvelope) async throws -> [UpdateEvent])?
+    var decryptEventsIn_Invocations: [UpdateEventEnvelope] = []
+    var decryptEventsIn_MockError: Error?
+    var decryptEventsIn_MockMethod: ((UpdateEventEnvelope) async throws -> [UpdateEvent])?
+    var decryptEventsIn_MockValue: [UpdateEvent]?
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventCallsCount += 1
-        decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReceivedEventEnvelope = eventEnvelope
-        decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReceivedInvocations.append(eventEnvelope)
-        if let error = decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventThrowableError {
+        decryptEventsIn_Invocations.append(eventEnvelope)
+
+        if let error = decryptEventsIn_MockError {
             throw error
         }
-        if let decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventClosure = decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventClosure {
-            return try await decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventClosure(eventEnvelope)
+
+        if let mock = decryptEventsIn_MockMethod {
+            return try await mock(eventEnvelope)
+        } else if let mock = decryptEventsIn_MockValue {
+            return mock
         } else {
-            return decryptEventsInEventEnvelopeUpdateEventEnvelopeUpdateEventReturnValue
+            fatalError("no mock for `decryptEventsIn`")
         }
     }
 
-
 }
-class UpdateEventProcessorProtocolMock: UpdateEventProcessorProtocol {
+
+class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
+
+    // MARK: - Life cycle
 
 
 
+    // MARK: - processEvent
 
-    //MARK: - processEvent
-
-    var processEventEventUpdateEventVoidThrowableError: (any Error)?
-    var processEventEventUpdateEventVoidCallsCount = 0
-    var processEventEventUpdateEventVoidCalled: Bool {
-        return processEventEventUpdateEventVoidCallsCount > 0
-    }
-    var processEventEventUpdateEventVoidReceivedEvent: (UpdateEvent)?
-    var processEventEventUpdateEventVoidReceivedInvocations: [(UpdateEvent)] = []
-    var processEventEventUpdateEventVoidClosure: ((UpdateEvent) async throws -> Void)?
+    var processEvent_Invocations: [UpdateEvent] = []
+    var processEvent_MockError: Error?
+    var processEvent_MockMethod: ((UpdateEvent) async throws -> Void)?
 
     func processEvent(_ event: UpdateEvent) async throws {
-        processEventEventUpdateEventVoidCallsCount += 1
-        processEventEventUpdateEventVoidReceivedEvent = event
-        processEventEventUpdateEventVoidReceivedInvocations.append(event)
-        if let error = processEventEventUpdateEventVoidThrowableError {
+        processEvent_Invocations.append(event)
+
+        if let error = processEvent_MockError {
             throw error
         }
-        try await processEventEventUpdateEventVoidClosure?(event)
-    }
 
+        guard let mock = processEvent_MockMethod else {
+            fatalError("no mock for `processEvent`")
+        }
+
+        try await mock(event)
+    }
 
 }
-class UpdateEventsRepositoryProtocolMock: UpdateEventsRepositoryProtocol {
+
+class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
+
+    // MARK: - Life cycle
 
 
 
+    // MARK: - pullPendingEvents
 
-    //MARK: - pullPendingEvents
-
-    var pullPendingEventsVoidThrowableError: (any Error)?
-    var pullPendingEventsVoidCallsCount = 0
-    var pullPendingEventsVoidCalled: Bool {
-        return pullPendingEventsVoidCallsCount > 0
-    }
-    var pullPendingEventsVoidClosure: (() async throws -> Void)?
+    var pullPendingEvents_Invocations: [Void] = []
+    var pullPendingEvents_MockError: Error?
+    var pullPendingEvents_MockMethod: (() async throws -> Void)?
 
     func pullPendingEvents() async throws {
-        pullPendingEventsVoidCallsCount += 1
-        if let error = pullPendingEventsVoidThrowableError {
+        pullPendingEvents_Invocations.append(())
+
+        if let error = pullPendingEvents_MockError {
             throw error
         }
-        try await pullPendingEventsVoidClosure?()
+
+        guard let mock = pullPendingEvents_MockMethod else {
+            fatalError("no mock for `pullPendingEvents`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - fetchNextPendingEvents
+    // MARK: - fetchNextPendingEvents
 
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeThrowableError: (any Error)?
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeCallsCount = 0
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeCalled: Bool {
-        return fetchNextPendingEventsLimitUIntUpdateEventEnvelopeCallsCount > 0
-    }
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReceivedLimit: (UInt)?
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReceivedInvocations: [(UInt)] = []
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReturnValue: [UpdateEventEnvelope]!
-    var fetchNextPendingEventsLimitUIntUpdateEventEnvelopeClosure: ((UInt) async throws -> [UpdateEventEnvelope])?
+    var fetchNextPendingEventsLimit_Invocations: [UInt] = []
+    var fetchNextPendingEventsLimit_MockError: Error?
+    var fetchNextPendingEventsLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
+    var fetchNextPendingEventsLimit_MockValue: [UpdateEventEnvelope]?
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
-        fetchNextPendingEventsLimitUIntUpdateEventEnvelopeCallsCount += 1
-        fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReceivedLimit = limit
-        fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReceivedInvocations.append(limit)
-        if let error = fetchNextPendingEventsLimitUIntUpdateEventEnvelopeThrowableError {
+        fetchNextPendingEventsLimit_Invocations.append(limit)
+
+        if let error = fetchNextPendingEventsLimit_MockError {
             throw error
         }
-        if let fetchNextPendingEventsLimitUIntUpdateEventEnvelopeClosure = fetchNextPendingEventsLimitUIntUpdateEventEnvelopeClosure {
-            return try await fetchNextPendingEventsLimitUIntUpdateEventEnvelopeClosure(limit)
+
+        if let mock = fetchNextPendingEventsLimit_MockMethod {
+            return try await mock(limit)
+        } else if let mock = fetchNextPendingEventsLimit_MockValue {
+            return mock
         } else {
-            return fetchNextPendingEventsLimitUIntUpdateEventEnvelopeReturnValue
+            fatalError("no mock for `fetchNextPendingEventsLimit`")
         }
     }
 
-    //MARK: - deleteNextPendingEvents
+    // MARK: - deleteNextPendingEvents
 
-    var deleteNextPendingEventsLimitUIntVoidThrowableError: (any Error)?
-    var deleteNextPendingEventsLimitUIntVoidCallsCount = 0
-    var deleteNextPendingEventsLimitUIntVoidCalled: Bool {
-        return deleteNextPendingEventsLimitUIntVoidCallsCount > 0
-    }
-    var deleteNextPendingEventsLimitUIntVoidReceivedLimit: (UInt)?
-    var deleteNextPendingEventsLimitUIntVoidReceivedInvocations: [(UInt)] = []
-    var deleteNextPendingEventsLimitUIntVoidClosure: ((UInt) async throws -> Void)?
+    var deleteNextPendingEventsLimit_Invocations: [UInt] = []
+    var deleteNextPendingEventsLimit_MockError: Error?
+    var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
 
     func deleteNextPendingEvents(limit: UInt) async throws {
-        deleteNextPendingEventsLimitUIntVoidCallsCount += 1
-        deleteNextPendingEventsLimitUIntVoidReceivedLimit = limit
-        deleteNextPendingEventsLimitUIntVoidReceivedInvocations.append(limit)
-        if let error = deleteNextPendingEventsLimitUIntVoidThrowableError {
+        deleteNextPendingEventsLimit_Invocations.append(limit)
+
+        if let error = deleteNextPendingEventsLimit_MockError {
             throw error
         }
-        try await deleteNextPendingEventsLimitUIntVoidClosure?(limit)
+
+        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
+            fatalError("no mock for `deleteNextPendingEventsLimit`")
+        }
+
+        try await mock(limit)
     }
 
-    //MARK: - startBufferingLiveEvents
+    // MARK: - startBufferingLiveEvents
 
-    var startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorThrowableError: (any Error)?
-    var startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorCallsCount = 0
-    var startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorCalled: Bool {
-        return startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorCallsCount > 0
-    }
-    var startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorReturnValue: AsyncThrowingStream<UpdateEventEnvelope, Error>!
-    var startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorClosure: (() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>)?
+    var startBufferingLiveEvents_Invocations: [Void] = []
+    var startBufferingLiveEvents_MockError: Error?
+    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>)?
+    var startBufferingLiveEvents_MockValue: AsyncThrowingStream<UpdateEventEnvelope, Error>?
 
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorCallsCount += 1
-        if let error = startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorThrowableError {
+        startBufferingLiveEvents_Invocations.append(())
+
+        if let error = startBufferingLiveEvents_MockError {
             throw error
         }
-        if let startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorClosure = startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorClosure {
-            return try await startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorClosure()
+
+        if let mock = startBufferingLiveEvents_MockMethod {
+            return try await mock()
+        } else if let mock = startBufferingLiveEvents_MockValue {
+            return mock
         } else {
-            return startBufferingLiveEventsAsyncThrowingStreamUpdateEventEnvelopeErrorReturnValue
+            fatalError("no mock for `startBufferingLiveEvents`")
         }
     }
 
-    //MARK: - stopReceivingLiveEvents
+    // MARK: - stopReceivingLiveEvents
 
-    var stopReceivingLiveEventsVoidCallsCount = 0
-    var stopReceivingLiveEventsVoidCalled: Bool {
-        return stopReceivingLiveEventsVoidCallsCount > 0
-    }
-    var stopReceivingLiveEventsVoidClosure: (() async -> Void)?
+    var stopReceivingLiveEvents_Invocations: [Void] = []
+    var stopReceivingLiveEvents_MockMethod: (() async -> Void)?
 
     func stopReceivingLiveEvents() async {
-        stopReceivingLiveEventsVoidCallsCount += 1
-        await stopReceivingLiveEventsVoidClosure?()
+        stopReceivingLiveEvents_Invocations.append(())
+
+        guard let mock = stopReceivingLiveEvents_MockMethod else {
+            fatalError("no mock for `stopReceivingLiveEvents`")
+        }
+
+        await mock()
     }
 
-    //MARK: - storeLastEventEnvelopeID
+    // MARK: - storeLastEventEnvelopeID
 
-    var storeLastEventEnvelopeIDIdUUIDVoidCallsCount = 0
-    var storeLastEventEnvelopeIDIdUUIDVoidCalled: Bool {
-        return storeLastEventEnvelopeIDIdUUIDVoidCallsCount > 0
-    }
-    var storeLastEventEnvelopeIDIdUUIDVoidReceivedId: (UUID)?
-    var storeLastEventEnvelopeIDIdUUIDVoidReceivedInvocations: [(UUID)] = []
-    var storeLastEventEnvelopeIDIdUUIDVoidClosure: ((UUID) -> Void)?
+    var storeLastEventEnvelopeID_Invocations: [UUID] = []
+    var storeLastEventEnvelopeID_MockMethod: ((UUID) -> Void)?
 
     func storeLastEventEnvelopeID(_ id: UUID) {
-        storeLastEventEnvelopeIDIdUUIDVoidCallsCount += 1
-        storeLastEventEnvelopeIDIdUUIDVoidReceivedId = id
-        storeLastEventEnvelopeIDIdUUIDVoidReceivedInvocations.append(id)
-        storeLastEventEnvelopeIDIdUUIDVoidClosure?(id)
+        storeLastEventEnvelopeID_Invocations.append(id)
+
+        guard let mock = storeLastEventEnvelopeID_MockMethod else {
+            fatalError("no mock for `storeLastEventEnvelopeID`")
+        }
+
+        mock(id)
     }
 
-    //MARK: - pullLastEventID
+    // MARK: - pullLastEventID
 
-    var pullLastEventIDVoidThrowableError: (any Error)?
-    var pullLastEventIDVoidCallsCount = 0
-    var pullLastEventIDVoidCalled: Bool {
-        return pullLastEventIDVoidCallsCount > 0
-    }
-    var pullLastEventIDVoidClosure: (() async throws -> Void)?
+    var pullLastEventID_Invocations: [Void] = []
+    var pullLastEventID_MockError: Error?
+    var pullLastEventID_MockMethod: (() async throws -> Void)?
 
     func pullLastEventID() async throws {
-        pullLastEventIDVoidCallsCount += 1
-        if let error = pullLastEventIDVoidThrowableError {
+        pullLastEventID_Invocations.append(())
+
+        if let error = pullLastEventID_MockError {
             throw error
         }
-        try await pullLastEventIDVoidClosure?()
+
+        guard let mock = pullLastEventID_MockMethod else {
+            fatalError("no mock for `pullLastEventID`")
+        }
+
+        try await mock()
     }
 
-
 }
-public class UserRepositoryProtocolMock: UserRepositoryProtocol {
+
+public class MockUserRepositoryProtocol: UserRepositoryProtocol {
+
+    // MARK: - Life cycle
 
     public init() {}
 
 
+    // MARK: - fetchSelfUser
 
-    //MARK: - fetchSelfUser
-
-    public var fetchSelfUserZMUserCallsCount = 0
-    public var fetchSelfUserZMUserCalled: Bool {
-        return fetchSelfUserZMUserCallsCount > 0
-    }
-    public var fetchSelfUserZMUserReturnValue: ZMUser!
-    public var fetchSelfUserZMUserClosure: (() -> ZMUser)?
+    public var fetchSelfUser_Invocations: [Void] = []
+    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockValue: ZMUser?
 
     public func fetchSelfUser() -> ZMUser {
-        fetchSelfUserZMUserCallsCount += 1
-        if let fetchSelfUserZMUserClosure = fetchSelfUserZMUserClosure {
-            return fetchSelfUserZMUserClosure()
+        fetchSelfUser_Invocations.append(())
+
+        if let mock = fetchSelfUser_MockMethod {
+            return mock()
+        } else if let mock = fetchSelfUser_MockValue {
+            return mock
         } else {
-            return fetchSelfUserZMUserReturnValue
+            fatalError("no mock for `fetchSelfUser`")
         }
     }
 
-    //MARK: - fetchUser
+    // MARK: - fetchUser
 
-    public var fetchUserWithIdUUIDDomainStringZMUserThrowableError: (any Error)?
-    public var fetchUserWithIdUUIDDomainStringZMUserCallsCount = 0
-    public var fetchUserWithIdUUIDDomainStringZMUserCalled: Bool {
-        return fetchUserWithIdUUIDDomainStringZMUserCallsCount > 0
-    }
-    public var fetchUserWithIdUUIDDomainStringZMUserReceivedArguments: (id: UUID, domain: String?)?
-    public var fetchUserWithIdUUIDDomainStringZMUserReceivedInvocations: [(id: UUID, domain: String?)] = []
-    public var fetchUserWithIdUUIDDomainStringZMUserReturnValue: ZMUser!
-    public var fetchUserWithIdUUIDDomainStringZMUserClosure: ((UUID, String?) async throws -> ZMUser)?
+    public var fetchUserWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchUserWithDomain_MockError: Error?
+    public var fetchUserWithDomain_MockMethod: ((UUID, String?) async throws -> ZMUser)?
+    public var fetchUserWithDomain_MockValue: ZMUser?
 
     public func fetchUser(with id: UUID, domain: String?) async throws -> ZMUser {
-        fetchUserWithIdUUIDDomainStringZMUserCallsCount += 1
-        fetchUserWithIdUUIDDomainStringZMUserReceivedArguments = (id: id, domain: domain)
-        fetchUserWithIdUUIDDomainStringZMUserReceivedInvocations.append((id: id, domain: domain))
-        if let error = fetchUserWithIdUUIDDomainStringZMUserThrowableError {
+        fetchUserWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = fetchUserWithDomain_MockError {
             throw error
         }
-        if let fetchUserWithIdUUIDDomainStringZMUserClosure = fetchUserWithIdUUIDDomainStringZMUserClosure {
-            return try await fetchUserWithIdUUIDDomainStringZMUserClosure(id, domain)
+
+        if let mock = fetchUserWithDomain_MockMethod {
+            return try await mock(id, domain)
+        } else if let mock = fetchUserWithDomain_MockValue {
+            return mock
         } else {
-            return fetchUserWithIdUUIDDomainStringZMUserReturnValue
+            fatalError("no mock for `fetchUserWithDomain`")
         }
     }
 
-    //MARK: - pushSelfSupportedProtocols
+    // MARK: - pushSelfSupportedProtocols
 
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidThrowableError: (any Error)?
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidCallsCount = 0
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidCalled: Bool {
-        return pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidCallsCount > 0
-    }
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidReceivedSupportedProtocols: (Set<WireAPI.MessageProtocol>)?
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidReceivedInvocations: [(Set<WireAPI.MessageProtocol>)] = []
-    public var pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidClosure: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+    public var pushSelfSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSelfSupportedProtocols_MockError: Error?
+    public var pushSelfSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
 
     public func pushSelfSupportedProtocols(_ supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
-        pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidCallsCount += 1
-        pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidReceivedSupportedProtocols = supportedProtocols
-        pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidReceivedInvocations.append(supportedProtocols)
-        if let error = pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidThrowableError {
+        pushSelfSupportedProtocols_Invocations.append(supportedProtocols)
+
+        if let error = pushSelfSupportedProtocols_MockError {
             throw error
         }
-        try await pushSelfSupportedProtocolsSupportedProtocolsSetWireAPIMessageProtocolVoidClosure?(supportedProtocols)
+
+        guard let mock = pushSelfSupportedProtocols_MockMethod else {
+            fatalError("no mock for `pushSelfSupportedProtocols`")
+        }
+
+        try await mock(supportedProtocols)
     }
 
-    //MARK: - pullKnownUsers
+    // MARK: - pullKnownUsers
 
-    public var pullKnownUsersVoidThrowableError: (any Error)?
-    public var pullKnownUsersVoidCallsCount = 0
-    public var pullKnownUsersVoidCalled: Bool {
-        return pullKnownUsersVoidCallsCount > 0
-    }
-    public var pullKnownUsersVoidClosure: (() async throws -> Void)?
+    public var pullKnownUsers_Invocations: [Void] = []
+    public var pullKnownUsers_MockError: Error?
+    public var pullKnownUsers_MockMethod: (() async throws -> Void)?
 
     public func pullKnownUsers() async throws {
-        pullKnownUsersVoidCallsCount += 1
-        if let error = pullKnownUsersVoidThrowableError {
+        pullKnownUsers_Invocations.append(())
+
+        if let error = pullKnownUsers_MockError {
             throw error
         }
-        try await pullKnownUsersVoidClosure?()
+
+        guard let mock = pullKnownUsers_MockMethod else {
+            fatalError("no mock for `pullKnownUsers`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - pullUsers
+    // MARK: - pullUsers
 
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidThrowableError: (any Error)?
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidCallsCount = 0
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidCalled: Bool {
-        return pullUsersUserIDsWireDataModelQualifiedIDVoidCallsCount > 0
-    }
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidReceivedUserIDs: ([WireDataModel.QualifiedID])?
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidReceivedInvocations: [([WireDataModel.QualifiedID])] = []
-    public var pullUsersUserIDsWireDataModelQualifiedIDVoidClosure: (([WireDataModel.QualifiedID]) async throws -> Void)?
+    public var pullUsersUserIDs_Invocations: [[WireDataModel.QualifiedID]] = []
+    public var pullUsersUserIDs_MockError: Error?
+    public var pullUsersUserIDs_MockMethod: (([WireDataModel.QualifiedID]) async throws -> Void)?
 
     public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
-        pullUsersUserIDsWireDataModelQualifiedIDVoidCallsCount += 1
-        pullUsersUserIDsWireDataModelQualifiedIDVoidReceivedUserIDs = userIDs
-        pullUsersUserIDsWireDataModelQualifiedIDVoidReceivedInvocations.append(userIDs)
-        if let error = pullUsersUserIDsWireDataModelQualifiedIDVoidThrowableError {
+        pullUsersUserIDs_Invocations.append(userIDs)
+
+        if let error = pullUsersUserIDs_MockError {
             throw error
         }
-        try await pullUsersUserIDsWireDataModelQualifiedIDVoidClosure?(userIDs)
+
+        guard let mock = pullUsersUserIDs_MockMethod else {
+            fatalError("no mock for `pullUsersUserIDs`")
+        }
+
+        try await mock(userIDs)
     }
 
-    //MARK: - updateUser
+    // MARK: - updateUser
 
-    public var updateUserFromEventUserUpdateEventVoidCallsCount = 0
-    public var updateUserFromEventUserUpdateEventVoidCalled: Bool {
-        return updateUserFromEventUserUpdateEventVoidCallsCount > 0
-    }
-    public var updateUserFromEventUserUpdateEventVoidReceivedEvent: (UserUpdateEvent)?
-    public var updateUserFromEventUserUpdateEventVoidReceivedInvocations: [(UserUpdateEvent)] = []
-    public var updateUserFromEventUserUpdateEventVoidClosure: ((UserUpdateEvent) async -> Void)?
+    public var updateUserFrom_Invocations: [UserUpdateEvent] = []
+    public var updateUserFrom_MockMethod: ((UserUpdateEvent) async -> Void)?
 
     public func updateUser(from event: UserUpdateEvent) async {
-        updateUserFromEventUserUpdateEventVoidCallsCount += 1
-        updateUserFromEventUserUpdateEventVoidReceivedEvent = event
-        updateUserFromEventUserUpdateEventVoidReceivedInvocations.append(event)
-        await updateUserFromEventUserUpdateEventVoidClosure?(event)
+        updateUserFrom_Invocations.append(event)
+
+        guard let mock = updateUserFrom_MockMethod else {
+            fatalError("no mock for `updateUserFrom`")
+        }
+
+        await mock(event)
     }
 
-    //MARK: - fetchOrCreateUser
+    // MARK: - fetchOrCreateUser
 
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserCallsCount = 0
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserCalled: Bool {
-        return fetchOrCreateUserWithUuidUUIDDomainStringZMUserCallsCount > 0
-    }
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserReceivedArguments: (uuid: UUID, domain: String?)?
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserReceivedInvocations: [(uuid: UUID, domain: String?)] = []
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserReturnValue: ZMUser!
-    public var fetchOrCreateUserWithUuidUUIDDomainStringZMUserClosure: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
+    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
 
     public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
-        fetchOrCreateUserWithUuidUUIDDomainStringZMUserCallsCount += 1
-        fetchOrCreateUserWithUuidUUIDDomainStringZMUserReceivedArguments = (uuid: uuid, domain: domain)
-        fetchOrCreateUserWithUuidUUIDDomainStringZMUserReceivedInvocations.append((uuid: uuid, domain: domain))
-        if let fetchOrCreateUserWithUuidUUIDDomainStringZMUserClosure = fetchOrCreateUserWithUuidUUIDDomainStringZMUserClosure {
-            return fetchOrCreateUserWithUuidUUIDDomainStringZMUserClosure(uuid, domain)
+        fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
+
+        if let mock = fetchOrCreateUserWithDomain_MockMethod {
+            return mock(uuid, domain)
+        } else if let mock = fetchOrCreateUserWithDomain_MockValue {
+            return mock
         } else {
-            return fetchOrCreateUserWithUuidUUIDDomainStringZMUserReturnValue
+            fatalError("no mock for `fetchOrCreateUserWithDomain`")
         }
     }
 
-    //MARK: - removePushToken
+    // MARK: - removePushToken
 
-    public var removePushTokenVoidCallsCount = 0
-    public var removePushTokenVoidCalled: Bool {
-        return removePushTokenVoidCallsCount > 0
-    }
-    public var removePushTokenVoidClosure: (() -> Void)?
+    public var removePushToken_Invocations: [Void] = []
+    public var removePushToken_MockMethod: (() -> Void)?
 
     public func removePushToken() {
-        removePushTokenVoidCallsCount += 1
-        removePushTokenVoidClosure?()
+        removePushToken_Invocations.append(())
+
+        guard let mock = removePushToken_MockMethod else {
+            fatalError("no mock for `removePushToken`")
+        }
+
+        mock()
     }
 
-    //MARK: - fetchOrCreateUserClient
+    // MARK: - fetchOrCreateUserClient
 
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolThrowableError: (any Error)?
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolCallsCount = 0
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolCalled: Bool {
-        return fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolCallsCount > 0
-    }
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReceivedId: (String)?
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReceivedInvocations: [(String)] = []
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReturnValue: (client: WireDataModel.UserClient, isNew: Bool)!
-    public var fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolClosure: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateUserClientWith_Invocations: [String] = []
+    public var fetchOrCreateUserClientWith_MockError: Error?
+    public var fetchOrCreateUserClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateUserClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
 
     public func fetchOrCreateUserClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
-        fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolCallsCount += 1
-        fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReceivedId = id
-        fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReceivedInvocations.append(id)
-        if let error = fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolThrowableError {
+        fetchOrCreateUserClientWith_Invocations.append(id)
+
+        if let error = fetchOrCreateUserClientWith_MockError {
             throw error
         }
-        if let fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolClosure = fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolClosure {
-            return try await fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolClosure(id)
+
+        if let mock = fetchOrCreateUserClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateUserClientWith_MockValue {
+            return mock
         } else {
-            return fetchOrCreateUserClientWithIdString_ClientWireDataModelUserClientIsNewBoolReturnValue
+            fatalError("no mock for `fetchOrCreateUserClientWith`")
         }
     }
 
-    //MARK: - updateUserClient
+    // MARK: - updateUserClient
 
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidThrowableError: (any Error)?
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidCallsCount = 0
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidCalled: Bool {
-        return updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidCallsCount > 0
-    }
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidReceivedArguments: (localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)?
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidReceivedInvocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
-    public var updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidClosure: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
+    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateUserClientFromIsNewClient_MockError: Error?
+    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
 
     public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
-        updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidCallsCount += 1
-        updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidReceivedArguments = (localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient)
-        updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidReceivedInvocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
-        if let error = updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidThrowableError {
+        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateUserClientFromIsNewClient_MockError {
             throw error
         }
-        try await updateUserClientLocalClientWireDataModelUserClientFromRemoteClientWireAPIUserClientIsNewClientBoolVoidClosure?(localClient, remoteClient, isNewClient)
+
+        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateUserClientFromIsNewClient`")
+        }
+
+        try await mock(localClient, remoteClient, isNewClient)
     }
 
-    //MARK: - addLegalHoldRequest
+    // MARK: - addLegalHoldRequest
 
-    public var addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidCallsCount = 0
-    public var addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidCalled: Bool {
-        return addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidCallsCount > 0
-    }
-    public var addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidReceivedArguments: (userID: UUID, clientID: String, lastPrekey: Prekey)?
-    public var addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidReceivedInvocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
-    public var addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidClosure: ((UUID, String, Prekey) async -> Void)?
+    public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
+    public var addLegalHoldRequestForClientIDLastPrekey_MockMethod: ((UUID, String, Prekey) async -> Void)?
 
     public func addLegalHoldRequest(for userID: UUID, clientID: String, lastPrekey: Prekey) async {
-        addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidCallsCount += 1
-        addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidReceivedArguments = (userID: userID, clientID: clientID, lastPrekey: lastPrekey)
-        addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidReceivedInvocations.append((userID: userID, clientID: clientID, lastPrekey: lastPrekey))
-        await addLegalHoldRequestForUserIDUUIDClientIDStringLastPrekeyPrekeyVoidClosure?(userID, clientID, lastPrekey)
+        addLegalHoldRequestForClientIDLastPrekey_Invocations.append((userID: userID, clientID: clientID, lastPrekey: lastPrekey))
+
+        guard let mock = addLegalHoldRequestForClientIDLastPrekey_MockMethod else {
+            fatalError("no mock for `addLegalHoldRequestForClientIDLastPrekey`")
+        }
+
+        await mock(userID, clientID, lastPrekey)
     }
 
-    //MARK: - disableUserLegalHold
+    // MARK: - disableUserLegalHold
 
-    public var disableUserLegalHoldVoidThrowableError: (any Error)?
-    public var disableUserLegalHoldVoidCallsCount = 0
-    public var disableUserLegalHoldVoidCalled: Bool {
-        return disableUserLegalHoldVoidCallsCount > 0
-    }
-    public var disableUserLegalHoldVoidClosure: (() async throws -> Void)?
+    public var disableUserLegalHold_Invocations: [Void] = []
+    public var disableUserLegalHold_MockError: Error?
+    public var disableUserLegalHold_MockMethod: (() async throws -> Void)?
 
     public func disableUserLegalHold() async throws {
-        disableUserLegalHoldVoidCallsCount += 1
-        if let error = disableUserLegalHoldVoidThrowableError {
+        disableUserLegalHold_Invocations.append(())
+
+        if let error = disableUserLegalHold_MockError {
             throw error
         }
-        try await disableUserLegalHoldVoidClosure?()
+
+        guard let mock = disableUserLegalHold_MockMethod else {
+            fatalError("no mock for `disableUserLegalHold`")
+        }
+
+        try await mock()
     }
 
-    //MARK: - updateUserProperty
+    // MARK: - updateUserProperty
 
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidThrowableError: (any Error)?
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidCallsCount = 0
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidCalled: Bool {
-        return updateUserPropertyUserPropertyWireAPIUserPropertyVoidCallsCount > 0
-    }
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidReceivedUserProperty: (WireAPI.UserProperty)?
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidReceivedInvocations: [(WireAPI.UserProperty)] = []
-    public var updateUserPropertyUserPropertyWireAPIUserPropertyVoidClosure: ((WireAPI.UserProperty) async throws -> Void)?
+    public var updateUserProperty_Invocations: [WireAPI.UserProperty] = []
+    public var updateUserProperty_MockError: Error?
+    public var updateUserProperty_MockMethod: ((WireAPI.UserProperty) async throws -> Void)?
 
     public func updateUserProperty(_ userProperty: WireAPI.UserProperty) async throws {
-        updateUserPropertyUserPropertyWireAPIUserPropertyVoidCallsCount += 1
-        updateUserPropertyUserPropertyWireAPIUserPropertyVoidReceivedUserProperty = userProperty
-        updateUserPropertyUserPropertyWireAPIUserPropertyVoidReceivedInvocations.append(userProperty)
-        if let error = updateUserPropertyUserPropertyWireAPIUserPropertyVoidThrowableError {
+        updateUserProperty_Invocations.append(userProperty)
+
+        if let error = updateUserProperty_MockError {
             throw error
         }
-        try await updateUserPropertyUserPropertyWireAPIUserPropertyVoidClosure?(userProperty)
+
+        guard let mock = updateUserProperty_MockMethod else {
+            fatalError("no mock for `updateUserProperty`")
+        }
+
+        try await mock(userProperty)
     }
 
-    //MARK: - deleteUserProperty
+    // MARK: - deleteUserProperty
 
-    public var deleteUserPropertyWithKeyKeyUserPropertyKeyVoidCallsCount = 0
-    public var deleteUserPropertyWithKeyKeyUserPropertyKeyVoidCalled: Bool {
-        return deleteUserPropertyWithKeyKeyUserPropertyKeyVoidCallsCount > 0
-    }
-    public var deleteUserPropertyWithKeyKeyUserPropertyKeyVoidReceivedKey: (UserProperty.Key)?
-    public var deleteUserPropertyWithKeyKeyUserPropertyKeyVoidReceivedInvocations: [(UserProperty.Key)] = []
-    public var deleteUserPropertyWithKeyKeyUserPropertyKeyVoidClosure: ((UserProperty.Key) async -> Void)?
+    public var deleteUserPropertyWithKey_Invocations: [UserProperty.Key] = []
+    public var deleteUserPropertyWithKey_MockMethod: ((UserProperty.Key) async -> Void)?
 
     public func deleteUserProperty(withKey key: UserProperty.Key) async {
-        deleteUserPropertyWithKeyKeyUserPropertyKeyVoidCallsCount += 1
-        deleteUserPropertyWithKeyKeyUserPropertyKeyVoidReceivedKey = key
-        deleteUserPropertyWithKeyKeyUserPropertyKeyVoidReceivedInvocations.append(key)
-        await deleteUserPropertyWithKeyKeyUserPropertyKeyVoidClosure?(key)
+        deleteUserPropertyWithKey_Invocations.append(key)
+
+        guard let mock = deleteUserPropertyWithKey_MockMethod else {
+            fatalError("no mock for `deleteUserPropertyWithKey`")
+        }
+
+        await mock(key)
     }
 
-    //MARK: - deleteUserAccount
+    // MARK: - deleteUserAccount
 
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidThrowableError: (any Error)?
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidCallsCount = 0
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidCalled: Bool {
-        return deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidCallsCount > 0
-    }
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidReceivedArguments: (id: UUID, domain: String?, date: Date)?
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidReceivedInvocations: [(id: UUID, domain: String?, date: Date)] = []
-    public var deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidClosure: ((UUID, String?, Date) async throws -> Void)?
+    public var deleteUserAccountWithDomainAt_Invocations: [(id: UUID, domain: String?, date: Date)] = []
+    public var deleteUserAccountWithDomainAt_MockError: Error?
+    public var deleteUserAccountWithDomainAt_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
     public func deleteUserAccount(with id: UUID, domain: String?, at date: Date) async throws {
-        deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidCallsCount += 1
-        deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidReceivedArguments = (id: id, domain: domain, date: date)
-        deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidReceivedInvocations.append((id: id, domain: domain, date: date))
-        if let error = deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidThrowableError {
+        deleteUserAccountWithDomainAt_Invocations.append((id: id, domain: domain, date: date))
+
+        if let error = deleteUserAccountWithDomainAt_MockError {
             throw error
         }
-        try await deleteUserAccountWithIdUUIDDomainStringAtDateDateVoidClosure?(id, domain, date)
+
+        guard let mock = deleteUserAccountWithDomainAt_MockMethod else {
+            fatalError("no mock for `deleteUserAccountWithDomainAt`")
+        }
+
+        try await mock(id, domain, date)
     }
 
-
 }
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

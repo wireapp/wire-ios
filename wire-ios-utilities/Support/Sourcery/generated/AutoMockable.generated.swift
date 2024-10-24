@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.5 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -24,9 +24,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-// swiftlint:disable line_length
-// swiftlint:disable variable_name
-
 import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
 import UIKit
@@ -37,9 +34,6 @@ import AppKit
 import UserNotifications
 
 @testable import WireUtilities
-
-
-
 
 
 
