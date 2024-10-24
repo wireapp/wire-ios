@@ -24,15 +24,13 @@ import XCTest
 
 final class GetUserAccountImageUseCaseTests: XCTestCase {
 
-    private var mockInitialsProvider: MockInitialsProvider!
     @MainActor
     private var mockAccount: MockAccount!
-    private var sut: GetUserAccountImageUseCase<MockInitialsProvider>!
+    private var sut: GetUserAccountImageUseCase!
 
     @MainActor
     override func setUp() async throws {
-        mockInitialsProvider = .init()
-        sut = .init(initalsProvider: mockInitialsProvider)
+        sut = .init()
         mockAccount = .init()
     }
 

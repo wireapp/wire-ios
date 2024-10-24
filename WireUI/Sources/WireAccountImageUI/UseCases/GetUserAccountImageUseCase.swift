@@ -19,17 +19,11 @@
 import UIKit
 import WireFoundation
 
-public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider>: GetUserAccountImageUseCaseProtocol {
-
-    // MARK: - Internal Properties
-
-    var initalsProvider: InitalsProvider
+public struct GetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
 
     // MARK: - Life Cycle
 
-    public init(initalsProvider: InitalsProvider) {
-        self.initalsProvider = initalsProvider
-    }
+    public init() {}
 
     // MARK: - Methods
 
