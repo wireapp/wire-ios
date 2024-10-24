@@ -33,8 +33,6 @@ final class SelfProfileViewController: UIViewController {
 
     let userSession: UserSession
     private let userRightInterfaceType: UserRightInterface.Type
-    private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
-    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
 
     // MARK: - Views
 
@@ -46,11 +44,6 @@ final class SelfProfileViewController: UIViewController {
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
-
-    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
-
-    // MARK: - AppLock
-    private var callback: ResultHandler?
 
     // MARK: - Configuration
 
@@ -100,11 +93,8 @@ final class SelfProfileViewController: UIViewController {
 
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-        self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
-        self.rootGroup = rootGroup
 
         super.init(nibName: nil, bundle: nil)
-        settingsPropertyFactory.delegate = self
 
         if selfUser.isTeamMember {
             userSession.enqueue {
@@ -237,79 +227,5 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             }
             self.accountSelector?.switchTo(account: account)
         }
-    }
-}
-
-// MARK: - SettingsPropertyFactoryDelegate
-
-extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
-
-    private var topViewController: UIViewController! {
-        navigationController!.topViewController
-    }
-
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        // shown on SettingsTableViewController
-        activityIndicator.start()
-    }
-
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        activityIndicator.stop()
-    }
-
-    /// Create or delete custom passcode when appLock option did change
-    /// If custom passcode is not enabled, no action is taken
-    ///
-    /// - Parameters:
-    ///   - settingsPropertyFactory: caller of this delegate method
-    ///   - newValue: new value of app lock option
-    ///   - callback: callback for PasscodeSetupViewController
-    func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory,
-                                newValue: Bool,
-                                callback: @escaping ResultHandler) {
-        // There is an additional check for the simulator because there's no way to disable the device passcode on the simulator. We need it for testing.
-        guard AuthenticationType.current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
-            callback(newValue)
-            return
-        }
-
-        guard newValue else {
-            try? userSession.deleteAppLockPasscode()
-            callback(newValue)
-            return
-        }
-
-        self.callback = callback
-        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode,
-                                                                      callback: callback)
-        passcodeSetupViewController.passcodeSetupViewControllerDelegate = self
-
-        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: passcodeSetupViewController)
-
-        let wrappedViewController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
-
-        let closeItem = passcodeSetupViewController.closeItem
-
-        keyboardAvoidingViewController.navigationItem.leftBarButtonItem = closeItem
-
-        wrappedViewController.presentationController?.delegate = passcodeSetupViewController
-
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            wrappedViewController.modalPresentationStyle = .popover
-            present(wrappedViewController, animated: true)
-        } else {
-            UIApplication.shared.topmostViewController()?.present(wrappedViewController, animated: true)
-        }
-    }
-}
-
-extension SelfProfileViewController: PasscodeSetupViewControllerDelegate {
-    func passcodeSetupControllerDidFinish() {
-        // no-op
-    }
-
-    func passcodeSetupControllerWasDismissed() {
-        // refresh options applock switch
-        (topViewController as? SettingsTableViewController)?.refreshData()
     }
 }
