@@ -114,6 +114,8 @@ on:
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
+  REPO_ROOT: ${{ github.workspace }}
+  PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
 
 jobs:
   run-tests:
@@ -159,6 +161,19 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

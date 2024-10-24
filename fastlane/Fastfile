@@ -350,6 +350,7 @@ platform :ios do
             xcargs += enable_datadog_args if build.enable_datadog
             xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
 
+           sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
                 scheme: "Wire-iOS",
                 configuration: build.configuration,
@@ -362,7 +363,10 @@ platform :ios do
                 output_name: build.filename,
                 include_bitcode: false,
                 include_symbols: true,
-                xcargs: xcargs.join(' ')
+                xcargs: xcargs.join(' '),
+                cloned_source_packages_path: ENV['PACKAGES_DIR'],
+                disable_package_automatic_updates: true,
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
             )
         end
     end
