@@ -61,20 +61,10 @@ final class ArchivedListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationBarTitle(L10n.Localizable.ArchivedList.title.capitalized)
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
         emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
-    }
-
-    private func setupNavigationItem() {
-
-        let titleLabel = UILabel()
-        titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
-        titleLabel.font = FontSpec(.normal, .semibold).font
-        titleLabel.textColor = SemanticColors.Label.textDefault
-        titleLabel.accessibilityTraits = .header
-        navigationItem.titleView = titleLabel
     }
 
     private func setupCollectionView() {
