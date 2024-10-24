@@ -168,7 +168,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             domain: domain
         )
     }
-    
+
     public func fetchOrCreateConversation(
         with id: UUID,
         domain: String?

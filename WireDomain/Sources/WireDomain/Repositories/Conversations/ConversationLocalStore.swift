@@ -188,7 +188,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func fetchOrCreateConversation(
         with id: UUID,
         domain: String?
