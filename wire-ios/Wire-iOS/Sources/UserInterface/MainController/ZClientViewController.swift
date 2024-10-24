@@ -91,7 +91,7 @@ final class ZClientViewController: UIViewController {
         )
     }()
 
-    private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
+    var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
@@ -300,11 +300,12 @@ final class ZClientViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        return presentedViewController?.shouldAutorotate ?? true
+          if let viewController = presentedViewController,
+             viewController is ModalPresentationViewController,
+             !viewController.isBeingDismissed {
+              return viewController.supportedInterfaceOrientations
+          }
+          return wr_supportedInterfaceOrientations
     }
 
     // MARK: keyboard shortcut

@@ -23,12 +23,12 @@ final class DefaultSettingsPropertyFactoryDelegate: SettingsPropertyFactoryDeleg
 
     var userSession: any UserSession
     var settingsTableViewController: () -> SettingsTableViewController?
-    var mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+    var mainCoordinator: AnyMainCoordinator
 
     init(
         userSession: any UserSession,
         settingsTableViewController: @escaping () -> SettingsTableViewController?,
-        mainCoordinator: AnyMainCoordinator<MainCoordinatorDependencies>
+        mainCoordinator: AnyMainCoordinator
     ) {
         self.userSession = userSession
         self.settingsTableViewController = settingsTableViewController
