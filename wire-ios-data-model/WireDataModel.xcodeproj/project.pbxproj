@@ -41,6 +41,7 @@
 		01BDA31A2C59210400675DCB /* CoreDataMigrationVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDA3152C59210300675DCB /* CoreDataMigrationVersion.swift */; };
 		01BDA31B2C59210400675DCB /* CoreDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BDA3162C59210300675DCB /* CoreDataMigrator.swift */; };
 		01E3C8552B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E3C8542B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift */; };
+		01F0F8952CCA4F2300FE4170 /* store2-119-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 01586D432CAED2B200C3BCE1 /* store2-119-0.wiredatabase */; };
 		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
 		0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */; };
 		0604F8002651CAFE0016A71E /* store2-91-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0604F7FF2651CAFD0016A71E /* store2-91-0.wiredatabase */; };
@@ -3914,7 +3915,7 @@
 				162F85AC2BC58E3F007E2CB6 /* store2-116-0.wiredatabase in Resources */,
 				F9A706FA1CAEE32A00C2F5FE /* ExternalMessageTextFixture.txt in Resources */,
 				6391A7FF2A6FDB9100832665 /* store2-107-0.wiredatabase in Resources */,
-				01586D442CAED2B200C3BCE1 /* store2-119-0.wiredatabase in Resources */,
+				01F0F8952CCA4F2300FE4170 /* store2-119-0.wiredatabase in Resources */,
 				16EFC3AE2BAB8AF20046C1D7 /* store2-114-0.wiredatabase in Resources */,
 				54AA3C9924ED2CE700FE1F94 /* store2-84-0.wiredatabase in Resources */,
 				5495BC431E019F1B004253ED /* audio.m4a in Resources */,
