@@ -494,20 +494,20 @@ class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConve
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UIViewController)?
-    var buildMainCoordinator_MockValue: UIViewController?
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
-        buildMainCoordinator_Invocations.append(mainCoordinator)
+    func build() -> UIViewController {
+        build_Invocations.append(())
 
-        if let mock = buildMainCoordinator_MockMethod {
-            return mock(mainCoordinator)
-        } else if let mock = buildMainCoordinator_MockValue {
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
             return mock
         } else {
-            fatalError("no mock for `buildMainCoordinator`")
+            fatalError("no mock for `build`")
         }
     }
 

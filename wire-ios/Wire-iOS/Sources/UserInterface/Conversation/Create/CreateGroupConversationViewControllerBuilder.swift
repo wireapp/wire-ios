@@ -22,8 +22,6 @@ import WireSyncEngine
 
 final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
-    typealias Dependencies = MainCoordinatorDependencies
-
     let userSession: UserSession
     var delegate: ConversationCreationControllerDelegate?
 
@@ -31,9 +29,7 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
         self.userSession = userSession
     }
 
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator _: MainCoordinator
-    ) -> UIViewController where MainCoordinator.Dependencies == Dependencies {
+    func build() -> UIViewController {
         let rootViewController = ConversationCreationController(
             preSelectedParticipants: nil,
             userSession: userSession
