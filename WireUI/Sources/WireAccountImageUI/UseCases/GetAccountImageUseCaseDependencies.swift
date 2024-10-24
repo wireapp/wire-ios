@@ -37,7 +37,8 @@ public protocol GetAccountImageUseCaseTeamProtocol {
 }
 
 /// An abstraction of a user account for the account image use cases.
-public protocol GetAccountImageUseCaseAccountProtocol {
+@MainActor
+public protocol GetAccountImageUseCaseAccountProtocol: Sendable {
     var imageData: Data? { get }
     var userName: String { get }
     var teamName: String? { get }
