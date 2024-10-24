@@ -96,7 +96,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate accountImage: AccountImageView.Content
+        didUpdate accountImage: AccountImageSource
     ) {
         // no-op
     }

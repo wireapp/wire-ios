@@ -38,10 +38,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
-        didUpdate accountImage: AccountImageView.Content
+        didUpdate accountImage: AccountImageSource
     ) {
 
-        accountImageView?.content = accountImage
+        accountImageView?.source = accountImage
         accountImageView?.accessibilityIdentifier = "account_profile_image_view"
 
         if let userName = viewModel.userSession.selfUser.name {
@@ -62,7 +62,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.content = viewModel.accountImage
+        accountImageView.source = viewModel.accountImage
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint

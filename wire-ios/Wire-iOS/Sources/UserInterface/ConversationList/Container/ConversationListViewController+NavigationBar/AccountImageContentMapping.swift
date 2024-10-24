@@ -22,14 +22,14 @@ import WireAccountImageUI
 extension WireSidebarUI.SidebarAccountInfo.AccountImageContent {
 
     /// Since `WireAccountImageUI.AccountImageView.Content` does not know about the type `WireSidebarUI`,
-    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.AccountImageContent` to `WireAccountImageUI.AccountImageView.Content`.
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.AccountImageContent` to `WireAccountImageUI.AccountImageSource`.
 
-    func mapToAccountImageViewContent() -> WireAccountImageUI.AccountImageView.Content {
+    func mapToAccountImageViewContent() -> WireAccountImageUI.AccountImageSource {
         switch self {
         case .image(let image):
-                .image(image)
+                .data(image.pngData()!) // TODO: fix force-unwrap
         case .text(let text):
-                .text(text)
+                .text(initials: text)
         }
     }
 }

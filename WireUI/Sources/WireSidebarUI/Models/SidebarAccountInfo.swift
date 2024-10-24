@@ -43,7 +43,7 @@ public struct SidebarAccountInfo {
         case available, busy, away
     }
 
-    public enum AccountImageContent {
-        case image(UIImage), text(String)
+    public enum AccountImageContent { // TODO: AccountImageSource
+        case image(UIImage), text(String) // TODO: Data
     }
 }
