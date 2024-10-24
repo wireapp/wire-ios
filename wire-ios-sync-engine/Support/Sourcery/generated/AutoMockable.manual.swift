@@ -251,3 +251,28 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
            }
        }
 }
+
+// this mocks has issues with Undefined symbol: nominal type descriptor for WireAnalytics.CallQualitySurveyReview
+public class MockSubmitCallQualitySurveyUseCaseProtocol: SubmitCallQualitySurveyUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [WireAnalytics.CallQualitySurveyReview] = []
+    public var invoke_MockMethod: ((WireAnalytics.CallQualitySurveyReview) -> Void)?
+
+    public func invoke(_ review: WireAnalytics.CallQualitySurveyReview) {
+        invoke_Invocations.append(review)
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock(review)
+    }
+
+}
