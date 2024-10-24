@@ -19,7 +19,7 @@
 import Foundation
 
 /// An abstraction of a user for the account image use cases.
-public protocol GetAccountImageUseCaseUserProtocol {
+public protocol GetAccountImageUseCaseUserProtocol: Sendable {
     associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
     var membership: TeamMembership? { get async }
 }

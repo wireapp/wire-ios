@@ -18,18 +18,19 @@
 
 import UIKit
 
-@MainActor
-func AccountImageGeneratorPreview(_ initials: String) -> UINavigationController {
-    let accountImageGenerator = AccountImageGenerator()
+extension AccountImageView {
+    public enum Content {
 
-    let accountImageView = AccountImageView()
-    Task {
-        let accountImage = await accountImageGenerator.createImage(initials: initials)
-        accountImageView.content = .image(accountImage)
+        case image(UIImage), text(String)
+
+        var image: UIImage? {
+            guard case .image(let image) = self else { return nil }
+            return image
+        }
+
+        var text: String? {
+            guard case .text(let value) = self else { return nil }
+            return value
+        }
     }
-
-    let viewController = UIViewController()
-    viewController.navigationItem.leftBarButtonItem = .init(customView: accountImageView)
-    let navigationController = UINavigationController(rootViewController: viewController)
-    return navigationController
 }

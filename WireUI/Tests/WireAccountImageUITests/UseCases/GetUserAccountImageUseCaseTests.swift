@@ -26,22 +26,26 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
 
     private var mockAccountImageGenerator: MockAccountImageGeneratorProtocol!
     private var mockInitialsProvider: MockInitialsProvider!
+    @MainActor
     private var mockAccount: MockAccount!
     private var sut: GetUserAccountImageUseCase<MockInitialsProvider, MockAccountImageGeneratorProtocol>!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         mockAccountImageGenerator = .init()
         mockInitialsProvider = .init()
         sut = .init(initalsProvider: mockInitialsProvider, accountImageGenerator: mockAccountImageGenerator)
         mockAccount = .init()
     }
 
-    override func tearDown() {
+    @MainActor
+    override func tearDown() async throws {
         mockAccount = nil
         sut = nil
         mockAccountImageGenerator = nil
     }
 
+    @MainActor
     func testUserImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
@@ -54,6 +58,7 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
+    @MainActor
     func testInitalsImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
@@ -67,6 +72,7 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
+    @MainActor
     func testErrorIsThrown() async throws {
         // When
         do {
