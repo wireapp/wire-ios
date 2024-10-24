@@ -94,6 +94,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             addressBookHelperType: MockAddressBookHelper.self,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
             selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
