@@ -28,12 +28,11 @@ public class MockAnalyticsServiceProtocol: AnalyticsServiceProtocol {
     // MARK: - isTrackingEnabled
 
     public var isTrackingEnabled: Bool {
-        get { return underlyingIsTrackingEnabled }
+        get { underlyingIsTrackingEnabled }
         set(value) { underlyingIsTrackingEnabled = value }
     }
 
     public var underlyingIsTrackingEnabled: Bool!
-
 
     // MARK: - enableTracking
 
