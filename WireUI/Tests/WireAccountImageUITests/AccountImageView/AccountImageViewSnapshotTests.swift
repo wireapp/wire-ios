@@ -63,7 +63,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
             let rootView = Previews.previewWithNavigationBar(.text("CA"), availability)
             let hostingControllerView = UIHostingController(rootView: rootView).view!
             hostingControllerView.frame = UIScreen.main.bounds
-            let testName = if let availability { "textMode_\(availability)" } else { "imageMode_noAvailability" }
+            let testName = if let availability { "textMode_\(availability)" } else { "textMode_noAvailability" }
 
             // Then
             snapshotHelper
