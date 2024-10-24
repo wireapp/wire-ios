@@ -94,6 +94,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
 
+        if let navigationController = tabBarController.conversationListUI?.navigationController {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+            navigationController.navigationBar.standardAppearance = navBarAppearance
+            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
+        }
+
         await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
         tabBarController.overrideUserInterfaceStyle = .dark
         UIView.setAnimationsEnabled(false)
