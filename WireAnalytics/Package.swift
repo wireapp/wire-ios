@@ -5,13 +5,13 @@ import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.16.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0")
     ],
     targets: [
         .target(

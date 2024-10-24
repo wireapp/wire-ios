@@ -56,4 +56,6 @@ public extension WireLogger {
     static let network = WireLogger(tag: "network")
     static let eventProcessing = WireLogger(tag: "event-processing")
     static let messageProcessing = WireLogger(tag: "message-processing")
+    static let avs = WireLogger(tag: "avs")
+    static let supportedProtocols = WireLogger(tag: "supported-protocols")
 }

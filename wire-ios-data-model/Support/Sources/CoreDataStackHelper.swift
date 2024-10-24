@@ -25,11 +25,7 @@ public struct CoreDataStackHelper {
 
     public var storageDirectory: URL {
         var path = fileManager.temporaryDirectory
-        if #available(iOS 16, *) {
-            path.append(path: uniquePath, directoryHint: .isDirectory)
-        } else {
-            path.appendPathComponent(uniquePath, isDirectory: true)
-        }
+        path.append(path: uniquePath, directoryHint: .isDirectory)
         return path
     }
 

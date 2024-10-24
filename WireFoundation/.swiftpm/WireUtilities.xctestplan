@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "F6B6F291-6B7B-42FB-B7DE-25C4FA59F89D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireUtilitiesPackageTests",
+        "name" : "WireUtilitiesPackageTests"
+      }
+    }
+  ],
+  "version" : 1
+}

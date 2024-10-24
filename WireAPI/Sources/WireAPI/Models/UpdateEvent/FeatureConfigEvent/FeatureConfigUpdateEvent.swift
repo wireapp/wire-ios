@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a feature config was updated.
 
-public struct FeatureConfigUpdateEvent: Equatable, Codable {
+public struct FeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 
     /// The updated feature config.
 

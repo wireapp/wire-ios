@@ -39,7 +39,6 @@ struct UserEventProcessor {
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
     let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol
     let connectionEventProcessor: any UserConnectionEventProcessorProtocol
-    let contactJoinEventProcessor: any UserContactJoinEventProcessorProtocol
     let deleteEventProcessor: any UserDeleteEventProcessorProtocol
     let legalholdDisableEventProcessor: any UserLegalholdDisableEventProcessorProtocol
     let legalholdEnableEventProcessor: any UserLegalholdEnableEventProcessorProtocol
@@ -61,7 +60,8 @@ struct UserEventProcessor {
             try await connectionEventProcessor.processEvent(event)
 
         case .contactJoin(let event):
-            try await contactJoinEventProcessor.processEvent(event)
+            /// This event is not processed, we only show a notification to the user.
+            break
 
         case .delete(let event):
             try await deleteEventProcessor.processEvent(event)
@@ -82,7 +82,7 @@ struct UserEventProcessor {
             try await propertiesDeleteEventProcessor.processEvent(event)
 
         case .pushRemove:
-            try await pushRemoveEventProcessor.processEvent()
+            pushRemoveEventProcessor.processEvent()
 
         case .update(let event):
             try await updateEventProcessor.processEvent(event)
