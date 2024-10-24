@@ -182,6 +182,11 @@
 
 "profile.backButton.description" = "Вернуться к сведениям о беседе";
 "profile.closeButton.description" = "Закрыть профиль";
+"profile.shareProfileButton.description" = "Поделитесь своим профилем с помощью QR-кода или ссылки";
+
+"shareProfile.closeButton.description" = "Закрыть просмотр возможности поделиться профилем";
+"shareProfile.backButton.description" = "Вернуться к вашему профилю";
+"shareProfile.qrCode.description" = "QR-код";
 
 "accountPage.availabilityStatus.description" = "Статус";
 "accountPage.availabilityStatus.hint" = "Нажмите дважды, чтобы изменить статус";

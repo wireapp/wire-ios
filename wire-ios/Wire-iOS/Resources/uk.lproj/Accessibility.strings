@@ -181,6 +181,11 @@
 
 "profile.backButton.description" = "Повернутися до детальної інформації про розмову";
 "profile.closeButton.description" = "Закрити профіль";
+"profile.shareProfileButton.description" = "Share your profile via QR code or link";
+
+"shareProfile.closeButton.description" = "Close share profile view";
+"shareProfile.backButton.description" = "Go back to your profile";
+"shareProfile.qrCode.description" = "QR code";
 
 "accountPage.availabilityStatus.description" = "Статус";
 "accountPage.availabilityStatus.hint" = "Торкніться двічі, щоб змінити статус";
