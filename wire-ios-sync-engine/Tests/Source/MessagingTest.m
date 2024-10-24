@@ -315,11 +315,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     user.emailAddress = emailAddress;
 }
 
-- (void)setPhoneNumber:(NSString *)phoneNumber onUser:(ZMUser *)user;
-{
-    user.phoneNumber = phoneNumber;
-}
-
 @end
 
 @implementation MessagingTest (FilesInCache)
