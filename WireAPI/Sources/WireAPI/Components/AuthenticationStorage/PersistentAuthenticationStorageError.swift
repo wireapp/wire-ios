@@ -18,25 +18,15 @@
 
 import Foundation
 
-final class InMemoryAuthenticationStorage: AuthenticationStorage {
+enum PersistentAuthenticationStorageError: Error {
 
-    private var accessToken: AccessToken?
-    private var cookies = [HTTPCookie]()
-
-    func storeAccessToken(_ accessToken: AccessToken) {
-        self.accessToken = accessToken
-    }
-
-    func fetchAccessToken() -> AccessToken? {
-        accessToken
-    }
-
-    func storeCookies(_ cookies: [HTTPCookie]) async throws {
-        self.cookies = cookies
-    }
-
-    func fetchCookies() async throws -> [HTTPCookie] {
-        cookies
-    }
+    case malformedCookieData
+    case failedToDecodeCookieData(any Error)
+    case failedKeychainFetch(status: Int32?)
+    case failedKeychainAdd(status: Int32)
+    case failedKeychainUpdate(status: Int32)
+    case missingCookieEncryptionKey
+    case failedToEncryptCookie(any Error)
+    case failedToDecryptCookie(any Error)
 
 }

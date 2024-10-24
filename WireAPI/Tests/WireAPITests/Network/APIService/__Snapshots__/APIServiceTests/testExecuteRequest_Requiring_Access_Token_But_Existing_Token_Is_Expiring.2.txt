@@ -1,0 +1,4 @@
+curl \
+	--header "Accept: application/json" \
+	--header "Authorization: Bearer a-new-access-token" \
+	"https://www.example.com/foo"

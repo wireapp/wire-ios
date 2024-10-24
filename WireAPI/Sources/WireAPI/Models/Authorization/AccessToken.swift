@@ -21,7 +21,7 @@ import Foundation
 /// A token used to make authenticated requests to
 /// the backend.
 
-public struct AccessToken {
+public struct AccessToken: Sendable {
 
     /// The user id of whom the token belongs.
 
@@ -35,8 +35,8 @@ public struct AccessToken {
 
     public let type: String
 
-    /// The number of seconds the token is valid.
+    /// The point in time the token expires.
 
-    public let validityInSeconds: TimeInterval
+    public let expirationDate: Date
 
 }

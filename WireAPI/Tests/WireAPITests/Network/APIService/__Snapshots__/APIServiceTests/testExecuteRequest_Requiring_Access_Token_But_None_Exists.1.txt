@@ -1,0 +1,4 @@
+curl \
+	--request POST \
+	--header "Accept: application/json" \
+	"https://www.example.com/access?client_id=abc123"
