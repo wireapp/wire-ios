@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.5 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -21,6 +21,9 @@
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable vertical_whitespace
+// swiftlint:disable line_length
+// swiftlint:disable variable_name
+
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -54,24 +57,22 @@ import AppKit
 
 
 
-public class MockCurrentDateProviding: CurrentDateProviding {
 
-    // MARK: - Life cycle
+
+
+public class CurrentDateProvidingMock: CurrentDateProviding {
 
     public init() {}
-
-    // MARK: - now
 
     public var now: Date {
         get { return underlyingNow }
         set(value) { underlyingNow = value }
     }
+    public var underlyingNow: (Date)!
 
-    public var underlyingNow: Date!
 
 
 }
-
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

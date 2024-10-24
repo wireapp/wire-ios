@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.5 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 //
@@ -21,6 +21,9 @@
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable vertical_whitespace
+// swiftlint:disable line_length
+// swiftlint:disable variable_name
+
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -56,1335 +59,1372 @@ import Combine
 
 
 
-public class MockAPIProviderInterface: APIProviderInterface {
 
-    // MARK: - Life cycle
+
+
+public class APIProviderInterfaceMock: APIProviderInterface {
 
     public init() {}
 
 
-    // MARK: - prekeyAPI
 
-    public var prekeyAPIApiVersion_Invocations: [APIVersion] = []
-    public var prekeyAPIApiVersion_MockMethod: ((APIVersion) -> PrekeyAPI)?
-    public var prekeyAPIApiVersion_MockValue: PrekeyAPI?
+    //MARK: - prekeyAPI
+
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPICallsCount = 0
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPICalled: Bool {
+        return prekeyAPIApiVersionAPIVersionPrekeyAPICallsCount > 0
+    }
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPIReceivedApiVersion: (APIVersion)?
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPIReceivedInvocations: [(APIVersion)] = []
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPIReturnValue: PrekeyAPI!
+    public var prekeyAPIApiVersionAPIVersionPrekeyAPIClosure: ((APIVersion) -> PrekeyAPI)?
 
     public func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
-        prekeyAPIApiVersion_Invocations.append(apiVersion)
-
-        if let mock = prekeyAPIApiVersion_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = prekeyAPIApiVersion_MockValue {
-            return mock
+        prekeyAPIApiVersionAPIVersionPrekeyAPICallsCount += 1
+        prekeyAPIApiVersionAPIVersionPrekeyAPIReceivedApiVersion = apiVersion
+        prekeyAPIApiVersionAPIVersionPrekeyAPIReceivedInvocations.append(apiVersion)
+        if let prekeyAPIApiVersionAPIVersionPrekeyAPIClosure = prekeyAPIApiVersionAPIVersionPrekeyAPIClosure {
+            return prekeyAPIApiVersionAPIVersionPrekeyAPIClosure(apiVersion)
         } else {
-            fatalError("no mock for `prekeyAPIApiVersion`")
+            return prekeyAPIApiVersionAPIVersionPrekeyAPIReturnValue
         }
     }
 
-    // MARK: - messageAPI
+    //MARK: - messageAPI
 
-    public var messageAPIApiVersion_Invocations: [APIVersion] = []
-    public var messageAPIApiVersion_MockMethod: ((APIVersion) -> MessageAPI)?
-    public var messageAPIApiVersion_MockValue: MessageAPI?
+    public var messageAPIApiVersionAPIVersionMessageAPICallsCount = 0
+    public var messageAPIApiVersionAPIVersionMessageAPICalled: Bool {
+        return messageAPIApiVersionAPIVersionMessageAPICallsCount > 0
+    }
+    public var messageAPIApiVersionAPIVersionMessageAPIReceivedApiVersion: (APIVersion)?
+    public var messageAPIApiVersionAPIVersionMessageAPIReceivedInvocations: [(APIVersion)] = []
+    public var messageAPIApiVersionAPIVersionMessageAPIReturnValue: MessageAPI!
+    public var messageAPIApiVersionAPIVersionMessageAPIClosure: ((APIVersion) -> MessageAPI)?
 
     public func messageAPI(apiVersion: APIVersion) -> MessageAPI {
-        messageAPIApiVersion_Invocations.append(apiVersion)
-
-        if let mock = messageAPIApiVersion_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = messageAPIApiVersion_MockValue {
-            return mock
+        messageAPIApiVersionAPIVersionMessageAPICallsCount += 1
+        messageAPIApiVersionAPIVersionMessageAPIReceivedApiVersion = apiVersion
+        messageAPIApiVersionAPIVersionMessageAPIReceivedInvocations.append(apiVersion)
+        if let messageAPIApiVersionAPIVersionMessageAPIClosure = messageAPIApiVersionAPIVersionMessageAPIClosure {
+            return messageAPIApiVersionAPIVersionMessageAPIClosure(apiVersion)
         } else {
-            fatalError("no mock for `messageAPIApiVersion`")
+            return messageAPIApiVersionAPIVersionMessageAPIReturnValue
         }
     }
 
-    // MARK: - e2eIAPI
+    //MARK: - e2eIAPI
 
-    public var e2eIAPIApiVersion_Invocations: [APIVersion] = []
-    public var e2eIAPIApiVersion_MockMethod: ((APIVersion) -> E2eIAPI?)?
-    public var e2eIAPIApiVersion_MockValue: E2eIAPI??
+    public var e2eIAPIApiVersionAPIVersionE2eIAPICallsCount = 0
+    public var e2eIAPIApiVersionAPIVersionE2eIAPICalled: Bool {
+        return e2eIAPIApiVersionAPIVersionE2eIAPICallsCount > 0
+    }
+    public var e2eIAPIApiVersionAPIVersionE2eIAPIReceivedApiVersion: (APIVersion)?
+    public var e2eIAPIApiVersionAPIVersionE2eIAPIReceivedInvocations: [(APIVersion)] = []
+    public var e2eIAPIApiVersionAPIVersionE2eIAPIReturnValue: E2eIAPI?
+    public var e2eIAPIApiVersionAPIVersionE2eIAPIClosure: ((APIVersion) -> E2eIAPI?)?
 
     public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
-        e2eIAPIApiVersion_Invocations.append(apiVersion)
-
-        if let mock = e2eIAPIApiVersion_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = e2eIAPIApiVersion_MockValue {
-            return mock
+        e2eIAPIApiVersionAPIVersionE2eIAPICallsCount += 1
+        e2eIAPIApiVersionAPIVersionE2eIAPIReceivedApiVersion = apiVersion
+        e2eIAPIApiVersionAPIVersionE2eIAPIReceivedInvocations.append(apiVersion)
+        if let e2eIAPIApiVersionAPIVersionE2eIAPIClosure = e2eIAPIApiVersionAPIVersionE2eIAPIClosure {
+            return e2eIAPIApiVersionAPIVersionE2eIAPIClosure(apiVersion)
         } else {
-            fatalError("no mock for `e2eIAPIApiVersion`")
+            return e2eIAPIApiVersionAPIVersionE2eIAPIReturnValue
         }
     }
 
-    // MARK: - userClientAPI
+    //MARK: - userClientAPI
 
-    public var userClientAPIApiVersion_Invocations: [APIVersion] = []
-    public var userClientAPIApiVersion_MockMethod: ((APIVersion) -> UserClientAPI)?
-    public var userClientAPIApiVersion_MockValue: UserClientAPI?
+    public var userClientAPIApiVersionAPIVersionUserClientAPICallsCount = 0
+    public var userClientAPIApiVersionAPIVersionUserClientAPICalled: Bool {
+        return userClientAPIApiVersionAPIVersionUserClientAPICallsCount > 0
+    }
+    public var userClientAPIApiVersionAPIVersionUserClientAPIReceivedApiVersion: (APIVersion)?
+    public var userClientAPIApiVersionAPIVersionUserClientAPIReceivedInvocations: [(APIVersion)] = []
+    public var userClientAPIApiVersionAPIVersionUserClientAPIReturnValue: UserClientAPI!
+    public var userClientAPIApiVersionAPIVersionUserClientAPIClosure: ((APIVersion) -> UserClientAPI)?
 
     public func userClientAPI(apiVersion: APIVersion) -> UserClientAPI {
-        userClientAPIApiVersion_Invocations.append(apiVersion)
-
-        if let mock = userClientAPIApiVersion_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = userClientAPIApiVersion_MockValue {
-            return mock
+        userClientAPIApiVersionAPIVersionUserClientAPICallsCount += 1
+        userClientAPIApiVersionAPIVersionUserClientAPIReceivedApiVersion = apiVersion
+        userClientAPIApiVersionAPIVersionUserClientAPIReceivedInvocations.append(apiVersion)
+        if let userClientAPIApiVersionAPIVersionUserClientAPIClosure = userClientAPIApiVersionAPIVersionUserClientAPIClosure {
+            return userClientAPIApiVersionAPIVersionUserClientAPIClosure(apiVersion)
         } else {
-            fatalError("no mock for `userClientAPIApiVersion`")
+            return userClientAPIApiVersionAPIVersionUserClientAPIReturnValue
         }
     }
 
+
 }
-
-public class MockAcmeAPIInterface: AcmeAPIInterface {
-
-    // MARK: - Life cycle
+public class AcmeAPIInterfaceMock: AcmeAPIInterface {
 
     public init() {}
 
 
-    // MARK: - getACMEDirectory
 
-    public var getACMEDirectory_Invocations: [Void] = []
-    public var getACMEDirectory_MockError: Error?
-    public var getACMEDirectory_MockMethod: (() async throws -> Data)?
-    public var getACMEDirectory_MockValue: Data?
+    //MARK: - getACMEDirectory
+
+    public var getACMEDirectoryDataThrowableError: (any Error)?
+    public var getACMEDirectoryDataCallsCount = 0
+    public var getACMEDirectoryDataCalled: Bool {
+        return getACMEDirectoryDataCallsCount > 0
+    }
+    public var getACMEDirectoryDataReturnValue: Data!
+    public var getACMEDirectoryDataClosure: (() async throws -> Data)?
 
     public func getACMEDirectory() async throws -> Data {
-        getACMEDirectory_Invocations.append(())
-
-        if let error = getACMEDirectory_MockError {
+        getACMEDirectoryDataCallsCount += 1
+        if let error = getACMEDirectoryDataThrowableError {
             throw error
         }
-
-        if let mock = getACMEDirectory_MockMethod {
-            return try await mock()
-        } else if let mock = getACMEDirectory_MockValue {
-            return mock
+        if let getACMEDirectoryDataClosure = getACMEDirectoryDataClosure {
+            return try await getACMEDirectoryDataClosure()
         } else {
-            fatalError("no mock for `getACMEDirectory`")
+            return getACMEDirectoryDataReturnValue
         }
     }
 
-    // MARK: - getACMENonce
+    //MARK: - getACMENonce
 
-    public var getACMENoncePath_Invocations: [String] = []
-    public var getACMENoncePath_MockError: Error?
-    public var getACMENoncePath_MockMethod: ((String) async throws -> String)?
-    public var getACMENoncePath_MockValue: String?
+    public var getACMENoncePathStringStringThrowableError: (any Error)?
+    public var getACMENoncePathStringStringCallsCount = 0
+    public var getACMENoncePathStringStringCalled: Bool {
+        return getACMENoncePathStringStringCallsCount > 0
+    }
+    public var getACMENoncePathStringStringReceivedPath: (String)?
+    public var getACMENoncePathStringStringReceivedInvocations: [(String)] = []
+    public var getACMENoncePathStringStringReturnValue: String!
+    public var getACMENoncePathStringStringClosure: ((String) async throws -> String)?
 
     public func getACMENonce(path: String) async throws -> String {
-        getACMENoncePath_Invocations.append(path)
-
-        if let error = getACMENoncePath_MockError {
+        getACMENoncePathStringStringCallsCount += 1
+        getACMENoncePathStringStringReceivedPath = path
+        getACMENoncePathStringStringReceivedInvocations.append(path)
+        if let error = getACMENoncePathStringStringThrowableError {
             throw error
         }
-
-        if let mock = getACMENoncePath_MockMethod {
-            return try await mock(path)
-        } else if let mock = getACMENoncePath_MockValue {
-            return mock
+        if let getACMENoncePathStringStringClosure = getACMENoncePathStringStringClosure {
+            return try await getACMENoncePathStringStringClosure(path)
         } else {
-            fatalError("no mock for `getACMENoncePath`")
+            return getACMENoncePathStringStringReturnValue
         }
     }
 
-    // MARK: - getTrustAnchor
+    //MARK: - getTrustAnchor
 
-    public var getTrustAnchor_Invocations: [Void] = []
-    public var getTrustAnchor_MockError: Error?
-    public var getTrustAnchor_MockMethod: (() async throws -> String)?
-    public var getTrustAnchor_MockValue: String?
+    public var getTrustAnchorStringThrowableError: (any Error)?
+    public var getTrustAnchorStringCallsCount = 0
+    public var getTrustAnchorStringCalled: Bool {
+        return getTrustAnchorStringCallsCount > 0
+    }
+    public var getTrustAnchorStringReturnValue: String!
+    public var getTrustAnchorStringClosure: (() async throws -> String)?
 
     public func getTrustAnchor() async throws -> String {
-        getTrustAnchor_Invocations.append(())
-
-        if let error = getTrustAnchor_MockError {
+        getTrustAnchorStringCallsCount += 1
+        if let error = getTrustAnchorStringThrowableError {
             throw error
         }
-
-        if let mock = getTrustAnchor_MockMethod {
-            return try await mock()
-        } else if let mock = getTrustAnchor_MockValue {
-            return mock
+        if let getTrustAnchorStringClosure = getTrustAnchorStringClosure {
+            return try await getTrustAnchorStringClosure()
         } else {
-            fatalError("no mock for `getTrustAnchor`")
+            return getTrustAnchorStringReturnValue
         }
     }
 
-    // MARK: - getFederationCertificates
+    //MARK: - getFederationCertificates
 
-    public var getFederationCertificates_Invocations: [Void] = []
-    public var getFederationCertificates_MockError: Error?
-    public var getFederationCertificates_MockMethod: (() async throws -> [String])?
-    public var getFederationCertificates_MockValue: [String]?
+    public var getFederationCertificatesStringThrowableError: (any Error)?
+    public var getFederationCertificatesStringCallsCount = 0
+    public var getFederationCertificatesStringCalled: Bool {
+        return getFederationCertificatesStringCallsCount > 0
+    }
+    public var getFederationCertificatesStringReturnValue: [String]!
+    public var getFederationCertificatesStringClosure: (() async throws -> [String])?
 
     public func getFederationCertificates() async throws -> [String] {
-        getFederationCertificates_Invocations.append(())
-
-        if let error = getFederationCertificates_MockError {
+        getFederationCertificatesStringCallsCount += 1
+        if let error = getFederationCertificatesStringThrowableError {
             throw error
         }
-
-        if let mock = getFederationCertificates_MockMethod {
-            return try await mock()
-        } else if let mock = getFederationCertificates_MockValue {
-            return mock
+        if let getFederationCertificatesStringClosure = getFederationCertificatesStringClosure {
+            return try await getFederationCertificatesStringClosure()
         } else {
-            fatalError("no mock for `getFederationCertificates`")
+            return getFederationCertificatesStringReturnValue
         }
     }
 
-    // MARK: - sendACMERequest
+    //MARK: - sendACMERequest
 
-    public var sendACMERequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendACMERequestPathRequestBody_MockError: Error?
-    public var sendACMERequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEResponse)?
-    public var sendACMERequestPathRequestBody_MockValue: ACMEResponse?
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseThrowableError: (any Error)?
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseCallsCount = 0
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseCalled: Bool {
+        return sendACMERequestPathStringRequestBodyDataACMEResponseCallsCount > 0
+    }
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseReceivedArguments: (path: String, requestBody: Data)?
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseReceivedInvocations: [(path: String, requestBody: Data)] = []
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseReturnValue: ACMEResponse!
+    public var sendACMERequestPathStringRequestBodyDataACMEResponseClosure: ((String, Data) async throws -> ACMEResponse)?
 
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
-        sendACMERequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendACMERequestPathRequestBody_MockError {
+        sendACMERequestPathStringRequestBodyDataACMEResponseCallsCount += 1
+        sendACMERequestPathStringRequestBodyDataACMEResponseReceivedArguments = (path: path, requestBody: requestBody)
+        sendACMERequestPathStringRequestBodyDataACMEResponseReceivedInvocations.append((path: path, requestBody: requestBody))
+        if let error = sendACMERequestPathStringRequestBodyDataACMEResponseThrowableError {
             throw error
         }
-
-        if let mock = sendACMERequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendACMERequestPathRequestBody_MockValue {
-            return mock
+        if let sendACMERequestPathStringRequestBodyDataACMEResponseClosure = sendACMERequestPathStringRequestBodyDataACMEResponseClosure {
+            return try await sendACMERequestPathStringRequestBodyDataACMEResponseClosure(path, requestBody)
         } else {
-            fatalError("no mock for `sendACMERequestPathRequestBody`")
+            return sendACMERequestPathStringRequestBodyDataACMEResponseReturnValue
         }
     }
 
-    // MARK: - sendAuthorizationRequest
+    //MARK: - sendAuthorizationRequest
 
-    public var sendAuthorizationRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendAuthorizationRequestPathRequestBody_MockError: Error?
-    public var sendAuthorizationRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ACMEAuthorizationResponse)?
-    public var sendAuthorizationRequestPathRequestBody_MockValue: ACMEAuthorizationResponse?
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseThrowableError: (any Error)?
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseCallsCount = 0
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseCalled: Bool {
+        return sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseCallsCount > 0
+    }
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReceivedArguments: (path: String, requestBody: Data)?
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReceivedInvocations: [(path: String, requestBody: Data)] = []
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReturnValue: ACMEAuthorizationResponse!
+    public var sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseClosure: ((String, Data) async throws -> ACMEAuthorizationResponse)?
 
     public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
-        sendAuthorizationRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendAuthorizationRequestPathRequestBody_MockError {
+        sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseCallsCount += 1
+        sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReceivedArguments = (path: path, requestBody: requestBody)
+        sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReceivedInvocations.append((path: path, requestBody: requestBody))
+        if let error = sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseThrowableError {
             throw error
         }
-
-        if let mock = sendAuthorizationRequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendAuthorizationRequestPathRequestBody_MockValue {
-            return mock
+        if let sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseClosure = sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseClosure {
+            return try await sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseClosure(path, requestBody)
         } else {
-            fatalError("no mock for `sendAuthorizationRequestPathRequestBody`")
+            return sendAuthorizationRequestPathStringRequestBodyDataACMEAuthorizationResponseReturnValue
         }
     }
 
-    // MARK: - sendChallengeRequest
+    //MARK: - sendChallengeRequest
 
-    public var sendChallengeRequestPathRequestBody_Invocations: [(path: String, requestBody: Data)] = []
-    public var sendChallengeRequestPathRequestBody_MockError: Error?
-    public var sendChallengeRequestPathRequestBody_MockMethod: ((String, Data) async throws -> ChallengeResponse)?
-    public var sendChallengeRequestPathRequestBody_MockValue: ChallengeResponse?
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseThrowableError: (any Error)?
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseCallsCount = 0
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseCalled: Bool {
+        return sendChallengeRequestPathStringRequestBodyDataChallengeResponseCallsCount > 0
+    }
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseReceivedArguments: (path: String, requestBody: Data)?
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseReceivedInvocations: [(path: String, requestBody: Data)] = []
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseReturnValue: ChallengeResponse!
+    public var sendChallengeRequestPathStringRequestBodyDataChallengeResponseClosure: ((String, Data) async throws -> ChallengeResponse)?
 
     public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
-        sendChallengeRequestPathRequestBody_Invocations.append((path: path, requestBody: requestBody))
-
-        if let error = sendChallengeRequestPathRequestBody_MockError {
+        sendChallengeRequestPathStringRequestBodyDataChallengeResponseCallsCount += 1
+        sendChallengeRequestPathStringRequestBodyDataChallengeResponseReceivedArguments = (path: path, requestBody: requestBody)
+        sendChallengeRequestPathStringRequestBodyDataChallengeResponseReceivedInvocations.append((path: path, requestBody: requestBody))
+        if let error = sendChallengeRequestPathStringRequestBodyDataChallengeResponseThrowableError {
             throw error
         }
-
-        if let mock = sendChallengeRequestPathRequestBody_MockMethod {
-            return try await mock(path, requestBody)
-        } else if let mock = sendChallengeRequestPathRequestBody_MockValue {
-            return mock
+        if let sendChallengeRequestPathStringRequestBodyDataChallengeResponseClosure = sendChallengeRequestPathStringRequestBodyDataChallengeResponseClosure {
+            return try await sendChallengeRequestPathStringRequestBodyDataChallengeResponseClosure(path, requestBody)
         } else {
-            fatalError("no mock for `sendChallengeRequestPathRequestBody`")
+            return sendChallengeRequestPathStringRequestBodyDataChallengeResponseReturnValue
         }
     }
 
+
 }
-
-public class MockCertificateRevocationListAPIProtocol: CertificateRevocationListAPIProtocol {
-
-    // MARK: - Life cycle
+public class CertificateRevocationListAPIProtocolMock: CertificateRevocationListAPIProtocol {
 
     public init() {}
 
 
-    // MARK: - getRevocationList
 
-    public var getRevocationListFrom_Invocations: [URL] = []
-    public var getRevocationListFrom_MockError: Error?
-    public var getRevocationListFrom_MockMethod: ((URL) async throws -> Data)?
-    public var getRevocationListFrom_MockValue: Data?
+    //MARK: - getRevocationList
+
+    public var getRevocationListFromDistributionPointURLDataThrowableError: (any Error)?
+    public var getRevocationListFromDistributionPointURLDataCallsCount = 0
+    public var getRevocationListFromDistributionPointURLDataCalled: Bool {
+        return getRevocationListFromDistributionPointURLDataCallsCount > 0
+    }
+    public var getRevocationListFromDistributionPointURLDataReceivedDistributionPoint: (URL)?
+    public var getRevocationListFromDistributionPointURLDataReceivedInvocations: [(URL)] = []
+    public var getRevocationListFromDistributionPointURLDataReturnValue: Data!
+    public var getRevocationListFromDistributionPointURLDataClosure: ((URL) async throws -> Data)?
 
     public func getRevocationList(from distributionPoint: URL) async throws -> Data {
-        getRevocationListFrom_Invocations.append(distributionPoint)
-
-        if let error = getRevocationListFrom_MockError {
+        getRevocationListFromDistributionPointURLDataCallsCount += 1
+        getRevocationListFromDistributionPointURLDataReceivedDistributionPoint = distributionPoint
+        getRevocationListFromDistributionPointURLDataReceivedInvocations.append(distributionPoint)
+        if let error = getRevocationListFromDistributionPointURLDataThrowableError {
             throw error
         }
-
-        if let mock = getRevocationListFrom_MockMethod {
-            return try await mock(distributionPoint)
-        } else if let mock = getRevocationListFrom_MockValue {
-            return mock
+        if let getRevocationListFromDistributionPointURLDataClosure = getRevocationListFromDistributionPointURLDataClosure {
+            return try await getRevocationListFromDistributionPointURLDataClosure(distributionPoint)
         } else {
-            fatalError("no mock for `getRevocationListFrom`")
+            return getRevocationListFromDistributionPointURLDataReturnValue
         }
     }
 
+
 }
-
-public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
+public class ConversationParticipantsServiceInterfaceMock: ConversationParticipantsServiceInterface {
 
     public init() {}
 
 
-    // MARK: - addParticipants
 
-    public var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    public var addParticipantsTo_MockError: Error?
-    public var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
+    //MARK: - addParticipants
+
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError: (any Error)?
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount = 0
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidCalled: Bool {
+        return addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount > 0
+    }
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments: (users: [ZMUser], conversation: ZMConversation)?
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    public var addParticipantsUsersZMUserToConversationZMConversationVoidClosure: (([ZMUser], ZMConversation) async throws -> Void)?
 
     public func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
+        addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount += 1
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments = (users: users, conversation: conversation)
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations.append((users: users, conversation: conversation))
+        if let error = addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
+        try await addParticipantsUsersZMUserToConversationZMConversationVoidClosure?(users, conversation)
     }
 
-    // MARK: - removeParticipant
+    //MARK: - removeParticipant
 
-    public var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    public var removeParticipantFrom_MockError: Error?
-    public var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError: (any Error)?
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount = 0
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidCalled: Bool {
+        return removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount > 0
+    }
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments: (user: ZMUser, conversation: ZMConversation)?
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    public var removeParticipantUserZMUserFromConversationZMConversationVoidClosure: ((ZMUser, ZMConversation) async throws -> Void)?
 
     public func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
+        removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount += 1
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments = (user: user, conversation: conversation)
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations.append((user: user, conversation: conversation))
+        if let error = removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
+        try await removeParticipantUserZMUserFromConversationZMConversationVoidClosure?(user, conversation)
     }
 
+
 }
-
-public class MockConversationServiceInterface: ConversationServiceInterface {
-
-    // MARK: - Life cycle
+public class ConversationServiceInterfaceMock: ConversationServiceInterface {
 
     public init() {}
 
 
-    // MARK: - createGroupConversation
 
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+    //MARK: - createGroupConversation
+
+    public var createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidCallsCount = 0
+    public var createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidCalled: Bool {
+        return createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidCallsCount > 0
+    }
+    public var createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidReceivedArguments: (name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)?
+    public var createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidReceivedInvocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidClosure: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
 
     public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
-
-        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
-            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
-        }
-
-        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
+        createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidCallsCount += 1
+        createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidReceivedArguments = (name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion)
+        createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidReceivedInvocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
+        createGroupConversationNameStringUsersSetZMUserAllowGuestsBoolAllowServicesBoolEnableReceiptsBoolMessageProtocolMessageProtocolCompletionEscapingResultZMConversationConversationCreationFailureVoidVoidClosure?(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
     }
 
-    // MARK: - createTeamOneOnOneProteusConversation
+    //MARK: - createTeamOneOnOneProteusConversation
 
-    public var createTeamOneOnOneProteusConversationUserCompletion_Invocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createTeamOneOnOneProteusConversationUserCompletion_MockMethod: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+    public var createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidCallsCount = 0
+    public var createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidCalled: Bool {
+        return createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidCallsCount > 0
+    }
+    public var createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidReceivedArguments: (user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)?
+    public var createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidReceivedInvocations: [(user: ZMUser, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidClosure: ((ZMUser, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
 
     public func createTeamOneOnOneProteusConversation(user: ZMUser, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createTeamOneOnOneProteusConversationUserCompletion_Invocations.append((user: user, completion: completion))
-
-        guard let mock = createTeamOneOnOneProteusConversationUserCompletion_MockMethod else {
-            fatalError("no mock for `createTeamOneOnOneProteusConversationUserCompletion`")
-        }
-
-        mock(user, completion)
+        createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidCallsCount += 1
+        createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidReceivedArguments = (user: user, completion: completion)
+        createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidReceivedInvocations.append((user: user, completion: completion))
+        createTeamOneOnOneProteusConversationUserZMUserCompletionEscapingSwiftResultZMConversationConversationCreationFailureVoidVoidClosure?(user, completion)
     }
 
-    // MARK: - syncConversation
+    //MARK: - syncConversation
 
-    public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
-    public var syncConversationQualifiedIDCompletion_MockMethod: ((QualifiedID, @escaping () -> Void) -> Void)?
+    public var syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidCallsCount = 0
+    public var syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidCalled: Bool {
+        return syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidCallsCount > 0
+    }
+    public var syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidReceivedArguments: (qualifiedID: QualifiedID, completion: () -> Void)?
+    public var syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidReceivedInvocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
+    public var syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidClosure: ((QualifiedID, @escaping () -> Void) -> Void)?
 
     public func syncConversation(qualifiedID: QualifiedID, completion: @escaping () -> Void) {
-        syncConversationQualifiedIDCompletion_Invocations.append((qualifiedID: qualifiedID, completion: completion))
-
-        guard let mock = syncConversationQualifiedIDCompletion_MockMethod else {
-            fatalError("no mock for `syncConversationQualifiedIDCompletion`")
-        }
-
-        mock(qualifiedID, completion)
+        syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidCallsCount += 1
+        syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidReceivedArguments = (qualifiedID: qualifiedID, completion: completion)
+        syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidReceivedInvocations.append((qualifiedID: qualifiedID, completion: completion))
+        syncConversationQualifiedIDQualifiedIDCompletionEscapingVoidVoidClosure?(qualifiedID, completion)
     }
 
-    // MARK: - syncConversation
+    //MARK: - syncConversation
 
-    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
-    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+    public var syncConversationQualifiedIDQualifiedIDVoidCallsCount = 0
+    public var syncConversationQualifiedIDQualifiedIDVoidCalled: Bool {
+        return syncConversationQualifiedIDQualifiedIDVoidCallsCount > 0
+    }
+    public var syncConversationQualifiedIDQualifiedIDVoidReceivedQualifiedID: (QualifiedID)?
+    public var syncConversationQualifiedIDQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
+    public var syncConversationQualifiedIDQualifiedIDVoidClosure: ((QualifiedID) async -> Void)?
 
     public func syncConversation(qualifiedID: QualifiedID) async {
-        syncConversationQualifiedID_Invocations.append(qualifiedID)
-
-        guard let mock = syncConversationQualifiedID_MockMethod else {
-            fatalError("no mock for `syncConversationQualifiedID`")
-        }
-
-        await mock(qualifiedID)
+        syncConversationQualifiedIDQualifiedIDVoidCallsCount += 1
+        syncConversationQualifiedIDQualifiedIDVoidReceivedQualifiedID = qualifiedID
+        syncConversationQualifiedIDQualifiedIDVoidReceivedInvocations.append(qualifiedID)
+        await syncConversationQualifiedIDQualifiedIDVoidClosure?(qualifiedID)
     }
 
-    // MARK: - syncConversationIfMissing
+    //MARK: - syncConversationIfMissing
 
-    public var syncConversationIfMissingQualifiedID_Invocations: [QualifiedID] = []
-    public var syncConversationIfMissingQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+    public var syncConversationIfMissingQualifiedIDQualifiedIDVoidCallsCount = 0
+    public var syncConversationIfMissingQualifiedIDQualifiedIDVoidCalled: Bool {
+        return syncConversationIfMissingQualifiedIDQualifiedIDVoidCallsCount > 0
+    }
+    public var syncConversationIfMissingQualifiedIDQualifiedIDVoidReceivedQualifiedID: (QualifiedID)?
+    public var syncConversationIfMissingQualifiedIDQualifiedIDVoidReceivedInvocations: [(QualifiedID)] = []
+    public var syncConversationIfMissingQualifiedIDQualifiedIDVoidClosure: ((QualifiedID) async -> Void)?
 
     public func syncConversationIfMissing(qualifiedID: QualifiedID) async {
-        syncConversationIfMissingQualifiedID_Invocations.append(qualifiedID)
-
-        guard let mock = syncConversationIfMissingQualifiedID_MockMethod else {
-            fatalError("no mock for `syncConversationIfMissingQualifiedID`")
-        }
-
-        await mock(qualifiedID)
+        syncConversationIfMissingQualifiedIDQualifiedIDVoidCallsCount += 1
+        syncConversationIfMissingQualifiedIDQualifiedIDVoidReceivedQualifiedID = qualifiedID
+        syncConversationIfMissingQualifiedIDQualifiedIDVoidReceivedInvocations.append(qualifiedID)
+        await syncConversationIfMissingQualifiedIDQualifiedIDVoidClosure?(qualifiedID)
     }
 
+
 }
-
-public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
-
-    // MARK: - Life cycle
+public class E2EIKeyPackageRotatingMock: E2EIKeyPackageRotating {
 
     public init() {}
 
 
-    // MARK: - rotateKeysAndMigrateConversations
 
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError: Error?
-    public var rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
+    //MARK: - rotateKeysAndMigrateConversations
+
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidThrowableError: (any Error)?
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidCallsCount = 0
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidCalled: Bool {
+        return rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidCallsCount > 0
+    }
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidReceivedArguments: (enrollment: E2eiEnrollmentProtocol, certificateChain: String)?
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidReceivedInvocations: [(enrollment: E2eiEnrollmentProtocol, certificateChain: String)] = []
+    public var rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidClosure: ((E2eiEnrollmentProtocol, String) async throws -> Void)?
 
     public func rotateKeysAndMigrateConversations(enrollment: E2eiEnrollmentProtocol, certificateChain: String) async throws {
-        rotateKeysAndMigrateConversationsEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
-
-        if let error = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockError {
+        rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidCallsCount += 1
+        rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidReceivedArguments = (enrollment: enrollment, certificateChain: certificateChain)
+        rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidReceivedInvocations.append((enrollment: enrollment, certificateChain: certificateChain))
+        if let error = rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidThrowableError {
             throw error
         }
-
-        guard let mock = rotateKeysAndMigrateConversationsEnrollmentCertificateChain_MockMethod else {
-            fatalError("no mock for `rotateKeysAndMigrateConversationsEnrollmentCertificateChain`")
-        }
-
-        try await mock(enrollment, certificateChain)
+        try await rotateKeysAndMigrateConversationsEnrollmentE2eiEnrollmentProtocolCertificateChainStringVoidClosure?(enrollment, certificateChain)
     }
 
+
 }
-
-public class MockE2eIAPI: E2eIAPI {
-
-    // MARK: - Life cycle
+public class E2eIAPIMock: E2eIAPI {
 
     public init() {}
 
 
-    // MARK: - getWireNonce
 
-    public var getWireNonceClientId_Invocations: [String] = []
-    public var getWireNonceClientId_MockError: Error?
-    public var getWireNonceClientId_MockMethod: ((String) async throws -> String)?
-    public var getWireNonceClientId_MockValue: String?
+    //MARK: - getWireNonce
+
+    public var getWireNonceClientIdStringStringThrowableError: (any Error)?
+    public var getWireNonceClientIdStringStringCallsCount = 0
+    public var getWireNonceClientIdStringStringCalled: Bool {
+        return getWireNonceClientIdStringStringCallsCount > 0
+    }
+    public var getWireNonceClientIdStringStringReceivedClientId: (String)?
+    public var getWireNonceClientIdStringStringReceivedInvocations: [(String)] = []
+    public var getWireNonceClientIdStringStringReturnValue: String!
+    public var getWireNonceClientIdStringStringClosure: ((String) async throws -> String)?
 
     public func getWireNonce(clientId: String) async throws -> String {
-        getWireNonceClientId_Invocations.append(clientId)
-
-        if let error = getWireNonceClientId_MockError {
+        getWireNonceClientIdStringStringCallsCount += 1
+        getWireNonceClientIdStringStringReceivedClientId = clientId
+        getWireNonceClientIdStringStringReceivedInvocations.append(clientId)
+        if let error = getWireNonceClientIdStringStringThrowableError {
             throw error
         }
-
-        if let mock = getWireNonceClientId_MockMethod {
-            return try await mock(clientId)
-        } else if let mock = getWireNonceClientId_MockValue {
-            return mock
+        if let getWireNonceClientIdStringStringClosure = getWireNonceClientIdStringStringClosure {
+            return try await getWireNonceClientIdStringStringClosure(clientId)
         } else {
-            fatalError("no mock for `getWireNonceClientId`")
+            return getWireNonceClientIdStringStringReturnValue
         }
     }
 
-    // MARK: - getAccessToken
+    //MARK: - getAccessToken
 
-    public var getAccessTokenClientIdDpopToken_Invocations: [(clientId: String, dpopToken: String)] = []
-    public var getAccessTokenClientIdDpopToken_MockError: Error?
-    public var getAccessTokenClientIdDpopToken_MockMethod: ((String, String) async throws -> AccessTokenResponse)?
-    public var getAccessTokenClientIdDpopToken_MockValue: AccessTokenResponse?
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseThrowableError: (any Error)?
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseCallsCount = 0
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseCalled: Bool {
+        return getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseCallsCount > 0
+    }
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReceivedArguments: (clientId: String, dpopToken: String)?
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReceivedInvocations: [(clientId: String, dpopToken: String)] = []
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReturnValue: AccessTokenResponse!
+    public var getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseClosure: ((String, String) async throws -> AccessTokenResponse)?
 
     public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
-        getAccessTokenClientIdDpopToken_Invocations.append((clientId: clientId, dpopToken: dpopToken))
-
-        if let error = getAccessTokenClientIdDpopToken_MockError {
+        getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseCallsCount += 1
+        getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReceivedArguments = (clientId: clientId, dpopToken: dpopToken)
+        getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReceivedInvocations.append((clientId: clientId, dpopToken: dpopToken))
+        if let error = getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseThrowableError {
             throw error
         }
-
-        if let mock = getAccessTokenClientIdDpopToken_MockMethod {
-            return try await mock(clientId, dpopToken)
-        } else if let mock = getAccessTokenClientIdDpopToken_MockValue {
-            return mock
+        if let getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseClosure = getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseClosure {
+            return try await getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseClosure(clientId, dpopToken)
         } else {
-            fatalError("no mock for `getAccessTokenClientIdDpopToken`")
+            return getAccessTokenClientIdStringDpopTokenStringAccessTokenResponseReturnValue
         }
     }
 
+
 }
-
-public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseCaseProtocol {
-
-    // MARK: - Life cycle
+public class EnrollE2EICertificateUseCaseProtocolMock: EnrollE2EICertificateUseCaseProtocol {
 
     public init() {}
 
 
-    // MARK: - invoke
 
-    public var invokeAuthenticate_Invocations: [OAuthBlock] = []
-    public var invokeAuthenticate_MockError: Error?
-    public var invokeAuthenticate_MockMethod: ((@escaping OAuthBlock) async throws -> String)?
-    public var invokeAuthenticate_MockValue: String?
+    //MARK: - invoke
+
+    public var invokeAuthenticateEscapingOAuthBlockStringThrowableError: (any Error)?
+    public var invokeAuthenticateEscapingOAuthBlockStringCallsCount = 0
+    public var invokeAuthenticateEscapingOAuthBlockStringCalled: Bool {
+        return invokeAuthenticateEscapingOAuthBlockStringCallsCount > 0
+    }
+    public var invokeAuthenticateEscapingOAuthBlockStringReceivedAuthenticate: ((OAuthBlock))?
+    public var invokeAuthenticateEscapingOAuthBlockStringReceivedInvocations: [((OAuthBlock))] = []
+    public var invokeAuthenticateEscapingOAuthBlockStringReturnValue: String!
+    public var invokeAuthenticateEscapingOAuthBlockStringClosure: ((@escaping OAuthBlock) async throws -> String)?
 
     public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
-        invokeAuthenticate_Invocations.append(authenticate)
-
-        if let error = invokeAuthenticate_MockError {
+        invokeAuthenticateEscapingOAuthBlockStringCallsCount += 1
+        invokeAuthenticateEscapingOAuthBlockStringReceivedAuthenticate = authenticate
+        invokeAuthenticateEscapingOAuthBlockStringReceivedInvocations.append(authenticate)
+        if let error = invokeAuthenticateEscapingOAuthBlockStringThrowableError {
             throw error
         }
-
-        if let mock = invokeAuthenticate_MockMethod {
-            return try await mock(authenticate)
-        } else if let mock = invokeAuthenticate_MockValue {
-            return mock
+        if let invokeAuthenticateEscapingOAuthBlockStringClosure = invokeAuthenticateEscapingOAuthBlockStringClosure {
+            return try await invokeAuthenticateEscapingOAuthBlockStringClosure(authenticate)
         } else {
-            fatalError("no mock for `invokeAuthenticate`")
+            return invokeAuthenticateEscapingOAuthBlockStringReturnValue
         }
     }
 
+
 }
-
-public class MockEventDecoderProtocol: EventDecoderProtocol {
-
-    // MARK: - Life cycle
+public class EventDecoderProtocolMock: EventDecoderProtocol {
 
     public init() {}
 
 
-    // MARK: - decryptAndStoreEvents
 
-    public var decryptAndStoreEventsPublicKeys_Invocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
-    public var decryptAndStoreEventsPublicKeys_MockError: Error?
-    public var decryptAndStoreEventsPublicKeys_MockMethod: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
-    public var decryptAndStoreEventsPublicKeys_MockValue: [ZMUpdateEvent]?
+    //MARK: - decryptAndStoreEvents
+
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventThrowableError: (any Error)?
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventCallsCount = 0
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventCalled: Bool {
+        return decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventCallsCount > 0
+    }
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReceivedArguments: (events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)?
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReceivedInvocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReturnValue: [ZMUpdateEvent]!
+    public var decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventClosure: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
 
     public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], publicKeys: EARPublicKeys?) async throws -> [ZMUpdateEvent] {
-        decryptAndStoreEventsPublicKeys_Invocations.append((events: events, publicKeys: publicKeys))
-
-        if let error = decryptAndStoreEventsPublicKeys_MockError {
+        decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventCallsCount += 1
+        decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReceivedArguments = (events: events, publicKeys: publicKeys)
+        decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReceivedInvocations.append((events: events, publicKeys: publicKeys))
+        if let error = decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventThrowableError {
             throw error
         }
-
-        if let mock = decryptAndStoreEventsPublicKeys_MockMethod {
-            return try await mock(events, publicKeys)
-        } else if let mock = decryptAndStoreEventsPublicKeys_MockValue {
-            return mock
+        if let decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventClosure = decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventClosure {
+            return try await decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventClosure(events, publicKeys)
         } else {
-            fatalError("no mock for `decryptAndStoreEventsPublicKeys`")
+            return decryptAndStoreEventsEventsZMUpdateEventPublicKeysEARPublicKeysZMUpdateEventReturnValue
         }
     }
 
-    // MARK: - processStoredEvents
+    //MARK: - processStoredEvents
 
-    public var processStoredEventsWithCallEventsOnly_Invocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
-    public var processStoredEventsWithCallEventsOnly_MockMethod: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
+    public var processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidCallsCount = 0
+    public var processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidCalled: Bool {
+        return processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidCallsCount > 0
+    }
+    public var processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidReceivedArguments: (privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)?
+    public var processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidReceivedInvocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
+    public var processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidClosure: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
 
     public func processStoredEvents(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool, _ block: @escaping ([ZMUpdateEvent]) async -> Void) async {
-        processStoredEventsWithCallEventsOnly_Invocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
-
-        guard let mock = processStoredEventsWithCallEventsOnly_MockMethod else {
-            fatalError("no mock for `processStoredEventsWithCallEventsOnly`")
-        }
-
-        await mock(privateKeys, callEventsOnly, block)
+        processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidCallsCount += 1
+        processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidReceivedArguments = (privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block)
+        processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidReceivedInvocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
+        await processStoredEventsWithPrivateKeysEARPrivateKeysCallEventsOnlyBoolBlockEscapingZMUpdateEventAsyncVoidVoidClosure?(privateKeys, callEventsOnly, block)
     }
 
+
 }
-
-class MockMLSClientIDsProviding: MLSClientIDsProviding {
-
-    // MARK: - Life cycle
+class MLSClientIDsProvidingMock: MLSClientIDsProviding {
 
 
 
-    // MARK: - fetchUserClients
 
-    var fetchUserClientsForIn_Invocations: [(userID: QualifiedID, context: NotificationContext)] = []
-    var fetchUserClientsForIn_MockError: Error?
-    var fetchUserClientsForIn_MockMethod: ((QualifiedID, NotificationContext) async throws -> [MLSClientID])?
-    var fetchUserClientsForIn_MockValue: [MLSClientID]?
+    //MARK: - fetchUserClients
+
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDThrowableError: (any Error)?
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDCallsCount = 0
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDCalled: Bool {
+        return fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDCallsCount > 0
+    }
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReceivedArguments: (userID: QualifiedID, context: NotificationContext)?
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReceivedInvocations: [(userID: QualifiedID, context: NotificationContext)] = []
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReturnValue: [MLSClientID]!
+    var fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDClosure: ((QualifiedID, NotificationContext) async throws -> [MLSClientID])?
 
     func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
-        fetchUserClientsForIn_Invocations.append((userID: userID, context: context))
-
-        if let error = fetchUserClientsForIn_MockError {
+        fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDCallsCount += 1
+        fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReceivedArguments = (userID: userID, context: context)
+        fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReceivedInvocations.append((userID: userID, context: context))
+        if let error = fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDThrowableError {
             throw error
         }
-
-        if let mock = fetchUserClientsForIn_MockMethod {
-            return try await mock(userID, context)
-        } else if let mock = fetchUserClientsForIn_MockValue {
-            return mock
+        if let fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDClosure = fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDClosure {
+            return try await fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDClosure(userID, context)
         } else {
-            fatalError("no mock for `fetchUserClientsForIn`")
+            return fetchUserClientsForUserIDQualifiedIDInContextNotificationContextMLSClientIDReturnValue
         }
     }
 
+
 }
-
-class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
+class MLSConversationParticipantsServiceInterfaceMock: MLSConversationParticipantsServiceInterface {
 
 
 
-    // MARK: - addParticipants
 
-    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    var addParticipantsTo_MockError: Error?
-    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
+    //MARK: - addParticipants
+
+    var addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError: (any Error)?
+    var addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount = 0
+    var addParticipantsUsersZMUserToConversationZMConversationVoidCalled: Bool {
+        return addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount > 0
+    }
+    var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments: (users: [ZMUser], conversation: ZMConversation)?
+    var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    var addParticipantsUsersZMUserToConversationZMConversationVoidClosure: (([ZMUser], ZMConversation) async throws -> Void)?
 
     func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
+        addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount += 1
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments = (users: users, conversation: conversation)
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations.append((users: users, conversation: conversation))
+        if let error = addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
+        try await addParticipantsUsersZMUserToConversationZMConversationVoidClosure?(users, conversation)
     }
 
-    // MARK: - removeParticipant
+    //MARK: - removeParticipant
 
-    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    var removeParticipantFrom_MockError: Error?
-    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError: (any Error)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount = 0
+    var removeParticipantUserZMUserFromConversationZMConversationVoidCalled: Bool {
+        return removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount > 0
+    }
+    var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments: (user: ZMUser, conversation: ZMConversation)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    var removeParticipantUserZMUserFromConversationZMConversationVoidClosure: ((ZMUser, ZMConversation) async throws -> Void)?
 
     func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
+        removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount += 1
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments = (user: user, conversation: conversation)
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations.append((user: user, conversation: conversation))
+        if let error = removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
+        try await removeParticipantUserZMUserFromConversationZMConversationVoidClosure?(user, conversation)
     }
 
+
 }
-
-public class MockMLSEventProcessing: MLSEventProcessing {
-
-    // MARK: - Life cycle
+public class MLSEventProcessingMock: MLSEventProcessing {
 
     public init() {}
 
 
-    // MARK: - updateConversationIfNeeded
 
-    public var updateConversationIfNeededConversationFallbackGroupIDContext_Invocations: [(conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext)] = []
-    public var updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod: ((ZMConversation, MLSGroupID?, NSManagedObjectContext) async -> Void)?
+    //MARK: - updateConversationIfNeeded
+
+    public var updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidCallsCount = 0
+    public var updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidCalled: Bool {
+        return updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidCallsCount > 0
+    }
+    public var updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidReceivedArguments: (conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext)?
+    public var updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidReceivedInvocations: [(conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext)] = []
+    public var updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidClosure: ((ZMConversation, MLSGroupID?, NSManagedObjectContext) async -> Void)?
 
     public func updateConversationIfNeeded(conversation: ZMConversation, fallbackGroupID: MLSGroupID?, context: NSManagedObjectContext) async {
-        updateConversationIfNeededConversationFallbackGroupIDContext_Invocations.append((conversation: conversation, fallbackGroupID: fallbackGroupID, context: context))
-
-        guard let mock = updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod else {
-            fatalError("no mock for `updateConversationIfNeededConversationFallbackGroupIDContext`")
-        }
-
-        await mock(conversation, fallbackGroupID, context)
+        updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidCallsCount += 1
+        updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidReceivedArguments = (conversation: conversation, fallbackGroupID: fallbackGroupID, context: context)
+        updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidReceivedInvocations.append((conversation: conversation, fallbackGroupID: fallbackGroupID, context: context))
+        await updateConversationIfNeededConversationZMConversationFallbackGroupIDMLSGroupIDContextNSManagedObjectContextVoidClosure?(conversation, fallbackGroupID, context)
     }
 
-    // MARK: - process
+    //MARK: - process
 
-    public var processWelcomeMessageConversationIDIn_Invocations: [(welcomeMessage: String, conversationID: QualifiedID, context: NSManagedObjectContext)] = []
-    public var processWelcomeMessageConversationIDIn_MockMethod: ((String, QualifiedID, NSManagedObjectContext) async -> Void)?
+    public var processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidCallsCount = 0
+    public var processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidCalled: Bool {
+        return processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidCallsCount > 0
+    }
+    public var processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidReceivedArguments: (welcomeMessage: String, conversationID: QualifiedID, context: NSManagedObjectContext)?
+    public var processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidReceivedInvocations: [(welcomeMessage: String, conversationID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidClosure: ((String, QualifiedID, NSManagedObjectContext) async -> Void)?
 
     public func process(welcomeMessage: String, conversationID: QualifiedID, in context: NSManagedObjectContext) async {
-        processWelcomeMessageConversationIDIn_Invocations.append((welcomeMessage: welcomeMessage, conversationID: conversationID, context: context))
-
-        guard let mock = processWelcomeMessageConversationIDIn_MockMethod else {
-            fatalError("no mock for `processWelcomeMessageConversationIDIn`")
-        }
-
-        await mock(welcomeMessage, conversationID, context)
+        processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidCallsCount += 1
+        processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidReceivedArguments = (welcomeMessage: welcomeMessage, conversationID: conversationID, context: context)
+        processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidReceivedInvocations.append((welcomeMessage: welcomeMessage, conversationID: conversationID, context: context))
+        await processWelcomeMessageStringConversationIDQualifiedIDInContextNSManagedObjectContextVoidClosure?(welcomeMessage, conversationID, context)
     }
 
-    // MARK: - wipeMLSGroup
+    //MARK: - wipeMLSGroup
 
-    public var wipeMLSGroupForConversationContext_Invocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []
-    public var wipeMLSGroupForConversationContext_MockMethod: ((ZMConversation, NSManagedObjectContext) async -> Void)?
+    public var wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidCallsCount = 0
+    public var wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidCalled: Bool {
+        return wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidCallsCount > 0
+    }
+    public var wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidReceivedArguments: (conversation: ZMConversation, context: NSManagedObjectContext)?
+    public var wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidReceivedInvocations: [(conversation: ZMConversation, context: NSManagedObjectContext)] = []
+    public var wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidClosure: ((ZMConversation, NSManagedObjectContext) async -> Void)?
 
     public func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async {
-        wipeMLSGroupForConversationContext_Invocations.append((conversation: conversation, context: context))
-
-        guard let mock = wipeMLSGroupForConversationContext_MockMethod else {
-            fatalError("no mock for `wipeMLSGroupForConversationContext`")
-        }
-
-        await mock(conversation, context)
+        wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidCallsCount += 1
+        wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidReceivedArguments = (conversation: conversation, context: context)
+        wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidReceivedInvocations.append((conversation: conversation, context: context))
+        await wipeMLSGroupForConversationConversationZMConversationContextNSManagedObjectContextVoidClosure?(conversation, context)
     }
 
+
 }
-
-public class MockMessageAPI: MessageAPI {
-
-    // MARK: - Life cycle
+public class MessageAPIMock: MessageAPI {
 
     public init() {}
 
 
-    // MARK: - broadcastProteusMessage
 
-    public var broadcastProteusMessageMessage_Invocations: [Data] = []
-    public var broadcastProteusMessageMessage_MockError: Error?
-    public var broadcastProteusMessageMessage_MockMethod: ((Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
-    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+    //MARK: - broadcastProteusMessage
+
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseThrowableError: (any Error)?
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseCallsCount = 0
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseCalled: Bool {
+        return broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseCallsCount > 0
+    }
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReceivedEncryptedMessage: (Data)?
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReceivedInvocations: [(Data)] = []
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReturnValue: (Payload.MessageSendingStatus, ZMTransportResponse)!
+    public var broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseClosure: ((Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
 
     public func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        broadcastProteusMessageMessage_Invocations.append(encryptedMessage)
-
-        if let error = broadcastProteusMessageMessage_MockError {
+        broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseCallsCount += 1
+        broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReceivedEncryptedMessage = encryptedMessage
+        broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReceivedInvocations.append(encryptedMessage)
+        if let error = broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseThrowableError {
             throw error
         }
-
-        if let mock = broadcastProteusMessageMessage_MockMethod {
-            return try await mock(encryptedMessage)
-        } else if let mock = broadcastProteusMessageMessage_MockValue {
-            return mock
+        if let broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseClosure = broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseClosure {
+            return try await broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseClosure(encryptedMessage)
         } else {
-            fatalError("no mock for `broadcastProteusMessageMessage`")
+            return broadcastProteusMessageMessageEncryptedMessageData_PayloadMessageSendingStatusZMTransportResponseReturnValue
         }
     }
 
-    // MARK: - sendProteusMessage
+    //MARK: - sendProteusMessage
 
-    public var sendProteusMessageMessageConversationIDExpirationDate_Invocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
-    public var sendProteusMessageMessageConversationIDExpirationDate_MockError: Error?
-    public var sendProteusMessageMessageConversationIDExpirationDate_MockMethod: ((Data, QualifiedID, Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
-    public var sendProteusMessageMessageConversationIDExpirationDate_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseThrowableError: (any Error)?
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseCallsCount = 0
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseCalled: Bool {
+        return sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseCallsCount > 0
+    }
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReceivedArguments: (encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)?
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReceivedInvocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReturnValue: (Payload.MessageSendingStatus, ZMTransportResponse)!
+    public var sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseClosure: ((Data, QualifiedID, Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
 
     public func sendProteusMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        sendProteusMessageMessageConversationIDExpirationDate_Invocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
-
-        if let error = sendProteusMessageMessageConversationIDExpirationDate_MockError {
+        sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseCallsCount += 1
+        sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReceivedArguments = (encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate)
+        sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReceivedInvocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
+        if let error = sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseThrowableError {
             throw error
         }
-
-        if let mock = sendProteusMessageMessageConversationIDExpirationDate_MockMethod {
-            return try await mock(encryptedMessage, conversationID, expirationDate)
-        } else if let mock = sendProteusMessageMessageConversationIDExpirationDate_MockValue {
-            return mock
+        if let sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseClosure = sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseClosure {
+            return try await sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseClosure(encryptedMessage, conversationID, expirationDate)
         } else {
-            fatalError("no mock for `sendProteusMessageMessageConversationIDExpirationDate`")
+            return sendProteusMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMessageSendingStatusZMTransportResponseReturnValue
         }
     }
 
-    // MARK: - sendMLSMessage
+    //MARK: - sendMLSMessage
 
-    public var sendMLSMessageMessageConversationIDExpirationDate_Invocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
-    public var sendMLSMessageMessageConversationIDExpirationDate_MockError: Error?
-    public var sendMLSMessageMessageConversationIDExpirationDate_MockMethod: ((Data, QualifiedID, Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse))?
-    public var sendMLSMessageMessageConversationIDExpirationDate_MockValue: (Payload.MLSMessageSendingStatus, ZMTransportResponse)?
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseThrowableError: (any Error)?
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseCallsCount = 0
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseCalled: Bool {
+        return sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseCallsCount > 0
+    }
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReceivedArguments: (encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)?
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReceivedInvocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReturnValue: (Payload.MLSMessageSendingStatus, ZMTransportResponse)!
+    public var sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseClosure: ((Data, QualifiedID, Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse))?
 
     public func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
-        sendMLSMessageMessageConversationIDExpirationDate_Invocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
-
-        if let error = sendMLSMessageMessageConversationIDExpirationDate_MockError {
+        sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseCallsCount += 1
+        sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReceivedArguments = (encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate)
+        sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReceivedInvocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
+        if let error = sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseThrowableError {
             throw error
         }
-
-        if let mock = sendMLSMessageMessageConversationIDExpirationDate_MockMethod {
-            return try await mock(encryptedMessage, conversationID, expirationDate)
-        } else if let mock = sendMLSMessageMessageConversationIDExpirationDate_MockValue {
-            return mock
+        if let sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseClosure = sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseClosure {
+            return try await sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseClosure(encryptedMessage, conversationID, expirationDate)
         } else {
-            fatalError("no mock for `sendMLSMessageMessageConversationIDExpirationDate`")
+            return sendMLSMessageMessageEncryptedMessageDataConversationIDQualifiedIDExpirationDateDate_PayloadMLSMessageSendingStatusZMTransportResponseReturnValue
         }
     }
 
+
 }
-
-public class MockMessageDependencyResolverInterface: MessageDependencyResolverInterface {
-
-    // MARK: - Life cycle
+public class MessageDependencyResolverInterfaceMock: MessageDependencyResolverInterface {
 
     public init() {}
 
 
-    // MARK: - waitForDependenciesToResolve
 
-    public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
-    public var waitForDependenciesToResolveFor_MockError: Error?
-    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async throws -> Void)?
+    //MARK: - waitForDependenciesToResolve
+
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidThrowableError: (any Error)?
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidCallsCount = 0
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidCalled: Bool {
+        return waitForDependenciesToResolveForMessageAnySendableMessageVoidCallsCount > 0
+    }
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidReceivedMessage: (any SendableMessage)?
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidReceivedInvocations: [(any SendableMessage)] = []
+    public var waitForDependenciesToResolveForMessageAnySendableMessageVoidClosure: ((any SendableMessage) async throws -> Void)?
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
-        waitForDependenciesToResolveFor_Invocations.append(message)
-
-        if let error = waitForDependenciesToResolveFor_MockError {
+        waitForDependenciesToResolveForMessageAnySendableMessageVoidCallsCount += 1
+        waitForDependenciesToResolveForMessageAnySendableMessageVoidReceivedMessage = message
+        waitForDependenciesToResolveForMessageAnySendableMessageVoidReceivedInvocations.append(message)
+        if let error = waitForDependenciesToResolveForMessageAnySendableMessageVoidThrowableError {
             throw error
         }
-
-        guard let mock = waitForDependenciesToResolveFor_MockMethod else {
-            fatalError("no mock for `waitForDependenciesToResolveFor`")
-        }
-
-        try await mock(message)
+        try await waitForDependenciesToResolveForMessageAnySendableMessageVoidClosure?(message)
     }
 
+
 }
-
-public class MockMessageSenderInterface: MessageSenderInterface {
-
-    // MARK: - Life cycle
+public class MessageSenderInterfaceMock: MessageSenderInterface {
 
     public init() {}
 
 
-    // MARK: - sendMessage
 
-    public var sendMessageMessage_Invocations: [any SendableMessage] = []
-    public var sendMessageMessage_MockError: Error?
-    public var sendMessageMessage_MockMethod: ((any SendableMessage) async throws -> Void)?
+    //MARK: - sendMessage
+
+    public var sendMessageMessageAnySendableMessageVoidThrowableError: (any Error)?
+    public var sendMessageMessageAnySendableMessageVoidCallsCount = 0
+    public var sendMessageMessageAnySendableMessageVoidCalled: Bool {
+        return sendMessageMessageAnySendableMessageVoidCallsCount > 0
+    }
+    public var sendMessageMessageAnySendableMessageVoidReceivedMessage: (any SendableMessage)?
+    public var sendMessageMessageAnySendableMessageVoidReceivedInvocations: [(any SendableMessage)] = []
+    public var sendMessageMessageAnySendableMessageVoidClosure: ((any SendableMessage) async throws -> Void)?
 
     public func sendMessage(message: any SendableMessage) async throws {
-        sendMessageMessage_Invocations.append(message)
-
-        if let error = sendMessageMessage_MockError {
+        sendMessageMessageAnySendableMessageVoidCallsCount += 1
+        sendMessageMessageAnySendableMessageVoidReceivedMessage = message
+        sendMessageMessageAnySendableMessageVoidReceivedInvocations.append(message)
+        if let error = sendMessageMessageAnySendableMessageVoidThrowableError {
             throw error
         }
-
-        guard let mock = sendMessageMessage_MockMethod else {
-            fatalError("no mock for `sendMessageMessage`")
-        }
-
-        try await mock(message)
+        try await sendMessageMessageAnySendableMessageVoidClosure?(message)
     }
 
-    // MARK: - broadcastMessage
+    //MARK: - broadcastMessage
 
-    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
-    public var broadcastMessageMessage_MockError: Error?
-    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+    public var broadcastMessageMessageAnyProteusMessageVoidThrowableError: (any Error)?
+    public var broadcastMessageMessageAnyProteusMessageVoidCallsCount = 0
+    public var broadcastMessageMessageAnyProteusMessageVoidCalled: Bool {
+        return broadcastMessageMessageAnyProteusMessageVoidCallsCount > 0
+    }
+    public var broadcastMessageMessageAnyProteusMessageVoidReceivedMessage: (any ProteusMessage)?
+    public var broadcastMessageMessageAnyProteusMessageVoidReceivedInvocations: [(any ProteusMessage)] = []
+    public var broadcastMessageMessageAnyProteusMessageVoidClosure: ((any ProteusMessage) async throws -> Void)?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        broadcastMessageMessage_Invocations.append(message)
-
-        if let error = broadcastMessageMessage_MockError {
+        broadcastMessageMessageAnyProteusMessageVoidCallsCount += 1
+        broadcastMessageMessageAnyProteusMessageVoidReceivedMessage = message
+        broadcastMessageMessageAnyProteusMessageVoidReceivedInvocations.append(message)
+        if let error = broadcastMessageMessageAnyProteusMessageVoidThrowableError {
             throw error
         }
-
-        guard let mock = broadcastMessageMessage_MockMethod else {
-            fatalError("no mock for `broadcastMessageMessage`")
-        }
-
-        try await mock(message)
+        try await broadcastMessageMessageAnyProteusMessageVoidClosure?(message)
     }
 
+
 }
-
-public class MockPrekeyAPI: PrekeyAPI {
-
-    // MARK: - Life cycle
+public class PrekeyAPIMock: PrekeyAPI {
 
     public init() {}
 
 
-    // MARK: - fetchPrekeys
 
-    public var fetchPrekeysFor_Invocations: [Set<QualifiedClientID>] = []
-    public var fetchPrekeysFor_MockError: Error?
-    public var fetchPrekeysFor_MockMethod: ((Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID)?
-    public var fetchPrekeysFor_MockValue: Payload.PrekeyByQualifiedUserID?
+    //MARK: - fetchPrekeys
+
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyThrowableError: (any Error)?
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyCallsCount = 0
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyCalled: Bool {
+        return fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyCallsCount > 0
+    }
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReceivedClients: (Set<QualifiedClientID>)?
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReceivedInvocations: [(Set<QualifiedClientID>)] = []
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReturnValue: Payload.PrekeyByQualifiedUserID!
+    public var fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyClosure: ((Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID)?
 
     public func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
-        fetchPrekeysFor_Invocations.append(clients)
-
-        if let error = fetchPrekeysFor_MockError {
+        fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyCallsCount += 1
+        fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReceivedClients = clients
+        fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReceivedInvocations.append(clients)
+        if let error = fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyThrowableError {
             throw error
         }
-
-        if let mock = fetchPrekeysFor_MockMethod {
-            return try await mock(clients)
-        } else if let mock = fetchPrekeysFor_MockValue {
-            return mock
+        if let fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyClosure = fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyClosure {
+            return try await fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyClosure(clients)
         } else {
-            fatalError("no mock for `fetchPrekeysFor`")
+            return fetchPrekeysForClientsSetQualifiedClientIDStringStringStringPayloadPrekeyReturnValue
         }
     }
 
+
 }
-
-public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterface {
-
-    // MARK: - Life cycle
+public class PrekeyPayloadProcessorInterfaceMock: PrekeyPayloadProcessorInterface {
 
     public init() {}
 
 
-    // MARK: - establishSessions
 
-    public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
-    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) async -> Void)?
+    //MARK: - establishSessions
+
+    public var establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidCallsCount = 0
+    public var establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidCalled: Bool {
+        return establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidCallsCount > 0
+    }
+    public var establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidReceivedArguments: (payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)?
+    public var establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidReceivedInvocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
+    public var establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidClosure: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) async -> Void)?
 
     public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) async {
-        establishSessionsFromWithContext_Invocations.append((payload: payload, selfClient: selfClient, context: context))
-
-        guard let mock = establishSessionsFromWithContext_MockMethod else {
-            fatalError("no mock for `establishSessionsFromWithContext`")
-        }
-
-        await mock(payload, selfClient, context)
+        establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidCallsCount += 1
+        establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidReceivedArguments = (payload: payload, selfClient: selfClient, context: context)
+        establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidReceivedInvocations.append((payload: payload, selfClient: selfClient, context: context))
+        await establishSessionsFromPayloadPayloadPrekeyByQualifiedUserIDWithSelfClientUserClientContextNSManagedObjectContextVoidClosure?(payload, selfClient, context)
     }
 
+
 }
-
-class MockProteusConversationParticipantsServiceInterface: ProteusConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
+class ProteusConversationParticipantsServiceInterfaceMock: ProteusConversationParticipantsServiceInterface {
 
 
 
-    // MARK: - addParticipants
 
-    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    var addParticipantsTo_MockError: Error?
-    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
+    //MARK: - addParticipants
+
+    var addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError: (any Error)?
+    var addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount = 0
+    var addParticipantsUsersZMUserToConversationZMConversationVoidCalled: Bool {
+        return addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount > 0
+    }
+    var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments: (users: [ZMUser], conversation: ZMConversation)?
+    var addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    var addParticipantsUsersZMUserToConversationZMConversationVoidClosure: (([ZMUser], ZMConversation) async throws -> Void)?
 
     func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
+        addParticipantsUsersZMUserToConversationZMConversationVoidCallsCount += 1
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedArguments = (users: users, conversation: conversation)
+        addParticipantsUsersZMUserToConversationZMConversationVoidReceivedInvocations.append((users: users, conversation: conversation))
+        if let error = addParticipantsUsersZMUserToConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
+        try await addParticipantsUsersZMUserToConversationZMConversationVoidClosure?(users, conversation)
     }
 
-    // MARK: - removeParticipant
+    //MARK: - removeParticipant
 
-    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    var removeParticipantFrom_MockError: Error?
-    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError: (any Error)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount = 0
+    var removeParticipantUserZMUserFromConversationZMConversationVoidCalled: Bool {
+        return removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount > 0
+    }
+    var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments: (user: ZMUser, conversation: ZMConversation)?
+    var removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    var removeParticipantUserZMUserFromConversationZMConversationVoidClosure: ((ZMUser, ZMConversation) async throws -> Void)?
 
     func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
+        removeParticipantUserZMUserFromConversationZMConversationVoidCallsCount += 1
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedArguments = (user: user, conversation: conversation)
+        removeParticipantUserZMUserFromConversationZMConversationVoidReceivedInvocations.append((user: user, conversation: conversation))
+        if let error = removeParticipantUserZMUserFromConversationZMConversationVoidThrowableError {
             throw error
         }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
+        try await removeParticipantUserZMUserFromConversationZMConversationVoidClosure?(user, conversation)
     }
 
+
 }
-
-public class MockProteusMessage: ProteusMessage {
-
-    // MARK: - Life cycle
+public class ProteusMessageMock: ProteusMessage {
 
     public init() {}
-
-    // MARK: - shouldExpire
 
     public var shouldExpire: Bool {
         get { return underlyingShouldExpire }
         set(value) { underlyingShouldExpire = value }
     }
-
-    public var underlyingShouldExpire: Bool!
-
-    // MARK: - underlyingMessage
-
+    public var underlyingShouldExpire: (Bool)!
     public var underlyingMessage: GenericMessage?
-
-    // MARK: - targetRecipients
-
     public var targetRecipients: Recipients {
         get { return underlyingTargetRecipients }
         set(value) { underlyingTargetRecipients = value }
     }
-
-    public var underlyingTargetRecipients: Recipients!
-
-    // MARK: - context
-
+    public var underlyingTargetRecipients: (Recipients)!
     public var context: NSManagedObjectContext {
         get { return underlyingContext }
         set(value) { underlyingContext = value }
     }
-
-    public var underlyingContext: NSManagedObjectContext!
-
-    // MARK: - conversation
-
+    public var underlyingContext: (NSManagedObjectContext)!
     public var conversation: ZMConversation?
-
-    // MARK: - dependentObjectNeedingUpdateBeforeProcessing
-
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
-
-    // MARK: - isExpired
-
     public var isExpired: Bool {
         get { return underlyingIsExpired }
         set(value) { underlyingIsExpired = value }
     }
-
-    public var underlyingIsExpired: Bool!
-
-    // MARK: - shouldIgnoreTheSecurityLevelCheck
-
+    public var underlyingIsExpired: (Bool)!
     public var shouldIgnoreTheSecurityLevelCheck: Bool {
         get { return underlyingShouldIgnoreTheSecurityLevelCheck }
         set(value) { underlyingShouldIgnoreTheSecurityLevelCheck = value }
     }
-
-    public var underlyingShouldIgnoreTheSecurityLevelCheck: Bool!
-
-    // MARK: - expirationDate
-
+    public var underlyingShouldIgnoreTheSecurityLevelCheck: (Bool)!
     public var expirationDate: Date?
-
-    // MARK: - expirationReasonCode
-
     public var expirationReasonCode: NSNumber?
 
 
-    // MARK: - setExpirationDate
+    //MARK: - setExpirationDate
 
-    public var setExpirationDate_Invocations: [Void] = []
-    public var setExpirationDate_MockMethod: (() -> Void)?
+    public var setExpirationDateVoidCallsCount = 0
+    public var setExpirationDateVoidCalled: Bool {
+        return setExpirationDateVoidCallsCount > 0
+    }
+    public var setExpirationDateVoidClosure: (() -> Void)?
 
     public func setExpirationDate() {
-        setExpirationDate_Invocations.append(())
-
-        guard let mock = setExpirationDate_MockMethod else {
-            fatalError("no mock for `setExpirationDate`")
-        }
-
-        mock()
+        setExpirationDateVoidCallsCount += 1
+        setExpirationDateVoidClosure?()
     }
 
-    // MARK: - prepareMessageForSending
+    //MARK: - prepareMessageForSending
 
-    public var prepareMessageForSending_Invocations: [Void] = []
-    public var prepareMessageForSending_MockError: Error?
-    public var prepareMessageForSending_MockMethod: (() async throws -> Void)?
+    public var prepareMessageForSendingVoidThrowableError: (any Error)?
+    public var prepareMessageForSendingVoidCallsCount = 0
+    public var prepareMessageForSendingVoidCalled: Bool {
+        return prepareMessageForSendingVoidCallsCount > 0
+    }
+    public var prepareMessageForSendingVoidClosure: (() async throws -> Void)?
 
     public func prepareMessageForSending() async throws {
-        prepareMessageForSending_Invocations.append(())
-
-        if let error = prepareMessageForSending_MockError {
+        prepareMessageForSendingVoidCallsCount += 1
+        if let error = prepareMessageForSendingVoidThrowableError {
             throw error
         }
-
-        guard let mock = prepareMessageForSending_MockMethod else {
-            fatalError("no mock for `prepareMessageForSending`")
-        }
-
-        try await mock()
+        try await prepareMessageForSendingVoidClosure?()
     }
 
-    // MARK: - setUnderlyingMessage
+    //MARK: - setUnderlyingMessage
 
-    public var setUnderlyingMessage_Invocations: [GenericMessage] = []
-    public var setUnderlyingMessage_MockError: Error?
-    public var setUnderlyingMessage_MockMethod: ((GenericMessage) throws -> Void)?
+    public var setUnderlyingMessageMessageGenericMessageVoidThrowableError: (any Error)?
+    public var setUnderlyingMessageMessageGenericMessageVoidCallsCount = 0
+    public var setUnderlyingMessageMessageGenericMessageVoidCalled: Bool {
+        return setUnderlyingMessageMessageGenericMessageVoidCallsCount > 0
+    }
+    public var setUnderlyingMessageMessageGenericMessageVoidReceivedMessage: (GenericMessage)?
+    public var setUnderlyingMessageMessageGenericMessageVoidReceivedInvocations: [(GenericMessage)] = []
+    public var setUnderlyingMessageMessageGenericMessageVoidClosure: ((GenericMessage) throws -> Void)?
 
     public func setUnderlyingMessage(_ message: GenericMessage) throws {
-        setUnderlyingMessage_Invocations.append(message)
-
-        if let error = setUnderlyingMessage_MockError {
+        setUnderlyingMessageMessageGenericMessageVoidCallsCount += 1
+        setUnderlyingMessageMessageGenericMessageVoidReceivedMessage = message
+        setUnderlyingMessageMessageGenericMessageVoidReceivedInvocations.append(message)
+        if let error = setUnderlyingMessageMessageGenericMessageVoidThrowableError {
             throw error
         }
-
-        guard let mock = setUnderlyingMessage_MockMethod else {
-            fatalError("no mock for `setUnderlyingMessage`")
-        }
-
-        try mock(message)
+        try setUnderlyingMessageMessageGenericMessageVoidClosure?(message)
     }
 
-    // MARK: - missesRecipients
+    //MARK: - missesRecipients
 
-    public var missesRecipients_Invocations: [Set<WireDataModel.UserClient>] = []
-    public var missesRecipients_MockMethod: ((Set<WireDataModel.UserClient>) -> Void)?
+    public var missesRecipientsRecipientsSetWireDataModelUserClientVoidCallsCount = 0
+    public var missesRecipientsRecipientsSetWireDataModelUserClientVoidCalled: Bool {
+        return missesRecipientsRecipientsSetWireDataModelUserClientVoidCallsCount > 0
+    }
+    public var missesRecipientsRecipientsSetWireDataModelUserClientVoidReceivedRecipients: (Set<WireDataModel.UserClient>)?
+    public var missesRecipientsRecipientsSetWireDataModelUserClientVoidReceivedInvocations: [(Set<WireDataModel.UserClient>)] = []
+    public var missesRecipientsRecipientsSetWireDataModelUserClientVoidClosure: ((Set<WireDataModel.UserClient>) -> Void)?
 
     public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>) {
-        missesRecipients_Invocations.append(recipients)
-
-        guard let mock = missesRecipients_MockMethod else {
-            fatalError("no mock for `missesRecipients`")
-        }
-
-        mock(recipients)
+        missesRecipientsRecipientsSetWireDataModelUserClientVoidCallsCount += 1
+        missesRecipientsRecipientsSetWireDataModelUserClientVoidReceivedRecipients = recipients
+        missesRecipientsRecipientsSetWireDataModelUserClientVoidReceivedInvocations.append(recipients)
+        missesRecipientsRecipientsSetWireDataModelUserClientVoidClosure?(recipients)
     }
 
-    // MARK: - detectedRedundantUsers
+    //MARK: - detectedRedundantUsers
 
-    public var detectedRedundantUsers_Invocations: [[ZMUser]] = []
-    public var detectedRedundantUsers_MockMethod: (([ZMUser]) -> Void)?
+    public var detectedRedundantUsersUsersZMUserVoidCallsCount = 0
+    public var detectedRedundantUsersUsersZMUserVoidCalled: Bool {
+        return detectedRedundantUsersUsersZMUserVoidCallsCount > 0
+    }
+    public var detectedRedundantUsersUsersZMUserVoidReceivedUsers: ([ZMUser])?
+    public var detectedRedundantUsersUsersZMUserVoidReceivedInvocations: [([ZMUser])] = []
+    public var detectedRedundantUsersUsersZMUserVoidClosure: (([ZMUser]) -> Void)?
 
     public func detectedRedundantUsers(_ users: [ZMUser]) {
-        detectedRedundantUsers_Invocations.append(users)
-
-        guard let mock = detectedRedundantUsers_MockMethod else {
-            fatalError("no mock for `detectedRedundantUsers`")
-        }
-
-        mock(users)
+        detectedRedundantUsersUsersZMUserVoidCallsCount += 1
+        detectedRedundantUsersUsersZMUserVoidReceivedUsers = users
+        detectedRedundantUsersUsersZMUserVoidReceivedInvocations.append(users)
+        detectedRedundantUsersUsersZMUserVoidClosure?(users)
     }
 
-    // MARK: - delivered
+    //MARK: - delivered
 
-    public var deliveredWith_Invocations: [ZMTransportResponse] = []
-    public var deliveredWith_MockMethod: ((ZMTransportResponse) -> Void)?
+    public var deliveredWithResponseZMTransportResponseVoidCallsCount = 0
+    public var deliveredWithResponseZMTransportResponseVoidCalled: Bool {
+        return deliveredWithResponseZMTransportResponseVoidCallsCount > 0
+    }
+    public var deliveredWithResponseZMTransportResponseVoidReceivedResponse: (ZMTransportResponse)?
+    public var deliveredWithResponseZMTransportResponseVoidReceivedInvocations: [(ZMTransportResponse)] = []
+    public var deliveredWithResponseZMTransportResponseVoidClosure: ((ZMTransportResponse) -> Void)?
 
     public func delivered(with response: ZMTransportResponse) {
-        deliveredWith_Invocations.append(response)
-
-        guard let mock = deliveredWith_MockMethod else {
-            fatalError("no mock for `deliveredWith`")
-        }
-
-        mock(response)
+        deliveredWithResponseZMTransportResponseVoidCallsCount += 1
+        deliveredWithResponseZMTransportResponseVoidReceivedResponse = response
+        deliveredWithResponseZMTransportResponseVoidReceivedInvocations.append(response)
+        deliveredWithResponseZMTransportResponseVoidClosure?(response)
     }
 
-    // MARK: - addFailedToSendRecipients
+    //MARK: - addFailedToSendRecipients
 
-    public var addFailedToSendRecipients_Invocations: [[ZMUser]] = []
-    public var addFailedToSendRecipients_MockMethod: (([ZMUser]) -> Void)?
+    public var addFailedToSendRecipientsRecipientsZMUserVoidCallsCount = 0
+    public var addFailedToSendRecipientsRecipientsZMUserVoidCalled: Bool {
+        return addFailedToSendRecipientsRecipientsZMUserVoidCallsCount > 0
+    }
+    public var addFailedToSendRecipientsRecipientsZMUserVoidReceivedRecipients: ([ZMUser])?
+    public var addFailedToSendRecipientsRecipientsZMUserVoidReceivedInvocations: [([ZMUser])] = []
+    public var addFailedToSendRecipientsRecipientsZMUserVoidClosure: (([ZMUser]) -> Void)?
 
     public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
-        addFailedToSendRecipients_Invocations.append(recipients)
-
-        guard let mock = addFailedToSendRecipients_MockMethod else {
-            fatalError("no mock for `addFailedToSendRecipients`")
-        }
-
-        mock(recipients)
+        addFailedToSendRecipientsRecipientsZMUserVoidCallsCount += 1
+        addFailedToSendRecipientsRecipientsZMUserVoidReceivedRecipients = recipients
+        addFailedToSendRecipientsRecipientsZMUserVoidReceivedInvocations.append(recipients)
+        addFailedToSendRecipientsRecipientsZMUserVoidClosure?(recipients)
     }
 
-    // MARK: - expire
+    //MARK: - expire
 
-    public var expireWithReason_Invocations: [ExpirationReason] = []
-    public var expireWithReason_MockMethod: ((ExpirationReason) -> Void)?
+    public var expireWithReasonReasonExpirationReasonVoidCallsCount = 0
+    public var expireWithReasonReasonExpirationReasonVoidCalled: Bool {
+        return expireWithReasonReasonExpirationReasonVoidCallsCount > 0
+    }
+    public var expireWithReasonReasonExpirationReasonVoidReceivedReason: (ExpirationReason)?
+    public var expireWithReasonReasonExpirationReasonVoidReceivedInvocations: [(ExpirationReason)] = []
+    public var expireWithReasonReasonExpirationReasonVoidClosure: ((ExpirationReason) -> Void)?
 
     public func expire(withReason reason: ExpirationReason) {
-        expireWithReason_Invocations.append(reason)
-
-        guard let mock = expireWithReason_MockMethod else {
-            fatalError("no mock for `expireWithReason`")
-        }
-
-        mock(reason)
+        expireWithReasonReasonExpirationReasonVoidCallsCount += 1
+        expireWithReasonReasonExpirationReasonVoidReceivedReason = reason
+        expireWithReasonReasonExpirationReasonVoidReceivedInvocations.append(reason)
+        expireWithReasonReasonExpirationReasonVoidClosure?(reason)
     }
 
+
 }
-
-public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
-
-    // MARK: - Life cycle
+public class QuickSyncObserverInterfaceMock: QuickSyncObserverInterface {
 
     public init() {}
 
 
-    // MARK: - waitForQuickSyncToFinish
 
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
+    //MARK: - waitForQuickSyncToFinish
+
+    public var waitForQuickSyncToFinishVoidCallsCount = 0
+    public var waitForQuickSyncToFinishVoidCalled: Bool {
+        return waitForQuickSyncToFinishVoidCallsCount > 0
+    }
+    public var waitForQuickSyncToFinishVoidClosure: (() async -> Void)?
 
     public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
-
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
-        }
-
-        await mock()
+        waitForQuickSyncToFinishVoidCallsCount += 1
+        await waitForQuickSyncToFinishVoidClosure?()
     }
 
+
 }
-
-public class MockSessionEstablisherInterface: SessionEstablisherInterface {
-
-    // MARK: - Life cycle
+public class SessionEstablisherInterfaceMock: SessionEstablisherInterface {
 
     public init() {}
 
 
-    // MARK: - establishSession
 
-    public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
-    public var establishSessionWithApiVersion_MockError: Error?
-    public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async throws -> Void)?
+    //MARK: - establishSession
+
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidThrowableError: (any Error)?
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidCallsCount = 0
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidCalled: Bool {
+        return establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidCallsCount > 0
+    }
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidReceivedArguments: (clients: Set<QualifiedClientID>, apiVersion: APIVersion)?
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidReceivedInvocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
+    public var establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidClosure: ((Set<QualifiedClientID>, APIVersion) async throws -> Void)?
 
     public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
-        establishSessionWithApiVersion_Invocations.append((clients: clients, apiVersion: apiVersion))
-
-        if let error = establishSessionWithApiVersion_MockError {
+        establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidCallsCount += 1
+        establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidReceivedArguments = (clients: clients, apiVersion: apiVersion)
+        establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidReceivedInvocations.append((clients: clients, apiVersion: apiVersion))
+        if let error = establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidThrowableError {
             throw error
         }
-
-        guard let mock = establishSessionWithApiVersion_MockMethod else {
-            fatalError("no mock for `establishSessionWithApiVersion`")
-        }
-
-        try await mock(clients, apiVersion)
+        try await establishSessionWithClientsSetQualifiedClientIDApiVersionAPIVersionVoidClosure?(clients, apiVersion)
     }
 
+
 }
-
-public class MockSyncProgress: SyncProgress {
-
-    // MARK: - Life cycle
+public class SyncProgressMock: SyncProgress {
 
     public init() {}
-
-    // MARK: - currentSyncPhase
 
     public var currentSyncPhase: SyncPhase {
         get { return underlyingCurrentSyncPhase }
         set(value) { underlyingCurrentSyncPhase = value }
     }
+    public var underlyingCurrentSyncPhase: (SyncPhase)!
 
-    public var underlyingCurrentSyncPhase: SyncPhase!
 
+    //MARK: - finishCurrentSyncPhase
 
-    // MARK: - finishCurrentSyncPhase
-
-    public var finishCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var finishCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
+    public var finishCurrentSyncPhasePhaseSyncPhaseVoidCallsCount = 0
+    public var finishCurrentSyncPhasePhaseSyncPhaseVoidCalled: Bool {
+        return finishCurrentSyncPhasePhaseSyncPhaseVoidCallsCount > 0
+    }
+    public var finishCurrentSyncPhasePhaseSyncPhaseVoidReceivedPhase: (SyncPhase)?
+    public var finishCurrentSyncPhasePhaseSyncPhaseVoidReceivedInvocations: [(SyncPhase)] = []
+    public var finishCurrentSyncPhasePhaseSyncPhaseVoidClosure: ((SyncPhase) -> Void)?
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
-        finishCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = finishCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `finishCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
+        finishCurrentSyncPhasePhaseSyncPhaseVoidCallsCount += 1
+        finishCurrentSyncPhasePhaseSyncPhaseVoidReceivedPhase = phase
+        finishCurrentSyncPhasePhaseSyncPhaseVoidReceivedInvocations.append(phase)
+        finishCurrentSyncPhasePhaseSyncPhaseVoidClosure?(phase)
     }
 
-    // MARK: - failCurrentSyncPhase
+    //MARK: - failCurrentSyncPhase
 
-    public var failCurrentSyncPhasePhase_Invocations: [SyncPhase] = []
-    public var failCurrentSyncPhasePhase_MockMethod: ((SyncPhase) -> Void)?
+    public var failCurrentSyncPhasePhaseSyncPhaseVoidCallsCount = 0
+    public var failCurrentSyncPhasePhaseSyncPhaseVoidCalled: Bool {
+        return failCurrentSyncPhasePhaseSyncPhaseVoidCallsCount > 0
+    }
+    public var failCurrentSyncPhasePhaseSyncPhaseVoidReceivedPhase: (SyncPhase)?
+    public var failCurrentSyncPhasePhaseSyncPhaseVoidReceivedInvocations: [(SyncPhase)] = []
+    public var failCurrentSyncPhasePhaseSyncPhaseVoidClosure: ((SyncPhase) -> Void)?
 
     public func failCurrentSyncPhase(phase: SyncPhase) {
-        failCurrentSyncPhasePhase_Invocations.append(phase)
-
-        guard let mock = failCurrentSyncPhasePhase_MockMethod else {
-            fatalError("no mock for `failCurrentSyncPhasePhase`")
-        }
-
-        mock(phase)
+        failCurrentSyncPhasePhaseSyncPhaseVoidCallsCount += 1
+        failCurrentSyncPhasePhaseSyncPhaseVoidReceivedPhase = phase
+        failCurrentSyncPhasePhaseSyncPhaseVoidReceivedInvocations.append(phase)
+        failCurrentSyncPhasePhaseSyncPhaseVoidClosure?(phase)
     }
 
+
 }
-
-public class MockUserClientAPI: UserClientAPI {
-
-    // MARK: - Life cycle
+public class UserClientAPIMock: UserClientAPI {
 
     public init() {}
 
 
-    // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
-    public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    //MARK: - deleteUserClient
+
+    public var deleteUserClientClientIdStringPasswordStringVoidThrowableError: (any Error)?
+    public var deleteUserClientClientIdStringPasswordStringVoidCallsCount = 0
+    public var deleteUserClientClientIdStringPasswordStringVoidCalled: Bool {
+        return deleteUserClientClientIdStringPasswordStringVoidCallsCount > 0
+    }
+    public var deleteUserClientClientIdStringPasswordStringVoidReceivedArguments: (clientId: String, password: String)?
+    public var deleteUserClientClientIdStringPasswordStringVoidReceivedInvocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdStringPasswordStringVoidClosure: ((String, String) async throws -> Void)?
 
     public func deleteUserClient(clientId: String, password: String) async throws {
-        deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
-
-        if let error = deleteUserClientClientIdPassword_MockError {
+        deleteUserClientClientIdStringPasswordStringVoidCallsCount += 1
+        deleteUserClientClientIdStringPasswordStringVoidReceivedArguments = (clientId: clientId, password: password)
+        deleteUserClientClientIdStringPasswordStringVoidReceivedInvocations.append((clientId: clientId, password: password))
+        if let error = deleteUserClientClientIdStringPasswordStringVoidThrowableError {
             throw error
         }
-
-        guard let mock = deleteUserClientClientIdPassword_MockMethod else {
-            fatalError("no mock for `deleteUserClientClientIdPassword`")
-        }
-
-        try await mock(clientId, password)
+        try await deleteUserClientClientIdStringPasswordStringVoidClosure?(clientId, password)
     }
 
+
 }
-
-class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
-
-    // MARK: - Life cycle
+class UserProfilePayloadProcessingMock: UserProfilePayloadProcessing {
 
 
 
-    // MARK: - updateUserProfiles
 
-    var updateUserProfilesFromIn_Invocations: [(userProfiles: Payload.UserProfiles, context: NSManagedObjectContext)] = []
-    var updateUserProfilesFromIn_MockMethod: ((Payload.UserProfiles, NSManagedObjectContext) -> Void)?
+    //MARK: - updateUserProfiles
+
+    var updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidCallsCount = 0
+    var updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidCalled: Bool {
+        return updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidCallsCount > 0
+    }
+    var updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidReceivedArguments: (userProfiles: Payload.UserProfiles, context: NSManagedObjectContext)?
+    var updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidReceivedInvocations: [(userProfiles: Payload.UserProfiles, context: NSManagedObjectContext)] = []
+    var updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidClosure: ((Payload.UserProfiles, NSManagedObjectContext) -> Void)?
 
     func updateUserProfiles(from userProfiles: Payload.UserProfiles, in context: NSManagedObjectContext) {
-        updateUserProfilesFromIn_Invocations.append((userProfiles: userProfiles, context: context))
-
-        guard let mock = updateUserProfilesFromIn_MockMethod else {
-            fatalError("no mock for `updateUserProfilesFromIn`")
-        }
-
-        mock(userProfiles, context)
+        updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidCallsCount += 1
+        updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidReceivedArguments = (userProfiles: userProfiles, context: context)
+        updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidReceivedInvocations.append((userProfiles: userProfiles, context: context))
+        updateUserProfilesFromUserProfilesPayloadUserProfilesInContextNSManagedObjectContextVoidClosure?(userProfiles, context)
     }
 
-}
 
+}
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
