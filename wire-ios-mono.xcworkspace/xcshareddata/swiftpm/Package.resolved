@@ -129,7 +129,7 @@
       },
       {
         "package": "SwiftDocCPlugin",
-        "repositoryURL": "https://github.com/apple/swift-docc-plugin",
+        "repositoryURL": "https://github.com/swiftlang/swift-docc-plugin",
         "state": {
           "branch": null,
           "revision": "85e4bb4e1cd62cec64a4b8e769dcefdf0c5b9d64",

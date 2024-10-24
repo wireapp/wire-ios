@@ -44,6 +44,7 @@ final class StartUIViewController: UIViewController {
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
+    let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
 
@@ -84,6 +85,7 @@ final class StartUIViewController: UIViewController {
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
+        createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
@@ -97,6 +99,7 @@ final class StartUIViewController: UIViewController {
         )
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
