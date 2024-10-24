@@ -21,5 +21,5 @@ import UIKit
 // sourcery: AutoMockable
 protocol CreateGroupConversationViewControllerBuilderProtocol {
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
+    func build() -> UIViewController
 }
