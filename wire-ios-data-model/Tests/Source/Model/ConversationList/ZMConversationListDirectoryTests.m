@@ -307,8 +307,10 @@
 {
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.groupConversations;
-    NSSet *expected = [NSSet setWithArray:@[self.groupConversation, self.favoritedConversation]];
-    
+    NSSet *expected = [NSSet setWithArray:@[self.groupConversation,
+                                            self.favoritedConversation,
+                                            self.groupConversationInFolder]];
+
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);
 }
@@ -317,7 +319,11 @@
 {
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
-    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.oneToOneConversationInTeam, self.outgoingPendingConnectionConversation, self.serviceConversation]];
+    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation,
+                                            self.oneToOneConversationInTeam,
+                                            self.outgoingPendingConnectionConversation,
+                                            self.serviceConversation,
+                                            self.oneToOneConversationInFolder]];
 
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list.items], expected);

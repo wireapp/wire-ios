@@ -16,33 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPackage
-import XCTest
-
-@testable import Wire
-
-final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
-
-    private var sut: GiphyConfirmationViewController!
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        super.setUp()
-        snapshotHelper = SnapshotHelper()
-        sut = GiphyConfirmationViewController(
-            withZiph: nil,
-            previewImage: nil,
-            searchResultController: nil
-        )
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
+/// Declares a contract for participants of a conversation which can be filtered.
+public protocol FilterableConversationParticipant {
+    var name: String { get }
 }
