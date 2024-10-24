@@ -86,14 +86,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
         )
         sut.mainSplitViewState = .collapsed
-        // sut.navigationController?.navigationBar.barTintColor = SemanticColors.View.backgroundDefaultWhite
-
-        // Set the navigation bar color here
-           let navBarAppearance = UINavigationBarAppearance()
-           navBarAppearance.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-           UINavigationBar.appearance().standardAppearance = navBarAppearance
-           UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
-
 
         tabBarController = .init()
         tabBarController.conversationListUI = sut
