@@ -77,6 +77,20 @@ final class ZClientViewController: UIViewController {
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
 
+    private lazy var defaultSettingsPropertyFactoryDelegate = {
+        var settingsTableViewController = { [weak self] in
+            self?.mainSplitViewController.settingsContentUI as? SettingsTableViewController ??
+            self?.mainTabBarController.settingsContentUI as? SettingsTableViewController ??
+            self?.mainSplitViewController.settingsUI as? SettingsTableViewController ??
+            self?.mainTabBarController.settingsUI as? SettingsTableViewController
+        }
+        return DefaultSettingsPropertyFactoryDelegate(
+            userSession: userSession,
+            settingsTableViewController: settingsTableViewController,
+            mainCoordinator: AnyMainCoordinator(mainCoordinator: mainCoordinator)
+        )
+    }()
+
     var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
             selfUser: userSession.editableSelfUser,
@@ -247,6 +261,7 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
+        settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)

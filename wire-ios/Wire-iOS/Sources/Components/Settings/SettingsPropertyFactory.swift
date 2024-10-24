@@ -40,9 +40,6 @@ enum SettingsPropertyError: Error {
 }
 
 protocol SettingsPropertyFactoryDelegate: AnyObject {
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory)
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory)
-
     func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory, newValue: Bool, callback: @escaping  ResultHandler)
 }
 
@@ -271,18 +268,18 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     return SettingsPropertyValue(self.isAppLockActive)
-            },
+                },
                 setAction: { _, value in
                     switch value {
                     case .number(value: let lockApp):
-                        self.delegate?.appLockOptionDidChange(self,
-                                                              newValue: lockApp.boolValue,
-                                                              callback: { result in
-                           self.userSession?.perform {
-                               self.isAppLockActive = result
-                           }
-                        })
-
+                        self.delegate?.appLockOptionDidChange(
+                            self,
+                            newValue: lockApp.boolValue
+                        ) { result in
+                            self.userSession?.perform {
+                                self.isAppLockActive = result
+                            }
+                        }
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
