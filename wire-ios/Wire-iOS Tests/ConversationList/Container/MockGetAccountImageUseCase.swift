@@ -25,7 +25,7 @@ final class MockGetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
 
     init() {}
 
-    func invoke<Account>(account: Account) async -> UIImage
+    func invoke<Account>(account: Account) async -> UIImage?
     where Account: GetAccountImageUseCaseAccountProtocol {
         invoke_Invocations += [account]
         return invoke_MockValue

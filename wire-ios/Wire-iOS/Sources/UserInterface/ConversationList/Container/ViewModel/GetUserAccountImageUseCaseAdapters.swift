@@ -20,22 +20,11 @@ import WireAccountImageUI
 import WireDataModel
 import WireFoundation
 
-extension GetUserAccountImageUseCase<InitialsProviderAdapter, AccountImageGenerator> {
-
-    @MainActor
-    init() {
-        self.init(
-            initalsProvider: .init(),
-            accountImageGenerator: .init()
-        )
-    }
-}
-
 // MARK: -
 
 extension GetUserAccountImageUseCaseProtocol {
 
-    func invoke(account: Account) async throws -> UIImage {
+    func invoke(account: Account) async throws -> UIImage? {
         try await invoke(account: AccountAdapter(account: account))
     }
 }
