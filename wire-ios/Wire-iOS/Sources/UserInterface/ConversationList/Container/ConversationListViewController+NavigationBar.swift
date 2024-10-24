@@ -102,8 +102,8 @@ extension ConversationListViewController {
 
         } else {
             defer {
-                titleViewLabel?.text = viewModel.selfUserStatus.name
-                titleViewLabel?.accessibilityValue = viewModel.selfUserStatus.name
+                titleViewLabel?.text = viewModel.selfUserStatus.displayName
+                titleViewLabel?.accessibilityValue = viewModel.selfUserStatus.displayName
             }
             guard titleViewLabel == nil else { return }
             if let userStatusViewController {
