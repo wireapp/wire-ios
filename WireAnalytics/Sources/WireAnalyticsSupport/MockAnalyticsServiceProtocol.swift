@@ -17,6 +17,8 @@
 //
 import WireAnalytics
 
+// this mock is generated manually because of (any Error)?
+// TODO: [WPB-11829] update sourcery
 public class MockAnalyticsServiceProtocol: AnalyticsServiceProtocol {
 
     // MARK: - Life cycle
