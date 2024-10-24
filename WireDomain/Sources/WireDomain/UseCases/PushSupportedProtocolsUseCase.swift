@@ -45,7 +45,7 @@ public struct PushSupportedProtocolsUseCase {
 
         let remoteProtocols = await remotelySupportedProtocols()
         let migrationState = await currentMigrationState()
-        let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
+        let allClientsMLSReady = await allSelfUserClientsAreActiveMLSClients()
 
         logger.debug(
             "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
@@ -147,8 +147,10 @@ public struct PushSupportedProtocolsUseCase {
         return .finalised
     }
 
-    private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        userRepository.fetchSelfUser().clients.all { userClient in
+    private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        let selfUser = await userRepository.fetchSelfUser()
+
+        return selfUser.clients.all { userClient in
             let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
 
             let isRecentlyActive: Bool = {

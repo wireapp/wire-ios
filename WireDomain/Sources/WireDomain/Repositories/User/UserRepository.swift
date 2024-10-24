@@ -31,7 +31,7 @@ public protocol UserRepositoryProtocol {
 
     /// Fetch self user from the local store
 
-    func fetchSelfUser() -> ZMUser
+    func fetchSelfUser() async -> ZMUser
 
     /// Fetches a user locally
     ///
@@ -75,11 +75,11 @@ public protocol UserRepositoryProtocol {
     /// Fetches or creates a user locally.
     ///
     /// - parameters:
-    ///     - uuid: The user id to fetch or create locally.
+    ///     - id: The user id to fetch or create locally.
     ///     - domain: The user domain when federated.
 
     func fetchOrCreateUser(
-        with uuid: UUID,
+        with id: UUID,
         domain: String?
     ) -> ZMUser
 
@@ -160,6 +160,17 @@ public protocol UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws
+
+    /// Indicates whether a given user is a self user.
+    /// - Parameters:
+    ///     - id: The user id.
+    ///     - domain: The user domain if any.
+    /// - Returns: Whether the user is self user.
+
+    func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -197,8 +208,21 @@ public final class UserRepository: UserRepositoryProtocol {
 
     // MARK: - Public
 
-    public func fetchSelfUser() -> ZMUser {
-        ZMUser.selfUser(in: context)
+    public func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool {
+        let user = try await fetchUser(with: id, domain: domain)
+
+        return await context.perform {
+            user.isSelfUser
+        }
+    }
+
+    public func fetchSelfUser() async -> ZMUser {
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
     }
 
     public func fetchOrCreateUser(
@@ -434,7 +458,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func disableUserLegalHold() async throws {
-        let selfUser = fetchSelfUser()
+        let selfUser = await fetchSelfUser()
 
         try await context.perform { [context] in
             selfUser.legalHoldRequestWasCancelled()
@@ -446,7 +470,7 @@ public final class UserRepository: UserRepositoryProtocol {
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
-            let selfUser = fetchSelfUser()
+            let selfUser = await fetchSelfUser()
 
             await context.perform {
                 selfUser.readReceiptsEnabled = isEnabled
@@ -468,7 +492,7 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         switch key {
         case .wireReceiptMode:
-            let selfUser = fetchSelfUser()
+            let selfUser = await fetchSelfUser()
 
             await context.perform {
                 selfUser.readReceiptsEnabled = false
@@ -505,9 +529,10 @@ public final class UserRepository: UserRepositoryProtocol {
                 user.isAccountDeleted = true
             }
 
-            await conversationRepository.removeFromConversations(
-                user: user,
-                removalDate: date
+            try await conversationRepository.removeParticipantFromAllConversations(
+                participantID: id,
+                participantDomain: domain,
+                removedAt: date
             )
         }
     }

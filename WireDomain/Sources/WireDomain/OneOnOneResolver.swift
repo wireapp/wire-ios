@@ -89,7 +89,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
             domain: userID.domain
         )
 
-        let selfUser = userRepository.fetchSelfUser()
+        let selfUser = await userRepository.fetchSelfUser()
         let commonProtocol = getCommonProtocol(between: selfUser, and: user)
 
         if isMLSEnabled, commonProtocol == .mls {
@@ -121,7 +121,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         /// Sync the user MLS conversation from backend.
         let mlsGroupID = try await conversationsRepository.pullMLSOneToOneConversation(
-            userID: userID.uuid.uuidString,
+            for: userID.uuid.uuidString,
             domain: userID.domain
         )
 
