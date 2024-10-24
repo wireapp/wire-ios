@@ -124,13 +124,7 @@ class WireTextField: UITextField {
         }
         clearButton.addAction(clearAction, for: .touchUpInside)
 
-        // Create a container view for the button with padding
-        // 16 (button) + 20 (padding)
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 16))
-        clearButton.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
-        containerView.addSubview(clearButton)
-
-        self.rightView = containerView
+        self.rightView = clearButton
         // Start with clear button hidden
         self.rightViewMode = .never
     }
@@ -139,6 +133,14 @@ class WireTextField: UITextField {
 
     private func updateClearButtonVisibility() {
         rightViewMode = (text?.isEmpty == false) ? .always : .never
+    }
+
+    // MARK: - Override rightViewRect(forBounds:) for padding
+
+    override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+        var rect = super.rightViewRect(forBounds: bounds)
+        rect.origin.x -= 10 // Add padding by shifting it to the left
+        return rect
     }
 
     // MARK: - UI Updates
