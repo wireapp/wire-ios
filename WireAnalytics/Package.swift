@@ -69,8 +69,8 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 
 for target in package.targets {
     target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+//        .enableUpcomingFeature("ExistentialAny"),
+//        .enableUpcomingFeature("GlobalConcurrency"),
+//        .enableExperimentalFeature("StrictConcurrency")
     ]
 }
