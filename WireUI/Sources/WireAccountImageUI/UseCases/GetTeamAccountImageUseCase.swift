@@ -51,7 +51,7 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
         }
 
         if !teamName.isEmpty, let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map({ "\($0)" }), !initials.isEmpty {
-            return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
+            return await accountImageGenerator.createImage(initials: initials)
         }
 
         throw Error.invalidImageSource

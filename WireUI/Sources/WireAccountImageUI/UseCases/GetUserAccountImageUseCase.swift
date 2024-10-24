@@ -23,8 +23,24 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
 
     typealias Error = GetUserAccountImageUseCaseError
 
+    // MARK: - Public Properties
+
+    public var textColor: UIColor {
+        get { accountImageGenerator.textColor }
+        set { accountImageGenerator.textColor = newValue }
+    }
+
+    public var backgroundColor: UIColor {
+        get { accountImageGenerator.backgroundColor }
+        set { accountImageGenerator.backgroundColor = newValue }
+    }
+
+    // MARK: - Internal Properties
+
     var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
+
+    // MARK: - Life Cycle
 
     public init(
         initalsProvider: InitalsProvider,
@@ -33,6 +49,8 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
         self.initalsProvider = initalsProvider
         self.accountImageGenerator = accountImageGenerator
     }
+
+    // MARK: - Methods
 
     public func invoke(
         account: some GetAccountImageUseCaseAccountProtocol
@@ -43,9 +61,10 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
         }
 
         // image base on user's initials
-        let initials = await initalsProvider.initials(from: account.userName).trimmingCharacters(in: .whitespacesAndNewlines)
+        let initials = await initalsProvider.initials(from: account.userName)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { throw Error.invalidImageSource }
-        return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
+        return await accountImageGenerator.createImage(initials: initials)
     }
 }
 

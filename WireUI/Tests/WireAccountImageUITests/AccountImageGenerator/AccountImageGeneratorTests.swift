@@ -40,28 +40,40 @@ final class AccountImageGeneratorTests: XCTestCase {
 
     @MainActor
     func testRenderingWhiteW() async {
-        let image = await sut.createImage(initials: "W", backgroundColor: .white)
-        let imageView = UIImageView(image: image)
-        imageView.frame.size = image.size
-
-        snapshotHelper
-            .verify(matching: imageView)
-    }
-
-    @MainActor
-    func testRenderingBlueCA() async {
-        let image = await sut.createImage(initials: "CA", backgroundColor: .init(red: 0.02, green: 0.4, blue: 0.78, alpha: 1))
+        let image = await sut.createImage(initials: "W")
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: imageView)
-
-        imageView.image = await sut.createImage(initials: "CA", backgroundColor: .init(red: 0.33, green: 0.65, blue: 1, alpha: 1))
-
+            .verify(matching: imageView, named: "light")
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: imageView)
+            .verify(matching: imageView, named: "dark")
+    }
+
+    @MainActor
+    func testRenderingBlueCA() async {
+        sut.backgroundColor = .init(red: 0.02, green: 0.4, blue: 0.78, alpha: 1)
+        let image = await sut.createImage(initials: "CA")
+        let imageView = UIImageView(image: image)
+        imageView.frame.size = image.size
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: imageView, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: imageView, named: "dark")
+
+        sut.backgroundColor = .init(red: 0.33, green: 0.65, blue: 1, alpha: 1)
+        imageView.image = await sut.createImage(initials: "CA")
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: imageView, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: imageView, named: "dark")
     }
 }

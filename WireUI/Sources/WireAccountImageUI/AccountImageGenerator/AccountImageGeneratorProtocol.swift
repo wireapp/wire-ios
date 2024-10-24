@@ -18,7 +18,12 @@
 
 import UIKit
 
+// sourcery: AutoMockable
 /// Creates an image based on a user's or team's initials.
 public protocol AccountImageGeneratorProtocol {
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage
+
+    var textColor: UIColor { get set }
+    var backgroundColor: UIColor { get set }
+
+    func createImage(initials: String) async -> UIImage
 }

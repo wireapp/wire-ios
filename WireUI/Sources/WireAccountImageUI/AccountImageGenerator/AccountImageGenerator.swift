@@ -21,11 +21,27 @@ import UIKit
 @MainActor
 public struct AccountImageGenerator: AccountImageGeneratorProtocol {
 
+    // MARK: - Public Properties
+
+    public var textColor: UIColor = .init { traitCollection in
+        traitCollection.userInterfaceStyle == .dark ? .white : .black
+    }
+
+    public var backgroundColor: UIColor = .init { traitCollection in
+        traitCollection.userInterfaceStyle == .dark ? .black : .white
+    }
+
+    // MARK: - Private Properties
+
     private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 26, height: 26))
+
+    // MARK: - Life Cycle
 
     public init() {}
 
-    public func createImage(initials: String, backgroundColor: UIColor) async -> UIImage {
+    // MARK: - Methods
+
+    public func createImage(initials: String) async -> UIImage {
         let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { return .init() }
 
@@ -61,7 +77,6 @@ private final class InitialsRenderer: UIView {
 
     private func setupLabel(_ initials: String) {
         initialsLabel.font = .systemFont(ofSize: 13, weight: .light)
-        initialsLabel.textColor = .black
         initialsLabel.textAlignment = .center
         initialsLabel.text = initials
         initialsLabel.frame = bounds.insetBy(dx: 2, dy: 2)

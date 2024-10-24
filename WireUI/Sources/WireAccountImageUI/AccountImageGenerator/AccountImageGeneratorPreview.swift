@@ -24,7 +24,7 @@ func AccountImageGeneratorPreview(_ initials: String) -> UINavigationController 
 
     let accountImageView = AccountImageView()
     Task {
-        accountImageView.accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
+        accountImageView.accountImage = await accountImageGenerator.createImage(initials: initials)
     }
 
     let viewController = UIViewController()
