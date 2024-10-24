@@ -67,6 +67,7 @@ class WireTextField: UITextField {
         setupPadding()
         setupTextFieldProperties()
         setupTextFieldEvents()
+        setupCustomClearButton()
     }
 
     private func setupAppearance() {
@@ -87,7 +88,6 @@ class WireTextField: UITextField {
         returnKeyType = .next
         autocapitalizationType = .words
         accessibilityIdentifier = "NameField"
-        clearButtonMode = .whileEditing
         autocorrectionType = .no
         contentVerticalAlignment = .center
         font = .font(for: .body1)
@@ -97,18 +97,58 @@ class WireTextField: UITextField {
     }
 
     private func setupTextFieldEvents() {
-        addTarget(self, action: #selector(textFieldDidStartEditing), for: .editingDidBegin)
-        addTarget(self, action: #selector(textFieldDidFinishEditing), for: .editingDidEnd)
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.textFieldDidStartEditing()
+        }), for: .editingDidBegin)
+
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.textFieldDidFinishEditing()
+        }), for: .editingDidEnd)
+
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.updateClearButtonVisibility()
+        }), for: .editingChanged)
+    }
+
+    // MARK: - Custom Clear Button
+
+    private func setupCustomClearButton() {
+        let clearButton = UIButton(type: .custom)
+        let clearImage = UIImage(named: "Clear")?.withRenderingMode(.alwaysTemplate)
+        clearButton.setImage(clearImage, for: .normal)
+        clearButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+
+        let clearAction = UIAction { [weak self] _ in
+            self?.text = ""
+            self?.sendActions(for: .editingChanged)
+        }
+        clearButton.addAction(clearAction, for: .touchUpInside)
+
+        // Create a container view for the button with padding
+        // 16 (button) + 20 (padding)
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 36, height: 16))
+        clearButton.frame = CGRect(x: 0, y: 0, width: 16, height: 16)
+        containerView.addSubview(clearButton)
+
+        self.rightView = containerView
+        // Start with clear button hidden
+        self.rightViewMode = .never
+    }
+
+    // MARK: - Clear Button Visibility
+
+    private func updateClearButtonVisibility() {
+        rightViewMode = (text?.isEmpty == false) ? .always : .never
     }
 
     // MARK: - UI Updates
 
-    @objc private func textFieldDidStartEditing() {
+    private func textFieldDidStartEditing() {
         layer.borderColor = selectedBorderColor.cgColor
         wireTextFieldDelegate?.textFieldDidBeginEditing(self)
     }
 
-    @objc private func textFieldDidFinishEditing() {
+    private func textFieldDidFinishEditing() {
         layer.borderColor = defaultBorderColor.cgColor
         wireTextFieldDelegate?.textFieldDidEndEditing(self)
     }
