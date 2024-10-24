@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireSystem
 
 /// Process conversation member update events.
 
@@ -32,9 +33,48 @@ protocol ConversationMemberUpdateEventProcessorProtocol {
 
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationMemberUpdateEvent) async throws {
-        // TODO: [WPB-10170]
-        assertionFailure("not implemented yet")
+    let conversationRepository: any ConversationRepositoryProtocol
+    let userRepository: any UserRepositoryProtocol
+    let localStore: any ConversationLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMemberUpdateEvent) async throws {
+        let senderID = event.senderID
+        let conversationID = event.conversationID
+        let memberChange = event.memberChange
+        let muteStatus = memberChange.newMuteStatus
+        let muteStatusDate = memberChange.muteStatusReferenceDate
+        let archivedStatus = memberChange.newArchivedStatus
+        let archivedStatusDate = memberChange.archivedStatusReferenceDate
+
+        let conversation = await conversationRepository.fetchOrCreateConversation(
+            with: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        let isSelfUser = try await userRepository.isSelfUser(
+            id: senderID.uuid,
+            domain: senderID.domain
+        )
+
+        if isSelfUser {
+            await localStore.updateMemberStatus(
+                mutedStatusInfo: (muteStatus, muteStatusDate),
+                archivedStatusInfo: (archivedStatus, archivedStatusDate),
+                for: conversation
+            )
+        }
+
+        guard let role = event.memberChange.newRoleName else {
+            return
+        }
+
+        await conversationRepository.addParticipantToConversation(
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            participantID: senderID.uuid,
+            participantDomain: senderID.domain,
+            participantRole: role
+        )
     }
 
 }

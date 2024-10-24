@@ -329,7 +329,7 @@ final class OneOnOneResolverTests: XCTestCase {
         userRepository.fetchUserWithDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
 
-        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = Scaffolding.conversationID.uuidString
+        conversationsRepository.pullMLSOneToOneConversationForDomain_MockValue = Scaffolding.conversationID.uuidString
         conversationsRepository.fetchMLSConversationWith_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite

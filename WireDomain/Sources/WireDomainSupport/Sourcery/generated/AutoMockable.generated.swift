@@ -161,6 +161,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+        }
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
@@ -224,19 +242,49 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - removeFromConversations
+    // MARK: - removeParticipantFromAllConversations
 
-    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var removeParticipantFromAllConversationsUserDate_Invocations: [(user: ZMUser, date: Date)] = []
+    public var removeParticipantFromAllConversationsUserDate_MockMethod: ((ZMUser, Date) async -> Void)?
 
-    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+    public func removeParticipantFromAllConversations(user: ZMUser, date: Date) async {
+        removeParticipantFromAllConversationsUserDate_Invocations.append((user: user, date: date))
 
-        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
-            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        guard let mock = removeParticipantFromAllConversationsUserDate_MockMethod else {
+            fatalError("no mock for `removeParticipantFromAllConversationsUserDate`")
         }
 
-        await mock(user, removalDate)
+        await mock(user, date)
+    }
+
+    // MARK: - addParticipant
+
+    public var addParticipantWithRoleTo_Invocations: [(user: ZMUser, role: String, conversation: ZMConversation)] = []
+    public var addParticipantWithRoleTo_MockMethod: ((ZMUser, String, ZMConversation) async -> Void)?
+
+    public func addParticipant(_ user: ZMUser, withRole role: String, to conversation: ZMConversation) async {
+        addParticipantWithRoleTo_Invocations.append((user: user, role: role, conversation: conversation))
+
+        guard let mock = addParticipantWithRoleTo_MockMethod else {
+            fatalError("no mock for `addParticipantWithRoleTo`")
+        }
+
+        await mock(user, role, conversation)
+    }
+
+    // MARK: - updateMemberStatus
+
+    public var updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations: [(mutedStatusInfo: (status: Int?, referenceDate: Date?), archivedStatusInfo: (status: Bool?, referenceDate: Date?), localConversation: ZMConversation)] = []
+    public var updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod: (((status: Int?, referenceDate: Date?), (status: Bool?, referenceDate: Date?), ZMConversation) async -> Void)?
+
+    public func updateMemberStatus(mutedStatusInfo: (status: Int?, referenceDate: Date?), archivedStatusInfo: (status: Bool?, referenceDate: Date?), for localConversation: ZMConversation) async {
+        updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations.append((mutedStatusInfo: mutedStatusInfo, archivedStatusInfo: archivedStatusInfo, localConversation: localConversation))
+
+        guard let mock = updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod else {
+            fatalError("no mock for `updateMemberStatusMutedStatusInfoArchivedStatusInfoFor`")
+        }
+
+        await mock(mutedStatusInfo, archivedStatusInfo, localConversation)
     }
 
 }
@@ -270,24 +318,42 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - pullMLSOneToOneConversation
 
-    public var pullMLSOneToOneConversationUserIDDomain_Invocations: [(userID: String, domain: String)] = []
-    public var pullMLSOneToOneConversationUserIDDomain_MockError: Error?
-    public var pullMLSOneToOneConversationUserIDDomain_MockMethod: ((String, String) async throws -> String)?
-    public var pullMLSOneToOneConversationUserIDDomain_MockValue: String?
+    public var pullMLSOneToOneConversationForDomain_Invocations: [(userID: String, domain: String)] = []
+    public var pullMLSOneToOneConversationForDomain_MockError: Error?
+    public var pullMLSOneToOneConversationForDomain_MockMethod: ((String, String) async throws -> String)?
+    public var pullMLSOneToOneConversationForDomain_MockValue: String?
 
-    public func pullMLSOneToOneConversation(userID: String, domain: String) async throws -> String {
-        pullMLSOneToOneConversationUserIDDomain_Invocations.append((userID: userID, domain: domain))
+    public func pullMLSOneToOneConversation(for userID: String, domain: String) async throws -> String {
+        pullMLSOneToOneConversationForDomain_Invocations.append((userID: userID, domain: domain))
 
-        if let error = pullMLSOneToOneConversationUserIDDomain_MockError {
+        if let error = pullMLSOneToOneConversationForDomain_MockError {
             throw error
         }
 
-        if let mock = pullMLSOneToOneConversationUserIDDomain_MockMethod {
+        if let mock = pullMLSOneToOneConversationForDomain_MockMethod {
             return try await mock(userID, domain)
-        } else if let mock = pullMLSOneToOneConversationUserIDDomain_MockValue {
+        } else if let mock = pullMLSOneToOneConversationForDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `pullMLSOneToOneConversationUserIDDomain`")
+            fatalError("no mock for `pullMLSOneToOneConversationForDomain`")
+        }
+    }
+
+    // MARK: - fetchOrCreateConversation
+
+    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+
+    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
         }
     }
 
@@ -309,19 +375,39 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
     }
 
-    // MARK: - removeFromConversations
+    // MARK: - removeParticipantFromAllConversations
 
-    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
-    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_Invocations: [(participantID: UUID, participantDomain: String?, date: Date)] = []
+    public var removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_MockError: Error?
+    public var removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
-    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
-        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+    public func removeParticipantFromAllConversations(participantID: UUID, participantDomain: String?, removedAt date: Date) async throws {
+        removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_Invocations.append((participantID: participantID, participantDomain: participantDomain, date: date))
 
-        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
-            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        if let error = removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_MockError {
+            throw error
         }
 
-        await mock(user, removalDate)
+        guard let mock = removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_MockMethod else {
+            fatalError("no mock for `removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt`")
+        }
+
+        try await mock(participantID, participantDomain, date)
+    }
+
+    // MARK: - addParticipantToConversation
+
+    public var addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_Invocations: [(conversationID: UUID, conversationDomain: String?, participantID: UUID, participantDomain: String?, participantRole: String)] = []
+    public var addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_MockMethod: ((UUID, String?, UUID, String?, String) async -> Void)?
+
+    public func addParticipantToConversation(conversationID: UUID, conversationDomain: String?, participantID: UUID, participantDomain: String?, participantRole: String) async {
+        addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_Invocations.append((conversationID: conversationID, conversationDomain: conversationDomain, participantID: participantID, participantDomain: participantDomain, participantRole: participantRole))
+
+        guard let mock = addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_MockMethod else {
+            fatalError("no mock for `addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole`")
+        }
+
+        await mock(conversationID, conversationDomain, participantID, participantDomain, participantRole)
     }
 
 }
@@ -758,14 +844,14 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
     // MARK: - fetchSelfUser
 
     public var fetchSelfUser_Invocations: [Void] = []
-    public var fetchSelfUser_MockMethod: (() -> ZMUser)?
+    public var fetchSelfUser_MockMethod: (() async -> ZMUser)?
     public var fetchSelfUser_MockValue: ZMUser?
 
-    public func fetchSelfUser() -> ZMUser {
+    public func fetchSelfUser() async -> ZMUser {
         fetchSelfUser_Invocations.append(())
 
         if let mock = fetchSelfUser_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = fetchSelfUser_MockValue {
             return mock
         } else {
@@ -873,15 +959,15 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - fetchOrCreateUser
 
-    public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
+    public var fetchOrCreateUserWithDomain_Invocations: [(id: UUID, domain: String?)] = []
     public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
     public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
 
-    public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
-        fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
+    public func fetchOrCreateUser(with id: UUID, domain: String?) -> ZMUser {
+        fetchOrCreateUserWithDomain_Invocations.append((id: id, domain: domain))
 
         if let mock = fetchOrCreateUserWithDomain_MockMethod {
-            return mock(uuid, domain)
+            return mock(id, domain)
         } else if let mock = fetchOrCreateUserWithDomain_MockValue {
             return mock
         } else {
@@ -1035,6 +1121,29 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
 
         try await mock(id, domain, date)
+    }
+
+    // MARK: - isSelfUser
+
+    public var isSelfUserIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var isSelfUserIdDomain_MockError: Error?
+    public var isSelfUserIdDomain_MockMethod: ((UUID, String?) async throws -> Bool)?
+    public var isSelfUserIdDomain_MockValue: Bool?
+
+    public func isSelfUser(id: UUID, domain: String?) async throws -> Bool {
+        isSelfUserIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = isSelfUserIdDomain_MockError {
+            throw error
+        }
+
+        if let mock = isSelfUserIdDomain_MockMethod {
+            return try await mock(id, domain)
+        } else if let mock = isSelfUserIdDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isSelfUserIdDomain`")
+        }
     }
 
 }

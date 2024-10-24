@@ -240,7 +240,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        let localSelfUser = sut.fetchSelfUser()
+        let localSelfUser = await sut.fetchSelfUser()
 
         // Then
 
@@ -360,7 +360,7 @@ final class UserRepositoryTests: XCTestCase {
         }
 
         // Mock
-        conversationsRepository.removeFromConversationsUserRemovalDate_MockMethod = { _, _ in }
+        conversationsRepository.removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in }
 
         // When
 
@@ -373,7 +373,7 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(user.isAccountDeleted, true)
-        XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
+        XCTAssertEqual(conversationsRepository.removeParticipantFromAllConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count, 1)
     }
 
     func testUpdateUserProperty_It_Enables_Read_Receipts_Property() async throws {
@@ -396,9 +396,9 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [self] in
-            let selfUser = try XCTUnwrap(sut.fetchSelfUser())
+        let selfUser = await sut.fetchSelfUser()
 
+        await context.perform {
             XCTAssertEqual(selfUser.readReceiptsEnabled, true)
             XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
         }
@@ -455,7 +455,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.updateUser(from: Scaffolding.event)
+        await sut.updateUser(from: Scaffolding.event)
 
         // Then
 
@@ -470,7 +470,37 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testIsSelfUser_It_Returns_Correct_Flag() async throws {
+        // Mock
+
+        let (selfUser, notSelfUser) = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
+            let notSelfUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            return (selfUser, notSelfUser)
+        }
+
+        // When / Then isSelfUser == true
+
+        let isSelfUser = try await sut.isSelfUser(
+            id: Scaffolding.selfUserID,
+            domain: nil
+        )
+
+        XCTAssertEqual(isSelfUser, true)
+
+        // When / Then isSelfUser == false
+
+        let isNotSelfUser = try await sut.isSelfUser(
+            id: Scaffolding.userID,
+            domain: nil
+        )
+
+        XCTAssertEqual(isNotSelfUser, false)
+    }
+
     private enum Scaffolding {
+        static let selfUserID = UUID()
         static let userID = UUID()
         static let domain = "domain.com"
         static let existingHandle = "handle"
