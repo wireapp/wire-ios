@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a new conversation was created.
 
-public struct ConversationCreateEvent: Equatable, Codable {
+public struct ConversationCreateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 
@@ -37,5 +37,17 @@ public struct ConversationCreateEvent: Equatable, Codable {
     /// The conversation metadata.
 
     public let conversation: Conversation
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        conversation: Conversation
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.conversation = conversation
+    }
 
 }
