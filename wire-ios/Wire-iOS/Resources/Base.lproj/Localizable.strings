@@ -59,8 +59,8 @@
 "peoplepicker.header.directory" = "Connect";
 "peoplepicker.header.federation" = "Connect with other domain";
 
-"peoplepicker.group.title.singular" = "Add Participants";
-"peoplepicker.group.title.plural" = "Add Participants (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Skip";
 "peoplepicker.group.done" = "Done";
 "peoplepicker.group.create" = "Create";

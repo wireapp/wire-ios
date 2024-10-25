@@ -132,7 +132,7 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             mainCoordinator: mainCoordinator,
-            getUserAccountImageUseCase: GetUserAccountImageUseCase()
+            getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
         )
         self.init(
             viewModel: viewModel,
@@ -516,23 +516,6 @@ final class ConversationListViewController: UIViewController {
     /// - Parameter focus: Boolean to indicate if the view should focus
     func selectInboxAndFocusOnView(focus: Bool) {
         listContentController.selectInboxAndFocus(onView: focus)
-    }
-}
-
-// MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
-
-extension ConversationListViewController: ArchivedListViewControllerDelegate {
-
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
-    ) {
-        _ = selectOnListContentController(
-            conversation,
-            scrollTo: nil,
-            focusOnView: true,
-            animated: true
-        )
     }
 }
 
