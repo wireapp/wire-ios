@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 public enum AccountImageSource: Equatable, Sendable {
-    case image(UIImage), text(String)
-    init () { self = .text("") }
+    case image(UIImage), text(_ initials: String)
+    public init() { self = .text("") }
 }

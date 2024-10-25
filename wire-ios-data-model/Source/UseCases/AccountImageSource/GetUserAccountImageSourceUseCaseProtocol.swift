@@ -19,8 +19,8 @@
 import CoreData
 
 /// If the personal user has an account image set, this use cases retrieves it.
-@MainActor
 public protocol GetUserAccountImageSourceUseCaseProtocol {
+    @MainActor
     func invoke(
         user: some UserType,
         userContext: NSManagedObjectContext?,

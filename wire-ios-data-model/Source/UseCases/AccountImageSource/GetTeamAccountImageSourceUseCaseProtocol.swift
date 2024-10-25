@@ -20,8 +20,8 @@ import CoreData
 
 /// If the team has an image set, this use cases retrieves it.
 /// If no team image data is available, a string value with the team name's initials will be returned.
-@MainActor
 public protocol GetTeamAccountImageSourceUseCaseProtocol {
+    @MainActor
     func invoke(
         user: some UserType,
         userContext: NSManagedObjectContext?,
