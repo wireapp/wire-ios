@@ -23,9 +23,6 @@ import XCTest
 
 final class GetUserAccountImageSourceUseCaseTests: XCTestCase {
 
-//    private var mockAccountImageGenerator: MockAccountImageGenerator!
-//    private var mockInitialsProvider: MockInitialsProvider!
-//    private var mockAccount: MockAccount!
     private var coreDataStack: CoreDataStack!
     private var sut: GetUserAccountImageSourceUseCase!
 

@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireDataModelSupport
 import XCTest
 
+@testable import WireDataModel
+
+// TODO: finish implementation
 final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
-//    private var mockAccountImageGenerator: MockAccountImageGenerator!
-//    private var mockUser: MockUser!
-//    private var mockAccount: MockAccount!
     private var coreDataStack: CoreDataStack!
     private var sut: GetTeamAccountImageSourceUseCase!
 

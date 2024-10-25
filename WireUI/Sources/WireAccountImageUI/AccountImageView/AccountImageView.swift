@@ -31,7 +31,7 @@ public final class AccountImageView: UIView {
     // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
-    private let initialsLabelInset: CGFloat = 5
+    private let initialsLabelSizeMultiplier: CGFloat = 7/10
 
     enum Defaults {
         static let imageViewBorderWidth: CGFloat = 1
@@ -170,6 +170,7 @@ public final class AccountImageView: UIView {
         initialsLabel.adjustsFontSizeToFitWidth = true
         initialsLabel.minimumScaleFactor = 0.1
         initialsLabel.translatesAutoresizingMaskIntoConstraints = false
+    // TODO: initialsLabel.backgroundColor!
         accountImageViewWrapper.addSubview(initialsLabel)
 
         NSLayoutConstraint.activate([
@@ -179,10 +180,10 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: imageBorderWidth),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: imageBorderWidth),
             // text mode
-            initialsLabel.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: initialsLabelInset),
-            initialsLabel.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: initialsLabelInset),
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: initialsLabel.trailingAnchor, constant: initialsLabelInset),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: initialsLabel.bottomAnchor, constant: initialsLabelInset)
+            initialsLabel.centerXAnchor.constraint(equalTo: accountImageViewWrapper.centerXAnchor),
+            initialsLabel.centerYAnchor.constraint(equalTo: accountImageViewWrapper.centerYAnchor),
+            initialsLabel.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: initialsLabelSizeMultiplier),
+            initialsLabel.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: initialsLabelSizeMultiplier)
         ])
 
         // view which renders the availability status
