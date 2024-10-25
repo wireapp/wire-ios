@@ -284,7 +284,6 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
-		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
 		5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */; };
 		5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
@@ -1198,7 +1197,6 @@
 		591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
 		591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
-		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSClientID+random.swift"; sourceTree = "<group>"; };
 		5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSConferenceInfo+random.swift"; sourceTree = "<group>"; };
 		5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPropertyValidating.swift; sourceTree = "<group>"; };
@@ -1861,8 +1859,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		594C4E2D2CCAAB6900F13D03 /* AccountImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImage; sourceTree = "<group>"; };
-		594C4E382CCAAB9B00F13D03 /* AccountImage */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImage; sourceTree = "<group>"; };
+		594C4E2D2CCAAB6900F13D03 /* AccountImageSource */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImageSource; sourceTree = "<group>"; };
+		594C4E382CCAAB9B00F13D03 /* AccountImageSource */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AccountImageSource; sourceTree = "<group>"; };
+		594C4E462CCB199200F13D03 /* generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = generated; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2191,17 +2190,9 @@
 			children = (
 				017F67952C207EDB00B6E02D /* AutoMockable.stencil */,
 				017F67962C207EDB00B6E02D /* config.yml */,
-				594EB2FF2B1E31D30022A5CD /* generated */,
+				594C4E462CCB199200F13D03 /* generated */,
 			);
 			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		594EB2FF2B1E31D30022A5CD /* generated */ = {
-			isa = PBXGroup;
-			children = (
-				594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */,
-			);
-			path = generated;
 			sourceTree = "<group>";
 		};
 		597A3BB52B6418090020E337 /* Availability */ = {
@@ -2307,7 +2298,7 @@
 		638941EC2AF4FD170051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				594C4E2D2CCAAB6900F13D03 /* AccountImage */,
+				594C4E2D2CCAAB6900F13D03 /* AccountImageSource */,
 				591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */,
 				591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */,
 				59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */,
@@ -2321,7 +2312,7 @@
 		638941F42AF521050051ABFD /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				594C4E382CCAAB9B00F13D03 /* AccountImage */,
+				594C4E382CCAAB9B00F13D03 /* AccountImageSource */,
 				591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */,
 				59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */,
 				638941F52AF5211D0051ABFD /* RemoveLocalConversationUseCaseTests.swift */,
@@ -3811,6 +3802,9 @@
 			dependencies = (
 				598E86C02BF4D70500FC5438 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				594C4E462CCB199200F13D03 /* generated */,
+			);
 			name = WireDataModelSupport;
 			productName = WireDataModelSupport;
 			productReference = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */;
@@ -3830,7 +3824,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				594C4E2D2CCAAB6900F13D03 /* AccountImage */,
+				594C4E2D2CCAAB6900F13D03 /* AccountImageSource */,
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
@@ -3856,7 +3850,7 @@
 				F9C9A5091CAD5DF10039E10C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				594C4E382CCAAB9B00F13D03 /* AccountImage */,
+				594C4E382CCAAB9B00F13D03 /* AccountImageSource */,
 			);
 			name = WireDataModelTests;
 			productName = WireDataModelTests;
@@ -4049,7 +4043,6 @@
 				0125F73C2B28A31C00D989AB /* SpyUserClientKeyStore.swift in Sources */,
 				635101EE2B4EE449009D6166 /* MockE2EIEnrollment.swift in Sources */,
 				5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */,
-				594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */,
 				590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */,
 				0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */,
 				6398545C2B3346F700AA10DE /* MockSafeCoreCrypto.swift in Sources */,

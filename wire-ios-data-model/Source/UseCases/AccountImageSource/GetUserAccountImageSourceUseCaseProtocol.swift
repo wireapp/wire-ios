@@ -16,17 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
+
 /// If the personal user has an account image set, this use cases retrieves it.
 @MainActor
 public protocol GetUserAccountImageSourceUseCaseProtocol {
-
-    // TODO: fix doc
-    /// <#Description#>
-    /// - Parameters:
-    ///   - user: <#user description#>
-    ///   - userContext: <#userContext description#>
-    ///   - account: <#account description#>
-    /// - Returns: <#description#>
     func invoke(
         user: some UserType,
         userContext: NSManagedObjectContext?,

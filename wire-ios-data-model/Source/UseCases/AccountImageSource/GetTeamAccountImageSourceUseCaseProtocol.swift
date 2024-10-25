@@ -17,20 +17,11 @@
 //
 
 import CoreData
-import Dispatch
 
 /// If the team has an image set, this use cases retrieves it.
 /// If no team image data is available, a string value with the team name's initials will be returned.
 @MainActor
 public protocol GetTeamAccountImageSourceUseCaseProtocol {
-
-    // TODO: fix doc
-    /// <#Description#>
-    /// - Parameters:
-    ///   - user: <#user description#>
-    ///   - userContext: <#userContext description#>
-    ///   - account: <#account description#>
-    /// - Returns: <#description#>
     func invoke(
         user: some UserType,
         userContext: NSManagedObjectContext?,
