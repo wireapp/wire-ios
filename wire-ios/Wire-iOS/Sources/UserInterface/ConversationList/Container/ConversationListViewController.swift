@@ -110,6 +110,7 @@ final class ConversationListViewController: UIViewController {
             updateNavigationItem()
             applyColorTheme()
             updateFilterContainerView()
+            navigationItem.searchController?.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
         }
     }
 
@@ -394,9 +395,10 @@ final class ConversationListViewController: UIViewController {
 
         let searchController = UISearchController(searchResultsController: .none)
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
+
+        searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
 
         if !isEmptyPlaceholderVisible {
             navigationItem.searchController = searchController
