@@ -373,7 +373,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
