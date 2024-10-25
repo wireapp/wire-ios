@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebarUI
-import WireDataModel
 import WireAccountImageUI
+import WireDataModel
+import WireSidebarUI
 
 extension WireDataModel.AccountImageSource {
 

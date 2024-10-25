@@ -21,7 +21,6 @@ import XCTest
 
 @testable import WireDataModel
 
-// TODO: finish implementation
 final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
