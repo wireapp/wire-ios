@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import CoreData
 
-/// If the personal user has an account image set, this use cases retrieves it.
-/// Otherwise an image will be generated using the initials of the person's name.
-public protocol GetUserAccountImageUseCaseProtocol {
-
-    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage
+/// If the team has an image set, this use cases retrieves it.
+/// If no team image data is available, a string value with the team name's initials will be returned.
+public protocol GetTeamAccountImageSourceUseCaseProtocol {
+    @MainActor
+    func invoke(
+        user: some UserType,
+        userContext: NSManagedObjectContext?,
+        account: Account
+    ) async throws -> AccountImageSource
 }
