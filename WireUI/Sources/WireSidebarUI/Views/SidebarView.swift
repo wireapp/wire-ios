@@ -101,7 +101,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
-                accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }
+                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) }
             )
         }
     }
