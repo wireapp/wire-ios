@@ -17,15 +17,16 @@
 //
 
 import WireDataModelSupport
+import WireDesign
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-// MARK: - ConversationListViewControllerTests
+// MARK: - ConversationListViewControllerSnapshotTests
 
-final class ConversationListViewControllerTests: XCTestCase {
+final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -92,6 +93,13 @@ final class ConversationListViewControllerTests: XCTestCase {
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
+
+        if let navigationController = tabBarController.conversationListUI?.navigationController {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+            navigationController.navigationBar.standardAppearance = navBarAppearance
+            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
+        }
 
         await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
         tabBarController.overrideUserInterfaceStyle = .dark

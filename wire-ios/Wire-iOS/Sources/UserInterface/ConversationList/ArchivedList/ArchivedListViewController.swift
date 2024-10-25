@@ -50,31 +50,18 @@ final class ArchivedListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.accessibilityViewIsModal = true
         view.backgroundColor = SemanticColors.View.backgroundConversationList
-        // "Avoid tying the creation of bar button items in your navigation item to the creation of your view controller's view. The navigation item of a view controller may be retrieved independently of the view controller's view. ..."
-        setupNavigationItem()
         setupCollectionView()
         setupEmptyPlaceholder()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationBarTitle(L10n.Localizable.ArchivedList.title.capitalized)
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
         emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
-    }
-
-    private func setupNavigationItem() {
-
-        let titleLabel = UILabel()
-        titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
-        titleLabel.font = FontSpec(.normal, .semibold).font
-        titleLabel.textColor = SemanticColors.Label.textDefault
-        titleLabel.accessibilityTraits = .header
-        navigationItem.titleView = titleLabel
     }
 
     private func setupCollectionView() {
