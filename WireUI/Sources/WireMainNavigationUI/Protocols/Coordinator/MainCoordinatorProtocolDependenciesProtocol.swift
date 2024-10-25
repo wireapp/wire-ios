@@ -16,15 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-public protocol MainCoordinatorInjectingViewControllerBuilder {
-
-    associatedtype Dependencies: MainCoordinatorProtocolDependencies
-    associatedtype ViewController: UIViewController
-
-    @MainActor
-    func build<MainCoordinator: MainCoordinatorProtocol>(
-        mainCoordinator: MainCoordinator
-    ) -> ViewController where MainCoordinator.Dependencies == Dependencies
+public protocol MainCoordinatorProtocolDependenciesProtocol {
+    associatedtype ConversationFilter: MainConversationFilterRepresentable
+    associatedtype ConversationModel
+    associatedtype ConversationMessageModel
+    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
 }

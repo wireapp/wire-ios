@@ -59,26 +59,6 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
         hideSettingsContent_Invocations.append(())
     }
 
-    var showSelfProfile_Invocations: [Void] = []
-    func showSelfProfile() async {
-        showSelfProfile_Invocations.append(())
-    }
-
-    var showUserProfile_Invocations: [User] = []
-    func showUserProfile(user: User) async {
-        showUserProfile_Invocations += [user]
-    }
-
-    var showConnect_Invocations: [Void] = []
-    func showConnect() async {
-        showConnect_Invocations.append(())
-    }
-
-    var showCreateGroupConversation_Invocations: [Void] = []
-    func showCreateGroupConversation() async {
-        showCreateGroupConversation_Invocations.append(())
-    }
-
     var presentViewController_Invocations: [UIViewController] = []
     func presentViewController(_ viewController: UIViewController) async {
         presentViewController_Invocations += [viewController]
