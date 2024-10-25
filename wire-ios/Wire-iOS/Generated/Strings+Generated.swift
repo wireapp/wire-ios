@@ -4439,12 +4439,12 @@ internal enum L10n {
         /// Skip
         internal static let skip = L10n.tr("Localizable", "peoplepicker.group.skip", fallback: "Skip")
         internal enum Title {
-          /// Add Participants (%d)
+          /// Select Participants (%d)
           internal static func plural(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "peoplepicker.group.title.plural", p1, fallback: "Add Participants (%d)")
+            return L10n.tr("Localizable", "peoplepicker.group.title.plural", p1, fallback: "Select Participants (%d)")
           }
-          /// Add Participants
-          internal static let singular = L10n.tr("Localizable", "peoplepicker.group.title.singular", fallback: "Add Participants")
+          /// Select Participants
+          internal static let singular = L10n.tr("Localizable", "peoplepicker.group.title.singular", fallback: "Select Participants")
         }
       }
       internal enum Header {
