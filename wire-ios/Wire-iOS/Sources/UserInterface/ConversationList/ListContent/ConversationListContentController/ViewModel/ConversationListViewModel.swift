@@ -215,7 +215,12 @@ final class ConversationListViewModel: NSObject {
     }
 
     // Local copies of the lists.
-    var sections: [Section] = []
+    private var sections: [Section] = []
+    
+    var isEmptyList: Bool {
+        let totalItems = sections.map { $0.items.count }.reduce(0, +)
+        return totalItems == 0
+    }
 
     private typealias DiffKitSection = ArraySection<Int, SectionItem>
 
@@ -400,7 +405,7 @@ final class ConversationListViewModel: NSObject {
         delegate?.listViewModelShouldBeReloaded()
     }
 
-    private func updateAllSections() {
+    private func updateAllSections() {//
         sections = createSections()
     }
 
