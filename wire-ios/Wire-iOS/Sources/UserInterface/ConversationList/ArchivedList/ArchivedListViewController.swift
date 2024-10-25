@@ -51,7 +51,7 @@ final class ArchivedListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.accessibilityViewIsModal = true
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
+        view.backgroundColor = ColorTheme.Backgrounds.surface
         setupCollectionView()
         setupEmptyPlaceholder()
     }
