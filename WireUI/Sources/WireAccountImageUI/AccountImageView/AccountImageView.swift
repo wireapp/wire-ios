@@ -61,6 +61,16 @@ public final class AccountImageView: UIView {
         didSet { updateAccountImageBorder() }
     }
 
+    public var initialsTextColor: UIColor {
+        get { initialsLabel.textColor }
+        set { initialsLabel.textColor = newValue }
+    }
+
+    public var initialsBackgroundColor: UIColor {
+        get { initialsLabel.superview!.backgroundColor! }
+        set { initialsLabel.superview!.backgroundColor = newValue }
+    }
+
     public var availableColor: UIColor {
         get { availabilityIndicatorView.availableColor }
         set { availabilityIndicatorView.availableColor = newValue }
@@ -170,8 +180,8 @@ public final class AccountImageView: UIView {
         initialsLabel.adjustsFontSizeToFitWidth = true
         initialsLabel.minimumScaleFactor = 0.1
         initialsLabel.translatesAutoresizingMaskIntoConstraints = false
-    // TODO: initialsLabel.backgroundColor!
         accountImageViewWrapper.addSubview(initialsLabel)
+        accountImageViewWrapper.backgroundColor = .systemBackground
 
         NSLayoutConstraint.activate([
             // image mode
