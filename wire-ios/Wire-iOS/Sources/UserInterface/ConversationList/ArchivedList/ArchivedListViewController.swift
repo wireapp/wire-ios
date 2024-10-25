@@ -59,9 +59,21 @@ final class ArchivedListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.ArchivedList.title.capitalized)
+        configureNavigationBarAppearance()
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
         emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     private func setupCollectionView() {
