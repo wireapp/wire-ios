@@ -16,19 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import CoreData
 
+/// If the personal user has an account image set, this use cases retrieves it.
 @MainActor
-func AccountImageGeneratorPreview(_ initials: String) -> UINavigationController {
-    let accountImageGenerator = AccountImageGenerator()
-
-    let accountImageView = AccountImageView()
-    Task {
-        accountImageView.accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
-    }
-
-    let viewController = UIViewController()
-    viewController.navigationItem.leftBarButtonItem = .init(customView: accountImageView)
-    let navigationController = UINavigationController(rootViewController: viewController)
-    return navigationController
+public protocol GetUserAccountImageSourceUseCaseProtocol {
+    func invoke(
+        user: some UserType,
+        userContext: NSManagedObjectContext?,
+        account: Account
+    ) async throws -> AccountImageSource
 }

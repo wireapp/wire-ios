@@ -18,9 +18,11 @@
 
 import UIKit
 
-/// If the personal user has an account image set, this use cases retrieves it.
-/// Otherwise an image will be generated using the initials of the person's name.
-public protocol GetUserAccountImageUseCaseProtocol {
+public enum AccountImageSource: Sendable {
 
-    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage
+    case image(UIImage), text(_ initials: String)
+
+    public init() {
+        self = .text("")
+    }
 }

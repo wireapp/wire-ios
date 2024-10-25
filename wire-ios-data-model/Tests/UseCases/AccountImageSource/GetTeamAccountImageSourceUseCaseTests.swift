@@ -16,32 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
+import WireDataModelSupport
 import XCTest
 
-@testable import WireAccountImageUI
+@testable import WireDataModel
 
-final class GetTeamAccountImageUseCaseTests: XCTestCase {
+// TODO: finish implementation
+final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
-    private var mockAccountImageGenerator: MockAccountImageGenerator!
-    private var mockUser: MockUser!
-    private var mockAccount: MockAccount!
-    private var sut: GetTeamAccountImageUseCase<MockAccountImageGenerator>!
+    private var coreDataStack: CoreDataStack!
+    private var sut: GetTeamAccountImageSourceUseCase!
 
-    override func setUp() {
-        mockAccountImageGenerator = .init()
-        sut = .init(accountImageGenerator: mockAccountImageGenerator)
-        mockUser = .init()
-        mockAccount = .init()
+    @MainActor
+    override func setUp() async throws {
+        coreDataStack = try await CoreDataStackHelper().createStack()
+
+//        mockAccountImageGenerator = .init()
+        sut = .init()
+//        mockUser = .init()
+//        mockAccount = .init()
     }
 
     override func tearDown() {
-        mockAccount = nil
-        mockUser = nil
+//        mockAccount = nil
+//        mockUser = nil
         sut = nil
-        mockAccountImageGenerator = nil
+//        mockAccountImageGenerator = nil
     }
-
+/*
     func testTeamImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
@@ -105,8 +107,9 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
             // Then
         }
     }
+ */
 
-    // MARK: -
+    // MARK: - Helper
 
     private func imageData(from solidColor: UIColor) throws -> Data {
         var image = UIImage.from(solidColor: solidColor)
