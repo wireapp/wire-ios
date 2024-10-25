@@ -41,6 +41,7 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
         mockAccountImageGenerator = nil
     }
 
+    @MainActor
     func testUserImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
