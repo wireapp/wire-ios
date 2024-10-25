@@ -19,9 +19,10 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+
+@testable import WireDomain
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 

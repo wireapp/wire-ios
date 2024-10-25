@@ -67,6 +67,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
+    @MainActor
     func testAccountImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
@@ -79,6 +80,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
         XCTAssertEqual(expectedData, actualData)
     }
 
+    @MainActor
     func testAccountTeamNameInitalsImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
