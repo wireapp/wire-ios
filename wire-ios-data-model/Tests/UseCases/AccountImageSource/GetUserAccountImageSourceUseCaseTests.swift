@@ -34,6 +34,7 @@ final class GetUserAccountImageSourceUseCaseTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        coreDataStack = nil
     }
 
     func testAccountImage() async throws {
@@ -102,7 +103,7 @@ final class GetUserAccountImageSourceUseCaseTests: XCTestCase {
 
         do {
             // When
-            let accountImageSource = try await sut.invoke(
+            _ = try await sut.invoke(
                 user: user,
                 userContext: user.managedObjectContext,
                 account: coreDataStack.account
