@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-/// If the personal user has an account image set, this use cases retrieves it.
-/// Otherwise an image will be generated using the initials of the person's name.
-public protocol GetUserAccountImageUseCaseProtocol {
-
-    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage
+public enum AccountImageSource {
+    case image(UIImage), text(String)
+    init () { self = .text("") }
 }

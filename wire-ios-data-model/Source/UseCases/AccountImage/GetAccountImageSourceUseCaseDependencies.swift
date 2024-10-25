@@ -17,34 +17,31 @@
 //
 
 import Foundation
-
-/// An abstraction of a user for the account image use cases.
-public protocol GetAccountImageUseCaseUserProtocol {
-    associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
+/*
+/// An abstraction of a user for the account image source use cases.
+public protocol GetAccountImageSourceUseCaseUserProtocol {
+    associatedtype TeamMembership: GetAccountImageSourceUseCaseTeamMembershipProtocol
     var membership: TeamMembership? { get async }
 }
 
-/// An abstraction of a user's team membership for the account image use cases.
-public protocol GetAccountImageUseCaseTeamMembershipProtocol {
-    associatedtype Team: GetAccountImageUseCaseTeamProtocol
+/// An abstraction of a user's team membership for the account image source use cases.
+public protocol GetAccountImageSourceUseCaseTeamMembershipProtocol {
+    associatedtype Team: GetAccountImageSourceUseCaseTeamProtocol
     var team: Team? { get async }
 }
 
-/// An abstraction of a user's team for the account image use cases.
-public protocol GetAccountImageUseCaseTeamProtocol {
+/// An abstraction of a user's team for the account image source use cases.
+public protocol GetAccountImageSourceUseCaseTeamProtocol {
     var name: String? { get async }
     var teamImageSource: AccountImageSource? { get async }
 }
 
-/// An abstraction of a user account for the account image use cases.
+/// An abstraction of a user account for the account image source use cases.
 @MainActor
-public protocol GetAccountImageUseCaseAccountProtocol: Sendable {
+public protocol GetAccountImageSourceUseCaseAccountProtocol: Sendable {
     var imageData: Data? { get }
     var userName: String { get }
     var teamName: String? { get }
     var teamImageSource: AccountImageSource? { get }
 }
-
-public protocol GetAccountImageUseCaseInitialsProvider {
-    func initials(from fullName: String) async -> String
-}
+*/
