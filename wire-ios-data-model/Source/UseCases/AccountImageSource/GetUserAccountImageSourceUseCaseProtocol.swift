@@ -16,30 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
-/// An event where some participants were removed from a conversation.
-
-public struct ConversationMemberLeaveEvent: Equatable, Codable, Sendable {
-
-    /// The id of the conversation.
-
-    public let conversationID: ConversationID
-
-    /// The id of the user who removed the members.
-
-    public let senderID: UserID
-
-    /// When the members were removed.
-
-    public let timestamp: Date
-
-    /// The ids of the members who were removed.
-
-    public let removedUserIDs: Set<UserID>
-
-    /// The reason why the members were removed.
-
-    public let reason: ConversationMemberLeaveReason
-
+/// If the personal user has an account image set, this use cases retrieves it.
+@MainActor
+public protocol GetUserAccountImageSourceUseCaseProtocol {
+    func invoke(
+        user: some UserType,
+        userContext: NSManagedObjectContext?,
+        account: Account
+    ) async throws -> AccountImageSource
 }

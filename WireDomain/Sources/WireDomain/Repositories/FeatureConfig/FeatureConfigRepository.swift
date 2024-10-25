@@ -75,6 +75,8 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     // MARK: - Properties
 
     private let featureConfigsAPI: any FeatureConfigsAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create FeatureConfigLocalStore
     private let context: NSManagedObjectContext
     private let logger = WireLogger.featureConfigs
     private let featureStateSubject = PassthroughSubject<FeatureState, Never>()

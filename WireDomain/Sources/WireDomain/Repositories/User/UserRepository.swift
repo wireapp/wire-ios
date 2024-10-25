@@ -31,7 +31,7 @@ public protocol UserRepositoryProtocol {
 
     /// Fetch self user from the local store
 
-    func fetchSelfUser() -> ZMUser
+    func fetchSelfUser() async -> ZMUser
 
     /// Fetches a user locally
     ///
@@ -81,7 +81,7 @@ public protocol UserRepositoryProtocol {
     func fetchOrCreateUser(
         with uuid: UUID,
         domain: String?
-    ) -> ZMUser
+    ) async -> ZMUser
 
     /// Removes user push token from storage.
 
@@ -95,7 +95,7 @@ public protocol UserRepositoryProtocol {
 
     func fetchOrCreateUserClient(
         with id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
 
     /// Updates the user client informations locally.
     ///
@@ -129,7 +129,7 @@ public protocol UserRepositoryProtocol {
 
     /// Disables user legal hold.
 
-    func disableUserLegalHold() async throws
+    func disableUserLegalHold() async
 
     /// Updates a user property
     ///
@@ -160,73 +160,71 @@ public protocol UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws
+
+    func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: move to ClientRepository when related branch is merged
+    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserRepository: UserRepositoryProtocol {
 
-    enum DefaultsKeys: String {
-        case pushToken = "PushToken"
-    }
-
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let conversationRepository: any ConversationRepositoryProtocol
-    private let storage: UserDefaults
+    private let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
         conversationRepository: ConversationRepositoryProtocol,
-        sharedUserDefaults: UserDefaults = .standard
+        userLocalStore: any UserLocalStoreProtocol
     ) {
-        self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationLabelsRepository = conversationLabelsRepository
         self.conversationRepository = conversationRepository
-        storage = sharedUserDefaults
+        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
 
-    public func fetchSelfUser() -> ZMUser {
-        ZMUser.selfUser(in: context)
+    public func fetchSelfUser() async -> ZMUser {
+        await userLocalStore.fetchSelfUser()
     }
 
     public func fetchOrCreateUser(
         with id: UUID,
         domain: String? = nil
-    ) -> ZMUser {
-        ZMUser.fetchOrCreate(
+    ) async -> ZMUser {
+        await userLocalStore.fetchOrCreateUser(
             with: id,
-            domain: domain,
-            in: context
+            domain: domain
         )
+    }
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        await userLocalStore.allSelfUserClientsAreActiveMLSClients()
     }
 
     public func fetchUser(
         with id: UUID,
         domain: String?
     ) async throws -> ZMUser {
-        try await context.perform { [context] in
-            guard let user = ZMUser.fetch(
-                with: id,
-                domain: domain,
-                in: context
-            ) else {
-                throw UserRepositoryError.failedToFetchUser(id)
-            }
-
-            return user
-        }
+        try await userLocalStore.fetchUser(
+            with: id,
+            domain: domain
+        )
     }
 
     public func pushSelfSupportedProtocols(
@@ -239,11 +237,7 @@ public final class UserRepository: UserRepositoryProtocol {
         let knownUserIDs: [WireDataModel.QualifiedID]
 
         do {
-            knownUserIDs = try await context.perform {
-                let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-                let knownUsers = try self.context.fetch(fetchRequest)
-                return knownUsers.compactMap(\.qualifiedID)
-            }
+            knownUserIDs = try await userLocalStore.fetchUsersQualifiedIDs()
         } catch {
             throw UserRepositoryError.failedToCollectKnownUsers(error)
         }
@@ -255,99 +249,29 @@ public final class UserRepository: UserRepositoryProtocol {
         do {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
-            await context.perform {
-                for user in userList.found {
-                    self.persistUser(from: user)
-                }
+            for user in userList.found {
+                await userLocalStore.persistUser(from: user)
             }
+
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
 
-    // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
     public func updateUser(
         from event: UserUpdateEvent
     ) async {
-        await context.perform { [self] in
-
-            let user = fetchOrCreateUser(
-                with: event.userID
-            )
-
-            if let name = event.name {
-                user.name = name
-            }
-
-            if let email = event.email {
-                user.emailAddress = email
-            }
-
-            if let handle = event.handle {
-                user.handle = handle
-            }
-
-            if let accentColor = event.accentColorID {
-                user.accentColorValue = Int16(accentColor)
-            }
-
-            let assetKeys: Set<String> = [
-                ZMUser.previewProfileAssetIdentifierKey,
-                ZMUser.completeProfileAssetIdentifierKey
-            ]
-
-            /// Do not update assets if user has local modifications: a possible explanation is that if user has local changes to its assets
-            /// we don't want to update them and keep these changes as is until they're synced.
-            if !user.hasLocalModifications(forKeys: assetKeys) {
-                let previewAssetKey = event.assets?
-                    .first(where: { $0.size == .preview })
-                    .map(\.key)
-
-                let completeAssetKey = event.assets?
-                    .first(where: { $0.size == .complete })
-                    .map(\.key)
-
-                if let previewAssetKey {
-                    user.previewProfileAssetIdentifier = previewAssetKey
-                }
-
-                if let completeAssetKey {
-                    user.completeProfileAssetIdentifier = completeAssetKey
-                }
-            }
-
-            user.supportedProtocols = event.supportedProtocols?.toDomainModel() ?? [.proteus]
-
-            user.isPendingMetadataRefresh = false
-        }
+        await userLocalStore.updateUser(from: event)
     }
 
     public func removePushToken() {
-        storage.set(
-            nil,
-            forKey: DefaultsKeys.pushToken.rawValue
-        )
+        userLocalStore.deletePushToken()
     }
 
     public func fetchOrCreateUserClient(
         with id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
-        let localUserClient = await context.perform { [context] in
-            if let existingClient = UserClient.fetchExistingUserClient(
-                with: id,
-                in: context
-            ) {
-                return (existingClient, false)
-            } else {
-                let newClient = UserClient.insertNewObject(in: context)
-                newClient.remoteIdentifier = id
-                return (newClient, true)
-            }
-        }
-
-        try context.save()
-
-        return localUserClient
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
+        await userLocalStore.fetchOrCreateUserClient(with: id)
     }
 
     public func updateUserClient(
@@ -355,57 +279,11 @@ public final class UserRepository: UserRepositoryProtocol {
         from remoteClient: WireAPI.UserClient,
         isNewClient: Bool
     ) async throws {
-        await context.perform { [context] in
-
-            localClient.label = remoteClient.label
-            localClient.type = remoteClient.type.toDomainModel()
-            localClient.model = remoteClient.model
-            localClient.deviceClass = remoteClient.deviceClass?.toDomainModel()
-            localClient.activationDate = remoteClient.activationDate
-            localClient.lastActiveDate = remoteClient.lastActiveDate
-            localClient.remoteIdentifier = remoteClient.id
-
-            let selfUser = ZMUser.selfUser(in: context)
-            localClient.user = localClient.user ?? selfUser
-
-            if isNewClient {
-                localClient.needsSessionMigration = selfUser.domain == nil
-            }
-
-            if localClient.isLegalHoldDevice, isNewClient {
-                selfUser.legalHoldRequest = nil
-                selfUser.needsToAcknowledgeLegalHoldStatus = true
-            }
-
-            if !localClient.isSelfClient() {
-                localClient.mlsPublicKeys = .init(
-                    ed25519: remoteClient.mlsPublicKeys?.ed25519,
-                    ed448: remoteClient.mlsPublicKeys?.ed448,
-                    p256: remoteClient.mlsPublicKeys?.p256,
-                    p384: remoteClient.mlsPublicKeys?.p384,
-                    p521: remoteClient.mlsPublicKeys?.p512
-                )
-            }
-
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
-
-            if let selfClient, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
-            }
-
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
-        }
-
-        try context.save()
+        try await userLocalStore.updateUserClient(
+            localClient,
+            from: remoteClient,
+            isNewClient: isNewClient
+        )
     }
 
     public func addLegalHoldRequest(
@@ -413,45 +291,32 @@ public final class UserRepository: UserRepositoryProtocol {
         clientID: String,
         lastPrekey: Prekey
     ) async {
-        await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-
-            guard let prekey = lastPrekey.toDomainModel() else {
-                return WireLogger.eventProcessing.error(
-                    "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
-                )
-            }
-
-            let legalHoldRequest = LegalHoldRequest(
-                target: userID,
-                requester: nil,
-                clientIdentifier: clientID,
-                lastPrekey: prekey
+        // prepare data for the local store
+        guard let mappedPrekey = lastPrekey.toDomainModel() else {
+            return WireLogger.eventProcessing.error(
+                "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
             )
-
-            selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
+
+        await userLocalStore.addSelfLegalHoldRequest(
+            for: userID,
+            clientID: clientID,
+            lastPrekey: mappedPrekey
+        )
     }
 
-    public func disableUserLegalHold() async throws {
-        let selfUser = fetchSelfUser()
-
-        try await context.perform { [context] in
-            selfUser.legalHoldRequestWasCancelled()
-
-            try context.save()
-        }
+    public func disableUserLegalHold() async {
+        await userLocalStore.cancelSelfUserLegalholdRequest()
     }
 
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
-            let selfUser = fetchSelfUser()
 
-            await context.perform {
-                selfUser.readReceiptsEnabled = isEnabled
-                selfUser.readReceiptsEnabledChangedRemotely = true
-            }
+            await userLocalStore.updateSelfUserReadReceipts(
+                isReadReceiptsEnabled: isEnabled,
+                isReadReceiptsEnabledChangedRemotely: true
+            )
 
         case .conversationLabels(let conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
@@ -468,20 +333,18 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         switch key {
         case .wireReceiptMode:
-            let selfUser = fetchSelfUser()
-
-            await context.perform {
-                selfUser.readReceiptsEnabled = false
-                selfUser.readReceiptsEnabledChangedRemotely = true
-            }
+            await userLocalStore.updateSelfUserReadReceipts(
+                isReadReceiptsEnabled: false,
+                isReadReceiptsEnabledChangedRemotely: true
+            )
 
         case .wireTypingIndicatorMode:
             // TODO: [WPB-726] feature not implemented yet
             break
 
         case .labels:
-            /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
-            /// see `ConversationLabelsRepository`
+            // Already handled with `user.properties-set` event (adding new labels and removing old ones)
+            // see `ConversationLabelsRepository`
             break
         }
     }
@@ -491,50 +354,32 @@ public final class UserRepository: UserRepositoryProtocol {
         domain: String?,
         at date: Date
     ) async throws {
-        let user = try await fetchUser(with: id, domain: domain)
-
-        let isSelfUser = await context.perform {
-            user.isSelfUser
-        }
+        let (user, isSelfUser) = try await userLocalStore.isSelfUser(
+            id: id,
+            domain: domain
+        )
 
         if isSelfUser {
-            let notification = AccountDeletedNotification(context: context)
-            notification.post(in: context.notificationContext)
+            userLocalStore.postAccountDeletedNotification()
         } else {
-            await context.perform {
-                user.isAccountDeleted = true
-            }
+            await userLocalStore.markAccountAsDeleted(for: user)
 
-            await conversationRepository.removeFromConversations(
+            await conversationRepository.removeUserFromAllGroupConversations(
                 user: user,
                 removalDate: date
             )
         }
     }
 
-    // MARK: - Private
-
-    private func persistUser(from user: WireAPI.User) {
-        let persistedUser = fetchOrCreateUser(
-            with: user.id.uuid,
-            domain: user.id.domain
+    public func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool {
+        let (_, isSelfUser) = try await userLocalStore.isSelfUser(
+            id: id,
+            domain: domain
         )
 
-        guard user.deleted == false else {
-            return persistedUser.markAccountAsDeleted(at: Date())
-        }
-
-        persistedUser.name = user.name
-        persistedUser.handle = user.handle
-        persistedUser.teamIdentifier = user.teamID
-        persistedUser.accentColorValue = Int16(user.accentID)
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-        persistedUser.emailAddress = user.email
-        persistedUser.expiresAt = user.expiresAt
-        persistedUser.serviceIdentifier = user.service?.id.transportString()
-        persistedUser.providerIdentifier = user.service?.provider.transportString()
-        persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
-        persistedUser.needsToBeUpdatedFromBackend = false
+        return isSelfUser
     }
 }
