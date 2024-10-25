@@ -154,6 +154,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(group.title)
+        configureNavigationBarAppearance()
     }
 
     required init(
@@ -194,6 +195,17 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
         setupTableView()
         setupNavigationBarAccessibility()
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     private func setupTableView() {

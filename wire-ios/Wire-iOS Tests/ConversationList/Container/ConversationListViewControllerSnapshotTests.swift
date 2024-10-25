@@ -17,15 +17,16 @@
 //
 
 import WireDataModelSupport
+import WireDesign
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-// MARK: - ConversationListViewControllerTests
+// MARK: - ConversationListViewControllerSnapshotTests
 
-final class ConversationListViewControllerTests: XCTestCase {
+final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 

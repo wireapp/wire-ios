@@ -216,7 +216,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        configureNavigationBarAppearance()
         viewModel.savePendingLastRead()
         configureEmptyPlaceholder()
     }
@@ -280,6 +280,17 @@ final class ConversationListViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     func setupFilterContainerView() {
@@ -362,7 +373,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
@@ -376,7 +387,7 @@ final class ConversationListViewController: UIViewController {
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
         ? ColorTheme.Backgrounds.backgroundVariant
-        : ColorTheme.Backgrounds.surfaceVariant
+        : ColorTheme.Backgrounds.surface
     }
 
     private func setupSearchController() {
