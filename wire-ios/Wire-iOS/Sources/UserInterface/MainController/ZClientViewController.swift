@@ -727,11 +727,11 @@ final class ZClientViewController: UIViewController {
     private func updateCachedAccountImage() async {
         do {
             let useCase = GetUserAccountImageSourceUseCase()
-            let accountImageSource = try await useCase.invoke(
+            cachedAccountImage = try await useCase.invoke(
                 user: userSession.selfUser,
                 userContext: userSession.contextProvider.viewContext,
                 account: account
-            )
+            ).mapToAccountImageSource()
         } catch {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }

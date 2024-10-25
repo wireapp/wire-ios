@@ -208,11 +208,11 @@ extension ConversationListViewController.ViewModel {
         Task { @MainActor in
             do {
                 let useCase = GetUserAccountImageSourceUseCase()
-                let accountImageSource = try await useCase.invoke(
+                accountImageSource = try await useCase.invoke(
                     user: userSession.selfUser,
                     userContext: userSession.contextProvider.viewContext,
                     account: account
-                )
+                ).mapToAccountImageSource()
             } catch {
                 WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
             }

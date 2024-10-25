@@ -17,12 +17,34 @@
 //
 
 import WireSidebarUI
+import WireDataModel
 import WireAccountImageUI
 
-extension WireSidebarUI.SidebarAccountInfo.AccountImageSource {
+extension WireDataModel.AccountImageSource {
 
-    /// Since `WireAccountImageUI.AccountImageSource` does not know about the type `WireSidebarUI`,
-    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.AccountImageSource` to `WireAccountImageUI.AccountImageSource`.
+    func mapToAccountImageSource() -> WireAccountImageUI.AccountImageSource {
+        switch self {
+        case .image(let image):
+                .image(image)
+        case .text(let text):
+                .text(text)
+        }
+    }
+}
+
+extension WireDataModel.AccountImageSource {
+
+    func mapToAccountImageSource() -> WireSidebarUI.SidebarAccountInfo.AccountImageSource {
+        switch self {
+        case .image(let image):
+                .image(image)
+        case .text(let text):
+                .text(text)
+        }
+    }
+}
+
+extension WireSidebarUI.SidebarAccountInfo.AccountImageSource {
 
     func mapToAccountImageSource() -> WireAccountImageUI.AccountImageSource {
         switch self {
