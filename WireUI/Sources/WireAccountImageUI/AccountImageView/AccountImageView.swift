@@ -44,7 +44,9 @@ public final class AccountImageView: UIView {
         didSet { updateAccountImage() }
     }
 
-    // TODO: [WPB-11449] is this even needed? We always show the user's image
+    // TODO: [WPB-11449] Is this still needed? In the navigation bar, where this
+    // class is used, we only show the user's image, never the team image. However,
+    // maybe this class could be used for the account switcher.
     public var isTeamAccount = false {
         didSet { updateShape() }
     }
