@@ -31,7 +31,7 @@ public final class AccountImageView: UIView {
     // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
-    private let initialsLabelSizeMultiplier: CGFloat = 7/10
+    private let initialsLabelSizeMultiplier: CGFloat = 7 / 10
 
     enum Defaults {
         static let imageViewBorderWidth: CGFloat = 1
@@ -229,6 +229,7 @@ public final class AccountImageView: UIView {
         case .image(let image):
             initialsLabel.text = nil
             accountImageView.image = image
+
         case .text(let initials):
             initialsLabel.text = initials
             accountImageView.image = nil
