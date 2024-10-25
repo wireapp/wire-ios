@@ -38,7 +38,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(
         _ viewModel: ViewModel,
-        didUpdate accountImage: AccountImageSource
+        didUpdate accountImage: WireAccountImageUI.AccountImageSource
     ) {
 
         accountImageView?.source = accountImage
@@ -62,7 +62,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.source = viewModel.accountImage
+        accountImageView.source = viewModel.accountImageSource
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint

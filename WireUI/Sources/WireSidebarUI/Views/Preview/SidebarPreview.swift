@@ -28,7 +28,7 @@ struct SidebarPreview: View {
     @State private var accountInfo = SidebarAccountInfo(
         displayName: "Firstname Lastname",
         username: "@username",
-        accountImage: .image(.from(solidColor: .brown)),
+        accountImageSource: .image(.from(solidColor: .brown)),
         availability: .away
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all

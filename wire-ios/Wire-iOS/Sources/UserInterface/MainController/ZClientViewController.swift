@@ -35,8 +35,8 @@ final class ZClientViewController: UIViewController {
 
     let account: Account
     let userSession: UserSession
-    private(set) var cachedAccountImage: SidebarAccountInfo.AccountImageContent = .text("") {
-        didSet { sidebarViewController.accountInfo.accountImage = cachedAccountImage }
+    private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
+        didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
 
     private(set) var conversationRootViewController: UIViewController?
@@ -726,12 +726,12 @@ final class ZClientViewController: UIViewController {
 
     private func updateCachedAccountImage() async {
         do {
-            if let accountImage = try await GetUserAccountImageUseCase().invoke(account: account) {
-                cachedAccountImage = .image(accountImage)
-            } else {
-                let initials = PersonName.person(withName: account.userName, schemeTagger: nil).initials
-                cachedAccountImage = .text(initials)
-            }
+            let useCase = GetUserAccountImageSourceUseCase()
+            let accountImageSource = try await useCase.invoke(
+                user: userSession.selfUser,
+                userContext: userSession.contextProvider.viewContext,
+                account: account
+            )
         } catch {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }

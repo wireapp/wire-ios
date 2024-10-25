@@ -360,7 +360,7 @@
 		594211D02C90700200576053 /* FileMetaDataGeneratorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */; };
 		594211D32C90778E00576053 /* SettingsDebugReportViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
-		594C4E2B2CCA98F000F13D03 /* AccountImageContentMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594C4E2A2CCA98E800F13D03 /* AccountImageContentMapping.swift */; };
+		594C4E2B2CCA98F000F13D03 /* AccountImageSourceMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594C4E2A2CCA98E800F13D03 /* AccountImageSourceMapping.swift */; };
 		5950467D2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */; };
 		5950A9472C2F1C31005AB9CE /* AvailabilityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */; };
 		59510DD32CB3E6EE00BCD5FD /* SidebarViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */; };
@@ -387,7 +387,6 @@
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5994B2BE2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5994B2BD2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift */; };
-		5994B2C02C91F46E0098959E /* MockGetAccountImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5994B2BF2C91F46E0098959E /* MockGetAccountImageUseCase.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
 		5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
 		5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
@@ -2371,7 +2370,7 @@
 		594211CC2C90591700576053 /* PDFFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFFilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMetaDataGeneratorProtocol.swift; sourceTree = "<group>"; };
 		594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportViewModelProtocol.swift; sourceTree = "<group>"; };
-		594C4E2A2CCA98E800F13D03 /* AccountImageContentMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountImageContentMapping.swift; sourceTree = "<group>"; };
+		594C4E2A2CCA98E800F13D03 /* AccountImageSourceMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountImageSourceMapping.swift; sourceTree = "<group>"; };
 		5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityMappings.swift; sourceTree = "<group>"; };
 		59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -2395,7 +2394,6 @@
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
 		5994B2BD2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserAccountImageUseCaseAdapters.swift; sourceTree = "<group>"; };
-		5994B2BF2C91F46E0098959E /* MockGetAccountImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGetAccountImageUseCase.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		599EA3C72C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+UISearchResultsUpdating.swift"; sourceTree = "<group>"; };
 		599EA3CC2C243CF1009319D4 /* ConversationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFilter.swift; sourceTree = "<group>"; };
@@ -7900,7 +7898,7 @@
 		E96AB4FA2C0722F900792DA9 /* ConversationListViewController+NavigationBar */ = {
 			isa = PBXGroup;
 			children = (
-				594C4E2A2CCA98E800F13D03 /* AccountImageContentMapping.swift */,
+				594C4E2A2CCA98E800F13D03 /* AccountImageSourceMapping.swift */,
 				59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */,
 				E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */,
 				599EA3CC2C243CF1009319D4 /* ConversationFilter.swift */,
@@ -8303,7 +8301,6 @@
 				EFAFCA8C213433D6002B31A6 /* ConversationListViewControllerTests.swift */,
 				A98ECDF0232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift */,
 				EF223F5C2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift */,
-				5994B2BF2C91F46E0098959E /* MockGetAccountImageUseCase.swift */,
 			);
 			path = Container;
 			sourceTree = "<group>";
@@ -10130,7 +10127,7 @@
 				06ADE9F12BC7C515008BA0B3 /* RemoveClientsViewController.swift in Sources */,
 				EF17B0D6223A70D1006252A8 /* SketchColorPickerController.swift in Sources */,
 				16829EDF2010D60800F579A0 /* InviteTeamMemberSection.swift in Sources */,
-				594C4E2B2CCA98F000F13D03 /* AccountImageContentMapping.swift in Sources */,
+				594C4E2B2CCA98F000F13D03 /* AccountImageSourceMapping.swift in Sources */,
 				87E8D0BD21821E6F00BD26AC /* ConversationContentViewController+Reply.swift in Sources */,
 				63238C6B2B860E2B00951467 /* DeveloperE2eiView.swift in Sources */,
 				E9F2D6422B55DAD800133C59 /* ConversationIgnoredDeviceSystemMessageCellDescription.swift in Sources */,
@@ -10636,7 +10633,6 @@
 				D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */,
 				876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */,
 				E6C25FCE2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
-				5994B2C02C91F46E0098959E /* MockGetAccountImageUseCase.swift in Sources */,
 				5E8FFC0821ECCC9B0052DF03 /* MockAuthenticationFeatureProvider.swift in Sources */,
 				A9C7BEC0237C0FFB005D676A /* ColorSchemeTests.swift in Sources */,
 				EE52379323F5588000D4FE79 /* MockUserType+CodingKeys.swift in Sources */,

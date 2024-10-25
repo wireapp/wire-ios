@@ -36,7 +36,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
-    private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
     private var modelHelper: ModelHelper!
     private var snapshotHelper: SnapshotHelper!
 
@@ -57,8 +57,8 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        mockGetUserAccountImageUseCase = .init()
-        mockGetUserAccountImageUseCase.invoke_MockValue = .init()
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
 
         modelHelper = ModelHelper()
 
@@ -73,7 +73,7 @@ final class ConversationListViewControllerTests: XCTestCase {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             mainCoordinator: mockMainCoordinator,
-            getUserAccountImageUseCase: mockGetUserAccountImageUseCase
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
 
         sut = ConversationListViewController(
@@ -112,7 +112,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture = nil
         modelHelper = nil
         mockMainCoordinator = nil
-        mockGetUserAccountImageUseCase = nil
+        mockGetUserAccountImageSourceUseCase = nil
     }
 
     // MARK: - View Controller

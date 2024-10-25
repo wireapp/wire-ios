@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSidebarUI
 import WireAccountImageUI
 
-final class MockGetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
+extension WireSidebarUI.SidebarAccountInfo.AccountImageSource {
 
-    var invoke_Invocations = [any GetAccountImageUseCaseAccountProtocol]()
-    var invoke_MockValue: UIImage!
+    /// Since `WireAccountImageUI.AccountImageSource` does not know about the type `WireSidebarUI`,
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.AccountImageSource` to `WireAccountImageUI.AccountImageSource`.
 
-    init() {}
-
-    func invoke<Account>(account: Account) async -> UIImage
-    where Account: GetAccountImageUseCaseAccountProtocol {
-        invoke_Invocations += [account]
-        return invoke_MockValue
+    func mapToAccountImageSource() -> WireAccountImageUI.AccountImageSource {
+        switch self {
+        case .image(let image):
+                .image(image)
+        case .text(let text):
+                .text(text)
+        }
     }
 }
