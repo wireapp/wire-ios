@@ -379,7 +379,6 @@ final class AddParticipantsViewController: UIViewController {
         guard let title else { return }
 
         setupNavigationBarTitle(title.capitalized)
-
     }
 
     private func rightNavigationItemTapped() -> UIAction {
@@ -394,6 +393,7 @@ final class AddParticipantsViewController: UIViewController {
             }
         }
     }
+
     func setLoadingView(isVisible: Bool) {
         activityIndicator.setIsActive(isVisible)
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
@@ -500,10 +500,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation) {
-        // no-op
-    }
-
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
         // no-op
     }
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class LegalHoldDetailsViewController: UIViewController {
@@ -27,31 +28,36 @@ final class LegalHoldDetailsViewController: UIViewController {
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     convenience init?(
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         guard let conversation = user.oneToOneConversation else { return nil }
         self.init(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
     init(
         conversation: LegalHoldDetailsConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
         self.collectionViewController.collectionView = collectionView
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -71,9 +77,16 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         user: UserType,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UINavigationController? {
-        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession, mainCoordinator: mainCoordinator) else { return nil }
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            user: user,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
+        guard let legalHoldDetailsViewController else { return nil }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
@@ -83,9 +96,15 @@ final class LegalHoldDetailsViewController: UIViewController {
         in parentViewController: UIViewController,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) -> UINavigationController {
-        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession, mainCoordinator: mainCoordinator)
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
+        )
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
@@ -150,9 +169,9 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
             viewer: viewer,
             context: .deviceList,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         show(profileViewController, sender: nil)
     }
-
 }

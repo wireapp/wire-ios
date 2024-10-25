@@ -128,8 +128,6 @@ final class DateFormatterTests: XCTestCase {
     func testWr_formattedDateForTwoHourBefore() {
         // GIVEN
         let twoHourBefore = Calendar.current.date(byAdding: .hour, value: -2, to: Date())!
-        let hour = Calendar.current.component(.hour, from: twoHourBefore)
-        let minute = Calendar.current.component(.minute, from: twoHourBefore)
         let dateFormatter = DateFormatter()
 
         // WHEN

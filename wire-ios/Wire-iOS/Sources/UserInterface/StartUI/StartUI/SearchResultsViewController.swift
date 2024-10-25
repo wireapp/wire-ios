@@ -64,12 +64,6 @@ protocol SearchResultsViewControllerDelegate: AnyObject {
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didDoubleTapOnUser user: UserType, indexPath: IndexPath)
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation)
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser)
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction)
-}
-
-enum SearchResultsViewControllerAction: Int {
-    case createGroup
-    case createGuestRoom
 }
 
 enum SearchResultsViewControllerMode: Int {
@@ -163,7 +157,6 @@ final class SearchResultsViewController: UIViewController {
 
     let servicesSection: SearchServicesSectionController
     let inviteTeamMemberSection: InviteTeamMemberSection
-    let createGroupSection = CreateGroupSection()
 
     var pendingSearchTask: SearchTask?
     var isAddingParticipants: Bool
@@ -224,7 +217,6 @@ final class SearchResultsViewController: UIViewController {
         topPeopleSection.delegate = self
         conversationsSection.delegate = self
         servicesSection.delegate = self
-        createGroupSection.delegate = self
         inviteTeamMemberSection.delegate = self
         federationSection.delegate = self
     }
@@ -358,9 +350,9 @@ final class SearchResultsViewController: UIViewController {
             case (.selection, true):
                 sections = [teamMemberAndContactsSection]
             case (.list, false):
-                sections = [createGroupSection, topPeopleSection, contactsSection]
+                sections = [topPeopleSection, contactsSection]
             case (.list, true):
-                sections = [createGroupSection, inviteTeamMemberSection, teamMemberAndContactsSection]
+                sections = [inviteTeamMemberSection, teamMemberAndContactsSection]
             }
         }
 
@@ -450,16 +442,6 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
 
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectConversation conversation: ZMConversation, at indexPath: IndexPath) {
         delegate?.searchResultsViewController(self, didTapOnConversation: conversation)
-    }
-
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectRow row: CreateGroupSection.Row, at indexPath: IndexPath) {
-        switch row {
-        case .createGroup:
-            delegate?.searchResultsViewController(self, wantsToPerformAction: .createGroup)
-        case .createGuestRoom:
-            delegate?.searchResultsViewController(self, wantsToPerformAction: .createGuestRoom)
-        }
-
     }
 
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, wantsToDisplayError error: LocalizedError) {

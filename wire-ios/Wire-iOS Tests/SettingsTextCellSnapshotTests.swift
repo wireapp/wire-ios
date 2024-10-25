@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireTestingPackage
 import XCTest
 
@@ -23,9 +24,16 @@ import XCTest
 
 final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
+    private var settingsCoordinator: AnySettingsCoordinator!
     private var snapshotHelper: SnapshotHelper!
     private var sut: SettingsTextCell!
     private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
+
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+    }
 
     override func setUp() {
         super.setUp()
@@ -37,13 +45,16 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
+            userRightInterfaceType: UserRight.self,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+        settingsCoordinator = nil
+
         super.tearDown()
     }
 

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireTestingPackage
 import XCTest
 
@@ -27,11 +28,13 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var mockSelfUser: MockUserType!
+    private var settingsCoordinator: AnySettingsCoordinator!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
@@ -43,11 +46,10 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        settingsCoordinator = nil
         snapshotHelper = nil
         mockSelfUser = nil
         SelfUser.provider = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -83,8 +85,18 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let state = HandleChangeState(currentHandle: currentHandle, newHandle: newHandle, availability: availability)
-        let sut = ChangeHandleViewController(state: state, federationEnabled: federationEnabled)
+        let state = HandleChangeState(
+            currentHandle: currentHandle,
+            newHandle: newHandle,
+            availability: availability
+        )
+        let sut = ChangeHandleViewController(
+            state: state,
+            useTypeIntrinsicSizeTableView: true,
+            federationEnabled: federationEnabled,
+            settingsCoordinator: settingsCoordinator
+        )
+        sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)
     }
 }

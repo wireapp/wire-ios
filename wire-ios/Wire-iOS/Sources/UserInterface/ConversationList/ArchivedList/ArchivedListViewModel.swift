@@ -22,7 +22,6 @@ import WireSyncEngine
 
 protocol ArchivedListViewModelDelegate: AnyObject {
     func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void)
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
 }
 
 final class ArchivedListViewModel: NSObject {
@@ -49,10 +48,16 @@ final class ArchivedListViewModel: NSObject {
         return archivedConversations.count
     }
 
-    subscript(key: Int) -> ZMConversation? {
+    subscript(key: Int) -> ZMConversation {
         return archivedConversations[key]
     }
 
+    func unarchiveConversation(at row: Int) {
+        let conversation = self[row]
+        userSession.enqueue {
+            conversation.isArchived = false
+        }
+    }
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {
@@ -66,6 +71,6 @@ extension ArchivedListViewModel: ZMConversationListObserver {
     }
 
     func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo) {
-        delegate?.archivedListViewModel(self, didUpdateConversationWithChange: changeInfo)
+        // no-op
     }
 }

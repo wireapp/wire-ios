@@ -99,8 +99,21 @@ class ImagePickerManager: NSObject {
             if viewController.isIPadRegular() {
                 imagePickerController.modalPresentationStyle = .popover
 
-                let popover: UIPopoverPresentationController? = imagePickerController.popoverPresentationController
-                popover?.backgroundColor = UIColor.white
+                if let popoverPresentationController = imagePickerController.popoverPresentationController {
+                    popoverPresentationController.backgroundColor = UIColor.white
+
+                    // UIKit will crash if the photo library is not presented using a popoverPresentationController
+                    // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
+                    // TODO: [WPB-11605] fix this workaround and choose proper sourceView/sourceRect
+                    popoverPresentationController.sourceView = viewController.view
+                    popoverPresentationController.sourceRect = .init(
+                        origin: .init(
+                            x: viewController.view.safeAreaLayoutGuide.layoutFrame.maxX,
+                            y: viewController.view.safeAreaLayoutGuide.layoutFrame.minY
+                        ),
+                        size: .zero
+                    )
+                }
             }
         default:
             break
@@ -108,7 +121,6 @@ class ImagePickerManager: NSObject {
 
         viewController.present(imagePickerController, animated: true)
     }
-
 }
 
  extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

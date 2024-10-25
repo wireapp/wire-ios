@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Search by name or username";
 "peoplepicker.header.top_people" = "Top people";
-"peoplepicker.button.create_conversation" = "Create group";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "Groups";
 "peoplepicker.header.team_conversations" = "%@ Groups";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invite more people";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Open";
-"peoplepicker.quick-action.create-conversation" = "Create group";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Everything archived";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorites";
+"conversation_list.filter.groups.title" = "Groups";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Remove";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Join";
@@ -134,6 +137,15 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tap to activate.";
 "conversation_list.header.self_team.accessibility_value.active" = "Active now.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
@@ -300,10 +312,10 @@
 "conversation.input_bar.message_too_long.message" = "You can send messages up to %d characters long.";
 
 "conversation.create.group_name.title" = "Create group";
-"conversation.create.group_name.placeholder" = "Group name";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "At least 1 character";
 "conversation.create.guidance.toolong" = "Too many characters";
-"conversation.create.options.title" = "Conversation options";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Allow guests";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";

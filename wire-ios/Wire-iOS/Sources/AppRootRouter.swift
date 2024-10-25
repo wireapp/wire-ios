@@ -375,7 +375,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.viewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {

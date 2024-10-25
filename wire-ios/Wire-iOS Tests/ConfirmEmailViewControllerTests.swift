@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireTestingPackage
 import XCTest
 
@@ -28,24 +29,32 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
     private var sut: ConfirmEmailViewController!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
+    private var settingsCoordinator: AnySettingsCoordinator!
 
     // MARK: setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
-        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+        sut = ConfirmEmailViewController(
+            newEmail: "bill@wire.com",
+            delegate: nil,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
+        )
         sut.overrideUserInterfaceStyle = .dark
     }
 
     // MARK: tearDown
 
     override func tearDown() {
+        settingsCoordinator = nil
         snapshotHelper = nil
         userSession = nil
         sut = nil
-        super.tearDown()
     }
 
     // MARK: Snapshot Tests

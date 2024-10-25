@@ -135,7 +135,7 @@ extension ConversationViewController {
             arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
         }
 
-        let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
+        let isLayoutSizeCompact = traitCollection.horizontalSizeClass == .compact
         let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
 
         return icon
@@ -181,7 +181,7 @@ extension ConversationViewController {
     func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
-        if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
+        if traitCollection.horizontalSizeClass != .regular {
             items.append(createBackButton(hasUnread: hasUnread))
         }
 

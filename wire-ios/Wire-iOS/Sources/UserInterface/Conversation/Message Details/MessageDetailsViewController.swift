@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 /**
@@ -91,13 +92,15 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     convenience init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.init(
             message: message,
             preferredDisplayMode: .receipts,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -113,7 +116,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)
@@ -125,13 +129,15 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 contentType: .receipts(enabled: dataSource.supportsReadReceipts),
                 conversation: dataSource.conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             let reactionsViewController = MessageDetailsContentViewController(
                 contentType: .reactions,
                 conversation: dataSource.conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
 
@@ -140,7 +146,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 contentType: .reactions,
                 conversation: dataSource.conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             viewControllers = .singleView(reactionsViewController)
 
@@ -149,7 +156,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 contentType: .receipts(enabled: dataSource.supportsReadReceipts),
                 conversation: dataSource.conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             viewControllers = .singleView(readReceiptsViewController)
         }

@@ -31,15 +31,17 @@ extension ConversationViewController {
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 }
 
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

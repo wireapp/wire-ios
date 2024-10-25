@@ -53,16 +53,21 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: StartUIViewController!
     private var mockAddressBookHelper: MockAddressBookHelper!
     private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
         super.setUp()
-        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
@@ -82,13 +87,15 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    // MARK: - Helper Method
+    // MARK: - Helper Methods
 
     func setupSut() {
         sut = StartUIViewController(
             addressBookHelperType: MockAddressBookHelper.self,
             userSession: userSession,
-            mainCoordinator: mockMainCoordinator
+            mainCoordinator: mockMainCoordinator,
+            createGroupConversationUIBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -97,53 +104,50 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         sut.view.frame = CGRect(origin: .zero, size: screenSize)
     }
 
+    func setupNavigationController() -> UINavigationController {
+        setupSut()
+        let navigationController = UINavigationController(rootViewController: sut)
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.overrideUserInterfaceStyle = .dark
+        return navigationController
+    }
+
     // MARK: - Snapshot Tests
 
-    func testForWrappedInNavigationViewController() {
+    func testStartUIViewControllerWrappedInNavigationController() {
         nonTeamTest {
-            setupSut()
-
-            let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-            navigationController.pushViewController(sut, animated: false)
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    func testForNoContact() {
+    func testStartUIViewControllerNoContact() {
         nonTeamTest {
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    /// has create group and create guest room rows
-    func testForNoContactWhenSelfIsTeamMember() {
+    func testStartUIViewControllerNoContactWhenSelfIsTeamMember() {
         teamTest {
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    /// has no create group and create guest room rows, and no group selector tab
-    func testForNoContactWhenSelfIsPartner() {
+    func testStartUIViewControllerNoContactWhenSelfIsPartner() {
         teamTest {
             selfUser.membership?.setTeamRole(.partner)
-
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 }

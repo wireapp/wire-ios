@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSettingsUI
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
@@ -40,13 +41,22 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
-    init(user: UserType, userSession: UserSession) {
+    init(
+        user: UserType,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
             userProfile: userSession.userProfile
         )
-        super.init(style: .grouped)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
         setupViews()
     }
 
@@ -127,7 +137,13 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         activityIndicator.setIsActive(false)
         updateSaveButtonState()
         if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: true,
+                settingsCoordinator: settingsCoordinator
+            )
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }

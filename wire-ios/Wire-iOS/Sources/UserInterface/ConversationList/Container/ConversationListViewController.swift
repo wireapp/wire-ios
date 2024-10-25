@@ -17,35 +17,72 @@
 //
 
 import UIKit
+import WireAccountImageUI
 import WireCommonComponents
+import WireConversationListUI
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
 
-enum ConversationListState {
-    case conversationList
-    case peoplePicker
-    case archived
-}
-
 final class ConversationListViewController: UIViewController {
 
+    // MARK: - Properties
+
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    let connectViewControllerBuilder: any ConnectViewControllerBuilderProtocol
+    let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
+    let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
+    let conversationListCoordinator: any ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
-    /// internal View Model
-    var state: ConversationListState = .conversationList
-
-    /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
 
+    private lazy var filterContainerView = UIView()
+
+    private lazy var filterLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.font(for: .h5)
+        label.textColor = SemanticColors.Label.baseSecondaryText
+        // TODO: [WPB-7301] The strings "Selected by groups", "Selected by favorites" etc. should probably be separate localized strings, without concatenation.
+        label.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        return label
+    }()
+
+    private lazy var removeButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
+        button.titleLabel?.font = UIFont.font(for: .h5)
+        button.setTitleColor(UIColor.accent(), for: .normal)
+        button.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterView.RemoveButton.descritpion
+        let action = UIAction { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showConversationList(conversationFilter: .none)
+            }
+        }
+        button.addAction(action, for: .touchUpInside)
+        return button
+    }()
+
+    var selectedFilterLabel: String {
+        typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
+        switch listContentController.listViewModel.selectedFilter {
+        case .favorites:
+            return FilterMenuLocale.Favorites.title
+        case .groups:
+            return FilterMenuLocale.Groups.title
+        case .oneOnOne:
+            return FilterMenuLocale.OneOnOneConversations.title
+        case .none:
+            return ""
+        }
+    }
+
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
-
-    var startCallToken: Any?
 
     weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
@@ -53,67 +90,83 @@ final class ConversationListViewController: UIViewController {
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
-        label.backgroundColor = .clear
         return label
     }()
 
-    let contentContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-        return view
-    }()
+    /// Arranges the filterContainerView (if visible) and the contentContainer below each other.
+    private var stackView: UIStackView!
+
+    let contentContainer = UIView()
 
     let listContentController: ConversationListContentController
 
-    var userStatusViewController: UserStatusViewController?
-    weak var titleViewLabel: UILabel?
+    weak var accountImageView: AccountImageView?
+
     let networkStatusViewController = NetworkStatusViewController()
-    let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: any ViewControllerBuilder
+    private var emptyPlaceholderView: EmptyPlaceholderView!
+    var mainSplitViewState: MainSplitViewState = .expanded {
+        didSet {
+            setupTitleView()
+            updateNavigationItem()
+            applyColorTheme()
+            updateFilterContainerView()
+        }
+    }
+
+    // MARK: - Init
 
     convenience init(
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: AnyMainCoordinator,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        isFolderStatePersistenceEnabled: Bool,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            getUserAccountImageUseCase: GetUserAccountImageUseCase()
         )
         self.init(
             viewModel: viewModel,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
             zClientViewController: zClientViewController,
             mainCoordinator: mainCoordinator,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+            connectViewControllerBuilder: connectViewControllerBuilder,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder
         )
     }
 
     required init(
         viewModel: ViewModel,
-        isFolderStatePersistenceEnabled: Bool,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        mainCoordinator: AnyMainCoordinator,
+        connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
+        selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
+        self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
+        let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
+        self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
+            conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            selfProfileUIBuilder: selfProfileViewControllerBuilder,
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
@@ -122,21 +175,7 @@ final class ConversationListViewController: UIViewController {
 
         definesPresentationContext = true
 
-        /// setup UI
-        view.addSubview(contentContainer)
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-
-        setupListContentController()
-        setupNoConversationLabel()
-        setupOnboardingHint()
-        setupNetworkStatusBar()
-
-        createViewConstraints()
-
-        updateTitleView()
-        updateAccountView()
-        updateLegalHoldIndictor()
-
+        hideNoContactLabel(animated: false)
         viewModel.viewController = self
     }
 
@@ -145,25 +184,41 @@ final class ConversationListViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
+    // MARK: - Override methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Update
-        hideNoContactLabel(animated: false)
+        setupStackView()
+        setupListContentController()
+        setupNoConversationLabel()
+        setupEmptyPlaceholder()
+        setupNetworkStatusBar()
+        setupFilterContainerView()
+
+        stackView.addArrangedSubview(contentContainer)
+
+        createViewConstraints()
+
+        setupTitleView()
+        updateNavigationItem()
 
         setupObservers()
 
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+
+        applyColorTheme()
+
+        setupSearchController()
+
+        setContentScrollView(listContentController.collectionView)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-
-        // there are currently always four tab items
-        let offset = (view.bounds.width / 4 * -1.5)
-        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
+        configureEmptyPlaceholder()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -172,8 +227,6 @@ final class ConversationListViewController: UIViewController {
         if !isIPadRegular() {
             Settings.shared[.lastViewedScreen] = SettingsLastScreen.list
         }
-
-        state = .conversationList
 
         shouldAnimateNetworkStatusView = true
 
@@ -188,6 +241,13 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        configureEmptyPlaceholder()
+        updateFilterContainerView()
+    }
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: { _ in
             // we reload on rotation to make sure that the list cells lay themselves out correctly for the new
@@ -199,31 +259,88 @@ final class ConversationListViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 
-    // MARK: - setup UI
+    // MARK: - Setup UI
 
     private func setupObservers() {
         viewModel.setupObservers()
     }
 
+    /// Sets up a vertical stack view containing all subviews
+    private func setupStackView() {
+        stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    func setupFilterContainerView() {
+        stackView.addArrangedSubview(filterContainerView)
+
+        let filterContainerStackView = UIStackView()
+        filterContainerStackView.axis = .horizontal
+        filterContainerStackView.alignment = .center
+        filterContainerStackView.spacing = 4
+        filterContainerStackView.translatesAutoresizingMaskIntoConstraints = false
+        filterContainerView.addSubview(filterContainerStackView)
+        NSLayoutConstraint.activate([
+            filterContainerStackView.topAnchor.constraint(equalTo: filterContainerView.topAnchor),
+            filterContainerView.bottomAnchor.constraint(equalTo: filterContainerStackView.bottomAnchor),
+            filterContainerStackView.leadingAnchor.constraint(equalToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 2),
+            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 2)
+        ])
+
+        filterContainerStackView.addArrangedSubview(filterLabel)
+        filterContainerStackView.addArrangedSubview(removeButton)
+
+        // Initially hide the filter container view
+        filterContainerView.isHidden = true
+    }
+
+    func updateFilterContainerView() {
+        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+    }
+
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
-        add(listContentController, to: contentContainer)
+        addChild(listContentController)
+        contentContainer.addSubview(listContentController.view)
+        listContentController.didMove(toParent: self)
     }
 
     private func setupNoConversationLabel() {
         contentContainer.addSubview(noConversationLabel)
     }
 
-    private func setupOnboardingHint() {
-        contentContainer.addSubview(onboardingHint)
+    private func setupEmptyPlaceholder() {
+        let connectWithPeopleAction = UIAction { [weak self] _ in
+            self?.presentConnectUI()
+        }
+        emptyPlaceholderView = EmptyPlaceholderView(
+            content: emptyPlaceholderForSelectedFilter,
+            connectWithPeopleAction: connectWithPeopleAction)
+        contentContainer.addSubview(emptyPlaceholderView)
+    }
+
+    func configureEmptyPlaceholder() {
+        emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
     }
 
     private func setupNetworkStatusBar() {
         networkStatusViewController.delegate = self
-        add(networkStatusViewController, to: contentContainer)
+        addChild(networkStatusViewController)
+        contentContainer.addSubview(networkStatusViewController.view)
+        networkStatusViewController.didMove(toParent: self)
     }
 
     private func createViewConstraints() {
@@ -232,15 +349,10 @@ final class ConversationListViewController: UIViewController {
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false
         noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
-        onboardingHint.translatesAutoresizingMaskIntoConstraints = false
+        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
@@ -250,9 +362,10 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
-            onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
-            onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
+            emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
 
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
@@ -260,19 +373,51 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
-    func createArchivedListViewController() -> ArchivedListViewController {
-        let archivedViewController = ArchivedListViewController(userSession: viewModel.userSession)
-        archivedViewController.delegate = viewModel
-        return archivedViewController
+    func applyColorTheme() {
+        view.backgroundColor = mainSplitViewState == .expanded
+        ? ColorTheme.Backgrounds.backgroundVariant
+        : ColorTheme.Backgrounds.surfaceVariant
     }
 
-    func showNoContactLabel(animated: Bool = true) {
-        if state != .conversationList { return }
+    private func setupSearchController() {
 
+        let searchController = UISearchController(searchResultsController: .none)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.isTranslucent = false
+        searchController.searchResultsUpdater = self
+
+        if !isEmptyPlaceholderVisible {
+            navigationItem.searchController = searchController
+        } else {
+            navigationItem.searchController = nil
+        }
+        navigationItem.preferredSearchBarPlacement = .stacked
+    }
+
+    /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
+    /// For expanded layouts, the navigation bar should only show a title and a new-conversation-button.
+    /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
+    private func updateNavigationItem() {
+
+        switch mainSplitViewState {
+        case .collapsed:
+            setupLeftNavigationBarButtonItems()
+            setupRightNavigationBarButtonItems()
+        case .expanded:
+            setupLeftNavigationBarButtonItems_SplitView()
+            setupRightNavigationBarButtonItems_SplitView()
+        }
+    }
+
+    // MARK: - No Contact Label Management
+
+    /// Show or hide the "No Contact" label and onboarding hint based on whether there are archived conversations.
+    /// - Parameter animated: Boolean to indicate if the change should be animated
+    func showNoContactLabel(animated: Bool = true) {
         let closure = {
             let hasArchivedConversations = self.viewModel.hasArchivedConversations
             self.noConversationLabel.alpha = hasArchivedConversations ? 1.0 : 0.0
-            self.onboardingHint.alpha = hasArchivedConversations ? 0.0 : 1.0
         }
 
         if animated {
@@ -282,36 +427,62 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
+    /// Hide the "No Contact" label and onboarding hint.
+    /// - Parameter animated: Boolean to indicate if the change should be animated
     func hideNoContactLabel(animated: Bool) {
         UIView.animate(withDuration: animated ? 0.2 : 0) {
             self.noConversationLabel.alpha = 0
-            self.onboardingHint.alpha = 0
         }
     }
 
-    /// Scroll to the current selection
-    ///
-    /// - Parameter animated: perform animation or not
+    // MARK: - Filter Management
+
+    /// Method to apply the selected filter and update the UI accordingly
+    /// - Parameter filter: The selected filter type to be applied
+    func applyFilter(_ filter: ConversationFilter?) {
+        listContentController.listViewModel.selectedFilter = filter
+        setupTitleView()
+        if mainSplitViewState == .collapsed {
+            setupRightNavigationBarButtonItems()
+        } else {
+            setupRightNavigationBarButtonItems_SplitView()
+        }
+        setupSearchController()
+        updateFilterContainerView()
+        configureEmptyPlaceholder()
+    }
+
+    @objc
+    func applySearchText() {
+        let searchText = navigationItem
+            .searchController?
+            .searchBar
+            .text?
+            .trimmingCharacters(in: .whitespaces)
+            .lowercased() ?? ""
+        listContentController.listViewModel.appliedSearchText = searchText
+    }
+
+    // MARK: - Selection Management
+
     func scrollToCurrentSelection(animated: Bool) {
         listContentController.scrollToCurrentSelection(animated: animated)
     }
 
-    func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController(
-            userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
-        )
-        startUIViewController.delegate = viewModel
-        return startUIViewController
-    }
-
-    func presentPeoplePicker(
-        completion: Completion? = nil
-    ) {
-        setState(.peoplePicker, animated: true, completion: completion)
-    }
-
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
+    /// Select a conversation in the list content controller
+    /// - Parameters:
+    ///   - conversation: The conversation to select
+    ///   - message: The message to scroll to
+    ///   - focus: Boolean to indicate if the view should focus
+    ///   - animated: Boolean to indicate if the change should be animated
+    ///   - completion: Completion handler to be called after the selection
+    /// - Returns: Boolean indicating if the selection was successful
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool {
         listContentController.select(
             conversation,
             scrollTo: message,
@@ -319,21 +490,29 @@ final class ConversationListViewController: UIViewController {
             animated: animated
         )
     }
-}
 
-// MARK: - ViewModel Delegate
+    // MARK: - Presentation
 
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {
+    private func presentConnectUI() {
+        Task {
+            let connectUI = connectViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            connectUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(connectUI)
+        }
+    }
 
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        updateTitleView()
+    /// Select the inbox and focus on the view
+    /// - Parameter focus: Boolean to indicate if the view should focus
+    func selectInboxAndFocusOnView(focus: Bool) {
+        listContentController.selectInboxAndFocus(onView: focus)
     }
 }
+
+// MARK: - Helpers
 
 private extension NSAttributedString {
 
     static var attributedTextForNoConversationLabel: NSAttributedString? {
-
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 

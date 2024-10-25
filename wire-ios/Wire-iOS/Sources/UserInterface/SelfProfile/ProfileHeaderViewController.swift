@@ -261,6 +261,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
+        nameLabel.text = userStatus.displayName
         nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
     }

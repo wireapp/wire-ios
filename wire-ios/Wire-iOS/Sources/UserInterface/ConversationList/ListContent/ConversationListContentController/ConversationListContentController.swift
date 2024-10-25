@@ -18,8 +18,10 @@
 
 import DifferenceKit
 import UIKit
+import WireConversationListUI
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
@@ -27,7 +29,13 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: MainCoordinating
+    typealias ConversationListCoordinator = AnyConversationListCoordinator<
+        ZMConversation,
+        ZMConversationMessage
+    >
+    private let conversationListCoordinator: ConversationListCoordinator
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -43,24 +51,28 @@ final class ConversationListContentController: UICollectionViewController {
 
     let userSession: UserSession
 
-    init(
+    init<ConversationListCoordinator>(
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
-        isFolderStatePersistenceEnabled: Bool,
+        conversationListCoordinator: ConversationListCoordinator,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         zClientViewController: ZClientViewController?
-    ) {
+    ) where
+    ConversationListCoordinator: ConversationListCoordinatorProtocol,
+    ConversationListCoordinator.ConversationModel == ZMConversation,
+    ConversationListCoordinator.ConversationMessageModel == ZMConversationMessage {
+
         self.userSession = userSession
+        self.conversationListCoordinator = .init(conversationListCoordinator: conversationListCoordinator)
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.zClientViewController = zClientViewController
 
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(
-            userSession: userSession,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
-        )
+        listViewModel = .init(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
@@ -75,9 +87,7 @@ final class ConversationListContentController: UICollectionViewController {
         super.loadView()
 
         listViewModel.delegate = self
-
         setupViews()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -106,11 +116,11 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
                 (cell as? ConversationListCell)?.updateAppearance()
             }
-        })
+        }
     }
 
     func reload() {
@@ -132,13 +142,14 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
-        collectionView.backgroundColor = SemanticColors.View.backgroundConversationList
         collectionView.alwaysBounceVertical = true
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
         collectionView.contentInset = .zero
+        collectionView.contentInset.top = -20
         collectionView.delaysContentTouches = false
         collectionView.accessibilityIdentifier = "conversation list"
+        collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
     }
 
@@ -258,21 +269,13 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     // MARK: context menu
-    override func collectionView(_ collectionView: UICollectionView,
-                                 willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                 animator: UIContextMenuInteractionCommitAnimating) {
-        guard let destinationViewController = animator.previewViewController as? ConversationPreviewViewController else { return }
-
-        animator.addAnimations { [weak self] in
-            self?.openConversation(conversationListItem: destinationViewController.conversation)
-        }
-    }
 
     override func collectionView(
         _ collectionView: UICollectionView,
         contextMenuConfigurationForItemAt indexPath: IndexPath,
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
+
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
                 return nil
         }
@@ -283,7 +286,8 @@ final class ConversationListContentController: UICollectionViewController {
                 presentingViewController: self,
                 sourceView: collectionView.cellForItem(at: indexPath)!,
                 userSession: self.userSession,
-                mainCoordinator: self.mainCoordinator
+                mainCoordinator: self.mainCoordinator,
+                selfProfileUIBuilder: self.selfProfileUIBuilder
             )
         }
 
@@ -305,7 +309,7 @@ final class ConversationListContentController: UICollectionViewController {
 
         return UIContextMenuConfiguration(
             identifier: indexPath as NSIndexPath,
-            previewProvider: previewProvider,
+            previewProvider: .none,
             actionProvider: actionProvider
         )
     }
@@ -388,27 +392,29 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                     self.collectionView.deselectItem(at: obj, animated: false)
                 }
             })
-            zClientViewController?.loadPlaceholderConversationController(animated: true)
+            // TODO: [WPB-11609] still needed? (iPhone and iPad)
+            // zClientViewController?.loadPlaceholderConversationController(animated: true)
             zClientViewController?.transitionToList(animated: true, completion: nil)
 
             return
         }
 
-        if let conversation = item as? ZMConversation {
-            if let scrollToMessageOnNextSelection {
-                mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+        Task {
+            if let conversation = item as? ZMConversation {
+                if let message = scrollToMessageOnNextSelection {
+                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
+                } else {
+                    await conversationListCoordinator.showConversation(conversation: conversation)
+                }
+                contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
+            } else if item is ConversationListConnectRequestsItem {
+                zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
             } else {
-                mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                assertionFailure("Invalid item in conversation list view model!!")
             }
-            contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
-        } else if item is ConversationListConnectRequestsItem {
-            zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
-        } else {
-            assertionFailure("Invalid item in conversation list view model!!")
+            // Make sure the correct item is selected in the list, without triggering a collection view callback
+            ensureCurrentSelection()
         }
-        // Make sure the correct item is selected in the list, without triggering a collection view
-        // callback
-        ensureCurrentSelection()
     }
 
     func listViewModelShouldBeReloaded() {
@@ -470,7 +476,8 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
             presentingViewController: self,
             sourceView: collectionView.cellForItem(at: indexPath)!,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 }

@@ -17,40 +17,78 @@
 //
 
 import WireDataModel
+import WireMainNavigationUI
+import WireSettingsUI
+import WireSyncEngine
 
 @testable import Wire
 
-final class MockMainCoordinator: MainCoordinating {
+final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    func openConversation(
-        _ conversation: ZMConversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
+    typealias Dependencies = Wire.MainCoordinatorDependencies
+
+    @MainActor
+    func showConversationList(conversationFilter: ConversationFilter?) {
         fatalError("Mock method not implemented")
     }
 
-    func openConversation<Message>(
-        _ conversation: ZMConversation,
-        scrollTo message: Message,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) where Message: ZMConversationMessage {
+    @MainActor
+    func showArchive() {
         fatalError("Mock method not implemented")
     }
 
-    func showConversationList() {
-        fatalError("Mock method not implemented")
-    }
-
+    @MainActor
     func showSettings() {
         fatalError("Mock method not implemented")
     }
-}
 
-// MARK: - MainCoordinating + mock
+    @MainActor
+    func showConversation(conversation: ZMConversation, message: ZMConversationMessage?) async {
+        fatalError("Mock method not implemented")
+    }
 
-extension MainCoordinating where Self == MockMainCoordinator {
+    @MainActor
+    func hideConversation() {
+        fatalError("Mock method not implemented")
+    }
 
-    static var mock: Self { .init() }
+    @MainActor
+    func showSettingsContent(_: SettingsTopLevelMenuItem) {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func hideSettingsContent() {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func showSelfProfile() {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func showUserProfile(user: any UserType) async {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func showConnect() {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func showCreateGroupConversation() async {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func presentViewController(_ viewController: UIViewController) async {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
+    func dismissPresentedViewController() async {
+        fatalError("Mock method not implemented")
+    }
 }

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
@@ -30,7 +31,8 @@ final class ConversationPreviewViewController: UIViewController {
         presentingViewController: UIViewController,
         sourceView: UIView,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.conversation = conversation
         actionController = ConversationActionController(
@@ -44,7 +46,8 @@ final class ConversationPreviewViewController: UIViewController {
             conversation: conversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         super.init(nibName: nil, bundle: nil)
     }

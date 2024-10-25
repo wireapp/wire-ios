@@ -29,9 +29,12 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     @MainActor
     override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
 
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
@@ -40,12 +43,16 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
+        mockGetUserAccountImageUseCase = .init()
+        mockGetUserAccountImageUseCase.invoke_MockValue = .init()
+
         sut = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            getUserAccountImageUseCase: mockGetUserAccountImageUseCase
         )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
@@ -58,8 +65,8 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         selfUser = nil
         mockConversation = nil
         userSession = nil
-
-        super.tearDown()
+        mockGetUserAccountImageUseCase = nil
+        mockMainCoordinator = nil
     }
 
     func testThatSelectAConversationCallsSelectOnListContentController() {

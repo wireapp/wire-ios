@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -26,6 +27,7 @@ enum ProfileViewControllerTabBarIndex: Int {
     case devices
 }
 
+@MainActor
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
 }
@@ -53,7 +55,8 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
 
     // MARK: - init
 
@@ -65,7 +68,8 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -94,7 +98,8 @@ final class ProfileViewController: UIViewController {
 
         self.init(
             viewModel: viewModel,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         self.viewControllerDismisser = viewControllerDismisser
@@ -102,10 +107,12 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -256,7 +263,7 @@ final class ProfileViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            securityLevelView.topAnchor.constraint(equalTo: view.topAnchor),
+            securityLevelView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             securityLevelView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             securityLevelView.heightAnchor.constraint(equalToConstant: securityBannerHeight),
 
@@ -299,7 +306,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         case .ignore:
             viewModel.ignoreConnectionRequest()
         }
-
     }
 
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction) {
@@ -364,18 +370,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     }
 
     private func openSelfProfile() {
-        // Do not reveal list view for iPad regular mode
-        let leftViewControllerRevealed: Bool
-        if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
-        } else {
-            leftViewControllerRevealed = true
-        }
-
-        dismiss(animated: true) {
-            self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                self.mainCoordinator.showSettings()
-            }
+        Task {
+            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            selfProfileUI.modalPresentationStyle = .formSheet
+            await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 
@@ -403,7 +401,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             in: self,
             user: user,
             userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 

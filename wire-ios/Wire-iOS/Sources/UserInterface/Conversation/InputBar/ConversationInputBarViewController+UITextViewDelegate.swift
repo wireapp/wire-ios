@@ -26,16 +26,6 @@ extension CharacterSet {
     static var newlinesAndTabulation = CharacterSet(charactersIn: "\r\n\t")
 }
 
-extension ConversationInputBarViewController {
-    func hideLeftView() {
-        let currentDevice = DeviceWrapper(device: .current)
-        guard self.isIPadRegularPortrait(device: currentDevice) else { return }
-        guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
-
-        splitViewController.setLeftViewControllerRevealed(false, animated: true)
-    }
-}
-
 extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard let conversation = conversation as? ZMConversation else { return }
@@ -112,7 +102,6 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         updateAccessoryViews()
         updateNewButtonTitleLabel()
-        hideLeftView()
     }
 
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
