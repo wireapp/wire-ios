@@ -66,6 +66,17 @@ public protocol ConversationLocalStoreProtocol {
     func fetchMLSConversation(
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
+    
+    /// Fetches a conversation locally.
+     /// - Parameters:
+     ///     - id: The ID of the conversation.
+     ///     - domain: The domain of the conversation if any.
+     /// - returns: The `ZMConversation` found locally.
+
+     func fetchConversation(
+         with id: UUID,
+         domain: String?
+     ) async -> ZMConversation?
 
     /// Removes a given user from all conversations.
     ///
@@ -205,6 +216,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
+    
+    public func fetchConversation(
+         with id: UUID,
+         domain: String?
+     ) async -> ZMConversation? {
+         await context.perform { [context] in
+             ZMConversation.fetch(
+                 with: id,
+                 domain: domain,
+                 in: context
+             )
+         }
+     }
 
     public func removeFromConversations(
         user: ZMUser,
