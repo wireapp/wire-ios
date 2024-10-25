@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireTesting
 import XCTest
 
 @testable import WireDataModel
@@ -38,14 +39,17 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
     }
 
     func testTeamImage() async throws {
-        throw XCTSkip("TODO: try to fix this test")
-
         // Given
         let teamImageData = try imageData(from: .brown)
         let user = await coreDataStack.viewContext.perform { [self] in
+
+            let fileAssetCache = FileAssetCache(location: FileManager.default.randomCacheURL!)
+            coreDataStack.viewContext.zm_fileAssetCache = fileAssetCache
+
             let user = ZMUser.selfUser(in: coreDataStack.viewContext)
             let team = Team.mockTeam(context: coreDataStack.viewContext)
-            team.imageData = teamImageData // <-- TODO: value is not stored
+            team.pictureAssetId = "123-1234-abc"
+            team.imageData = teamImageData
             let membership = TeamMembership.insertNewObject(in: coreDataStack.viewContext)
             membership.team = team
             membership.user = user
