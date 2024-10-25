@@ -20,7 +20,7 @@ import SwiftUI
 
 public struct AccountImageViewRepresentable: UIViewRepresentable {
 
-    private let accountImage: UIImage
+    private let source: AccountImageSource
     private let availability: Availability?
 
     @Environment(\.accountImageBorderWidth) private var accountImageBorderWidth
@@ -34,10 +34,10 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     // MARK: - Life Cycle
 
     public init(
-        accountImage: UIImage,
+        source: AccountImageSource,
         availability: Availability?
     ) {
-        self.accountImage = accountImage
+        self.source = source
         self.availability = availability
     }
 
@@ -46,7 +46,7 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     }
 
     public func updateUIView(_ view: AccountImageView, context: Context) {
-        view.accountImage = accountImage
+        view.source = source
         view.availability = availability
         view.imageBorderWidth = accountImageBorderWidth
         view.imageBorderColor = accountImageBorderColor
@@ -61,11 +61,11 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 extension AccountImageViewRepresentable {
 
     init(
-        _ accountImage: UIImage,
+        _ source: AccountImageSource,
         _ availability: Availability?
     ) {
         self.init(
-            accountImage: accountImage,
+            source: source,
             availability: availability
         )
     }

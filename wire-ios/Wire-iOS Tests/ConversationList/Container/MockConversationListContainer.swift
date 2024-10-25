@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImageUI
 import XCTest
 
 @testable import Wire
@@ -95,7 +96,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate accountImage: UIImage
+        didUpdate accountImageSource: WireAccountImageUI.AccountImageSource
     ) {
         // no-op
     }

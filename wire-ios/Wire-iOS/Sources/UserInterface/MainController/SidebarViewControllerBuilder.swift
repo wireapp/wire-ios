@@ -30,7 +30,7 @@ struct SidebarViewControllerBuilder {
         let availabilityIndicatorDesign = accountImageViewDesign.availabilityIndicator
         let sidebarViewController = SidebarViewController { accountImage, availability in
             AccountImageViewRepresentable(
-                accountImage: accountImage,
+                source: accountImage.mapToAccountImageSource(),
                 availability: availability?.mapToAccountImageAvailability()
             )
             .accountImageBorderWidth(accountImageViewDesign.borderWidth)

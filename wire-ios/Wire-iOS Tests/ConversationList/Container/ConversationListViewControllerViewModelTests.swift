@@ -29,7 +29,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
-    private var mockGetUserAccountImageUseCase: MockGetUserAccountImageUseCase!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
     private var mockMainCoordinator: AnyMainCoordinator!
 
     @MainActor
@@ -43,8 +43,8 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        mockGetUserAccountImageUseCase = .init()
-        mockGetUserAccountImageUseCase.invoke_MockValue = .init()
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
 
         sut = ConversationListViewController.ViewModel(
             account: account,
@@ -52,7 +52,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             mainCoordinator: mockMainCoordinator,
-            getUserAccountImageUseCase: mockGetUserAccountImageUseCase
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
@@ -65,7 +65,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         selfUser = nil
         mockConversation = nil
         userSession = nil
-        mockGetUserAccountImageUseCase = nil
+        mockGetUserAccountImageSourceUseCase = nil
         mockMainCoordinator = nil
     }
 

@@ -132,7 +132,7 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             mainCoordinator: mainCoordinator,
-            getUserAccountImageUseCase: GetUserAccountImageUseCase()
+            getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
         )
         self.init(
             viewModel: viewModel,
