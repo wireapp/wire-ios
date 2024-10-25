@@ -143,7 +143,8 @@ final class ArchivedListViewController: UIViewController {
 extension ArchivedListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let conversation = viewModel[indexPath.row] else { return }
+        let conversation = viewModel[indexPath.row]
+        viewModel.unarchiveConversation(at: indexPath.row)
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
     }
 }

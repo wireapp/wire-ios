@@ -508,23 +508,6 @@ final class ConversationListViewController: UIViewController {
     }
 }
 
-// MARK: - ConversationListViewController + ArchivedListViewControllerDelegate
-
-extension ConversationListViewController: ArchivedListViewControllerDelegate {
-
-    func archivedListViewController(
-        _ viewController: ArchivedListViewController,
-        didSelectConversation conversation: ZMConversation
-    ) {
-        _ = selectOnListContentController(
-            conversation,
-            scrollTo: nil,
-            focusOnView: true,
-            animated: true
-        )
-    }
-}
-
 // MARK: - Helpers
 
 private extension NSAttributedString {
