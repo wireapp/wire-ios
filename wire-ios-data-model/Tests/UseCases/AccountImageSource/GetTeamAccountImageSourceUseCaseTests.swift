@@ -21,7 +21,6 @@ import XCTest
 
 @testable import WireDataModel
 
-// TODO: finish implementation
 final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
     private var coreDataStack: CoreDataStack!
@@ -44,7 +43,8 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
         let user = await coreDataStack.viewContext.perform { [self] in
             let user = ZMUser.selfUser(in: coreDataStack.viewContext)
             let team = Team.mockTeam(context: coreDataStack.viewContext)
-            let membership = TeamMembership(context: coreDataStack.viewContext)
+            team.imageData = teamImageData // <-- TODO: value is not stored
+            let membership = TeamMembership.insertNewObject(in: coreDataStack.viewContext)
             membership.team = team
             membership.user = user
             return user
@@ -59,45 +59,70 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
         // Then
         guard case .image(let teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
-            return XCTFail("Expected account image to match actual image")
+            return XCTFail("Expected team image to match actual image")
         }
     }
 
-//    func testUserInitials() async throws {
-//        // Given
-//        let user = await coreDataStack.viewContext.perform { [self] in
-//            let user = ZMUser.selfUser(in: coreDataStack.viewContext)
-//            user.name = " Wire\tUser \t\n"
-//            return user
-//        }
-//
-//        // When
-//        let accountImageSource = try await sut.invoke(
-//            user: user,
-//            userContext: user.managedObjectContext,
-//            account: coreDataStack.account
-//        )
-//
-//        // Then
-//        XCTAssertEqual(accountImageSource, .text("WU"))
-//    }
-/*
-    func testAccountName() async throws {
+    func testTeamName() async throws {
         // Given
-        coreDataStack.account.userName = "Wire\tUser \t\n"
+        let user = await coreDataStack.viewContext.perform { [self] in
+            let user = ZMUser.selfUser(in: coreDataStack.viewContext)
+            let team = Team.mockTeam(context: coreDataStack.viewContext)
+            team.name = "\tWire \n"
+            let membership = TeamMembership.insertNewObject(in: coreDataStack.viewContext)
+            membership.team = team
+            membership.user = user
+            return user
+        }
+
+        // When
+        let teamImageSource = try await sut.invoke(
+            user: user,
+            userContext: user.managedObjectContext,
+            account: coreDataStack.account
+        )
+
+        // Then
+        XCTAssertEqual(teamImageSource, .text("W"))
+    }
+
+    func testAccountImage() async throws {
+        // Given
+        let teamImageData = try imageData(from: .brown)
+        coreDataStack.account.teamImageData = teamImageData
         let user = await coreDataStack.viewContext.perform { [self] in
             ZMUser.selfUser(in: coreDataStack.viewContext)
         }
 
         // When
-        let accountImageSource = try await sut.invoke(
+        let teamImageSource = try await sut.invoke(
             user: user,
             userContext: nil,
             account: coreDataStack.account
         )
 
         // Then
-        XCTAssertEqual(accountImageSource, .text("WU"))
+        guard case .image(let teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
+            return XCTFail("Expected team image to match actual image")
+        }
+    }
+
+    func testAccountName() async throws {
+        // Given
+        coreDataStack.account.teamName = "\nWire \t"
+        let user = await coreDataStack.viewContext.perform { [self] in
+            ZMUser.selfUser(in: coreDataStack.viewContext)
+        }
+
+        // When
+        let teamImageSource = try await sut.invoke(
+            user: user,
+            userContext: user.managedObjectContext,
+            account: coreDataStack.account
+        )
+
+        // Then
+        XCTAssertEqual(teamImageSource, .text("W"))
     }
 
     func testNoSource() async throws {
@@ -108,17 +133,16 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
 
         do {
             // When
-            let accountImageSource = try await sut.invoke(
+            let teamImageSource = try await sut.invoke(
                 user: user,
                 userContext: user.managedObjectContext,
                 account: coreDataStack.account
             )
             XCTFail("Unexpected success")
-        } catch GetUserAccountImageSourceUseCase.Error.invalidImageSource {
+        } catch GetTeamAccountImageSourceUseCase.Error.invalidImageSource {
             // Then
         }
     }
-    */
 
     // MARK: - Helper
 
