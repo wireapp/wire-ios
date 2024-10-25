@@ -30,84 +30,95 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
         coreDataStack = try await CoreDataStackHelper().createStack()
-
-//        mockAccountImageGenerator = .init()
         sut = .init()
-//        mockUser = .init()
-//        mockAccount = .init()
     }
 
     override func tearDown() {
-//        mockAccount = nil
-//        mockUser = nil
         sut = nil
-//        mockAccountImageGenerator = nil
+        coreDataStack = nil
     }
+
+    func testTeamImage() async throws {
+        // Given
+        let teamImageData = try imageData(from: .brown)
+        let user = await coreDataStack.viewContext.perform { [self] in
+            let user = ZMUser.selfUser(in: coreDataStack.viewContext)
+            let team = Team.mockTeam(context: coreDataStack.viewContext)
+            let membership = TeamMembership(context: coreDataStack.viewContext)
+            membership.team = team
+            membership.user = user
+            return user
+        }
+
+        // When
+        let teamImageSource = try await sut.invoke(
+            user: user,
+            userContext: user.managedObjectContext,
+            account: coreDataStack.account
+        )
+
+        // Then
+        guard case .image(let teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
+            return XCTFail("Expected account image to match actual image")
+        }
+    }
+
+//    func testUserInitials() async throws {
+//        // Given
+//        let user = await coreDataStack.viewContext.perform { [self] in
+//            let user = ZMUser.selfUser(in: coreDataStack.viewContext)
+//            user.name = " Wire\tUser \t\n"
+//            return user
+//        }
+//
+//        // When
+//        let accountImageSource = try await sut.invoke(
+//            user: user,
+//            userContext: user.managedObjectContext,
+//            account: coreDataStack.account
+//        )
+//
+//        // Then
+//        XCTAssertEqual(accountImageSource, .text("WU"))
+//    }
 /*
-    func testTeamImageDataMatches() async throws {
+    func testAccountName() async throws {
         // Given
-        let expectedData = try imageData(from: .green)
-        mockUser.membership?.team?.teamImageSource = .data(expectedData)
+        coreDataStack.account.userName = "Wire\tUser \t\n"
+        let user = await coreDataStack.viewContext.perform { [self] in
+            ZMUser.selfUser(in: coreDataStack.viewContext)
+        }
 
         // When
-        let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
+        let accountImageSource = try await sut.invoke(
+            user: user,
+            userContext: nil,
+            account: coreDataStack.account
+        )
 
         // Then
-        XCTAssertEqual(expectedData, actualData)
+        XCTAssertEqual(accountImageSource, .text("WU"))
     }
 
-    func testTeamNameImageDataMatches() async throws {
+    func testNoSource() async throws {
         // Given
-        let expectedData = try imageData(from: .green)
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
-        mockUser.membership?.team?.teamImageSource = .text(initials: "W")
+        let user = await coreDataStack.viewContext.perform { [self] in
+            ZMUser.selfUser(in: coreDataStack.viewContext)
+        }
 
-        // When
-        let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
-
-        // Then
-        XCTAssertEqual(expectedData, actualData)
-    }
-
-    @MainActor
-    func testAccountImageDataMatches() async throws {
-        // Given
-        let expectedData = try imageData(from: .green)
-        mockAccount.teamImageSource = .data(expectedData)
-
-        // When
-        let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
-
-        // Then
-        XCTAssertEqual(expectedData, actualData)
-    }
-
-    @MainActor
-    func testAccountTeamNameInitalsImageDataMatches() async throws {
-        // Given
-        let expectedData = try imageData(from: .green)
-        mockAccount.teamName = " Wire Team "
-        mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
-
-        // When
-        let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
-
-        // Then
-        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.count, 1)
-        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.first?.initials, "W")
-        XCTAssertEqual(expectedData, actualData)
-    }
-
-    func testErrorIsThrown() async throws {
-        // When
         do {
-            _ = try await sut.invoke(user: mockUser, account: mockAccount)
+            // When
+            let accountImageSource = try await sut.invoke(
+                user: user,
+                userContext: user.managedObjectContext,
+                account: coreDataStack.account
+            )
             XCTFail("Unexpected success")
-        } catch GetTeamAccountImageUseCase.Error.invalidImageSource {
+        } catch GetUserAccountImageSourceUseCase.Error.invalidImageSource {
             // Then
         }
     }
- */
+    */
 
     // MARK: - Helper
 
