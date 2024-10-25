@@ -34,7 +34,11 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
         account: some GetAccountImageUseCaseAccountProtocol
     ) async throws -> UIImage {
         var teamName = ""
-        if let team = await user.membership?.team, let teamImageSource = await team.teamImageSource ?? account.teamImageSource {
+        var teamImageSource = await user.membership?.team?.teamImageSource
+        if teamImageSource == nil {
+            teamImageSource = await account.teamImageSource
+        }
+        if let teamImageSource {
             // team image
             if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
                 return accountImage
@@ -46,7 +50,11 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
             }
         }
 
-        if teamName.isEmpty, let alternativeTeamName = await user.membership?.team?.name ?? account.teamName {
+        var alternativeTeamName = await user.membership?.team?.name
+        if alternativeTeamName == nil {
+            alternativeTeamName = await account.teamName
+        }
+        if teamName.isEmpty, let alternativeTeamName {
             teamName = alternativeTeamName.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 

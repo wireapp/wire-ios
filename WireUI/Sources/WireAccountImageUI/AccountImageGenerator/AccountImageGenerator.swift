@@ -18,6 +18,8 @@
 
 import UIKit
 
+// TODO: [WPB-11833] fix supporting dark mode, fix injecting colors from WireDesign for the image generation
+
 @MainActor
 public struct AccountImageGenerator: AccountImageGeneratorProtocol {
 

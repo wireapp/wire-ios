@@ -19,7 +19,7 @@ let package = Package(
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
