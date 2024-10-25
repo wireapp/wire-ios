@@ -67,6 +67,7 @@ class WireTextField: UITextField {
         setupPadding()
         setupTextFieldProperties()
         setupTextFieldEvents()
+        setupCustomClearButton()
     }
 
     private func setupAppearance() {
@@ -96,18 +97,60 @@ class WireTextField: UITextField {
     }
 
     private func setupTextFieldEvents() {
-        addTarget(self, action: #selector(textFieldDidStartEditing), for: .editingDidBegin)
-        addTarget(self, action: #selector(textFieldDidFinishEditing), for: .editingDidEnd)
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.textFieldDidStartEditing()
+        }), for: .editingDidBegin)
+
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.textFieldDidFinishEditing()
+        }), for: .editingDidEnd)
+
+        addAction(UIAction(handler: { [weak self] _ in
+            self?.updateClearButtonVisibility()
+        }), for: .editingChanged)
+    }
+
+    // MARK: - Custom Clear Button
+
+    private func setupCustomClearButton() {
+        let clearButton = UIButton(type: .custom)
+        let clearImage = UIImage(named: "Clear")?.withRenderingMode(.alwaysTemplate)
+        clearButton.setImage(clearImage, for: .normal)
+        clearButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+
+        let clearAction = UIAction { [weak self] _ in
+            self?.text = ""
+            self?.sendActions(for: .editingChanged)
+        }
+        clearButton.addAction(clearAction, for: .touchUpInside)
+
+        self.rightView = clearButton
+        // Start with clear button hidden
+        self.rightViewMode = .never
+    }
+
+    // MARK: - Clear Button Visibility
+
+    private func updateClearButtonVisibility() {
+        rightViewMode = (text?.isEmpty == false) ? .always : .never
+    }
+
+    // MARK: - Override rightViewRect(forBounds:) for padding
+
+    override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+        var rect = super.rightViewRect(forBounds: bounds)
+        rect.origin.x -= 10 // Add padding by shifting it to the left
+        return rect
     }
 
     // MARK: - UI Updates
 
-    @objc private func textFieldDidStartEditing() {
+    private func textFieldDidStartEditing() {
         layer.borderColor = selectedBorderColor.cgColor
         wireTextFieldDelegate?.textFieldDidBeginEditing(self)
     }
 
-    @objc private func textFieldDidFinishEditing() {
+    private func textFieldDidFinishEditing() {
         layer.borderColor = defaultBorderColor.cgColor
         wireTextFieldDelegate?.textFieldDidEndEditing(self)
     }
