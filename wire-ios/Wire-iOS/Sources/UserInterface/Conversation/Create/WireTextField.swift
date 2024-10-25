@@ -117,7 +117,7 @@ class WireTextField: UITextField {
         let clearImage = UIImage(systemName: "x.circle.fill")?.withRenderingMode(.alwaysTemplate)
         clearButton.setImage(clearImage, for: .normal)
         clearButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
-        
+
         let clearAction = UIAction { [weak self] _ in
             self?.text = ""
             self?.sendActions(for: .editingChanged)
