@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "已傳送";
 "content.system.message_read_timestamp" = "閱";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "傳送匿名使用資料";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "接收新聞";
-"self.settings.receiveNews_and_offers.description.title" = "接收Wire的新聞和產品更新電子郵件。";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "無效的鏈接。";
 "url_action.invalid_link.message" = "你想打開的連結無效。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "您想接收來自Wire的新聞和產品更新電子郵件嗎？";
-"news_offers.consent.message" = "您可以在任何時候取消訂閱。";
-"news_offers.consent.button.privacy_policy.title" = "隱私權原則";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

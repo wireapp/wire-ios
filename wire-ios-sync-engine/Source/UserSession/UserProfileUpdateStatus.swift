@@ -288,12 +288,6 @@ extension UserProfileUpdateStatus {
         return selfUser.emailAddress != nil && selfUser.emailAddress != ""
     }
 
-    /// Whether the current user has a phone number set in the profile
-    private var selfUserHasPhoneNumber: Bool {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
-        return selfUser.phoneNumber != nil && selfUser.phoneNumber != ""
-    }
-
     /// Whether we are currently changing email
     public var currentlyChangingEmail: Bool {
         guard self.selfUserHasEmail else {

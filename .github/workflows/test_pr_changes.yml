@@ -15,7 +15,14 @@ jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      ) && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     # Set job outputs to values from filter step
     outputs:

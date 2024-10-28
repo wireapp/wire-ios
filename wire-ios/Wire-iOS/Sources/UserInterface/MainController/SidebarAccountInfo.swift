@@ -18,15 +18,15 @@
 
 import UIKit
 import WireDataModel
-import WireSidebar
+import WireSidebarUI
 
 extension SidebarAccountInfo {
 
-    init(_ user: some UserType, _ accountImage: UIImage) {
+    init(_ user: some UserType, _ accountImageSource: AccountImageSource) {
         self.init(
             displayName: user.name ?? "",
             username: user.handle ?? "",
-            accountImage: accountImage,
+            accountImageSource: accountImageSource,
             availability: user.availability.map()
         )
     }

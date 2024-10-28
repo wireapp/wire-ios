@@ -53,20 +53,6 @@
         "identifier" : "3E1860C2191A649D000FE027",
         "name" : "UnitTests"
       }
-    },
-    {
-      "skippedTests" : [
-        "AvailabilityTests",
-        "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",
-        "SessionManagerTests\/testThatItMarksConversationsAsRead()",
-        "UserRichProfileIntegrationTests\/testThatItHandlesErrorWhenUpdatingRichInfo()",
-        "UserTests"
-      ],
-      "target" : {
-        "containerPath" : "container:WireSyncEngine.xcodeproj",
-        "identifier" : "169BA1D125ECDBA300374343",
-        "name" : "IntegrationTests"
-      }
     }
   ],
   "version" : 1

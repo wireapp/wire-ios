@@ -21,9 +21,9 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSidebar
+import WireMainNavigationUI
+import WireSidebarUI
 import WireSyncEngine
-import WireUIFoundation
 
 final class ZClientViewController: UIViewController {
 
@@ -39,7 +39,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController!
+    private(set) var mainTabBarController: MainTabBarController<ConversationListViewController, ConversationRootViewController>!
     // TODO [WPB-6647]: Remove in navigation overhaul
     private var tabBarChangeHandler: TabBarChangeHandler!
 
@@ -195,8 +195,9 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.view.backgroundColor = .clear
 
         mainTabBarController = .init()
-        mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
-        mainTabBarController[tab: .folders].viewControllers = [conversationListWithFoldersViewController]
+        mainTabBarController.applyMainTabBarControllerAppearance()
+        mainTabBarController.conversationListUI = conversationListViewController
+        mainTabBarController.foldersUI = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
 
         // TODO [WPB-6647]: Remove in navigation overhaul

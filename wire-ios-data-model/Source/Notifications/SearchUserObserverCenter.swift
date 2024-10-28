@@ -48,7 +48,7 @@ public class SearchUserSnapshot {
                                             #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
 
     weak var searchUser: ZMSearchUser?
-    public private (set) var snapshotValues: [String: NSObject?]
+    public private(set) var snapshotValues: [String: NSObject?]
 
     /// The managed object context used for notifications
     weak var managedObjectContext: NSManagedObjectContext?

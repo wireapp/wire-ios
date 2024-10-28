@@ -172,18 +172,22 @@ final class SearchResultsView: UIView {
 
         if let accessoryView = self.accessoryView {
             accessoryView.layoutIfNeeded()
-            let bottomInset = (UIScreen.hasNotch ? accessoryViewMargin : 0) + accessoryView.frame.height - UIScreen.safeArea.bottom
 
-            // Add padding at the bottom of the screen
-            collectionView.contentInset.bottom = bottomInset
-            collectionView.horizontalScrollIndicatorInsets.bottom = bottomInset
-            collectionView.verticalScrollIndicatorInsets.bottom = bottomInset
+            // Use the safeAreaInsets of the window or screen directly to determine if there's a notch
+            if let window = UIApplication.shared.windows.first {
+                let safeAreaInsets = window.safeAreaInsets
+                let bottomInset = (safeAreaInsets.bottom > 0 ? accessoryViewMargin : 0) + accessoryView.frame.height - safeAreaInsets.bottom
+
+                // Add padding at the bottom of the screen
+                collectionView.contentInset.bottom = bottomInset
+                collectionView.horizontalScrollIndicatorInsets.bottom = bottomInset
+                collectionView.verticalScrollIndicatorInsets.bottom = bottomInset
+            }
         } else {
+            // Reset the insets if no accessory view is available
             collectionView.contentInset.bottom = 0
             collectionView.horizontalScrollIndicatorInsets.bottom = 0
             collectionView.verticalScrollIndicatorInsets.bottom = 0
         }
-
     }
-
 }

@@ -264,7 +264,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
             bottomToolbar.topAnchor.constraint(equalTo: topContainer.bottomAnchor),
             bottomToolbar.leftAnchor.constraint(equalTo: topContainer.leftAnchor),
-            bottomToolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            bottomToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             bottomToolbar.rightAnchor.constraint(equalTo: topContainer.rightAnchor),
             bottomToolbar.heightAnchor.constraint(equalToConstant: 72),
             bottomToolbar.centerXAnchor.constraint(equalTo: topContainer.centerXAnchor),

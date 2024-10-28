@@ -862,6 +862,10 @@ internal enum L10n {
         /// Close profile
         internal static let description = L10n.tr("Accessibility", "profile.closeButton.description", fallback: "Close profile")
       }
+      internal enum ShareProfileButton {
+        /// Share your profile via QR code or link
+        internal static let description = L10n.tr("Accessibility", "profile.shareProfileButton.description", fallback: "Share your profile via QR code or link")
+      }
     }
     internal enum ReactionPicker {
       internal enum DismissButton {
@@ -951,6 +955,20 @@ internal enum L10n {
         internal static func hint(_ p1: Any) -> String {
           return L10n.tr("Accessibility", "settings.deviceCount.hint", String(describing: p1), fallback: "%@ devices in use")
         }
+      }
+    }
+    internal enum ShareProfile {
+      internal enum BackButton {
+        /// Go back to your profile
+        internal static let description = L10n.tr("Accessibility", "shareProfile.backButton.description", fallback: "Go back to your profile")
+      }
+      internal enum CloseButton {
+        /// Close share profile view
+        internal static let description = L10n.tr("Accessibility", "shareProfile.closeButton.description", fallback: "Close share profile view")
+      }
+      internal enum QrCode {
+        /// QR code
+        internal static let description = L10n.tr("Accessibility", "shareProfile.qrCode.description", fallback: "QR code")
       }
     }
     internal enum Sketch {
@@ -4152,20 +4170,6 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
       }
     }
-    internal enum NewsOffers {
-      internal enum Consent {
-        /// You can unsubscribe at any time.
-        internal static let message = L10n.tr("Localizable", "news_offers.consent.message", fallback: "You can unsubscribe at any time.")
-        /// Do you want to receive news and product updates from Wire via email?
-        internal static let title = L10n.tr("Localizable", "news_offers.consent.title", fallback: "Do you want to receive news and product updates from Wire via email?")
-        internal enum Button {
-          internal enum PrivacyPolicy {
-            /// Privacy Policy
-            internal static let title = L10n.tr("Localizable", "news_offers.consent.button.privacy_policy.title", fallback: "Privacy Policy")
-          }
-        }
-      }
-    }
     internal enum Notifications {
       /// %@ - %@
       internal static func inConversation(_ p1: Any, _ p2: Any) -> String {
@@ -4641,6 +4645,24 @@ internal enum L10n {
         /// %@ joined Wire
         internal static func newUser(_ p1: Any) -> String {
           return L10n.tr("Localizable", "push.notification.new_user", String(describing: p1), fallback: "%@ joined Wire")
+        }
+      }
+    }
+    internal enum Qrcode {
+      /// Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.
+      internal static let shareMessage = L10n.tr("Localizable", "qrcode.share_message", fallback: "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
+      /// Share Profile
+      internal static let title = L10n.tr("Localizable", "qrcode.title", fallback: "Share Profile")
+      internal enum ShareProfileLink {
+        internal enum Button {
+          /// Share Profile Link
+          internal static let title = L10n.tr("Localizable", "qrcode.share_profile_link.button.title", fallback: "Share Profile Link")
+        }
+      }
+      internal enum ShareQrcode {
+        internal enum Button {
+          /// Share QR Code
+          internal static let title = L10n.tr("Localizable", "qrcode.share_qrcode.button.title", fallback: "Share QR Code")
         }
       }
     }
@@ -5613,14 +5635,6 @@ internal enum L10n {
               /// Wrong password. Please try again.
               internal static let wrongPassword = L10n.tr("Localizable", "self.settings.privacy_security.lock_password.description.wrong_password", fallback: "Wrong password. Please try again.")
             }
-          }
-        }
-        internal enum ReceiveNewsAndOffers {
-          /// Receive Newsletter
-          internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.title", fallback: "Receive Newsletter")
-          internal enum Description {
-            /// Receive news and product updates from Wire via email.
-            internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
         }
         internal enum SoundMenu {

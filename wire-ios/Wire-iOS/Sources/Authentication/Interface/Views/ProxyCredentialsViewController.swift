@@ -42,13 +42,21 @@ final class ProxyCredentialsViewController: UIViewController {
     }
 
     lazy var titleLabel = {
-        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
+        let label = DynamicFontLabel(
+            text: Credentials.title,
+            style: .h3,
+            color: SemanticColors.Label.textCellSubtitle
+        )
         label.text = Credentials.title
         return label
     }()
 
     lazy var captionLabel = {
-        let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
+        let label = DynamicFontLabel(
+            text: Credentials.title,
+            style: .body1,
+            color: SemanticColors.Label.textCellSubtitle
+        )
         label.numberOfLines = 0
         return label
     }()

@@ -140,7 +140,6 @@ final class CoreDataFixture {
         selfUser.name = "selfUser"
         selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
 
         if selfUserInTeam {
             setupMember()

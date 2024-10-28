@@ -69,10 +69,10 @@ final class StartUIInviteActionBar: UIView {
         NSLayoutConstraint.activate([
             inviteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding * 2),
             inviteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -(padding * 2)),
-            inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom)),
+            inviteButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -padding),
             inviteButton.topAnchor.constraint(equalTo: topAnchor, constant: padding)
         ])
-        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom))
+        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -padding)
         bottomEdgeConstraint.isActive = true
 
         inviteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
@@ -92,7 +92,7 @@ final class StartUIInviteActionBar: UIView {
         UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] _ in
             guard let self else { return }
 
-            bottomEdgeConstraint.constant = -padding - (diff > 0 ? 0 : UIScreen.safeArea.bottom)
+            bottomEdgeConstraint.constant = -padding - (diff > 0 ? 0 : safeAreaInsets.bottom)
             layoutIfNeeded()
         })
     }

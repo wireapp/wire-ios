@@ -136,7 +136,7 @@ final class CallTopOverlayController: UIViewController {
             interactiveView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             interactiveView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             interactiveView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            interactiveView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.safeArea.top),
+            interactiveView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             durationLabel.centerYAnchor.constraint(equalTo: interactiveView.centerYAnchor),
             durationLabel.leadingAnchor.constraint(equalTo: muteIcon.trailingAnchor, constant: 8),
             durationLabel.trailingAnchor.constraint(equalTo: interactiveView.trailingAnchor, constant: -16),

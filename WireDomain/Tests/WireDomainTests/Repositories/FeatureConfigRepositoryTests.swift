@@ -26,22 +26,22 @@ import XCTest
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
-    var sut: FeatureConfigRepository!
-    var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var sut: FeatureConfigRepository!
+    private var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var subscription: AnyCancellable?
 
-    var subscription: AnyCancellable?
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
-
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
         sut = FeatureConfigRepository(featureConfigsAPI: featureConfigsAPI,
@@ -49,11 +49,13 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
         featureConfigsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -69,8 +71,12 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let features = Feature.Name.allCases.compactMap {
-            Feature.fetch(name: $0, context: context)
+        let features = await context.perform { [self] in
+            let allFeatures = Feature.Name.allCases.compactMap {
+                Feature.fetch(name: $0, context: context)
+            }
+
+            return allFeatures
         }
 
         XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
@@ -125,12 +131,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         subscription = sut.observeFeatureStates()
             .sink { featureState in
                 featureStates.append(featureState)
-                let feature = Feature.fetch(name: featureState.name, context: self.context)
-                XCTAssertNotNil(feature)
-                XCTAssertEqual(featureState.status, .enabled)
-                XCTAssertEqual(featureState.shouldNotifyUser, false)
 
-                expectation.fulfill()
+                if featureStates.count == Scaffolding.featureConfigs.count {
+                    expectation.fulfill()
+                }
             }
 
         // When
@@ -140,13 +144,19 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
+
+        for featureState in featureStates {
+            await context.perform {
+                let feature = Feature.fetch(name: featureState.name, context: self.context)
+                XCTAssertNotNil(feature)
+                XCTAssertEqual(featureState.status, .enabled)
+                XCTAssertEqual(featureState.shouldNotifyUser, false)
+            }
+        }
     }
 
-}
-
-private extension FeatureConfigRepositoryTests {
-    enum Scaffolding {
-        nonisolated(unsafe) static let featureConfigs: [FeatureConfig] = [
+    private enum Scaffolding {
+        static let featureConfigs: [FeatureConfig] = [
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,
@@ -200,4 +210,5 @@ private extension FeatureConfigRepositoryTests {
         ]
 
     }
+
 }

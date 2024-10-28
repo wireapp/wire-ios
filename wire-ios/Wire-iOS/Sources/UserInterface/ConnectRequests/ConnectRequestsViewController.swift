@@ -82,10 +82,13 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         if !lastLayoutBounds.size.equalTo(view.bounds.size) {
             lastLayoutBounds = view.bounds
             tableView.reloadData()
-            let yPos = tableView.contentSize.height - tableView.bounds.size.height + UIScreen.safeArea.bottom
+
+            let yPos = tableView.contentSize.height - tableView.bounds.size.height + view.safeAreaInsets.bottom
             tableView.contentOffset = CGPoint(x: 0, y: yPos)
         }
     }

@@ -91,6 +91,9 @@ final class DatabaseStatisticsController: UIViewController {
 
                 let allConversations = ZMConversation.fetchRequest()
 
+                let version = syncMoc.persistentStoreCoordinator?.managedObjectModel.version ?? "unknown"
+                self.addRow(title: "Version", contents: version)
+
                 let conversationsCount = try syncMoc.count(for: allConversations)
                 self.addRow(title: "Number of conversations", contents: "\(conversationsCount)")
 

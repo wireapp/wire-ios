@@ -68,6 +68,13 @@ public extension Color {
             dark: .white
         )
     )
+
+    static let viewBackground = Color(
+        uiColor: UIColor(
+            light: .gray20,
+            dark: .gray100
+        )
+    )
 }
 
 private extension UIColor {

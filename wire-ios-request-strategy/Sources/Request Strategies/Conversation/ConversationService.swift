@@ -372,7 +372,7 @@ public final class ConversationService: ConversationServiceInterface {
         guard let mlsGroupID, let mlsService else { return }
 
         self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
-        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
+        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, removalKeys: nil)
 
         await syncContext.perform {
             self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")

@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireSystem
 
 /// Process user properties delete events.
 
@@ -26,15 +27,24 @@ protocol UserPropertiesDeleteEventProcessorProtocol {
     ///
     /// - Parameter event: A user properties delete event.
 
-    func processEvent(_ event: UserPropertiesDeleteEvent) async throws
+    func processEvent(_ event: UserPropertiesDeleteEvent) async
 
 }
 
 struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
 
-    func processEvent(_: UserPropertiesDeleteEvent) async throws {
-        // TODO: [WPB-10198]
-        assertionFailure("not implemented yet")
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserPropertiesDeleteEvent) async {
+        let userPropertyKey = UserProperty.Key(rawValue: event.key)
+
+        guard let userPropertyKey else {
+            return WireLogger.eventProcessing.error(
+                "Unknown user property key: \(event.key)"
+            )
+        }
+
+        await repository.deleteUserProperty(withKey: userPropertyKey)
     }
 
 }
