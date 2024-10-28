@@ -27,7 +27,7 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
             return
         }
 
-        let fakeOneOnOnePerUser = conversationsPerUser(from: fake1On1Conversations)
+        let fakeOneOnOnePerUser = conversationsByUser(from: fake1On1Conversations)
 
         for (user, conversations) in fakeOneOnOnePerUser {
             guard conversations.count > 1 else {
@@ -51,19 +51,14 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
         }
     }
 
-    private func conversationsPerUser(from conversations: [ZMConversation]) -> [ZMUser: [ZMConversation]] {
-        var fakeOnOnOnePerUser = [ZMUser: [ZMConversation]]()
+    private func conversationsByUser(from conversations: [ZMConversation]) -> [ZMUser: [ZMConversation]] {
+        var fakeOnOnOneByUser = [ZMUser: [ZMConversation]]()
         for conversation in conversations {
             if let otherUser = conversation.localParticipantsExcludingSelf.first {
-                if fakeOnOnOnePerUser[otherUser] == nil {
-                    fakeOnOnOnePerUser[otherUser] = [conversation]
-                } else {
-                    fakeOnOnOnePerUser[otherUser]?.append(conversation)
-                }
-
+                fakeOnOnOneByUser[otherUser, default: []].append(conversation)
             }
         }
-        return fakeOnOnOnePerUser
+        return fakeOnOnOneByUser
     }
 
     private func moveMessages(from otherConversation: ZMConversation,
