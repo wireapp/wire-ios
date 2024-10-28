@@ -114,12 +114,12 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         await XCTAssertThrowsErrorAsync({
             // When
             try await sut.storeCookies(cookies)
-        }) { error in
+        }, errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
                 return
             }
-        }
+        })
     }
 
     func testStoreCookies_Invalid_Cookie() async throws {
@@ -130,12 +130,12 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         await XCTAssertThrowsErrorAsync({
             // When
             try await sut.storeCookies([invalidCookie])
-        }) { error in
+        }, errorHandler: { error in
             guard case HTTPCookieCodecError.invalidCookies = error else {
                 XCTFail("unexpected error: \(error)")
                 return
             }
-        }
+        })
     }
 
     func testStoreCookies_Adds_To_Keychain() async throws {
@@ -181,8 +181,8 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
 
         // Mock existing cookie.
         keychain.fetchItemQueryResult_MockMethod = { _, result in
-            let data = "raw cookie".data(using: .utf8)!.base64EncodedData()
-            result?.pointee = data as Optional<AnyObject>
+            let data = Data("raw cookie".utf8).base64EncodedData()
+            result?.pointee = data as AnyObject?
             return errSecSuccess
         }
 
