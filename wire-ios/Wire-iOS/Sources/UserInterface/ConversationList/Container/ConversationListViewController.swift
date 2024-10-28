@@ -506,7 +506,7 @@ final class ConversationListViewController: UIViewController {
 
     private func presentConnectUI() {
         Task {
-            let connectUI = connectViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            let connectUI = UINavigationController(rootViewController: connectViewControllerBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
