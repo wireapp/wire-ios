@@ -146,8 +146,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             for id in missingConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
-                        true,
+                    await conversationsLocalStore.storeConversation(
+                        needsBackendUpdate: true,
                         qualifiedId: id
                     )
                 }

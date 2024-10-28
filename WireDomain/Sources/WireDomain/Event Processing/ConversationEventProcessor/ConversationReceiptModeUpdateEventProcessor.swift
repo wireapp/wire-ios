@@ -58,8 +58,8 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             )
         }
 
-        await conversationLocalStore.storeConversationHasReadReceiptsEnabled(
-            isEnabled,
+        await conversationLocalStore.storeConversation(
+            hasReadReceiptsEnabled: isEnabled,
             for: conversation
         )
 
@@ -78,8 +78,8 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         let mutedMessageTypes = await conversationLocalStore.conversationMutedMessageTypes(conversation)
 
         if isConversationArchived, mutedMessageTypes == .none {
-            await conversationLocalStore.storeConversationIsArchived(
-                false,
+            await conversationLocalStore.storeConversation(
+                isArchived: false,
                 for: conversation
             )
         }

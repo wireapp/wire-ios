@@ -41,11 +41,11 @@ public protocol ConversationLocalStoreProtocol {
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
-    func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async
 
@@ -114,8 +114,8 @@ public protocol ConversationLocalStoreProtocol {
     ///     - isArchived: Indicates whether the conversation is archived.
     ///     - conversation: The conversation to set the `isArchived` flag for.
 
-    func storeConversationIsArchived(
-        _ isArchived: Bool,
+    func storeConversation(
+        isArchived: Bool,
         for conversation: ZMConversation
     ) async
 
@@ -132,8 +132,8 @@ public protocol ConversationLocalStoreProtocol {
     ///     - hasReadReceiptsEnabled: A flag indicating whether the conversation has read receipts enabled.
     ///     - conversation: The conversation to update the flag for.
 
-    func storeConversationHasReadReceiptsEnabled(
-        _ hasReadReceiptsEnabled: Bool,
+    func storeConversation(
+        hasReadReceiptsEnabled: Bool,
         for conversation: ZMConversation
     ) async
 }
@@ -225,8 +225,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    public func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async {
         await context.perform { [context] in
@@ -236,7 +236,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 in: context
             )
 
-            conversation?.needsToBeUpdatedFromBackend = needsUpdate
+            conversation?.needsToBeUpdatedFromBackend = needsBackendUpdate
         }
     }
 
@@ -323,8 +323,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func storeConversationIsArchived(
-        _ isArchived: Bool,
+    public func storeConversation(
+        isArchived: Bool,
         for conversation: ZMConversation
     ) async {
         await context.perform {
@@ -332,8 +332,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func storeConversationHasReadReceiptsEnabled(
-        _ hasReadReceiptsEnabled: Bool,
+    public func storeConversation(
+        hasReadReceiptsEnabled: Bool,
         for conversation: ZMConversation
     ) async {
         await context.perform {

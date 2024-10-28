@@ -176,19 +176,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversation, isFederationEnabled)
     }
 
-    // MARK: - storeConversationNeedsBackendUpdate
+    // MARK: - storeConversation
 
-    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
     public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
 
-    public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
-        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+    public func storeConversation(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsBackendUpdate: needsBackendUpdate, qualifiedId: qualifiedId))
 
         guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
             fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
         }
 
-        await mock(needsUpdate, qualifiedId)
+        await mock(needsBackendUpdate, qualifiedId)
     }
 
     // MARK: - storeFailedConversation
@@ -290,12 +290,12 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - storeConversationIsArchived
+    // MARK: - storeConversation
 
     public var storeConversationIsArchivedFor_Invocations: [(isArchived: Bool, conversation: ZMConversation)] = []
     public var storeConversationIsArchivedFor_MockMethod: ((Bool, ZMConversation) async -> Void)?
 
-    public func storeConversationIsArchived(_ isArchived: Bool, for conversation: ZMConversation) async {
+    public func storeConversation(isArchived: Bool, for conversation: ZMConversation) async {
         storeConversationIsArchivedFor_Invocations.append((isArchived: isArchived, conversation: conversation))
 
         guard let mock = storeConversationIsArchivedFor_MockMethod else {
@@ -323,12 +323,12 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - storeConversationHasReadReceiptsEnabled
+    // MARK: - storeConversation
 
     public var storeConversationHasReadReceiptsEnabledFor_Invocations: [(hasReadReceiptsEnabled: Bool, conversation: ZMConversation)] = []
     public var storeConversationHasReadReceiptsEnabledFor_MockMethod: ((Bool, ZMConversation) async -> Void)?
 
-    public func storeConversationHasReadReceiptsEnabled(_ hasReadReceiptsEnabled: Bool, for conversation: ZMConversation) async {
+    public func storeConversation(hasReadReceiptsEnabled: Bool, for conversation: ZMConversation) async {
         storeConversationHasReadReceiptsEnabledFor_Invocations.append((hasReadReceiptsEnabled: hasReadReceiptsEnabled, conversation: conversation))
 
         guard let mock = storeConversationHasReadReceiptsEnabledFor_MockMethod else {
