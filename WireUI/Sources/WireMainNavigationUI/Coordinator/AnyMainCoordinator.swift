@@ -19,7 +19,7 @@
 import UIKit
 
 /// A type-erased MainCoordinator.
-public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>: MainCoordinatorProtocol {
+public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesProtocol>: MainCoordinatorProtocol {
 
     public let base: any MainCoordinatorProtocol
 
@@ -30,10 +30,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     private let _hideConversation: @MainActor () -> Void
     private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
     private let _hideSettingsContent: @MainActor () -> Void
-    private let _showSelfProfile: @MainActor () async -> Void
-    private let _showUserProfile: @MainActor (_ user: User) async -> Void
-    private let _showConnect: @MainActor () async -> Void
-    private let _showCreateGroupConversation: @MainActor () async -> Void
     private let _presentViewController: @MainActor (_ viewController: UIViewController) async -> Void
     private let _dismissPresentedViewController: @MainActor () async -> Void
 
@@ -62,18 +58,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
         }
         _hideSettingsContent = {
             mainCoordinator.hideSettingsContent()
-        }
-        _showSelfProfile = {
-            await mainCoordinator.showSelfProfile()
-        }
-        _showUserProfile = { user in
-            await mainCoordinator.showUserProfile(user: user)
-        }
-        _showConnect = {
-            await mainCoordinator.showConnect()
-        }
-        _showCreateGroupConversation = {
-            await mainCoordinator.showCreateGroupConversation()
         }
         _presentViewController = { viewController in
             await mainCoordinator.presentViewController(viewController)
@@ -116,26 +100,6 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependencies>
     @MainActor
     public func hideSettingsContent() {
         _hideSettingsContent()
-    }
-
-    @MainActor
-    public func showSelfProfile() async {
-        await _showSelfProfile()
-    }
-
-    @MainActor
-    public func showUserProfile(user: User) async {
-        await _showUserProfile(user)
-    }
-
-    @MainActor
-    public func showConnect() async {
-        await _showConnect()
-    }
-
-    @MainActor
-    public func showCreateGroupConversation() async {
-        await _showCreateGroupConversation()
     }
 
     @MainActor

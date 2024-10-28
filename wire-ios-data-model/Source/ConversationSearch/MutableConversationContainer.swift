@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+/// A mutable container of conversations used by the `FilterConversationsUseCase`.
+/// This can be interpreted as a section in a table where a row is a conversation.
+public protocol MutableConversationContainer {
+    associatedtype Conversation: FilterableConversation
 
-public protocol MainUserProfileUIBuilderProtocol {
-    associatedtype UserProfileUI: UIViewController
-    associatedtype User
+    var conversations: [Conversation] { get }
 
-    @MainActor
-    func build(
-        user: User,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UserProfileUI
+    mutating func removeConversation(at index: Int)
 }

@@ -138,10 +138,6 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.emailAddress
     }
 
-    public var phoneNumber: String? {
-        return user?.phoneNumber
-    }
-
     public var domain: String? {
         return user?.domain ?? internalDomain
     }
