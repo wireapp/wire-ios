@@ -16,18 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImageUI
+import UIKit
 
-final class MockGetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
-
-    var invoke_Invocations = [any GetAccountImageUseCaseAccountProtocol]()
-    var invoke_MockValue: UIImage!
-
-    init() {}
-
-    func invoke<Account>(account: Account) async -> UIImage
-    where Account: GetAccountImageUseCaseAccountProtocol {
-        invoke_Invocations += [account]
-        return invoke_MockValue
-    }
+public enum AccountImageSource: Equatable, Sendable {
+    case image(UIImage), text(_ initials: String)
+    public init() { self = .text("") }
 }
