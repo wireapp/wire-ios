@@ -20,6 +20,8 @@ import Foundation
 
 extension ZMConversation {
 
+    public typealias ConversationID = UUID
+
     /// Whether the conversation was deleted on the backend.
 
     @NSManaged
@@ -64,7 +66,7 @@ extension ZMConversation {
     @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
     @objc
-    public var remoteIdentifier: UUID! {
+    public var remoteIdentifier: ConversationID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
             let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
@@ -83,7 +85,7 @@ extension ZMConversation {
     /// combination of domain and remoteIdentifier
     @NSManaged private var primaryKey: String
 
-    private func updatePrimaryKey(remoteIdentifier: UUID?, domain: String?) {
+    private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {
             // trying to access primaryKey property from older model - tests
             return

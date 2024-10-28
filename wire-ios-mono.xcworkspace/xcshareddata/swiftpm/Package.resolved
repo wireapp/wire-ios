@@ -129,16 +129,16 @@
       },
       {
         "package": "SwiftDocCPlugin",
-        "repositoryURL": "https://github.com/apple/swift-docc-plugin",
+        "repositoryURL": "https://github.com/swiftlang/swift-docc-plugin",
         "state": {
           "branch": null,
-          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
-          "version": "1.3.0"
+          "revision": "85e4bb4e1cd62cec64a4b8e769dcefdf0c5b9d64",
+          "version": "1.4.3"
         }
       },
       {
         "package": "SymbolKit",
-        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "repositoryURL": "https://github.com/swiftlang/swift-docc-symbolkit",
         "state": {
           "branch": null,
           "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
@@ -177,8 +177,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "82a453c2dfa335c7e778695762438dfe72b328d2",
-          "version": "600.0.0-prerelease-2024-07-24"
+          "revision": "0687f71944021d616d34d922343dcef086855920",
+          "version": "600.0.1"
         }
       }
     ]
