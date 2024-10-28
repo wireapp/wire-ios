@@ -96,12 +96,14 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             accountSelector: SessionManager.shared
         )
     }
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
         userSession: userSession,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
@@ -321,7 +323,7 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let connectUI = connectBuilder.build(mainCoordinator: .init(mainCoordinator: mainCoordinator))
+            let connectUI = UINavigationController(rootViewController: connectBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
