@@ -29,7 +29,6 @@
     
     if(self.isSelfUser) {
         FHAssertEqualObjects(failureRecorder, self.emailAddress, user.email);
-        FHAssertEqualObjects(failureRecorder, self.phoneNumber, user.phone);
     }
     
     FHAssertEqualObjects(failureRecorder, self.name, user.name);

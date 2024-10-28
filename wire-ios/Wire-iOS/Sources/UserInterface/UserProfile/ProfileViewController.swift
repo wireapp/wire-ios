@@ -366,6 +366,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicateUser()
         case .duplicateTeam:
             duplicateTeam()
+        case .duplicateConversation:
+            duplicateConversation()
         }
     }
 
@@ -520,6 +522,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
             WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
+    }
+
+    private func duplicateConversation() {
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+
+        viewModel.startOneToOneConversation()
     }
 
 }
