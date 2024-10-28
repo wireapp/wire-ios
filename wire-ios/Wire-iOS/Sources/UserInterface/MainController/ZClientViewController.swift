@@ -91,15 +91,12 @@ final class ZClientViewController: UIViewController {
         )
     }()
 
-    var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
-        .init(
-            selfUser: userSession.editableSelfUser,
-            userRightInterfaceType: UserRight.self,
-            userSession: userSession,
-            mainCoordinator: .init(mainCoordinator: mainCoordinator),
-            accountSelector: SessionManager.shared
-        )
-    }
+    private(set) lazy var selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
+        selfUser: userSession.editableSelfUser,
+        userRightInterfaceType: UserRight.self,
+        userSession: userSession,
+        accountSelector: SessionManager.shared
+    )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
         userSession: userSession,
@@ -262,6 +259,8 @@ final class ZClientViewController: UIViewController {
 
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
+
+        selfProfileViewControllerBuilder.mainCoordinator = .init(mainCoordinator: mainCoordinator)
 
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
