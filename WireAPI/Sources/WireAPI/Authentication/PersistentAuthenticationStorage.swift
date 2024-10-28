@@ -26,14 +26,17 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
     private let userID: UUID
     private var accessToken: AccessToken?
     private let sharedUserDefaults: UserDefaults
+    private let keychain: any KeychainProtocol
     private static let cookieEncryptionKeyKey = "ZMCookieKey"
 
     public init(
         userID: UUID,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        keychain: any KeychainProtocol
     ) {
         self.userID = userID
         self.sharedUserDefaults = sharedUserDefaults
+        self.keychain = keychain
     }
 
     // MARK: - Access token
@@ -49,22 +52,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
     // MARK: - Cookie
 
     public func storeCookies(_ cookies: [HTTPCookie]) async throws {
-        let properties = cookies.compactMap(\.properties)
-
-        // How many cookies do we expect to have?
-        guard
-            let name = properties.first?[.name] as? String,
-            name == "zuid"
-        else {
-            // What should we do?
-            fatalError()
-        }
-
-        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
-        archiver.encode(properties, forKey: "properties")
-        archiver.finishEncoding()
-
-        let cookieData = archiver.encodedData
+        let cookieData = try HTTPCookieCodec.encodeCookies(cookies)
         try await storeCookieData(cookieData)
     }
 
@@ -73,27 +61,13 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
             return []
         }
 
-        let unarchiver: NSKeyedUnarchiver
-        do {
-            unarchiver = try NSKeyedUnarchiver(forReadingFrom: cookieData)
-            unarchiver.requiresSecureCoding = true
-        } catch {
-            throw Error.failedToDecodeCookieData(error)
-        }
-
-        guard let properties = unarchiver.decodePropertyList(forKey: "properties") as? [[HTTPCookiePropertyKey: Any]] else {
-            throw Error.malformedCookieData
-        }
-
-        return properties.compactMap(HTTPCookie.init)
+        return try HTTPCookieCodec.decodeData(cookieData)
     }
 
     // MARK: - Cookie data
 
     private func storeCookieData(_ cookieData: Data) async throws {
-        guard let encryptionKey = fetchCookieEncryptionKey() else {
-            throw Error.missingCookieEncryptionKey
-        }
+        let encryptionKey = try fetchOrCreateCookieEncryptionKey()
 
         let encryptedCookieData: Data
         do {
@@ -135,7 +109,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     private func addCookieToKeychain(_ cookieData: Data) throws {
         let query = addQuery(cookieData: cookieData)
-        let status = SecItemAdd(query as CFDictionary, nil)
+        let status = keychain.addItem(query: query)
 
         guard status == errSecSuccess else {
             throw PersistentAuthenticationStorageError.failedKeychainAdd(status: status)
@@ -144,7 +118,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     private func updateCookieInKeychain(_ cookieData: Data) throws {
         let updateQuery = updateQuery(cookieData: cookieData)
-        let status = SecItemUpdate(fetchQuery as CFDictionary, updateQuery as CFDictionary)
+        let status = keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
 
         guard status == errSecSuccess else {
             throw PersistentAuthenticationStorageError.failedKeychainUpdate(status: status)
@@ -153,7 +127,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     private func fetchCookieDataFromKeychain() throws -> Data? {
         var result: CFTypeRef?
-        let status = SecItemCopyMatching(fetchQuery as CFDictionary, &result)
+        let status = keychain.fetchItem(query: fetchQuery, result: &result)
 
         switch status {
         case errSecItemNotFound:

@@ -18,25 +18,26 @@
 
 import Foundation
 
-/// A token used to make authenticated requests to
-/// the backend.
+// sourcery: AutoMockable
+/// A protocol mirroring Keychain api to allow mocking in tests.
+public protocol KeychainProtocol: Sendable {
 
-public struct AccessToken: Equatable, Sendable {
+    func addItem(
+        query: [CFString: Any]
+    ) -> OSStatus
 
-    /// The user id of whom the token belongs.
+    func updateItem(
+        query: [CFString: Any],
+        attributesToUpdate: [CFString: Any]
+    ) -> OSStatus
 
-    public let userID: UUID
+    func fetchItem(
+        query: [CFString: Any],
+        result: UnsafeMutablePointer<CFTypeRef?>?
+    ) -> OSStatus
 
-    /// The authentication token.
-
-    public let token: String
-
-    /// The type of token.
-
-    public let type: String
-
-    /// The point in time the token expires.
-
-    public let expirationDate: Date
+    func deleteItem(
+        query: [CFString: Any]
+    ) -> OSStatus
 
 }

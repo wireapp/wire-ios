@@ -18,25 +18,9 @@
 
 import Foundation
 
-/// A token used to make authenticated requests to
-/// the backend.
+enum HTTPCookieCodecError: Error {
 
-public struct AccessToken: Equatable, Sendable {
-
-    /// The user id of whom the token belongs.
-
-    public let userID: UUID
-
-    /// The authentication token.
-
-    public let token: String
-
-    /// The type of token.
-
-    public let type: String
-
-    /// The point in time the token expires.
-
-    public let expirationDate: Date
+    case invalidCookies
+    case invalidCookieData(reason: String)
 
 }
