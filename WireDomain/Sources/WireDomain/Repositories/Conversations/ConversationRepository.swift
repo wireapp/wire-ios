@@ -365,6 +365,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: time)
     }
 
+    // TODO: [WPB-11839] To be removed when MessageRepository PR is merged
     public func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation

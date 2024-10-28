@@ -425,6 +425,39 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversation, users, initiatingUser)
     }
 
+    // MARK: - conversationMessageDestructionTimeout
+
+    public var conversationMessageDestructionTimeout_Invocations: [ZMConversation] = []
+    public var conversationMessageDestructionTimeout_MockMethod: ((ZMConversation) async -> MessageDestructionTimeoutValue)?
+    public var conversationMessageDestructionTimeout_MockValue: MessageDestructionTimeoutValue?
+
+    public func conversationMessageDestructionTimeout(_ conversation: ZMConversation) async -> MessageDestructionTimeoutValue {
+        conversationMessageDestructionTimeout_Invocations.append(conversation)
+
+        if let mock = conversationMessageDestructionTimeout_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationMessageDestructionTimeout_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationMessageDestructionTimeout`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationTimeoutValueFor_Invocations: [(timeoutValue: Double, conversation: ZMConversation)] = []
+    public var storeConversationTimeoutValueFor_MockMethod: ((Double, ZMConversation) async -> Void)?
+
+    public func storeConversation(timeoutValue: Double, for conversation: ZMConversation) async {
+        storeConversationTimeoutValueFor_Invocations.append((timeoutValue: timeoutValue, conversation: conversation))
+
+        guard let mock = storeConversationTimeoutValueFor_MockMethod else {
+            fatalError("no mock for `storeConversationTimeoutValueFor`")
+        }
+
+        await mock(timeoutValue, conversation)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {

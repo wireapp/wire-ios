@@ -184,6 +184,25 @@ public protocol ConversationLocalStoreProtocol {
         users: Set<ZMUser>,
         initiatingUser: ZMUser
     ) async
+
+    /// The conversation active message destruction timeout value.
+    /// - Parameters:
+    ///     - conversation: The conversation to get the message destruction timeout value from.
+    /// - returns: A `MessageDestructionTimeoutValue` object.
+
+    func conversationMessageDestructionTimeout(
+        _ conversation: ZMConversation
+    ) async -> MessageDestructionTimeoutValue
+
+    /// Stores a message destruction timeout value.
+    /// - parameters:
+    ///     - timeoutValue: The message destruction timeout value.
+    ///     - conversation: The conversation to update the value for.
+
+    func storeConversation(
+        timeoutValue: Double,
+        for conversation: ZMConversation
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -238,6 +257,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    // TODO: [WPB-11839] To be removed when MessageRepository PR is merged
     public func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
@@ -386,6 +406,26 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> MutedMessageTypes {
         await context.perform {
             conversation.mutedMessageTypes
+        }
+    }
+
+    public func conversationMessageDestructionTimeout(
+        _ conversation: ZMConversation
+    ) async -> MessageDestructionTimeoutValue {
+        await context.perform {
+            conversation.activeMessageDestructionTimeoutValue ?? .init(rawValue: 0)
+        }
+    }
+
+    public func storeConversation(
+        timeoutValue: Double,
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.setMessageDestructionTimeoutValue(
+                .init(rawValue: timeoutValue),
+                for: .groupConversation
+            )
         }
     }
 

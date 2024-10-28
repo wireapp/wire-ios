@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process conversation message timer update events.
 
@@ -26,15 +27,56 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation message timer update event.
 
-    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async
 
 }
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
-        // TODO: [WPB-10171]
-        assertionFailure("not implemented yet")
+    let userRepository: any UserRepositoryProtocol
+    let conversationRepository: any ConversationRepositoryProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
+        let userID = event.senderID
+        let conversationID = event.conversationID
+        let timer = Double(event.newTimer ?? 0)
+        let timestamp = event.timestamp
+
+        let sender = await userRepository.fetchOrCreateUser(
+            with: userID.uuid,
+            domain: userID.domain
+        )
+
+        let conversation = await conversationRepository.fetchOrCreateConversation(
+            with: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        let timeoutValue = timer / 1_000
+        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+        let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
+
+        if currentTimeout != timeout {
+            let systemMessage = SystemMessage(
+                type: .messageTimerUpdate,
+                sender: sender,
+                users: [sender],
+                timestamp: timestamp,
+                messageTimer: timeoutValue
+            )
+
+            // TODO: [WPB-11839] Use MessageRepository
+            await conversationRepository.addSystemMessage(
+                systemMessage,
+                to: conversation
+            )
+        }
+
+        await conversationLocalStore.storeConversation(
+            timeoutValue: timeoutValue,
+            for: conversation
+        )
     }
 
 }

@@ -65,6 +65,7 @@
 		C99322E72C986E3A0065E10F /* ConnectionsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322CD2C986E3A0065E10F /* ConnectionsRepositoryError.swift */; };
 		C99322E82C986E3A0065E10F /* ConversationLabelsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322CF2C986E3A0065E10F /* ConversationLabelsRepository.swift */; };
 		C99322E92C986E3A0065E10F /* ConversationLabelsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322D02C986E3A0065E10F /* ConversationLabelsRepositoryError.swift */; };
+		C9C758542CCFF089001D45D7 /* ConversationMessageTimerUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C758532CCFF089001D45D7 /* ConversationMessageTimerUpdateEventProcessorTests.swift */; };
 		C9C8FDCE2C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC32C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift */; };
 		C9C8FDCF2C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC52C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift */; };
 		C9C8FDD02C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC62C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift */; };
@@ -204,6 +205,7 @@
 		C99322CD2C986E3A0065E10F /* ConnectionsRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryError.swift; sourceTree = "<group>"; };
 		C99322CF2C986E3A0065E10F /* ConversationLabelsRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepository.swift; sourceTree = "<group>"; };
 		C99322D02C986E3A0065E10F /* ConversationLabelsRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepositoryError.swift; sourceTree = "<group>"; };
+		C9C758532CCFF089001D45D7 /* ConversationMessageTimerUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageTimerUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDC32C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDC52C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDC62C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMemberLeaveEventProcessorTests.swift; sourceTree = "<group>"; };
@@ -465,6 +467,7 @@
 				C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
 				C97C01B72CBD6D3C000683C5 /* ConversationCreateEventProcessorTests.swift */,
 				C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */,
+				C9C758532CCFF089001D45D7 /* ConversationMessageTimerUpdateEventProcessorTests.swift */,
 			);
 			path = ConversationEventProcessor;
 			sourceTree = "<group>";
@@ -1029,6 +1032,7 @@
 				C9F691292C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
+				C9C758542CCFF089001D45D7 /* ConversationMessageTimerUpdateEventProcessorTests.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
 				C98433F82CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift in Sources */,
