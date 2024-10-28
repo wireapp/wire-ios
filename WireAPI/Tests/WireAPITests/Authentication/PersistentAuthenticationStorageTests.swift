@@ -111,7 +111,7 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         let cookies = [HTTPCookie]()
 
         // Then
-        await XCTAssertThrowsError({
+        await XCTAssertThrowsErrorAsync({
             // When
             try await sut.storeCookies(cookies)
         }) { error in
@@ -127,7 +127,7 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         let invalidCookie = try XCTUnwrap(Scaffolding.invalidCookie)
 
         // Then
-        await XCTAssertThrowsError({
+        await XCTAssertThrowsErrorAsync({
             // When
             try await sut.storeCookies([invalidCookie])
         }) { error in

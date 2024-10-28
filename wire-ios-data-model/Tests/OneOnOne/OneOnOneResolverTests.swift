@@ -18,6 +18,7 @@
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import WireTestingPackage
 import XCTest
 
 final class OneOnOneResolverTests: XCTestCase {

@@ -234,7 +234,7 @@ final class APIServiceTests: XCTestCase {
         }
 
         // Then
-        await XCTAssertThrowsError(APIServiceError.invalidCredentials) {
+        await XCTAssertThrowsErrorAsync(APIServiceError.invalidCredentials) {
             // When
             try await self.sut.executeRequest(
                 request,

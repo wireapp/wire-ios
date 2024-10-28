@@ -107,7 +107,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.teamNotFound) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -119,7 +119,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.userIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.userIsNotTeamMember) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -131,7 +131,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.insufficientPermissions) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.insufficientPermissions) {
             // When
             try await sut.getFeatureConfigs()
         }

@@ -52,6 +52,7 @@
 		CEF709D81C1599D600AF3718 /* ZMMockManagedObjectContextFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CEB8FD671C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709D91C1599E700AF3718 /* ZMMockEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EE05D45C2CCFC16700B2C64F /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = EE05D45B2CCFC16700B2C64F /* WireTestingPackage */; };
 		EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49A5562954850800406C4F /* WireSystem.framework */; };
 		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 		F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */; };
@@ -135,6 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE05D45C2CCFC16700B2C64F /* WireTestingPackage in Frameworks */,
 				EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */,
 				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
 			);
@@ -588,6 +590,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE05D45B2CCFC16700B2C64F /* WireTestingPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireTestingPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 096AD7B21B68D41D00E007A8 /* Project object */;
 }

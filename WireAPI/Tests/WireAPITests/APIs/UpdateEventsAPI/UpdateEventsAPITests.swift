@@ -80,7 +80,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.invalidClient) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.invalidClient) {
             // When
             try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
@@ -96,7 +96,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
             // When
             try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
@@ -136,7 +136,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.invalidParameters) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.invalidParameters) {
             // When
             for try await _ in sut.getUpdateEvents(
                 selfClientID: Scaffolding.selfClientID,
@@ -153,7 +153,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
             // When
             for try await _ in sut.getUpdateEvents(
                 selfClientID: Scaffolding.selfClientID,
@@ -191,7 +191,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
             // When
             try await sut.getLastUpdateEvent(selfClientID: Scaffolding.selfClientID)
         }
@@ -231,7 +231,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
         // Then
-        await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
+        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
             // When
             for try await _ in sut.getUpdateEvents(
                 selfClientID: Scaffolding.selfClientID,

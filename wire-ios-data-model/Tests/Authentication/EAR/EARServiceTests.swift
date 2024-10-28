@@ -17,6 +17,7 @@
 //
 
 import LocalAuthentication
+import WireTestingPackage
 import XCTest
 
 @testable import WireDataModel
