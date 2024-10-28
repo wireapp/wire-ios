@@ -91,17 +91,16 @@ final class ZClientViewController: UIViewController {
         )
     }()
 
-    var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
-        .init(
-            selfUser: userSession.editableSelfUser,
-            userRightInterfaceType: UserRight.self,
-            userSession: userSession,
-            accountSelector: SessionManager.shared
-        )
-    }
+    private(set) lazy var selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
+        selfUser: userSession.editableSelfUser,
+        userRightInterfaceType: UserRight.self,
+        userSession: userSession,
+        accountSelector: SessionManager.shared
+    )
 
     private lazy var connectBuilder = StartUIViewControllerBuilder(
         userSession: userSession,
+        mainCoordinator: .init(mainCoordinator: mainCoordinator),
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         selfProfileUIBuilder: selfProfileViewControllerBuilder
     )
@@ -261,6 +260,8 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
+        selfProfileViewControllerBuilder.mainCoordinator = .init(mainCoordinator: mainCoordinator)
+
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder
@@ -321,7 +322,7 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         Task {
-            let connectUI = connectBuilder.build(mainCoordinator: .init(mainCoordinator: mainCoordinator))
+            let connectUI = UINavigationController(rootViewController: connectBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
