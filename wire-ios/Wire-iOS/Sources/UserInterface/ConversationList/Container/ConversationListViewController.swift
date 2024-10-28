@@ -81,6 +81,19 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
+    private var searchPlaceholderText: String {
+        switch listContentController.listViewModel.selectedFilter {
+        case .none:
+            return L10n.Localizable.ConversationList.SearchBar.placeholder
+        case .favorites:
+            return L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+        case .groups:
+            return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .oneOnOne:
+            return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        }
+    }
+
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
