@@ -65,11 +65,11 @@ public protocol ConversationLocalStoreProtocol {
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
-    func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async
 
@@ -127,6 +127,42 @@ public protocol ConversationLocalStoreProtocol {
     func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
+    ) async
+
+    /// Retrieves conversation muted message types
+    /// - parameter conversation: The conversation to get the muted message types for.
+    /// - returns: The muted message types.
+
+    func conversationMutedMessageTypes(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+
+    /// Stores a flag indicating whether a conversation is archived.
+    /// - parameters:
+    ///     - isArchived: Indicates whether the conversation is archived.
+    ///     - conversation: The conversation to set the `isArchived` flag for.
+
+    func storeConversation(
+        isArchived: Bool,
+        for conversation: ZMConversation
+    ) async
+
+    /// Indicates whether a conversation is archived.
+    /// - parameter conversation: The conversation to check the `isArchived` flag for.
+    /// - returns: A flag indicating whether the conversation is archived.
+
+    func isConversationArchived(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    /// Stores a flag indicating whether a conversation has read receipts enabled.
+    /// - parameters:
+    ///     - hasReadReceiptsEnabled: A flag indicating whether the conversation has read receipts enabled.
+    ///     - conversation: The conversation to update the flag for.
+
+    func storeConversation(
+        hasReadReceiptsEnabled: Bool,
+        for conversation: ZMConversation
     ) async
 
     /// Fetches the MLS group ID (if any) from a conversation.
@@ -297,8 +333,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    public func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async {
         await context.perform { [context] in
@@ -308,7 +344,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 in: context
             )
 
-            conversation?.needsToBeUpdatedFromBackend = needsUpdate
+            conversation?.needsToBeUpdatedFromBackend = needsBackendUpdate
         }
     }
 
@@ -334,6 +370,40 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: groupID,
                 in: context
             )
+        }
+    }
+
+    public func isConversationArchived(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isArchived
+        }
+    }
+
+    public func conversationMutedMessageTypes(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes {
+        await context.perform {
+            conversation.mutedMessageTypes
+        }
+    }
+
+    public func storeConversation(
+        isArchived: Bool,
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.isArchived = isArchived
+        }
+    }
+
+    public func storeConversation(
+        hasReadReceiptsEnabled: Bool,
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.hasReadReceiptsEnabled = hasReadReceiptsEnabled
         }
     }
 

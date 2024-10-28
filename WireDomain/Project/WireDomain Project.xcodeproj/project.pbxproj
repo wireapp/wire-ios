@@ -41,6 +41,8 @@
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
 		C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433CF2CC26A1D009723D4 /* MLSProvider.swift */; };
 		C98433EC2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */; };
+		C98433F82CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */; };
+		C98433FB2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
 		C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B52C986E3A0065E10F /* SelfUserProvider.swift */; };
@@ -176,8 +178,10 @@
 		C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalStore.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
-		C98433D22CC2949D009723D4 /* ConversationMemberLeaveEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventTests.swift; sourceTree = "<group>"; };
+		C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventTests.swift; sourceTree = "<group>"; };
+		C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
+		C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -393,7 +397,7 @@
 				01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */,
 				01D0DCA72C1C8C870076CB1C /* Products */,
 				01D0DCC02C1C8CBA0076CB1C /* Frameworks */,
-				C98433EA2CCA9768009723D4 /* Recovered References */,
+				C98433F92CCFD982009723D4 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -457,6 +461,8 @@
 		C97C01B62CBD6D1D000683C5 /* ConversationEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
+				C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */,
+				C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
 				C97C01B72CBD6D3C000683C5 /* ConversationCreateEventProcessorTests.swift */,
 				C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */,
 			);
@@ -479,10 +485,10 @@
 			path = Mock;
 			sourceTree = "<group>";
 		};
-		C98433EA2CCA9768009723D4 /* Recovered References */ = {
+		C98433F92CCFD982009723D4 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				C98433D22CC2949D009723D4 /* ConversationMemberLeaveEventTests.swift */,
+				C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1025,6 +1031,7 @@
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
+				C98433F82CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				C97C01522CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift in Sources */,
 				C9C8FDD02C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift in Sources */,
@@ -1045,6 +1052,7 @@
 				C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */,
 				C9C8FDD12C9DBE0E00702B91 /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
 				C97C01542CB04626000683C5 /* UserDeleteEventProcessorTests.swift in Sources */,
+				C98433FB2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift in Sources */,
 				C9C8FDCE2C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */,
 				C9C8FDCF2C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift in Sources */,
 				C97C01592CB40010000683C5 /* FederationConnectionRemovedEventProcessorTests.swift in Sources */,

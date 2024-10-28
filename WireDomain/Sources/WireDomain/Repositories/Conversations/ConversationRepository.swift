@@ -24,6 +24,12 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
+    /// Fetches and persists a conversation with a given ID.
+    /// - parameter id: The conversation ID.
+
+    func pullConversation(
+        with id: ConversationID
+    ) async throws
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -159,6 +165,20 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     // MARK: - Public
 
+    public func pullConversation(with id: ConversationID) async throws {
+        let conversationList = try await conversationsAPI.getConversations(for: [id])
+
+        guard let conversation = conversationList.found.first else {
+            throw ConversationRepositoryError.conversationNotFound
+        }
+
+        await conversationsLocalStore.storeConversation(
+            conversation,
+            timestamp: .now,
+            isFederationEnabled: backendInfo.isFederationEnabled
+        )
+    }
+
     public func fetchConversation(
         with id: UUID,
         domain: String?
@@ -193,13 +213,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 
-        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment)
+        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { // only for api v0 (see `ConversationsAPIV0` method comment)
             let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
             qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain) }
         } else {
-            /// fallback to api versions > v0.
+            // fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
             qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
@@ -224,8 +244,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             for id in missingConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
-                        true,
+                    await conversationsLocalStore.storeConversation(
+                        needsBackendUpdate: true,
                         qualifiedId: id
                     )
                 }
@@ -417,5 +437,4 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             }
         }
     }
-
 }

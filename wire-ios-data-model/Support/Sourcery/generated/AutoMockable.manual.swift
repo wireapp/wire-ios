@@ -323,3 +323,66 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
 // swiftlint:enable superfluous_disable_command
+import CoreData
+import WireDataModel
+
+public class MockGetTeamAccountImageSourceUseCaseProtocol: GetTeamAccountImageSourceUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - invoke
+
+    public var invokeUserUserContextAccount_Invocations: [(user: any UserType, userContext: NSManagedObjectContext?, account: Account)] = []
+    public var invokeUserUserContextAccount_MockError: Error?
+    public var invokeUserUserContextAccount_MockMethod: ((any UserType, NSManagedObjectContext?, Account) async throws -> AccountImageSource)?
+    public var invokeUserUserContextAccount_MockValue: AccountImageSource?
+
+    public func invoke(user: some UserType, userContext: NSManagedObjectContext?, account: Account) async throws -> AccountImageSource {
+        invokeUserUserContextAccount_Invocations.append((user: user, userContext: userContext, account: account))
+
+        if let error = invokeUserUserContextAccount_MockError {
+            throw error
+        }
+
+        if let mock = invokeUserUserContextAccount_MockMethod {
+            return try await mock(user, userContext, account)
+        } else if let mock = invokeUserUserContextAccount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserUserContextAccount`")
+        }
+    }
+}
+
+public class MockGetUserAccountImageSourceUseCaseProtocol: GetUserAccountImageSourceUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - invoke
+
+    public var invokeUserUserContextAccount_Invocations: [(user: any UserType, userContext: NSManagedObjectContext?, account: Account)] = []
+    public var invokeUserUserContextAccount_MockError: Error?
+    public var invokeUserUserContextAccount_MockMethod: ((any UserType, NSManagedObjectContext?, Account) async throws -> AccountImageSource)?
+    public var invokeUserUserContextAccount_MockValue: AccountImageSource?
+
+    public func invoke(user: some UserType, userContext: NSManagedObjectContext?, account: Account) async throws -> AccountImageSource {
+        invokeUserUserContextAccount_Invocations.append((user: user, userContext: userContext, account: account))
+
+        if let error = invokeUserUserContextAccount_MockError {
+            throw error
+        }
+
+        if let mock = invokeUserUserContextAccount_MockMethod {
+            return try await mock(user, userContext, account)
+        } else if let mock = invokeUserUserContextAccount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserUserContextAccount`")
+        }
+    }
+
+}

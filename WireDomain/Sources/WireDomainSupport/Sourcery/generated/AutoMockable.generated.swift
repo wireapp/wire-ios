@@ -212,19 +212,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversation, timestamp, isFederationEnabled)
     }
 
-    // MARK: - storeConversationNeedsBackendUpdate
+    // MARK: - storeConversation
 
-    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
     public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
 
-    public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
-        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+    public func storeConversation(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsBackendUpdate: needsBackendUpdate, qualifiedId: qualifiedId))
 
         guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
             fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
         }
 
-        await mock(needsUpdate, qualifiedId)
+        await mock(needsBackendUpdate, qualifiedId)
     }
 
     // MARK: - storeFailedConversation
@@ -326,6 +326,72 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(message, conversation)
     }
 
+    // MARK: - conversationMutedMessageTypes
+
+    public var conversationMutedMessageTypes_Invocations: [ZMConversation] = []
+    public var conversationMutedMessageTypes_MockMethod: ((ZMConversation) async -> MutedMessageTypes)?
+    public var conversationMutedMessageTypes_MockValue: MutedMessageTypes?
+
+    public func conversationMutedMessageTypes(_ conversation: ZMConversation) async -> MutedMessageTypes {
+        conversationMutedMessageTypes_Invocations.append(conversation)
+
+        if let mock = conversationMutedMessageTypes_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationMutedMessageTypes_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationMutedMessageTypes`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationIsArchivedFor_Invocations: [(isArchived: Bool, conversation: ZMConversation)] = []
+    public var storeConversationIsArchivedFor_MockMethod: ((Bool, ZMConversation) async -> Void)?
+
+    public func storeConversation(isArchived: Bool, for conversation: ZMConversation) async {
+        storeConversationIsArchivedFor_Invocations.append((isArchived: isArchived, conversation: conversation))
+
+        guard let mock = storeConversationIsArchivedFor_MockMethod else {
+            fatalError("no mock for `storeConversationIsArchivedFor`")
+        }
+
+        await mock(isArchived, conversation)
+    }
+
+    // MARK: - isConversationArchived
+
+    public var isConversationArchived_Invocations: [ZMConversation] = []
+    public var isConversationArchived_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isConversationArchived_MockValue: Bool?
+
+    public func isConversationArchived(_ conversation: ZMConversation) async -> Bool {
+        isConversationArchived_Invocations.append(conversation)
+
+        if let mock = isConversationArchived_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isConversationArchived_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isConversationArchived`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationHasReadReceiptsEnabledFor_Invocations: [(hasReadReceiptsEnabled: Bool, conversation: ZMConversation)] = []
+    public var storeConversationHasReadReceiptsEnabledFor_MockMethod: ((Bool, ZMConversation) async -> Void)?
+
+    public func storeConversation(hasReadReceiptsEnabled: Bool, for conversation: ZMConversation) async {
+        storeConversationHasReadReceiptsEnabledFor_Invocations.append((hasReadReceiptsEnabled: hasReadReceiptsEnabled, conversation: conversation))
+
+        guard let mock = storeConversationHasReadReceiptsEnabledFor_MockMethod else {
+            fatalError("no mock for `storeConversationHasReadReceiptsEnabledFor`")
+        }
+
+        await mock(hasReadReceiptsEnabled, conversation)
+    }
+
     // MARK: - fetchMLSGroupID
 
     public var fetchMLSGroupIDFor_Invocations: [ZMConversation] = []
@@ -367,6 +433,26 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public init() {}
 
+
+    // MARK: - pullConversation
+
+    public var pullConversationWith_Invocations: [ConversationID] = []
+    public var pullConversationWith_MockError: Error?
+    public var pullConversationWith_MockMethod: ((ConversationID) async throws -> Void)?
+
+    public func pullConversation(with id: ConversationID) async throws {
+        pullConversationWith_Invocations.append(id)
+
+        if let error = pullConversationWith_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversationWith_MockMethod else {
+            fatalError("no mock for `pullConversationWith`")
+        }
+
+        try await mock(id)
+    }
 
     // MARK: - fetchConversation
 
