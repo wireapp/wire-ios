@@ -16,13 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-public enum AccountImageSource: Sendable {
+public enum AccountImageSource: Equatable, Sendable {
 
-    /// An image based on the provided image data is displayed.
-    case data(Data)
+    /// An image based on the provided image is displayed.
+    case image(UIImage)
 
     /// An account image based on the provided initials is generated.
-    case text(initials: String)
+    case text(_ initials: String)
+
+    public init() {
+        self = .text("")
+    }
 }
