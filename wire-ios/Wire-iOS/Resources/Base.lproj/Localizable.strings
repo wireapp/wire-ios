@@ -123,6 +123,14 @@
 "conversation_list.empty.all_archived.message" = "Everything archived";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+
+
 // Conversation List - Filter Conversations
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favorites";

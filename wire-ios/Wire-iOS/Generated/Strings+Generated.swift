@@ -2830,6 +2830,16 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation_list.right_accessory.join_button.title", fallback: "Join")
         }
       }
+      internal enum SearchBar {
+        /// Search favourites
+        internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
+        /// Search groups
+        internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
+        /// Search 1:1 conversations
+        internal static let oneOnOnePlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.oneOnOnePlaceholder", fallback: "Search 1:1 conversations")
+        /// Search conversations
+        internal static let placeholder = L10n.tr("Localizable", "conversation_list.search_bar.placeholder", fallback: "Search conversations")
+      }
       internal enum Voiceover {
         internal enum BottomBar {
           internal enum CameraButton {
