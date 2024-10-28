@@ -245,7 +245,7 @@ final class APIServiceTests: XCTestCase {
         // Then there is only one request for the access token renewal
         try XCTAssertCount(receivedRequests, count: 1)
         let accessTokenRequest = receivedRequests[0]
-        await HTTPRequestSnapshotHelper().verifyRequest(request: accessTokenRequest)        
+        await HTTPRequestSnapshotHelper().verifyRequest(request: accessTokenRequest)
     }
 
 }

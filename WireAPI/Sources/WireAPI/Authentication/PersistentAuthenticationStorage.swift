@@ -152,7 +152,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
     private lazy var baseQuery: [CFString: Any] = [
         kSecAttrService: "Wire: Credentials for wire.com",
         kSecAttrAccount: userID.uuidString,
-        kSecClass: kSecClassGenericPassword,
+        kSecClass: kSecClassGenericPassword
     ]
 
     private lazy var fetchQuery: [CFString: Any] = {

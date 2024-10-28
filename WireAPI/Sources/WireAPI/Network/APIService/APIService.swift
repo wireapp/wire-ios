@@ -147,7 +147,6 @@ public final class APIService: APIServiceProtocol {
             .parse(code: response.statusCode, data: data)
     }
 
-
 }
 
 private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {

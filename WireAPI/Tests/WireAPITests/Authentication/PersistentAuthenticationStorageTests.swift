@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireFoundation
 import WireTestingPackage
+import XCTest
 
 @testable import WireAPI
 @testable import WireFoundationSupport
@@ -244,7 +244,7 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
 
         // Mock existing cookie.
         keychain.fetchItemQueryResult_MockMethod = { _, result in
-            result?.pointee = storedCookieData as Optional<AnyObject>
+            result?.pointee = storedCookieData as AnyObject?
             return errSecSuccess
         }
 
