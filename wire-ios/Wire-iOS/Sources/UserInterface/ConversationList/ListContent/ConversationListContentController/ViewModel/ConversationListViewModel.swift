@@ -596,9 +596,10 @@ final class ConversationListViewModel: NSObject {
     // https://github.com/wireapp/wire-ios/pull/1466
     let isFolderStatePersistenceEnabled = false
 
-    // TODO [WPB-7307]: remove everything around the legacy folder view (grouped)
+    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
+        // TODO [WPB-7307]: remove everything regarding folders
         var folderEnabled: Bool
 
         init() {

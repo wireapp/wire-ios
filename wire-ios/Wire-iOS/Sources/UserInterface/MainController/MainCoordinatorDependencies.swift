@@ -36,4 +36,6 @@ enum MainCoordinatorDependencies: MainCoordinatorDependenciesProtocol {
     typealias TabBarController = MainTabBarController<ConversationListViewController, ConversationRootViewController>
     typealias ConversationUIBuilder = ConversationViewControllerBuilder
     typealias SettingsContentUIBuilder = SettingsViewControllerBuilder
+    typealias ConnectUIBuilder = StartUIViewControllerBuilder
+    typealias CreateGroupConversationUIBuilder = CreateGroupConversationViewControllerBuilder
 }

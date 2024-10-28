@@ -313,20 +313,20 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
 
     // MARK: - build
 
-    var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build() -> UIViewController {
-        build_Invocations.append(())
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
 
-        if let mock = build_MockMethod {
-            return mock()
-        } else if let mock = build_MockValue {
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
             return mock
         } else {
-            fatalError("no mock for `build`")
+            fatalError("no mock for `buildMainCoordinator`")
         }
     }
 
@@ -1428,20 +1428,20 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
 
     // MARK: - build
 
-    var build_Invocations: [Void] = []
-    var build_MockMethod: (() -> UIViewController)?
-    var build_MockValue: UIViewController?
+    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
+    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
+    var buildMainCoordinator_MockValue: UINavigationController?
 
     @MainActor
-    func build() -> UIViewController {
-        build_Invocations.append(())
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
+        buildMainCoordinator_Invocations.append(mainCoordinator)
 
-        if let mock = build_MockMethod {
-            return mock()
-        } else if let mock = build_MockValue {
+        if let mock = buildMainCoordinator_MockMethod {
+            return mock(mainCoordinator)
+        } else if let mock = buildMainCoordinator_MockValue {
             return mock
         } else {
-            fatalError("no mock for `build`")
+            fatalError("no mock for `buildMainCoordinator`")
         }
     }
 

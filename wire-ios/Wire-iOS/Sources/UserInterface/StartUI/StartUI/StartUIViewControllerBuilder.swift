@@ -23,24 +23,21 @@ import WireSyncEngine
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
 
     let userSession: UserSession
-    let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    weak var delegate: StartUIDelegate?
+    var delegate: StartUIDelegate?
 
     init(
         userSession: UserSession,
-        mainCoordinator: AnyMainCoordinator,
         createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.userSession = userSession
-        self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
     }
 
-    func build() -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
         let rootViewController = StartUIViewController(
             userSession: userSession,
             mainCoordinator: mainCoordinator,
@@ -48,6 +45,6 @@ final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         rootViewController.delegate = delegate
-        return rootViewController
+        return UINavigationController(rootViewController: rootViewController)
     }
 }

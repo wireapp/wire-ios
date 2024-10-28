@@ -45,9 +45,9 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
         guard let tabBarController = presentingViewController as? UITabBarController else {
             return assertionFailure("wrong assumption!")
         }
-        // TODO: [WPB-6647] test this flow manually
         dismiss(animated: true) {
             // point to the contacts tab item
+            // TODO: [WPB-9728] actually it should point to the right top corner, where the new conversation button is
             var tabItemFrame = tabBarController.tabBar.bounds
             tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
             tabItemFrame.origin.x = CGFloat(MainTabBarControllerContent.conversations.rawValue) * tabItemFrame.size.width

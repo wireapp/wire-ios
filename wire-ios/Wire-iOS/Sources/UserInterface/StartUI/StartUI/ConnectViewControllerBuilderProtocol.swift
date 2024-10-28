@@ -22,5 +22,5 @@ import WireMainNavigationUI
 // sourcery: AutoMockable
 protocol ConnectViewControllerBuilderProtocol {
     @MainActor
-    func build() -> UIViewController
+    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController
 }
