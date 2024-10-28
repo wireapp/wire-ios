@@ -19,9 +19,9 @@
 import WireMainNavigationUI
 import WireSidebarUI
 
-extension SidebarViewController: MainSidebarProtocol {}
+extension SidebarViewController: @retroactive MainSidebarProtocol {}
 
-extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable {
+extension SidebarSelectableMenuItem: @retroactive MainSidebarSelectableMenuItemRepresentable {
 
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
         switch mainSidebarMenuItem {

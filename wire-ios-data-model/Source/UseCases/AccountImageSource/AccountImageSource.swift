@@ -19,6 +19,14 @@
 import UIKit
 
 public enum AccountImageSource: Equatable, Sendable {
-    case image(UIImage), text(_ initials: String)
-    public init() { self = .text("") }
+
+    /// An image based on the provided image is displayed.
+    case image(UIImage)
+
+    /// An account image based on the provided initials is generated.
+    case text(_ initials: String)
+
+    public init() {
+        self = .text("")
+    }
 }

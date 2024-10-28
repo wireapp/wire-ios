@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -38,7 +39,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
@@ -66,7 +67,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
         Task {
-            let connectUI = connectUIBuilder.build(mainCoordinator: mainCoordinator)
+            let connectUI = UINavigationController(rootViewController: connectUIBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }

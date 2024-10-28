@@ -114,7 +114,7 @@ class WireTextField: UITextField {
 
     private func setupCustomClearButton() {
         let clearButton = UIButton(type: .custom)
-        let clearImage = UIImage(named: "Clear")?.withRenderingMode(.alwaysTemplate)
+        let clearImage = UIImage(resource: .WireTextField.clear)
         clearButton.setImage(clearImage, for: .normal)
         clearButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 

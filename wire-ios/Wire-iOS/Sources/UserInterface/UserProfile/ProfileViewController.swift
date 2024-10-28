@@ -366,12 +366,14 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicateUser()
         case .duplicateTeam:
             duplicateTeam()
+        case .duplicateConversation:
+            duplicateConversation()
         }
     }
 
     private func openSelfProfile() {
         Task {
-            let selfProfileUI = selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
@@ -520,6 +522,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
             WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
+    }
+
+    private func duplicateConversation() {
+        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
+
+        viewModel.startOneToOneConversation()
     }
 
 }

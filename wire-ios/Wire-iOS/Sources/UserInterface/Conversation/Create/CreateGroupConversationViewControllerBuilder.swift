@@ -23,7 +23,7 @@ import WireSyncEngine
 final class CreateGroupConversationViewControllerBuilder: CreateGroupConversationViewControllerBuilderProtocol {
 
     let userSession: UserSession
-    var delegate: ConversationCreationControllerDelegate?
+    weak var delegate: ConversationCreationControllerDelegate?
 
     init(userSession: UserSession) {
         self.userSession = userSession

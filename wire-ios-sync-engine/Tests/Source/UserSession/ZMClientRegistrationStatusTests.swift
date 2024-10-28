@@ -304,7 +304,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
 
@@ -324,7 +323,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForEmailVerfication)
 
@@ -344,7 +342,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = nil
             selfUser.emailAddress = "email@example.com"
-            selfUser.phoneNumber = nil
 
             XCTAssertEqual(sut.currentPhase, .waitingForHandle)
 
@@ -389,7 +386,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             selfUser.usesCompanyLogin = true
 
             // then
@@ -424,7 +420,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             syncMOC.saveOrRollback()
 
             let client = UserClient.insertNewObject(in: self.syncMOC)
@@ -449,7 +444,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = "handle"
             selfUser.emailAddress = nil
-            selfUser.phoneNumber = nil
             self.syncMOC.saveOrRollback()
 
             // when
@@ -468,7 +462,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             selfUser.remoteIdentifier = UUID()
             selfUser.handle = nil
             selfUser.emailAddress = "email@example.com"
-            selfUser.phoneNumber = nil
             syncMOC.saveOrRollback()
 
             // when
