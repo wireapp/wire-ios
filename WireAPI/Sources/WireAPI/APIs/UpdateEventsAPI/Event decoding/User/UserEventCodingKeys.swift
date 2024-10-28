@@ -28,5 +28,6 @@ enum UserEventCodingKeys: String, CodingKey {
     case lastPrekey = "last_prekey"
     case propertyKey = "key"
     case propertyValue = "value"
+    case time
 
 }

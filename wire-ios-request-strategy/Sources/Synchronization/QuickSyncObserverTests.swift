@@ -40,12 +40,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
             .arrange()
 
         Task {
-            // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            if #available(iOS 16.0, *) {
-                try? await Task.sleep(for: .seconds(0.25))
-            } else {
-                try? await Task.sleep(nanoseconds: 250_000_000)
-            }
+            try? await Task.sleep(for: .seconds(0.25))
             NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
         }
 

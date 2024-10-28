@@ -19,7 +19,6 @@ Wire-iOS/ComponentsVersions.plist
 /Libraries
 /wire-ios-build-assets
 .bundle/
-SnapshotResults
 Wire-iOS/Resources/Licenses.generated.plist
 Scripts/**/.build
 /fastlane/report.xml

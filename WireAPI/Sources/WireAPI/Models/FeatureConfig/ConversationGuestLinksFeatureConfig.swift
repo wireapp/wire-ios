@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Conversation Guest Links* feature.
 
-public struct ConversationGuestLinksFeatureConfig: Codable, Equatable {
+public struct ConversationGuestLinksFeatureConfig: Codable, Equatable, Sendable {
 
     /// The feature's status.
 

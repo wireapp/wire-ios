@@ -16,60 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
+@testable import WireDomain
 import WireDomainSupport
 import XCTest
 
-@testable import WireDomain
-
 final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
-    var sut: UserLegalholdRequestEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
+    private var sut: UserLegalholdRequestEventProcessor!
+    private var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        coreDataStack = try await coreDataStackHelper.createStack()
+        userRepository = MockUserRepositoryProtocol()
         sut = UserLegalholdRequestEventProcessor(
-            repository: UserRepository(
-                context: context,
-                usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI(),
-                conversationRepository: MockConversationRepositoryProtocol()
-            )
+            repository: userRepository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
+        userRepository = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Processes_Legalhold_Request_Event() async throws {
-        // Given
+    func testProcessEvent_It_Invokes_Add_Legalhold_Request_Repo_Method() async throws {
+        // Mock
 
-        await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(
-                id: Scaffolding.userID,
-                domain: nil,
-                in: context
-            )
-        }
+        userRepository.addLegalHoldRequestForClientIDLastPrekey_MockMethod = { _, _, _ in }
 
         // When
 
@@ -77,38 +53,16 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [context] in
-            let selfUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
-
-            XCTAssertEqual(selfUser.legalHoldStatus, .pending(Scaffolding.legalHoldRequest))
-        }
+        XCTAssertEqual(userRepository.addLegalHoldRequestForClientIDLastPrekey_Invocations.count, 1)
     }
 
-}
-
-extension UserLegalholdRequestEventProcessorTests {
-    enum Scaffolding {
-        static let userID = UUID()
-        static let clientID = UUID().uuidString
-        static let lastPrekeyId = 65_535
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
-
-        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
-            target: userID,
-            requester: nil,
-            clientIdentifier: clientID,
-            lastPrekey: .init(
-                id: lastPrekeyId,
-                key: Data(base64Encoded: base64encodedString)!
-            )
-        )
-
-        nonisolated(unsafe) static let event = UserLegalholdRequestEvent(
-            userID: userID,
-            clientID: clientID,
+    private enum Scaffolding {
+        static let event = UserLegalholdRequestEvent(
+            userID: UUID(),
+            clientID: UUID().uuidString,
             lastPrekey: Prekey(
-                id: lastPrekeyId,
-                base64EncodedKey: base64encodedString
+                id: 2_932,
+                base64EncodedKey: "foo"
             )
         )
     }

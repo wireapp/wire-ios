@@ -100,11 +100,7 @@ final class Date_TransportCodingTests: XCTestCase {
     }
 
     var gmt: TimeZone {
-        if #available(iOS 16, *) {
-            .gmt
-        } else {
-            .init(secondsFromGMT: 0)!
-        }
+        .gmt
     }
 
     var cet: TimeZone {

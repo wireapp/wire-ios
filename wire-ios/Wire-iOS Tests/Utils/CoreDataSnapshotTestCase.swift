@@ -66,7 +66,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()
-
+        team!.name = "Wire"
         teamMember = Member.insertNewObject(in: uiMOC)
         teamMember!.user = selfUser
         teamMember!.team = team
@@ -79,7 +79,6 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUser.name = "selfUser"
         selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
 
         ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
         if selfUserInTeam {

@@ -207,7 +207,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
-            selfUserStatus.name = changeInfo.user.name ?? ""
+            selfUserStatus.displayName = changeInfo.user.name ?? ""
         }
         if changeInfo.nameChanged || changeInfo.teamsChanged {
             viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)

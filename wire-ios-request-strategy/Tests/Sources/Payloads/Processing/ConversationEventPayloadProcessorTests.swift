@@ -1382,7 +1382,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         )
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
         expectation.handler = { notification in
-            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] is AccountDeletedNotification
         }
 
         // When

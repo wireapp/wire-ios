@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
-import WireMainNavigation
+import WireMainNavigationUI
 
 extension StartUIViewController {
 

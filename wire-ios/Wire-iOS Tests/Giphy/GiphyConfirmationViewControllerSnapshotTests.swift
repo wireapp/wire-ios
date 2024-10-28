@@ -23,7 +23,7 @@ import XCTest
 
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
 
-    var sut: GiphyConfirmationViewController!
+    private var sut: GiphyConfirmationViewController!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

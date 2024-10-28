@@ -52,12 +52,11 @@ private extension UIColor {
 
 // MARK: - Previews
 
-@available(iOS 16.0, *)
 #Preview {
     WireAccentColorMappingPreview()
 }
 
-@available(iOS 16.0, *) @ViewBuilder @MainActor
+@ViewBuilder @MainActor
 func WireAccentColorMappingPreview() -> some View {
     NavigationStack {
         VStack {
@@ -79,9 +78,10 @@ private struct MappingTestView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
     var body: some View {
+        let foregroundColor = wireAccentColorMapping?.color(for: wireAccentColor) ?? .primary.opacity(0.8)
         VStack {
             Text(verbatim: "\(String(describing: wireAccentColor))")
-            Circle().foregroundStyle(wireAccentColorMapping.color(for: wireAccentColor))
+            Circle().foregroundStyle(foregroundColor)
         }
     }
 }

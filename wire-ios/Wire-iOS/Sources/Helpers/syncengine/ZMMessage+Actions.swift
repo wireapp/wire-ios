@@ -29,6 +29,7 @@ extension ZMConversationMessage {
     /// Whether the message can be digitally signed in.
     var canBeDigitallySigned: Bool {
         guard
+            // TODO: [WPB-11830] phone number is no longer available so digital signature can't work
             let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember,
             selfUser.hasDigitalSignatureEnabled

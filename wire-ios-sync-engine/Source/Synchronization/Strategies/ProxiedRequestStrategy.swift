@@ -45,7 +45,7 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
     /// Requests fail after this interval if the network is unreachable
     fileprivate static let RequestExpirationTime: TimeInterval = 20
 
-    @available (*, unavailable, message: "use `init(withManagedObjectContext:applicationStatus:requestsStatus:)` instead")
+    @available(*, unavailable, message: "use `init(withManagedObjectContext:applicationStatus:requestsStatus:)` instead")
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }

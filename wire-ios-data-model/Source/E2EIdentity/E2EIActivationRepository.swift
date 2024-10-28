@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireFoundation
 
 /// The repository is responsible for storing the e2ei activation date.
 /// The e2ei activation date begins from the moment the client receives the notification that the feature flag is enabled for the team.

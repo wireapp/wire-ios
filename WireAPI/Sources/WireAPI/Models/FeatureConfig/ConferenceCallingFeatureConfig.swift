@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *Conference Calling* feature.
 
-public struct ConferenceCallingFeatureConfig: Codable, Equatable {
+public struct ConferenceCallingFeatureConfig: Codable, Equatable, Sendable {
 
     /// The feature's status.
 

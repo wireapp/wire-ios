@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "配信済み";
 "content.system.message_read_timestamp" = "既読";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "利用状況に関する匿名のデータを送信";
 "self.settings.privacy_analytics_menu.description.title" = "使用データを使用すると、Wireはアプリがどのように使用されているかと、アプリがどのように改善されるかを理解することができます。 データは匿名であり、通信の内容(メッセージ、ファイル、通話など)は含まれません。";
-
-"self.settings.receiveNews_and_offers.title" = "ニュースレターを受け取る";
-"self.settings.receiveNews_and_offers.description.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取る。";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "リンクが無効です";
 "url_action.invalid_link.message" = "あなたが開いたリンクは有効ではありません。";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "電子メールで Wireからニュースや製品アップデート情報を受け取りますか？";
-"news_offers.consent.message" = "購読解除はいつでもできます。";
-"news_offers.consent.button.privacy_policy.title" = "プライバシーポリシー";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

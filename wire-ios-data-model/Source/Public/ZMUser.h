@@ -114,11 +114,9 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 + (BOOL)validateName:(NSString * __nullable * __nullable)ioName error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validateEmailAddress:(NSString * __nullable * __nullable)ioEmailAddress error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validatePassword:(NSString * __nullable * __nullable)ioPassword error:(NSError * __nullable * __nullable)outError;
-+ (BOOL)validatePhoneVerificationCode:(NSString * __nullable * __nullable)ioVerificationCode error:(NSError * __nullable * __nullable)outError;
 
 + (BOOL)isValidName:(NSString * _Nullable)name;
 + (BOOL)isValidEmailAddress:(NSString * _Nullable)emailAddress;
 + (BOOL)isValidPassword:(NSString * _Nullable)password;
-+ (BOOL)isValidPhoneVerificationCode:(NSString * _Nullable)phoneVerificationCode;
 
 @end

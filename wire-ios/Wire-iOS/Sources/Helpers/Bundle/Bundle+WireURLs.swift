@@ -57,9 +57,6 @@ struct WireURLs: Codable {
     /// Link to the license information page.
     let licenseInformation: URL
 
-    /// Link to the password reset page.
-    let passwordReset: URL
-
     /// Link to the support page where the user can submit a support request for various issues.
     let askSupportArticle: URL
 
@@ -117,7 +114,6 @@ struct WireURLs: Codable {
         case privacyPolicy
         case legal
         case licenseInformation
-        case passwordReset
         case askSupportArticle
         case reportAbuse
         case wireEnterpriseInfo
