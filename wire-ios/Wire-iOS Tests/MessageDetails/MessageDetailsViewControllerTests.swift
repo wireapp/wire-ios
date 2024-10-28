@@ -54,7 +54,6 @@ final class MessageDetailsViewControllerTests: XCTestCase {
 
     // MARK: - Snapshot Tests
 
-    // MARK: - Seen
     func testThatItShowsReceipts_ShortList_11() {
         // GIVEN
         conversation = createGroupConversation()

@@ -16,10 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocolDependencies {
-    associatedtype ConversationFilter: MainConversationFilterRepresentable
-    associatedtype ConversationModel
-    associatedtype ConversationMessageModel
-    associatedtype SettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable
-    associatedtype User
+/// Declares a contract for participants of a conversation which can be filtered.
+public protocol FilterableConversationParticipant {
+    var name: String { get }
 }

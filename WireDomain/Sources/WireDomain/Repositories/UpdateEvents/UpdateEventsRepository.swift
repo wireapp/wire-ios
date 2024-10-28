@@ -96,6 +96,8 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let updateEventsAPI: any UpdateEventsAPI
     private let pushChannel: any PushChannelProtocol
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create UpdateEventsLocalStore
     private let eventContext: NSManagedObjectContext
     private let storage: PrivateUserDefaults<Key>
 

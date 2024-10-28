@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireMainNavigationUI
+import WireDataModel
 
-struct MockUserProfileViewControllerBuilder: MainUserProfileUIBuilderProtocol {
-    typealias UserProfile = UIViewController
+public struct MLSProvider {
+    let service: any MLSServiceInterface
+    let isMLSEnabled: Bool
 
-    func build(
-        user: MockUser,
-        mainCoordinator: some MainCoordinatorProtocol
-    ) -> UIViewController {
-        fatalError()
+    public init(
+        service: any MLSServiceInterface,
+        isMLSEnabled: Bool
+    ) {
+        self.service = service
+        self.isMLSEnabled = isMLSEnabled
     }
 }
