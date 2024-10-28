@@ -96,6 +96,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
+            mainCoordinator: .init(mainCoordinator: mainCoordinator),
             accountSelector: SessionManager.shared
         )
     }
