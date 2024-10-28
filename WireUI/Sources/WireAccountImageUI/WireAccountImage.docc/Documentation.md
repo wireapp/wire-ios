@@ -1,3 +1,3 @@
 # ``WireAccountImageUI``
 
-Everything around fetching and generating an account image from initials as well as presenting it. 
+A view for displaying an account image or the user's initals together with the availability status.
