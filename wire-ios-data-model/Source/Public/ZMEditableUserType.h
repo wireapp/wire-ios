@@ -24,7 +24,6 @@ NS_SWIFT_NAME(EditableUserType)
 @property (nonatomic, copy, nullable) NSString *name;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
 @property (nonatomic) BOOL readReceiptsEnabled;
 @property (nonatomic) BOOL needsRichProfileUpdate;
 
