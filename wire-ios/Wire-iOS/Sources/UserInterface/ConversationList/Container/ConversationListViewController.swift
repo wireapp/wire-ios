@@ -411,6 +411,8 @@ final class ConversationListViewController: UIViewController {
         searchController.searchBar.isTranslucent = false
         searchController.searchResultsUpdater = self
 
+        searchController.searchBar.placeholder = searchPlaceholderText
+        
         searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
 
         if !isEmptyPlaceholderVisible {
