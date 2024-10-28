@@ -313,20 +313,20 @@ class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProt
 
     // MARK: - build
 
-    var buildMainCoordinator_Invocations: [AnyMainCoordinator] = []
-    var buildMainCoordinator_MockMethod: ((AnyMainCoordinator) -> UINavigationController)?
-    var buildMainCoordinator_MockValue: UINavigationController?
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UINavigationController {
-        buildMainCoordinator_Invocations.append(mainCoordinator)
+    func build() -> UIViewController {
+        build_Invocations.append(())
 
-        if let mock = buildMainCoordinator_MockMethod {
-            return mock(mainCoordinator)
-        } else if let mock = buildMainCoordinator_MockValue {
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
             return mock
         } else {
-            fatalError("no mock for `buildMainCoordinator`")
+            fatalError("no mock for `build`")
         }
     }
 

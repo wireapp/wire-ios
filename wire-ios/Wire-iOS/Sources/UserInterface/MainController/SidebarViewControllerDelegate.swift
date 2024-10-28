@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -66,7 +67,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
         Task {
-            let connectUI = connectUIBuilder.build(mainCoordinator: mainCoordinator)
+            let connectUI = UINavigationController(rootViewController: connectUIBuilder.build())
             connectUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(connectUI)
         }
