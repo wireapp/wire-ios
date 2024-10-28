@@ -311,29 +311,29 @@ final class ConversationRepositoryTests: XCTestCase {
             XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
         }
     }
-    
+
     func testFetchConversation_It_Retrieves_Conversation_Locally() async {
-         // Given
+        // Given
 
-         let conversation = await context.perform { [self] in
-             modelHelper.createGroupConversation(
-                 id: Scaffolding.conversationID,
-                 domain: Scaffolding.domain,
-                 in: context
-             )
-         }
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
 
-         // When
+        // When
 
-         let localConversation = await sut.fetchConversation(
-             with: Scaffolding.conversationID,
-             domain: Scaffolding.domain
-         )
+        let localConversation = await sut.fetchConversation(
+            with: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
 
-         // Then
+        // Then
 
-         XCTAssertEqual(conversation, localConversation)
-     }
+        XCTAssertEqual(conversation, localConversation)
+    }
 
     private func checkLastMessage(
         in conversation: ZMConversation,

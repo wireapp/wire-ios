@@ -27,23 +27,23 @@ public protocol MessageRepositoryProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-    
+
 }
 
 public class MessageRepository: MessageRepositoryProtocol {
-    
+
     // MARK: - Properties
-    
+
     private let localStore: any MessageLocalStoreProtocol
-    
+
     // MARK: - Object lifecycle
-    
+
     public init(
         localStore: any MessageLocalStoreProtocol
     ) {
         self.localStore = localStore
     }
-    
+
     public func addMessageToConversation(
         messageType: MessageType,
         conversationID: UUID,
@@ -54,6 +54,5 @@ public class MessageRepository: MessageRepositoryProtocol {
             conversationID: conversationID,
             conversationDomain: conversationDomain
         )
-
     }
 }

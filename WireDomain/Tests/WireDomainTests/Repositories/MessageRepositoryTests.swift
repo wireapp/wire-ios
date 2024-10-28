@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireDomainSupport
 @testable import WireDomain
+import WireDomainSupport
+import XCTest
 
 final class MessageRepositoryTests: XCTestCase {
 
@@ -27,7 +27,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         localStore = MockMessageLocalStoreProtocol()
-        
+
         sut = MessageRepository(
             localStore: localStore
         )
@@ -41,32 +41,28 @@ final class MessageRepositoryTests: XCTestCase {
     // MARK: - Tests
 
     func testAddMessageToConversation_It_Invokes_Local_Store_Method() async {
-        
         // Mock
-        
+
         localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
-        
+
         // When
-        
+
         await sut.addMessageToConversation(
             messageType: .mlsMigrationMLSNotSupportedForSelfUser,
             conversationID: Scaffolding.conversationID,
             conversationDomain: Scaffolding.conversationDomain
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
-        
     }
 
-
     private enum Scaffolding {
-        
+
         static let conversationID = UUID()
         static let conversationDomain = "domain.com"
 
     }
 
 }
-
