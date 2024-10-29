@@ -34,7 +34,6 @@ class ImagePickerManager: NSObject {
 
     // MARK: - Properties
     private weak var viewController: UIViewController?
-    private var sourceType: UIImagePickerController.SourceType?
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
@@ -60,7 +59,6 @@ class ImagePickerManager: NSObject {
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
-                self?.sourceType = .photoLibrary
                 self?.getImage(
                     fromSourceType: .photoLibrary,
                     popoverSourceView: popoverSourceView
@@ -71,7 +69,6 @@ class ImagePickerManager: NSObject {
 
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
-            self?.sourceType = .camera
             self?.getImage(
                 fromSourceType: .camera,
                 popoverSourceView: popoverSourceView
