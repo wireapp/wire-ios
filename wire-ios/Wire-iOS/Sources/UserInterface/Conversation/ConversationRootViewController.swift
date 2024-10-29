@@ -22,27 +22,18 @@ import WireDesign
 import WireMainNavigationUI
 import WireSyncEngine
 
-// MARK: - ConversationRootViewController
-
-// This class wraps the conversation content view controller in order to display the navigation bar on the top
 final class ConversationRootViewController: UIViewController {
 
     // MARK: - Properties
 
-    let navBarContainer: NavigationBarContainer
     fileprivate var contentView = UIView()
     private var navBarHeightForFederatedUsers: CGFloat = 50
-    // This value is coming from NavigationBarContainer. swift file
-    // where the value for the navigation bar height is set to 44.
     private var defaultNavBarHeight: CGFloat = 44
-    var navHeight: NSLayoutConstraint?
     var networkStatusBarHeight: NSLayoutConstraint?
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
-
     fileprivate let networkStatusViewController: NetworkStatusViewController = NetworkStatusViewController()
-
     fileprivate(set) weak var conversationViewController: ConversationViewController?
 
     // MARK: - Init
@@ -68,18 +59,25 @@ final class ConversationRootViewController: UIViewController {
 
         conversationViewController = conversationController
 
-        let navbar = UINavigationBar()
-        navbar.isTranslucent = false
-        navbar.isOpaque = true
-        navbar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
-        navbar.shadowImage = UIImage()
-        navbar.barTintColor = ColorTheme.Backgrounds.surface
-        navbar.tintColor = SemanticColors.Label.textDefault
-        navbar.barStyle = .default
-
-        navBarContainer = NavigationBarContainer(navbar)
-
         super.init(nibName: .none, bundle: .none)
+
+        // Configure navigation bar appearance
+        if let navBar = navigationController?.navigationBar {
+            navBar.isTranslucent = false
+            navBar.isOpaque = true
+            navBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+            navBar.shadowImage = UIImage()
+            navBar.barTintColor = ColorTheme.Backgrounds.surface
+            navBar.tintColor = SemanticColors.Label.textDefault
+            navBar.barStyle = .default
+
+            // Handle federated users case
+            if conversation.conversationType == .oneOnOne,
+               let user = conversation.connectedUserType,
+               user.isFederated {
+                navBar.frame.size.height = navBarHeightForFederatedUsers
+            }
+        }
 
         networkStatusViewController.delegate = self
 
@@ -100,14 +98,15 @@ final class ConversationRootViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         shouldAnimateNetworkStatusView = true
-        navBarContainer.navigationBar.accessibilityElementsHidden = false
+        navigationController?.navigationBar.accessibilityElementsHidden = false
         conversationViewController?.view.accessibilityElementsHidden = false
     }
 
@@ -119,7 +118,7 @@ final class ConversationRootViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        navBarContainer.navigationBar.accessibilityElementsHidden = true
+        navigationController?.navigationBar.accessibilityElementsHidden = true
         conversationViewController?.view.accessibilityElementsHidden = true
     }
 
@@ -139,16 +138,18 @@ final class ConversationRootViewController: UIViewController {
         guard let conversationViewController = self.conversationViewController else {
             return
         }
-        navHeight = navBarContainer.view.heightAnchor.constraint(equalToConstant: defaultNavBarHeight)
-        setupNavigationBarHeight()
 
-        guard let navigationBarHeight = navHeight else {
-            return
-        }
+        // Remove the "Back" text
+        navigationItem.backButtonTitle = ""
+        // This ensures only chevron is shown
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+
+        // Copy navigation item properties but ensure we keep the search in the titleView
+        navigationItem.titleView = conversationViewController.navigationItem.titleView
+        navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
+        navigationItem.leftItemsSupplementBackButton = false  // This ensures we don't supplement the back button
 
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        self.addToSelf(navBarContainer)
         self.view.addSubview(self.contentView)
 
         // This container view will have the same background color as the inputBar
@@ -158,13 +159,6 @@ final class ConversationRootViewController: UIViewController {
         inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(inputBarContainer)
         contentView.sendSubviewToBack(inputBarContainer)
-
-        NSLayoutConstraint.activate([
-            inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
-        ])
 
         self.addToSelf(networkStatusViewController)
 
@@ -179,41 +173,27 @@ final class ConversationRootViewController: UIViewController {
             networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
 
-            navBarContainer.view.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            navBarContainer.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            navBarContainer.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-            navigationBarHeight,
-
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            contentView.topAnchor.constraint(equalTo: navBarContainer.view.bottomAnchor),
+            contentView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             conversationViewController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            conversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor)
-        ])
+            conversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor),
 
-        navBarContainer.navigationBar.pushItem(conversationViewController.navigationItem, animated: false)
+            inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
 
     // MARK: - Methods
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
-    }
-
-    func setupNavigationBarHeight() {
-        if let conversationVC = conversationViewController?.conversation,
-           conversationVC.conversationType == .oneOnOne,
-           let user = conversationVC.connectedUserType,
-           user.isFederated {
-            navHeight?.constant = navBarHeightForFederatedUsers
-        } else {
-            navHeight?.constant = defaultNavBarHeight
-        }
-
     }
 }
 
