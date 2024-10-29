@@ -29,6 +29,10 @@ extension UITraitEnvironment {
         return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
     }
 
+    func isIPad(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
+        return device.userInterfaceIdiom == .pad
+    }
+
     func isIPadRegularPortrait(
         device: DeviceAbstraction = DeviceWrapper(device: .current)
     ) -> Bool {
