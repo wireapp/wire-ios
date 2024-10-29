@@ -31,6 +31,8 @@ final class ConversationRootViewController: UIViewController {
     private var defaultNavBarHeight: CGFloat = 44
     var networkStatusBarHeight: NSLayoutConstraint?
 
+    private var conversation: ZMConversation
+
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
     fileprivate let networkStatusViewController: NetworkStatusViewController = NetworkStatusViewController()
@@ -46,6 +48,8 @@ final class ConversationRootViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?
     ) {
+        self.conversation = conversation
+
         let conversationController = ConversationViewController(
             conversation: conversation,
             visibleMessage: message as? ZMMessage,
@@ -57,6 +61,7 @@ final class ConversationRootViewController: UIViewController {
             networkStatusObservable: NetworkStatus.shared
         )
 
+        
         conversationViewController = conversationController
 
         super.init(nibName: .none, bundle: .none)
@@ -144,8 +149,7 @@ final class ConversationRootViewController: UIViewController {
         // managed by the custom container (navBarContainer).
 
         // Set left navigation items (back button, search, unread status, etc.)
-        // TODO: pass the conversation.hasUnread instead of either true or false
-        navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: true)
+        navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
 
         // Set right navigation items (call buttons etc.) from the conversation controller
         navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
