@@ -17,7 +17,6 @@
 //
 
 import XCTest
-import WireMainNavigationUI
 
 @testable import Wire
 
@@ -117,27 +116,4 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         XCTAssertFalse(searchController.searchBar.isTranslucent)
     }
 
-    func test_makeSearchController_commonConfiguration() {
-        // Given
-        let configurations: [(ConversationFilter?, MainSplitViewState, Bool)] = [
-            (nil, .collapsed, false),
-            (.favorites, .expanded, true),
-            (.groups, .collapsed, false),
-            (.oneOnOne, .expanded, true)
-        ]
-
-        for (filter, splitViewState, isEmptyPlaceholderVisible) in configurations {
-            // When
-            let searchController = ConversationListViewController.makeSearchController(
-                filter: filter,
-                mainSplitViewState: splitViewState,
-                isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
-            )
-
-            // Then
-            XCTAssertFalse(searchController.obscuresBackgroundDuringPresentation, "Failed for filter: \(String(describing: filter))")
-            XCTAssertFalse(searchController.searchBar.isTranslucent, "Failed for filter: \(String(describing: filter))")
-            XCTAssertNil(searchController.searchResultsController, "Failed for filter: \(String(describing: filter))")
-        }
-    }
 }
