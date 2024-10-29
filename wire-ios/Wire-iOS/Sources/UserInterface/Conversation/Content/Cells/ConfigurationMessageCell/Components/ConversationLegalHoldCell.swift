@@ -97,28 +97,3 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     }
 
 }
-
-extension ConversationLegalHoldSystemMessageCell {
-
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation,
-            let clientViewController = ZClientViewController.shared {
-
-            // TODO: [WPB-11607] Do we want to display the view controller, jump into the browser, or both?
-            LegalHoldDetailsViewController.present(
-                in: clientViewController,
-                conversation: conversation,
-                userSession: clientViewController.userSession,
-                mainCoordinator: .init(mainCoordinator: clientViewController.mainCoordinator),
-                selfProfileUIBuilder: clientViewController.selfProfileViewControllerBuilder
-            )
-
-            return true
-        }
-
-        return false
-    }
-
-}
