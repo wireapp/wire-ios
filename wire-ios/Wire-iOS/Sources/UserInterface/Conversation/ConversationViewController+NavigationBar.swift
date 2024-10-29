@@ -126,6 +126,7 @@ extension ConversationViewController {
         return button
     }
 
+    // TODO: Replace StyleKitIcon with the equivelant of UIImagex
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
         if view.isRightToLeft {
             hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
