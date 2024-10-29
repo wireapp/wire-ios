@@ -20,13 +20,19 @@ import Foundation
 
 public extension Date {
 
+    private static var customCalendar: Calendar = {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        return calendar
+    }()
+    
     /// The number of days from this date til now.
     ///
     /// If this date is in the future, the return value will be 0.
 
     var ageInDays: Int {
         let now = Date()
-        return Calendar.current.dateComponents([.day], from: self, to: now).day!
+        return Self.customCalendar.dateComponents([.day], from: self, to: now).day!
     }
 
     /// Whether the date is after the current instant.
