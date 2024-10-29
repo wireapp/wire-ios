@@ -33,7 +33,6 @@ extension UIImage {
 class ImagePickerManager: NSObject {
 
     // MARK: - Properties
-    private weak var viewController: UIViewController?
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
@@ -44,13 +43,12 @@ class ImagePickerManager: NSObject {
         completion: @escaping (UIImage) -> Void
     ) -> UIAlertController {
         self.completion = completion
-        self.viewController = viewController
 
-        let actionSheet = imagePickerAlert(popoverSourceView: popoverSourceView)
+        let actionSheet = imagePickerAlert(popoverSourceView: popoverSourceView, viewController: viewController)
         return actionSheet
     }
 
-    private func imagePickerAlert(popoverSourceView: UIView) -> UIAlertController {
+    private func imagePickerAlert(popoverSourceView: UIView, viewController: UIViewController?) -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
         let actionSheet = UIAlertController(title: Alert.title,
                                             message: nil,
@@ -59,8 +57,11 @@ class ImagePickerManager: NSObject {
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
-                self?.getImage(
+                guard let self, let viewController else { return }
+
+                self.getImage(
                     fromSourceType: .photoLibrary,
+                    viewController: viewController,
                     popoverSourceView: popoverSourceView
                 )
             }
@@ -69,8 +70,11 @@ class ImagePickerManager: NSObject {
 
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
-            self?.getImage(
+            guard let self, let viewController else { return }
+
+            self.getImage(
                 fromSourceType: .camera,
+                viewController: viewController,
                 popoverSourceView: popoverSourceView
             )
         }
@@ -84,9 +88,10 @@ class ImagePickerManager: NSObject {
 
     private func getImage(
         fromSourceType sourceType: UIImagePickerController.SourceType,
+        viewController: UIViewController,
         popoverSourceView: UIView
     ) {
-        guard UIImagePickerController.isSourceTypeAvailable(sourceType), let viewController else { return }
+        guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
