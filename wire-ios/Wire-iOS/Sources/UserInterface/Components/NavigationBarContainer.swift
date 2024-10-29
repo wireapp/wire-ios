@@ -31,7 +31,7 @@ final class NavigationBarContainer: UIViewController {
         self.navigationBar = navigationBar
         super.init(nibName: nil, bundle: nil)
         self.view.addSubview(navigationBar)
-        self.view.backgroundColor = SemanticColors.View.backgroundDefault
+        self.view.backgroundColor = ColorTheme.Backgrounds.surface
         createConstraints()
     }
 

@@ -73,7 +73,7 @@ final class ConversationRootViewController: UIViewController {
         navbar.isOpaque = true
         navbar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
         navbar.shadowImage = UIImage()
-        navbar.barTintColor = SemanticColors.View.backgroundDefault
+        navbar.barTintColor = ColorTheme.Backgrounds.surface
         navbar.tintColor = SemanticColors.Label.textDefault
         navbar.barStyle = .default
 
