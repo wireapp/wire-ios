@@ -17,8 +17,8 @@
 //
 
 import WireSystemSupport
-import WireTestingPackage
 import WireTesting
+import WireTestingPackage
 import WireUtilitiesSupport
 import XCTest
 
