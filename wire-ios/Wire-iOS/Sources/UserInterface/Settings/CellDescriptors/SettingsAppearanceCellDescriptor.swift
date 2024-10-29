@@ -21,7 +21,7 @@ import UIKit
 import WireSettingsUI
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
+class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String

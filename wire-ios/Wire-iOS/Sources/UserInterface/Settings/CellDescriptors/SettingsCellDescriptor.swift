@@ -115,10 +115,6 @@ extension SettingsInternalGroupCellDescriptorType {
     }
 }
 
-protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorType {
-    var presentationAction: () -> (UIViewController?) {get}
-}
-
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
     var settingsProperty: SettingsProperty { get }
 }
