@@ -143,10 +143,11 @@ final class ConversationRootViewController: UIViewController {
         // properly set up the standard UINavigationBar items. These items were previously
         // managed by the custom container (navBarContainer).
 
-        // Set left navigation items (back button, unread status, etc.)
+        // Set left navigation items (back button, search, unread status, etc.)
+        // TODO: pass the conversation.hasUnread instead of either true or false
         navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: true)
 
-        // Set right navigation items (call buttons, search, etc.) from the conversation controller
+        // Set right navigation items (call buttons etc.) from the conversation controller
         navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
 
         // Set the custom title view which includes conversation name and search functionality
