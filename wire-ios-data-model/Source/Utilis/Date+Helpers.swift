@@ -22,7 +22,7 @@ public extension Date {
 
     private static var customCalendar: Calendar = {
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? TimeZone.autoupdatingCurrent
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
         return calendar
     }()
     
