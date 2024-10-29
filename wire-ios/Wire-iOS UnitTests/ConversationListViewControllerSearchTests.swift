@@ -23,17 +23,17 @@ import XCTest
 final class ConversationListViewControllerSearchTests: XCTestCase {
 
     func test_makeSearchController_withNoFilter() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter? = nil
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .collapsed,
             isEmptyPlaceholderVisible: false
         )
 
-        // Then
+        // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
         XCTAssertTrue(searchController.hidesNavigationBarDuringPresentation)
         XCTAssertFalse(searchController.obscuresBackgroundDuringPresentation)
@@ -41,77 +41,77 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
     }
 
     func test_makeSearchController_withFavoritesFilter() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter = .favorites
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .collapsed,
             isEmptyPlaceholderVisible: false
         )
 
-        // Then
+        // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
     }
 
     func test_makeSearchController_withGroupsFilter() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter = .groups
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .collapsed,
             isEmptyPlaceholderVisible: false
         )
 
-        // Then
+        // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
     }
 
     func test_makeSearchController_withOneOnOneFilter() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter = .oneOnOne
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .collapsed,
             isEmptyPlaceholderVisible: false
         )
 
-        // Then
+        // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
     }
 
     func test_makeSearchController_expandedState() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter? = nil
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .expanded,
             isEmptyPlaceholderVisible: false
         )
 
-        // Then
+        // THEN
         XCTAssertFalse(searchController.hidesNavigationBarDuringPresentation)
     }
 
     func test_makeSearchController_withEmptyPlaceholder() {
-        // Given
+        // GIVEN
         let filter: ConversationFilter? = nil
 
-        // When
+        // WHEN
         let searchController = ConversationListViewController.makeSearchController(
             filter: filter,
             mainSplitViewState: .collapsed,
             isEmptyPlaceholderVisible: true
         )
 
-        // Then
+        // THEN
         XCTAssertFalse(searchController.obscuresBackgroundDuringPresentation)
         XCTAssertFalse(searchController.searchBar.isTranslucent)
     }
