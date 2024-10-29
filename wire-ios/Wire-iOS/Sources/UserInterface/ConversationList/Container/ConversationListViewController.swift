@@ -81,19 +81,6 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
-    private var searchPlaceholderText: String {
-        switch listContentController.listViewModel.selectedFilter {
-        case .none:
-            return L10n.Localizable.ConversationList.SearchBar.placeholder
-        case .favorites:
-            return L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
-        case .groups:
-            return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
-        case .oneOnOne:
-            return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
-        }
-    }
-
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
@@ -404,16 +391,40 @@ final class ConversationListViewController: UIViewController {
         : ColorTheme.Backgrounds.surface
     }
 
-    private func setupSearchController() {
-
-        let searchController = UISearchController(searchResultsController: .none)
+    static func makeSearchController(
+            filter: ConversationFilter?,
+            mainSplitViewState: MainSplitViewState,
+            isEmptyPlaceholderVisible: Bool
+    ) -> UISearchController {
+        let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        searchController.searchResultsUpdater = self
-
-        searchController.searchBar.placeholder = searchPlaceholderText
-
         searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
+        searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
+        return searchController
+    }
+
+    private static func searchPlaceholderText(for filter: ConversationFilter?) -> String {
+        switch filter {
+        case .none:
+            return L10n.Localizable.ConversationList.SearchBar.placeholder
+        case .favorites:
+            return L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+        case .groups:
+            return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        case .oneOnOne:
+            return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        }
+    }
+
+    private func setupSearchController() {
+        let searchController = ConversationListViewController.makeSearchController(
+            filter: listContentController.listViewModel.selectedFilter,
+            mainSplitViewState: mainSplitViewState,
+            isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
+        )
+
+        searchController.searchResultsUpdater = self
 
         if !isEmptyPlaceholderVisible {
             navigationItem.searchController = searchController
