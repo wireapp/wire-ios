@@ -391,7 +391,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.storeConversation(Scaffolding.conversationGroupType, timestamp: .now)
+        await sut.storeConversation(Scaffolding.conversationGroupType.toDomainModel(), timestamp: .now)
 
         // Then
 

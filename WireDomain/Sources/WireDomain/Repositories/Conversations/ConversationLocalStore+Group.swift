@@ -26,16 +26,16 @@ extension ConversationLocalStore {
     // MARK: - User & Role
 
     func fetchUserAndRole(
-        from remoteConversationMember: WireAPI.Conversation.Member,
+        from conversationMember: Conversation.Members.Member,
         for localConversation: ZMConversation
     ) -> (user: ZMUser, role: Role?)? {
-        guard let userID = remoteConversationMember.id ?? remoteConversationMember.qualifiedID?.uuid else {
+        guard let userID = conversationMember.id ?? conversationMember.qualifiedID?.uuid else {
             return nil
         }
 
         let user = ZMUser.fetchOrCreate(
             with: userID,
-            domain: remoteConversationMember.qualifiedID?.domain,
+            domain: conversationMember.qualifiedID?.domain,
             in: context
         )
 
@@ -50,8 +50,11 @@ extension ConversationLocalStore {
             )
         }
 
-        let role = remoteConversationMember.conversationRole.map {
-            fetchOrCreateRoleForConversation(name: $0, conversation: localConversation)
+        let role = conversationMember.conversationRole.map {
+            fetchOrCreateRoleForConversation(
+                name: $0,
+                conversation: localConversation
+            )
         }
 
         return (user, role)
@@ -60,10 +63,10 @@ extension ConversationLocalStore {
     // MARK: - Members
 
     func updateMembers(
-        from remoteConversation: WireAPI.Conversation,
+        from conversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        guard let members = remoteConversation.members else {
+        guard let members = conversation.members else {
             return
         }
 
@@ -79,7 +82,10 @@ extension ConversationLocalStore {
             for: localConversation
         )?.role
 
-        localConversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
+        localConversation.updateMembers(
+            otherMembers,
+            selfUserRole: selfUserRole
+        )
     }
 
     // MARK: - 1:1

@@ -199,10 +199,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Date, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabled_MockMethod: ((WireDomain.Conversation, Date, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool) async {
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool) async {
         storeConversationTimestampIsFederationEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled))
 
         guard let mock = storeConversationTimestampIsFederationEnabled_MockMethod else {
@@ -214,32 +214,32 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
-    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
+    public var storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations: [(needsBackendUpdate: Bool, conversationID: UUID, conversationDomain: String)] = []
+    public var storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod: ((Bool, UUID, String) async -> Void)?
 
-    public func storeConversation(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
-        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsBackendUpdate: needsBackendUpdate, qualifiedId: qualifiedId))
+    public func storeConversation(needsBackendUpdate: Bool, conversationID: UUID, conversationDomain: String) async {
+        storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations.append((needsBackendUpdate: needsBackendUpdate, conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
-            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        guard let mock = storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateConversationIDConversationDomain`")
         }
 
-        await mock(needsBackendUpdate, qualifiedId)
+        await mock(needsBackendUpdate, conversationID, conversationDomain)
     }
 
     // MARK: - storeFailedConversation
 
-    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
-    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+    public var storeFailedConversationConversationIDConversationDomain_Invocations: [(conversationID: UUID, conversationDomain: String)] = []
+    public var storeFailedConversationConversationIDConversationDomain_MockMethod: ((UUID, String) async -> Void)?
 
-    public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
-        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+    public func storeFailedConversation(conversationID: UUID, conversationDomain: String) async {
+        storeFailedConversationConversationIDConversationDomain_Invocations.append((conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
-            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        guard let mock = storeFailedConversationConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeFailedConversationConversationIDConversationDomain`")
         }
 
-        await mock(qualifiedId)
+        await mock(conversationID, conversationDomain)
     }
 
     // MARK: - fetchMLSConversation
@@ -507,10 +507,10 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestamp_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date)] = []
-    public var storeConversationTimestamp_MockMethod: ((WireAPI.Conversation, Date) async -> Void)?
+    public var storeConversationTimestamp_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date)] = []
+    public var storeConversationTimestamp_MockMethod: ((WireDomain.Conversation, Date) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date) async {
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date) async {
         storeConversationTimestamp_Invocations.append((conversation: conversation, timestamp: timestamp))
 
         guard let mock = storeConversationTimestamp_MockMethod else {
