@@ -139,15 +139,18 @@ final class ConversationRootViewController: UIViewController {
             return
         }
 
-        // Remove the "Back" text
-        navigationItem.backButtonTitle = ""
-        // This ensures only chevron is shown
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        // Since we're not using a custom navigation bar container anymore, we need to
+        // properly set up the standard UINavigationBar items. These items were previously
+        // managed by the custom container (navBarContainer).
 
-        // Copy navigation item properties but ensure we keep the search in the titleView
-        navigationItem.titleView = conversationViewController.navigationItem.titleView
+        // Set left navigation items (back button, unread status, etc.)
+        navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: true)
+
+        // Set right navigation items (call buttons, search, etc.) from the conversation controller
         navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
-        navigationItem.leftItemsSupplementBackButton = false  // This ensures we don't supplement the back button
+
+        // Set the custom title view which includes conversation name and search functionality
+        navigationItem.titleView = conversationViewController.navigationItem.titleView
 
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
         self.view.addSubview(self.contentView)
