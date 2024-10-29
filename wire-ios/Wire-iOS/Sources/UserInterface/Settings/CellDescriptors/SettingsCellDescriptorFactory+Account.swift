@@ -300,8 +300,8 @@ extension SettingsCellDescriptorFactory {
             return .image(image)
         }
 
-        let presentationAction: () -> (UIViewController?) = {
-            let actionSheet = profileImagePicker.selectProfileImage()
+        let presentationAction: (_ sender: UIView) -> UIViewController? = { sender in
+            let actionSheet = profileImagePicker.selectProfileImage(popoverSourceView: sender)
             return actionSheet
         }
         return SettingsAppearanceCellDescriptor(
@@ -331,7 +331,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsCellPreview.color((selfUser.accentColor ?? .default).uiColor)
     }
 
-    private func colorElementPresentationAction() -> UIViewController {
+    private func colorElementPresentationAction(sender: UIView) -> UIViewController {
         guard
             let selfUser = ZMUser.selfUser(),
             let userSession = ZMUserSession.shared()

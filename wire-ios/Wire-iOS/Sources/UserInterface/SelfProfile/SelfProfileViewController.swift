@@ -206,10 +206,10 @@ final class SelfProfileViewController: UIViewController {
     @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertController = profileImagePicker.selectProfileImage()
+        let imageView = profileHeaderViewController.imageView
+        let alertController = profileImagePicker.selectProfileImage(popoverSourceView: imageView)
         if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
-            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(dx: -4, dy: -4)
+            popoverPresentationController.sourceView = imageView
         }
         present(alertController, animated: true)
     }

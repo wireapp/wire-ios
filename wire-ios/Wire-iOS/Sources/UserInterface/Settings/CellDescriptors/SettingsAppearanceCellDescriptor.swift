@@ -28,7 +28,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
     private let presentationStyle: PresentationStyle
 
     weak var viewController: UIViewController?
-    let presentationAction: () -> (UIViewController?)
+    let presentationAction: (_ sender: UIView) -> UIViewController?
 
     var identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
@@ -48,7 +48,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
         text: String,
         previewGenerator: PreviewGeneratorType? = .none,
         presentationStyle: PresentationStyle,
-        presentationAction: @escaping () -> (UIViewController?),
+        presentationAction: @escaping (_ sender: UIView) -> UIViewController?,
         settingsCoordinator: AnySettingsCoordinator
     ) {
         self.text = text
@@ -81,7 +81,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
     // MARK: - SettingsCellDescriptorType
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = generateViewController() else { return }
+        guard let controllerToShow = generateViewController(sender: sender)  else { return }
 
         switch presentationStyle {
         case .alert:
@@ -97,7 +97,7 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
         }
     }
 
-    func generateViewController() -> UIViewController? {
-        presentationAction()
+    private func generateViewController(sender: UIView) -> UIViewController? {
+        presentationAction(sender)
     }
 }

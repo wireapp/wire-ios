@@ -39,16 +39,19 @@ class ImagePickerManager: NSObject {
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
-    func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-                         completion: @escaping (UIImage) -> Void) -> UIAlertController {
+    func showActionSheet(
+        on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
+        popoverSourceView: UIView,
+        completion: @escaping (UIImage) -> Void
+    ) -> UIAlertController {
         self.completion = completion
         self.viewController = viewController
 
-        let actionSheet = imagePickerAlert()
+        let actionSheet = imagePickerAlert(popoverSourceView: popoverSourceView)
         return actionSheet
     }
 
-    private func imagePickerAlert() -> UIAlertController {
+    private func imagePickerAlert(popoverSourceView: UIView) -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
         let actionSheet = UIAlertController(title: Alert.title,
                                             message: nil,
@@ -58,7 +61,10 @@ class ImagePickerManager: NSObject {
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
                 self?.sourceType = .photoLibrary
-                self?.getImage(fromSourceType: .photoLibrary)
+                self?.getImage(
+                    fromSourceType: .photoLibrary,
+                    popoverSourceView: popoverSourceView
+                )
             }
             actionSheet.addAction(galleryAction)
         }
@@ -66,7 +72,10 @@ class ImagePickerManager: NSObject {
         // Take photo
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
             self?.sourceType = .camera
-            self?.getImage(fromSourceType: .camera)
+            self?.getImage(
+                fromSourceType: .camera,
+                popoverSourceView: popoverSourceView
+            )
         }
         actionSheet.addAction(cameraAction)
 
@@ -76,11 +85,11 @@ class ImagePickerManager: NSObject {
         return actionSheet
     }
 
-    private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
-        guard UIImagePickerController.isSourceTypeAvailable(sourceType),
-              let viewController else {
-                  return
-              }
+    private func getImage(
+        fromSourceType sourceType: UIImagePickerController.SourceType,
+        popoverSourceView: UIView
+    ) {
+        guard UIImagePickerController.isSourceTypeAvailable(sourceType), let viewController else { return }
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -96,23 +105,13 @@ class ImagePickerManager: NSObject {
             imagePickerController.cameraDevice = .front
             imagePickerController.modalTransitionStyle = .coverVertical
         case .photoLibrary, .savedPhotosAlbum:
-            if viewController.isIPadRegular() {
+            if viewController.isIPad() {
+                // UIKit will crash if the photo library is not presented using a popoverPresentationController on iPad
+                // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
                 imagePickerController.modalPresentationStyle = .popover
-
                 if let popoverPresentationController = imagePickerController.popoverPresentationController {
                     popoverPresentationController.backgroundColor = UIColor.white
-
-                    // UIKit will crash if the photo library is not presented using a popoverPresentationController
-                    // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
-                    // TODO: [WPB-11605] fix this workaround and choose proper sourceView/sourceRect
-                    popoverPresentationController.sourceView = viewController.view
-                    popoverPresentationController.sourceRect = .init(
-                        origin: .init(
-                            x: viewController.view.safeAreaLayoutGuide.layoutFrame.maxX,
-                            y: viewController.view.safeAreaLayoutGuide.layoutFrame.minY
-                        ),
-                        size: .zero
-                    )
+                    popoverPresentationController.sourceView = popoverSourceView
                 }
             }
         default:
