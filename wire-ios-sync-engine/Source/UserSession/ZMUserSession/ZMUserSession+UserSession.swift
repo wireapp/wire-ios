@@ -357,7 +357,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {
-        return CallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
+        return SubmitCallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
 }

@@ -334,7 +334,7 @@ final class UserSessionMock: UserSession {
     }
 
     func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
-        CallQualitySurveyUseCase(analyticsEventTracker: nil)
+        SubmitCallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)

@@ -24,7 +24,7 @@ public protocol SubmitCallQualitySurveyUseCaseProtocol {
     func invoke(_ review: CallQualitySurveyReview)
 }
 
-public struct CallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProtocol {
+public struct SubmitCallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProtocol {
 
     weak var analyticsEventTracker: (any AnalyticsEventTracker)?
 

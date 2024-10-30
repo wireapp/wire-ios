@@ -555,7 +555,6 @@
 		5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */; };
 		5EDF03EA22453AE400C04007 /* ConversationLinkAttachmentMessageCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03E822453AC200C04007 /* ConversationLinkAttachmentMessageCellTests.swift */; };
 		5EDF03EF22455C4E00C04007 /* MockImageResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03ED22455BD200C04007 /* MockImageResource.swift */; };
-		5EE115E1204EEC7D002AD6C2 /* CallQualityControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE115E0204EEC7D002AD6C2 /* CallQualityControllerTests.swift */; };
 		5EE51CBD2099B915008BA4B1 /* ThumbnailCornerPinningBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE51CBC2099B915008BA4B1 /* ThumbnailCornerPinningBehavior.swift */; };
 		5EE73BE62122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE73BE52122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift */; };
 		5EE73BEB212307D10032986D /* RegistrationActivationExistingAccountPolicyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE73BEA212307D10032986D /* RegistrationActivationExistingAccountPolicyHandler.swift */; };
@@ -10400,7 +10399,6 @@
 				E6F442FD2B15FD3200D2B08A /* ConversationSystemMessageCellSnapshotTests.swift in Sources */,
 				6372A0F225C8438B000CCB2D /* SelfCallParticipantViewTests.swift in Sources */,
 				5E8FFC0621ECCC7C0052DF03 /* AuthenticationInterfaceBuilderTests.swift in Sources */,
-				5EE115E1204EEC7D002AD6C2 /* CallQualityControllerTests.swift in Sources */,
 				EFE043992149CE8D00BC3079 /* ContactsViewControllerSnapshotTests.swift in Sources */,
 				EF4C5D4A23351CF00092CA38 /* ConversationListViewModelTests.swift in Sources */,
 				EF68856820F611D50074CA0F /* CanvasViewControllerTests.swift in Sources */,
