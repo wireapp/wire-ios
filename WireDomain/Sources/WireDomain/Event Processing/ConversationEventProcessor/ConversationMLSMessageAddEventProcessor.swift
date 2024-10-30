@@ -31,10 +31,26 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 }
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
+    
+    let repository: any ConversationRepositoryProtocol
 
-    func processEvent(_: ConversationMLSMessageAddEvent) async throws {
-        // TODO: [WPB-10172]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
+        let message = event.message
+        let conversationID = event.conversationID
+        let senderID = event.senderID
+        let subconversation = event.subconversation
+        let date = event.timestamp
+        
+        await repository.addMLSMessage(
+            message,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            senderID: senderID.uuid,
+            senderDomain: senderID.domain,
+            subconversation: subconversation,
+            date: date
+        )
+        
     }
 
 }

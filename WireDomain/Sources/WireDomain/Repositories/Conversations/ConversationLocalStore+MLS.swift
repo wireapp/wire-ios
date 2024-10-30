@@ -19,11 +19,651 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage operations related to conversation MLS.
+/// An extension that encapsulates storage operations related to MLS.
 
 extension ConversationLocalStore {
+    
+    // MARK: - Public
+    
+    public func addMLSMessage(
+        _ encryptedMessage: String,
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        subconversation: String?,
+        date: Date?
+    ) async {
+        
+        let decryptionResults = await decryptMLSMessage(
+            message: encryptedMessage,
+            mlsGroupID: mlsGroupID,
+            subconversation: subconversation
+        )
+        
+        await processMLSMessageDecryptionResults(
+            decryptionResults,
+            conversation: conversation,
+            senderID: senderID,
+            senderDomain: senderDomain,
+            date: date
+        )
+        
+    }
+    
+    // MARK: - Private
+    
+    private func decryptMLSMessage(
+        message: String,
+        mlsGroupID: MLSGroupID,
+        subconversation: String?
+    ) async -> [MLSDecryptResult] {
+        do {
+            let subconvType = subconversation != nil ?
+                SubgroupType(rawValue: subconversation!) : nil
 
-    // MARK: - Message protocols
+            let results = try await decryptionService.decrypt(
+                message: message,
+                for: mlsGroupID,
+                subconversationType: subconvType
+            )
+
+            if results.isEmpty {
+                WireLogger.mls.info(
+                    "successfully decrypted mls message but no result was returned"
+                )
+
+                return []
+            }
+
+            return results
+
+        } catch {
+            WireLogger.mls.warn(
+                "failed to decrypt mls message: \(String(describing: error))"
+            )
+
+            return []
+        }
+    }
+    
+    private func processMLSMessageDecryptionResults(
+        _ results: [MLSDecryptResult],
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date?
+    ) async {
+        for result in results {
+            switch result {
+            case .message(let decryptedData, let senderClientID):
+                let mlsDecryptedMessage = decryptedData.base64EncodedString()
+                
+                await createOrUpdateMLSMessage(
+                    mlsDecryptedMessage,
+                    conversation: conversation,
+                    senderID: senderID,
+                    senderDomain: senderDomain,
+                    senderClientID: senderClientID,
+                    date: date
+                )
+
+            case .proposal(let commitDelay):
+                await commitPendingProposals(
+                    conversation: conversation,
+                    commitDelay: commitDelay,
+                    date: date
+                )
+            }
+        }
+        
+        context.processPendingChanges()
+    }
+    
+    private func createOrUpdateMLSMessage(
+        _ decryptedMessage: String,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        senderClientID: String?,
+        date: Date?
+    ) async {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        let isSelf = await context.perform {
+            conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
+        }
+        
+        let conversationID = await context.perform {
+            conversation.remoteIdentifier
+        }
+        
+        var logAttributes: LogAttributes = [
+            .messageType: "conversation.mls-message-add",
+            .conversationId: conversationID?.safeForLoggingDescription
+        ]
+
+        guard !isSelf else {
+            return WireLogger.eventProcessing.debug(
+                "Illegal sender or conversation, abort processing.",
+                attributes: logAttributes
+            )
+        }
+
+        let isForcedReadOnly = await isConversationForcedReadOnly(conversation)
+
+        guard !isForcedReadOnly else {
+            return WireLogger.eventProcessing.warn(
+                "Ignoring incoming message in readonly conversation.",
+                attributes: logAttributes
+            )
+        }
+
+        guard let genericMessage = GenericMessage(withBase64String: decryptedMessage),
+              let content = genericMessage.content else {
+            
+            if let sender = try? await userLocalStore.fetchUser(
+                with: senderID,
+                domain: senderDomain
+            ) {
+                let systemMessage = SystemMessage(
+                    type: .invalid,
+                    sender: sender,
+                    timestamp: date ?? .now
+                )
+                
+                await addSystemMessage(
+                    systemMessage,
+                    to: conversation
+                )
+            }
+            
+            return WireLogger.eventProcessing.warn(
+                "Can't read protobuf, abort processing",
+                attributes: logAttributes
+            )
+        }
+        
+        WireLogger.eventProcessing.debug("Processing:\n\(genericMessage)")
+        logAttributes[.nonce] = UUID(uuidString: genericMessage.messageID) ?? "<nil>"
+        WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
+
+        // Update the legal hold state in the conversation
+        await context.perform {
+            conversation.updateSecurityLevelIfNeededAfterReceiving(
+                message: genericMessage,
+                timestamp: date ?? .now
+            )
+        }
+
+        // Verify sender is part of conversation
+        await verifySender(
+            senderID: senderID,
+            senderDomain: senderDomain,
+            in: conversation,
+            date: date
+        )
+
+        // Insert the message
+        await insertMLSMessage(
+            genericMessage,
+            in: conversation,
+            senderID: senderID,
+            senderDomain: senderDomain,
+            senderClientID: senderClientID,
+            logAttributes: logAttributes,
+            date: date
+        )
+    }
+    
+    public func commitPendingProposals(
+        conversation: ZMConversation,
+        commitDelay: UInt64,
+        date: Date?
+    ) async {
+        let scheduledDate = (date ?? Date.now) + TimeInterval(commitDelay)
+        
+        await context.perform {
+            conversation.commitPendingProposalDate = scheduledDate
+        }
+        
+        mlsService.commitPendingProposalsIfNeeded()
+    }
+    
+    public func insertMLSMessage(
+        _ message: GenericMessage,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        senderClientID: String?,
+        logAttributes: LogAttributes,
+        date: Date?
+    ) async {
+        guard let content = message.content else {
+            return
+        }
+        
+        await context.perform { [self] in
+            switch content {
+            case .lastRead where conversation.isSelfConversation:
+                ZMConversation.updateConversation(
+                    withLastReadFromSelfConversation: message.lastRead,
+                    in: context
+                )
+
+            case .cleared where conversation.isSelfConversation:
+                ZMConversation.updateConversation(
+                    withClearedFromSelfConversation: message.cleared,
+                    in: context
+                )
+
+            case .hidden where conversation.isSelfConversation:
+                ZMMessage.remove(
+                    remotelyHiddenMessage: message.hidden,
+                    inContext: context
+                )
+
+            case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
+                guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
+                    break
+                }
+                
+                ZMUser.selfUser(in: context).analyticsIdentifier = trackingIdentifier
+
+            case .deleted:
+                ZMMessage.remove(
+                    remotelyDeletedMessage: message.deleted,
+                    inConversation: conversation,
+                    senderID: senderID,
+                    inContext: context
+                )
+
+            case .reaction:
+                ZMMessage.add(
+                    reaction: message.reaction,
+                    senderID: senderID,
+                    conversation: conversation,
+                    creationDate: date,
+                    inContext: context
+                )
+
+            case .confirmation:
+                break // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
+            case .buttonActionConfirmation:
+                ZMClientMessage.updateButtonStates(
+                    withConfirmation: message.buttonActionConfirmation,
+                    forConversation: conversation,
+                    inContext: context
+                )
+
+            case .edited:
+                guard let editedMessageId = UUID(
+                    uuidString: message.edited.replacingMessageID
+                ) else {
+                    return
+                }
+                
+                guard let editedClientMessage = ZMClientMessage.fetch(
+                    withNonce: editedMessageId,
+                    for: conversation,
+                    in: context
+                ) else {
+                    return
+                }
+                
+                guard processMessageEdit(
+                    message.edited,
+                    clientMessage: editedClientMessage,
+                    genericMessage: message,
+                    senderID: senderID,
+                    date: date ?? .now
+                ) else {
+                    return
+                }
+
+                editedClientMessage.updateCategoryCache()
+                editedClientMessage.markAsSent()
+
+            case .clientAction(.resetSession):
+                
+                let sender = ZMUser.fetchOrCreate(
+                    with: senderID,
+                    domain: senderDomain,
+                    in: context
+                )
+                
+                guard
+                    let senderClientID = senderClientID,
+                    let senderClient = UserClient.fetchUserClient(
+                        withRemoteId: senderClientID,
+                        forUser: sender,
+                        createIfNeeded: true
+                    ),
+                    let timestamp = date
+                else {
+                    return WireLogger.eventProcessing.warn(
+                        "clientAction resetSession did not create any message",
+                        attributes: logAttributes
+                    )
+                }
+                
+                conversation.appendSessionResetSystemMessage(
+                    user: sender,
+                    client: senderClient,
+                    at: timestamp
+                )
+                
+            case .calling, .availability:
+                
+                break // do not handle these cases
+
+            default:
+                
+                addOtherContentMessage(
+                    message,
+                    conversation: conversation,
+                    senderID: senderID,
+                    senderDomain: senderDomain,
+                    senderClientID: senderClientID,
+                    date: date,
+                    logAttributes: logAttributes
+                )
+                
+            }
+
+        }
+    }
+    
+    /// Verifies that a sender of an update event is part of the conversation. If they are not,
+    /// it means that our local state is out of sync and we need to update the list of participants.
+    private func verifySender(
+        senderID: UUID,
+        senderDomain: String?,
+        in conversation: ZMConversation,
+        date: Date?
+    ) async {
+        
+       guard let sender = try? await userLocalStore.fetchUser(
+            with: senderID,
+            domain: senderDomain
+       ) else {
+           return
+       }
+        
+        await context.perform {
+            conversation.addParticipantAndSystemMessageIfMissing(
+                sender,
+                date: date ?? .now
+            )
+        }
+    }
+    
+    private func processMessageEdit(
+        _ messageEdit: MessageEdit,
+        clientMessage: ZMClientMessage,
+        genericMessage: GenericMessage,
+        senderID: UUID,
+        date: Date
+    ) -> Bool {
+        guard
+            let messageNonce = UUID(uuidString: genericMessage.messageID),
+            let originalText = clientMessage.underlyingMessage?.textData,
+            case .text? = messageEdit.content,
+            senderID == clientMessage.sender?.remoteIdentifier
+        else {
+            return false
+        }
+
+        do {
+            let genericMessage = GenericMessage(
+                content: originalText.applyEdit(from: messageEdit.text),
+                nonce: messageNonce
+            )
+            try clientMessage.setUnderlyingMessage(genericMessage)
+        } catch {
+            WireLogger.messageProcessing.warn(
+                "Failed to process message edit. Reason: \(error.localizedDescription)"
+            )
+            return false
+        }
+
+        clientMessage.updateNormalizedText()
+        clientMessage.nonce = messageNonce
+        clientMessage.updatedTimestamp = date
+        clientMessage.reactions.removeAll()
+        clientMessage.linkAttachments = nil
+
+        return true
+    }
+    
+    private func addOtherContentMessage(
+        _ message: GenericMessage,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        senderClientID: String?,
+        date: Date?,
+        logAttributes: LogAttributes
+    ) {
+        
+        func shouldAdd() -> Bool {
+            if let clearedTime = conversation.clearedTimeStamp, let time = date,
+               clearedTime.compare(time) != .orderedAscending {
+                return false
+            }
+            return conversation.conversationType != .self
+        }
+        
+        guard shouldAdd(), let nonce = UUID(uuidString: message.messageID) else {
+            return WireLogger.eventProcessing.warn(
+                "Dropping message because no nonce or for self conv",
+                attributes: logAttributes
+            )
+        }
+        
+        let messageClass: AnyClass = GenericMessage.entityClass(for: message)
+        
+        var clientMessage = messageClass.fetch(
+            withNonce: nonce,
+            for: conversation,
+            in: context,
+            prefetchResult: .none,
+            assumeMissingIfNotPrefetched: true
+        ) as? ZMOTRMessage
+        
+        func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
+            guard let message else { return false }
+            return message.isZombieObject
+        }
+        
+        guard !isZombieObject(clientMessage)  else {
+            return WireLogger.eventProcessing.warn(
+                "Dropping message because zombieObject",
+                attributes: logAttributes
+            )
+        }
+        
+        var isNewMessage = false
+        
+        if clientMessage == nil {
+            isNewMessage = true
+            
+            if messageClass is ZMClientMessage.Type {
+                clientMessage = ZMClientMessage(
+                    nonce: nonce,
+                    managedObjectContext: context
+                )
+                
+            } else if messageClass is ZMAssetClientMessage.Type {
+                clientMessage = ZMAssetClientMessage(nonce: nonce, managedObjectContext: context)
+            } else {
+                return WireLogger.eventProcessing.warn(
+                    "Dropping unknown type new message",
+                    attributes: logAttributes
+                )
+            }
+            
+            clientMessage?.senderClientID = senderClientID
+            clientMessage?.serverTimestamp = date
+            
+            let isGroup = conversation.conversationType == .group && senderID != ZMUser.selfUser(in: context).remoteIdentifier
+            
+            if isGroup {
+                let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
+                clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
+            }
+            
+        } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != senderClientID {
+            return WireLogger.eventProcessing.warn(
+                "senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: senderID)))",
+                attributes: logAttributes
+            )
+        }
+        
+        if let assetClientMessage = clientMessage as? ZMAssetClientMessage {
+            updateAssetClientMessage(
+                assetClientMessage,
+                genericMessage: message,
+                isNewMessage: isNewMessage
+            )
+        } else if let clientMessage = clientMessage as? ZMClientMessage {
+            updateClientMessage(
+                clientMessage,
+                genericMessage: message,
+                senderID: senderID,
+                isNewMessage: isNewMessage
+            )
+            
+        }
+        
+        // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.
+        // In addition the object will still have a managedObjectContext until the context is finally saved. In this
+        // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
+        // relationship between the deleted object and the conversation and / or sender
+        guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
+            return WireLogger.eventProcessing.warn(
+                "Dropping potential zombie message"
+            )
+        }
+        
+        guard let clientMessage else {
+            return
+        }
+        
+        clientMessage.visibleInConversation = conversation
+        
+        let sender = ZMUser.fetchOrCreate(
+            with: senderID,
+            domain: senderDomain,
+            in: context
+        )
+        
+        clientMessage.sender = sender
+        conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
+        clientMessage.unarchiveIfNeeded(conversation)
+        clientMessage.updateCategoryCache()
+        clientMessage.markAsSent()
+    }
+    
+    private func updateClientMessage(
+        _ clientMessage: ZMClientMessage,
+        genericMessage: GenericMessage,
+        senderID: UUID,
+        isNewMessage: Bool
+    ) {
+        guard isNewMessage else {
+            applyLinkPreviewUpdate(
+                clientMessage: clientMessage,
+                updatedMessage: genericMessage,
+                senderID: senderID
+            )
+            return
+        }
+
+        do {
+            try clientMessage.setUnderlyingMessage(genericMessage)
+            clientMessage.updateNormalizedText()
+        } catch {
+            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+        }
+    }
+    
+    private func applyLinkPreviewUpdate(
+        clientMessage: ZMClientMessage,
+        updatedMessage: GenericMessage,
+        senderID: UUID
+    ) {
+        guard
+            let nonce = clientMessage.nonce,
+            let originalText = clientMessage.underlyingMessage?.textData,
+            let updatedText = updatedMessage.textData,
+            senderID == clientMessage.sender?.remoteIdentifier,
+            originalText.content == updatedText.content
+        else {
+            return
+        }
+
+        let timeout = clientMessage.deletionTimeout > 0 ? clientMessage.deletionTimeout : nil
+        let message = GenericMessage(
+            content: originalText.updateLinkPreview(from: updatedText),
+            nonce: nonce,
+            expiresAfterTimeInterval: timeout
+        )
+
+        do {
+            try clientMessage.setUnderlyingMessage(message)
+        } catch {
+            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+        }
+    }
+    
+    private func updateAssetClientMessage(
+        _ assetClientMessage: ZMAssetClientMessage,
+        genericMessage: GenericMessage,
+        isNewMessage: Bool
+    ) {
+        
+        do {
+            try assetClientMessage.setUnderlyingMessage(genericMessage)
+        } catch {
+            return assertionFailure(
+                "Failed to set generic message: \(error.localizedDescription)"
+            )
+        }
+        
+        // We assume received assets are V3 since backend no longer supports sending V2 assets.
+        assetClientMessage.version = 3
+        
+        guard
+            let assetData = genericMessage.assetData,
+            let status = assetData.status
+        else {
+            return
+        }
+
+        switch status {
+        case .uploaded(let data) where data.hasAssetID:
+            assetClientMessage.updateTransferState(
+                .uploaded,
+                synchronize: false
+            )
+        case .notUploaded where assetClientMessage.transferState != .uploaded:
+            switch assetData.notUploaded {
+            case .cancelled:
+                context.delete(assetClientMessage)
+            case .failed:
+                assetClientMessage.updateTransferState(
+                    .uploadingFailed,
+                    synchronize: false
+                )
+            }
+        default:
+            break
+        }
+        
+    }
+    
+    // MARK: - Update message protocols
 
     func assignMessageProtocol(
         from remoteConversation: WireAPI.Conversation,
@@ -94,7 +734,7 @@ extension ConversationLocalStore {
         }
     }
 
-    // MARK: - Self / MLS
+    // MARK: - Self MLS Conversation
 
     func createOrJoinSelfConversation(
         from localConversation: ZMConversation

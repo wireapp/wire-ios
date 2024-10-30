@@ -41,5 +41,9 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable {
     /// The base 64 encoded message.
 
     public let message: String
+    
+    /// The date the message was received.
+
+    public let timestamp: Date?
 
 }

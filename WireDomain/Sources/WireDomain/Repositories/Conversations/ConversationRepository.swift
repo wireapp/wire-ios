@@ -127,6 +127,17 @@ public protocol ConversationRepositoryProtocol {
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
+
+    // TODO: [WPB-11839] move to MessageRepository
+    func addMLSMessage(
+        _ message: String,
+        conversationID: UUID,
+        conversationDomain: String,
+        senderID: UUID,
+        senderDomain: String,
+        subconversation: String?,
+        date: Date?
+    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -352,7 +363,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let mlsService = mlsProvider.service
 
         if isMLSEnabled {
-            let mlsGroupID = await conversationsLocalStore.fetchMLSGroupID(for: conversation)
+            let mlsGroupID = await conversationsLocalStore.conversationMLSGroupID(conversation)
             if isSelfUserRemoved, let mlsGroupID, messageProtocol.isOne(of: .mls, .mixed) {
                 try await mlsService.wipeGroup(mlsGroupID)
             }
@@ -375,7 +386,68 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
+    public func addMLSMessage(
+        _ message: String,
+        conversationID: UUID,
+        conversationDomain: String,
+        senderID: UUID,
+        senderDomain: String,
+        subconversation: String?,
+        date: Date?
+    ) async {
+        
+        guard let mlsData = await prepareForMLSMessageDecryption(
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        ) else { return }
+        
+        await conversationsLocalStore.addMLSMessage(
+            message,
+            mlsGroupID: mlsData.mlsGroupID,
+            conversation: mlsData.conversation,
+            senderID: senderID,
+            senderDomain: senderDomain,
+            subconversation: subconversation,
+            date: date
+        )
+
+    }
+
     // MARK: - Private
+    
+    private func prepareForMLSMessageDecryption(
+        conversationID: UUID,
+        conversationDomain: String
+    ) async -> (conversation: ZMConversation, mlsGroupID: MLSGroupID)? {
+        guard let conversation = await fetchConversation(
+            with: conversationID,
+            domain: conversationDomain
+        ) else {
+            WireLogger.mls.error(
+                "failed to decrypt mls message: conversation not found in db"
+            )
+            
+            return nil
+        }
+
+        guard let mlsGroupID = await conversationsLocalStore.conversationMLSGroupID(conversation) else {
+            WireLogger.mls.error(
+                "failed to decrypt mls message: missing MLS group ID"
+            )
+            
+            return nil
+        }
+
+        guard await conversationsLocalStore.isConversationMLSReady(conversation) else {
+            WireLogger.mls.warn(
+                "failed to decrypt mls message: conversation is not ready"
+            )
+            
+            return nil
+        }
+        
+        return (conversation, mlsGroupID)
+    }
 
     private func getRemovedUsers(from userIDs: Set<UserID>) async -> [WireDataModel.ZMUser] {
         await withTaskGroup(of: WireDataModel.ZMUser.self) { taskGroup in

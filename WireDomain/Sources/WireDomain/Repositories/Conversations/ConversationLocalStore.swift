@@ -169,9 +169,25 @@ public protocol ConversationLocalStoreProtocol {
     /// - parameter conversation: The conversation to get the MLS group ID from.
     /// - returns: The MLS group ID for that conversation (if any)
 
-    func fetchMLSGroupID(
-        for conversation: ZMConversation
+    func conversationMLSGroupID(
+        _ conversation: ZMConversation
     ) async -> MLSGroupID?
+    
+    /// Indicates whether a given conversation is read-only.
+    /// - parameter conversation: The conversation to check the flag for.
+    /// - returns: Whether the conversation is read-only.
+    
+    func isConversationForcedReadOnly(
+        _ conversation: ZMConversation
+    ) async -> Bool
+    
+    /// Indicates whether a given conversation is MLS ready.
+    /// - parameter conversation: The conversation to check the flag for.
+    /// - returns: Whether the conversation is MLS ready.
+    
+    func isConversationMLSReady(
+        _ conversation: ZMConversation
+    ) async -> Bool
 
     /// Removes participants from conversation and updates conversation state.
     /// - Parameters:
@@ -184,6 +200,28 @@ public protocol ConversationLocalStoreProtocol {
         users: Set<ZMUser>,
         initiatingUser: ZMUser
     ) async
+    
+    // TODO: [WPB-11839] move to MessageRepository
+    /// Adds a MLS message to a given conversation
+    /// - Parameters:
+    ///     - encryptedMessage: The encrypted MLS message that was received.
+    ///     - mlsGroupID: The MLS group ID.
+    ///     - conversation: The MLS conversation.
+    ///     - senderID: The ID of the user who sent the message.
+    ///     - senderDomain: The domain of the user who sent the message.
+    ///     - subconversation: The subconversation name if any.
+    ///     - date: The date the message was received.
+
+    func addMLSMessage(
+        _ encryptedMessage: String,
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        subconversation: String?,
+        date: Date?
+    ) async
+    
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -195,19 +233,25 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: MLSServiceInterface?
+    let mlsService: any MLSServiceInterface
+    let decryptionService: any MLSDecryptionServiceInterface
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
+    let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface?
+        mlsService: any MLSServiceInterface,
+        decryptionService: any MLSDecryptionServiceInterface,
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
         self.mlsService = mlsService
+        self.decryptionService = decryptionService
+        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
@@ -380,6 +424,30 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isArchived
         }
     }
+    
+    public func isConversationForcedReadOnly(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isForcedReadOnly
+        }
+    }
+    
+    public func conversationMLSGroupID(
+        _ conversation: ZMConversation
+    ) async -> MLSGroupID? {
+        await context.perform {
+            conversation.mlsGroupID
+        }
+    }
+    
+    public func isConversationMLSReady(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.mlsStatus == .ready
+        }
+    }
 
     public func conversationMutedMessageTypes(
         _ conversation: ZMConversation
@@ -478,12 +546,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
-        await context.perform {
-            conversation.mlsGroupID
-        }
-    }
-
     public func removeParticipantsAndUpdateConversationState(
         conversation: ZMConversation,
         users: Set<ZMUser>,
@@ -496,7 +558,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-
+    
     // MARK: - Private
 
     /// Updates or creates a conversation of type `connection` locally.
