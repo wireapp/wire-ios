@@ -155,7 +155,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                                                                                      isCollapsed: isCollapsed,
                                                                                      buttonAction: buttonAction)
         } else {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
+            contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownStoredMessageCellDescription())]
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {

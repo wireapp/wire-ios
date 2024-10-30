@@ -30,11 +30,9 @@ extension CustomMessageView: ConversationMessageCell {
     }
 }
 
-/**
- * A description for a message cell that informs the user a message cannot be rendered.
- */
+/// A description for a message cell that informs the user a stored message cannot be rendered.
 
-final class UnknownMessageCellDescription: ConversationMessageCellDescription {
+final class UnknownStoredMessageCellDescription: ConversationMessageCellDescription {
     typealias View = CustomMessageView
     let configuration: String
 

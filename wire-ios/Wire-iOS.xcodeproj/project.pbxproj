@@ -459,7 +459,7 @@
 		5E423CD92295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E423CD82295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift */; };
 		5E4B1385204FE58D00ED5DF1 /* TimeInterval+Days.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1384204FE58D00ED5DF1 /* TimeInterval+Days.swift */; };
 		5E4B1387204FE7DA00ED5DF1 /* SystemAnimationCurves.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1386204FE7DA00ED5DF1 /* SystemAnimationCurves.swift */; };
-		5E4BC1C0218A0A4300A8682E /* UnknownMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */; };
+		5E4BC1C0218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BF218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift */; };
 		5E4BC1CA218C9F6600A8682E /* ConversationQuoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1C9218C9F6600A8682E /* ConversationQuoteCell.swift */; };
 		5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1CB218CA94D00A8682E /* ZMConversationMessage+Date.swift */; };
 		5E52378A20EB5B4C00649241 /* SCSiriWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E52378820EB5B4C00649241 /* SCSiriWaveformView.swift */; };
@@ -2422,7 +2422,7 @@
 		5E423CD82295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+PrivacyAlert.swift"; sourceTree = "<group>"; };
 		5E4B1384204FE58D00ED5DF1 /* TimeInterval+Days.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Days.swift"; sourceTree = "<group>"; };
 		5E4B1386204FE7DA00ED5DF1 /* SystemAnimationCurves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemAnimationCurves.swift; sourceTree = "<group>"; };
-		5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownMessageCellDescription.swift; sourceTree = "<group>"; };
+		5E4BC1BF218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownStoredMessageCellDescription.swift; sourceTree = "<group>"; };
 		5E4BC1C9218C9F6600A8682E /* ConversationQuoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationQuoteCell.swift; sourceTree = "<group>"; };
 		5E4BC1CB218CA94D00A8682E /* ZMConversationMessage+Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+Date.swift"; sourceTree = "<group>"; };
 		5E52376A20E7F99500649241 /* EasingFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EasingFunction.swift; sourceTree = "<group>"; };
@@ -4844,7 +4844,7 @@
 				163E8C7821E363FE0030BD8D /* ConversationGuestsAllowedCell.swift */,
 				EF7F8FC021B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift */,
 				5EBBE97021878D09008BC1B7 /* ConversationMessageToolboxCell.swift */,
-				5E4BC1BF218A0A4300A8682E /* UnknownMessageCellDescription.swift */,
+				5E4BC1BF218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift */,
 				1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */,
 				7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */,
 				E9B8EB7E2A0CEC370056E417 /* Reactions */,
@@ -9724,7 +9724,7 @@
 				067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */,
 				1682AEBF20483F73003A052A /* ParticipantsSectionController.swift in Sources */,
 				E9C0B3572B558C0A00BC80E8 /* ConversationCannotDecryptSystemMessageCell.swift in Sources */,
-				5E4BC1C0218A0A4300A8682E /* UnknownMessageCellDescription.swift in Sources */,
+				5E4BC1C0218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift in Sources */,
 				A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */,
 				BFC0673D2099DD7D00204179 /* CallInfoViewController.swift in Sources */,
 				06D93B472B56F64F00A0A512 /* E2EIFeatureChange.swift in Sources */,
