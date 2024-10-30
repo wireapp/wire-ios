@@ -100,21 +100,28 @@ extension ConversationViewController {
     }
 
     var joinCallButton: UIBarButtonItem {
-        typealias Conversation = L10n.Accessibility.ConversationsList
+       typealias Conversation = L10n.Accessibility.ConversationsList
 
-        let button = IconButton(fontSpec: .smallSemiboldFont)
-        button.adjustsTitleWhenHighlighted = true
-        button.adjustBackgroundImageWhenHighlighted = true
-        button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
-        button.accessibilityLabel = Conversation.JoinButton.description
-        button.accessibilityHint = Conversation.JoinButton.hint
-        button.accessibilityTraits.insert(.startsMediaSession)
-        button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
-        button.addTarget(self, action: #selector(joinCallButtonTapped), for: .touchUpInside)
-        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 24))
-        button.layer.cornerRadius = button.bounds.height / 2
-        return UIBarButtonItem(customView: button)
+       let button = UIButton(type: .system)
+       button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
+       button.titleLabel?.font = .font(for: .body2)
+       button.accessibilityLabel = Conversation.JoinButton.description
+       button.accessibilityHint = Conversation.JoinButton.hint
+       button.accessibilityTraits.insert(.startsMediaSession)
+
+       button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
+
+       let joinAction = UIAction { [weak self] _ in
+           self?.joinCallButtonTapped()
+       }
+        
+       button.addAction(joinAction, for: .touchUpInside)
+
+       button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
+       button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
+       button.layer.cornerRadius = button.bounds.height / 2
+
+       return UIBarButtonItem(customView: button)
     }
 
     func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
@@ -229,7 +236,7 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
+    private dynamic func joinCallButtonTapped() {
         startCallController.joinCall()
     }
 
