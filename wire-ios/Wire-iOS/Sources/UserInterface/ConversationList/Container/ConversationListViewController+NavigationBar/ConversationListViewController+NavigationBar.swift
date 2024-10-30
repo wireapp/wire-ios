@@ -132,20 +132,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func setupTitleView() {
-        switch mainSplitViewState {
-        case .expanded:
-            switch conversationFilter {
-            case .none:
-                navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
-            case .favorites:
-                navigationItem.title = L10n.Localizable.ConversationList.Filter.Favorites.title
-            case .groups:
-                navigationItem.title = L10n.Localizable.ConversationList.Filter.Groups.title
-            case .oneOnOne:
-                navigationItem.title = L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
-            }
-        case .collapsed:
-            navigationItem.title = L10n.Localizable.List.title
+        navigationItem.title = switch (mainSplitViewState, conversationFilter) {
+        case (.expanded, .none):
+            L10n.Localizable.ConversationList.Filter.AllConversations.title
+        case (.expanded, .favorites):
+            L10n.Localizable.ConversationList.Filter.Favorites.title
+        case (.expanded, .groups):
+            L10n.Localizable.ConversationList.Filter.Groups.title
+        case (.expanded, .oneOnOne):
+            L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+        case (.collapsed, _):
+            L10n.Localizable.List.title
         }
     }
 
