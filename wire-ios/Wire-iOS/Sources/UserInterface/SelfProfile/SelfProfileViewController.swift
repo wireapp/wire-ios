@@ -58,13 +58,18 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
+        trackingManager: TrackingManager?,
         mainCoordinator: AnyMainCoordinator
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
 
         // Create the settings hierarchy
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: trackingManager
+        )
 
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
@@ -73,7 +78,8 @@ final class SelfProfileViewController: UIViewController {
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup()
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
+
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options

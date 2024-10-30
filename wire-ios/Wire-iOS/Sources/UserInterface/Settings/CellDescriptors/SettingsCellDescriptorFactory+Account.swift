@@ -35,10 +35,10 @@ extension ZMUser {
 extension SettingsCellDescriptorFactory {
 
     func accountGroup(
-        isTeamMember: Bool,
+        isPublicDomain: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
-    ) -> SettingsCellDescriptorType {
+    ) -> any SettingsCellDescriptorType {
         var sections: [SettingsSectionDescriptorType] = [
             infoSection(userSession: userSession, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
         ]
@@ -55,7 +55,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         #if !DATA_COLLECTION_DISABLED
-        sections.append(personalInformationSection(isTeamMember: isTeamMember))
+        sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
         #endif
 
         if SecurityFlags.backup.isEnabled {
@@ -153,9 +153,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func personalInformationSection(isTeamMember: Bool) -> SettingsSectionDescriptorType {
+    func personalInformationSection(isPublicDomain: Bool) -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
-            cellDescriptors: [dateUsagePermissionsElement(isTeamMember: isTeamMember)],
+            cellDescriptors: [dateUsagePermissionsElement(isPublicDomain: isPublicDomain)],
             header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
         )
     }
@@ -277,23 +277,23 @@ extension SettingsCellDescriptorFactory {
         }
     }
 
-    func teamElement() -> SettingsCellDescriptorType {
+    func teamElement() -> any SettingsCellDescriptorType {
         return textValueCellDescriptor(propertyName: .team, enabled: false)
     }
 
-    func domainElement() -> SettingsCellDescriptorType {
+    func domainElement() -> any SettingsCellDescriptorType {
         return textValueCellDescriptor(propertyName: .domain, enabled: false)
     }
 
-    func profileLinkElement() -> SettingsCellDescriptorType {
+    func profileLinkElement() -> any SettingsCellDescriptorType {
         return SettingsProfileLinkCellDescriptor()
     }
 
-    func profileLinkButton() -> SettingsCellDescriptorType {
+    func profileLinkButton() -> any SettingsCellDescriptorType {
         return SettingsCopyButtonCellDescriptor()
     }
 
-    private func pictureElement() -> SettingsCellDescriptorType {
+    private func pictureElement() -> any SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
             guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
@@ -313,7 +313,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    private func colorElement() -> SettingsCellDescriptorType {
+    private func colorElement() -> any SettingsCellDescriptorType {
         SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
             previewGenerator: colorElementPreviewGenerator,
@@ -346,7 +346,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
+    func readReceiptsEnabledElement() -> any SettingsCellDescriptorType {
 
         return SettingsPropertyToggleCellDescriptor(settingsProperty:
             self.settingsPropertyFactory.property(.readReceiptsEnabled),
@@ -354,11 +354,11 @@ extension SettingsCellDescriptorFactory {
                                                     identifier: "ReadReceiptsSwitch")
     }
 
-    func encryptMessagesAtRestElement() -> SettingsCellDescriptorType {
+    func encryptMessagesAtRestElement() -> any SettingsCellDescriptorType {
         return SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.encryptMessagesAtRest))
     }
 
-    func backUpElement() -> SettingsCellDescriptorType {
+    func backUpElement() -> any SettingsCellDescriptorType {
         return SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.HistoryBackup.title,
             isDestructive: false,
@@ -387,17 +387,18 @@ extension SettingsCellDescriptorFactory {
         })
     }
 
-    func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
-        return dataUsagePermissionsGroup(isTeamMember: isTeamMember)
+    func dateUsagePermissionsElement(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
+        return dataUsagePermissionsGroup(isPublicDomain: isPublicDomain)
     }
-    func resetPasswordElement() -> SettingsCellDescriptorType {
+
+    func resetPasswordElement() -> any SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URL.wr_passwordReset)
         }, previewGenerator: .none)
     }
 
-    func deleteAccountButtonElement() -> SettingsCellDescriptorType {
+    func deleteAccountButtonElement() -> any SettingsCellDescriptorType {
         let presentationAction: () -> UIViewController = {
             let alert = UIAlertController(
                 title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
@@ -423,7 +424,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func signOutElement() -> SettingsCellDescriptorType {
+    func signOutElement() -> any SettingsCellDescriptorType {
         return SettingsSignOutCellDescriptor()
     }
 

@@ -30,8 +30,8 @@ struct SettingsCellDescriptorFactory {
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCoordinator: AnySettingsCoordinator
 
-    func rootGroup() -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
-        var rootElements: [SettingsCellDescriptorType] = []
+    func rootGroup(userSession: UserSession) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+        var rootElements: [any SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
@@ -71,7 +71,7 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
-    func addAccountOrTeamCell() -> SettingsCellDescriptorType {
+    func addAccountOrTeamCell() -> any SettingsCellDescriptorType {
 
         let sessionManager = SessionManager.shared
 
@@ -115,13 +115,13 @@ struct SettingsCellDescriptorFactory {
     }
 
     func settingsGroup(
-        isTeamMember: Bool,
+        isPublicDomain: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
-    ) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    ) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
-                isTeamMember: isTeamMember,
+                isPublicDomain: isPublicDomain,
                 userSession: userSession,
                 useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
@@ -170,7 +170,7 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
-    func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {
+    func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> any SettingsCellDescriptorType {
         let items: [ZMSound] = [ZMSound.None, defaultSound] + customSounds
         let previewPlayer: SoundPreviewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
 
@@ -193,7 +193,7 @@ struct SettingsCellDescriptorFactory {
             return SettingsPropertySelectValueCellDescriptor(settingsProperty: settingsProperty, value: propertyValue, title: item.descriptionLocalizationKey.localized, identifier: .none, selectAction: playSoundAction)
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: L10n.Localizable.Self.Settings.SoundMenu.Ringtones.title)
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType }, header: L10n.Localizable.Self.Settings.SoundMenu.Ringtones.title)
 
         let previewGenerator: PreviewGeneratorType = { _ in
             let value = settingsProperty.value()
@@ -217,7 +217,7 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
-    func helpSection() -> SettingsCellDescriptorType {
+    func helpSection() -> any SettingsCellDescriptorType {
         let supportButton = SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.HelpCenter.supportWebsite, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: WireURLs.shared.support)
         }, previewGenerator: .none)
@@ -246,7 +246,7 @@ struct SettingsCellDescriptorFactory {
         )
     }
 
-    func aboutSection() -> SettingsCellDescriptorType {
+    func aboutSection() -> any SettingsCellDescriptorType {
 
         let legalButton = SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.About.Legal.title,

@@ -55,7 +55,6 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
             ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? "")) { [weak topMostViewController] result in
                 Task { @MainActor in self.activityIndicator.stop() }
-                TrackingManager.shared.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
                     topMostViewController?.showAlert(for: error)
                 }

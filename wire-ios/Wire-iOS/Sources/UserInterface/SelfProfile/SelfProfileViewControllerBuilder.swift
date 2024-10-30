@@ -28,6 +28,7 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var userSession: UserSession
     var mainCoordinator: AnyMainCoordinator!
     var accountSelector: AccountSelector?
+    var trackingManager: TrackingManager?
 
     init(
         selfUser: SettingsSelfUser,
@@ -47,6 +48,7 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
             accountSelector: accountSelector,
+            trackingManager: trackingManager,
             mainCoordinator: mainCoordinator
         )
     }
