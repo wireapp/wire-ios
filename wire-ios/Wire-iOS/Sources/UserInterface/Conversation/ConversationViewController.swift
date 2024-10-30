@@ -621,8 +621,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     var searchBarButtonItem: UIBarButtonItem {
         let button = UIButton(type: .system)
-        let searchImage = UIImage(named: "searchIcon")
-        button.setImage(searchImage, for: .normal)
+        button.setImage(UIImage(resource: .searchIcon), for: .normal)
         button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "collection"
