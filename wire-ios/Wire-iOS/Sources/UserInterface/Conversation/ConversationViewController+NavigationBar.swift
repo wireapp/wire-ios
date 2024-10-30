@@ -130,7 +130,7 @@ extension ConversationViewController {
         let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
-        let button = UIBarButtonItem(icon: icon, target: self, action: action)
+        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
@@ -139,12 +139,11 @@ extension ConversationViewController {
         return button
     }
 
-    // TODO: Replace StyleKitIcon with the equivelant of UIImage
-    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
         if view.isRightToLeft {
-            hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+            hasUnreadInOtherConversations ? UIImage(resource: .unreadForwardArrow) : UIImage(resource: .forwardArrow)
         } else {
-            hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+            hasUnreadInOtherConversations ? UIImage(resource: .unreadBackArrow) : UIImage(resource: .backArrow)
         }
     }
 
