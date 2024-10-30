@@ -109,7 +109,10 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
+        let controller = ConversationCreationController(
+            preSelectedParticipants: nil,
+            userSession: userSession,
+            mlsFeature: userSession.makeGetMLSFeatureUseCase().invoke())
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {

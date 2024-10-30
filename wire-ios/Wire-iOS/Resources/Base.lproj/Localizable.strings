@@ -305,6 +305,7 @@
 "conversation.create.guidance.toolong" = "Too many characters";
 "conversation.create.options.title" = "Conversation options";
 "conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
+"conversation.create.options.subtitle.without_services" = "Guests: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Allow guests";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";

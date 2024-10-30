@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireTestingPackage
 import XCTest
 
@@ -84,11 +85,23 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
+    func testTeamGroupOptionsExpanded_withoutServices() {
+        let mls = Feature.MLS(status: .enabled, config: .init(defaultProtocol: .mls))
+        createSut(isTeamMember: true, mlsFeature: mls)
+        sut.expandOptions()
+
+
+        snapshotHelper.verify(matching: sut)
+    }
+
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool) {
+    private func createSut(isTeamMember: Bool, mlsFeature: Feature.MLS = .init(status: .disabled, config: .init())) {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
-        sut = ConversationCreationController(preSelectedParticipants: nil, userSession: mockUserSession)
+        sut = ConversationCreationController(
+            preSelectedParticipants: nil,
+            userSession: mockUserSession,
+            mlsFeature: mlsFeature)
     }
 }

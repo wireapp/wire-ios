@@ -101,7 +101,9 @@ extension ConversationCreateOptionsCell: ConversationCreationValuesConfigurable 
         let guests = values.allowGuests.localized.capitalized
         let services = values.allowServices.localized.capitalized
         let receipts = values.enableReceipts.localized.capitalized
-        status = L10n.Localizable.Conversation.Create.Options.subtitle(guests, services, receipts)
+        status = values.shouldIncludeServices
+        ? L10n.Localizable.Conversation.Create.Options.subtitle(guests, services, receipts)
+        : L10n.Localizable.Conversation.Create.Options.Subtitle.withoutServices(guests, receipts)
     }
 }
 
