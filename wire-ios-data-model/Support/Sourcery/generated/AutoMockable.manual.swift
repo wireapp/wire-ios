@@ -324,8 +324,6 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 // swiftlint:enable vertical_whitespace
 // swiftlint:enable superfluous_disable_command
 import CoreData
-import WireDataModel
-
 public class MockGetTeamAccountImageSourceUseCaseProtocol: GetTeamAccountImageSourceUseCaseProtocol {
 
     // MARK: - Life cycle
