@@ -57,7 +57,12 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
+
+        let zClientViewController = ZClientViewController(
+            account: mockAccount,
+            userSession: userSession,
+            trackingManager: nil
+        )
 
         sut = ConversationViewController(
             conversation: mockConversation,
