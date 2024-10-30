@@ -139,6 +139,18 @@ final class ConversationRootViewController: UIViewController {
         return child
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            guard let conversationViewController = self.conversationViewController else {
+                return
+            }
+            conversationViewController.updateRightNavigationItemsButtons()
+            conversationViewController.updateLeftNavigationBarItems()
+        }
+    }
+
     func configure() {
         guard let conversationViewController = self.conversationViewController else {
             return
