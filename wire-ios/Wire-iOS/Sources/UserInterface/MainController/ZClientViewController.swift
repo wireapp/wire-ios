@@ -35,6 +35,7 @@ final class ZClientViewController: UIViewController {
 
     let account: Account
     let userSession: UserSession
+    let trackingManager: TrackingManager?
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
@@ -75,7 +76,11 @@ final class ZClientViewController: UIViewController {
         mediaPlaybackManager: mediaPlaybackManager
     )
 
-    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(userSession: userSession)
+    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
+        isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
+        userSession: userSession,
+        trackingManager: trackingManager
+    )
 
     private lazy var defaultSettingsPropertyFactoryDelegate = {
         var settingsTableViewController = { [weak self] in
@@ -144,11 +149,12 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager?
     ) {
         self.account = account
         self.userSession = userSession
-
+        self.trackingManager = trackingManager
         colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
@@ -245,12 +251,24 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        firstTimeRequestToEnableAnalytics()
+
         // in expanded layout we want to see the same background color of the
         // sidebar also for the status bar
         if mainSplitViewController.isCollapsed {
             view.backgroundColor = ColorTheme.Backgrounds.surface
         } else {
             view.backgroundColor = SidebarViewDesign().backgroundColor
+        }
+    }
+
+    private func firstTimeRequestToEnableAnalytics() {
+        Task {
+            do {
+                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+            } catch {
+                WireLogger.analytics.error("failed to first time enable analytics: \(error)")
+            }
         }
     }
 
@@ -392,7 +410,6 @@ final class ZClientViewController: UIViewController {
         )
         let navController = controller.wrapInNavigationController()
         navController.modalPresentationStyle = .formSheet
-
         present(navController, animated: true)
     }
 

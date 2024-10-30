@@ -79,7 +79,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         sut = ConversationListViewController(
             viewModel: viewModel,
-            zClientViewController: .init(account: account, userSession: userSession),
+            zClientViewController: .init(account: account, userSession: userSession, trackingManager: nil),
             mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
