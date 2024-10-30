@@ -92,17 +92,4 @@ extension ZMConversationMessage {
         readReceipts.sortedAscendingPrependingNil(by: \.userType.name)
     }
 
-    func react(_ reaction: Emoji.ID) {
-        if selfUserReactions().contains(reaction) {
-            ZMMessage.removeReaction(
-                reaction,
-                from: self
-            )
-        } else {
-            ZMMessage.addReaction(
-                reaction,
-                to: self
-            )
-        }
-    }
 }

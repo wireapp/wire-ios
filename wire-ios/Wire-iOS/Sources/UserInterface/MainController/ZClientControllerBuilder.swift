@@ -23,9 +23,14 @@ struct ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
+    private(set) var trackingManager: TrackingManager?
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(
+            account: account,
+            userSession: userSession,
+            trackingManager: trackingManager
+        )
         viewController.router = router
         return viewController
     }

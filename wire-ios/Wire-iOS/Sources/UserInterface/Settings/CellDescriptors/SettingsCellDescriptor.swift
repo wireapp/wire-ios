@@ -38,11 +38,13 @@ import WireSettingsUI
  * should be updated from the cell.
  */
 protocol SettingsCellDescriptorType: AnyObject {
-    static var cellType: SettingsTableCellProtocol.Type {get}
-    var visible: Bool {get}
-    var title: String {get}
-    var identifier: String? {get}
-    var group: SettingsGroupCellDescriptorType? {get}
+
+    static var cellType: SettingsTableCellProtocol.Type { get }
+
+    var visible: Bool { get }
+    var title: String { get }
+    var identifier: String? { get }
+    var group: (any SettingsGroupCellDescriptorType)? { get }
     var copiableText: String? { get }
 
     /// If non-nil the item is a top-level item of the main settings menu.
@@ -162,7 +164,11 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    typealias Cell = SettingsTableCell
+
     var visible: Bool = true
     let title: String
     let accessibilityBackButtonText: String
@@ -173,7 +179,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let previewGenerator: PreviewGeneratorType?
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
 
     var visibleItems: [SettingsSectionDescriptorType] {
         return self.items.filter {

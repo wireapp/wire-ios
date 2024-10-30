@@ -18,7 +18,7 @@
 
 import UIKit
 
-extension UITableViewCell: @retroactive UIScrollViewDelegate, @retroactive UITableViewDelegate, @retroactive UITableViewDataSource {
+extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
 
     func wrapInTableView() -> UITableView {
 
