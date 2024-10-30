@@ -69,7 +69,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         sut = ConversationListViewController(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: false,
-            zClientViewController: .init(account: account, userSession: userSession),
+            zClientViewController: .init(account: account, userSession: userSession, trackingManager: nil),
             mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )

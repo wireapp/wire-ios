@@ -31,8 +31,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
     fileprivate var newRequestObserver: OperationLoopNewRequestObserver!
 
-    fileprivate var mockAnalytics: MockAnalytics!
-
     /// Number of time the new request callback was invoked
     var newRequestCallbackCount: Int {
         return newRequestObserver.notifications.count
@@ -42,8 +40,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         super.setUp()
         self.newRequestObserver = OperationLoopNewRequestObserver()
         self.observer = TestUserProfileUpdateObserver()
-        self.mockAnalytics = MockAnalytics()
-        self.sut = UserProfileUpdateStatus(managedObjectContext: self.uiMOC, analytics: self.mockAnalytics)
+        self.sut = UserProfileUpdateStatus(managedObjectContext: self.uiMOC)
         self.observerToken = self.sut.add(observer: self.observer)
     }
 
@@ -51,7 +48,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         self.newRequestObserver = nil
         self.observerToken = nil
         self.observer = nil
-        self.mockAnalytics = nil
         self.sut = nil
         super.tearDown()
     }
