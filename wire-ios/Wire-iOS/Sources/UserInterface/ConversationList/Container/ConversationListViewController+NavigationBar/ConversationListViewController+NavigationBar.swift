@@ -59,7 +59,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     // MARK: - Navigation Bar Items
 
-    private func setupAccountImageView() -> AccountImageView {
+    private func makeAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
         accountImageView.source = viewModel.accountImageSource
@@ -96,7 +96,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         stackView.spacing = 4
 
         // avatar
-        let accountImageView = setupAccountImageView()
+        let accountImageView = makeAccountImageView()
         stackView.addArrangedSubview(accountImageView)
         self.accountImageView = accountImageView
 
