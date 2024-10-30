@@ -25,6 +25,25 @@ public struct ModelHelper {
 
     public init() {}
 
+    // MARK: - Messages
+
+    @discardableResult
+    public func addTextMessages(
+        to conversation: ZMConversation,
+        messagePrefix: String = "message",
+        sender: ZMUser?,
+        count: Int,
+        in context: NSManagedObjectContext
+    ) throws -> [ZMMessage] {
+        let messageSender = sender ?? ZMUser.selfUser(in: context)
+        return try (0..<count).map { index in
+            let message = try conversation.appendText(content: "\(messagePrefix) \(index)") as! ZMMessage
+            message.sender = messageSender
+            return message
+        }
+
+    }
+
     // MARK: - Users
 
     @discardableResult
