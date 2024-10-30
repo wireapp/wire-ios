@@ -83,7 +83,7 @@ extension ZMConversation {
     }
 
     /// combination of domain and remoteIdentifier
-    @NSManaged private var primaryKey: String
+    @NSManaged private(set) var primaryKey: String
 
     private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {
