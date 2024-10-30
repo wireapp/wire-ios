@@ -121,8 +121,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
         /// Sync the user MLS conversation from backend.
         let mlsGroupID = try await conversationsRepository.pullMLSOneToOneConversation(
-            for: userID.uuid.uuidString,
-            domain: userID.domain
+            userID: userID.uuid.uuidString,
+            userDomain: userID.domain
         )
 
         /// Then, fetch the synced MLS conversation.

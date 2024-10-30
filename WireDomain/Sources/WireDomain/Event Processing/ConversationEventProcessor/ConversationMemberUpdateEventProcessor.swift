@@ -47,7 +47,7 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         let archivedStatusDate = memberChange.archivedStatusReferenceDate
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 

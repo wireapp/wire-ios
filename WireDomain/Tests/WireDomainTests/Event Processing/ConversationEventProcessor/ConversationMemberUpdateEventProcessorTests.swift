@@ -75,7 +75,7 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
         }
 
         userRepository.isSelfUserIdDomain_MockMethod = { _, _ in true }
-        conversationRepository.fetchOrCreateConversationWithDomain_MockValue = conversation
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationRepository.addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_MockMethod = { _, _, _, _, _ in }
         conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod = { _, _, _ in }
 
@@ -86,7 +86,7 @@ final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchOrCreateConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations.count, 1)
     }

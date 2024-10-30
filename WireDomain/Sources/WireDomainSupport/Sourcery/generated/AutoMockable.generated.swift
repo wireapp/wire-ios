@@ -318,42 +318,42 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - pullMLSOneToOneConversation
 
-    public var pullMLSOneToOneConversationForDomain_Invocations: [(userID: String, domain: String)] = []
-    public var pullMLSOneToOneConversationForDomain_MockError: Error?
-    public var pullMLSOneToOneConversationForDomain_MockMethod: ((String, String) async throws -> String)?
-    public var pullMLSOneToOneConversationForDomain_MockValue: String?
+    public var pullMLSOneToOneConversationUserIDUserDomain_Invocations: [(userID: String, userDomain: String)] = []
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockError: Error?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockMethod: ((String, String) async throws -> String)?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockValue: String?
 
-    public func pullMLSOneToOneConversation(for userID: String, domain: String) async throws -> String {
-        pullMLSOneToOneConversationForDomain_Invocations.append((userID: userID, domain: domain))
+    public func pullMLSOneToOneConversation(userID: String, userDomain: String) async throws -> String {
+        pullMLSOneToOneConversationUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
 
-        if let error = pullMLSOneToOneConversationForDomain_MockError {
+        if let error = pullMLSOneToOneConversationUserIDUserDomain_MockError {
             throw error
         }
 
-        if let mock = pullMLSOneToOneConversationForDomain_MockMethod {
-            return try await mock(userID, domain)
-        } else if let mock = pullMLSOneToOneConversationForDomain_MockValue {
+        if let mock = pullMLSOneToOneConversationUserIDUserDomain_MockMethod {
+            return try await mock(userID, userDomain)
+        } else if let mock = pullMLSOneToOneConversationUserIDUserDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `pullMLSOneToOneConversationForDomain`")
+            fatalError("no mock for `pullMLSOneToOneConversationUserIDUserDomain`")
         }
     }
 
     // MARK: - fetchOrCreateConversation
 
-    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
-    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+    public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationIdDomain_MockValue: ZMConversation?
 
-    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
-        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchOrCreateConversation(id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+        if let mock = fetchOrCreateConversationIdDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+        } else if let mock = fetchOrCreateConversationIdDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+            fatalError("no mock for `fetchOrCreateConversationIdDomain`")
         }
     }
 

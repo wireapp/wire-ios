@@ -32,13 +32,13 @@ public protocol ConversationRepositoryProtocol {
     ///
     /// - parameters:
     ///     - userID: The user ID.
-    ///     - domain: The user domain.
+    ///     - userDomain: The user domain.
     ///
     /// - returns : The MLS group ID.
 
     func pullMLSOneToOneConversation(
-        for userID: String,
-        domain: String
+        userID: String,
+        userDomain: String
     ) async throws -> String
 
     /// Fetches or creates a conversation locally.
@@ -48,7 +48,7 @@ public protocol ConversationRepositoryProtocol {
     /// - Returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation
 
@@ -175,12 +175,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func pullMLSOneToOneConversation(
-        for userID: String,
-        domain: String
+        userID: String,
+        userDomain: String
     ) async throws -> String {
         let mlsConversation = try await conversationsAPI.getMLSOneToOneConversation(
             userID: userID,
-            in: domain
+            in: userDomain
         )
 
         guard let mlsGroupID = mlsConversation.mlsGroupID else {
@@ -208,7 +208,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation {
         await conversationsLocalStore.fetchOrCreateConversation(
@@ -246,7 +246,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
 
         let conversation = await fetchOrCreateConversation(
-            with: conversationID,
+            id: conversationID,
             domain: conversationDomain
         )
 
