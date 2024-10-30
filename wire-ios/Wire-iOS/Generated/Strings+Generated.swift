@@ -2268,6 +2268,10 @@ internal enum L10n {
           /// This message can’t be displayed. You may be using an older version of Wire.
           internal static let body = L10n.tr("Localizable", "content.system.unknown_message.body", fallback: "This message can’t be displayed. You may be using an older version of Wire.")
         }
+        internal enum UnknownMessageReceived {
+          /// You have received a message that can't be displayed. You may be using an older version of Wire.
+          internal static let body = L10n.tr("Localizable", "content.system.unknown_message_received.body", fallback: "You have received a message that can't be displayed. You may be using an older version of Wire.")
+        }
       }
     }
     internal enum Conversation {

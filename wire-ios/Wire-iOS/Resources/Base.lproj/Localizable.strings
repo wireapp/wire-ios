@@ -595,6 +595,7 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "This message can’t be displayed. You may be using an older version of Wire.";
+"content.system.unknown_message_received.body" = "You have received a message that can't be displayed. You may be using an older version of Wire.";
 
 "content.file.uploading" = "Uploading…";
 "content.file.downloading" = "Downloading…";

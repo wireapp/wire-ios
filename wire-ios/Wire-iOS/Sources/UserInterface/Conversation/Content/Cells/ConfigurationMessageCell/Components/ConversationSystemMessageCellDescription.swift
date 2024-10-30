@@ -216,10 +216,13 @@ final class ConversationSystemMessageCellDescription {
                 assertionFailure("connectedUserType should not be nil in this case")
             }
 
-        case .invalid:
-            let unknownMessage = UnknownMessageCellDescription()
+        case .unknownMessageReceived:
+            let unknownMessage = UnknownStoredMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
 
+        case .invalid:
+            // Nothing to display.
+            break
         }
 
         return []

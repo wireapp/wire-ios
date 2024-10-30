@@ -1428,6 +1428,7 @@
 		EE01D08725ADA3D5001DB205 /* AppLockModule.Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */; };
 		EE01D08825ADA3D5001DB205 /* AppLockModule.Interactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08325ADA3D5001DB205 /* AppLockModule.Interactor.swift */; };
 		EE01D08925ADA3D5001DB205 /* AppLockModule.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08425ADA3D5001DB205 /* AppLockModule.View.swift */; };
+		EE05D4942CD28AA800B2C64F /* UnknownMessageReceivedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE05D4932CD28AA800B2C64F /* UnknownMessageReceivedCellDescription.swift */; };
 		EE0768EE2A9FB99700BA47A3 /* EmojiRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */; };
 		EE08ADED29C8862800B6C14D /* SwitchBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */; };
 		EE08ADEF29C8863000B6C14D /* SwitchBackendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */; };
@@ -3436,6 +3437,7 @@
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
 		EE01D08325ADA3D5001DB205 /* AppLockModule.Interactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Interactor.swift; sourceTree = "<group>"; };
 		EE01D08425ADA3D5001DB205 /* AppLockModule.View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.View.swift; sourceTree = "<group>"; };
+		EE05D4932CD28AA800B2C64F /* UnknownMessageReceivedCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownMessageReceivedCellDescription.swift; sourceTree = "<group>"; };
 		EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiRepository.swift; sourceTree = "<group>"; };
 		EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendView.swift; sourceTree = "<group>"; };
 		EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendViewModel.swift; sourceTree = "<group>"; };
@@ -4845,6 +4847,7 @@
 				EF7F8FC021B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift */,
 				5EBBE97021878D09008BC1B7 /* ConversationMessageToolboxCell.swift */,
 				5E4BC1BF218A0A4300A8682E /* UnknownStoredMessageCellDescription.swift */,
+				EE05D4932CD28AA800B2C64F /* UnknownMessageReceivedCellDescription.swift */,
 				1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */,
 				7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */,
 				E9B8EB7E2A0CEC370056E417 /* Reactions */,
@@ -9604,6 +9607,7 @@
 				BF4D99CD1E79AAD400A7B08F /* ParticipantsCellViewModel.swift in Sources */,
 				16A94AF8209B5334008A5718 /* CallGridViewController.swift in Sources */,
 				7C440E7A23472E9900D91B5F /* FolderCreationNameCell.swift in Sources */,
+				EE05D4942CD28AA800B2C64F /* UnknownMessageReceivedCellDescription.swift in Sources */,
 				D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */,
 				16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */,
 				EF2E2F6E223BAF410038D7D9 /* MediaBar.swift in Sources */,
