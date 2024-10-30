@@ -26,14 +26,17 @@ public protocol SettingsCoordinatorProtocol: AnyObject {
 @MainActor
 public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
 
-    private let _showSettingsContent: (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
+    private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
 
     public init(
         settingsCoordinator: some SettingsCoordinatorProtocol
     ) {
-        _showSettingsContent = settingsCoordinator.showSettingsContent(_:)
+        _showSettingsContent = { topLevelMenuItem in
+            settingsCoordinator.showSettingsContent(topLevelMenuItem)
+        }
     }
 
+    @MainActor
     public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
         _showSettingsContent(topLevelMenuItem)
     }

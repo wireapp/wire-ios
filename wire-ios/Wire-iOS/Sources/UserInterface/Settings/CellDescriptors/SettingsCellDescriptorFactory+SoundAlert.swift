@@ -21,7 +21,7 @@ import Foundation
 
 extension SettingsCellDescriptorFactory {
 
-    var soundAlertGroup: SettingsCellDescriptorType {
+    var soundAlertGroup: any SettingsCellDescriptorType {
         return SettingsGroupCellDescriptor(
             items: [alertsSection],
             title: title,

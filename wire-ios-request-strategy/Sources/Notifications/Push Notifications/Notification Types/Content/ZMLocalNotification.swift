@@ -17,6 +17,7 @@
 //
 
 import UserNotifications
+import WireDataModel
 
 /// Defines the various types of local notifications, some of which
 /// have associated subtypes.
@@ -124,6 +125,16 @@ public class ZMLocalNotification: NSObject {
         hash.combine(title)
         hash.combine(body)
         return hash.finalize()
+    }
+
+    public var logAttributes: LogAttributes {
+        [
+            LogAttributesKey.eventId: userInfo?.eventID?.safeForLoggingDescription,
+            LogAttributesKey.nonce: userInfo?.messageNonce?.safeForLoggingDescription,
+            LogAttributesKey.conversationId: userInfo?.conversationID?.safeForLoggingDescription,
+            LogAttributesKey.senderUserId: userInfo?.senderID?.safeForLoggingDescription,
+            LogAttributesKey.selfUserId: userInfo?.selfUserID?.safeForLoggingDescription
+        ]
     }
 }
 
