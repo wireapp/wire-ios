@@ -41,7 +41,10 @@ extension ConversationViewController {
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.voiceCallItemTapped(_:)), for: .touchUpInside)
+        let audioCallAction = UIAction { [weak self] _ in
+            self?.voiceCallItemTapped()
+        }
+        button.addAction(audioCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
@@ -64,7 +67,10 @@ extension ConversationViewController {
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeVideoCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.videoCallItemTapped(_:)), for: .touchUpInside)
+        let videoCallAction = UIAction { [weak self] _ in
+            self?.videoCallItemTapped()
+        }
+        button.addAction(videoCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
@@ -205,8 +211,7 @@ extension ConversationViewController {
         }
     }
 
-    @objc
-    func voiceCallItemTapped(_ sender: UIBarButtonItem) {
+    func voiceCallItemTapped() {
         view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
@@ -215,7 +220,7 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
+    func videoCallItemTapped() {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
