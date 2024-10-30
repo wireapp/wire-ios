@@ -33,9 +33,10 @@ extension ConversationViewController {
     }
 
     var audioCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.phone, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+        let button = UIButton(type: .system)
+        let audioImage = UIImage(named: "audioCallIcon")
+        button.setImage(audioImage, for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "audioCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
@@ -48,7 +49,7 @@ extension ConversationViewController {
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
@@ -59,9 +60,10 @@ extension ConversationViewController {
     }
 
     var videoCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.camera, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+        let button = UIButton(type: .system)
+        let videoImage = UIImage(named: "videoCallIcon")
+        button.setImage(videoImage, for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "videoCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
@@ -74,7 +76,7 @@ extension ConversationViewController {
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
 
