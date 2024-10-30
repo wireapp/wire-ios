@@ -37,7 +37,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             switch self {
             case .notifications: return user.canModifyNotificationSettings(in: conversation)
             case .guests:        return user.canModifyAccessControlSettings(in: conversation)
-            case .services:      return user.canModifyAccessControlSettings(in: conversation)
+            case .services:      return user.canModifyAccessControlSettings(in: conversation) && !conversation.messageProtocol.isOne(of: .mls, .mixed)
             case .timeout:       return user.canModifyEphemeralSettings(in: conversation)
             }
         }

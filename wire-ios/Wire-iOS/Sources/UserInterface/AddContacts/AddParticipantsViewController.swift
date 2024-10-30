@@ -347,7 +347,6 @@ final class AddParticipantsViewController: UIViewController {
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,
-                allowServices: true,
                 encryptionProtocol: mlsFeature.config.defaultProtocol,
                 selfUser: userSession.selfUser
             )
