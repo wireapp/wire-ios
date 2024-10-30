@@ -19,7 +19,7 @@
 import SwiftUI
 
 /// A small demo for implementing the split view with SwiftUI.
-struct ThreeColumnSplitView: View {
+struct ThreeColumnSplitViewPreview: View {
     @State private var selectedTab: String? = "Tab 1"
 
     var body: some View {
@@ -109,8 +109,6 @@ struct ThreeColumnSplitView: View {
     }
 }
 
-struct ThreeColumnSplitView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreeColumnSplitView()
-    }
+#Preview {
+    ThreeColumnSplitViewPreview()
 }
