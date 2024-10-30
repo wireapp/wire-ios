@@ -90,7 +90,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
         createSut(isTeamMember: true, mlsFeature: mls)
         sut.expandOptions()
 
-
         snapshotHelper.verify(matching: sut)
     }
 

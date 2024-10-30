@@ -64,7 +64,7 @@ final class ConversationCreationController: UIViewController {
     var optionsSections: [ConversationCreateSectionController] {
         return [
             guestsSection,
-            values.shouldIncludeServices ? servicesSection: nil,
+            values.shouldIncludeServices ? servicesSection : nil,
             receiptsSection,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
         ].compactMap { $0 }
