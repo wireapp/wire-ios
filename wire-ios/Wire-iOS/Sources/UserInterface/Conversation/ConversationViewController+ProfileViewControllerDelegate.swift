@@ -41,7 +41,7 @@ extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
             await mainCoordinator.showConversationList(conversationFilter: .none)
-            await mainCoordinator.showConversation(conversation: conversation, message: nil)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil) // TODO: what if the conversation exists but is archived? will it work?
         }
     }
 }
