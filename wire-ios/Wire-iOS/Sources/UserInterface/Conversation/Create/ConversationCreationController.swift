@@ -61,7 +61,7 @@ final class ConversationCreationController: UIViewController {
         return section
     }()
 
-    var optionsSections: [ConversationCreateSectionController] {
+    private var optionsSections: [ConversationCreateSectionController] {
         return [
             guestsSection,
             values.shouldIncludeServices ? servicesSection : nil,
