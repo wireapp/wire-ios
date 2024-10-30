@@ -89,7 +89,8 @@ extension ConversationLocalStore {
     ) {
         guard
             localConversation.conversationType == .oneOnOne,
-            let otherUser = localConversation.localParticipantsExcludingSelf.first
+            let otherUser = localConversation.localParticipantsExcludingSelf.first,
+            otherUser.oneOnOneConversation == nil
         else {
             return
         }
