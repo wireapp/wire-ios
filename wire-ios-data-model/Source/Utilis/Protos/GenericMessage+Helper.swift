@@ -832,7 +832,7 @@ extension DataTransfer {
         }
     }
 
-    var trackingIdentifierData: String? {
+    public var trackingIdentifierData: String? {
         guard
             hasTrackingIdentifier,
             trackingIdentifier.hasIdentifier

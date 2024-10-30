@@ -46,7 +46,7 @@ extension ZMClientMessage: CompositeMessageData {
 
 // MARK: - ButtonStates Interface
 extension ZMClientMessage {
-    static func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation,
+    public static func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation,
                                    forConversation conversation: ZMConversation,
                                    inContext moc: NSManagedObjectContext) {
         let nonce = UUID(uuidString: confirmation.referenceMessageID)

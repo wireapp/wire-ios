@@ -50,7 +50,7 @@ extension ZMMessage {
         }
     }
 
-    static func remove(remotelyHiddenMessage hiddenMessage: MessageHide, inContext moc: NSManagedObjectContext) {
+    public static func remove(remotelyHiddenMessage hiddenMessage: MessageHide, inContext moc: NSManagedObjectContext) {
         guard
             let conversationID = UUID(uuidString: hiddenMessage.conversationID),
             let messageID = UUID(uuidString: hiddenMessage.messageID),
@@ -65,7 +65,7 @@ extension ZMMessage {
         moc.delete(message)
     }
 
-    static func remove(remotelyDeletedMessage deletedMessage: MessageDelete,
+    public static func remove(remotelyDeletedMessage deletedMessage: MessageDelete,
                        inConversation conversation: ZMConversation,
                        senderID: UUID,
                        inContext moc: NSManagedObjectContext) {

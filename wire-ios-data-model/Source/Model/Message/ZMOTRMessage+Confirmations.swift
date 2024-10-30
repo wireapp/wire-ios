@@ -22,7 +22,7 @@ extension ZMOTRMessage {
 
     private static let deliveryConfirmationDayThreshold = 7
 
-    @NSManaged dynamic var expectsReadConfirmation: Bool
+    @NSManaged dynamic public var expectsReadConfirmation: Bool
 
     @objc
     var needsDeliveryConfirmation: Bool {

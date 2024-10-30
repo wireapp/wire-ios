@@ -43,7 +43,7 @@ extension GenericMessage {
         self = unwrappedMessage
     }
 
-    static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
+    public static func entityClass(for genericMessage: GenericMessage) -> AnyClass {
         if genericMessage.imageAssetData != nil || genericMessage.assetData != nil {
             return ZMAssetClientMessage.self
         }
