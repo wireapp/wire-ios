@@ -33,7 +33,7 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
         sut = SettingsTextCell()
 
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: SessionManager.shared?.activeUserSession, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: SessionManager.shared?.activeUserSession, trackingManager: nil, selfUser: selfUser)
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
