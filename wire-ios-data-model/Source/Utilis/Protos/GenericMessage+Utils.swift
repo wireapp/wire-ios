@@ -19,9 +19,11 @@
 import Foundation
 
 extension GenericMessage {
-    var knownMessage: Bool {
-        return content != nil
+
+    var isContentUnknown: Bool {
+        content == nil
     }
+
 }
 
 extension ImageAsset {

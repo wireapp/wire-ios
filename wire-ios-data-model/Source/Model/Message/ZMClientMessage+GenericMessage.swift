@@ -34,7 +34,7 @@ extension ZMClientMessage {
     private func underlyingMessageMergedFromDataSet() -> GenericMessage? {
         let filteredData = dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
-            .filter { $0.knownMessage && $0.imageAssetData == nil }
+            .filter { !$0.isContentUnknown && $0.imageAssetData == nil }
             .compactMap { try? $0.serializedData() }
 
         guard !Array(filteredData).isEmpty else {

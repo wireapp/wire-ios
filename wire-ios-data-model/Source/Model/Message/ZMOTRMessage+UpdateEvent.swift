@@ -46,8 +46,7 @@ extension ZMOTRMessage {
             return nil
         }
 
-        // TODO: rename isUnknownMessage
-        if !message.knownMessage {
+        if message.isContentUnknown {
             switch message.unknownStrategy {
             case .ignore:
                 // Throw the message away without informing the user.
