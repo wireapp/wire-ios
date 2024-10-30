@@ -25,7 +25,7 @@ public extension Date {
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
         return calendar
     }()
-    
+
     /// The number of days from this date til now.
     ///
     /// If this date is in the future, the return value will be 0.

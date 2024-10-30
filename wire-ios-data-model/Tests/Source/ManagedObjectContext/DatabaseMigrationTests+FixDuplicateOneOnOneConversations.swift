@@ -50,7 +50,7 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
         var oldConversationMessageNonces: [UUID]!
         var newConversationMessageNonces: [UUID]!
         let draftMessageText = "test"
-        
+
         try helper.migrateStoreToCurrentVersion(sourceVersion: "2.118.0",
                                             preMigrationAction: { context in
             try context.performAndWait {
@@ -135,7 +135,7 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
                                                            in: context))
                 XCTAssertEqual(otherUser.oneToOneConversation, oneOnOneConversation)
                 XCTAssertEqual(oneOnOneConversation.oneOnOneUser, otherUser)
-                
+
                 XCTAssertNotNil(oneOnOneConversation.draftMessage)
                 XCTAssertNotNil(oneOnOneConversation.draftMessage?.text, draftMessageText)
             }
