@@ -143,18 +143,17 @@ final class ConversationRootViewController: UIViewController {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-            guard let conversationViewController = self.conversationViewController else {
-                return
-            }
-            conversationViewController.updateRightNavigationItemsButtons()
-            conversationViewController.updateLeftNavigationBarItems()
+            // Refresh navigation items to get new buttons with updated colors
+            guard let conversationViewController = self.conversationViewController else { return }
+
+            navigationItem.rightBarButtonItems = conversationViewController.rightNavigationItems(forConversation: conversation)
+            navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
         }
     }
 
     func configure() {
-        guard let conversationViewController = self.conversationViewController else {
-            return
-        }
+        
+        guard let conversationViewController = self.conversationViewController else { return }
 
         // Since we're not using a custom navigation bar container anymore, we need to
         // properly set up the standard UINavigationBar items. These items were previously

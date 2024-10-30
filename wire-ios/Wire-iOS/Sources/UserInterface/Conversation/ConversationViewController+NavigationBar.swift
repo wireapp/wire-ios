@@ -53,7 +53,6 @@ extension ConversationViewController {
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
@@ -80,7 +79,6 @@ extension ConversationViewController {
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
