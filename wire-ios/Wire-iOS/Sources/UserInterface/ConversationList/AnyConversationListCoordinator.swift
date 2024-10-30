@@ -20,8 +20,7 @@ import WireConversationListUI
 
 final class AnyConversationListCoordinator<ConversationModel, ConversationMessageModel>: ConversationListCoordinatorProtocol {
 
-    let showConversation: (ConversationModel) async -> Void
-    let showConversationScrolledToMessage: (ConversationModel, ConversationMessageModel) async -> Void
+    let showConversationScrolledToMessage: (ConversationModel, ConversationMessageModel?) async -> Void
 
     init<ConversationListCoordinator: ConversationListCoordinatorProtocol>(
         conversationListCoordinator: ConversationListCoordinator
@@ -29,19 +28,12 @@ final class AnyConversationListCoordinator<ConversationModel, ConversationMessag
     ConversationListCoordinator.ConversationModel == ConversationModel,
     ConversationListCoordinator.ConversationMessageModel == ConversationMessageModel {
 
-        showConversation = { conversation in
-            await conversationListCoordinator.showConversation(conversation: conversation)
-        }
         showConversationScrolledToMessage = { conversation, message in
             await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
         }
     }
 
-    func showConversation(conversation: ConversationModel) async {
-        await showConversation(conversation)
-    }
-
-    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async {
+    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel?) async {
         await showConversationScrolledToMessage(conversation, message)
     }
 }
