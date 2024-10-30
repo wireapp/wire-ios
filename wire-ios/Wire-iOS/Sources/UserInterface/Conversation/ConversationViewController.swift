@@ -36,7 +36,7 @@ final class ConversationViewController: UIViewController {
                          input: UIKeyCommand.inputDownArrow,
                          modifierFlags: [.command, .alternate],
                          discoverabilityTitle: keyboardShortcut.scrollToBottom),
-            UIKeyCommand(action: #selector(onCollectionButtonPressed(_:)),
+            UIKeyCommand(action: #selector(onSearchButtonPressed(_:)),
                          input: "f",
                          modifierFlags: [.command],
                          discoverabilityTitle: keyboardShortcut.searchInConversation),
@@ -628,7 +628,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
 
         button.addTarget(self,
-                        action: #selector(onCollectionButtonPressed(_:)),
+                        action: #selector(onSearchButtonPressed(_:)),
                         for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
@@ -643,7 +643,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onCollectionButtonPressed(_ sender: AnyObject?) {
+    private func onSearchButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,
