@@ -149,7 +149,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     }
 
     func navigate(to destination: NavigationDestination) {
-
         switch destination {
         case .conversation(let converation, let message):
             _zClientViewController?.showConversation(converation, at: message)
@@ -163,7 +162,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
             }
         }
     }
-// TODO: check diff
 }
 
 protocol FeatureRepositoryProvider {
