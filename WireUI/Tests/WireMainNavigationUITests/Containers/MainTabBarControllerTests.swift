@@ -50,7 +50,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.conversationListUI = conversationListUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController) // TODO: [WPB-6647] fix index for navigation overhaul
+        let navigationController = try XCTUnwrap(sut.viewControllers?[0] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [conversationListUI])
     }
 
@@ -81,7 +81,7 @@ final class MainTabBarControllerTests: XCTestCase {
         sut.archiveUI = archiveUI
 
         // Then
-        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController) // TODO: [WPB-6647] fix index for navigation overhaul
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
         XCTAssertEqual(navigationController.viewControllers, [archiveUI])
     }
 
@@ -105,7 +105,6 @@ final class MainTabBarControllerTests: XCTestCase {
 
     @MainActor
     func testSettingsIsInstalled() throws {
-        throw XCTSkip("this test will be fixed with navigation overhaul") // TODO: [WPB-6647] remove this line
         // Given
         let settingsUI = UIViewController()
 
