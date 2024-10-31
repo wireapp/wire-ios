@@ -102,7 +102,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        let message = GenericMessage (content: InCallEmoji(), nonce: nonce)
+        let message = GenericMessage(content: InCallEmoji(), nonce: nonce)
         let contentData = try XCTUnwrap(message.serializedData())
         let data = contentData.base64String()
 
