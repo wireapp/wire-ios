@@ -127,18 +127,11 @@ extension ConversationViewController {
     }
 
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
-        var arrowIcon: StyleKitIcon
-
         if view.isRightToLeft {
-            arrowIcon = hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+            hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
         } else {
-            arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+            hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
         }
-
-        let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
-        let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
-
-        return icon
     }
 
     var shouldShowCollectionsButton: Bool {
@@ -181,7 +174,7 @@ extension ConversationViewController {
     func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
-        if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
+        if traitCollection.horizontalSizeClass != .regular {
             items.append(createBackButton(hasUnread: hasUnread))
         }
 

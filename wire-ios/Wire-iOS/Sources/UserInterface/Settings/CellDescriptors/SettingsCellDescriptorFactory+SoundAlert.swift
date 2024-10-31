@@ -21,13 +21,15 @@ import Foundation
 
 extension SettingsCellDescriptorFactory {
 
-    var soundAlertGroup: any SettingsCellDescriptorType {
-        return SettingsGroupCellDescriptor(
+    var soundAlertGroup: SettingsCellDescriptorType {
+        SettingsGroupCellDescriptor(
             items: [alertsSection],
             title: title,
             identifier: .none,
             previewGenerator: alertPreviewGenerator,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
