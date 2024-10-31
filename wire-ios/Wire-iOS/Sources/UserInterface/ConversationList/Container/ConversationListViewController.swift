@@ -47,7 +47,6 @@ final class ConversationListViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.font(for: .h5)
         label.textColor = SemanticColors.Label.baseSecondaryText
-        // TODO: [WPB-7301] The strings "Selected by groups", "Selected by favorites" etc. should probably be separate localized strings, without concatenation.
         label.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
         return label
     }()

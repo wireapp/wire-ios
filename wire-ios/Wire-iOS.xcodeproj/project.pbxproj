@@ -1387,7 +1387,6 @@
 		E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96C8830281706640003245E /* UIViewController+DynamicType.swift */; };
 		E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97661802BDA4D1E0033AACC /* SecureLinkHeaderCell.swift */; };
 		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
-		E9816C912CC9244700D77F22 /* WireSyncEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9816C962CC9281000D77F22 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C952CC9280400D77F22 /* LaunchScreenViewController.swift */; };
 		E9816C9A2CC929FC00D77F22 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9816C992CC929FC00D77F22 /* WireFoundationSupport */; };
 		E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */; };
@@ -1990,17 +1989,6 @@
 				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E9816C922CC9244700D77F22 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E9816C912CC9244700D77F22 /* WireSyncEngine.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8722,7 +8710,6 @@
 				F1FEA14521DCEB1700790A54 /* Headers */,
 				F1FEA14621DCEB1700790A54 /* Sources */,
 				F1FEA14721DCEB1700790A54 /* Frameworks */,
-				E9816C922CC9244700D77F22 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
