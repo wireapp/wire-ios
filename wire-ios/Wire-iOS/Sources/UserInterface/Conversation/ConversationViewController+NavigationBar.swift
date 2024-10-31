@@ -108,28 +108,35 @@ extension ConversationViewController {
     }
 
     var joinCallButton: UIBarButtonItem {
-       typealias Conversation = L10n.Accessibility.ConversationsList
+        typealias Conversation = L10n.Accessibility.ConversationsList
 
-       let button = UIButton(type: .system)
-       button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
-       button.titleLabel?.font = .font(for: .body2)
-       button.accessibilityLabel = Conversation.JoinButton.description
-       button.accessibilityHint = Conversation.JoinButton.hint
-       button.accessibilityTraits.insert(.startsMediaSession)
+        let button = UIButton(type: .system)
+        button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
+        button.titleLabel?.font = .font(for: .body2)
+        // Prevent text from growing with larger fonts, since it's a navigation bar button and should be a fixed size
+        button.titleLabel?.adjustsFontForContentSizeCategory = false
 
-       button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
+        button.accessibilityLabel = Conversation.JoinButton.description
+        button.accessibilityHint = Conversation.JoinButton.hint
+        button.accessibilityTraits.insert(.startsMediaSession)
 
-       let joinAction = UIAction { [weak self] _ in
-           self?.joinCallButtonTapped()
-       }
+        button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
 
-       button.addAction(joinAction, for: .touchUpInside)
+        let joinAction = UIAction { [weak self] _ in
+            self?.joinCallButtonTapped()
+        }
 
-       button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
-       button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-       button.layer.cornerRadius = button.bounds.height / 2
+        button.addAction(joinAction, for: .touchUpInside)
 
-       return UIBarButtonItem(customView: button)
+        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
+        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
+        button.layer.cornerRadius = button.bounds.height / 2
+
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = Conversation.JoinButton.description
+
+        return UIBarButtonItem(customView: button)
     }
 
     func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
