@@ -141,8 +141,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen"
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "en" : {
@@ -213,8 +213,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите дважды, чтобы открыть список архивных бесед"
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "sl" : {
@@ -231,8 +231,8 @@
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Торкніться двічі, щоб відкрити список заархівованих розмов"
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "zh-Hans" : {
@@ -265,8 +265,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Liste der letzten Unterhaltungen"
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "en" : {
@@ -337,8 +337,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Список недавних бесед"
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "sl" : {
@@ -355,8 +355,8 @@
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Список недавніх розмов"
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "zh-Hans" : {
@@ -389,8 +389,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen"
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "en" : {
@@ -461,8 +461,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите дважды, чтобы открыть список последних бесед"
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "sl" : {
@@ -479,8 +479,8 @@
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Торкніться двічі, щоб відкрити список недавніх розмов"
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "zh-Hans" : {
@@ -501,20 +501,20 @@
       "localizations" : {
         "ar" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "الإعدادات"
           }
         },
         "da" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Indstillinger"
           }
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Einstellungen"
           }
         },
         "en" : {
@@ -525,98 +525,98 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Ajustes"
           }
         },
         "et" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Seaded"
           }
         },
         "fi" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Asetukset"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Paramètres"
           }
         },
         "it" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Impostazioni"
           }
         },
         "ja" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "設定"
           }
         },
         "lt" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Nustatymai"
           }
         },
         "nl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Instellingen"
           }
         },
         "pl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Ustawienia"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Ajustes"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Настройки"
           }
         },
         "sl" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Nastavitve"
           }
         },
         "tr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Ayarlar"
           }
         },
         "uk" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "Налаштування"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "设置"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "tabBar.settings.description"
+            "state" : "translated",
+            "value" : "設定"
           }
         }
       }
@@ -626,19 +626,19 @@
         "ar" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "da" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "en" : {
@@ -650,97 +650,97 @@
         "es" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "et" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "sl" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "tabBar.settings.hint"
+            "value" : "Double tap to open Settings"
           }
         }
       }
