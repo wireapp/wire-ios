@@ -113,7 +113,11 @@ extension ConversationViewController {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
         button.titleLabel?.font = .font(for: .body2)
-        // Prevent text from growing with larger fonts, since it's a navigation bar button and should be a fixed size
+        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        // Set a custom font that will not scale with Dynamic Type
+        // Use your desired fixed size and font
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        // Prevent the font from adjusting automatically for content size category changes
         button.titleLabel?.adjustsFontForContentSizeCategory = false
 
         button.accessibilityLabel = Conversation.JoinButton.description
