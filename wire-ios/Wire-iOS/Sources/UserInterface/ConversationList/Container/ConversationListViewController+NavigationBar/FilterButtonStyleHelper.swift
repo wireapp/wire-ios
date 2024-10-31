@@ -28,9 +28,8 @@ struct FilterButtonStyleHelper {
     ///   - isSelected: A boolean indicating whether the filter is currently selected.
     /// - Returns: A configured `UIImage`.
     static func makeActionImage(named imageName: String, isSelected: Bool) -> UIImage? {
-        let font = UIFont.systemFont(ofSize: 17)
-        let configuration = UIImage.SymbolConfiguration(font: font)
-        let actionImage = UIImage(systemName: imageName)?.applyingSymbolConfiguration(configuration)
+        let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
+        let actionImage = UIImage(systemName: imageName, withConfiguration: configuration)
 
         // Apply the tint color conditionally based on the selection state
         if isSelected {

@@ -401,11 +401,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         Task {
             if let conversation = item as? ZMConversation {
-                if let message = scrollToMessageOnNextSelection {
-                    await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
-                } else {
-                    await conversationListCoordinator.showConversation(conversation: conversation)
-                }
+                await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: scrollToMessageOnNextSelection)
                 contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
             } else if item is ConversationListConnectRequestsItem {
                 zClientViewController?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)

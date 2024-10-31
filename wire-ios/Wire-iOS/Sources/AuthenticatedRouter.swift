@@ -60,6 +60,7 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
@@ -69,7 +70,11 @@ final class AuthenticatedRouter {
             userSession: userSession,
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
-        zClientControllerBuilder = .init(account: account, userSession: userSession)
+        zClientControllerBuilder = .init(
+            account: account,
+            userSession: userSession,
+            trackingManager: trackingManager
+        )
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
@@ -144,7 +149,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     }
 
     func navigate(to destination: NavigationDestination) {
-
         switch destination {
         case .conversation(let converation, let message):
             _zClientViewController?.showConversation(converation, at: message)

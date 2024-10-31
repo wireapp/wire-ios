@@ -23,11 +23,17 @@ import WireSyncEngine
 @MainActor
 final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
+    let isPublicDomain: Bool
     let userSession: UserSession
+    let trackingManager: (any TrackingInterface)?
     weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: userSession.editableSelfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: userSession.editableSelfUser,
+            trackingManager: trackingManager
+        )
         settingsPropertyFactory.delegate = settingsPropertyFactoryDelegate
         return settingsPropertyFactory
     }
@@ -40,15 +46,21 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         )
     }
 
-    init(userSession: UserSession) {
+    init(
+        isPublicDomain: Bool,
+        userSession: UserSession,
+        trackingManager: (any TrackingInterface)?
+    ) {
+        self.isPublicDomain = isPublicDomain
         self.userSession = userSession
+        self.trackingManager = trackingManager
     }
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> SettingsTableViewController {
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.settingsGroup(
-            isTeamMember: userSession.selfUser.isTeamMember,
+            isPublicDomain: isPublicDomain,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         )
@@ -83,7 +95,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let factory = settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.accountGroup(
-            isTeamMember: userSession.selfUser.isTeamMember,
+            isPublicDomain: isPublicDomain,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         ) as! SettingsGroupCellDescriptor

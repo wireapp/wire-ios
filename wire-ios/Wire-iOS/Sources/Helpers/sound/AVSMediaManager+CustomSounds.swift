@@ -110,7 +110,7 @@ extension AVSMediaManager {
     }
 
     private func configureCustomSounds() {
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil)
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil, trackingManager: nil)
 
         let messageSoundProperty = settingsPropertyFactory.property(.messageSoundName)
         self.updateCustomSoundForProperty(messageSoundProperty)

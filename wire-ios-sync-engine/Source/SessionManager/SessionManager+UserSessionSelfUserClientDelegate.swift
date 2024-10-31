@@ -59,7 +59,19 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+
+        guard account == accountManager.selectedAccount else {
+            return
+        }
+
+        Task {
+            if let activeUserSession {
+                await configureAnalytics(for: activeUserSession)
+            }
+
+            await MainActor.run {
+                delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+            }
+        }
     }
 }

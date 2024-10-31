@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-6647] when opening self profile ensure these alerts are shown and also don't block each other
-// - alert that newes devices have been added
+// TODO: [WPB-11951] when opening self profile ensure these alerts are shown and also don't block each other
+// - alert that new devices have been added
 // - alert about read receipts enabled
 
 import UIKit
@@ -58,13 +58,18 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
+        trackingManager: TrackingManager?,
         mainCoordinator: AnyMainCoordinator
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
 
         // Create the settings hierarchy
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: trackingManager
+        )
 
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
@@ -73,7 +78,8 @@ final class SelfProfileViewController: UIViewController {
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup()
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
+
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options

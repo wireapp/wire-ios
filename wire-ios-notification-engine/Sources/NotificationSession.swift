@@ -121,7 +121,6 @@ public final class NotificationSession {
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
-        analytics: AnalyticsType?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
     ) throws {
@@ -181,7 +180,6 @@ public final class NotificationSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            analytics: analytics,
             accountIdentifier: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults
         )
@@ -192,7 +190,6 @@ public final class NotificationSession {
         transportSession: ZMTransportSession,
         cachesDirectory: URL,
         accountContainer: URL,
-        analytics: AnalyticsType?,
         accountIdentifier: UUID,
         sharedUserDefaults: UserDefaults
     ) throws {
@@ -207,13 +204,10 @@ public final class NotificationSession {
             lastEventIDRepository: lastEventIDRepository
         )
 
-        let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
-
         let pushNotificationStrategy = PushNotificationStrategy(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
-            notificationsTracker: notificationsTracker,
             lastEventIDRepository: lastEventIDRepository
         )
 
