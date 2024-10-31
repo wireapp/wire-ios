@@ -95,6 +95,31 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageData, contentData)
     }
 
+    // Delete this when we add support for call reactions.
+    func testThatItIgnoresInCallEmojiMessages() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let nonce = UUID.create()
+        let message = GenericMessage (content: InCallEmoji(), nonce: nonce)
+        let contentData = try XCTUnwrap(message.serializedData())
+        let data = contentData.base64String()
+
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
+        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+        XCTAssertNotNil(event)
+
+        // when
+        var sut: ZMClientMessage?
+        self.performPretendingUiMocIsSyncMoc {
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
+        }
+
+        // then
+        XCTAssertNil(sut)
+    }
+
     func testThatItCreatesOTRMessagesFromUpdateEvent() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
