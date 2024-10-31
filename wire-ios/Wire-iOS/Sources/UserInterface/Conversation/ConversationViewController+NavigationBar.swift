@@ -112,7 +112,7 @@ extension ConversationViewController {
        let joinAction = UIAction { [weak self] _ in
            self?.joinCallButtonTapped()
        }
-        
+
        button.addAction(joinAction, for: .touchUpInside)
 
        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)

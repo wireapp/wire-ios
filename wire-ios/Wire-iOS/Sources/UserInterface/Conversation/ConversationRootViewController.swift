@@ -61,7 +61,6 @@ final class ConversationRootViewController: UIViewController {
             networkStatusObservable: NetworkStatus.shared
         )
 
-        
         conversationViewController = conversationController
 
         super.init(nibName: .none, bundle: .none)
@@ -152,7 +151,7 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func configure() {
-        
+
         guard let conversationViewController = self.conversationViewController else { return }
 
         // Since we're not using a custom navigation bar container anymore, we need to
