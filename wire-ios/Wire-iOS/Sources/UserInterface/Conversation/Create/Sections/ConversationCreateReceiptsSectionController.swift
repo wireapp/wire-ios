@@ -27,7 +27,6 @@ final class ConversationCreateReceiptsSectionController: ConversationCreateSecti
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
-        headerHeight = 24
         footerText = L10n.Localizable.Conversation.Create.Receipts.subtitle
     }
 }

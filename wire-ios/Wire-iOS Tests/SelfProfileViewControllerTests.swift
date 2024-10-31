@@ -60,11 +60,13 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     // MARK: - Snapshot Tests
 
+    @MainActor
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
         snapshotHelper.verify(matching: sut.view)
     }
 
+    @MainActor
     func testForAUserWithALongName() {
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
         snapshotHelper.verify(matching: sut.view)
@@ -72,11 +74,13 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     // MARK: - Unit Tests
 
+    @MainActor
     func testItRequestsToRefreshTeamMetadataIfSelfUserIsTeamMember() {
         createSut(userName: "Tarja Turunen", teamMember: true)
         XCTAssertEqual(selfUser.refreshTeamDataCount, 1)
     }
 
+    @MainActor
     func testItDoesNotRequestToRefreshTeamMetadataIfSelfUserIsNotTeamMember() {
         createSut(userName: "Tarja Turunen", teamMember: false)
         XCTAssertEqual(selfUser.refreshTeamDataCount, 0)
@@ -147,6 +151,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     // MARK: Helper Method
 
+    @MainActor
     private func createSut(userName: String, teamMember: Bool) {
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
         sut = SelfProfileViewController(
@@ -154,7 +159,8 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
             userRightInterfaceType: MockUserRight.self,
             userSession: userSession,
             accountSelector: MockAccountSelector(),
-            trackingManager: nil
+            trackingManager: nil,
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator())
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

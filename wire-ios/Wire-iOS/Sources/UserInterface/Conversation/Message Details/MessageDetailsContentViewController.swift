@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
@@ -76,7 +77,8 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -98,12 +100,14 @@ final class MessageDetailsContentViewController: UIViewController {
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.contentType = contentType
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -384,7 +388,8 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             viewer: viewer,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
