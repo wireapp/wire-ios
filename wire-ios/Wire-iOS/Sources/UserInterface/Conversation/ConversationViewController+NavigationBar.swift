@@ -139,9 +139,17 @@ extension ConversationViewController {
 
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
         if view.isRightToLeft {
-            hasUnreadInOtherConversations ? UIImage(resource: .unreadForwardArrow) : UIImage(resource: .forwardArrow)
+            if hasUnreadInOtherConversations {
+                return UIImage(resource: .unreadForwardArrow)
+            } else {
+                return UIImage(resource: .forwardArrow)
+            }
         } else {
-            hasUnreadInOtherConversations ? UIImage(resource: .unreadBackArrow) : UIImage(resource: .backArrow)
+            if hasUnreadInOtherConversations {
+                return UIImage(resource: .unreadBackArrow)
+            } else {
+                return UIImage(resource: .backArrow)
+            }
         }
     }
 
