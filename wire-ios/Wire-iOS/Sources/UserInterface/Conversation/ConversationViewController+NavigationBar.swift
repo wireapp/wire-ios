@@ -34,7 +34,7 @@ extension ConversationViewController {
 
     var audioCallButton: UIButton {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .audioCallIcon), for: .normal)
+        button.setImage(UIImage(resource: .audioCall), for: .normal)
         button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "audioCallBarButton"
@@ -59,7 +59,7 @@ extension ConversationViewController {
 
     var videoCallButton: UIButton {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(resource: .videoCallIcon), for: .normal)
+        button.setImage(UIImage(resource: .videoCall), for: .normal)
         button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "videoCallBarButton"
