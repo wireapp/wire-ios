@@ -52,6 +52,11 @@ extension ConversationViewController {
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeAudioCall
+        button.largeContentImage = UIImage(resource: .audioCall)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
@@ -76,6 +81,11 @@ extension ConversationViewController {
         button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
+
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeVideoCall
+        button.largeContentImage = UIImage(resource: .videoCall)
 
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 

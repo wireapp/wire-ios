@@ -628,8 +628,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
 
         button.addTarget(self,
-                        action: #selector(onSearchButtonPressed(_:)),
-                        for: .touchUpInside)
+                         action: #selector(onSearchButtonPressed(_:)),
+                         for: .touchUpInside)
+
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = L10n.Accessibility.Conversation.SearchButton.description
+        button.largeContentImage = UIImage(resource: .search)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
