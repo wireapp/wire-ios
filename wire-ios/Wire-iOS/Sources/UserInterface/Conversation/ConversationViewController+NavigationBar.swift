@@ -32,7 +32,7 @@ extension ConversationViewController {
         return conversation.voiceChannel?.addCallStateObserver(self)
     }
 
-    var audioCallButton: UIButton {
+    private var audioCallButton: UIButton {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .audioCall), for: .normal)
         button.tintColor = IconColors.foregroundDefault
@@ -57,7 +57,7 @@ extension ConversationViewController {
         return button
     }
 
-    var videoCallButton: UIButton {
+    private var videoCallButton: UIButton {
         let button = UIButton(type: .system)
         button.setImage(UIImage(resource: .videoCall), for: .normal)
         button.tintColor = IconColors.foregroundDefault
