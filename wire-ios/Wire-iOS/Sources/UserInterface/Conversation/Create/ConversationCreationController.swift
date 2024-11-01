@@ -77,6 +77,7 @@ final class ConversationCreationController: UIViewController {
         if AutomationHelper.sharedHelper.allowMLSGroupCreation == true {
             return true
         }
+
         return userSession.selfUser.canCreateMLSGroups
     }
 
