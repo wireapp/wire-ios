@@ -1,0 +1,6 @@
+/target
+/bin/
+/tests/ios/.idea/
+.classpath
+.settings
+backendConnections.json
