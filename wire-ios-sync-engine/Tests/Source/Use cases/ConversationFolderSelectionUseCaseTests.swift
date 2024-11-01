@@ -25,7 +25,7 @@ final class ConversationFolderSelectionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var mockConversation: MockMessageAppendableConversation!
+    private var mockConversation: MockToFolderMovableConversation!
     private var sut: ConversationFolderSelectionUseCase!
 
     // MARK: - setUp
@@ -47,6 +47,7 @@ final class ConversationFolderSelectionUseCaseTests: XCTestCase {
     func testInvoke_ShouldMoveConversationToSpecifiedFolder() {
         // GIVEN
         let expectedFolder = MockLabelType(kind: .folder, name: "Test Folder")
+        mockConversation.moveToFolder_MockMethod = { _ in }
 
         // WHEN
         sut.invoke(folder: expectedFolder, conversation: mockConversation)

@@ -22,7 +22,7 @@ import WireDataModel
 
 protocol ConversationFolderSelectionUseCaseProtocol {
 
-    func invoke<Conversation: MessageAppendableConversation>(
+    func invoke<Conversation: ToFolderMovableConversation>(
         folder: LabelType,
         conversation: Conversation
     )
@@ -33,7 +33,7 @@ protocol ConversationFolderSelectionUseCaseProtocol {
 
 final class ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke<Conversation: ToFolderMovableConversation>(
         folder: LabelType,
         conversation: Conversation
     ) {
