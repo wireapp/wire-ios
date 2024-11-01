@@ -110,7 +110,12 @@ extension ZMOTRMessage {
                 return nil
             }
             conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
+
         case .calling, .availability:
+            return nil
+
+        case .inCallEmoji:
+            // Not supported yet, just discard.
             return nil
 
         default:
