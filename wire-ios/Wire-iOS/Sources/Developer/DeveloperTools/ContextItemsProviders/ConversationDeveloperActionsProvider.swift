@@ -33,11 +33,9 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
     }
 
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
-        var items = [makeConversationIdItem()]
-
-        if let groupIdItem = makeConversationGroupIdItem() {
-            items.append(groupIdItem)
-        }
+        var items = [makeConversationIdItem(),
+                     makeConversationType(),
+                     makeConversationMessageProtocol()]
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())
@@ -50,22 +48,24 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         return items
     }
 
-    private func makeConversationGroupIdItem() -> DeveloperToolsViewModel.Item? {
-        switch conversation.messageProtocol {
-        case .mls, .mixed:
-            return .text(DeveloperToolsViewModel.TextItem(
-                title: "Conversation ID",
-                value: conversation.remoteIdentifier.uuidString
-            ))
-        default:
-            return nil
-        }
-    }
-
     private func makeConversationIdItem() -> DeveloperToolsViewModel.Item {
         .text(DeveloperToolsViewModel.TextItem(
             title: "Conversation ID",
             value: conversation.remoteIdentifier.uuidString
+        ))
+    }
+
+    private func makeConversationType() -> DeveloperToolsViewModel.Item {
+        .text(DeveloperToolsViewModel.TextItem(
+            title: "Conversation type",
+            value: conversation.conversationType.debugDescription
+        ))
+    }
+
+    private func makeConversationMessageProtocol() -> DeveloperToolsViewModel.Item {
+        .text(DeveloperToolsViewModel.TextItem(
+            title: "Message protocol",
+            value: conversation.messageProtocol.rawValue
         ))
     }
 
