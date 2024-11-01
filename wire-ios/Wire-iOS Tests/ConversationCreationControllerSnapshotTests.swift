@@ -77,6 +77,13 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             )
     }
 
+    func testTeamGroupOptions_withoutServices() {
+        let mls = Feature.MLS(status: .enabled, config: .init(defaultProtocol: .mls))
+        createSut(isTeamMember: true, mlsFeature: mls)
+
+        snapshotHelper.verify(matching: sut)
+    }
+
     // MARK: - Helper Method
 
     private func createSut(isTeamMember: Bool, mlsFeature: Feature.MLS = .init(status: .disabled, config: .init())) {
