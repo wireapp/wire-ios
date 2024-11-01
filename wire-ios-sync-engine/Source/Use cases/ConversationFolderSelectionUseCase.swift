@@ -20,7 +20,7 @@ import WireDataModel
 
 // MARK: - ConversationFolderSelectionUseCaseProtocol
 
-protocol ConversationFolderSelectionUseCaseProtocol {
+public protocol ConversationFolderSelectionUseCaseProtocol {
 
     func invoke<Conversation: ToFolderMovableConversation>(
         folder: LabelType,
