@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "379098EA-12FB-4E50-AED5-45E5465D6AC1",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "TrimStringCatalogs",
+      "name" : "TrimStringCatalogs"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "TrimStringCatalogsTests",
+        "name" : "TrimStringCatalogsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

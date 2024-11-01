@@ -114,8 +114,8 @@ func getRenderingInfo(in str: String) -> [String: String] {
 }
 
 func generateText(renderingInfo: [String: String]) -> (enumCases: String, renderingProperties: String) {
-    var enumCases: String = ""
-    var renderingProperties: String = ""
+    var enumCases = ""
+    var renderingProperties = ""
 
     for (name, size) in renderingInfo {
         enumCases.append("    case \(name)\n")

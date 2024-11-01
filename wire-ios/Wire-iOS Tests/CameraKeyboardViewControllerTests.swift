@@ -18,9 +18,8 @@
 
 import AVFoundation
 import Photos
-import SnapshotTesting
 import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -100,6 +99,7 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 
 // MARK: - CameraKeyboardViewControllerTests
 
+@MainActor
 final class CameraKeyboardViewControllerTests: XCTestCase {
 
     // MARK: - Properties
@@ -114,7 +114,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         mockAssetLibrary = MockAssetLibrary(photoLibrary: MockPhotoLibrary())
         mockImageManager = MockImageManager()
@@ -131,8 +130,6 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         delegateMock = nil
         mockAssetLibrary = nil
         mockImageManager = nil
-
-        super.tearDown()
     }
 
     // MARK: - Helper methods

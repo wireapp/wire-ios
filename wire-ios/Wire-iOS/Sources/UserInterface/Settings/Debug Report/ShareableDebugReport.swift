@@ -28,18 +28,8 @@ struct ShareableDebugReport: Shareable {
 
     // MARK: - Properties
 
-    private let logFileMetadata: ZMFileMetadata
-    private let shareFile: ShareFileUseCaseProtocol
-
-    // MARK: - Life cycle
-
-    init(
-        logFileMetadata: ZMFileMetadata,
-        shareFile: ShareFileUseCaseProtocol
-    ) {
-        self.logFileMetadata = logFileMetadata
-        self.shareFile = shareFile
-    }
+    private(set) var logFileMetadata: ZMFileMetadata
+    private(set) var shareFile: ShareFileUseCaseProtocol
 
     // MARK: - Interface
 

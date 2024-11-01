@@ -125,7 +125,7 @@ private class VerifyClientsParser: OTREntity {
         self.conversation = conversation
     }
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
 
@@ -151,7 +151,7 @@ private class VerifyClientsParser: OTREntity {
 
     var expirationReasonCode: NSNumber?
 
-    func expire() {
+    func expire(withReason reason: ExpirationReason) {
         // no-op
     }
 

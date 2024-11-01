@@ -90,7 +90,7 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
                 action.notifyResult(.success(Void()))
             }
             Task {
-                await eventProcessor.processConversationEvents([updateEvent])
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
 

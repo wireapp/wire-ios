@@ -26,7 +26,7 @@ public protocol PushChannelProtocol {
     ///
     /// - Returns: An async stream of live update event envelopes.
 
-    func open() throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>
+    func open() throws -> AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     /// Close the push channel and stop receiving update events.
 

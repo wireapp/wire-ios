@@ -95,8 +95,10 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
-                ZMUserSession.shared()?.perform {
+            Task {
+                let fileMetadata = await FileMetaDataGenerator.shared.metadataForFile(at: url)
+                let userSession = ZMUserSession.shared()
+                await userSession?.managedObjectContext.perform {
                     conversations.forEachNonEphemeral {
                         do {
                             try $0.appendFile(with: fileMetadata)
@@ -104,6 +106,7 @@ extension ZMMessage: Shareable {
                             WireLogger.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
                         }
                     }
+                    userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import XCTest
 
 @testable import WireAPI
@@ -31,11 +32,11 @@ final class APIServiceTests: XCTestCase {
         try await super.setUp()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         authenticationStorage = InMemoryAuthenticationStorage()
+        let networkService = NetworkService(baseURL: backendURL)
+        networkService.configure(with: .mockURLSession())
         sut = APIService(
-            backendURL: backendURL,
-            authenticationStorage: authenticationStorage,
-            urlSession: .mock,
-            minTLSVersion: .v1_2
+            networkService: networkService,
+            authenticationStorage: authenticationStorage
         )
     }
 
@@ -47,39 +48,6 @@ final class APIServiceTests: XCTestCase {
     }
 
     // MARK: - Execute request
-
-    func testItDoesNotExecuteAnInvalidRequest() async throws {
-        // Given
-        let invalidRequest = Scaffolding.invalidRequest
-
-        // Then
-        await XCTAssertThrowsError(APIServiceError.invalidRequest) {
-            // When
-            try await self.sut.executeRequest(
-                invalidRequest,
-                requiringAccessToken: false
-            )
-        }
-    }
-
-    func testItThrowsWhenThereIsAnInvalidResponse() async throws {
-        // Given
-        let request = Scaffolding.getRequest
-
-        // Mock an invalid response.
-        URLProtocolMock.mockHandler = { _ in
-            (Data(), URLResponse())
-        }
-
-        // Then
-        await XCTAssertThrowsError(APIServiceError.notAHTTPURLResponse) {
-            // When
-            try await self.sut.executeRequest(
-                request,
-                requiringAccessToken: false
-            )
-        }
-    }
 
     func testItExecutesARequestNotRequiringAuthentication() async throws {
         // Given
@@ -164,12 +132,6 @@ private enum Scaffolding {
         .withMethod(.get)
         .withAcceptType(.json)
         .build()
-
-    static let invalidRequest: URLRequest = {
-        var request = getRequest
-        request.url = nil
-        return request
-    }()
 
     static let accessToken = AccessToken(
         userID: UUID(),

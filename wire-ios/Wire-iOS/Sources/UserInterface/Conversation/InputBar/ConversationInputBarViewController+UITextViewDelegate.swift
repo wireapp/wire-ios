@@ -18,22 +18,12 @@
 
 import UIKit
 import WireDataModel
-import WireSystemPackage
+import WireFoundation
 
 // MARK: SplitViewController reveal
 
 extension CharacterSet {
     static var newlinesAndTabulation = CharacterSet(charactersIn: "\r\n\t")
-}
-
-extension ConversationInputBarViewController {
-    func hideLeftView() {
-        let currentDevice = DeviceWrapper(device: .current)
-        guard self.isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else { return }
-        guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
-
-        splitViewController.setLeftViewControllerRevealed(false, animated: true)
-    }
 }
 
 extension ConversationInputBarViewController: UITextViewDelegate {
@@ -112,7 +102,6 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         updateAccessoryViews()
         updateNewButtonTitleLabel()
-        hideLeftView()
     }
 
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {

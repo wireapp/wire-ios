@@ -212,6 +212,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var userObserverToken: Any?
     private var typingObserverToken: Any?
     let userSession: UserSession
+    let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -342,6 +343,7 @@ final class ConversationInputBarViewController: UIViewController,
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
+        fileMetaDataGenerator = FileMetaDataGenerator.shared
 
         super.init(nibName: nil, bundle: nil)
 
@@ -669,9 +671,8 @@ final class ConversationInputBarViewController: UIViewController,
         notificationFeedbackGenerator.prepare()
         userSession.enqueue({
             do {
-                try conversation.appendKnock()
-                Analytics.shared.tagMediaActionCompleted(.ping, inConversation: conversation)
-
+                let useCase = self.userSession.makeAppendKnockMessageUseCase()
+                try useCase.invoke(in: conversation)
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {

@@ -30,11 +30,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     var apiVersion: APIVersion { .v0 }
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -89,6 +89,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .success(code: .ok, type: QualifiedConversationListV0.self)
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(response)
+    }
+
+    func getMLSOneToOneConversation(
+        userID: String,
+        in domain: String
+    ) async throws -> Conversation {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
 }
 

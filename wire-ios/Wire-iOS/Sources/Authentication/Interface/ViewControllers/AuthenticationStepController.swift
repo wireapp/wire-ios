@@ -271,7 +271,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             NSLayoutConstraint.activate([
                 footerViewStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 31),
                 footerViewStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -31),
-                footerViewStackView.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20)
+                footerViewStackView.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
             ])
         }
 

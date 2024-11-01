@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
 
-    var sut: GiphyConfirmationViewController!
+    private var sut: GiphyConfirmationViewController!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

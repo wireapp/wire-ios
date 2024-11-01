@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 extension Collection where Iterator.Element: UserType {
 
@@ -29,11 +30,11 @@ extension Collection where Iterator.Element: UserType {
         let query = query.lowercased().normalizedForMentionSearch() as String
 
         var rules = [(UserType) -> Bool]()
-        rules.append({ $0.name?.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false })
-        rules.append({ $0.nameTokens.first(where: { $0.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false }) != nil })
-        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch()?.hasPrefix(query) ?? false })
+        rules.append({ $0.name?.lowercased().normalizedForMentionSearch().hasPrefix(query) ?? false })
+        rules.append({ $0.nameTokens.first { $0.lowercased().normalizedForMentionSearch().hasPrefix(query) } != nil })
+        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch().hasPrefix(query) ?? false })
         rules.append({ $0.name?.lowercased().normalizedForMentionSearch().contains(query) ?? false })
-        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch()?.contains(query) ?? false })
+        rules.append({ $0.handle?.lowercased().normalizedForMentionSearch().contains(query) ?? false })
 
         var foundUsers = Set<HashBoxUser>()
         var results: [UserType] = []

@@ -21,7 +21,7 @@ import Foundation
 /// An event where a connection between the self user and
 /// another user was updated.
 
-public struct UserConnectionEvent: Equatable, Codable {
+public struct UserConnectionEvent: Equatable, Codable, Sendable {
 
     /// The name of the other user.
 
@@ -30,5 +30,13 @@ public struct UserConnectionEvent: Equatable, Codable {
     /// The connection to the other user.
 
     public let connection: Connection
+
+    public init(
+        userName: String,
+        connection: Connection
+    ) {
+        self.userName = userName
+        self.connection = connection
+    }
 
 }

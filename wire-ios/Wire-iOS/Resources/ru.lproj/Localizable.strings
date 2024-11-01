@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Вперед";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Гостевая комната";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Вы)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Поиск по имени или псевдониму";
 "peoplepicker.header.top_people" = "Топ-контакты";
-"peoplepicker.button.create_conversation" = "Создать группу";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Добавить участников";
 "peoplepicker.header.conversations" = "Группы";
 "peoplepicker.header.team_conversations" = "Группы %@";
@@ -63,8 +59,8 @@
 "peoplepicker.header.directory" = "Связаться";
 "peoplepicker.header.federation" = "Подключиться к другому домену";
 
-"peoplepicker.group.title.singular" = "Добавить участников";
-"peoplepicker.group.title.plural" = "Добавить участников (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Пропустить";
 "peoplepicker.group.done" = "Готово";
 "peoplepicker.group.create" = "Создать";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Пригласить больше пользователей";
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
-"peoplepicker.quick-action.create-conversation" = "Создать группу";
-"peoplepicker.quick-action.create-guest-room" = "Создать гостевую комнату";
 "peoplepicker.quick-action.admin-services" = "Управление сервисами";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
@@ -129,6 +123,21 @@
 "conversation_list.empty.all_archived.message" = "Архивировано";
 "conversation_list.empty.no_contacts.message" = "Начните беседу или\nсоздайте группу.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Избранное";
+"conversation_list.filter.groups.title" = "Группы";
+"conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Удалить";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Присоединиться";
@@ -137,11 +146,14 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Теперь активна.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Есть новые сообщения.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакты";
-"conversation_list.bottom_bar.conversations.title" = "Беседы";
-"conversation_list.bottom_bar.folders.title" = "Папки";
-"conversation_list.bottom_bar.archived.title" = "Архив";
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -308,10 +320,10 @@
 "conversation.input_bar.message_too_long.message" = "Вы можете отправлять сообщения длиной до %d символов.";
 
 "conversation.create.group_name.title" = "Создать группу";
-"conversation.create.group_name.placeholder" = "Название группы";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
-"conversation.create.options.title" = "Настройки беседы";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
@@ -514,6 +526,7 @@
 "content.system.message_delivered_timestamp" = "Доставлено";
 "content.system.message_read_timestamp" = "Прочитано";
 "content.system.failedtosend_message.general_reason" = "Не удалось отправить сообщение из-за проблем с подключением.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Сообщение не отправлено после отмены отправки.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Сообщение не может быть отправлено, поскольку бэкэнд **%@** недоступен. [Узнать больше](%@)";
 "content.system.failedtosend_message.retry" = "Повторить";
 
@@ -1039,8 +1052,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Поделиться профилем";
+"qrcode.share_message" = "Поделитесь своим профилем, чтобы было проще связаться с другими людьми. Вы должны принять запрос на подключение, прежде чем начнете общаться.";
+"qrcode.share_profile_link.button.title" = "Поделиться ссылкой на профиль";
+"qrcode.share_qrcode.button.title" = "Поделиться QR-кодом";
+
+// Options menu contents
 "self.settings" = "Настройки";
 "self.profile" = "Профиль";
 "self.account" = "Аккаунт";
@@ -1162,7 +1181,11 @@
 "self.settings.receiveNews_and_offers.title" = "Получать рассылку";
 "self.settings.receiveNews_and_offers.description.title" = "Получайте новости и обновления от Wire по электронной почте.";
 
-
+"self.settings.privacy_analytics.alert.title" = "Согласие на передачу пользовательских данных";
+"self.settings.privacy_analytics.alert.message" = "Помогите улучшить Wire, поделившись данными о своем использовании с помощью псевдонимного идентификатора. Эти данные не связаны с вашей личной информацией и не передаются третьим лицам, помимо Wire Group. К ним относятся, например, время использования функции, версия вашего приложения, тип устройства или операционная система. Эти данные будут удалены не позднее чем через 365 дней. Более подробная информация содержится в нашей Политике конфиденциальности. Вы можете отозвать свое согласие в любое время.";
+"self.settings.privacy_analytics.alert.button.agree" = "Принять";
+"self.settings.privacy_analytics.alert.button.decline" = "Отклонить";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Политика конфиденциальности";
 
 // Change Username
 
@@ -1924,13 +1947,6 @@
 
 "url_action.invalid_link.title" = "Недействительная ссылка.";
 "url_action.invalid_link.message" = "Открытая вами ссылка недействительна.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Вы хотите получать новости и обновления от Wire по электронной почте?";
-"news_offers.consent.message" = "Вы сможете отписаться в любое время.";
-"news_offers.consent.button.privacy_policy.title" = "Политика конфиденциальности";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -65,13 +65,13 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
         mockContentView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            sut.view.topAnchor.constraint(equalTo: mockContainerViewController.safeTopAnchor),
+            sut.view.topAnchor.constraint(equalTo: mockContainerViewController.view.safeAreaLayoutGuide.topAnchor),
             sut.view.leadingAnchor.constraint(equalTo: mockContainerViewController.view.leadingAnchor),
             sut.view.trailingAnchor.constraint(equalTo: mockContainerViewController.view.trailingAnchor),
             sut.view.bottomAnchor.constraint(equalTo: mockContentView.topAnchor),
             mockContentView.leadingAnchor.constraint(equalTo: mockContainerViewController.view.leadingAnchor),
             mockContentView.trailingAnchor.constraint(equalTo: mockContainerViewController.view.trailingAnchor),
-            mockContentView.bottomAnchor.constraint(equalTo: mockContainerViewController.safeBottomAnchor)
+            mockContentView.bottomAnchor.constraint(equalTo: mockContainerViewController.view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 

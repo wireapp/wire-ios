@@ -34,6 +34,8 @@ public enum LogAttributesKey: String, Comparable {
     case eventSource = "event_source"
     case `public`
     case tag
+    case processId = "process_id"
+    case processName = "process_name"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue

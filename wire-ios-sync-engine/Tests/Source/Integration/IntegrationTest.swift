@@ -49,7 +49,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             proxyUsername: nil,
             proxyPassword: nil,
             reachability: reachability,
-            analytics: nil,
             minTLSVersion: nil
         )
     }
@@ -70,7 +69,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            analytics: analytics,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
@@ -142,13 +140,17 @@ extension IntegrationTest {
         return MockJailbreakDetector()
     }
 
+    var proteusViaCoreCryptoEnabled: Bool {
+        return false
+    }
+
     @objc
     func _setUp() {
 
         PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
+        flag.isOn = proteusViaCoreCryptoEnabled
 
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()
@@ -305,15 +307,14 @@ extension IntegrationTest {
             callKitManager: MockCallKitManager(),
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
         sessionManager?.start(launchOptions: [:])
-
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
     }
 
     @objc
@@ -350,6 +351,7 @@ extension IntegrationTest {
 
             let selfConversation = session.insertSelfConversation(withSelfUser: selfUser)
             selfConversation.identifier = selfUser.identifier
+            selfConversation.domain = "local@domain.com"
 
             self.selfUser = selfUser
             self.selfConversation = selfConversation
@@ -406,15 +408,18 @@ extension IntegrationTest {
             let selfToUser1Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user1)
             selfToUser1Conversation.creator = self.selfUser
             selfToUser1Conversation.setValue("Connection conversation to user 1", forKey: "name")
+            selfToUser1Conversation.domain = "local@domain.com"
             self.selfToUser1Conversation = selfToUser1Conversation
 
             let selfToUser2Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user2)
+            selfToUser2Conversation.domain = "local@domain.com"
             selfToUser2Conversation.creator = user2
 
             selfToUser2Conversation.setValue("Connection conversation to user 2", forKey: "name")
             self.selfToUser2Conversation = selfToUser2Conversation
 
             let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, user3])
+            groupConversation.domain = "local@domain.com"
             groupConversation.creator = user3
             groupConversation.changeName(by: self.selfUser, name: "Group conversation")
             self.groupConversation = groupConversation
@@ -451,6 +456,7 @@ extension IntegrationTest {
 
             let bot = session.insertUser(withName: "Botty the Bot")
             bot.accentID = 3
+            bot.domain = "local@domain"
             session.addProfilePicture(to: bot)
             session.addV3ProfilePicture(to: bot)
             self.serviceUser = bot
@@ -458,6 +464,7 @@ extension IntegrationTest {
             let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, bot])
             groupConversation.team = team
             groupConversation.creator = user2
+            groupConversation.domain = "local@domain"
             groupConversation.changeName(by: self.selfUser, name: "Group conversation with bot")
             self.groupConversationWithServiceUser = groupConversation
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireMainNavigationUI
 
 extension StartUIViewController {
 
@@ -44,11 +45,12 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
         guard let tabBarController = presentingViewController as? UITabBarController else {
             return assertionFailure("wrong assumption!")
         }
+        // TODO: [WPB-11994] test this flow manually
         dismiss(animated: true) {
             // point to the contacts tab item
             var tabItemFrame = tabBarController.tabBar.bounds
             tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
-            tabItemFrame.origin.x = CGFloat(MainTabBarControllerTab.contacts.rawValue) * tabItemFrame.size.width
+            tabItemFrame.origin.x = CGFloat(MainTabBarControllerContent.conversations.rawValue) * tabItemFrame.size.width
             tabBarController.presentInviteActivityViewController(
                 popoverPresentationConfiguration: .sourceView(
                     sourceView: tabBarController.tabBar,

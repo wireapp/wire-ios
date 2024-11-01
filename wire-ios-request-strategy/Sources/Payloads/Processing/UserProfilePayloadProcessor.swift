@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {
@@ -102,10 +103,6 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
         if (payload.name != nil || authoritative) && !user.isAccountDeleted {
             user.name = payload.name
-        }
-
-        if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
-            user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
         }
 
         if (payload.updatedKeys.contains(.email) || authoritative) && !user.isAccountDeleted {

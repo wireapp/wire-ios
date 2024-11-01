@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -248,21 +249,6 @@ final class UserSessionMock: UserSession {
 
     }
 
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    ) {
-
-    }
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-
-    }
-
     func classification(
         users: [UserType],
         conversationDomain: String?
@@ -321,6 +307,34 @@ final class UserSessionMock: UserSession {
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
         MockSetAllowGuestAndServicesUseCaseProtocol()
+    }
+
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol {
+        AppendTextMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
+        AppendImageMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol {
+        AppendKnockMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol {
+        AppendLocationMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
+        AppendFileMessageUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol {
+        ToggleMessageReactionUseCase(analyticsEventTracker: nil)
+    }
+
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol {
+        SubmitCallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)

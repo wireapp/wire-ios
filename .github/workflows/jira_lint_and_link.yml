@@ -1,7 +1,7 @@
 name: Link and Lint PR with Jira Ticket Number
 on:
   pull_request:
-    types: [opened, edited, synchronize]
+    types: [opened, edited]
 
 # This is what will cancel the workflow
 concurrency:
@@ -11,6 +11,7 @@ concurrency:
 jobs:
   add-jira-description:
     runs-on: ubuntu-latest
+    if: github.event.action == 'opened' || github.event.changes.title != null
     steps:
       - uses: cakeinpanic/jira-description-action@v0.8.0
         name: jira-description-action

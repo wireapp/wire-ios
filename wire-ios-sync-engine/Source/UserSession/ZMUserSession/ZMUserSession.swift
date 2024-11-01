@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAnalytics
 import WireDataModel
 import WireRequestStrategy
 import WireSystem
@@ -42,7 +43,6 @@ public final class ZMUserSession: NSObject {
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
-    private(set) var analytics: AnalyticsType?
     private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
@@ -60,8 +60,7 @@ public final class ZMUserSession: NSObject {
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
     let legacyHotFix: ZMHotFix
-    // When we move to the monorepo, uncomment hotFixApplicator
-    // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
+
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
     var recurringActionService: any RecurringActionServiceInterface
@@ -77,6 +76,9 @@ public final class ZMUserSession: NSObject {
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
+
+    private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
@@ -334,6 +336,8 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
+    var callStateObserverToken: Any?
+
     // MARK: - Initialize
 
     init(
@@ -341,7 +345,6 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        analytics: (any AnalyticsType)?,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -364,7 +367,6 @@ public final class ZMUserSession: NSObject {
         self.appVersion = appVersion
         self.flowManager = flowManager
         self.mediaManager = mediaManager
-        self.analytics = analytics
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.notificationDispatcher = NotificationDispatcher(managedObjectContext: coreDataStack.viewContext)
@@ -388,6 +390,12 @@ public final class ZMUserSession: NSObject {
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
+
+        super.init()
+    }
+
+    func trackAppOpenAnalyticEventWhenAppBecomesActive() {
+        analyticsEventTracker?.trackEvent(.appOpen)
     }
 
     func setup(
@@ -398,7 +406,6 @@ public final class ZMUserSession: NSObject {
         configuration: Configuration,
         isDeveloperModeEnabled: Bool
     ) {
-        coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
         coreDataStack.linkContexts()
 
@@ -532,15 +539,18 @@ public final class ZMUserSession: NSObject {
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
         return [
+            ImportEventsURLActionProcessor(
+                eventProcessor: updateEventProcessor!
+            ),
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!
+                eventProcessor: conversationEventProcessor
             ),
             ConnectToBotURLActionProcessor(
                 contextprovider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!,
+                eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers
             )
         ]
@@ -590,6 +600,34 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+        analyticsEventTracker = tracker
+
+        // Track any events that were added before the service was configured.
+        if let analyticsEventTracker {
+            while !pendingAnalyticsEvents.isEmpty {
+                let event = pendingAnalyticsEvents.removeFirst()
+                analyticsEventTracker.trackEvent(event)
+            }
+            setupCallStateObserverForAnalytics()
+        } else {
+            callStateObserverToken = nil
+        }
+    }
+
+    private func setupCallStateObserverForAnalytics() {
+        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: self)
+    }
+
+    func trackAnalyticsEvent(_ event: AnalyticsEvent) {
+        guard let analyticsEventTracker else {
+            pendingAnalyticsEvents.append(event)
+            return
+        }
+
+        analyticsEventTracker.trackEvent(event)
+    }
+
     private func registerForCalculateBadgeCountNotification() {
         tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: notificationContext) { [weak self] _ in
             self?.calculateBadgeCount()
@@ -633,9 +671,14 @@ public final class ZMUserSession: NSObject {
 
     // temporary function to simplify call to ConversationEventProcessor
     // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
+    public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
+        WaitingGroupTask(context: self.syncContext) { [weak self] in
+            guard let self else {
+                completion?()
+                return
+            }
+            await self.conversationEventProcessor.processAndSaveConversationEvents(events)
+            completion?()
         }
     }
 
@@ -758,7 +801,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 // MARK: - UpdateEventProcessor
 
-// swiftlint:disable:next todo_requires_jira_link
 // TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -852,11 +894,29 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             await fetchAndStoreFeatureConfig()
+            await calculateSelfSupportedProtocolsIfNeeded()
             await resolveOneOnOneConversationsIfNeeded()
         }
 
         recurringActionService.performActionsIfNeeded()
         performPostQuickSyncE2EIActions()
+    }
+
+    /// Calculate supported protocols for self user in case they are empty
+    /// - note: Supported protocols are calculated only during slow sync
+    /// or while resolving 1-1 conversations (MLS enabled).
+    /// It fixes users that updates to latest version without having a supported-protocol.
+    /// This could be removed once MLS is enabled.
+    private func calculateSelfSupportedProtocolsIfNeeded() async {
+        await syncContext.perform { [syncContext] in
+            let service = SupportedProtocolsService(context: syncContext)
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            if selfUser.supportedProtocols.isEmpty {
+                WireLogger.supportedProtocols.warn("no supported protocols found")
+                selfUser.supportedProtocols = service.calculateSupportedProtocols()
+                syncContext.saveOrRollback()
+            }
+        }
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {

@@ -117,7 +117,7 @@ extension MockUserClient {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
         newClient.label = label
         newClient.type = type
-        newClient.identifier = String.createLegacyAlphanumerical()
+        newClient.identifier = String.randomClientIdentifier()
         newClient.mackey = mackey
         newClient.enckey = enckey
         newClient.deviceClass = deviceClass
@@ -147,7 +147,7 @@ extension MockUserClient {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
 
         newClient.user = user
-        newClient.identifier = String.createLegacyAlphanumerical()
+        newClient.identifier = String.randomClientIdentifier()
         newClient.label = label
         newClient.type = type
         newClient.deviceClass = deviceClass

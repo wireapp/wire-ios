@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import WireAPI
 
 final class UsersAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<UsersAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UsersAPI>!
 
     // MARK: - Setup
 

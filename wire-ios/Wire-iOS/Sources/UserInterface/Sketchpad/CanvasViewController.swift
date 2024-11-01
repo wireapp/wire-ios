@@ -213,7 +213,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             canvas.rightAnchor.constraint(equalTo: view.rightAnchor),
 
             toolbar.topAnchor.constraint(equalTo: canvas.bottomAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            toolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
             toolbar.rightAnchor.constraint(equalTo: view.rightAnchor),
 

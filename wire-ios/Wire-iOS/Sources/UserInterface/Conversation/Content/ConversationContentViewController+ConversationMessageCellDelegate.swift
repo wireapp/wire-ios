@@ -83,7 +83,8 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
             message: message,
             preferredDisplayMode: preferredDisplayMode,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         parent?.present(messageDetailsViewController, animated: true)
     }

@@ -43,12 +43,41 @@ extension WireAnalytics {
         }
 
         /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available, the function just returns.
-        /// Should be called early and only once per session (app or extensions)!
+        /// - Note: this should be called early and **has effect only once**
         public static func enable() {
+            enableOnlyOnce.execute()
+        }
+
+        static var enableOnlyOnce = OnceOnlyThreadSafeFunction({
             guard let shared else { return }
 
             shared.enable()
             WireLogger.addLogger(shared)
+
+            // pass tags to DataDog through WireLogger
+            WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+            WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
+        })
+    }
+}
+
+/// Wrapper class to execute a function just once, thread safe
+class OnceOnlyThreadSafeFunction {
+    private let lock = NSLock()
+    private var executed = false
+    private let function: () -> Void
+
+    init(_ function: @escaping () -> Void) {
+        self.function = function
+    }
+
+    func execute() {
+        lock.lock()
+        defer { lock.unlock() }
+
+        if !executed {
+            executed = true
+            function()
         }
     }
 }

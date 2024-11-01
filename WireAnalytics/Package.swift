@@ -1,22 +1,27 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 
 import Foundation
 import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
-        .library(name: "WireDatadog", targets: ["WireDatadog"])
+        .library(name: "WireDatadog", targets: ["WireDatadog"]),
+        .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(path: "../SourceryPlugin")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies(),
+            dependencies: resolveWireAnalyticsDependencies() + [
+                .product(name: "Countly", package: "countly-sdk-ios")
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -29,13 +34,26 @@ let package = Package(
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
             ],
             swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "WireAnalyticsSupport",
+            dependencies: ["WireAnalytics"],
+            plugins: [
+                .plugin(
+                    name: "SourceryPlugin",
+                    package: "SourceryPlugin"
+                )
+            ]
+        ),
+        .testTarget(
+            name: "WireAnalyticsTests",
+            dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
         )
     ]
 )
 
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
-    // and run File > Packages > Resolve Packages Versions
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
         ["WireDatadog"]
     } else {
@@ -52,5 +70,7 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 }
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
 ]

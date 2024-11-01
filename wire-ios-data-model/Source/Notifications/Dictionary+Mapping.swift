@@ -41,7 +41,7 @@ extension Array where Element: Hashable {
 
 extension Set {
 
-    func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
+    public func mapToDictionary<Value>(with block: (Element) -> Value?) -> [Element: Value] {
         var dict = [Element: Value]()
         forEach {
             if let value = block($0) {

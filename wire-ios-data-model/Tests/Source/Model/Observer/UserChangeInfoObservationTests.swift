@@ -214,18 +214,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
                                                      expectedChangedField: .handle)
     }
 
-    func testThatItNotifiesTheObserverOfAPhoneNumberChange() {
-        // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.setPhoneNumber("+99-32312423423", on: user)
-        uiMOC.saveOrRollback()
-
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { self.setPhoneNumber("+99-0000", on: $0) },
-                                                     expectedChangedField: .profileInfo)
-    }
-
     func testThatItNotifiesTheObserverOfAConnectionStateChange() {
         // given
         let user = ZMUser.insertNewObject(in: self.uiMOC)
@@ -585,14 +573,13 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
-    // swiftlint:disable:next todo_requires_jira_link
     // TODO: [WPB-5917] re-enable and fix calling `legalHoldClient.deleteClientAndEndSession()`
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
         user.acknowledgeLegalHoldStatus()
 
-        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
+        _ = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
 
         let modifier: (ZMUser) -> Void = { _ in
             self.performPretendingUiMocIsSyncMoc {

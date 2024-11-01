@@ -20,10 +20,10 @@ import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -40,23 +40,25 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
         var components = URLComponents(string: "\(pathPrefix)\(basePath)/last")
         components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
-        guard let path = components?.string else {
-            assertionFailure("generated an invalid path")
-            throw UpdateEventsAPIError.invalidPath
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UpdateEventsAPIError.invalidURL
         }
 
-        let request = HTTPRequest(
-            path: path,
-            method: .get
-        )
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: UpdateEventEnvelopeV0.self)
             .failure(code: .badRequest, error: UpdateEventsAPIError.invalidClient)
             .failure(code: .notFound, label: "not-found", error: UpdateEventsAPIError.notFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     // MARK: - Get events since
@@ -75,23 +77,25 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
                 URLQueryItem(name: "size", value: "500")
             ]
 
-            guard let path = components?.string else {
-                assertionFailure("generated an invalid path")
-                throw UpdateEventsAPIError.invalidPath
+            guard let url = components?.url else {
+                assertionFailure("generated an invalid url")
+                throw UpdateEventsAPIError.invalidURL
             }
 
-            let request = HTTPRequest(
-                path: path,
-                method: .get
-            )
+            let request = URLRequestBuilder(url: url)
+                .withMethod(.get)
+                .build()
 
-            let response = try await self.httpClient.executeRequest(request)
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
 
             return try ResponseParser()
                 .success(code: .ok, type: UpdateEventListResponseV0.self)
                 .failure(code: .badRequest, error: UpdateEventsAPIError.invalidParameters)
                 .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 

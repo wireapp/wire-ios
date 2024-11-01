@@ -305,6 +305,33 @@ class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
 }
 
+class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
+    }
+
+}
+
 class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsViewModelDelegate {
 
     // MARK: - Life cycle
@@ -455,6 +482,33 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
         }
 
         mock()
+    }
+
+}
+
+class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
     }
 
 }
@@ -708,26 +762,29 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
-public class MockFileMetaDataGenerating: FileMetaDataGenerating {
+public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
 
-    // MARK: - metadataForFileAtURL
+    // MARK: - metadataForFile
 
-    public var metadataForFileAtURLUTINameCompletion_Invocations: [(url: URL, uti: String, name: String, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtURLUTINameCompletion_MockMethod: ((URL, String, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
+    public var metadataForFileAt_Invocations: [URL] = []
+    public var metadataForFileAt_MockMethod: ((URL) async -> ZMFileMetadata)?
+    public var metadataForFileAt_MockValue: ZMFileMetadata?
 
-    public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtURLUTINameCompletion_Invocations.append((url: url, uti: uti, name: name, completion: completion))
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        metadataForFileAt_Invocations.append(url)
 
-        guard let mock = metadataForFileAtURLUTINameCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtURLUTINameCompletion`")
+        if let mock = metadataForFileAt_MockMethod {
+            return await mock(url)
+        } else if let mock = metadataForFileAt_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAt`")
         }
-
-        mock(url, uti, name, completion)
     }
 
 }
@@ -1363,6 +1420,33 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
 }
 
+class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
+    }
+
+}
+
 class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
 
     // MARK: - Life cycle
@@ -1441,16 +1525,16 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
     // MARK: - shareReport
 
     var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() -> Void)?
+    var shareReport_MockMethod: (() async -> Void)?
 
-    func shareReport() {
+    func shareReport() async {
         shareReport_Invocations.append(())
 
         guard let mock = shareReport_MockMethod else {
             fatalError("no mock for `shareReport`")
         }
 
-        mock()
+        await mock()
     }
 
 }

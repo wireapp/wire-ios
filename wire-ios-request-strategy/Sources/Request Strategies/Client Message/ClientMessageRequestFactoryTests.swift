@@ -45,9 +45,10 @@ extension ClientMessageRequestFactoryTests {
             // GIVEN
             let conversationID = UUID()
             let expectedMessage = Proteus_NewOtrMessage(
-                withSender: self.selfClient,
+                withSenderId: self.selfClient.hexRemoteIdentifier,
                 nativePush: false,
-                recipients: []
+                recipients: [],
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
             // WHEN

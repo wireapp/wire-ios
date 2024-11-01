@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -29,7 +28,6 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
@@ -43,7 +41,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
         snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testForEditingTextField() {

@@ -18,6 +18,7 @@
 
 import SnapshotTesting
 import UIKit
+import WireTestingPackage
 import XCTest
 
 @testable import Wire

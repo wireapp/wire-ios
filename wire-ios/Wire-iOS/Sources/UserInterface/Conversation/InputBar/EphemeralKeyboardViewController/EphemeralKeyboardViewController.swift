@@ -39,14 +39,17 @@ final class EphemeralKeyboardViewController: UIViewController {
     // MARK: - Properties
     weak var delegate: EphemeralKeyboardViewControllerDelegate?
 
-    fileprivate let timeouts: [MessageDestructionTimeoutValue?]
+    private let timeouts = MessageDestructionTimeoutValue.all
 
-    let titleLabel = DynamicFontLabel(text: L10n.Localizable.Input.Ephemeral.title,
-                                      fontSpec: .mediumSemiboldFont,
-                                      color: SemanticColors.Label.textDefault)
-    var pickerFont: UIFont? = .normalSemiboldFont
-    var pickerColor: UIColor? = SemanticColors.Label.textDefault
-    var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
+    private let titleLabel = DynamicFontLabel(
+        text: L10n.Localizable.Input.Ephemeral.title,
+        style: .body1,
+        color: SemanticColors.Label.textDefault
+    )
+
+    private let pickerFont: UIFont = .normalSemiboldFont
+    private let pickerColor: UIColor = SemanticColors.Label.textDefault
+    private let separatorColor: UIColor = SemanticColors.View.backgroundSeparatorCell
 
     private let conversation: ZMConversation!
     private let picker = PickerView()
@@ -57,11 +60,6 @@ final class EphemeralKeyboardViewController: UIViewController {
     /// - Parameter conversation: nil for testing only
     init(conversation: ZMConversation!) {
         self.conversation = conversation
-        if Bundle.developerModeEnabled {
-            timeouts = MessageDestructionTimeoutValue.all + [nil]
-        } else {
-            timeouts = MessageDestructionTimeoutValue.all
-        }
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -95,7 +93,9 @@ final class EphemeralKeyboardViewController: UIViewController {
         picker.backgroundColor = .clear
         picker.tintColor = .red
         picker.selectorColor = separatorColor
-        picker.didTapViewClosure = dismissKeyboardIfNeeded
+        picker.didTapViewClosure = { [weak self] in
+            self?.dismissKeyboardIfNeeded()
+        }
 
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
@@ -120,24 +120,6 @@ final class EphemeralKeyboardViewController: UIViewController {
         delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }
 
-    fileprivate func displayCustomPicker() {
-        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
-
-        UIAlertController.requestCustomTimeInterval(over: UIApplication.shared.topmostViewController(onlyFullScreen: true)!) { [weak self] result in
-
-            guard let self else {
-                return
-            }
-
-            switch result {
-            case .success(let value):
-                self.delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
-            default:
-                break
-            }
-
-        }
-    }
 }
 
 // MARK: - UIPickerViewDelegate & UIPickerViewDataSource
@@ -161,23 +143,16 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
         attributedTitleForRow row: Int,
         forComponent component: Int
     ) -> NSAttributedString? {
-        guard let font = pickerFont, let color = pickerColor else { return nil }
         let timeout = timeouts[row]
-        if let actualTimeout = timeout, let title = actualTimeout.displayString {
-            return NSAttributedString(string: title, attributes: [.font: font, .foregroundColor: color])
-        } else {
-            return NSAttributedString(string: "Custom", attributes: [.font: font, .foregroundColor: color])
-        }
+        let displayString = timeout.displayString
+        requireInternal(displayString != nil, "Missing displayString for \(timeout)")
+
+        let title = displayString ?? "Unknown"
+        return NSAttributedString(string: title, attributes: [.font: pickerFont, .foregroundColor: pickerColor])
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let timeout = timeouts[row]
-
-        if let actualTimeout = timeout {
-            delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: actualTimeout.rawValue)
-        } else {
-            displayCustomPicker()
-        }
+        delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: timeouts[row].rawValue)
     }
 
 }

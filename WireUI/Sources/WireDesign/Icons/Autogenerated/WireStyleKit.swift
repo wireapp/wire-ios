@@ -959,35 +959,6 @@ public class WireStyleKit: NSObject {
         downPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_hamburger_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
-        //// List Drawing
-        let listPath = UIBezierPath()
-        listPath.move(to: CGPoint(x: 0, y: 28))
-        listPath.addLine(to: CGPoint(x: 64, y: 28))
-        listPath.addLine(to: CGPoint(x: 64, y: 36))
-        listPath.addLine(to: CGPoint(x: 0, y: 36))
-        listPath.addLine(to: CGPoint(x: 0, y: 28))
-        listPath.addLine(to: CGPoint(x: 0, y: 28))
-        listPath.close()
-        listPath.move(to: CGPoint(x: 0, y: 4))
-        listPath.addLine(to: CGPoint(x: 64, y: 4))
-        listPath.addLine(to: CGPoint(x: 64, y: 12))
-        listPath.addLine(to: CGPoint(x: 0, y: 12))
-        listPath.addLine(to: CGPoint(x: 0, y: 4))
-        listPath.addLine(to: CGPoint(x: 0, y: 4))
-        listPath.close()
-        listPath.move(to: CGPoint(x: 0, y: 52))
-        listPath.addLine(to: CGPoint(x: 64, y: 52))
-        listPath.addLine(to: CGPoint(x: 64, y: 60))
-        listPath.addLine(to: CGPoint(x: 0, y: 60))
-        listPath.addLine(to: CGPoint(x: 0, y: 52))
-        listPath.addLine(to: CGPoint(x: 0, y: 52))
-        listPath.close()
-        listPath.usesEvenOddFillRule = true
-        color.setFill()
-        listPath.fill()
-    }
-
     @objc public dynamic class func drawIcon_forwardArrow_64pt(color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)) {
         //// Back Drawing
         let backPath = UIBezierPath()

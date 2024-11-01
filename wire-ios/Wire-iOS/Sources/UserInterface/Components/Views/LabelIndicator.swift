@@ -57,7 +57,7 @@ enum LabelIndicatorContext {
 final class LabelIndicator: UIView {
 
     private let indicatorIcon = UIImageView()
-    private let titleLabel = DynamicFontLabel(fontSpec: .mediumSemiboldInputText,
+    private let titleLabel = DynamicFontLabel(style: .h5,
                                               color: SemanticColors.Label.textDefault)
     private let containerView = UIView()
     private let context: LabelIndicatorContext
@@ -114,9 +114,9 @@ final class LabelIndicator: UIView {
             topAnchor.constraint(equalTo: containerView.topAnchor),
 
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: safeLeadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: safeTrailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
             // indicatorIcon
             indicatorIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),

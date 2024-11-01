@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *MLS* feature.
 
-public struct MLSFeatureConfig: Equatable, Codable {
+public struct MLSFeatureConfig: Equatable, Codable, Sendable {
 
     /// The feature's status.
 
@@ -45,5 +45,21 @@ public struct MLSFeatureConfig: Equatable, Codable {
     /// The list of supported message protocols.
 
     public let supportedProtocols: Set<MessageProtocol>
+
+    public init(
+        status: FeatureConfigStatus,
+        protocolToggleUsers: Set<UUID>,
+        defaultProtocol: MessageProtocol,
+        allowedCipherSuites: [MLSCipherSuite],
+        defaultCipherSuite: MLSCipherSuite,
+        supportedProtocols: Set<MessageProtocol>
+    ) {
+        self.status = status
+        self.protocolToggleUsers = protocolToggleUsers
+        self.defaultProtocol = defaultProtocol
+        self.allowedCipherSuites = allowedCipherSuites
+        self.defaultCipherSuite = defaultCipherSuite
+        self.supportedProtocols = supportedProtocols
+    }
 
 }

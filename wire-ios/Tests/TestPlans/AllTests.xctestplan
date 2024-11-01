@@ -12,6 +12,10 @@
     "commandLineArgumentEntries" : [
       {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      },
+      {
+        "argument" : "-NSShowNonLocalizedStrings YES",
+        "enabled" : false
       }
     ],
     "environmentVariableEntries" : [
@@ -59,20 +63,6 @@
         "containerPath" : "container:Wire-iOS.xcodeproj",
         "identifier" : "E6579E352AFF9B30004E7FD8",
         "name" : "Wire-iOS UnitTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/WireUI",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/WireUI",
-        "identifier" : "WireDesignTests",
-        "name" : "WireDesignTests"
       }
     }
   ],

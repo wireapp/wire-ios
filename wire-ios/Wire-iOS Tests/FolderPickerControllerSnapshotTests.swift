@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -29,7 +28,6 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.groupConversation()
         directory = MockConversationDirectory()
@@ -40,7 +38,7 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
         snapshotHelper = nil
         directory = nil
         mockConversation = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testWithNoExistingFolders() {

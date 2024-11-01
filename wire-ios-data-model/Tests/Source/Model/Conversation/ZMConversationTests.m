@@ -1774,8 +1774,8 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMMessage *message1 = (id)[conversation appendMessageWithText:@"haha"];
     ZMMessage *message2 = (id)[conversation appendMessageWithText:@"haha"];
-    [message2 expire];
-    
+    [message2 expireWithExpirationReason:ZMExpirationReasonOther];
+
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
     [self.uiMOC saveOrRollback];
     
@@ -1795,7 +1795,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation appendMessageWithText:@"haha"];
     ZMMessage *message2 = (id)[conversation appendMessageWithText:@"haha"];
-    [message2 expire];
+    [message2 expireWithExpirationReason:ZMExpirationReasonOther];
     ZMMessage *message3 = (id)[conversation appendMessageWithText:@"haha"];
     
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorExpiredMessage);
@@ -2092,8 +2092,8 @@
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         
         ZMMessage *message1 = (id)[conversation appendMessageWithText:@"A"];
-        [message1 expire];
-        
+        [message1 expireWithExpirationReason:ZMExpirationReasonOther];
+
         NSDate *clearedTimestamp = [NSDate date];
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"B"];
         message2.serverTimestamp = clearedTimestamp;
@@ -2102,8 +2102,8 @@
         [self spinMainQueueWithTimeout:1];
         
         ZMMessage *message3 = (id)[conversation appendMessageWithText:@"C"];
-        [message3 expire];
-        
+        [message3 expireWithExpirationReason:ZMExpirationReasonOther];
+
         // when
         conversation.clearedTimeStamp = clearedTimestamp;
         

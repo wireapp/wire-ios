@@ -115,12 +115,11 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
-    case start, provideMarketingConsent, setName, setPassword
+    case start, setName, setPassword
 
     var needsInterface: Bool {
         switch self {
         case .start: return false
-        case .provideMarketingConsent: return false
         default: return true
         }
     }

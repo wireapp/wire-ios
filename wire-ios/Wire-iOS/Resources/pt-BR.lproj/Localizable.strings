@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Próximo";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Grupo de convidados";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Você)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Procurar por nome ou nome de usuário";
 "peoplepicker.header.top_people" = "Contatos frequentes";
-"peoplepicker.button.create_conversation" = "Criar grupo";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Adicionar Participantes";
 "peoplepicker.header.conversations" = "Grupos";
 "peoplepicker.header.team_conversations" = "Grupos de %@";
@@ -63,8 +59,8 @@
 "peoplepicker.header.directory" = "Conectar";
 "peoplepicker.header.federation" = "Conecte-se com outro domínio";
 
-"peoplepicker.group.title.singular" = "Adicionar Participantes";
-"peoplepicker.group.title.plural" = "Adicionar Participantes (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Pular";
 "peoplepicker.group.done" = "Pronto";
 "peoplepicker.group.create" = "Criar";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Convidar mais pessoas";
 "peoplepicker.invite_team_members" = "Convide pessoas para entrar na equipe";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
-"peoplepicker.quick-action.create-conversation" = "Criar grupo";
-"peoplepicker.quick-action.create-guest-room" = "Criar grupo de convidados";
 "peoplepicker.quick-action.admin-services" = "Gerenciar serviços";
 
 "peoplepicker.federation.domain_unvailable" = "O domínio federado não está disponível no momento. [Saiba mais](%@)";
@@ -129,6 +123,21 @@
 "conversation_list.empty.all_archived.message" = "Tudo foi arquivado";
 "conversation_list.empty.no_contacts.message" = "Iniciar uma conversa ou \ncrie um grupo.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoritos";
+"conversation_list.filter.groups.title" = "Grupos";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Remover";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Participe";
@@ -137,11 +146,14 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Ative agora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tem novas mensagens.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contatos";
-"conversation_list.bottom_bar.conversations.title" = "Conversas";
-"conversation_list.bottom_bar.folders.title" = "Pastas";
-"conversation_list.bottom_bar.archived.title" = "Arquivar";
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "nos Contatos";
@@ -308,10 +320,10 @@
 "conversation.input_bar.message_too_long.message" = "Você pode enviar mensagens até %d caracteres.";
 
 "conversation.create.group_name.title" = "Criar grupo";
-"conversation.create.group_name.placeholder" = "Nome do grupo";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Pelo menos 1 caractere";
 "conversation.create.guidance.toolong" = "Muitos caracteres";
-"conversation.create.options.title" = "Opções de conversa";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Convidados: %@, Serviços: %@, Confirmação de leitura: %@";
 "conversation.create.guests.title" = "Permitir convidados";
 "conversation.create.guests.subtitle" = "Abra esta conversa para pessoas de fora da sua equipe.";
@@ -514,6 +526,7 @@
 "content.system.message_delivered_timestamp" = "Entregue";
 "content.system.message_read_timestamp" = "Visto";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1039,8 +1052,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Ajustes";
 "self.profile" = "Perfil";
 "self.account" = "Conta";
@@ -1159,10 +1178,14 @@
 "self.settings.privacy_analytics.title" = "Enviar dados de uso anônimos";
 "self.settings.privacy_analytics_menu.description.title" = "Os dados de uso permitem que o Wire entenda como o aplicativo está sendo usado e como ele pode ser melhorado. Os dados são anônimos e não incluem o conteúdo de suas comunicações (como mensagens, arquivos ou chamadas).";
 
-"self.settings.receiveNews_and_offers.title" = "Receba nosso Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Receba novidades e atualizações de produtos do Wire por e-mail.";
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
 
-
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Rejeitar";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Política de privacidade";
 
 // Change Username
 
@@ -1924,13 +1947,6 @@
 
 "url_action.invalid_link.title" = "Link inválido.";
 "url_action.invalid_link.message" = "O link que você abriu não é válido.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Deseja receber notícias e atualizações de produtos do Wire por email?";
-"news_offers.consent.message" = "Você pode cancelar a qualquer momento.";
-"news_offers.consent.button.privacy_policy.title" = "Política de privacidade";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
