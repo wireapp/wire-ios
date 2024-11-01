@@ -25,6 +25,7 @@ import WireSyncEngine
 final class ArchivedListViewController: UIViewController {
 
     private var collectionView: UICollectionView!
+    private var emptyPlaceholderView: UIStackView!
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
     private let viewModel: ArchivedListViewModel
@@ -49,40 +50,30 @@ final class ArchivedListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.accessibilityViewIsModal = true
-        view.backgroundColor = SemanticColors.View.backgroundConversationList
-        setupNavigationItem()
+        view.backgroundColor = ColorTheme.Backgrounds.surface
         setupCollectionView()
         setupEmptyPlaceholder()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setupNavigationBarTitle(L10n.Localizable.ArchivedList.title.capitalized)
+        configureNavigationBarAppearance()
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
+        emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
     }
 
-    private func setupNavigationItem() {
+    func configureNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.backgroundColor = ColorTheme.Backgrounds.surface
 
-        let titleLabel = UILabel()
-        titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
-        titleLabel.font = FontSpec(.normal, .semibold).font
-        titleLabel.textColor = SemanticColors.Label.textDefault
-        titleLabel.accessibilityTraits = .header
-        navigationItem.titleView = titleLabel
-
-        let dismissButton = IconButton()
-        dismissButton.setIcon(.cross, size: .tiny, for: [])
-        dismissButton.addAction(
-            .init { [weak self] _ in self?.delegate?.archivedListViewControllerWantsToDismiss(self!) },
-            for: .primaryActionTriggered
-        )
-        dismissButton.accessibilityIdentifier = "archiveCloseButton"
-        dismissButton.accessibilityLabel = L10n.Localizable.General.close
-        dismissButton.setIconColor(SemanticColors.Label.textDefault, for: .normal)
-        navigationItem.rightBarButtonItem = .init(customView: dismissButton)
+        // Configure appearance for different states
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
     }
 
     private func setupCollectionView() {
@@ -126,31 +117,23 @@ final class ArchivedListViewController: UIViewController {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
 
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
-        stackView.axis = .vertical
-        stackView.spacing = 2
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stackView)
+        emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        emptyPlaceholderView.axis = .vertical
+        emptyPlaceholderView.spacing = 2
+        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(emptyPlaceholderView)
         NSLayoutConstraint.activate([
 
-            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            stackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            stackView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
+            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
 
-            stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
-        stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
-    }
-
-    // MARK: - Accessibility
-
-    override func accessibilityPerformEscape() -> Bool {
-        self.delegate?.archivedListViewControllerWantsToDismiss(self)
-        return true
     }
 }
 
@@ -159,7 +142,8 @@ final class ArchivedListViewController: UIViewController {
 extension ArchivedListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let conversation = viewModel[indexPath.row] else { return }
+        let conversation = viewModel[indexPath.row]
+        viewModel.unarchiveConversation(at: indexPath.row)
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
     }
 }
@@ -207,15 +191,10 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
         applyChangesClosure: @escaping () -> Void
     ) {
         applyChangesClosure()
+        guard isViewLoaded else { return }
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
-    }
-
-    func archivedListViewModel(
-        _ model: ArchivedListViewModel,
-        didUpdateConversationWithChange change: ConversationChangeInfo
-    ) {
-        // no-op, ConversationListCell extended ZMConversationObserver
+        emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
     }
 }
 

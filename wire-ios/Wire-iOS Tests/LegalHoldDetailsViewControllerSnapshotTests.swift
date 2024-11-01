@@ -28,12 +28,17 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
@@ -48,7 +53,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
         sut = nil
         SelfUser.provider = nil
         userSession = nil
-        super.tearDown()
+        mockMainCoordinator = nil
     }
 
     // MARK: - Helper method
@@ -59,7 +64,8 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
-                mainCoordinator: .mock
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
             )
             return self.sut.wrapInNavigationController()
         }
@@ -111,7 +117,8 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
-                mainCoordinator: .mock
+                mainCoordinator: self.mockMainCoordinator,
+                selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
             )
             return self.sut.wrapInNavigationController()
         }
