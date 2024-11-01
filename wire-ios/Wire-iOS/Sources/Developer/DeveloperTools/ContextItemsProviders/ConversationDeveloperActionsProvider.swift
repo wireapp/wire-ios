@@ -34,8 +34,8 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
 
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
         var items = [makeConversationIdItem(),
-                     makeConversationType(),
-                     makeConversationMessageProtocol()]
+                     makeConversationTypeItem(),
+                     makeConversationMessageProtocolItem()]
 
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())
@@ -55,14 +55,14 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         ))
     }
 
-    private func makeConversationType() -> DeveloperToolsViewModel.Item {
+    private func makeConversationTypeItem() -> DeveloperToolsViewModel.Item {
         .text(DeveloperToolsViewModel.TextItem(
             title: "Conversation type",
             value: conversation.conversationType.debugDescription
         ))
     }
 
-    private func makeConversationMessageProtocol() -> DeveloperToolsViewModel.Item {
+    private func makeConversationMessageProtocolItem() -> DeveloperToolsViewModel.Item {
         .text(DeveloperToolsViewModel.TextItem(
             title: "Message protocol",
             value: conversation.messageProtocol.rawValue
