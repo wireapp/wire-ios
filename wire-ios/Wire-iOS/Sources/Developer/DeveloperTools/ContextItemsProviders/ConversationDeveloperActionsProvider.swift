@@ -31,7 +31,7 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         }
         self.conversation = conversation
     }
-    
+
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
         var items = [makeConversationIdItem()]
 
