@@ -22,11 +22,15 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
 
     typealias CreationCell = (DetailsCollectionViewCell & ConversationCreationValuesConfigurable)
 
+    var headerTitle: String?
+
     var values: ConversationCreationValues
 
     var isHidden = false
 
     weak var cell: CreationCell?
+
+    var header = SectionHeader(frame: .zero)
 
     var headerHeight: CGFloat = 0
 
@@ -44,7 +48,7 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
             withReuseIdentifier: "SectionFooter")
 
         collectionView?.register(
-            UICollectionReusableView.self,
+            SectionHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "SectionHeader")
     }
@@ -74,6 +78,7 @@ extension ConversationCreateSectionController {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionHeader", for: indexPath)
+            (view as? SectionHeader)?.titleLabel.text = headerTitle
             return view
         default:
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "SectionFooter", for: indexPath)
@@ -89,7 +94,10 @@ extension ConversationCreateSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: headerHeight)
+        guard headerTitle != nil else { return .zero }
+        header.titleLabel.text = headerTitle
+        header.size(fittingWidth: collectionView.bounds.width)
+        return header.bounds.size
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {

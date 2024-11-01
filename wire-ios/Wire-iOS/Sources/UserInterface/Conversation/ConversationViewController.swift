@@ -19,11 +19,13 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -95,6 +97,7 @@ final class ConversationViewController: UIViewController {
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -112,7 +115,8 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
@@ -121,12 +125,14 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         contentViewController = ConversationContentViewController(
             conversation: conversation,
             message: visibleMessage,
             mediaPlaybackManager: mediaPlaybackManager,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         inputBarController = ConversationInputBarViewController(
@@ -234,7 +240,7 @@ final class ConversationViewController: UIViewController {
                     self?.conversation.isArchived = true
                 })
             }
-            self?.openConversationList()
+            self?.mainCoordinator.hideConversation()
         }
     }
 
@@ -300,21 +306,16 @@ final class ConversationViewController: UIViewController {
         }
     }
 
-    func openConversationList() {
-        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
-        wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
-    }
-
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
-        openConversationList()
+        mainCoordinator.hideConversation()
         return true
     }
 
     @objc
     func onBackButtonPressed(_ backButton: UIButton?) {
-        openConversationList()
+        mainCoordinator.hideConversation()
     }
 
     private func setupContentViewController() {
@@ -436,7 +437,7 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
+        await mainCoordinator.showConversation(conversation: mlsConversation, message: nil)
     }
 
     // MARK: - ParticipantsPopover
@@ -646,7 +647,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             let collections = CollectionsViewController(
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             collections.delegate = self
 
