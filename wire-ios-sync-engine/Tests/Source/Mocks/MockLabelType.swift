@@ -17,7 +17,7 @@
 //
 
 class MockLabelType: NSObject, LabelType {
-    
+
     var remoteIdentifier: UUID?
     var kind: Label.Kind
     var name: String?
