@@ -380,7 +380,7 @@ platform :ios do
                 # test_without_building: true,
                 sdk:"iphonesimulator",
                 destination: "platform=iOS Simulator,name=#{iPhoneNameForTesting},OS=#{ios_version}",
-                # code_coverage: true,
+                code_coverage: !build.enable_datadog, # disable code coverage, otherwise we run into an error caused by PLCrashReporter: 'Undefined symbols for architecture arm64 "___llvm_profile_runtime"'
                 derived_data_path: "DerivedData",
                 buildlog_path: build.build_path,
                 output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
