@@ -44,9 +44,6 @@ final class ZClientViewController: UIViewController {
 
     var currentConversation: ZMConversation? {
         conversationListViewController.selectedConversation
-        //        didSet {
-        //            DeveloperToolsViewModel.context.currentConversation = currentConversation
-        //        }
     }
 
     weak var router: AuthenticatedRouterProtocol?
