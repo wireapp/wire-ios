@@ -1,7 +1,3 @@
 {
-<<<<<<< HEAD
-  "9.9.5": "https://github.com/wireapp/wire-avs/releases/download/9.9.5/avs.xcframework.zip",
-=======
-  "9.7.25": "https://github.com/wireapp/wire-avs/releases/download/9.7.25/avs.xcframework.zip",
->>>>>>> 970b4d9447 (chore: bump avs version to 9.7.25 - WPB-11785 (#2107))
+  "9.9.10": "https://github.com/wireapp/wire-avs/releases/download/9.9.10/avs.xcframework.zip",
 }
