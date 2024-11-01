@@ -207,7 +207,9 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        return SearchGroup.all.count > 1 &&
+               userSession.selfUser.canSeeServices &&
+               userSession.mlsFeature.config.defaultProtocol != .mls
     }
 
     func showKeyboardIfNeeded() {
