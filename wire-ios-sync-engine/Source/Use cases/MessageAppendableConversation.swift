@@ -49,6 +49,4 @@ public protocol MessageAppendableConversation {
     func moveToFolder(_ folder: LabelType)
 }
 
-extension ZMConversation: MessageAppendableConversation {
-
-}
+extension ZMConversation: MessageAppendableConversation { }
