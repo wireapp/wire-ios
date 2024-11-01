@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 protocol UserRightInterface {
@@ -58,14 +57,11 @@ final class UserRight: UserRightInterface {
             // NOTE we always allow editing for now since settting profile picture is not yet supported by SCIM.
             return true
 
-        case .editName,
-             .editHandle,
-             .editPhone:
-			return isProfileEditable
+        case .editName, .editHandle, .editPhone:
+            return isProfileEditable
 
         case .editAccentColor:
             return true
         }
     }
-
 }
