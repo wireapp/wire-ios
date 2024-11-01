@@ -425,7 +425,6 @@
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
-		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
 		59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */; };
@@ -2392,7 +2391,6 @@
 		59BFBFC72CB7E0F7005C3375 /* SidebarViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewControllerDelegate.swift; sourceTree = "<group>"; };
 		59BFBFC82CB7E0F7005C3375 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarAccountInfo+initWithUserSessionAndAccount.swift"; sourceTree = "<group>"; };
 		59BFBFCD2CB7E25B005C3375 /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
-		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
 		59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewControllerBuilderProtocol.swift; sourceTree = "<group>"; };
@@ -5896,7 +5894,6 @@
 				59AF779E2CC7FA8B002438D1 /* SelfProfileViewControllerBuilderProtocol.swift */,
 				1610366E20616EBC008AFDD0 /* SelfProfileViewController+NewDeviceAlert.swift */,
 				8758220821B6999E00D68266 /* SelfProfileViewController+SettingsChangeAlert.swift */,
-				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
 				EFDAC64622DE2AD100D63025 /* TeamImageView.swift */,
 				D3BF754A29B093FD008459B5 /* WarningLabelView.swift */,
 				E91450EF2C92EFC300141B8E /* Domain.swift */,
@@ -9752,7 +9749,6 @@
 				BFCCA4FE20A0A03D000A4F33 /* CallInfoRootViewController.swift in Sources */,
 				7C52F723200CBE61009F85FB /* CameraKeyboardPermissionsCell.swift in Sources */,
 				A9DC33EA2506865B00AB09DF /* WipeDatabaseInteractor.swift in Sources */,
-				59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */,
 				1607359B1EB2393000528965 /* SettingsShareDatabaseCellDescriptor.swift in Sources */,
 				543DF6AD25309641001F6EA6 /* AppRootRouter.swift in Sources */,
 				067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */,
