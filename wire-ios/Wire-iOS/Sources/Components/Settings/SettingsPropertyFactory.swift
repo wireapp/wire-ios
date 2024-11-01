@@ -45,15 +45,12 @@ enum SettingsPropertyError: Error {
 }
 
 protocol SettingsPropertyFactoryDelegate: AnyObject {
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory)
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory)
-
     func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory, newValue: Bool, callback: @escaping  ResultHandler)
 }
 
 final class SettingsPropertyFactory {
     let userDefaults: UserDefaults
-    var tracking: TrackingInterface?
+    var trackingManager: TrackingInterface?
     var mediaManager: AVSMediaManagerInterface?
     weak var userSession: UserSession?
     var selfUser: SettingsSelfUser?
@@ -77,27 +74,27 @@ final class SettingsPropertyFactory {
 
     convenience init(
         userSession: UserSession?,
-        trackingManager: TrackingManager?,
-        selfUser: SettingsSelfUser?
+        selfUser: SettingsSelfUser?,
+        trackingManager: TrackingInterface?
     ) {
         self.init(
             userDefaults: UserDefaults.standard,
-            tracking: trackingManager,
             mediaManager: AVSMediaManager.sharedInstance(),
             userSession: userSession,
-            selfUser: selfUser
+            selfUser: selfUser,
+            trackingManager: trackingManager
         )
     }
 
     init(
         userDefaults: UserDefaults,
-        tracking: TrackingInterface?,
         mediaManager: AVSMediaManagerInterface?,
         userSession: UserSession?,
-        selfUser: SettingsSelfUser?
+        selfUser: SettingsSelfUser?,
+        trackingManager: TrackingInterface?
     ) {
         self.userDefaults = userDefaults
-        self.tracking = tracking
+        self.trackingManager = trackingManager
         self.mediaManager = mediaManager
         self.userSession = userSession
         self.selfUser = selfUser
@@ -219,15 +216,15 @@ final class SettingsPropertyFactory {
 
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
-                if let tracking = self.tracking {
-                    return SettingsPropertyValue(tracking.isAnalyticsDisabled)
+                if let trackingManager {
+                    return SettingsPropertyValue(trackingManager.isAnalyticsDisabled)
                 } else {
                     return SettingsPropertyValue(false)
                 }
             }
 
             let setAction: SetAction = { [unowned self] _, value, resultHandler in
-                guard let tracking else {
+                guard let trackingManager else {
                     return
                 }
 
@@ -238,13 +235,13 @@ final class SettingsPropertyFactory {
                 Task { @MainActor in
                     do {
                         if shouldDisable.boolValue {
-                            try tracking.disableAnalytics()
+                            try trackingManager.disableAnalytics()
                         } else {
-                            guard try await tracking.requestAnalyticsConsent() else {
+                            guard try await trackingManager.requestAnalyticsConsent() else {
                                 throw TrackingManagerError.userConsentDenied
                             }
 
-                            try await tracking.enableAnalytics()
+                            try await trackingManager.enableAnalytics()
                         }
                     } catch {
                         resultHandler(.failure(error))
@@ -298,22 +295,23 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     return SettingsPropertyValue(self.isAppLockActive)
-            },
+                },
                 setAction: { _, value, _  in
                     switch value {
                     case .number(value: let lockApp):
-                        self.delegate?.appLockOptionDidChange(self,
-                                                              newValue: lockApp.boolValue,
-                                                              callback: { result in
-                           self.userSession?.perform {
-                               self.isAppLockActive = result
-                           }
-                        })
-
+                        self.delegate?.appLockOptionDidChange(
+                            self,
+                            newValue: lockApp.boolValue
+                        ) { result in
+                            self.userSession?.perform {
+                                self.isAppLockActive = result
+                            }
+                        }
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
-            })
+                }
+            )
 
         case .callingConstantBitRate:
             return SettingsBlockProperty(

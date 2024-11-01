@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class ProfilePresenter: NSObject, ViewControllerDismisser {
@@ -25,14 +26,19 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private var presentedFrame: CGRect = .zero
     private weak var viewToPresentOn: UIView?
     private weak var controllerToPresentOn: UIViewController?
     private var onDismiss: (() -> Void)?
 
-    init(mainCoordinator: MainCoordinating) {
+    init(
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    ) {
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         super.init()
 
         NotificationCenter.default.addObserver(self,
@@ -83,7 +89,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             viewer: viewer,
             context: .search,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self

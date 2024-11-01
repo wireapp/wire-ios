@@ -137,9 +137,15 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let tracking = ZMMockTracking()
+        let trackingManager = ZMMockTracking()
 
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, tracking: tracking, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(
+            userDefaults: self.userDefaults,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: trackingManager
+        )
 
         let property = factory.property(SettingsPropertyName.profileName)
         // when & then
@@ -149,14 +155,14 @@ final class SettingsPropertyTests: XCTestCase {
     private var settingsPropertyFactory: SettingsPropertyFactory {
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let tracking = ZMMockTracking()
+        let trackingManager = ZMMockTracking()
 
         return SettingsPropertyFactory(
             userDefaults: userDefaults,
-            tracking: tracking,
             mediaManager: mediaManager,
             userSession: userSession,
-            selfUser: selfUser
+            selfUser: selfUser,
+            trackingManager: trackingManager
         )
     }
 
@@ -182,14 +188,14 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let selfUser = MockZMEditableUser()
         let mediaManager = ZMMockAVSMediaManager()
-        let tracking = ZMMockTracking()
+        let trackingManager = ZMMockTracking()
 
         let factory = SettingsPropertyFactory(
-            userDefaults: self.userDefaults,
-            tracking: tracking,
+            userDefaults: userDefaults,
             mediaManager: mediaManager,
             userSession: userSession,
-            selfUser: selfUser
+            selfUser: selfUser,
+            trackingManager: trackingManager
         )
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
@@ -201,10 +207,10 @@ final class SettingsPropertyTests: XCTestCase {
         // given
         let factory = SettingsPropertyFactory(
             userDefaults: userDefaults,
-            tracking: ZMMockTracking(),
             mediaManager: ZMMockAVSMediaManager(),
             userSession: userSession,
-            selfUser: MockZMEditableUser()
+            selfUser: MockZMEditableUser(),
+            trackingManager: ZMMockTracking()
         )
 
         let property = factory.property(.tweetOpeningOption)
