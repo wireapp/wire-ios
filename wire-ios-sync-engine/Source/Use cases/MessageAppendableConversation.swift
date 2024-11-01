@@ -45,8 +45,6 @@ public protocol MessageAppendableConversation {
         with fileMetadata: ZMFileMetadata,
         nonce: UUID
     ) throws -> ZMConversationMessage
-
-    func moveToFolder(_ folder: LabelType)
 }
 
 extension ZMConversation: MessageAppendableConversation { }

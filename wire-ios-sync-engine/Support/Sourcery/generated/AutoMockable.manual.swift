@@ -250,17 +250,4 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
             fatalError("no mock for `appendFile`")
         }
     }
-
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        if let mock = moveToFolder_MockMethod {
-            mock(folder)
-        }
-    }
 }
