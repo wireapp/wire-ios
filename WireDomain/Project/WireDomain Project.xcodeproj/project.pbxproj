@@ -178,7 +178,6 @@
 		C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalStore.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
-		C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventTests.swift; sourceTree = "<group>"; };
 		C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
@@ -397,7 +396,6 @@
 				01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */,
 				01D0DCA72C1C8C870076CB1C /* Products */,
 				01D0DCC02C1C8CBA0076CB1C /* Frameworks */,
-				C98433F92CCFD982009723D4 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -483,14 +481,6 @@
 				C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */,
 			);
 			path = Mock;
-			sourceTree = "<group>";
-		};
-		C98433F92CCFD982009723D4 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		C99322B42C986E3A0065E10F /* Team */ = {
@@ -758,30 +748,12 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		017F677D2C207A3200B6E02D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01D0DCA12C1C8C870076CB1C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		017F67812C207A3200B6E02D /* WireDomainSupport */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 017F67882C207A3200B6E02D /* Build configuration list for PBXNativeTarget "WireDomainSupport" */;
 			buildPhases = (
 				017F67912C207A7E00B6E02D /* Sourcery */,
-				017F677D2C207A3200B6E02D /* Headers */,
 				017F677E2C207A3200B6E02D /* Sources */,
 				017F677F2C207A3200B6E02D /* Frameworks */,
 				017F67802C207A3200B6E02D /* Resources */,
@@ -803,7 +775,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 01D0DCBA2C1C8C880076CB1C /* Build configuration list for PBXNativeTarget "WireDomain" */;
 			buildPhases = (
-				01D0DCA12C1C8C870076CB1C /* Headers */,
 				01D0DCA22C1C8C870076CB1C /* Sources */,
 				01D0DCA32C1C8C870076CB1C /* Frameworks */,
 				01D0DCA42C1C8C870076CB1C /* Resources */,

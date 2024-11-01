@@ -279,22 +279,11 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		DBF380561B15C0B800369FB7 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		DBF380581B15C0B800369FB7 /* Ziphy */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBF3806F1B15C0B800369FB7 /* Build configuration list for PBXNativeTarget "Ziphy" */;
 			buildPhases = (
-				DBF380561B15C0B800369FB7 /* Headers */,
 				DBF380541B15C0B800369FB7 /* Sources */,
 				DBF380551B15C0B800369FB7 /* Frameworks */,
 				DBF380571B15C0B800369FB7 /* Resources */,
