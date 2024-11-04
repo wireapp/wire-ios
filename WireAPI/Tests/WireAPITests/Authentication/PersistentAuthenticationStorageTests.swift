@@ -45,46 +45,6 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         keychain = nil
     }
 
-    // MARK: - Helpers
-
-    private func assertStoredCookieData(
-        _ storedCookieData: Data,
-        equals cookie: HTTPCookie,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        do {
-            let encryptionKey = try XCTUnwrap(userDefaults.data(forKey: "ZMCookieKey"))
-            let actualHTTPCookies = try Scaffolding.decryptAndDecodeCookieData(
-                storedCookieData,
-                encryptionKey: encryptionKey
-            )
-            try assertCookies(
-                actualHTTPCookies,
-                equals: cookie
-            )
-        } catch {
-            XCTFail(
-                "failed to assert cookie data: \(error)",
-                file: file,
-                line: line
-            )
-        }
-    }
-
-    private func assertCookies(
-        _ cookies: [HTTPCookie],
-        equals cookie: HTTPCookie,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) throws {
-        try XCTAssertCount(cookies, count: 1)
-        XCTAssertEqual(cookies[0].name, cookie.name)
-        XCTAssertEqual(cookies[0].value, cookie.value)
-        XCTAssertEqual(cookies[0].path, cookie.path)
-        XCTAssertEqual(cookies[0].domain, cookie.domain)
-    }
-
     // MARK: - Access token
 
     func testFetchAccessToken_Non_Exists() async {
@@ -308,5 +268,46 @@ private enum Scaffolding {
         )
         return try HTTPCookieCodec.decodeData(decryptedData)
     }
+
+    // MARK: - Helpers
+
+    private func assertStoredCookieData(
+        _ storedCookieData: Data,
+        equals cookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        do {
+            let encryptionKey = try XCTUnwrap(userDefaults.data(forKey: "ZMCookieKey"))
+            let actualHTTPCookies = try Scaffolding.decryptAndDecodeCookieData(
+                storedCookieData,
+                encryptionKey: encryptionKey
+            )
+            try assertCookies(
+                actualHTTPCookies,
+                equals: cookie
+            )
+        } catch {
+            XCTFail(
+                "failed to assert cookie data: \(error)",
+                file: file,
+                line: line
+            )
+        }
+    }
+
+    private func assertCookies(
+        _ cookies: [HTTPCookie],
+        equals cookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        try XCTAssertCount(cookies, count: 1)
+        XCTAssertEqual(cookies[0].name, cookie.name)
+        XCTAssertEqual(cookies[0].value, cookie.value)
+        XCTAssertEqual(cookies[0].path, cookie.path)
+        XCTAssertEqual(cookies[0].domain, cookie.domain)
+    }
+
 
 }
