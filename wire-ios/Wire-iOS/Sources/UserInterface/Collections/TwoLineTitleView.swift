@@ -22,6 +22,7 @@ import WireDesign
 final class TwoLineTitleView: UIView {
 
     // MARK: - Views
+
     // Fixed font sizes are used since this is a navigation bar titleView.
     // Instead of scaling with Dynamic Type, it uses UILargeContentViewer
     // for accessibility, consistent with iOS navigation bar behavior.
