@@ -41,9 +41,17 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     // MARK: - Access token
 
+    /// Store an access token.
+    ///
+    /// - Parameter accessToken: The token to store.
+
     public func storeAccessToken(_ accessToken: AccessToken) async {
         self.accessToken = accessToken
     }
+
+    /// Fetch a stored access token.
+    ///
+    /// - Returns: The stored access token.
 
     public func fetchAccessToken() async -> AccessToken? {
         accessToken
@@ -51,10 +59,26 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     // MARK: - Cookie
 
+    /// Store cookies.
+    ///
+    /// Cookie data is stored in the device keychain and may persist across
+    /// different installations of the application, such as when the app is
+    /// deleted without the user logging out.
+    ///
+    /// - Parameter cookies: The cookies to store.
+
     public func storeCookies(_ cookies: [HTTPCookie]) async throws {
         let cookieData = try HTTPCookieCodec.encodeCookies(cookies)
         try await storeCookieData(cookieData)
     }
+
+    /// Fetch stored cookies.
+    ///
+    /// Note: Cookie data may be persisted across installations for the same
+    /// account, however it is likely that fetching an old cookie would result
+    /// in a decoding error.
+    ///
+    /// - Returns: The stored cookies.
 
     public func fetchCookies() async throws -> [HTTPCookie] {
         guard let cookieData = try await fetchCookieData() else {
