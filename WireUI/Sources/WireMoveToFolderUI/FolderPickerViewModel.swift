@@ -23,11 +23,16 @@ public final class FolderPickerViewModel: ObservableObject {
 
     private let conversation: Conversation
     private let directory: any FolderDirectoryType
+    private let selectionUseCase: any FolderSelectionUseCaseType
 
-    public init(conversation: Conversation,
-                directory: any FolderDirectoryType) {
+    public init(
+        conversation: Conversation,
+        directory: any FolderDirectoryType,
+        selectionUseCase: any FolderSelectionUseCaseType
+    ) {
         self.conversation = conversation
         self.directory = directory
+        self.selectionUseCase = selectionUseCase
         loadFolders()
     }
 
@@ -38,5 +43,9 @@ public final class FolderPickerViewModel: ObservableObject {
     public func isSelected(_ folder: Folder) -> Bool {
         guard let folderID = folder.identifier else { return false }
         return conversation.currentFolderIdentifier == folderID
+    }
+
+    public func select(_ folder: Folder) {
+        selectionUseCase.invoke(folder: folder, conversation: conversation)
     }
 }

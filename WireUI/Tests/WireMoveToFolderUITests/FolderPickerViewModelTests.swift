@@ -24,118 +24,115 @@ import WireMoveToFolderUISupport
 
 final class FolderPickerViewModelTests: XCTestCase {
 
+    // MARK: - Properties
+
     private var sut: FolderPickerViewModel!
     private var mockDirectory: MockFolderDirectoryType!
+    private var mockSelectionUseCase: MockFolderSelectionUseCaseType!
+
+    // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         mockDirectory = MockFolderDirectoryType()
+        mockSelectionUseCase = MockFolderSelectionUseCaseType()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         mockDirectory = nil
+        mockSelectionUseCase = nil
         super.tearDown()
     }
 
-    // MARK: - Initialization & Folder Loading
+    // MARK: - Initialization
 
     func test_init_loadsFoldersFromDirectory() {
-        // Given
-        let folders = createTestFolders()
+        // GIVEN
+        let folders = [
+            Folder(identifier: "1", name: "Work", kind: .folder),
+            Folder(identifier: "2", name: "Personal", kind: .folder)
+        ]
         mockDirectory.allFolders = folders
 
-        // When
+        // WHEN
         createSUT()
 
-        // Then
+        // THEN
         XCTAssertEqual(sut.folders, folders)
+    }
+
+    // MARK: - Folder Selection
+
+    func test_select_invokesUseCase() {
+        // GIVEN
+        let folder = Folder(identifier: "1", name: "Work", kind: .folder)
+        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: nil)
+        mockSelectionUseCase.invokeFolderConversation_MockMethod = { _, _ in }
+        createSUT(conversation: conversation)
+
+        // WHEN
+        sut.select(folder)
+
+        // THEN
+        XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.count, 1)
+        XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.first?.folder, folder)
     }
 
     // MARK: - Selection State
 
     func test_isSelected_returnsTrue_whenFolderMatchesCurrentFolder() {
-        // Given
-        let folderID = UUID().uuidString
-        let conversation = Conversation(
-            identifier: UUID().uuidString,
-            currentFolderIdentifier: folderID
-        )
-        let folder = Folder(
-            identifier: folderID,
-            name: "Test Folder",
-            kind: .folder
-        )
+        // GIVEN
+        let folderID = "folder1"
+        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: folderID)
+        let folder = Folder(identifier: folderID, name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
-        // When
+        // WHEN
         let isSelected = sut.isSelected(folder)
 
-        // Then
+        // THEN
         XCTAssertTrue(isSelected)
     }
 
     func test_isSelected_returnsFalse_whenFolderDoesNotMatchCurrentFolder() {
-        // Given
-        let conversation = Conversation(
-            identifier: UUID().uuidString,
-            currentFolderIdentifier: UUID().uuidString
-        )
-        let folder = Folder(
-            identifier: UUID().uuidString,
-            name: "Test Folder",
-            kind: .folder
-        )
+        // GIVEN
+        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: "folder1")
+        let folder = Folder(identifier: "folder2", name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
-        // When
+        // WHEN
         let isSelected = sut.isSelected(folder)
 
-        // Then
+        // THEN
         XCTAssertFalse(isSelected)
     }
 
     func test_isSelected_returnsFalse_whenFolderIdentifierIsNil() {
-        // Given
-        let conversation = Conversation(
-            identifier: UUID().uuidString,
-            currentFolderIdentifier: UUID().uuidString
-        )
-        let folder = Folder(
-            identifier: nil,
-            name: "Test Folder",
-            kind: .folder
-        )
+        // GIVEN
+        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: "folder1")
+        let folder = Folder(identifier: nil, name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
-        // When
+        // WHEN
         let isSelected = sut.isSelected(folder)
 
-        // Then
+        // THEN
         XCTAssertFalse(isSelected)
     }
-}
 
-// MARK: - Test Helpers
+    // MARK: - Helpers
 
-private extension FolderPickerViewModelTests {
-    func createSUT(
-        conversation: Conversation = Conversation(
-            identifier: UUID().uuidString,
-            currentFolderIdentifier: nil
-        )
+    private func createSUT(
+        conversation: Conversation = Conversation(identifier: "test", currentFolderIdentifier: nil),
+        directory: MockFolderDirectoryType? = nil,
+        selectionUseCase: MockFolderSelectionUseCaseType? = nil
     ) {
         sut = FolderPickerViewModel(
             conversation: conversation,
-            directory: mockDirectory
+            directory: directory ?? mockDirectory,
+            selectionUseCase: selectionUseCase ?? mockSelectionUseCase
         )
-    }
-
-    func createTestFolders() -> [Folder] {
-        [
-            Folder(identifier: UUID().uuidString, name: "Work", kind: .folder),
-            Folder(identifier: UUID().uuidString, name: "Personal", kind: .folder),
-            Folder(identifier: UUID().uuidString, name: "Favorites", kind: .favorite)
-        ]
     }
 }
