@@ -40,15 +40,15 @@ let package = Package(
 
         .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),
 
-            .target(
-                name: "WireMoveToFolderUISupport",
-                dependencies: ["WireMoveToFolderUI"],
-                plugins: [
-                    .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
-                ]
-            ),
+        .target(
+            name: "WireMoveToFolderUISupport",
+            dependencies: ["WireMoveToFolderUI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+            ]
+        ),
 
-            .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
+        .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
