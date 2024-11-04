@@ -238,3 +238,17 @@ extension ZMConversation {
         }
     }
 }
+
+extension ConversationRootViewController: WireCallCenterCallStateObserver {
+
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
+        conversationViewController?.updateRightNavigationItemsButtons()
+    }
+
+}
