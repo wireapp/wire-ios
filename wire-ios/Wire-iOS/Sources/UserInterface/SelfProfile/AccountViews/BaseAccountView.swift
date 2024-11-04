@@ -29,7 +29,14 @@ class BaseAccountView: UIView {
 
     let imageViewContainer = UIView()
     private let outlineView = UIView()
-    let selectionView = ShapeView()
+    let selectionView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.borderWidth = 1.5
+        view.layer.borderColor = UIColor.accent().cgColor
+        return view
+    }()
+
     private var unreadCountToken: Any?
     private var selfUserObserver: NSObjectProtocol!
     let account: Account
@@ -55,7 +62,7 @@ class BaseAccountView: UIView {
 
     func updateAppearance() {
         selectionView.isHidden = !selected
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        selectionView.layer.borderColor = UIColor.accent().cgColor
         layoutSubviews()
     }
 
@@ -83,9 +90,7 @@ class BaseAccountView: UIView {
             selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
         }
 
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-        selectionView.hostedLayer.fillColor = UIColor.clear.cgColor
-        selectionView.hostedLayer.lineWidth = 1.5
+        selectionView.layer.borderColor = UIColor.accent().cgColor
 
         [imageViewContainer, outlineView, selectionView].forEach(addSubview)
 
@@ -116,12 +121,18 @@ class BaseAccountView: UIView {
 
     // MARK: - Override methods
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Make selection view match container's corner radius if needed
+        selectionView.layer.cornerRadius = imageViewContainer.layer.cornerRadius
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        selectionView.layer.borderColor = UIColor.accent().cgColor
     }
 
     // MARK: - Setup constraints
