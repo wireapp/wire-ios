@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Protocol for accessing folders in the system
 // sourcery: AutoMockable
 public protocol FolderDirectoryType {
 
+    /// Returns all available folders in the system
     var allFolders: [Folder] { get }
 
 }

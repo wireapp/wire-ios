@@ -16,9 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Protocol for handling folder selection operations
 // sourcery: AutoMockable
 public protocol FolderSelectionUseCaseType {
 
+    /// Moves a conversation to a specified folder
+    /// - Parameters:
+    ///   - folder: The destination folder
+    ///   - conversation: The conversation to be moved
     func invoke(folder: Folder, conversation: Conversation)
 
 }

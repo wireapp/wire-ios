@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// Represents types of folders available in the system
 public enum FolderKind {
+    /// Represents a favorite folder
     case favorite
+    /// Represents a regular folder
     case folder
 }
