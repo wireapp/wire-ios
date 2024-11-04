@@ -30,27 +30,21 @@ public struct FolderPicker: View {
     @Binding var selected: UUID?
 
     public var body: some View {
-        List(options) { option in
-            Button {
-                didTapOption(option)
-            } label: {
-                HStack {
+        List {
+            Picker("", selection: $selected) {
+                ForEach(options) { option in
                     Text(option.title)
                         .font(.textStyle(.body1))
                         .lineLimit(1)
                         .foregroundStyle(option.id == selected ? Color(accentColor) : .black)
-
-                    Spacer()
-
-                    Image(systemName: "checkmark")
-                        .opacity(option.id == selected ? 1 : 0)
-
+                        .tag(option.id)
                 }
             }
+            .accentColor(Color(accentColor))
+            .pickerStyle(.inline)
         }
         .background(Color.viewBackground)
         .scrollContentBackground(.hidden)
-        .listStyle(.insetGrouped)
         .navigationTitle(
             Text("folderPicker.title", tableName: "Localizable", bundle: .module)
         )
@@ -71,10 +65,6 @@ public struct FolderPicker: View {
         }
     }
 
-    private func didTapOption(_ option: FolderPickerOption) {
-        selected = option.id
-    }
-
     private func didTapClose() {
         dismiss()
     }
@@ -83,7 +73,7 @@ public struct FolderPicker: View {
 @available(iOS 17.0, *)
 #Preview {
     @Previewable @State var isPresented = false
-    @Previewable @State var selected: UUID? = nil
+    @Previewable @State var selected: UUID? = FolderPickerOption.previewData.first?.id
 
     Button("Show Picker") {
         isPresented.toggle()
@@ -92,16 +82,20 @@ public struct FolderPicker: View {
         NavigationStack {
             FolderPicker(
                 showCloseButton: true,
-                options: [
-                    FolderPickerOption(id: .init(), title: "Folder name 1"),
-                    FolderPickerOption(id: .init(), title: "Folder name 2"),
-                    FolderPickerOption(id: .init(), title: "Folder name 3"),
-                    FolderPickerOption(id: .init(), title: "A super long folder name that can't fit on the screen"),
-                ],
+                options: FolderPickerOption.previewData,
                 selected: $selected
             )
         }
         .presentationDragIndicator(.visible)
         .presentationDetents([.medium, .large])
     }
+}
+
+private extension FolderPickerOption {
+    @MainActor static let previewData = [
+        FolderPickerOption(id: .init(), title: "Folder name 1"),
+        FolderPickerOption(id: .init(), title: "Folder name 2"),
+        FolderPickerOption(id: .init(), title: "Folder name 3"),
+        FolderPickerOption(id: .init(), title: "A super long folder name that can't fit on the screen"),
+    ]
 }

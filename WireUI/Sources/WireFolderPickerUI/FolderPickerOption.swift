@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct FolderPickerOption: Identifiable {
+public struct FolderPickerOption: Identifiable, Hashable {
 
     public let id: UUID
     public let title: String
