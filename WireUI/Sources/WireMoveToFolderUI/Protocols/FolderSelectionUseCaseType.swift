@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for handling folder selection operations
 // sourcery: AutoMockable
+/// Protocol for handling folder selection operations
 public protocol FolderSelectionUseCaseType {
 
     /// Moves a conversation to a specified folder
