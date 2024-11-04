@@ -73,6 +73,7 @@ final class ConversationCreationValues {
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
+        allowServices: Bool = true,
         enableReceipts: Bool = true,
         encryptionProtocol: Feature.MLS.Config.MessageProtocol,
         selfUser: UserType
@@ -80,7 +81,7 @@ final class ConversationCreationValues {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowServices = !encryptionProtocol.isOne(of: .mls, .mixed)
+        self.allowServices = allowServices
         self.enableReceipts = enableReceipts
         self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser

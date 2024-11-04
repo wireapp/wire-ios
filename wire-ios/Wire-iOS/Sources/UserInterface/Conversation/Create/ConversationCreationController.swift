@@ -133,6 +133,8 @@ final class ConversationCreationController: UIViewController {
         guard let collectionView = collectionViewController.collectionView else { return }
         updateSections()
 
+        // `startIndex` is 2 because we don't want to reload the first 2 sections (nameSection and errorSection)
+        // when the message protocol changes, as this will clear the conversation name.
         let startIndex = 2
         let endIndex = startIndex + optionsSections.count
         let reloadIndexSet = IndexSet(integersIn: startIndex..<endIndex)
