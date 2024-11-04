@@ -18,5 +18,7 @@
 
 // sourcery: AutoMockable
 public protocol FolderSelectionUseCaseType {
+
     func invoke(folder: Folder, conversation: Conversation)
+
 }
