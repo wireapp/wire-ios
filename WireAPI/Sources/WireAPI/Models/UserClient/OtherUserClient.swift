@@ -18,7 +18,7 @@
 
 /// Client device for user other than self.
 
-public struct OtherUserClient: Equatable, Codable, Sendable {
+public struct OtherUserClient: Equatable, Sendable {
 
     /// The unique id of the client.
 
@@ -27,10 +27,5 @@ public struct OtherUserClient: Equatable, Codable, Sendable {
     /// The device class of the client.
 
     public let deviceClass: DeviceClass?
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case deviceClass = "class"
-    }
 
 }

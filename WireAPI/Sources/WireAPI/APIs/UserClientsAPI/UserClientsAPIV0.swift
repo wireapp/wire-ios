@@ -156,11 +156,27 @@ struct UserClientsRequestV0: Encodable {
 
 }
 
+struct OtherUserClientV0: Decodable, ToAPIModelConvertible {
+    
+    let id: String
+    let deviceClass: DeviceClass?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case deviceClass = "class"
+    }
+    
+    func toAPIModel() -> OtherUserClient {
+        OtherUserClient(id: id, deviceClass: deviceClass)
+    }
+    
+}
+
 struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
     typealias Domain = String
     typealias UserID = String
 
-    let qualifiedUserMap: [Domain: [UserID: [OtherUserClient]]]
+    let qualifiedUserMap: [Domain: [UserID: [OtherUserClientV0]]]
 
     enum CodingKeys: String, CodingKey {
         case qualifiedUserMap = "qualified_user_map"
@@ -174,7 +190,7 @@ struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
                 let userClients = OtherUserClients(
                     domain: domain,
                     userID: UUID(uuidString: userID)!,
-                    clients: userClients
+                    clients: userClients.map { $0.toAPIModel() }
                 )
                 partialResult.append(userClients)
             }
