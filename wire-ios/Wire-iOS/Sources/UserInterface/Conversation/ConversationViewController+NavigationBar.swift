@@ -114,10 +114,7 @@ extension ConversationViewController {
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
         button.titleLabel?.font = .font(for: .body2)
         button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
-        // Set a custom font that will not scale with Dynamic Type
-        // Use your desired fixed size and font
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
-        // Prevent the font from adjusting automatically for content size category changes
         button.titleLabel?.adjustsFontForContentSizeCategory = false
 
         button.accessibilityLabel = Conversation.JoinButton.description

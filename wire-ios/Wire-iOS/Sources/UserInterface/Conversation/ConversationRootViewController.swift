@@ -102,7 +102,6 @@ final class ConversationRootViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
         navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
     }
 
@@ -151,12 +150,7 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func configure() {
-
         guard let conversationViewController = self.conversationViewController else { return }
-
-        // Since we're not using a custom navigation bar container anymore, we need to
-        // properly set up the standard UINavigationBar items. These items were previously
-        // managed by the custom container (navBarContainer).
 
         // Set left navigation items (back button, search, unread status, etc.)
         navigationItem.leftBarButtonItems = conversationViewController.leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
