@@ -17,5 +17,5 @@
 //
 
 public protocol FolderSelectionUseCaseType {
-    func invoke(folder: any FolderIdentifiable, conversation: any ConversationIdentifiable)
+    func invoke(folder: Folder, conversation: Conversation)
 }

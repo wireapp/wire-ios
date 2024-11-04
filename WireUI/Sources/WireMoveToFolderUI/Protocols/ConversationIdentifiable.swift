@@ -16,7 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol ConversationIdentifiable {
-    var identifier: String { get }
-    var currentFolderIdentifier: String? { get }
+public struct Conversation {
+    public let identifier: String
+    public let currentFolderIdentifier: String?
+
+    public init(identifier: String, currentFolderIdentifier: String?) {
+        self.identifier = identifier
+        self.currentFolderIdentifier = currentFolderIdentifier
+    }
 }

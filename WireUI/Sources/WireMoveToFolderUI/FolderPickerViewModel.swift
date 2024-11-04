@@ -19,12 +19,12 @@
 import Foundation
 
 public final class FolderPickerViewModel: ObservableObject {
-    @Published private(set) var folders: [any FolderIdentifiable] = []
+    @Published private(set) var folders: [Folder] = []
 
-    private let conversation: any ConversationIdentifiable
+    private let conversation: Conversation
     private let directory: any FolderDirectoryType
 
-    public init(conversation: any ConversationIdentifiable,
+    public init(conversation: Conversation,
                 directory: any FolderDirectoryType) {
         self.conversation = conversation
         self.directory = directory
@@ -35,7 +35,7 @@ public final class FolderPickerViewModel: ObservableObject {
         folders = directory.allFolders
     }
 
-    public func isSelected(_ folder: any FolderIdentifiable) -> Bool {
+    public func isSelected(_ folder: Folder) -> Bool {
         guard let folderID = folder.identifier else { return false }
         return conversation.currentFolderIdentifier == folderID
     }

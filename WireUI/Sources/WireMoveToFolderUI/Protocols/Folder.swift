@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol FolderIdentifiable {
-    var identifier: String? { get }
-    var name: String? { get }
-    var kind: FolderKind { get }
+public struct Folder {
+
+    public let identifier: String?
+    public let name: String?
+    public let kind: FolderKind
+
+    public init(identifier: String?, name: String?, kind: FolderKind) {
+        self.identifier = identifier
+        self.name = name
+        self.kind = kind
+    }
 }

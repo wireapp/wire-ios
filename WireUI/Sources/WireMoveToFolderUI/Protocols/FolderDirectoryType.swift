@@ -17,5 +17,5 @@
 //
 
 public protocol FolderDirectoryType {
-    var allFolders: [any FolderIdentifiable] { get }
+    var allFolders: [Folder] { get }
 }
