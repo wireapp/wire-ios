@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct Folder {
-
+public struct Folder: Equatable {
     public let identifier: String?
     public let name: String?
     public let kind: FolderKind
