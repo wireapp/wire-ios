@@ -45,6 +45,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
         guard let tabBarController = presentingViewController as? UITabBarController else {
             return assertionFailure("wrong assumption!")
         }
+
         // TODO: [WPB-11994] test this flow manually
         dismiss(animated: true) {
             // point to the contacts tab item
