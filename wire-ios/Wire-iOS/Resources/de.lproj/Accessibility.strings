@@ -181,6 +181,11 @@
 
 "profile.backButton.description" = "Zurück zu Unterhaltungsdetails";
 "profile.closeButton.description" = "Profil schließen";
+"profile.shareProfileButton.description" = "Teilen Sie Ihr Profil per QR-Code oder Link";
+
+"shareProfile.closeButton.description" = "Ansicht Profil teilen schließen";
+"shareProfile.backButton.description" = "Zurück zu Ihrem Profil";
+"shareProfile.qrCode.description" = "QR-Code";
 
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Doppeltippen, um Status zu ändern";
@@ -198,7 +203,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.closeButton.description" = "Close contact list";
+"contactsList.cancelButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -220,6 +225,21 @@
 "conversationsList.joinButton.hint" = "Doppeltippen, um dem Anruf beizutreten";
 "conversationsList.connectionRequest.description" = "Ausstehende Genehmigung der Kontaktanfrage";
 "conversationsList.connectionRequest.hint" = "Doppeltippen, um Profil zu öffnen";
+
+"conversationList.startConversationButton.description" = "Create group or search for people";
+"conversationsList.filterButton.description" = "Filter conversations";
+
+"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
+"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
+"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
+
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
+"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
+
+"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Textnachricht von %@ erhalten";
 "conversationAnnouncement.picture.description" = "Bild von %@ erhalten";

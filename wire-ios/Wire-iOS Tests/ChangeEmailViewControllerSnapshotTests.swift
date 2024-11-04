@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
@@ -26,13 +27,15 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
+    private var settingsCoordinator: AnySettingsCoordinator!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        settingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
         snapshotHelper = SnapshotHelper()
     }
 
@@ -41,7 +44,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         userSession = nil
-        super.tearDown()
+        settingsCoordinator = nil
     }
 
     // MARK: - Helper method
@@ -55,8 +58,13 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
         userProfile.addObserver_MockMethod = { _ in }
 
-        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
-        let viewController = sut.wrapInNavigationController()
+        let sut = ChangeEmailViewController(
+            user: mockUser,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true,
+            settingsCoordinator: settingsCoordinator
+        )
+        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
         return viewController
     }
@@ -78,5 +86,4 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
     }
-
 }

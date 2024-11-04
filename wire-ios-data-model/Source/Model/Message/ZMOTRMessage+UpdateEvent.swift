@@ -179,7 +179,11 @@ extension ZMOTRMessage {
                 at: timestamp
             )
 
-        case .calling, .availability, .inCallEmoji:
+        case .calling, .availability:
+            return nil
+
+        case .inCallEmoji:
+            // Not supported yet, just discard.
             return nil
 
         default:

@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Gästebereich";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Sie)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Nach Name oder Benutzername suchen";
 "peoplepicker.header.top_people" = "Top Kontakte";
-"peoplepicker.button.create_conversation" = "Gruppe erstellen";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Teilnehmer hinzufügen";
 "peoplepicker.header.conversations" = "Gruppen";
 "peoplepicker.header.team_conversations" = "%@ Gruppen";
@@ -61,8 +59,8 @@
 "peoplepicker.header.directory" = "Verbinden";
 "peoplepicker.header.federation" = "Mit einer anderen Domain verbinden";
 
-"peoplepicker.group.title.singular" = "Teilnehmer hinzufügen";
-"peoplepicker.group.title.plural" = "Teilnehmer hinzufügen (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Überspringen";
 "peoplepicker.group.done" = "Fertig";
 "peoplepicker.group.create" = "Erstellen";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Weitere Personen einladen";
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
-"peoplepicker.quick-action.create-conversation" = "Gruppe erstellen";
-"peoplepicker.quick-action.create-guest-room" = "Gästebereich erstellen";
 "peoplepicker.quick-action.admin-services" = "Dienste verwalten";
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
@@ -127,6 +123,21 @@
 "conversation_list.empty.all_archived.message" = "Alle Unterhaltungen archiviert";
 "conversation_list.empty.no_contacts.message" = "Eine Unterhaltung beginnen oder \neine Gruppe erstellen.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoriten";
+"conversation_list.filter.groups.title" = "Gruppen";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Entfernen";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Beitreten";
@@ -134,6 +145,15 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Zum Aktivieren tippen.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiv.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Hat neue Nachrichten.";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -300,10 +320,10 @@
 "conversation.input_bar.message_too_long.message" = "Sie können Nachrichten mit bist zu %d Zeichen senden.";
 
 "conversation.create.group_name.title" = "Gruppe erstellen";
-"conversation.create.group_name.placeholder" = "Gruppenname";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Mindestens 1 Zeichen";
 "conversation.create.guidance.toolong" = "Zu viele Zeichen";
-"conversation.create.options.title" = "Optionen";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Gäste: %@, Dienste: %@, Lesebestätigungen: %@";
 "conversation.create.guests.title" = "Gäste zulassen";
 "conversation.create.guests.subtitle" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams.";
@@ -1032,8 +1052,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Profil teilen";
+"qrcode.share_message" = "Teilen Sie Ihr Profil, um einfach mit anderen Personen in Kontakt zu treten. Sie müssen noch die Kontaktanfrage akzeptieren, bevor sie miteinander kommunizieren können.";
+"qrcode.share_profile_link.button.title" = "Profil-Link teilen";
+"qrcode.share_qrcode.button.title" = "QR-Code teilen";
+
+// Options menu contents
 "self.settings" = "Einstellungen";
 "self.profile" = "Profil";
 "self.account" = "Benutzerkonto";
@@ -1151,6 +1177,15 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Anonyme Nutzungsdaten senden";
 "self.settings.privacy_analytics_menu.description.title" = "Anhand der Nutzungsdaten kann Wire verstehen, wie die App genutzt wird und wie sie verbessert werden kann. Die Daten sind anonym und umfassen nicht den Inhalt Ihrer Kommunikation (wie Nachrichten, Dateien oder Anrufe).";
+
+"self.settings.receiveNews_and_offers.title" = "Newsletter abonnieren";
+"self.settings.receiveNews_and_offers.description.title" = "Neuigkeiten und Informationen zu Produktaktualisierungen von Wire per E-Mail erhalten.";
+
+"self.settings.privacy_analytics.alert.title" = "Einwilligung zum Teilen von Nutzungsdaten";
+"self.settings.privacy_analytics.alert.message" = "Helfen Sie mit, Wire zu verbessern, indem Sie Ihre Nutzungsdaten über eine pseudonyme ID mit uns teilen. Die Daten werden weder mit Ihren persönlichen Informationen verknüpft noch an Dritte außer der Wire Gruppe weitergegeben. Sie beinhalten zum Beispiel, wann Sie eine Funktion nutzen, Ihre App-Version, den Gerätetyp oder Ihr Betriebssystem. Diese Daten werden spätestens nach 365 Tagen gelöscht. Weitere Einzelheiten finden Sie in unserer Datenschutzerklärung. Sie können Ihre Zustimmung jederzeit widerrufen.";
+"self.settings.privacy_analytics.alert.button.agree" = "Zustimmen";
+"self.settings.privacy_analytics.alert.button.decline" = "Ablehnen";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Datenschutzrichtlinie";
 
 // Change Username
 

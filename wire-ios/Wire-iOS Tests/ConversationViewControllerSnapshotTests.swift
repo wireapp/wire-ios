@@ -24,7 +24,7 @@ import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
-    private var mockMainCoordinator: MockMainCoordinator!
+    private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: ConversationViewController!
     private var mockConversation: ZMConversation!
     private var serviceUser: ZMUser!
@@ -39,9 +39,14 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
 
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
+
     override func setUp() {
         super.setUp()
-        mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
@@ -57,13 +62,19 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
+
+        let zClientViewController = ZClientViewController(
+            account: mockAccount,
+            userSession: userSession,
+            trackingManager: nil
+        )
 
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,
             userSession: userSession,
             mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable()

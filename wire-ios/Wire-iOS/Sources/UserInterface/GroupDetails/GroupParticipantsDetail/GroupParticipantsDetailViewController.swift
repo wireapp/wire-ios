@@ -19,11 +19,13 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
     let viewModel: GroupParticipantsDetailViewModel
@@ -45,9 +47,11 @@ final class GroupParticipantsDetailViewController: UIViewController {
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
@@ -198,7 +202,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         if !user.isSelfUser {
             navigationController?.pushViewController(viewController, animated: true)
@@ -215,7 +220,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
             userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         detailsViewController.delegate = self
@@ -234,8 +240,9 @@ extension GroupParticipantsDetailViewController: ViewControllerDismisser {
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
 
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }
