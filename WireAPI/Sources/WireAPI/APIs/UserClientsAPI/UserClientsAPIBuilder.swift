@@ -35,7 +35,7 @@ public struct UserClientsAPIBuilder {
     /// Make a versioned `UserClientsAPI`.
     ///
     /// - Parameter version: An api version.
-    /// - Returns: A versioned `UsersAPI`.
+    /// - Returns: A versioned `UserClientsAPI`.
 
     public func makeAPI(for version: APIVersion) -> any UserClientsAPI {
         switch version {
