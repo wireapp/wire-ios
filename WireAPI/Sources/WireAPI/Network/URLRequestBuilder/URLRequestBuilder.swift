@@ -48,13 +48,7 @@ struct URLRequestBuilder {
                 value: value
             )
 
-            if #available(iOS 16, *) {
-                $0.request.url?.append(queryItems: [queryItem])
-            } else if let url = $0.request.url {
-                var components = URLComponents(string: url.absoluteString)
-                components?.queryItems = [queryItem]
-                $0.request.url = components?.url
-            }
+            $0.request.url?.append(queryItems: [queryItem])
         }
     }
 
