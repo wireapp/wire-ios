@@ -28,7 +28,7 @@ extension ConversationLocalStore {
     public func addMLSMessage(
         _ encryptedMessage: String,
         mlsGroupID: MLSGroupID,
-        conversation: ZMConversation,
+        mlsConversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
         subconversation: String?,
@@ -43,7 +43,7 @@ extension ConversationLocalStore {
         
         await processMLSMessageDecryptionResults(
             decryptionResults,
-            conversation: conversation,
+            mlsConversation: mlsConversation,
             senderID: senderID,
             senderDomain: senderDomain,
             date: date
@@ -59,8 +59,7 @@ extension ConversationLocalStore {
         subconversation: String?
     ) async -> [MLSDecryptResult] {
         do {
-            let subconvType = subconversation != nil ?
-                SubgroupType(rawValue: subconversation!) : nil
+            let subconvType = subconversation != nil ? SubgroupType(rawValue: subconversation!) : nil
 
             let results = try await decryptionService.decrypt(
                 message: message,
@@ -89,7 +88,7 @@ extension ConversationLocalStore {
     
     private func processMLSMessageDecryptionResults(
         _ results: [MLSDecryptResult],
-        conversation: ZMConversation,
+        mlsConversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
         date: Date?
@@ -99,9 +98,9 @@ extension ConversationLocalStore {
             case .message(let decryptedData, let senderClientID):
                 let mlsDecryptedMessage = decryptedData.base64EncodedString()
                 
-                await createOrUpdateMLSMessage(
+                await createOrUpdateMessage(
                     mlsDecryptedMessage,
-                    conversation: conversation,
+                    conversation: mlsConversation,
                     senderID: senderID,
                     senderDomain: senderDomain,
                     senderClientID: senderClientID,
@@ -110,18 +109,20 @@ extension ConversationLocalStore {
 
             case .proposal(let commitDelay):
                 await commitPendingProposals(
-                    conversation: conversation,
+                    conversation: mlsConversation,
                     commitDelay: commitDelay,
                     date: date
                 )
             }
         }
         
-        context.processPendingChanges()
+        await context.perform { [context] in
+            context.processPendingChanges()
+        }
     }
     
-    private func createOrUpdateMLSMessage(
-        _ decryptedMessage: String,
+    private func createOrUpdateMessage(
+        _ message: String,
         conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
@@ -158,31 +159,15 @@ extension ConversationLocalStore {
                 attributes: logAttributes
             )
         }
-
-        guard let genericMessage = GenericMessage(withBase64String: decryptedMessage),
-              let content = genericMessage.content else {
-            
-            if let sender = try? await userLocalStore.fetchUser(
-                with: senderID,
-                domain: senderDomain
-            ) {
-                let systemMessage = SystemMessage(
-                    type: .invalid,
-                    sender: sender,
-                    timestamp: date ?? .now
-                )
-                
-                await addSystemMessage(
-                    systemMessage,
-                    to: conversation
-                )
-            }
-            
-            return WireLogger.eventProcessing.warn(
-                "Can't read protobuf, abort processing",
-                attributes: logAttributes
-            )
-        }
+        
+        guard let (genericMessage, content) = await getGenericMessage(
+            from: message,
+            senderID: senderID,
+            senderDomain: senderDomain,
+            date: date,
+            conversation: conversation,
+            logAttributes: logAttributes
+        ) else { return }
         
         WireLogger.eventProcessing.debug("Processing:\n\(genericMessage)")
         logAttributes[.nonce] = UUID(uuidString: genericMessage.messageID) ?? "<nil>"
@@ -196,17 +181,18 @@ extension ConversationLocalStore {
             )
         }
 
-        // Verify sender is part of conversation
-        await verifySender(
+        // Add sender to the conversation if needed
+        await addParticipantIfNeeded(
             senderID: senderID,
             senderDomain: senderDomain,
             in: conversation,
             date: date
         )
 
-        // Insert the message
-        await insertMLSMessage(
+        // Process the message and its content
+        await processMessageContent(
             genericMessage,
+            content: content,
             in: conversation,
             senderID: senderID,
             senderDomain: senderDomain,
@@ -216,7 +202,7 @@ extension ConversationLocalStore {
         )
     }
     
-    public func commitPendingProposals(
+    private func commitPendingProposals(
         conversation: ZMConversation,
         commitDelay: UInt64,
         date: Date?
@@ -230,8 +216,9 @@ extension ConversationLocalStore {
         mlsService.commitPendingProposalsIfNeeded()
     }
     
-    public func insertMLSMessage(
+    private func processMessageContent(
         _ message: GenericMessage,
+        content: GenericMessage.OneOf_Content,
         in conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
@@ -239,10 +226,6 @@ extension ConversationLocalStore {
         logAttributes: LogAttributes,
         date: Date?
     ) async {
-        guard let content = message.content else {
-            return
-        }
-        
         await context.perform { [self] in
             switch content {
             case .lastRead where conversation.isSelfConversation:
@@ -355,11 +338,11 @@ extension ConversationLocalStore {
                 
             case .calling, .availability:
                 
-                break // do not handle these cases
+                break // cases not handled
 
             default:
                 
-                addOtherContentMessage(
+                insertTextMessage(
                     message,
                     conversation: conversation,
                     senderID: senderID,
@@ -374,26 +357,63 @@ extension ConversationLocalStore {
         }
     }
     
-    /// Verifies that a sender of an update event is part of the conversation. If they are not,
-    /// it means that our local state is out of sync and we need to update the list of participants.
-    private func verifySender(
+    private func getGenericMessage(
+        from base64Message: String,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date?,
+        conversation: ZMConversation,
+        logAttributes: LogAttributes
+    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
+        guard let genericMessage = GenericMessage(withBase64String: base64Message),
+              let content = genericMessage.content else {
+            
+            if let sender = try? await userLocalStore.fetchUser(
+                with: senderID,
+                domain: senderDomain
+            ) {
+                let systemMessage = SystemMessage(
+                    type: .invalid,
+                    sender: sender,
+                    timestamp: date ?? .now
+                )
+                
+                await addSystemMessage(
+                    systemMessage,
+                    to: conversation
+                )
+            }
+            
+            WireLogger.eventProcessing.warn(
+                "Can't read protobuf, abort processing",
+                attributes: logAttributes
+            )
+            
+            return nil
+        }
+        
+        return (genericMessage, content)
+    }
+    
+    private func addParticipantIfNeeded(
         senderID: UUID,
         senderDomain: String?,
         in conversation: ZMConversation,
         date: Date?
     ) async {
-        
-       guard let sender = try? await userLocalStore.fetchUser(
+        // Verifies that a sender of an update event is part of the conversation. If they are not,
+        // it means that our local state is out of sync and we need to update the list of participants.
+        guard let sender = try? await userLocalStore.fetchUser(
             with: senderID,
             domain: senderDomain
-       ) else {
-           return
-       }
+        ) else {
+            return
+        }
         
         await context.perform {
             conversation.addParticipantAndSystemMessageIfMissing(
                 sender,
-                date: date ?? .now
+                date: date?.addingTimeInterval(-0.01) ?? .now
             )
         }
     }
@@ -436,7 +456,7 @@ extension ConversationLocalStore {
         return true
     }
     
-    private func addOtherContentMessage(
+    private func insertTextMessage(
         _ message: GenericMessage,
         conversation: ZMConversation,
         senderID: UUID,
@@ -467,8 +487,7 @@ extension ConversationLocalStore {
             withNonce: nonce,
             for: conversation,
             in: context,
-            prefetchResult: .none,
-            assumeMissingIfNotPrefetched: true
+            prefetchResult: .none
         ) as? ZMOTRMessage
         
         func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
@@ -487,7 +506,6 @@ extension ConversationLocalStore {
         
         if clientMessage == nil {
             isNewMessage = true
-            
             if messageClass is ZMClientMessage.Type {
                 clientMessage = ZMClientMessage(
                     nonce: nonce,
@@ -533,7 +551,6 @@ extension ConversationLocalStore {
                 senderID: senderID,
                 isNewMessage: isNewMessage
             )
-            
         }
         
         // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.
@@ -550,19 +567,34 @@ extension ConversationLocalStore {
             return
         }
         
-        clientMessage.visibleInConversation = conversation
-        
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
             domain: senderDomain,
             in: context
         )
         
+        clientMessage.visibleInConversation = conversation
         clientMessage.sender = sender
+        updateQuoteRelationships(message: clientMessage)
         conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
         clientMessage.unarchiveIfNeeded(conversation)
         clientMessage.updateCategoryCache()
         clientMessage.markAsSent()
+    }
+    
+    private func updateQuoteRelationships(message: ZMOTRMessage) {
+        if let clientMessage = message as? ZMClientMessage {
+            
+            guard let text = clientMessage.underlyingMessage?.textData,
+                  text.hasQuote else {
+                return
+            }
+            
+            clientMessage.establishRelationshipsForInsertedQuote(text.quote)
+
+        } else if message is ZMAssetClientMessage {
+            return // Asset messages don't support quotes at the moment
+        }
     }
     
     private func updateClientMessage(

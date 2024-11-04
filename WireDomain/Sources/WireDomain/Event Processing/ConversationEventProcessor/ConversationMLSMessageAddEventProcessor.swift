@@ -41,14 +41,14 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let subconversation = event.subconversation
         let date = event.timestamp
         
-        await repository.addMLSMessage(
-            message,
-            conversationID: conversationID.uuid,
-            conversationDomain: conversationID.domain,
-            senderID: senderID.uuid,
-            senderDomain: senderID.domain,
-            subconversation: subconversation,
-            date: date
+        await repository.addMessage(
+            .mls(encryptedMessage: message,
+                 subconversation: subconversation,
+                 conversationID: conversationID.uuid,
+                 conversationDomain: conversationID.domain,
+                 senderID: senderID.uuid,
+                 senderDomain: senderID.domain,
+                 date: date)
         )
         
     }

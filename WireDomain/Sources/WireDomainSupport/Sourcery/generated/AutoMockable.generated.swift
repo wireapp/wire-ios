@@ -392,21 +392,57 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(hasReadReceiptsEnabled, conversation)
     }
 
-    // MARK: - fetchMLSGroupID
+    // MARK: - conversationMLSGroupID
 
-    public var fetchMLSGroupIDFor_Invocations: [ZMConversation] = []
-    public var fetchMLSGroupIDFor_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
-    public var fetchMLSGroupIDFor_MockValue: MLSGroupID??
+    public var conversationMLSGroupID_Invocations: [ZMConversation] = []
+    public var conversationMLSGroupID_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
+    public var conversationMLSGroupID_MockValue: MLSGroupID??
 
-    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
-        fetchMLSGroupIDFor_Invocations.append(conversation)
+    public func conversationMLSGroupID(_ conversation: ZMConversation) async -> MLSGroupID? {
+        conversationMLSGroupID_Invocations.append(conversation)
 
-        if let mock = fetchMLSGroupIDFor_MockMethod {
+        if let mock = conversationMLSGroupID_MockMethod {
             return await mock(conversation)
-        } else if let mock = fetchMLSGroupIDFor_MockValue {
+        } else if let mock = conversationMLSGroupID_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchMLSGroupIDFor`")
+            fatalError("no mock for `conversationMLSGroupID`")
+        }
+    }
+
+    // MARK: - isConversationForcedReadOnly
+
+    public var isConversationForcedReadOnly_Invocations: [ZMConversation] = []
+    public var isConversationForcedReadOnly_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isConversationForcedReadOnly_MockValue: Bool?
+
+    public func isConversationForcedReadOnly(_ conversation: ZMConversation) async -> Bool {
+        isConversationForcedReadOnly_Invocations.append(conversation)
+
+        if let mock = isConversationForcedReadOnly_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isConversationForcedReadOnly_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isConversationForcedReadOnly`")
+        }
+    }
+
+    // MARK: - isConversationMLSReady
+
+    public var isConversationMLSReady_Invocations: [ZMConversation] = []
+    public var isConversationMLSReady_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isConversationMLSReady_MockValue: Bool?
+
+    public func isConversationMLSReady(_ conversation: ZMConversation) async -> Bool {
+        isConversationMLSReady_Invocations.append(conversation)
+
+        if let mock = isConversationMLSReady_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isConversationMLSReady_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isConversationMLSReady`")
         }
     }
 
@@ -423,6 +459,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(conversation, users, initiatingUser)
+    }
+
+    // MARK: - addMLSMessage
+
+    public var addMLSMessageMlsGroupIDMlsConversationSenderIDSenderDomainSubconversationDate_Invocations: [(encryptedMessage: String, mlsGroupID: MLSGroupID, mlsConversation: ZMConversation, senderID: UUID, senderDomain: String, subconversation: String?, date: Date?)] = []
+    public var addMLSMessageMlsGroupIDMlsConversationSenderIDSenderDomainSubconversationDate_MockMethod: ((String, MLSGroupID, ZMConversation, UUID, String, String?, Date?) async -> Void)?
+
+    public func addMLSMessage(_ encryptedMessage: String, mlsGroupID: MLSGroupID, mlsConversation: ZMConversation, senderID: UUID, senderDomain: String, subconversation: String?, date: Date?) async {
+        addMLSMessageMlsGroupIDMlsConversationSenderIDSenderDomainSubconversationDate_Invocations.append((encryptedMessage: encryptedMessage, mlsGroupID: mlsGroupID, mlsConversation: mlsConversation, senderID: senderID, senderDomain: senderDomain, subconversation: subconversation, date: date))
+
+        guard let mock = addMLSMessageMlsGroupIDMlsConversationSenderIDSenderDomainSubconversationDate_MockMethod else {
+            fatalError("no mock for `addMLSMessageMlsGroupIDMlsConversationSenderIDSenderDomainSubconversationDate`")
+        }
+
+        await mock(encryptedMessage, mlsGroupID, mlsConversation, senderID, senderDomain, subconversation, date)
     }
 
 }
@@ -614,6 +665,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         await mock(message, conversation)
+    }
+
+    // MARK: - addMessage
+
+    public var addMessage_Invocations: [ConversationRepository.MessageType] = []
+    public var addMessage_MockMethod: ((ConversationRepository.MessageType) async -> Void)?
+
+    public func addMessage(_ messageType: ConversationRepository.MessageType) async {
+        addMessage_Invocations.append(messageType)
+
+        guard let mock = addMessage_MockMethod else {
+            fatalError("no mock for `addMessage`")
+        }
+
+        await mock(messageType)
     }
 
 }

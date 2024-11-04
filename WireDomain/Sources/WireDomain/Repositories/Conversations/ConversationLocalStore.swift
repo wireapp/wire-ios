@@ -206,7 +206,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - Parameters:
     ///     - encryptedMessage: The encrypted MLS message that was received.
     ///     - mlsGroupID: The MLS group ID.
-    ///     - conversation: The MLS conversation.
+    ///     - mlsConversation: The MLS conversation.
     ///     - senderID: The ID of the user who sent the message.
     ///     - senderDomain: The domain of the user who sent the message.
     ///     - subconversation: The subconversation name if any.
@@ -215,7 +215,7 @@ public protocol ConversationLocalStoreProtocol {
     func addMLSMessage(
         _ encryptedMessage: String,
         mlsGroupID: MLSGroupID,
-        conversation: ZMConversation,
+        mlsConversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
         subconversation: String?,

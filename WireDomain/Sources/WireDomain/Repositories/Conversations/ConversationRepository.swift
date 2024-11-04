@@ -122,21 +122,17 @@ public protocol ConversationRepositoryProtocol {
     /// - parameters:
     ///     - message: The system message to add.
     ///     - conversation: The conversation to add the system message to.
-
+    // TODO: [WPB-11839] move to MessageRepository
     func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
 
+    /// Adds a message to a given conversation.
+    /// - parameter messageType: The type of message to add (MLS or Proteus)
     // TODO: [WPB-11839] move to MessageRepository
-    func addMLSMessage(
-        _ message: String,
-        conversationID: UUID,
-        conversationDomain: String,
-        senderID: UUID,
-        senderDomain: String,
-        subconversation: String?,
-        date: Date?
+    func addMessage(
+        _ messageType: ConversationRepository.MessageType
     ) async
 }
 
@@ -145,6 +141,20 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public struct BackendInfo {
         let domain: String
         let isFederationEnabled: Bool
+    }
+    
+    public enum MessageType {
+        case mls(
+            encryptedMessage: String,
+            subconversation: String?,
+            conversationID: UUID,
+            conversationDomain: String,
+            senderID: UUID,
+            senderDomain: String,
+            date: Date?
+        )
+        
+        case proteus // TODO: [WPB-10174]
     }
 
     // MARK: - Properties
@@ -386,67 +396,65 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
-    public func addMLSMessage(
-        _ message: String,
-        conversationID: UUID,
-        conversationDomain: String,
-        senderID: UUID,
-        senderDomain: String,
-        subconversation: String?,
-        date: Date?
+    public func addMessage(
+        _ messageType: MessageType
     ) async {
-        
-        guard let mlsData = await prepareForMLSMessageDecryption(
-            conversationID: conversationID,
-            conversationDomain: conversationDomain
-        ) else { return }
-        
-        await conversationsLocalStore.addMLSMessage(
-            message,
-            mlsGroupID: mlsData.mlsGroupID,
-            conversation: mlsData.conversation,
-            senderID: senderID,
-            senderDomain: senderDomain,
-            subconversation: subconversation,
-            date: date
-        )
+        switch messageType {
+        case .mls(let encryptedMessage, let subconversation, let conversationID, let conversationDomain, let senderID, let senderDomain, let date):
 
+            await addMLSClientMessage(
+                encryptedMessage: encryptedMessage,
+                subconversation: subconversation,
+                conversation: (conversationID, conversationDomain),
+                sender: (senderID, senderDomain),
+                date: date
+            )
+            
+        case .proteus:
+            // TODO: [WPB-10174]
+            break
+        }
     }
 
     // MARK: - Private
     
-    private func prepareForMLSMessageDecryption(
-        conversationID: UUID,
-        conversationDomain: String
-    ) async -> (conversation: ZMConversation, mlsGroupID: MLSGroupID)? {
+    private func addMLSClientMessage(
+        encryptedMessage: String,
+        subconversation: String?,
+        conversation: (id: UUID, domain: String),
+        sender: (id: UUID, domain: String),
+        date: Date?
+    ) async {
         guard let conversation = await fetchConversation(
-            with: conversationID,
-            domain: conversationDomain
+            with: conversation.id,
+            domain: conversation.domain
         ) else {
-            WireLogger.mls.error(
-                "failed to decrypt mls message: conversation not found in db"
+            return WireLogger.mls.error(
+                "failed to add mls message: conversation not found in db"
             )
-            
-            return nil
-        }
-
-        guard let mlsGroupID = await conversationsLocalStore.conversationMLSGroupID(conversation) else {
-            WireLogger.mls.error(
-                "failed to decrypt mls message: missing MLS group ID"
-            )
-            
-            return nil
-        }
-
-        guard await conversationsLocalStore.isConversationMLSReady(conversation) else {
-            WireLogger.mls.warn(
-                "failed to decrypt mls message: conversation is not ready"
-            )
-            
-            return nil
         }
         
-        return (conversation, mlsGroupID)
+        guard let mlsGroupID = await conversationsLocalStore.conversationMLSGroupID(conversation) else {
+            return WireLogger.mls.error(
+                "failed to add mls message: missing MLS group ID"
+            )
+        }
+        
+        guard await conversationsLocalStore.isConversationMLSReady(conversation) else {
+            return WireLogger.mls.warn(
+                "failed to add mls message: conversation is not ready"
+            )
+        }
+        
+        await conversationsLocalStore.addMLSMessage(
+            encryptedMessage,
+            mlsGroupID: mlsGroupID,
+            mlsConversation: conversation,
+            senderID: sender.id,
+            senderDomain: sender.domain,
+            subconversation: subconversation,
+            date: date
+        )
     }
 
     private func getRemovedUsers(from userIDs: Set<UserID>) async -> [WireDataModel.ZMUser] {
