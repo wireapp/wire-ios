@@ -167,6 +167,7 @@ final class ConnectRequestsViewController: UIViewController,
                 guard self?.connectionRequests.isEmpty == true else { return }
 
                 ZClientViewController.shared?.hideIncomingContactRequests() // TODO: [WPB-11994] test this flow manually
+
                 if let oneToOneConversation = user.oneToOneConversation {
                     ZClientViewController.shared?.select(conversation: oneToOneConversation, focusOnView: true, animated: true)
                 }

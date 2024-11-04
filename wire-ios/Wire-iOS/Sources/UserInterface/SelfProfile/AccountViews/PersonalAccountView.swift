@@ -48,9 +48,7 @@ final class PersonalAccountView: BaseAccountView {
         self.shouldGroupAccessibilityChildren = true
         self.accessibilityIdentifier = "personal team"
 
-        selectionView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
-        }
+        selectionView.layer.masksToBounds = true
 
         if let userSession = ZMUserSession.shared() {
             conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: userSession), userSession: userSession)
@@ -62,6 +60,11 @@ final class PersonalAccountView: BaseAccountView {
         userImageView.fitIn(view: imageViewContainer, inset: 2)
 
         update()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        selectionView.layer.cornerRadius = selectionView.bounds.width / 2
     }
 
     @available(*, unavailable)
