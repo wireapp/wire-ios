@@ -5,7 +5,7 @@
       "shouldTranslate" : false
     },
     "folderPicker.close.label" : {
-
+      "shouldTranslate" : false
     },
     "folderPicker.title" : {
       "comment" : "Title displayed in the navigation bar of the folder picker view",
@@ -19,7 +19,7 @@
       }
     },
     "Show Picker" : {
-
+      "shouldTranslate" : false
     }
   },
   "version" : "1.0"
