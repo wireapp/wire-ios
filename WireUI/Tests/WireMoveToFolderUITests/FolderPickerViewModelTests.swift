@@ -26,14 +26,14 @@ final class FolderPickerViewModelTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: FolderPickerViewModel!
-    private var mockDirectory: MockFolderDirectoryType!
+    private var mockDirectory: MockFolderDirectoryTypeProtocol!
     private var mockSelectionUseCase: MockMoveConversationToFolderUseCaseType!
 
     // MARK: - setUp
 
     @MainActor
     override func setUp() async throws {
-        mockDirectory = MockFolderDirectoryType()
+        mockDirectory = MockFolderDirectoryTypeProtocol()
         mockSelectionUseCase = MockMoveConversationToFolderUseCaseType()
     }
 
@@ -126,7 +126,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     private func createSUT(
         conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil),
-        directory: MockFolderDirectoryType? = nil,
+        directory: MockFolderDirectoryTypeProtocol? = nil,
         selectionUseCase: MockMoveConversationToFolderUseCaseType? = nil
     ) {
         sut = FolderPickerViewModel(

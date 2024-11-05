@@ -23,12 +23,12 @@ public final class FolderPickerViewModel: ObservableObject {
     @Published private(set) var folders: [Folder] = []
 
     private let conversation: Conversation
-    private let directory: any FolderDirectoryType
+    private let directory: any FolderDirectoryTypeProtocol
     private let selectionUseCase: any MoveConversationToFolderUseCaseType
 
     public init(
         conversation: Conversation,
-        directory: any FolderDirectoryType,
+        directory: any FolderDirectoryTypeProtocol,
         selectionUseCase: any MoveConversationToFolderUseCaseType
     ) {
         self.conversation = conversation

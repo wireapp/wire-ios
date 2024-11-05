@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// Protocol for accessing folders in the system
-public protocol FolderDirectoryType {
+public protocol FolderDirectoryTypeProtocol {
 
     /// Returns all available folders in the system
     var allFolders: [Folder] { get }
