@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Client device for user other than self.
 
-/// An event where legalhold was enabled for a user.
+public struct OtherUserClient: Equatable, Sendable {
 
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
+    /// The unique id of the client.
 
-    /// The user id for whom legalhold was enabled.
+    public let id: String
 
-    public let userID: UUID
+    /// The device class of the client.
+
+    public let deviceClass: DeviceClass?
 
 }
