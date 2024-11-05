@@ -103,7 +103,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         // switch to the conversation list tab
         tabBarController.selectedContent = .conversations
-        await Task.yield() // without this line subsequent navigation controller push animations don't work // TODO: still true?
+        await Task.yield() // without this line subsequent navigation controller push animations don't work
 
         switch mainSplitViewState {
 
@@ -209,7 +209,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             )
             if mainSplitViewState == .collapsed {
                 tabBarController.selectedContent = .conversations
-                await Task.yield() // without this line subsequent navigation controller push animations don't work // TODO: still true?
+                await Task.yield() // without this line subsequent navigation controller push animations don't work
                 tabBarController.setConversationUI(conversationUI, animated: true)
             } else {
                 splitViewController.conversationUI = conversationUI
