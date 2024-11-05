@@ -1040,6 +1040,111 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
 }
 
+public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfClients
+
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
+
+        if let error = pullSelfClients_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - fetchOrCreateClient
+
+    public var fetchOrCreateClientWith_Invocations: [String] = []
+    public var fetchOrCreateClientWith_MockError: Error?
+    public var fetchOrCreateClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
+
+    public func fetchOrCreateClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        fetchOrCreateClientWith_Invocations.append(id)
+
+        if let error = fetchOrCreateClientWith_MockError {
+            throw error
+        }
+
+        if let mock = fetchOrCreateClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateClientWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateClientWith`")
+        }
+    }
+
+    // MARK: - updateClient
+
+    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
+    public var updateClientWithFromIsNewClient_MockError: Error?
+    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.SelfUserClient, Bool) async throws -> Void)?
+
+    public func updateClient(with id: String, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
+        updateClientWithFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateClientWithFromIsNewClient_MockError {
+            throw error
+        }
+
+        guard let mock = updateClientWithFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateClientWithFromIsNewClient`")
+        }
+
+        try await mock(id, remoteClient, isNewClient)
+    }
+
+    // MARK: - deleteClient
+
+    public var deleteClientWith_Invocations: [String] = []
+    public var deleteClientWith_MockMethod: ((String) async -> Void)?
+
+    public func deleteClient(with id: String) async {
+        deleteClientWith_Invocations.append(id)
+
+        guard let mock = deleteClientWith_MockMethod else {
+            fatalError("no mock for `deleteClientWith`")
+        }
+
+        await mock(id)
+    }
+
+    // MARK: - allSelfUserClientsAreActiveMLSClients
+
+    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
+    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
+    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
+
+        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
+            return await mock()
+        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
+        }
+    }
+
+}
+
 public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -1141,11 +1246,11 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - updateUserClient
 
-    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
     public var updateUserClientFromIsNewClient_MockError: Error?
-    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
+    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.SelfUserClient, Bool) async throws -> Void)?
 
-    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
         updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
 
         if let error = updateUserClientFromIsNewClient_MockError {
@@ -1310,24 +1415,6 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(event)
     }
 
-    // MARK: - allSelfUserClientsAreActiveMLSClients
-
-    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
-    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
-    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
-
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
-
-        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
-            return await mock()
-        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
-        }
-    }
-
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
@@ -1486,44 +1573,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         mock()
     }
 
-    // MARK: - fetchOrCreateUserClient
-
-    public var fetchOrCreateUserClientWith_Invocations: [String] = []
-    public var fetchOrCreateUserClientWith_MockMethod: ((String) async -> (client: WireDataModel.UserClient, isNew: Bool))?
-    public var fetchOrCreateUserClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
-
-    public func fetchOrCreateUserClient(with id: String) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        fetchOrCreateUserClientWith_Invocations.append(id)
-
-        if let mock = fetchOrCreateUserClientWith_MockMethod {
-            return await mock(id)
-        } else if let mock = fetchOrCreateUserClientWith_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchOrCreateUserClientWith`")
-        }
-    }
-
-    // MARK: - updateUserClient
-
-    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
-    public var updateUserClientFromIsNewClient_MockError: Error?
-    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
-
-    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
-        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
-
-        if let error = updateUserClientFromIsNewClient_MockError {
-            throw error
-        }
-
-        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
-            fatalError("no mock for `updateUserClientFromIsNewClient`")
-        }
-
-        try await mock(localClient, remoteClient, isNewClient)
-    }
-
     // MARK: - addLegalHoldRequest
 
     public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
@@ -1629,24 +1678,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `isSelfUserIdDomain`")
-        }
-    }
-
-    // MARK: - allSelfUserClientsAreActiveMLSClients
-
-    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
-    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
-    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
-
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
-
-        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
-            return await mock()
-        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
         }
     }
 

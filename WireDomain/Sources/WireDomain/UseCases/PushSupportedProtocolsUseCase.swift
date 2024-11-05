@@ -32,6 +32,7 @@ public struct PushSupportedProtocolsUseCase {
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
@@ -148,7 +149,7 @@ public struct PushSupportedProtocolsUseCase {
     }
 
     private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        await userRepository.allSelfUserClientsAreActiveMLSClients()
+        await userClientsRepository.allSelfUserClientsAreActiveMLSClients()
     }
 
 }
