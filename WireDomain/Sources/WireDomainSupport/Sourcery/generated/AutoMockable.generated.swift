@@ -272,6 +272,42 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(message, conversation)
     }
 
+    // MARK: - fetchOrCreateRole
+
+    public var fetchOrCreateRoleIn_Invocations: [(role: String, conversation: ZMConversation)] = []
+    public var fetchOrCreateRoleIn_MockMethod: ((String, ZMConversation) async -> Role)?
+    public var fetchOrCreateRoleIn_MockValue: Role?
+
+    public func fetchOrCreateRole(_ role: String, in conversation: ZMConversation) async -> Role {
+        fetchOrCreateRoleIn_Invocations.append((role: role, conversation: conversation))
+
+        if let mock = fetchOrCreateRoleIn_MockMethod {
+            return await mock(role, conversation)
+        } else if let mock = fetchOrCreateRoleIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateRoleIn`")
+        }
+    }
+
+    // MARK: - localParticipants
+
+    public var localParticipantsIn_Invocations: [ZMConversation] = []
+    public var localParticipantsIn_MockMethod: ((ZMConversation) async -> Set<ZMUser>)?
+    public var localParticipantsIn_MockValue: Set<ZMUser>?
+
+    public func localParticipants(in conversation: ZMConversation) async -> Set<ZMUser> {
+        localParticipantsIn_Invocations.append(conversation)
+
+        if let mock = localParticipantsIn_MockMethod {
+            return await mock(conversation)
+        } else if let mock = localParticipantsIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsIn`")
+        }
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {

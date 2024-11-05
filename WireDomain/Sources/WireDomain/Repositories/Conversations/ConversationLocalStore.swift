@@ -98,6 +98,25 @@ public protocol ConversationLocalStoreProtocol {
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
+
+    /// Fetches or creates a role locally.
+    /// - Parameters:
+    ///     - role: The role name to fetch or create.
+    ///     - conversation: The related conversation.
+    /// - Returns: A role created or fetched locally.
+
+    func fetchOrCreateRole(
+        _ role: String,
+        in conversation: ZMConversation
+    ) async -> Role
+
+    /// Fetches local participants from a conversation.
+    /// - parameter conversation: The related conversation.
+    /// - returns: A list of participants.
+
+    func localParticipants(
+        in conversation: ZMConversation
+    ) async -> Set<ZMUser>
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -299,6 +318,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             systemMessage.domains = message.domains
 
             conversation.append(systemMessage)
+        }
+    }
+
+    public func fetchOrCreateRole(
+        _ role: String,
+        in conversation: ZMConversation
+    ) async -> Role {
+        await context.perform { [context] in
+            Role.fetchOrCreateRole(
+                with: role,
+                teamOrConversation: TeamOrConversation.matching(conversation),
+                in: context
+            )
+        }
+    }
+
+    public func localParticipants(
+        in conversation: ZMConversation
+    ) async -> Set<ZMUser> {
+        await context.perform {
+            conversation.localParticipants
         }
     }
 

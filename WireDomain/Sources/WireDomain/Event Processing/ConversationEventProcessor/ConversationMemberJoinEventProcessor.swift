@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 import WireDataModel
 import WireSystem
@@ -35,8 +34,8 @@ protocol ConversationMemberJoinEventProcessorProtocol {
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
 
-    let context: NSManagedObjectContext
     let conversationRepository: any ConversationRepositoryProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
     let userRepository: any UserRepositoryProtocol
 
     func processEvent(_ event: ConversationMemberJoinEvent) async throws {
@@ -60,7 +59,10 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
 
         guard let conversation else {
             return WireLogger.eventProcessing.error(
-                "Member join update missing conversation, aborting..."
+                "Member join update missing conversation, aborting... ",
+                attributes: [
+                    .conversationId: id.safeForLoggingDescription
+                ]
             )
         }
 
@@ -78,15 +80,15 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
         senderID: UserID,
         timestamp: Date
     ) async throws {
-        let usersAndRoles = members.compactMap {
-            fetchUserAndRole(from: $0, for: conversation)
-        }
+        let usersAndRoles = await getUsersAndRoles(
+            members: members,
+            conversation: conversation
+        )
 
         let users = Set(usersAndRoles.map(\.user))
-        let existingUsers = await context.perform {
-            conversation.localParticipants
-        }
-
+        let existingUsers = await conversationLocalStore.localParticipants(
+            in: conversation
+        )
         let newUsers = users.subtracting(existingUsers)
 
         if !newUsers.isEmpty, conversation.conversationType == .group {
@@ -111,10 +113,33 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
         )
     }
 
+    private func getUsersAndRoles(
+        members: [WireAPI.Conversation.Member],
+        conversation: ZMConversation
+    ) async -> [(user: ZMUser, role: Role?)] {
+        typealias UserAndRole = (user: ZMUser, role: Role?)
+
+        return await withTaskGroup(of: UserAndRole?.self) { taskGroup in
+            for member in members {
+                taskGroup.addTask {
+                    await fetchUserAndRole(from: member, for: conversation)
+                }
+            }
+
+            var usersAndRoles: [UserAndRole?] = []
+
+            for await userAndRole in taskGroup {
+                usersAndRoles.append(userAndRole)
+            }
+
+            return usersAndRoles.compactMap { $0 }
+        }
+    }
+
     private func fetchUserAndRole(
         from member: WireAPI.Conversation.Member,
         for conversation: ZMConversation
-    ) -> (user: ZMUser, role: Role?)? {
+    ) async -> (user: ZMUser, role: Role?)? {
         guard let userID = member.id ?? member.qualifiedID?.uuid else {
             return nil
         }
@@ -124,15 +149,16 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
             domain: member.qualifiedID?.domain
         )
 
-        let role = member.conversationRole.map {
-            Role.fetchOrCreateRole(
-                with: $0,
-                teamOrConversation: TeamOrConversation.matching(conversation),
-                in: context
+        if let conversationRole = member.conversationRole {
+            let role = await conversationLocalStore.fetchOrCreateRole(
+                conversationRole,
+                in: conversation
             )
+
+            return (user, role)
         }
 
-        return (user, role)
+        return (user, nil)
     }
 
 }

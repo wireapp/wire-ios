@@ -31,6 +31,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var conversationRepository: MockConversationRepositoryProtocol!
     private var userRepository: MockUserRepositoryProtocol!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -43,9 +44,11 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationRepository = MockConversationRepositoryProtocol()
         userRepository = MockUserRepositoryProtocol()
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+
         sut = ConversationMemberJoinEventProcessor(
-            context: context,
             conversationRepository: conversationRepository,
+            conversationLocalStore: conversationLocalStore,
             userRepository: userRepository
         )
     }
@@ -59,6 +62,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
         coreDataStackHelper = nil
         conversationRepository = nil
         userRepository = nil
+        conversationLocalStore = nil
     }
 
     // MARK: - Tests
@@ -66,7 +70,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Adds_Participants_To_Conversation() async throws {
         // Mock
 
-        let (conversation, sender, addedUser) = await context.perform { [self] in
+        let (conversation, sender, addedUser, role) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID.uuid,
                 domain: Scaffolding.conversationID.domain,
@@ -83,7 +87,9 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
                 in: context
             )
 
-            return (conversation, sender, addedUser)
+            let role = modelHelper.createRole(in: context)
+
+            return (conversation, sender, addedUser, role)
         }
 
         conversationRepository.fetchConversationWithDomain_MockMethod = { _, _ in conversation }
@@ -91,12 +97,21 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
         conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
         userRepository.fetchUserWithDomain_MockValue = sender
         userRepository.fetchOrCreateUserWithDomain_MockValue = addedUser
+        conversationLocalStore.localParticipantsIn_MockValue = Set([sender])
+        conversationLocalStore.fetchOrCreateRoleIn_MockValue = role
 
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
+
+        XCTAssertEqual(conversationRepository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
+        XCTAssertEqual(userRepository.fetchUserWithDomain_Invocations.count, 1)
+        XCTAssertEqual(userRepository.fetchOrCreateUserWithDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.localParticipantsIn_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.fetchOrCreateRoleIn_Invocations.count, 1)
 
         await context.perform {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
@@ -105,11 +120,8 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-
         static let conversationID = ConversationID(uuid: UUID(), domain: domain)
-
         static let memberID = WireAPI.QualifiedID(uuid: UUID(), domain: domain)
-
         static let senderID = UserID(uuid: UUID(), domain: domain)
 
         static let member = Conversation.Member(

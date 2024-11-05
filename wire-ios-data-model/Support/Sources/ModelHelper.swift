@@ -332,4 +332,17 @@ public struct ModelHelper {
         return conversation
     }
 
+    // MARK: Role
+
+    @discardableResult
+    public func createRole(
+        _ name: String = "member",
+        in context: NSManagedObjectContext
+    ) -> Role {
+        let role = Role.insertNewObject(in: context)
+        role.name = name
+
+        return role
+    }
+
 }
