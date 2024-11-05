@@ -164,8 +164,10 @@ private struct FolderPickerPreview: View {
     let options: [FolderPickerOption]
 
     var body: some View {
-        Button("Show Picker") {
+        Button {
             isPresented.toggle()
+        } label: {
+            Text(verbatim: "Open Folder Picker")
         }
         .sheet(isPresented: $isPresented) {
             NavigationStack {
