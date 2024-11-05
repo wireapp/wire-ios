@@ -142,7 +142,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             in: context
         ) else {
             return WireLogger.userClient.error(
-                "Failed to find existing client with id: \(id.obfuscated())"
+                "Failed to find existing client with id: \(id.redactedAndTruncated())"
             )
         }
 
@@ -203,7 +203,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             in: context
         ) else {
             return WireLogger.userClient.error(
-                "Failed to find existing client with id: \(id.obfuscated())"
+                "Failed to find existing client with id: \(id.redactedAndTruncated())"
             )
         }
 
