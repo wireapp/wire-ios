@@ -275,6 +275,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(user, removalDate)
     }
 
+    // MARK: - updateAccesses
+
+    public var updateAccessesForAccessModesAccessRoles_Invocations: [(conversation: ZMConversation, accessModes: [String], accessRoles: [String])] = []
+    public var updateAccessesForAccessModesAccessRoles_MockMethod: ((ZMConversation, [String], [String]) async -> Void)?
+
+    public func updateAccesses(for conversation: ZMConversation, accessModes: [String], accessRoles: [String]) async {
+        updateAccessesForAccessModesAccessRoles_Invocations.append((conversation: conversation, accessModes: accessModes, accessRoles: accessRoles))
+
+        guard let mock = updateAccessesForAccessModesAccessRoles_MockMethod else {
+            fatalError("no mock for `updateAccessesForAccessModesAccessRoles`")
+        }
+
+        await mock(conversation, accessModes, accessRoles)
+    }
+
     // MARK: - getParticipants
 
     public var getParticipantsFrom_Invocations: [ZMConversation] = []
@@ -436,39 +451,39 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - pullConversation
 
-    public var pullConversationWith_Invocations: [ConversationID] = []
-    public var pullConversationWith_MockError: Error?
-    public var pullConversationWith_MockMethod: ((ConversationID) async throws -> Void)?
+    public var pullConversationIdDomain_Invocations: [(id: UUID, domain: String)] = []
+    public var pullConversationIdDomain_MockError: Error?
+    public var pullConversationIdDomain_MockMethod: ((UUID, String) async throws -> Void)?
 
-    public func pullConversation(with id: ConversationID) async throws {
-        pullConversationWith_Invocations.append(id)
+    public func pullConversation(id: UUID, domain: String) async throws {
+        pullConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let error = pullConversationWith_MockError {
+        if let error = pullConversationIdDomain_MockError {
             throw error
         }
 
-        guard let mock = pullConversationWith_MockMethod else {
-            fatalError("no mock for `pullConversationWith`")
+        guard let mock = pullConversationIdDomain_MockMethod else {
+            fatalError("no mock for `pullConversationIdDomain`")
         }
 
-        try await mock(id)
+        try await mock(id, domain)
     }
 
     // MARK: - fetchConversation
 
-    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
-    public var fetchConversationWithDomain_MockValue: ZMConversation??
+    public var fetchConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationIdDomain_MockValue: ZMConversation??
 
-    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
-        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchConversation(id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchConversationWithDomain_MockMethod {
+        if let mock = fetchConversationIdDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchConversationWithDomain_MockValue {
+        } else if let mock = fetchConversationIdDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchConversationWithDomain`")
+            fatalError("no mock for `fetchConversationIdDomain`")
         }
     }
 
@@ -489,19 +504,19 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - fetchOrCreateConversation
 
-    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
-    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+    public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationIdDomain_MockValue: ZMConversation?
 
-    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
-        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchOrCreateConversation(id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+        if let mock = fetchOrCreateConversationIdDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+        } else if let mock = fetchOrCreateConversationIdDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+            fatalError("no mock for `fetchOrCreateConversationIdDomain`")
         }
     }
 
@@ -527,42 +542,42 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - pullMLSOneToOneConversation
 
-    public var pullMLSOneToOneConversationUserIDDomain_Invocations: [(userID: String, domain: String)] = []
-    public var pullMLSOneToOneConversationUserIDDomain_MockError: Error?
-    public var pullMLSOneToOneConversationUserIDDomain_MockMethod: ((String, String) async throws -> String)?
-    public var pullMLSOneToOneConversationUserIDDomain_MockValue: String?
+    public var pullMLSOneToOneConversationUserIDUserDomain_Invocations: [(userID: String, userDomain: String)] = []
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockError: Error?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockMethod: ((String, String) async throws -> String)?
+    public var pullMLSOneToOneConversationUserIDUserDomain_MockValue: String?
 
-    public func pullMLSOneToOneConversation(userID: String, domain: String) async throws -> String {
-        pullMLSOneToOneConversationUserIDDomain_Invocations.append((userID: userID, domain: domain))
+    public func pullMLSOneToOneConversation(userID: String, userDomain: String) async throws -> String {
+        pullMLSOneToOneConversationUserIDUserDomain_Invocations.append((userID: userID, userDomain: userDomain))
 
-        if let error = pullMLSOneToOneConversationUserIDDomain_MockError {
+        if let error = pullMLSOneToOneConversationUserIDUserDomain_MockError {
             throw error
         }
 
-        if let mock = pullMLSOneToOneConversationUserIDDomain_MockMethod {
-            return try await mock(userID, domain)
-        } else if let mock = pullMLSOneToOneConversationUserIDDomain_MockValue {
+        if let mock = pullMLSOneToOneConversationUserIDUserDomain_MockMethod {
+            return try await mock(userID, userDomain)
+        } else if let mock = pullMLSOneToOneConversationUserIDUserDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `pullMLSOneToOneConversationUserIDDomain`")
+            fatalError("no mock for `pullMLSOneToOneConversationUserIDUserDomain`")
         }
     }
 
     // MARK: - fetchMLSConversation
 
-    public var fetchMLSConversationWith_Invocations: [String] = []
-    public var fetchMLSConversationWith_MockMethod: ((String) async -> ZMConversation?)?
-    public var fetchMLSConversationWith_MockValue: ZMConversation??
+    public var fetchMLSConversationGroupID_Invocations: [String] = []
+    public var fetchMLSConversationGroupID_MockMethod: ((String) async -> ZMConversation?)?
+    public var fetchMLSConversationGroupID_MockValue: ZMConversation??
 
-    public func fetchMLSConversation(with groupID: String) async -> ZMConversation? {
-        fetchMLSConversationWith_Invocations.append(groupID)
+    public func fetchMLSConversation(groupID: String) async -> ZMConversation? {
+        fetchMLSConversationGroupID_Invocations.append(groupID)
 
-        if let mock = fetchMLSConversationWith_MockMethod {
+        if let mock = fetchMLSConversationGroupID_MockMethod {
             return await mock(groupID)
-        } else if let mock = fetchMLSConversationWith_MockValue {
+        } else if let mock = fetchMLSConversationGroupID_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchMLSConversationWith`")
+            fatalError("no mock for `fetchMLSConversationGroupID`")
         }
     }
 
@@ -1040,6 +1055,111 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
 }
 
+public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullSelfClients
+
+    public var pullSelfClients_Invocations: [Void] = []
+    public var pullSelfClients_MockError: Error?
+    public var pullSelfClients_MockMethod: (() async throws -> Void)?
+
+    public func pullSelfClients() async throws {
+        pullSelfClients_Invocations.append(())
+
+        if let error = pullSelfClients_MockError {
+            throw error
+        }
+
+        guard let mock = pullSelfClients_MockMethod else {
+            fatalError("no mock for `pullSelfClients`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - fetchOrCreateClient
+
+    public var fetchOrCreateClientWith_Invocations: [String] = []
+    public var fetchOrCreateClientWith_MockError: Error?
+    public var fetchOrCreateClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
+
+    public func fetchOrCreateClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        fetchOrCreateClientWith_Invocations.append(id)
+
+        if let error = fetchOrCreateClientWith_MockError {
+            throw error
+        }
+
+        if let mock = fetchOrCreateClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateClientWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateClientWith`")
+        }
+    }
+
+    // MARK: - updateClient
+
+    public var updateClientWithFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
+    public var updateClientWithFromIsNewClient_MockError: Error?
+    public var updateClientWithFromIsNewClient_MockMethod: ((String, WireAPI.SelfUserClient, Bool) async throws -> Void)?
+
+    public func updateClient(with id: String, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
+        updateClientWithFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateClientWithFromIsNewClient_MockError {
+            throw error
+        }
+
+        guard let mock = updateClientWithFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateClientWithFromIsNewClient`")
+        }
+
+        try await mock(id, remoteClient, isNewClient)
+    }
+
+    // MARK: - deleteClient
+
+    public var deleteClientWith_Invocations: [String] = []
+    public var deleteClientWith_MockMethod: ((String) async -> Void)?
+
+    public func deleteClient(with id: String) async {
+        deleteClientWith_Invocations.append(id)
+
+        guard let mock = deleteClientWith_MockMethod else {
+            fatalError("no mock for `deleteClientWith`")
+        }
+
+        await mock(id)
+    }
+
+    // MARK: - allSelfUserClientsAreActiveMLSClients
+
+    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
+    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
+    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
+
+        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
+            return await mock()
+        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
+        }
+    }
+
+}
+
 public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -1141,11 +1261,11 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - updateUserClient
 
-    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
     public var updateUserClientFromIsNewClient_MockError: Error?
-    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
+    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.SelfUserClient, Bool) async throws -> Void)?
 
-    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
         updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
 
         if let error = updateUserClientFromIsNewClient_MockError {
@@ -1310,24 +1430,6 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(event)
     }
 
-    // MARK: - allSelfUserClientsAreActiveMLSClients
-
-    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
-    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
-    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
-
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
-
-        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
-            return await mock()
-        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
-        }
-    }
-
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
@@ -1486,44 +1588,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         mock()
     }
 
-    // MARK: - fetchOrCreateUserClient
-
-    public var fetchOrCreateUserClientWith_Invocations: [String] = []
-    public var fetchOrCreateUserClientWith_MockMethod: ((String) async -> (client: WireDataModel.UserClient, isNew: Bool))?
-    public var fetchOrCreateUserClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
-
-    public func fetchOrCreateUserClient(with id: String) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        fetchOrCreateUserClientWith_Invocations.append(id)
-
-        if let mock = fetchOrCreateUserClientWith_MockMethod {
-            return await mock(id)
-        } else if let mock = fetchOrCreateUserClientWith_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchOrCreateUserClientWith`")
-        }
-    }
-
-    // MARK: - updateUserClient
-
-    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
-    public var updateUserClientFromIsNewClient_MockError: Error?
-    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
-
-    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
-        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
-
-        if let error = updateUserClientFromIsNewClient_MockError {
-            throw error
-        }
-
-        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
-            fatalError("no mock for `updateUserClientFromIsNewClient`")
-        }
-
-        try await mock(localClient, remoteClient, isNewClient)
-    }
-
     // MARK: - addLegalHoldRequest
 
     public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
@@ -1629,24 +1693,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
             return mock
         } else {
             fatalError("no mock for `isSelfUserIdDomain`")
-        }
-    }
-
-    // MARK: - allSelfUserClientsAreActiveMLSClients
-
-    public var allSelfUserClientsAreActiveMLSClients_Invocations: [Void] = []
-    public var allSelfUserClientsAreActiveMLSClients_MockMethod: (() async -> Bool)?
-    public var allSelfUserClientsAreActiveMLSClients_MockValue: Bool?
-
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        allSelfUserClientsAreActiveMLSClients_Invocations.append(())
-
-        if let mock = allSelfUserClientsAreActiveMLSClients_MockMethod {
-            return await mock()
-        } else if let mock = allSelfUserClientsAreActiveMLSClients_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `allSelfUserClientsAreActiveMLSClients`")
         }
     }
 
