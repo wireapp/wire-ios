@@ -25,10 +25,13 @@ import WireDataModel
 public protocol ConversationRepositoryProtocol {
 
     /// Fetches and persists a conversation with a given ID.
-    /// - parameter id: The conversation ID.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation.
 
     func pullConversation(
-        with id: ConversationID
+        id: UUID,
+        domain: String
     ) async throws
     /// Fetches a conversation locally.
     /// - Parameters:
@@ -37,7 +40,7 @@ public protocol ConversationRepositoryProtocol {
     /// - returns: The `ZMConversation` found locally.
 
     func fetchConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation?
 
@@ -58,7 +61,7 @@ public protocol ConversationRepositoryProtocol {
     /// - returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation
 
@@ -76,7 +79,7 @@ public protocol ConversationRepositoryProtocol {
 
     func pullMLSOneToOneConversation(
         userID: String,
-        domain: String
+        userDomain: String
     ) async throws -> String
 
     /// Fetches a MLS conversation locally.
@@ -87,7 +90,7 @@ public protocol ConversationRepositoryProtocol {
     /// - returns : A MLS conversation.
 
     func fetchMLSConversation(
-        with groupID: String
+        groupID: String
     ) async -> ZMConversation?
 
     /// Removes a given user from all group conversations.
@@ -165,8 +168,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     // MARK: - Public
 
-    public func pullConversation(with id: ConversationID) async throws {
-        let conversationList = try await conversationsAPI.getConversations(for: [id])
+    public func pullConversation(id: UUID, domain: String) async throws {
+        let qualifiedID = WireAPI.QualifiedID(uuid: id, domain: domain)
+        let conversationList = try await conversationsAPI.getConversations(
+            for: [qualifiedID]
+        )
 
         guard let conversation = conversationList.found.first else {
             throw ConversationRepositoryError.conversationNotFound
@@ -180,7 +186,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func fetchConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation? {
         await conversationsLocalStore.fetchConversation(
@@ -190,7 +196,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation {
         await conversationsLocalStore.fetchOrCreateConversation(
@@ -263,11 +269,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func pullMLSOneToOneConversation(
         userID: String,
-        domain: String
+        userDomain: String
     ) async throws -> String {
         let mlsConversation = try await conversationsAPI.getMLSOneToOneConversation(
             userID: userID,
-            in: domain
+            in: userDomain
         )
 
         guard let mlsGroupID = mlsConversation.mlsGroupID else {
@@ -284,7 +290,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func fetchMLSConversation(
-        with groupID: String
+        groupID: String
     ) async -> ZMConversation? {
         guard let mlsGroupID = MLSGroupID(base64Encoded: groupID) else {
             return nil
@@ -377,7 +383,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     // MARK: - Private
 
-    private func getRemovedUsers(from userIDs: Set<UserID>) async -> [WireDataModel.ZMUser] {
+    private func getRemovedUsers(
+        from userIDs: Set<UserID>
+    ) async -> [WireDataModel.ZMUser] {
         await withTaskGroup(of: WireDataModel.ZMUser.self) { taskGroup in
             for userID in userIDs {
                 taskGroup.addTask { [self] in
@@ -398,7 +406,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
     }
 
-    private func isSelfUserRemoved(in removedUsersIDs: Set<UserID>) async -> Bool {
+    private func isSelfUserRemoved(
+        in removedUsersIDs: Set<UserID>
+    ) async -> Bool {
         await withTaskGroup(of: Bool.self) { taskGroup in
             for removedUserID in removedUsersIDs {
                 taskGroup.addTask { [self] in
@@ -418,7 +428,10 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
     }
 
-    private func deleteMembership(for userIDs: Set<UserID>, time: Date) async {
+    private func deleteMembership(
+        for userIDs: Set<UserID>,
+        time: Date
+    ) async {
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for userID in userIDs {
                 taskGroup.addTask { [self] in
