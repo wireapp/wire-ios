@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents a folder in the system
-public struct Folder: Equatable {
+public struct Folder: Equatable, Sendable {
     /// Unique identifier for the folder. Can be nil for temporary folders
     public let identifier: UUID?
 

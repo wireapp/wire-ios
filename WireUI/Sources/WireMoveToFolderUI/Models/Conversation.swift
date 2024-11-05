@@ -18,7 +18,7 @@
 import Foundation
 
 /// Represents a conversation in the context of folder operations
-public struct Conversation {
+public struct Conversation: Sendable {
     /// Unique identifier for the conversation
     public let identifier: UUID
 

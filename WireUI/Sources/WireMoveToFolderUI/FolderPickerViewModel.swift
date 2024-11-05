@@ -18,6 +18,7 @@
 
 import Foundation
 
+@MainActor
 public final class FolderPickerViewModel: ObservableObject {
     @Published private(set) var folders: [Folder] = []
 
@@ -46,6 +47,8 @@ public final class FolderPickerViewModel: ObservableObject {
     }
 
     public func select(_ folder: Folder) {
-        selectionUseCase.invoke(folder: folder, conversation: conversation)
+        Task {
+            await selectionUseCase.invoke(folder: folder, conversation: conversation)
+        }
     }
 }

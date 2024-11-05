@@ -18,12 +18,10 @@
 
 // sourcery: AutoMockable
 /// Protocol for handling moving a conversation to a specified folder
-public protocol MoveConversationToFolderUseCaseType {
-
+public protocol MoveConversationToFolderUseCaseType: Sendable {
     /// Moves a conversation to a specified folder
     /// - Parameters:
     ///   - folder: The destination folder
     ///   - conversation: The conversation to be moved
-    func invoke(folder: Folder, conversation: Conversation)
-
+    func invoke(folder: Folder, conversation: Conversation) async
 }
