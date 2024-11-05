@@ -87,29 +87,6 @@ public protocol UserRepositoryProtocol {
 
     func removePushToken()
 
-    /// Fetches or creates a user client locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id to find or create locally.
-    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
-
-    func fetchOrCreateUserClient(
-        with id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
-
-    /// Updates the user client informations locally.
-    ///
-    /// - parameters:
-    ///     - localClient: The user client to update locally.
-    ///     - remoteClient: The up-to-date remote user client.
-    ///     - isNewClient: A flag indicating whether the user client is new.
-
-    func updateUserClient(
-        _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
-        isNewClient: Bool
-    ) async throws
-
     /// Adds a legal hold request.
     ///
     /// - parameters:
@@ -166,9 +143,6 @@ public protocol UserRepositoryProtocol {
         domain: String?
     ) async throws -> Bool
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: move to ClientRepository when related branch is merged
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -211,10 +185,6 @@ public final class UserRepository: UserRepositoryProtocol {
             with: id,
             domain: domain
         )
-    }
-
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        await userLocalStore.allSelfUserClientsAreActiveMLSClients()
     }
 
     public func fetchUser(
@@ -266,24 +236,6 @@ public final class UserRepository: UserRepositoryProtocol {
 
     public func removePushToken() {
         userLocalStore.deletePushToken()
-    }
-
-    public func fetchOrCreateUserClient(
-        with id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        await userLocalStore.fetchOrCreateUserClient(with: id)
-    }
-
-    public func updateUserClient(
-        _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
-        isNewClient: Bool
-    ) async throws {
-        try await userLocalStore.updateUserClient(
-            localClient,
-            from: remoteClient,
-            isNewClient: isNewClient
-        )
     }
 
     public func addLegalHoldRequest(

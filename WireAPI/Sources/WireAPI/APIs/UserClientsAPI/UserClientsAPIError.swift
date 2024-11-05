@@ -18,12 +18,11 @@
 
 import Foundation
 
-/// An event where legalhold was enabled for a user.
+/// Errors originating from `UserClientsAPI`.
 
-public struct UserLegalholdEnableEvent: Equatable, Codable, Sendable {
+public enum UserClientsAPIError: Error {
 
-    /// The user id for whom legalhold was enabled.
+    /// A request url is not invalid.
 
-    public let userID: UUID
-
+    case invalidURL
 }
