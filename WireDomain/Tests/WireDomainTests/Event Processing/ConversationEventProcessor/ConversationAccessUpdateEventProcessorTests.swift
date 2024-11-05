@@ -74,7 +74,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
             )
         }
 
-        repository.fetchOrCreateConversationWithDomain_MockValue = conversation
+        repository.fetchOrCreateConversationIdDomain_MockValue = conversation
         localStore.updateAccessesForAccessModesAccessRoles_MockMethod = { _, _, _ in }
 
         // When
@@ -83,7 +83,7 @@ final class ConversationAccessUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.fetchOrCreateConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(localStore.updateAccessesForAccessModesAccessRoles_Invocations.count, 1)
     }
 

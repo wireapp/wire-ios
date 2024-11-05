@@ -39,7 +39,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         let conversationID = event.conversationID
 
         let localConversation = await repository.fetchOrCreateConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 

@@ -40,7 +40,7 @@ public struct ConversationAccessUpdateEvent: Equatable, Codable, Sendable {
     /// The new legacy access role.
 
     public let legacyAccessRole: ConversationAccessRoleLegacy?
-    
+
     public init(
         conversationID: ConversationID,
         senderID: UserID,
