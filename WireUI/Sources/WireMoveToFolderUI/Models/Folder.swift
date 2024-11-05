@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 /// Represents a folder in the system
 public struct Folder: Equatable {
     /// Unique identifier for the folder. Can be nil for temporary folders
-    public let identifier: String?
+    public let identifier: UUID?
 
     /// Display name of the folder. Can be nil if not set
     public let name: String?
@@ -32,7 +34,7 @@ public struct Folder: Equatable {
     ///   - identifier: Unique identifier for the folder. Can be nil for temporary folders
     ///   - name: Display name of the folder. Can be nil if not set
     ///   - kind: The type of folder
-    public init(identifier: String?, name: String?, kind: FolderKind) {
+    public init(identifier: UUID?, name: String?, kind: FolderKind) {
         self.identifier = identifier
         self.name = name
         self.kind = kind

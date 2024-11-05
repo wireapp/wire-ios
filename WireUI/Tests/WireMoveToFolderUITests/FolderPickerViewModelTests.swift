@@ -18,7 +18,6 @@
 
 import WireMoveToFolderUISupport
 import XCTest
-
 @testable import WireMoveToFolderUI
 
 final class FolderPickerViewModelTests: XCTestCase {
@@ -27,13 +26,14 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     private var sut: FolderPickerViewModel!
     private var mockDirectory: MockFolderDirectoryType!
-    private var mockSelectionUseCase: MockFolderSelectionUseCaseType!
+    private var mockSelectionUseCase: MockMoveConversationToFolderUseCaseType!
 
     // MARK: - setUp
 
     override func setUp() {
+        super.setUp()
         mockDirectory = MockFolderDirectoryType()
-        mockSelectionUseCase = MockFolderSelectionUseCaseType()
+        mockSelectionUseCase = MockMoveConversationToFolderUseCaseType()
     }
 
     // MARK: - tearDown
@@ -50,8 +50,8 @@ final class FolderPickerViewModelTests: XCTestCase {
     func test_init_loadsFoldersFromDirectory() {
         // GIVEN
         let folders = [
-            Folder(identifier: "1", name: "Work", kind: .folder),
-            Folder(identifier: "2", name: "Personal", kind: .folder)
+            Folder(identifier: UUID(), name: "Work", kind: .folder),
+            Folder(identifier: UUID(), name: "Personal", kind: .folder)
         ]
         mockDirectory.allFolders = folders
 
@@ -66,8 +66,8 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     func test_select_invokesUseCase() {
         // GIVEN
-        let folder = Folder(identifier: "1", name: "Work", kind: .folder)
-        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: nil)
+        let folder = Folder(identifier: UUID(), name: "Work", kind: .folder)
+        let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)
         mockSelectionUseCase.invokeFolderConversation_MockMethod = { _, _ in }
         createSUT(conversation: conversation)
 
@@ -84,7 +84,8 @@ final class FolderPickerViewModelTests: XCTestCase {
     func test_isSelected_returnsTrue_whenFolderMatchesCurrentFolder() {
         // GIVEN
         let folderID = "folder1"
-        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: folderID)
+        let folderID = UUID()
+        let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: folderID)
         let folder = Folder(identifier: folderID, name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
@@ -97,8 +98,8 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     func test_isSelected_returnsFalse_whenFolderDoesNotMatchCurrentFolder() {
         // GIVEN
-        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: "folder1")
-        let folder = Folder(identifier: "folder2", name: "Work", kind: .folder)
+        let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
+        let folder = Folder(identifier: UUID(), name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
         // WHEN
@@ -110,7 +111,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     func test_isSelected_returnsFalse_whenFolderIdentifierIsNil() {
         // GIVEN
-        let conversation = Conversation(identifier: "conv1", currentFolderIdentifier: "folder1")
+        let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
         let folder = Folder(identifier: nil, name: "Work", kind: .folder)
         createSUT(conversation: conversation)
 
@@ -124,9 +125,9 @@ final class FolderPickerViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     private func createSUT(
-        conversation: Conversation = Conversation(identifier: "test", currentFolderIdentifier: nil),
+        conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil),
         directory: MockFolderDirectoryType? = nil,
-        selectionUseCase: MockFolderSelectionUseCaseType? = nil
+        selectionUseCase: MockMoveConversationToFolderUseCaseType? = nil
     ) {
         sut = FolderPickerViewModel(
             conversation: conversation,

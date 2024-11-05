@@ -15,20 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import Foundation
 
 /// Represents a conversation in the context of folder operations
 public struct Conversation {
     /// Unique identifier for the conversation
-    public let identifier: String
+    public let identifier: UUID
 
     /// Identifier of the folder containing this conversation. Nil if not in any folder
-    public let currentFolderIdentifier: String?
+    public let currentFolderIdentifier: UUID?
 
     /// Creates a new conversation instance
     /// - Parameters:
     ///   - identifier: Unique identifier for the conversation
     ///   - currentFolderIdentifier: Identifier of the containing folder, if any
-    public init(identifier: String, currentFolderIdentifier: String?) {
+    public init(identifier: UUID, currentFolderIdentifier: UUID?) {
         self.identifier = identifier
         self.currentFolderIdentifier = currentFolderIdentifier
     }
