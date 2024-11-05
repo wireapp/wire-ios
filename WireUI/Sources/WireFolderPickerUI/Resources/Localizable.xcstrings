@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-      "shouldTranslate" : false
-    },
     "folderPicker.close.label" : {
       "shouldTranslate" : false
     },

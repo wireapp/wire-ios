@@ -91,7 +91,7 @@ public struct FolderPicker: View {
 
     private func picker() -> some View {
         List {
-            Picker("", selection: $selected) {
+            Picker(selection: $selected) {
                 ForEach(options) { option in
                     Text(option.title)
                         .font(.textStyle(.body1))
@@ -99,6 +99,8 @@ public struct FolderPicker: View {
                         .foregroundStyle(option.id == selected ? Color(accentColor) : .primaryText)
                         .tag(option.id)
                 }
+            } label: {
+                Text(verbatim: "")
             }
             .accentColor(Color(accentColor))
             .pickerStyle(.inline)
