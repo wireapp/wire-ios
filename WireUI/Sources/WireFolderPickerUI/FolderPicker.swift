@@ -152,7 +152,7 @@ private struct EmptyState: View {
 }
 
 private struct FolderPickerPreview: View {
-    @State private var isPresented = false
+    @State private var isPresented = true
     @State private var selected: UUID?
 
     let showCloseButton: Bool
