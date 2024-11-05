@@ -39,7 +39,6 @@ let package = Package(
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
         .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),
-
         .target(
             name: "WireMoveToFolderUISupport",
             dependencies: ["WireMoveToFolderUI"],
@@ -47,7 +46,6 @@ let package = Package(
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
         ),
-
         .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
