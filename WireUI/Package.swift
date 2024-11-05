@@ -34,7 +34,6 @@ let package = Package(
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
-        .testTarget(name: "WireFolderPickerUITests", dependencies: ["WireFolderPickerUI"]),
 
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
