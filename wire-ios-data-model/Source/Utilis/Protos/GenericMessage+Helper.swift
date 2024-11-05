@@ -96,6 +96,8 @@ extension GenericMessage {
             return data
         case .calling(let data):
             return data
+        case .inCallEmoji(let data):
+            return data
         case .hidden(let data):
             return data
         case .location(let data):
@@ -826,7 +828,8 @@ extension ImageAsset {
 // MARK: - DataTransfer
 
 extension DataTransfer {
-    init(trackingIdentifier: UUID) {
+
+    public init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)
         }

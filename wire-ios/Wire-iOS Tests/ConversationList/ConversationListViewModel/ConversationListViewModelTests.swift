@@ -49,10 +49,6 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: ConversationListItem?) {
         // no-op
     }
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateConversationWithChange change: ConversationChangeInfo?) {
-        // no-op
-    }
 }
 
 final class ConversationListViewModelTests: XCTestCase {
@@ -63,15 +59,15 @@ final class ConversationListViewModelTests: XCTestCase {
     var mockConversation: ZMConversation!
     var coreDataFixture: CoreDataFixture!
 
-    /// constants
-    let sectionGroups: Int = 2
-    let sectionContacts: Int = 3
+    // Constants for section indices
+    let sectionGroups = 0
 
     override func setUp() {
         super.setUp()
+
         removeViewModelState()
         mockUserSession = UserSessionMock()
-        sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
+        sut = ConversationListViewModel(userSession: mockUserSession)
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
@@ -96,7 +92,7 @@ final class ConversationListViewModelTests: XCTestCase {
         try? FileManager.default.removeItem(at: persistentURL)
     }
 
-    // folders with 2 group conversations and 1 contact. First group conversation is mock conversation
+    // 2 group conversations and 1 contact. First group conversation is mock conversation
     func fillDummyConversations(mockConversation: ZMConversation) {
         let info = ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [.groups, .contacts], updatedFolders: false)
 
@@ -112,23 +108,22 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func testForNumberOfItems() {
+
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.numberOfItems(inSection: 0), 0)
-        XCTAssertEqual(sut.numberOfItems(inSection: Int(sectionGroups)), 2)
-        XCTAssertEqual(sut.numberOfItems(inSection: Int(sectionContacts)), 1)
+        // WHEN & THEN
+        XCTAssertEqual(sut.numberOfItems(inSection: sectionGroups), 2)
         XCTAssertEqual(sut.numberOfItems(inSection: 100), 0)
     }
 
     func testForIndexPathOfItemAndItemForIndexPath() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -152,105 +147,50 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func testThatNonExistConversationHasNilIndexPath() {
-        // GIVEN & WHEN
-
-        // THEN
+        // GIVEN, WHEN && THEN
         XCTAssertNil(sut.indexPath(for: ZMConversation()))
     }
 
     func testForSectionCount() {
         // GIVEN
-
-        // WHEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         // THEN
-        XCTAssertEqual(sut.sectionCount, 4)
-
-        // WHEN
-        sut.folderEnabled = false
-        XCTAssertEqual(sut.sectionCount, 2)
+        XCTAssertEqual(sut.sectionCount, 1)
     }
 
     func testForSectionAtIndex() {
         // GIVEN
-        sut.folderEnabled = true
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
+        guard let sectionItems = sut.section(at: sectionGroups) else {
+            XCTFail("Section at index \(sectionGroups) is nil")
+            return
+        }
 
         // THEN
-        XCTAssertEqual(sut.section(at: Int(sectionGroups))?.first as? AnyHashable, mockConversation)
-
+        let containsMockConversation = sectionItems.contains {
+            guard let conversation = $0 as? ZMConversation else { return false }
+            return conversation.remoteIdentifier == mockConversation.remoteIdentifier
+        }
+        XCTAssertTrue(containsMockConversation, "Section does not contain the mock conversation")
         XCTAssertNil(sut.section(at: 100))
     }
 
     func testForSelectItem() {
-        sut.folderEnabled = true
+        // GIVEN
+        // Set the filter to a state that will include the mockConversation
+        sut.selectedFilter = .groups
 
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN & THEN
         XCTAssert(sut.select(itemToSelect: mockConversation))
-
-        // THEN
         XCTAssertEqual(sut.selectedItem as? AnyHashable, mockConversation)
-    }
-
-    // MARK: - state
-    func testThatSectionIsExpandedAfterSelected() {
-        // GIVEN
-        sut.folderEnabled = true
-        fillDummyConversations(mockConversation: mockConversation)
-        sut.setCollapsed(sectionIndex: Int(sectionGroups), collapsed: true) // todo
-
-        // WHEN
-        XCTAssert(sut.collapsed(at: Int(sectionGroups)))
-        XCTAssert(sut.select(itemToSelect: mockConversation))
-
-        // THEN
-        XCTAssertFalse(sut.collapsed(at: Int(sectionGroups)))
-    }
-
-    func testThatCollapseStateCanBeRestoredAfterFolderDisabled() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        XCTAssertFalse(sut.collapsed(at: 1))
-
-        // WHEN
-        sut.setCollapsed(sectionIndex: 1, collapsed: true)
-
-        XCTAssert(sut.collapsed(at: 1))
-
-        // all folder are not collapsed when folder disabled
-        sut.folderEnabled = false
-
-        XCTAssertFalse(sut.collapsed(at: 1))
-        sut.folderEnabled = true
-
-        // THEN
-        // collapsed state is restored
-        XCTAssert(sut.collapsed(at: 1))
-    }
-
-    func testThatStateJsonFormatIsCorrect() {
-        // GIVEN
-
-        // state is initial value when first run
-        XCTAssertEqual(sut.jsonString, #"{"collapsed":[],"folderEnabled":false}"#)
-
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-        sut.setCollapsed(sectionIndex: 2, collapsed: true)
-
-        // THEN
-        XCTAssertEqual(sut.jsonString, #"{"collapsed":["groups"],"folderEnabled":true}"#)
     }
 }

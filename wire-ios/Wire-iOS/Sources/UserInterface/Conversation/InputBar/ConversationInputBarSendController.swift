@@ -29,63 +29,79 @@ final class ConversationInputBarSendController: NSObject {
         super.init()
     }
 
-    func sendMessage(withImageData imageData: Data,
-                     userSession: UserSession,
-                     completion completionHandler: Completion? = nil) {
+    func sendMessage(
+        withImageData imageData: Data,
+        userSession: UserSession,
+        completion completionHandler: Completion? = nil
+    ) {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
         userSession.enqueue({
             do {
-                try conversation.appendImage(from: imageData)
+                let useCase = userSession.makeAppendImageMessageUseCase()
+                try useCase.invoke(withImageData: imageData, in: conversation)
                 self.feedbackGenerator.impactOccurred()
             } catch {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
         }, completionHandler: {
             completionHandler?()
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
         })
     }
 
-    func sendTextMessage(_ text: String,
-                         mentions: [Mention],
-                         userSession: UserSession,
-                         replyingTo message: ZMConversationMessage?) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        replyingTo message: ZMConversationMessage?
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         userSession.enqueue({
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: message, fetchLinkPreview: shouldFetchLinkPreview)
-                conversation.draftMessage = nil
+                let useCase = userSession.makeAppendTextMessageUseCase()
+                try useCase.invoke(
+                    text: text,
+                    mentions: mentions,
+                    replyingTo: message,
+                    in: conversation,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
-
         })
     }
 
-    func sendTextMessage(_ text: String, mentions: [Mention], userSession: UserSession, withImageData data: Data) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        withImageData data: Data
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
         userSession.enqueue({
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: shouldFetchLinkPreview)
-                try conversation.appendImage(from: data)
-                conversation.draftMessage = nil
+                let textMessageUseCase = userSession.makeAppendTextMessageUseCase()
+                let imageMessageUseCase = userSession.makeAppendImageMessageUseCase()
+                try textMessageUseCase.invoke(
+                    text: text,
+                    mentions: mentions,
+                    replyingTo: nil,
+                    in: conversation,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
+                try imageMessageUseCase.invoke(withImageData: data, in: conversation)
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
-        }, completionHandler: {
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
-            Analytics.shared.tagMediaActionCompleted(.text, inConversation: conversation)
         })
     }
 }

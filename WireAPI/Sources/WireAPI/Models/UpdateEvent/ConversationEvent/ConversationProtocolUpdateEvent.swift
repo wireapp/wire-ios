@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the message protocol was updated in a conversation.
 
-public struct ConversationProtocolUpdateEvent: Equatable, Codable {
+public struct ConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

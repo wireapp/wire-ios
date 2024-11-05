@@ -19,11 +19,13 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: AnyMainCoordinator
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -34,7 +36,7 @@ final class ConversationViewController: UIViewController {
                          input: UIKeyCommand.inputDownArrow,
                          modifierFlags: [.command, .alternate],
                          discoverabilityTitle: keyboardShortcut.scrollToBottom),
-            UIKeyCommand(action: #selector(onCollectionButtonPressed(_:)),
+            UIKeyCommand(action: #selector(onSearchButtonPressed(_:)),
                          input: "f",
                          modifierFlags: [.command],
                          discoverabilityTitle: keyboardShortcut.searchInConversation),
@@ -95,6 +97,7 @@ final class ConversationViewController: UIViewController {
                 conversation: conversation,
                 userSession: userSession,
                 mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
             )
         case .`self`, .oneOnOne, .connection:
@@ -112,7 +115,8 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
@@ -121,12 +125,14 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         contentViewController = ConversationContentViewController(
             conversation: conversation,
             message: visibleMessage,
             mediaPlaybackManager: mediaPlaybackManager,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         inputBarController = ConversationInputBarViewController(
@@ -234,7 +240,7 @@ final class ConversationViewController: UIViewController {
                     self?.conversation.isArchived = true
                 })
             }
-            self?.openConversationList()
+            self?.mainCoordinator.hideConversation()
         }
     }
 
@@ -300,21 +306,16 @@ final class ConversationViewController: UIViewController {
         }
     }
 
-    func openConversationList() {
-        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
-        wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
-    }
-
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
-        openConversationList()
+        mainCoordinator.hideConversation()
         return true
     }
 
     @objc
     func onBackButtonPressed(_ backButton: UIButton?) {
-        openConversationList()
+        mainCoordinator.hideConversation()
     }
 
     private func setupContentViewController() {
@@ -436,7 +437,7 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
+        await mainCoordinator.showConversation(conversation: mlsConversation, message: nil)
     }
 
     // MARK: - ParticipantsPopover
@@ -619,34 +620,41 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     var searchBarButtonItem: UIBarButtonItem {
-        let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
-        let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .search), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
-        let button = IconButton()
-        button.setIcon(showingSearchResults ? .activeSearch : .search, size: .tiny, for: .normal)
         button.accessibilityIdentifier = "collection"
         button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
 
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(onSearchButtonPressed(_:)),
+                         for: .touchUpInside)
 
-        button.backgroundColor = SemanticColors.Button.backgroundBarItem
-        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = L10n.Accessibility.Conversation.SearchButton.description
+        button.largeContentImage = UIImage(resource: .search)
+
+        button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return UIBarButtonItem(customView: button)
     }
 
     @objc
-    private func onCollectionButtonPressed(_ sender: AnyObject?) {
+    private func onSearchButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             collections.delegate = self
 

@@ -26,6 +26,8 @@ protocol PasscodeSetupUserInterface: AnyObject {
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool)
 }
 
+// TODO: [WPB-11836] fix issues with large font sizes (content is not scrolling)
+
 final class PasscodeSetupViewController: UIViewController {
 
     enum Context {

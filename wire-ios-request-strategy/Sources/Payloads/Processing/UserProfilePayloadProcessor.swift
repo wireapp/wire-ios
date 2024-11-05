@@ -105,10 +105,6 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.name = payload.name
         }
 
-        if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
-            user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
-        }
-
         if (payload.updatedKeys.contains(.email) || authoritative) && !user.isAccountDeleted {
             user.emailAddress = payload.email?.removingExtremeCombiningCharacters
         }

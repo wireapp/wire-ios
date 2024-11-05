@@ -261,6 +261,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
+        nameLabel.text = userStatus.displayName
         nameLabel.attributedText = combineUserNameWithIcons()
         userStatusViewController.userStatus = userStatus
     }
@@ -268,7 +269,7 @@ final class ProfileHeaderViewController: UIViewController {
     private func combineUserNameWithIcons() -> NSAttributedString {
         var userNameWithIcons: [NSAttributedString] = []
 
-        let userName = NSAttributedString(string: userStatus.name)
+        let userName = NSAttributedString(string: userStatus.displayName)
         userNameWithIcons.append(userName)
 
         if userStatus.isProteusVerified {
@@ -469,7 +470,7 @@ extension ProfileHeaderViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
-            userStatus.name = changeInfo.user.name ?? ""
+            userStatus.displayName = changeInfo.user.name ?? ""
         }
         if changeInfo.handleChanged {
             updateHandleLabel()

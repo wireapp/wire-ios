@@ -19,12 +19,12 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
 
         var items: [SettingsSectionDescriptor] = []
 
-        // show analytics toggle for team members only
-        if isTeamMember {
+        // show analytics toggle for public domain
+        if isPublicDomain {
             let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing), inverse: true)
             let sendAnalyticsDataSection = SettingsSectionDescriptor(cellDescriptors: [sendAnalyticsData], footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title)
 
@@ -34,7 +34,9 @@ extension SettingsCellDescriptorFactory {
         return SettingsGroupCellDescriptor(
             items: items,
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,
-            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
     }
 }

@@ -32,9 +32,11 @@ class CallQualityController: NSObject {
     fileprivate var token: Any?
 
     private let mainWindow: UIWindow
+    private let submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol
 
-    init(mainWindow: UIWindow) {
+    init(mainWindow: UIWindow, submitCallQualitySurvey: SubmitCallQualitySurveyUseCaseProtocol) {
         self.mainWindow = mainWindow
+        self.submitCallQualitySurvey = submitCallQualitySurvey
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -60,15 +62,15 @@ class CallQualityController: NSObject {
      */
 
     var canPresentCallQualitySurvey: Bool {
-        #if DISABLE_CALL_QUALITY_SURVEY
+#if DISABLE_CALL_QUALITY_SURVEY
         return false
-        #else
+#else
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             return false
         }
         return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && appDelegate.launchType != .unknown
-        #endif
+        && appDelegate.launchType != .unknown
+#endif
     }
 
     // MARK: - Events
@@ -116,18 +118,18 @@ class CallQualityController: NSObject {
         let callDuration = callEndDate.timeIntervalSince(callStartDate)
 
         guard callDuration >= miminumSignificantCallDuration else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .callTooShort, duration: Int(callDuration)))
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .callTooShort, duration: callDuration))
             return
         }
 
         guard self.canRequestSurvey(at: callEndDate) else {
-            Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
+            submitCallQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
             return
         }
 
-        #if !DISABLE_CALL_QUALITY_SURVEY
+#if !DISABLE_CALL_QUALITY_SURVEY
         router?.presentCallQualitySurvey(with: callDuration)
-        #endif
+#endif
     }
 }
 
@@ -168,12 +170,11 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         }
 
         CallQualityController.updateLastSurveyDate(Date())
-        Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))
+        submitCallQualitySurvey.invoke(.answered(score: score, duration: controller.callDuration))
     }
 
     func callQualityControllerDidFinishWithoutScore(_ controller: CallQualityViewController) {
         CallQualityController.updateLastSurveyDate(Date())
-        Analytics.shared.tagCallQualityReview(.dismissed(duration: controller.callDuration))
         router?.dismissCallQualitySurvey(completion: nil)
     }
 }

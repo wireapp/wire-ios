@@ -52,7 +52,8 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
                 forImageMessagePreview: message,
                 actionResponder: self,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
         } else if message.isLocation {
             // Preview a location

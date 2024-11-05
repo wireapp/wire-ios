@@ -31,11 +31,22 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
-    /// Fetches or creates a conversation locally.
+    /// Fetches a conversation locally.
     /// - Parameters:
-    ///     - id: The conversation ID.
-    ///     - domain: The conversation domain if any.
-    /// - Returns: The `ZMConversation` found or created locally.
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation?
+
+    /// Fetches or creates a conversation locally.
+    /// - parameter id: The ID of the conversation.
+    /// - parameter domain: The domain of the conversation if any.
+    ///
+    /// - returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
         with id: UUID,
@@ -44,19 +55,21 @@ public protocol ConversationLocalStoreProtocol {
 
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
+    /// - Parameter timestamp: The date the conversation was created or last modified.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
 
     func storeConversation(
         _ conversation: WireAPI.Conversation,
+        timestamp: Date,
         isFederationEnabled: Bool
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
-    func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async
 
@@ -78,13 +91,13 @@ public protocol ConversationLocalStoreProtocol {
         with groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
 
-    /// Removes a given user from all conversations.
+    /// Removes a given user from all group conversations.
     ///
     /// - parameters:
     ///     - user: The user to remove from the conversations.
     ///     - date: The date the user was removed from the conversations.
 
-    func removeParticipantFromAllConversations(
+    func removeParticipantFromAllGroupConversations(
         user: ZMUser,
         date: Date
     ) async
@@ -117,6 +130,101 @@ public protocol ConversationLocalStoreProtocol {
         for localConversation: ZMConversation
     ) async
 
+    /// Updates access modes and roles to conversation.
+    /// - Parameters:
+    ///     - accessModes: The access modes to update (how users can join a conversation).
+    ///     - accessRoles: The access roles to update (which users are allowed to be participants in a conversation).
+    ///
+    /// See `ConversationAccessMode` and `ConversationAccessRole`
+
+    func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async
+
+    /// Get local participants from a conversation
+    ///
+    /// - parameter conversation: The conversation to get the participants from.
+    /// - returns: A list of local participants.
+
+    func getParticipants(
+        from conversation: ZMConversation
+    ) async -> Set<ZMUser>
+
+    /// Get message protocol from a conversation
+    /// - parameter conversation: The conversation to get the message protocol from.
+    /// - returns: The message protocol used for that conversation.
+
+    func getMessageProtocol(
+        from conversation: ZMConversation
+    ) async -> WireDataModel.MessageProtocol
+
+    /// Adds a system message to a given conversation.
+    /// - parameters:
+    ///     - message: The system message to add.
+    ///     - conversation: The conversation to add the system message to.
+
+    func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async
+
+    /// Retrieves conversation muted message types
+    /// - parameter conversation: The conversation to get the muted message types for.
+    /// - returns: The muted message types.
+
+    func conversationMutedMessageTypes(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+
+    /// Stores a flag indicating whether a conversation is archived.
+    /// - parameters:
+    ///     - isArchived: Indicates whether the conversation is archived.
+    ///     - conversation: The conversation to set the `isArchived` flag for.
+
+    func storeConversation(
+        isArchived: Bool,
+        for conversation: ZMConversation
+    ) async
+
+    /// Indicates whether a conversation is archived.
+    /// - parameter conversation: The conversation to check the `isArchived` flag for.
+    /// - returns: A flag indicating whether the conversation is archived.
+
+    func isConversationArchived(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    /// Stores a flag indicating whether a conversation has read receipts enabled.
+    /// - parameters:
+    ///     - hasReadReceiptsEnabled: A flag indicating whether the conversation has read receipts enabled.
+    ///     - conversation: The conversation to update the flag for.
+
+    func storeConversation(
+        hasReadReceiptsEnabled: Bool,
+        for conversation: ZMConversation
+    ) async
+
+    /// Fetches the MLS group ID (if any) from a conversation.
+    /// - parameter conversation: The conversation to get the MLS group ID from.
+    /// - returns: The MLS group ID for that conversation (if any)
+
+    func fetchMLSGroupID(
+        for conversation: ZMConversation
+    ) async -> MLSGroupID?
+
+    /// Removes participants from conversation and updates conversation state.
+    /// - Parameters:
+    ///     - conversation: The conversation to remove the participants from.
+    ///     - users: The users to remove.
+    ///     - initiatingUser: The user that initiated the removal.
+
+    func removeParticipantsAndUpdateConversationState(
+        conversation: ZMConversation,
+        users: Set<ZMUser>,
+        initiatingUser: ZMUser
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -173,6 +281,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchConversation(
+        with id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
+    }
+
     public func fetchOrCreateConversation(
         with id: UUID,
         domain: String?
@@ -207,8 +328,38 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+            systemMessage.systemMessageType = message.type
+            systemMessage.sender = message.sender
+            systemMessage.users = message.users ?? Set()
+            systemMessage.addedUsers = message.addedUsers
+            systemMessage.clients = message.clients ?? Set()
+            systemMessage.serverTimestamp = message.timestamp
+
+            if let duration = message.duration {
+                systemMessage.duration = duration
+            }
+
+            if let messageTimer = message.messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
+
+            systemMessage.relevantForConversationStatus = message.relevantForStatus
+            systemMessage.participantsRemovedReason = message.removedReason
+            systemMessage.domains = message.domains
+
+            conversation.append(systemMessage)
+        }
+    }
+
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
+        timestamp: Date,
         isFederationEnabled: Bool
     ) async {
         guard let conversationType = conversation.type else {
@@ -238,6 +389,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateGroupConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -245,6 +397,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateSelfConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -254,6 +407,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateConnectionConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -263,13 +417,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateOneToOneConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
+                serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled
             )
         }
     }
 
-    public func storeConversationNeedsBackendUpdate(
-        _ needsUpdate: Bool,
+    public func storeConversation(
+        needsBackendUpdate: Bool,
         qualifiedId: WireAPI.QualifiedID
     ) async {
         await context.perform { [context] in
@@ -279,7 +434,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 in: context
             )
 
-            conversation?.needsToBeUpdatedFromBackend = needsUpdate
+            conversation?.needsToBeUpdatedFromBackend = needsBackendUpdate
         }
     }
 
@@ -308,36 +463,140 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func removeParticipantFromAllConversations(
+    public func isConversationArchived(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isArchived
+        }
+    }
+
+    public func conversationMutedMessageTypes(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes {
+        await context.perform {
+            conversation.mutedMessageTypes
+        }
+    }
+
+    public func storeConversation(
+        isArchived: Bool,
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.isArchived = isArchived
+        }
+    }
+
+    public func storeConversation(
+        hasReadReceiptsEnabled: Bool,
+        for conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.hasReadReceiptsEnabled = hasReadReceiptsEnabled
+        }
+    }
+
+    public func getParticipants(
+        from conversation: ZMConversation
+    ) async -> Set<ZMUser> {
+        await context.perform {
+            conversation.localParticipants
+        }
+    }
+
+    public func getMessageProtocol(
+        from conversation: ZMConversation
+    ) async -> WireDataModel.MessageProtocol {
+        await context.perform {
+            conversation.messageProtocol
+        }
+    }
+
+    public func removeParticipantFromAllGroupConversations(
         user: ZMUser,
         date: Date
     ) async {
-        await context.perform {
+        let allGroupConversations = await context.perform {
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
                 guard $0.conversation?.conversationType == .group else {
                     return nil
                 }
+
                 return $0.conversation
             }
 
-            for conversation in allGroupConversations {
-                if user.isTeamMember, conversation.team == user.team {
-                    conversation.appendTeamMemberRemovedSystemMessage(
-                        user: user,
-                        at: date
-                    )
-                } else {
-                    conversation.appendParticipantRemovedSystemMessage(
-                        user: user,
-                        at: date
-                    )
-                }
+            return allGroupConversations
+        }
 
+        for conversation in allGroupConversations {
+            let (userTeam, isTeamMember) = await context.perform {
+                (user.team, user.isTeamMember)
+            }
+
+            let teamConversation = await context.perform {
+                conversation.team
+            }
+
+            if isTeamMember, teamConversation == userTeam {
+                let systemMessage = SystemMessage(
+                    type: .teamMemberLeave,
+                    sender: user,
+                    users: [user],
+                    timestamp: date
+                )
+
+                await addSystemMessage(systemMessage, to: conversation)
+
+            } else {
+                let systemMessage = SystemMessage(
+                    type: .participantsRemoved,
+                    sender: user,
+                    users: [user],
+                    timestamp: date
+                )
+
+                await addSystemMessage(systemMessage, to: conversation)
+            }
+
+            await context.perform {
                 conversation.removeParticipantAndUpdateConversationState(
                     user: user,
                     initiatingUser: user
                 )
             }
+        }
+    }
+
+    public func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async {
+        await context.perform { [context] in
+            conversation.accessModeStrings = accessModes
+            conversation.accessRoleStringsV2 = accessRoles
+
+            context.saveOrRollback()
+        }
+    }
+
+    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
+        await context.perform {
+            conversation.mlsGroupID
+        }
+    }
+
+    public func removeParticipantsAndUpdateConversationState(
+        conversation: ZMConversation,
+        users: Set<ZMUser>,
+        initiatingUser: ZMUser
+    ) async {
+        await context.perform {
+            conversation.removeParticipantsAndUpdateConversationState(
+                users: users,
+                initiatingUser: initiatingUser
+            )
         }
     }
 
@@ -354,6 +613,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateConnectionConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         let conversation = await fetchOrCreateConversation(
@@ -367,6 +627,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             commonUpdate(
                 from: remoteConversation,
                 for: conversation,
+                serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -409,6 +670,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateSelfConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         let conversation = await fetchOrCreateConversation(
@@ -427,6 +689,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             commonUpdate(
                 from: remoteConversation,
                 for: conversation,
+                serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -461,6 +724,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateGroupConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         var isInitialFetch = false
@@ -481,6 +745,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             commonUpdate(
                 from: remoteConversation,
                 for: conversation,
+                serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -552,6 +817,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateOneToOneConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
         guard let conversationTypeRawValue = remoteConversation.type?.rawValue else {
@@ -582,6 +848,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             commonUpdate(
                 from: remoteConversation,
                 for: conversation,
+                serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
@@ -619,10 +886,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter localConversation: The local conversation to update.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
+    /// - Parameter serverTimestamp: The date the conversation was created/updated.
 
     private func commonUpdate(
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation,
+        serverTimestamp: Date,
         isFederationEnabled: Bool
     ) {
         updateAttributes(
@@ -642,7 +911,35 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
 
         updateConversationTimestamps(
-            for: localConversation
+            for: localConversation,
+            serverTimestamp: serverTimestamp
         )
     }
+
+    /// A helper method (for all conversations) that fetches or creates a conversation locally and executes a completion block.
+    ///
+    /// - Parameter conversationID: The conversation ID to fetch or create the local conversation from.
+    /// - Parameter domain: The domain to fetch or create the conversation from.
+    /// - Parameter handler: A completion block that takes a `ZMConversation` as argument and returns
+    ///   a `ZMConversation` and an optional `MLSGroupID`.
+    ///
+    ///  Since storage logic can be different according to the conversation type, the method provides a completion block
+    ///  with the conversation fetched or created locally.
+
+    @discardableResult
+    private func fetchOrCreateConversation(
+        conversationID: UUID,
+        domain: String?,
+        handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
+    ) async -> (ZMConversation, MLSGroupID?) {
+        let conversation = await fetchOrCreateConversation(
+            with: conversationID,
+            domain: domain
+        )
+
+        return await context.perform {
+            handler(conversation)
+        }
+    }
+
 }

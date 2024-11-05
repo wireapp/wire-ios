@@ -23,12 +23,20 @@ import WireSyncEngine
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
 
+    // MARK: - Properties
+
     var autoUpdateSelection = true
 
     let imageViewContainer = UIView()
     private let outlineView = UIView()
-    let dotView: DotView
-    let selectionView = ShapeView()
+    let selectionView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.layer.borderWidth = 1.5
+        view.layer.borderColor = UIColor.accent().cgColor
+        return view
+    }()
+
     private var unreadCountToken: Any?
     private var selfUserObserver: NSObjectProtocol!
     let account: Account
@@ -54,15 +62,14 @@ class BaseAccountView: UIView {
 
     func updateAppearance() {
         selectionView.isHidden = !selected
-        dotView.hasUnreadMessages = hasUnreadMessages
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        selectionView.layer.borderColor = UIColor.accent().cgColor
         layoutSubviews()
     }
 
     var onTap: (Account) -> Void = { _ in }
 
     var accessibilityState: String {
-       typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
+        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
         var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
@@ -72,11 +79,10 @@ class BaseAccountView: UIView {
         return result
     }
 
+    // MARK: - Init
+
     init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         self.account = account
-
-        dotView = DotView(user: user)
-        dotView.hasUnreadMessages = account.unreadConversationCount > 0
 
         super.init(frame: .zero)
 
@@ -84,15 +90,9 @@ class BaseAccountView: UIView {
             selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
         }
 
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
-        selectionView.hostedLayer.fillColor = UIColor.clear.cgColor
-        selectionView.hostedLayer.lineWidth = 1.5
+        selectionView.layer.borderColor = UIColor.accent().cgColor
 
-        [imageViewContainer, outlineView, selectionView, dotView].forEach(addSubview)
-
-        let dotConstraints = createDotConstraints()
-
-        let containerInset: CGFloat = 6
+        [imageViewContainer, outlineView, selectionView].forEach(addSubview)
 
         let iconWidth: CGFloat
 
@@ -103,27 +103,7 @@ class BaseAccountView: UIView {
             iconWidth = CGFloat.AccountView.iconWidth
         }
 
-        [self, dotView, selectionView, imageViewContainer].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        NSLayoutConstraint.activate(
-            dotConstraints +
-            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
-            [
-          imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
-          imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-          widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
-          trailingAnchor.constraint(greaterThanOrEqualTo: dotView.trailingAnchor),
-
-          imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
-          imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
-
-          imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
-          imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
-          imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
-          widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-            ])
+        setupConstraints(iconWidth: iconWidth)
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         self.addGestureRecognizer(tapGesture)
@@ -135,21 +115,53 @@ class BaseAccountView: UIView {
         updateAppearance()
     }
 
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Override methods
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Make selection view match container's corner radius if needed
+        selectionView.layer.cornerRadius = imageViewContainer.layer.cornerRadius
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
+        selectionView.layer.borderColor = UIColor.accent().cgColor
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - Setup constraints
+
+    func setupConstraints(iconWidth: CGFloat) {
+        let containerInset: CGFloat = 6
+
+        [self, selectionView, imageViewContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
+        NSLayoutConstraint.activate(
+            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
+            [
+                imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
+                imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+                widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
+
+                imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
+                imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+
+                imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
+                imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
+                imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
+                widthAnchor.constraint(lessThanOrEqualToConstant: 128)
+            ])
     }
 
-    func createDotConstraints() -> [NSLayoutConstraint] {
-        fatalError("Subclasses must override this method!")
-    }
+    // MARK: - Actions
 
     func update() {
         if self.autoUpdateSelection {
@@ -157,7 +169,8 @@ class BaseAccountView: UIView {
         }
     }
 
-    @objc func didTap(_ sender: UITapGestureRecognizer) {
+    @objc
+    func didTap(_ sender: UITapGestureRecognizer) {
         onTap(account)
     }
 }

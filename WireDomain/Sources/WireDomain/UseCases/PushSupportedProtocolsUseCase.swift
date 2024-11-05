@@ -32,6 +32,7 @@ public struct PushSupportedProtocolsUseCase {
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
@@ -148,29 +149,7 @@ public struct PushSupportedProtocolsUseCase {
     }
 
     private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await userRepository.fetchSelfUser()
-
-        return selfUser.clients.all { userClient in
-            let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
-
-            let isRecentlyActive: Bool = {
-                if userClient.isSelfClient() {
-                    return true
-                }
-
-                guard let lastActiveDate = userClient.lastActiveDate else {
-                    return false
-                }
-
-                guard lastActiveDate <= Date() else {
-                    return true
-                }
-
-                return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
-            }()
-
-            return hasMLSIdentity && isRecentlyActive
-        }
+        await userClientsRepository.allSelfUserClientsAreActiveMLSClients()
     }
 
 }
