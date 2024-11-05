@@ -25,9 +25,19 @@ public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var accentColor
 
-    let showCloseButton: Bool
-    let options: [FolderPickerOption]
-    @Binding var selected: UUID?
+    private let showCloseButton: Bool
+    private let options: [FolderPickerOption]
+    @Binding private var selected: UUID?
+
+    public init(
+        showCloseButton: Bool,
+        options: [FolderPickerOption],
+        selected: Binding<UUID?>
+    ) {
+        self.showCloseButton = showCloseButton
+        self.options = options
+        _selected = selected
+    }
 
     public var body: some View {
         List {
