@@ -85,7 +85,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userRepository.fetchUser(
-            with: userID.uuid,
+            id: userID.uuid,
             domain: userID.domain
         )
 

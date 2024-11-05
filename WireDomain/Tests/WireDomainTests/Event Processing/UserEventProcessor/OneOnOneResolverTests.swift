@@ -344,7 +344,7 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsOneOnOneConversation: ZMConversation,
         mlsConversationExists: Bool = false
     ) {
-        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
 
         conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID.uuidString

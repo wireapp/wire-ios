@@ -73,7 +73,7 @@ public protocol ConversationRepositoryProtocol {
     ///
     /// - parameters:
     ///     - userID: The user ID.
-    ///     - domain: The user domain.
+    ///     - userDomain: The user domain.
     ///
     /// - returns : The MLS group ID.
 
@@ -96,12 +96,34 @@ public protocol ConversationRepositoryProtocol {
     /// Removes a given user from all group conversations.
     ///
     /// - parameters:
-    ///     - user: The user to remove from the conversations.
-    ///     - removalDate: The date the user was removed from the conversations.
+    ///     - participantID: The user ID.
+    ///     - participantDomain: The user domain.
+    ///     - date: The date the user was removed from the conversations.
 
-    func removeUserFromAllGroupConversations(
-        user: ZMUser,
-        removalDate: Date
+    func removeParticipantFromAllGroupConversations(
+        participantID: UUID,
+        participantDomain: String?,
+        removedAt date: Date
+    ) async throws
+
+    /// Adds a participant or updates its role in a conversation.
+    ///
+    /// - Parameters:
+    ///     - participantID: The participant ID.
+    ///     - participantDomain: The participant domain if any.
+    ///     - participantRole: The role of the user.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain if any.
+    ///
+    /// If user is already part of the conversation, its role will be updated.
+    /// If not, user will be added to the conversation.
+
+    func addOrUpdateParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
     ) async
 
     /// Removes members from a conversation, deletes membership and wipe MLS group if needed.
@@ -301,13 +323,43 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
-    public func removeUserFromAllGroupConversations(
-        user: ZMUser,
-        removalDate: Date
-    ) async {
-        await conversationsLocalStore.removeUserFromAllGroupConversations(
+    public func removeParticipantFromAllGroupConversations(
+        participantID: UUID,
+        participantDomain: String?,
+        removedAt date: Date
+    ) async throws {
+        let user = try await userRepository.fetchUser(
+            id: participantID,
+            domain: participantDomain
+        )
+
+        await conversationsLocalStore.removeParticipantFromAllGroupConversations(
             user: user,
-            removalDate: removalDate
+            date: date
+        )
+    }
+
+    public func addOrUpdateParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async {
+        let participant = await userRepository.fetchOrCreateUser(
+            id: participantID,
+            domain: participantDomain
+        )
+
+        let conversation = await fetchOrCreateConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        await conversationsLocalStore.addOrUpdateParticipant(
+            participant,
+            withRole: participantRole,
+            in: conversation
         )
     }
 
@@ -331,7 +383,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let participants = await conversationsLocalStore.getParticipants(from: conversation)
 
         let sender = try await userRepository.fetchUser(
-            with: sender.uuid,
+            id: sender.uuid,
             domain: sender.domain
         )
 
@@ -390,7 +442,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for userID in userIDs {
                 taskGroup.addTask { [self] in
                     await userRepository.fetchOrCreateUser(
-                        with: userID.uuid,
+                        id: userID.uuid,
                         domain: userID.domain
                     )
                 }

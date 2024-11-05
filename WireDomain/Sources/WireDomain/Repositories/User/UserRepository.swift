@@ -41,7 +41,7 @@ public protocol UserRepositoryProtocol {
     /// - returns : A  local`ZMUser`.
 
     func fetchUser(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async throws -> ZMUser
 
@@ -75,11 +75,11 @@ public protocol UserRepositoryProtocol {
     /// Fetches or creates a user locally.
     ///
     /// - parameters:
-    ///     - uuid: The user id to fetch or create locally.
+    ///     - id: The user id to fetch or create locally.
     ///     - domain: The user domain when federated.
 
     func fetchOrCreateUser(
-        with uuid: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMUser
 
@@ -99,7 +99,7 @@ public protocol UserRepositoryProtocol {
     /// achieved by collecting the content of such communication for later auditing.
 
     func addLegalHoldRequest(
-        for userID: UUID,
+        userID: UUID,
         clientID: String,
         lastPrekey: Prekey
     ) async
@@ -133,10 +133,16 @@ public protocol UserRepositoryProtocol {
     ///     - date: The date the user was deleted.
 
     func deleteUserAccount(
-        with id: UUID,
+        id: UUID,
         domain: String?,
         at date: Date
     ) async throws
+
+    /// Indicates whether a given user is a self user.
+    /// - Parameters:
+    ///     - id: The user id.
+    ///     - domain: The user domain if any.
+    /// - Returns: Whether the user is self user.
 
     func isSelfUser(
         id: UUID,
@@ -178,21 +184,21 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func fetchOrCreateUser(
-        with id: UUID,
+        id: UUID,
         domain: String? = nil
     ) async -> ZMUser {
         await userLocalStore.fetchOrCreateUser(
-            with: id,
+            id: id,
             domain: domain
         )
     }
 
     public func fetchUser(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async throws -> ZMUser {
         try await userLocalStore.fetchUser(
-            with: id,
+            id: id,
             domain: domain
         )
     }
@@ -239,7 +245,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func addLegalHoldRequest(
-        for userID: UUID,
+        userID: UUID,
         clientID: String,
         lastPrekey: Prekey
     ) async {
@@ -251,7 +257,7 @@ public final class UserRepository: UserRepositoryProtocol {
         }
 
         await userLocalStore.addSelfLegalHoldRequest(
-            for: userID,
+            userID: userID,
             clientID: clientID,
             lastPrekey: mappedPrekey
         )
@@ -285,6 +291,7 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         switch key {
         case .wireReceiptMode:
+
             await userLocalStore.updateSelfUserReadReceipts(
                 isReadReceiptsEnabled: false,
                 isReadReceiptsEnabledChangedRemotely: true
@@ -302,7 +309,7 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func deleteUserAccount(
-        with id: UUID,
+        id: UUID,
         domain: String?,
         at date: Date
     ) async throws {
@@ -316,9 +323,10 @@ public final class UserRepository: UserRepositoryProtocol {
         } else {
             await userLocalStore.markAccountAsDeleted(for: user)
 
-            await conversationRepository.removeUserFromAllGroupConversations(
-                user: user,
-                removalDate: date
+            try await conversationRepository.removeParticipantFromAllGroupConversations(
+                participantID: id,
+                participantDomain: domain,
+                removedAt: date
             )
         }
     }
