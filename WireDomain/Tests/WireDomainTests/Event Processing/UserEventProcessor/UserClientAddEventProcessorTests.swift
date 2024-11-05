@@ -19,9 +19,10 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+
+@testable import WireDomain
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 
@@ -61,7 +62,9 @@ final class UserClientAddEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_User_Repo_Methods() async throws {
         // Mock
 
-        let userClient = modelHelper.createSelfClient(in: context)
+        let userClient = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
+        }
 
         userClientsRepository.fetchOrCreateClientWith_MockMethod = { _ in
             (userClient, true)

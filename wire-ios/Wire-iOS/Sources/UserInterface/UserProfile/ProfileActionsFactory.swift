@@ -41,6 +41,7 @@ enum ProfileAction: Equatable {
     case openSelfProfile
     case duplicateUser
     case duplicateTeam
+    case duplicateConversation
 
     /// The text of the button for this action.
     var buttonText: String {
@@ -63,6 +64,7 @@ enum ProfileAction: Equatable {
         case .openSelfProfile: return L10n.Localizable.Meta.Menu.openSelfProfile
         case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
         case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
+        case .duplicateConversation: return "⚠️ DEBUG - Duplicate Conversation"
         }
     }
 
@@ -82,6 +84,7 @@ enum ProfileAction: Equatable {
         case .openSelfProfile: return .personalProfile
         case .duplicateUser: return nil
         case .duplicateTeam: return nil
+        case .duplicateConversation: return nil
         }
     }
 
@@ -186,7 +189,8 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             return []
         }
 
-        // if the user is viewing their own profile, add the open self-profile screen button
+        // if the user is viewing their own profile by tapping his name/icon of
+        // a sent message, add the open self-profile screen button
         if viewer.isSelfUser && user.isSelfUser {
             return [.openSelfProfile]
         }
@@ -236,7 +240,9 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
                 actions.append(.duplicateUser)
                 if user.isTeamMember {
                     actions.append(.duplicateTeam)
+
                 }
+                actions.append(.duplicateConversation)
             }
 
         case (.profileViewer, .none),

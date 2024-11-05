@@ -32,7 +32,7 @@ enum TeamRepositoryError: Error {
 
     /// User is not a member of the team.
 
-    case userNotAMemberInTeam(user: UUID, team: UUID)
+    case userNotAMemberInTeam(user: UUID)
 
     /// Failed to find team member locally.
 

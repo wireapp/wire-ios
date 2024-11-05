@@ -36,7 +36,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
     private let searchUsersCache: SearchUsersCache?
 
-    @available (*, unavailable)
+    @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }

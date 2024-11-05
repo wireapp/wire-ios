@@ -331,7 +331,8 @@ final class UserEventDecodingTests: XCTestCase {
             qualifiedUserID: QualifiedID(
                 uuid: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
                 domain: "example.com"
-            )
+            ),
+            time: fractionalDate(from: "2021-05-12T10:52:02.671Z")
         )
 
         static let legalholdDisableEvent = UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)

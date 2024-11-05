@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
@@ -30,7 +31,7 @@ public protocol UserRepositoryProtocol {
 
     /// Fetch self user from the local store
 
-    func fetchSelfUser() -> ZMUser
+    func fetchSelfUser() async -> ZMUser
 
     /// Fetches a user locally
     ///
@@ -62,6 +63,26 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Updates a user.
+    ///
+    /// - parameters:
+    ///     - event: The event to update the user locally from.
+
+    func updateUser(
+        from event: UserUpdateEvent
+    ) async
+
+    /// Fetches or creates a user locally.
+    ///
+    /// - parameters:
+    ///     - uuid: The user id to fetch or create locally.
+    ///     - domain: The user domain when federated.
+
+    func fetchOrCreateUser(
+        with uuid: UUID,
+        domain: String?
+    ) async -> ZMUser
+
     /// Removes user push token from storage.
 
     func removePushToken()
@@ -85,7 +106,7 @@ public protocol UserRepositoryProtocol {
 
     /// Disables user legal hold.
 
-    func disableUserLegalHold() async throws
+    func disableUserLegalHold() async
 
     /// Updates a user property
     ///
@@ -111,60 +132,69 @@ public protocol UserRepositoryProtocol {
     ///     - user: The user to delete the account for.
     ///     - date: The date the user was deleted.
 
-    func deleteUserAccount(for user: ZMUser, at date: Date) async
+    func deleteUserAccount(
+        with id: UUID,
+        domain: String?,
+        at date: Date
+    ) async throws
+
+    func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool
 
 }
 
 public final class UserRepository: UserRepositoryProtocol {
 
-    enum DefaultsKeys: String {
-        case pushToken = "PushToken"
-    }
-
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
     private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     private let conversationRepository: any ConversationRepositoryProtocol
-    private let storage: UserDefaults
+    private let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
         selfUserAPI: any SelfUserAPI,
         conversationLabelsRepository: any ConversationLabelsRepositoryProtocol,
         conversationRepository: ConversationRepositoryProtocol,
-        sharedUserDefaults: UserDefaults = .standard
+        userLocalStore: any UserLocalStoreProtocol
     ) {
-        self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
         self.conversationLabelsRepository = conversationLabelsRepository
         self.conversationRepository = conversationRepository
-        storage = sharedUserDefaults
+        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
 
-    public func fetchSelfUser() -> ZMUser {
-        ZMUser.selfUser(in: context)
+    public func fetchSelfUser() async -> ZMUser {
+        await userLocalStore.fetchSelfUser()
+    }
+
+    public func fetchOrCreateUser(
+        with id: UUID,
+        domain: String? = nil
+    ) async -> ZMUser {
+        await userLocalStore.fetchOrCreateUser(
+            with: id,
+            domain: domain
+        )
     }
 
     public func fetchUser(
         with id: UUID,
         domain: String?
     ) async throws -> ZMUser {
-        try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
-                throw UserRepositoryError.failedToFetchUser(id)
-            }
-
-            return user
-        }
+        try await userLocalStore.fetchUser(
+            with: id,
+            domain: domain
+        )
     }
 
     public func pushSelfSupportedProtocols(
@@ -177,11 +207,7 @@ public final class UserRepository: UserRepositoryProtocol {
         let knownUserIDs: [WireDataModel.QualifiedID]
 
         do {
-            knownUserIDs = try await context.perform {
-                let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-                let knownUsers = try self.context.fetch(fetchRequest)
-                return knownUsers.compactMap(\.qualifiedID)
-            }
+            knownUserIDs = try await userLocalStore.fetchUsersQualifiedIDs()
         } catch {
             throw UserRepositoryError.failedToCollectKnownUsers(error)
         }
@@ -193,31 +219,23 @@ public final class UserRepository: UserRepositoryProtocol {
         do {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
-            await context.perform {
-                for user in userList.found {
-                    self.persistUser(from: user)
-                }
+            for user in userList.found {
+                await userLocalStore.persistUser(from: user)
             }
+
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
 
-    public func removePushToken() {
-        storage.set(
-            nil,
-            forKey: DefaultsKeys.pushToken.rawValue
-        )
+    public func updateUser(
+        from event: UserUpdateEvent
+    ) async {
+        await userLocalStore.updateUser(from: event)
     }
 
-    public func fetchUser(with id: UUID) async throws -> ZMUser {
-        try await context.perform { [context] in
-            guard let user = ZMUser.fetch(with: id, in: context) else {
-                throw UserRepositoryError.failedToFetchUser(id)
-            }
-
-            return user
-        }
+    public func removePushToken() {
+        userLocalStore.deletePushToken()
     }
 
     public func addLegalHoldRequest(
@@ -225,44 +243,32 @@ public final class UserRepository: UserRepositoryProtocol {
         clientID: String,
         lastPrekey: Prekey
     ) async {
-        await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-
-            guard let prekey = lastPrekey.toDomainModel() else {
-                return WireLogger.eventProcessing.error(
-                    "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
-                )
-            }
-
-            let legalHoldRequest = LegalHoldRequest(
-                target: userID,
-                requester: nil,
-                clientIdentifier: clientID,
-                lastPrekey: prekey
+        // prepare data for the local store
+        guard let mappedPrekey = lastPrekey.toDomainModel() else {
+            return WireLogger.eventProcessing.error(
+                "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
             )
-
-            selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
+
+        await userLocalStore.addSelfLegalHoldRequest(
+            for: userID,
+            clientID: clientID,
+            lastPrekey: mappedPrekey
+        )
     }
 
-    public func disableUserLegalHold() async throws {
-        try await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-            selfUser.legalHoldRequestWasCancelled()
-
-            try context.save()
-        }
+    public func disableUserLegalHold() async {
+        await userLocalStore.cancelSelfUserLegalholdRequest()
     }
 
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
-            let selfUser = fetchSelfUser()
 
-            await context.perform {
-                selfUser.readReceiptsEnabled = isEnabled
-                selfUser.readReceiptsEnabledChangedRemotely = true
-            }
+            await userLocalStore.updateSelfUserReadReceipts(
+                isReadReceiptsEnabled: isEnabled,
+                isReadReceiptsEnabledChangedRemotely: true
+            )
 
         case .conversationLabels(let conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
@@ -279,67 +285,53 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         switch key {
         case .wireReceiptMode:
-            let selfUser = fetchSelfUser()
-
-            await context.perform {
-                selfUser.readReceiptsEnabled = false
-                selfUser.readReceiptsEnabledChangedRemotely = true
-            }
+            await userLocalStore.updateSelfUserReadReceipts(
+                isReadReceiptsEnabled: false,
+                isReadReceiptsEnabledChangedRemotely: true
+            )
 
         case .wireTypingIndicatorMode:
             // TODO: [WPB-726] feature not implemented yet
             break
 
         case .labels:
-            /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
-            /// see `ConversationLabelsRepository`
+            // Already handled with `user.properties-set` event (adding new labels and removing old ones)
+            // see `ConversationLabelsRepository`
             break
         }
     }
 
     public func deleteUserAccount(
-        for user: ZMUser,
+        with id: UUID,
+        domain: String?,
         at date: Date
-    ) async {
-        let isSelfUser = await context.perform {
-            user.isSelfUser
-        }
+    ) async throws {
+        let (user, isSelfUser) = try await userLocalStore.isSelfUser(
+            id: id,
+            domain: domain
+        )
 
         if isSelfUser {
-            let notification = AccountDeletedNotification(context: context)
-            notification.post(in: context.notificationContext)
+            userLocalStore.postAccountDeletedNotification()
         } else {
-            await context.perform {
-                user.isAccountDeleted = true
-            }
+            await userLocalStore.markAccountAsDeleted(for: user)
 
-            await conversationRepository.removeFromConversations(
+            await conversationRepository.removeUserFromAllGroupConversations(
                 user: user,
                 removalDate: date
             )
         }
     }
 
-    // MARK: - Private
+    public func isSelfUser(
+        id: UUID,
+        domain: String?
+    ) async throws -> Bool {
+        let (_, isSelfUser) = try await userLocalStore.isSelfUser(
+            id: id,
+            domain: domain
+        )
 
-    private func persistUser(from user: WireAPI.User) {
-        let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
-
-        guard user.deleted == false else {
-            return persistedUser.markAccountAsDeleted(at: Date())
-        }
-
-        persistedUser.name = user.name
-        persistedUser.handle = user.handle
-        persistedUser.teamIdentifier = user.teamID
-        persistedUser.accentColorValue = Int16(user.accentID)
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
-        persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-        persistedUser.emailAddress = user.email
-        persistedUser.expiresAt = user.expiresAt
-        persistedUser.serviceIdentifier = user.service?.id.transportString()
-        persistedUser.providerIdentifier = user.service?.provider.transportString()
-        persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
-        persistedUser.needsToBeUpdatedFromBackend = false
+        return isSelfUser
     }
 }
