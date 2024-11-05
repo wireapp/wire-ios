@@ -23,15 +23,10 @@ final class PushChannel: PushChannelProtocol {
 
     typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
-    private let request: URLRequest
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
 
-    init(
-        request: URLRequest,
-        webSocket: any WebSocketProtocol
-    ) {
-        self.request = request
+    init(webSocket: any WebSocketProtocol) {
         self.webSocket = webSocket
     }
 

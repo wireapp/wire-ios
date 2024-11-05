@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the receipt mode of a conversation was updated.
 
-public struct ConversationReceiptModeUpdateEvent: Equatable, Codable {
+public struct ConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

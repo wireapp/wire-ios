@@ -145,7 +145,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         sut.backgroundColor = .systemBackground
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         sut.userStatus = .init(
-            name: userName,
+            displayName: userName,
             availability: availability,
             isE2EICertified: isE2EICertified,
             isProteusVerified: isProteusVerified

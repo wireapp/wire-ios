@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireAnalytics
 
 @testable import WireSyncEngine
 
@@ -149,6 +150,35 @@ public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationG
 
 }
 
+public class MockDisableAnalyticsUseCaseProtocol: DisableAnalyticsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() throws -> Void)?
+
+    public func invoke() throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try mock()
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -177,6 +207,35 @@ public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityC
         } else {
             fatalError("no mock for `invoke`")
         }
+    }
+
+}
+
+public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Void)?
+
+    public func invoke() async throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
     }
 
 }
@@ -974,6 +1033,30 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
+    }
+
+}
+
+public class MockToFolderMovableConversation: ToFolderMovableConversation {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - moveToFolder
+
+    public var moveToFolder_Invocations: [LabelType] = []
+    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
+
+    public func moveToFolder(_ folder: LabelType) {
+        moveToFolder_Invocations.append(folder)
+
+        guard let mock = moveToFolder_MockMethod else {
+            fatalError("no mock for `moveToFolder`")
+        }
+
+        mock(folder)
     }
 
 }

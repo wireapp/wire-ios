@@ -35,7 +35,7 @@ final class WireTextStyleMappingTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @available(iOS 16, *) @MainActor
+    @MainActor
     func testFontDarkUserInterfaceStyle() {
         let screenBounds = UIScreen.main.bounds
         let sut = WireTextStyleFontMappingPreview()
@@ -45,7 +45,7 @@ final class WireTextStyleMappingTests: XCTestCase {
             .verify(matching: sut)
     }
 
-    @available(iOS 16, *) @MainActor
+    @MainActor
     func testFontDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let sut = WireTextStyleFontMappingPreview()
@@ -60,7 +60,7 @@ final class WireTextStyleMappingTests: XCTestCase {
         }
     }
 
-    @available(iOS 16, *) @MainActor
+    @MainActor
     func testUIFontDarkUserInterfaceStyle() {
         let sut = WireTextStyleUIFontMappingPreview()
         snapshotHelper

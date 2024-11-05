@@ -19,14 +19,15 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+
+@testable import WireDomain
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 
     private var sut: UserClientAddEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -40,9 +41,9 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
         sut = UserClientAddEventProcessor(
-            repository: userRepository
+            repository: userClientsRepository
         )
     }
 
@@ -53,7 +54,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         sut = nil
-        userRepository = nil
+        userClientsRepository = nil
     }
 
     // MARK: - Tests
@@ -61,13 +62,15 @@ final class UserClientAddEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_User_Repo_Methods() async throws {
         // Mock
 
-        let userClient = modelHelper.createSelfClient(in: context)
+        let userClient = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
+        }
 
-        userRepository.fetchOrCreateUserClientWith_MockMethod = { _ in
+        userClientsRepository.fetchOrCreateClientWith_MockMethod = { _ in
             (userClient, true)
         }
 
-        userRepository.updateUserClientFromIsNewClient_MockMethod = { _, _, _ in }
+        userClientsRepository.updateClientWithFromIsNewClient_MockMethod = { _, _, _ in }
 
         // When
 
@@ -75,13 +78,13 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchOrCreateUserClientWith_Invocations.count, 1)
-        XCTAssertEqual(userRepository.updateUserClientFromIsNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.fetchOrCreateClientWith_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.updateClientWithFromIsNewClient_Invocations.count, 1)
     }
 
     private enum Scaffolding {
         static let event = UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: "94766bd92f56923d",
                 type: .permanent,
                 activationDate: .now,

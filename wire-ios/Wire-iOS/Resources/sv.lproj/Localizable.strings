@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Gästrum";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Du)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Sök efter namn eller användarnamn";
 "peoplepicker.header.top_people" = "Topp-personer";
-"peoplepicker.button.create_conversation" = "Skapa grupp";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Lägg till deltagare";
 "peoplepicker.header.conversations" = "Grupper";
 "peoplepicker.header.team_conversations" = "%@ grupper";
@@ -61,8 +59,8 @@
 "peoplepicker.header.directory" = "Anslut";
 "peoplepicker.header.federation" = "Anslut med annan domän";
 
-"peoplepicker.group.title.singular" = "Lägg till deltagare";
-"peoplepicker.group.title.plural" = "Lägg till deltagare (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Hoppa över";
 "peoplepicker.group.done" = "Klar";
 "peoplepicker.group.create" = "Skapa";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Bjud in fler personer";
 "peoplepicker.invite_team_members" = "Bjud in personer att gå med i teamet";
 "peoplepicker.quick-action.open-conversation" = "Öppna";
-"peoplepicker.quick-action.create-conversation" = "Skapa grupp";
-"peoplepicker.quick-action.create-guest-room" = "Skapa gästrum";
 "peoplepicker.quick-action.admin-services" = "Hantera Tjänster";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +123,21 @@
 "conversation_list.empty.all_archived.message" = "Allt arkiverat";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoriter";
+"conversation_list.filter.groups.title" = "Grupper";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Ta bort";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Gå med";
@@ -134,6 +145,15 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tryck för att aktivera.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiva nu.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Har nya meddelanden.";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i kontakter";
@@ -300,10 +320,10 @@
 "conversation.input_bar.message_too_long.message" = "Du kan skicka meddelanden upp till %d tecken.";
 
 "conversation.create.group_name.title" = "Skapa en grupp";
-"conversation.create.group_name.placeholder" = "Gruppens namn";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
-"conversation.create.options.title" = "Konversationsalternativ";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
@@ -1032,8 +1052,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Dela profil";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Dela profillänk";
+"qrcode.share_qrcode.button.title" = "Dela QR-kod";
+
+// Options menu contents
 "self.settings" = "Inställningar";
 "self.profile" = "Profil";
 "self.account" = "Konto";
@@ -1151,6 +1177,15 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Skicka anonyma användningsdata";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
+
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
+
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Avböj";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Integritetspolicy";
 
 // Change Username
 
@@ -1514,7 +1549,7 @@
 
 
 // Restore In Progress Loading Titles
-"registration.no_history.restore_backup.restoring" = "Restoring…";
+"registration.no_history.restore_backup.restoring" = "Återställer…";
 "registration.no_history.restore_backup.completed" = "Completed";
 
 // Password Import Alert
@@ -1564,7 +1599,7 @@
 
 "registration.personal.title" = "Skapa ett konto";
 "registration.signin.title" = "Logga in";
-"registration.signin.too_many_devices.title" = "Too Many Devices";
+"registration.signin.too_many_devices.title" = "För många enheter";
 "registration.signin.too_many_devices.subtitle" = "Ta bort en av dina andra enheter för att börja använda Wire på den här enheten.";
 "registration.signin.too_many_devices.manage_button.title" = "Hantera enheter";
 "registration.signin.too_many_devices.sign_out_button.title" = "Logga ut";
