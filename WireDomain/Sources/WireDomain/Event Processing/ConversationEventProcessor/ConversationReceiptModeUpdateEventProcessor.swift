@@ -48,7 +48,7 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         )
 
         let conversation = await conversationRepository.fetchConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 
