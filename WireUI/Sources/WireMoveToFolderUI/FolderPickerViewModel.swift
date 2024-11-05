@@ -46,9 +46,7 @@ public final class FolderPickerViewModel: ObservableObject {
         return conversation.currentFolderIdentifier == folderID
     }
 
-    public func select(_ folder: Folder) {
-        Task {
-            await selectionUseCase.invoke(folder: folder, conversation: conversation)
-        }
+    public func select(_ folder: Folder) async {
+        await selectionUseCase.invoke(folder: folder, conversation: conversation)
     }
 }
