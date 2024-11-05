@@ -18,9 +18,16 @@
 
 import Foundation
 
+/// An option to be displayed in the folder picker
+
 public struct FolderPickerOption: Identifiable, Hashable {
 
+    /// The unique identifier of the option's corresponding folder
+
     public let id: UUID
+
+    /// The option title
+
     public let title: String
 
     public init(id: UUID, title: String) {

@@ -21,13 +21,22 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
+/// A view that allows the user to pick a folder from a list
+
 public struct FolderPicker: View {
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var accentColor
 
     private let showCloseButton: Bool
     private let options: [FolderPickerOption]
     @Binding private var selected: UUID?
+
+    /// Creates a new instance of `FolderPicker`
+    /// - Parameters:
+    ///   - showCloseButton: Whether to show a close button in the navigation bar
+    ///   - options: An array of `FolderPickerOption` to display in the picker
+    ///   - selected: The `id` of the selected `FolderPickerOption`
 
     public init(
         showCloseButton: Bool,
@@ -78,6 +87,7 @@ public struct FolderPicker: View {
     private func didTapClose() {
         dismiss()
     }
+
 }
 
 // MARK: - Previews
