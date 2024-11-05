@@ -50,8 +50,8 @@ final class FolderPickerViewModelTests: XCTestCase {
     func test_init_loadsFoldersFromDirectory() {
         // GIVEN
         let folders = [
-            Folder(identifier: UUID(), name: "Work", kind: .folder),
-            Folder(identifier: UUID(), name: "Personal", kind: .folder)
+            Folder(identifier: UUID(), name: "Work"),
+            Folder(identifier: UUID(), name: "Personal")
         ]
         mockDirectory.allFolders = folders
 
@@ -66,7 +66,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     func test_select_invokesUseCase() {
         // GIVEN
-        let folder = Folder(identifier: UUID(), name: "Work", kind: .folder)
+        let folder = Folder(identifier: UUID(), name: "Work")
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)
         mockSelectionUseCase.invokeFolderConversation_MockMethod = { _, _ in }
         createSUT(conversation: conversation)
@@ -83,10 +83,9 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     func test_isSelected_returnsTrue_whenFolderMatchesCurrentFolder() {
         // GIVEN
-        let folderID = "folder1"
         let folderID = UUID()
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: folderID)
-        let folder = Folder(identifier: folderID, name: "Work", kind: .folder)
+        let folder = Folder(identifier: folderID, name: "Work")
         createSUT(conversation: conversation)
 
         // WHEN
@@ -99,7 +98,7 @@ final class FolderPickerViewModelTests: XCTestCase {
     func test_isSelected_returnsFalse_whenFolderDoesNotMatchCurrentFolder() {
         // GIVEN
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
-        let folder = Folder(identifier: UUID(), name: "Work", kind: .folder)
+        let folder = Folder(identifier: UUID(), name: "Work")
         createSUT(conversation: conversation)
 
         // WHEN
@@ -112,7 +111,7 @@ final class FolderPickerViewModelTests: XCTestCase {
     func test_isSelected_returnsFalse_whenFolderIdentifierIsNil() {
         // GIVEN
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
-        let folder = Folder(identifier: nil, name: "Work", kind: .folder)
+        let folder = Folder(identifier: nil, name: "Work")
         createSUT(conversation: conversation)
 
         // WHEN

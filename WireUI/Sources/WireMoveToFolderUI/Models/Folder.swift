@@ -26,17 +26,14 @@ public struct Folder: Equatable {
     /// Display name of the folder. Can be nil if not set
     public let name: String?
 
-    /// The type of folder (favorite or regular)
-    public let kind: FolderKind
 
     /// Creates a new folder instance
     /// - Parameters:
     ///   - identifier: Unique identifier for the folder. Can be nil for temporary folders
     ///   - name: Display name of the folder. Can be nil if not set
     ///   - kind: The type of folder
-    public init(identifier: UUID?, name: String?, kind: FolderKind) {
+    public init(identifier: UUID?, name: String?) {
         self.identifier = identifier
         self.name = name
-        self.kind = kind
     }
 }
