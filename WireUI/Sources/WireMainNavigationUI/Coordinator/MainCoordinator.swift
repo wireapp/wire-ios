@@ -407,19 +407,29 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
     // MARK: - Legacy Helpers
 
+    /// A notification should be shown if the conversation list is the topmost view controller.
     public var isConversationListVisible: Bool {
-        if mainSplitViewState == .expanded {
-            splitViewController.conversationListUI == nil // TODO: fix condition
-        } else {
-            tabBarController.conversationListUI != nil && tabBarController.conversationUI == nil && splitViewController.presentedViewController == nil
+        guard splitViewController.presentedViewController == nil else { return false }
+
+        return switch mainSplitViewState {
+        case .collapsed:
+            tabBarController.conversationListUI != nil &&
+            tabBarController.conversationUI == nil
+        case .expanded:
+            splitViewController.conversationListUI != nil
         }
     }
 
+    /// A notification should not be shown if the conversation screen is the topmost view
+    /// controller and the visible conversation matches the one of the notification.
     public var isConversationVisible: Bool {
-        if mainSplitViewState == .expanded {
-            splitViewController.conversationUI == nil // TODO: fix condition
-        } else {
-            tabBarController.conversationUI != nil && splitViewController.presentedViewController == nil
+        guard splitViewController.presentedViewController == nil else { return false }
+
+        return switch mainSplitViewState {
+        case .collapsed:
+            tabBarController.conversationUI != nil
+        case .expanded:
+            splitViewController.conversationUI != nil
         }
     }
 }
