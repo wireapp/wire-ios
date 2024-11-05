@@ -75,7 +75,7 @@ public protocol UserLocalStoreProtocol {
 
     func updateUserClient(
         _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws
 
@@ -136,10 +136,6 @@ public protocol UserLocalStoreProtocol {
     // TODO: [WPB-10727] Merge these two methods into a single method (also no API objects should be passed to local store)
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: move to ClientLocalStore when related branch is merged
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -166,36 +162,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func fetchSelfUser() async -> ZMUser {
         await context.perform { [context] in
             ZMUser.selfUser(in: context)
-        }
-    }
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: move to ClientLocalStore when related branch is merged
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await fetchSelfUser()
-
-        return await context.perform {
-            selfUser.clients.all { userClient in
-                let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
-
-                let isRecentlyActive: Bool = {
-                    if userClient.isSelfClient() {
-                        return true
-                    }
-
-                    guard let lastActiveDate = userClient.lastActiveDate else {
-                        return false
-                    }
-
-                    guard lastActiveDate <= Date() else {
-                        return true
-                    }
-
-                    return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
-                }()
-
-                return hasMLSIdentity && isRecentlyActive
-            }
         }
     }
 
@@ -412,7 +378,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly
     public func updateUserClient(
         _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         await context.perform { [context] in

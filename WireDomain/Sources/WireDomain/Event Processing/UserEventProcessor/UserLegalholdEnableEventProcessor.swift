@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process user legalhold enable events.
@@ -32,9 +33,24 @@ protocol UserLegalholdEnableEventProcessorProtocol {
 
 struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProtocol {
 
-    func processEvent(_: UserLegalholdEnableEvent) async throws {
-        // TODO: [WPB-10195]
-        assertionFailure("not implemented yet")
+    let context: NSManagedObjectContext
+    let userRepository: any UserRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
+
+    func processEvent(_ event: UserLegalholdEnableEvent) async throws {
+        let userID = event.userID
+
+        let selfUser = await userRepository.fetchSelfUser()
+
+        let selfUserID = await context.perform {
+            selfUser.remoteIdentifier
+        }
+
+        guard userID == selfUserID else {
+            return
+        }
+
+        try await userClientsRepository.pullSelfClients()
     }
 
 }

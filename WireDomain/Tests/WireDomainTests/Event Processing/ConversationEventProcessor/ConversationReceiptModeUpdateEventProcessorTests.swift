@@ -77,7 +77,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         }
 
         userRepository.fetchUserWithDomain_MockValue = user
-        conversationRepository.fetchConversationWithDomain_MockValue = conversation
+        conversationRepository.fetchConversationIdDomain_MockValue = conversation
         conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
         conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_MockMethod = { _, _ in }
         conversationLocalStore.isConversationArchived_MockValue = true
@@ -91,7 +91,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userRepository.fetchUserWithDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.isConversationArchived_Invocations.count, 1)
