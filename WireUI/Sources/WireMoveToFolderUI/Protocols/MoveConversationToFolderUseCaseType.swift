@@ -17,8 +17,8 @@
 //
 
 // sourcery: AutoMockable
-/// Protocol for handling folder selection operations
-public protocol FolderSelectionUseCaseType {
+/// Protocol for handling moving a conversation to a specified folder
+public protocol MoveConversationToFolderUseCaseType {
 
     /// Moves a conversation to a specified folder
     /// - Parameters:
