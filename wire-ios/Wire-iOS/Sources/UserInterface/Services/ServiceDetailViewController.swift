@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-private extension MessageProtocol {
+extension MessageProtocol {
     var supportsBots: Bool {
         !isOne(of: .mls, .mixed)
     }

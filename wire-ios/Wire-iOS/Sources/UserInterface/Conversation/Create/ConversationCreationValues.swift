@@ -36,14 +36,14 @@ final class ConversationCreationValues {
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
-    var encryptionProtocol: Feature.MLS.Config.MessageProtocol {
+    var encryptionProtocol: MessageProtocol {
         didSet {
             allowServices = shouldIncludeServices
         }
     }
 
     var shouldIncludeServices: Bool {
-        return !encryptionProtocol.isOne(of: .mls, .mixed)
+        encryptionProtocol.supportsBots
     }
 
     var participants: UserSet {
@@ -75,7 +75,7 @@ final class ConversationCreationValues {
         allowGuests: Bool = true,
         allowServices: Bool = true,
         enableReceipts: Bool = true,
-        encryptionProtocol: Feature.MLS.Config.MessageProtocol,
+        encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
         self.name = name

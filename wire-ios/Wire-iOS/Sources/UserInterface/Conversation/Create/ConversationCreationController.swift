@@ -155,7 +155,7 @@ final class ConversationCreationController: UIViewController {
         self.userSession = userSession
         self.mlsFeature = mlsFeature
         self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol,
+            encryptionProtocol: mlsFeature.config.defaultProtocol.toMessageProtocol,
             selfUser: userSession.selfUser
         )
 
@@ -444,7 +444,7 @@ extension ConversationCreationController {
 
     func presentEncryptionProtocolPicker(
         sender: UIView,
-        _ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void
+        _ completion: @escaping (MessageProtocol) -> Void
     ) {
         let alertController = encryptionProtocolPicker { type in
             completion(type)
@@ -457,7 +457,7 @@ extension ConversationCreationController {
         present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+    func encryptionProtocolPicker(_ completion: @escaping (MessageProtocol) -> Void) -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
         let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection.proteusDefault : Localizable.ProtocolSelection.proteus
@@ -492,5 +492,18 @@ extension ConversationCreationController {
         ]
 
         return alert
+    }
+}
+
+extension Feature.MLS.Config.MessageProtocol {
+    var toMessageProtocol: MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+        case .mls:
+            return .mls
+        case .mixed:
+            return .mixed
+        }
     }
 }

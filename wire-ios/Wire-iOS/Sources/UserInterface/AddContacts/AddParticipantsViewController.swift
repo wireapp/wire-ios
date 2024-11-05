@@ -347,7 +347,7 @@ final class AddParticipantsViewController: UIViewController {
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,
-                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                encryptionProtocol: mlsFeature.config.defaultProtocol.toMessageProtocol,
                 selfUser: userSession.selfUser
             )
             viewModel = AddParticipantsViewModel(with: .create(updated))
