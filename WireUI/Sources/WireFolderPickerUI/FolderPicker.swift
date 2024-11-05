@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
-import WireReusableUIComponents
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
@@ -98,6 +98,6 @@ private extension FolderPickerOption {
         FolderPickerOption(id: .init(), title: "Folder name 1"),
         FolderPickerOption(id: .init(), title: "Folder name 2"),
         FolderPickerOption(id: .init(), title: "Folder name 3"),
-        FolderPickerOption(id: .init(), title: "A super long folder name that can't fit on the screen"),
+        FolderPickerOption(id: .init(), title: "A super long folder name that can't fit on the screen")
     ]
 }

@@ -24,4 +24,3 @@ public struct FolderPickerOption: Identifiable, Hashable {
     public let title: String
 
 }
-
