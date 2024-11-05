@@ -157,19 +157,19 @@ struct UserClientsRequestV0: Encodable {
 }
 
 struct OtherUserClientV0: Decodable, ToAPIModelConvertible {
-    
+
     let id: String
     let deviceClass: DeviceClass?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case deviceClass = "class"
     }
-    
+
     func toAPIModel() -> OtherUserClient {
         OtherUserClient(id: id, deviceClass: deviceClass)
     }
-    
+
 }
 
 struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
