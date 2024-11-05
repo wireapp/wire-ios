@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "folderPicker.close.label" : {
-      "shouldTranslate" : false
-    },
     "folderPicker.emptyState.description" : {
       "comment" : "The text to be displayed when there are no folders to choose from",
       "localizations" : {
@@ -14,9 +11,6 @@
           }
         }
       }
-    },
-    "folderPicker.emptyState.link.accessibilityLabel" : {
-
     },
     "folderPicker.emptyState.link.text" : {
       "comment" : "The link text for documentation on how to add a conversation to a folder",
