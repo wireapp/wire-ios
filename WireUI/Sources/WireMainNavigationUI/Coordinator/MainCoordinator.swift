@@ -106,7 +106,6 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         await Task.yield() // without this line subsequent navigation controller push animations don't work
 
         switch mainSplitViewState {
-
         case .collapsed:
             // if `showConversationList` is called while in collapsed mode, pop the conversation view controller
             tabBarController.setConversationUI(nil, animated: true)
