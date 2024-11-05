@@ -83,7 +83,12 @@ public struct FolderPicker: View {
     @ViewBuilder
     private func content() -> some View {
         if options.isEmpty {
-            EmptyState(url: helpLink)
+            EmptyState(
+                image: Image(systemName: "folder"),
+                description: Text("folderPicker.emptyState.description", tableName: "Localizable", bundle: .module),
+                linkText: Text("folderPicker.emptyState.link.text", tableName: "Localizable", bundle: .module),
+                url: helpLink
+            )
         } else {
             picker()
         }
@@ -110,25 +115,27 @@ public struct FolderPicker: View {
 }
 
 private struct EmptyState: View {
+    let image: Image
+    let description: Text
+    let linkText: Text
     let url: URL
 
     var body: some View {
         Group {
             VStack {
-                Image(systemName: "folder")
+                image
                     .font(.system(size: 40))
                     .foregroundStyle(Color.secondaryText)
                     .padding(.bottom, 16)
 
-                Text("folderPicker.emptyState.description", tableName: "Localizable", bundle: .module)
+                description
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
 
                 Link(destination: url) {
-                    Text("folderPicker.emptyState.link.text", tableName: "Localizable", bundle: .module)
+                    linkText
                         .multilineTextAlignment(.center)
                         .underline()
-                        .accessibilityIdentifier("how-to-add-conversation-to-folder-link")
                 }
             }
             .font(.textStyle(.body1))
