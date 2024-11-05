@@ -96,6 +96,14 @@ public protocol ConversationLocalStoreProtocol {
         removalDate: Date
     ) async
 
+    /// Deletes a conversation locally.
+    /// - Parameters:
+    ///     - conversation: The conversation to delete.
+
+    func deleteConversation(
+        _ conversation: ZMConversation
+    ) async
+
     /// Stores a flag indicating whether a conversation is deleted remotely.
     /// - Parameter isDeletedRemotely: A flag indicating whether the conversation is deleted remotely.
     /// - Parameter conversation: The conversation to update the `isDeletedRemotely` flag for.
@@ -104,6 +112,20 @@ public protocol ConversationLocalStoreProtocol {
         _ isDeletedRemotely: Bool,
         conversation: ZMConversation
     ) async
+
+    /// Indicates whether a conversation is a MLS one.
+    /// - parameter conversation: The conversation to check the flag for.
+    /// - returns: A flag indicating whether the conversation uses the MLS protocol.
+
+    func isMLSConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    /// Fetches the MLS group ID from a conversation.
+    /// - parameter conversation: The conversation to fetch the MLS group ID for.
+    /// - returns: The MLS conversation group ID.
+
+    func mlsGroupID(conversation: ZMConversation) async -> MLSGroupID?
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -277,6 +299,29 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 )
             }
         }
+    }
+
+    public func isMLSConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.messageProtocol == .mls
+        }
+    }
+
+    public func mlsGroupID(
+        conversation: ZMConversation
+    ) async -> MLSGroupID? {
+        await context.perform {
+            conversation.mlsGroupID
+        }
+    }
+
+    public func deleteConversation(_ conversation: ZMConversation) async {
+        await storeConversationIsDeletedRemotely(
+            true,
+            conversation: conversation
+        )
     }
 
     public func wipeMLSGroup(with id: MLSGroupID) async throws {

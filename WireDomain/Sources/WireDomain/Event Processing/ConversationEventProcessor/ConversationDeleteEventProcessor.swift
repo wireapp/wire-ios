@@ -35,7 +35,7 @@ protocol ConversationDeleteEventProcessorProtocol {
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
 
     enum Error: Swift.Error {
-        case failedToDeleteMLSConversation(Swift.Error)
+        case failedToDeleteConversation(Swift.Error)
     }
 
     let repository: any ConversationRepositoryProtocol
@@ -44,25 +44,13 @@ struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtoco
         let id = event.conversationID.uuid
         let domain = event.conversationID.domain
 
-        let conversation = await repository.fetchConversation(
-            with: id,
-            domain: domain
-        )
-
-        guard let conversation else {
-            return WireLogger.eventProcessing.warn(
-                "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
+        do {
+            try await repository.deleteConversation(
+                id: id,
+                domain: domain
             )
-        }
-
-        if conversation.messageProtocol == .mls {
-            do {
-                try await repository.deleteMLSConversation(with: id, domain: domain)
-            } catch {
-                throw Error.failedToDeleteMLSConversation(error)
-            }
-        } else {
-            await repository.deleteConversation(with: id, domain: domain)
+        } catch {
+            throw Error.failedToDeleteConversation(error)
         }
     }
 

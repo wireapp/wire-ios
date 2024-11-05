@@ -338,7 +338,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversation, localConversation)
     }
 
-    func testDeleteMLSConversation_It_Wipes_MLS_Group_And_Deletes_MLS_Conversation_Locally() async throws {
+    func testDeleteMLSConversation_It_Wipes_MLS_Group_And_Marks_MLS_Conversation_As_Deleted_Locally() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -357,8 +357,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.deleteMLSConversation(
-            with: Scaffolding.conversationID,
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )
 
@@ -372,35 +372,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(isDeletedRemotely, true)
     }
 
-    func testDeleteMLSConversation_It_Throws_Repo_Error_When_Missing_MLS_Group_ID() async throws {
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createMLSConversation(
-                id: Scaffolding.conversationID,
-                domain: Scaffolding.domain,
-                mlsGroupID: nil,
-                mlsStatus: .ready,
-                conversationType: .group,
-                epoch: 0,
-                in: context
-            )
-        }
-
-        do {
-            // When
-            try await sut.deleteMLSConversation(
-                with: Scaffolding.conversationID,
-                domain: Scaffolding.domain
-            )
-
-        } catch {
-            // Then
-            XCTAssertTrue(error is ConversationRepositoryError)
-        }
-    }
-
-    func testDeleteConversation_It_Deletes_Conversation_Locally() async throws {
+    func testDeleteProteusConversation_It_Marks_Conversation_As_Deleted_Remotely() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -412,8 +384,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.deleteConversation(
-            with: Scaffolding.conversationID,
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )
 

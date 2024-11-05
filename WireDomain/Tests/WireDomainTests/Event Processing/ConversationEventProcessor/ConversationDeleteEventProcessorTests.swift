@@ -58,7 +58,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Repo_Methods() async throws {
+    func testProcessEvent_It_Invokes_Delete_Conversation_Repo_Method() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -68,8 +68,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
             )
         }
 
-        repository.fetchConversationWithDomain_MockValue = conversation
-        repository.deleteConversationWithDomain_MockMethod = { _, _ in }
+        repository.deleteConversationIdDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -77,34 +76,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
-        XCTAssertEqual(repository.deleteConversationWithDomain_Invocations.count, 1)
-    }
-
-    func testProcessEvent_It_Invokes_Repo_Methods_For_MLS_Conversation() async throws {
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createMLSConversation(
-                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
-                mlsStatus: .ready,
-                conversationType: .group,
-                epoch: 0,
-                in: context
-            )
-        }
-
-        repository.fetchConversationWithDomain_MockValue = conversation
-        repository.deleteMLSConversationWithDomain_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
-        XCTAssertEqual(repository.deleteMLSConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.deleteConversationIdDomain_Invocations.count, 1)
     }
 
     func testProcessEvent_It_Throws_Error_For_MLS_Conversation() async throws {
@@ -121,7 +93,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
         }
 
         repository.fetchConversationWithDomain_MockValue = conversation
-        repository.deleteMLSConversationWithDomain_MockError = Scaffolding.MockMLSError.failedToWipeGroup
+        repository.deleteConversationIdDomain_MockError = Scaffolding.MockMLSError.failedToWipeGroup
 
         do {
             // When
