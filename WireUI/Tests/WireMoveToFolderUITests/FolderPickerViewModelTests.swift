@@ -18,6 +18,7 @@
 
 import WireMoveToFolderUISupport
 import XCTest
+
 @testable import WireMoveToFolderUI
 
 @MainActor
@@ -74,6 +75,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
         // WHEN
         await sut.select(folder)
+        try await sut.select(folder)
 
         // THEN
         XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.count, 1)
