@@ -18,6 +18,7 @@
 
 import WireMoveToFolderUISupport
 import XCTest
+
 @testable import WireMoveToFolderUI
 
 final class FolderPickerViewModelTests: XCTestCase {

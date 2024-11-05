@@ -26,7 +26,6 @@ public struct Folder: Equatable {
     /// Display name of the folder. Can be nil if not set
     public let name: String?
 
-
     /// Creates a new folder instance
     /// - Parameters:
     ///   - identifier: Unique identifier for the folder. Can be nil for temporary folders
