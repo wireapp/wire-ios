@@ -128,13 +128,6 @@ private struct EmptyState: View {
                     Text("folderPicker.emptyState.link.text", tableName: "Localizable", bundle: .module)
                         .multilineTextAlignment(.center)
                         .underline()
-                        .accessibilityLabel(
-                            Text(
-                                "folderPicker.emptyState.link.accessibilityLabel",
-                                tableName: "Accessibility",
-                                bundle: .module
-                            )
-                        )
                         .accessibilityIdentifier("how-to-add-conversation-to-folder-link")
                 }
             }
