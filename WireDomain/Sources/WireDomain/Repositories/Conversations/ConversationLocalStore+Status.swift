@@ -60,7 +60,7 @@ extension ConversationLocalStore {
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard DeveloperFlag.enableMLSSupport.isOn else { return } // replace
 
         await updateConversationIfNeeded(
             localConversation: localConversation,

@@ -121,6 +121,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
+    private let needsToRegisterMLSClientUseCase: NeedsToRegisterMLSClientUseCaseProtocol
+
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
@@ -129,6 +131,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
         self.coreCryptoProvider = coreCryptoProvider
+        let featureRepository = FeatureRepository(context: context)
+        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
+        self.needsToRegisterMLSClientUseCase = NeedsToRegisterMLSClientUseCase(
+            context: context,
+            getMLSFeatureUseCase: getMLSFeatureUseCase)
 
         super.init()
 
@@ -248,7 +255,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     public var clientIsReadyForRequests: Bool {
-        return currentPhase == .registered && !needsToRegisterMLSCLient
+        return currentPhase == .registered && !needsToRegisterMLSClient
     }
 
     var isWaitingForLogin: Bool {
@@ -259,8 +266,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         return Self.needsToRegisterClient(in: managedObjectContext)
     }
 
-    var needsToRegisterMLSCLient: Bool {
-        return Self.needsToRegisterMLSClient(in: managedObjectContext)
+    var needsToRegisterMLSClient: Bool {
+        needsToRegisterMLSClientUseCase.invoke()
     }
 
     @objc(needsToRegisterClientInContext:)
@@ -298,7 +305,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         needsToFetchFeatureConfigs = needsToRegisterClient
         needsRefreshSelfUser = needsToRegisterClient
 
-        if !needsToRegisterClient && needsToRegisterMLSCLient {
+        if !needsToRegisterClient && needsToRegisterMLSClient {
             guard let client = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
                 fatal("Expected a self user client to exist")
             }
@@ -459,7 +466,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         prekeys = nil
         lastResortPrekey = nil
 
-        if needsToRegisterMLSCLient {
+        if needsToRegisterMLSClient {
             createMLSClient(client: client)
         } else {
             registrationStatusDelegate?.didRegisterSelfUserClient(client)
@@ -628,16 +635,16 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public var needsToEnrollE2EI: Bool {
         return FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
-
-    @objc(needsToRegisterMLSClientInContext:)
-    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
-        guard !self.needsToRegisterClient(in: context) else {
-            return false
-        }
-        let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-        let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
-        return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
-    }
+//
+//    @objc(needsToRegisterMLSClientInContext:)
+//    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+//        guard !self.needsToRegisterClient(in: context) else {
+//            return false
+//        }
+//        let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
+//        let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
+//        return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
+//    }
 
     public func willGeneratePrekeys() {
         isGeneratingPrekeys = true

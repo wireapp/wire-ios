@@ -22,6 +22,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
+    /// Remove
     case enableMLSSupport
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto

@@ -76,7 +76,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
-        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn
+        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn // replace
 
         switch messageProtocol {
         case .none where mlsEnabled:

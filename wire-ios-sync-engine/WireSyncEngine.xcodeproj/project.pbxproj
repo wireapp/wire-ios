@@ -32,6 +32,7 @@
 		0648FC1427864783006519D1 /* Conversation+Join.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648FC1327864783006519D1 /* Conversation+Join.swift */; };
 		065FEA122B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065FEA112B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift */; };
 		0664F2E62A0E25C200E5C34E /* RecurringActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0664F2E52A0E25C200E5C34E /* RecurringActionService.swift */; };
+		066A3D582CDA5B880089C5C2 /* NeedsToRegisterMLSClientUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A3D572CDA5B840089C5C2 /* NeedsToRegisterMLSClientUseCase.swift */; };
 		0678D9922C2C53D3000DF6E3 /* CRLURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */; };
 		0678D9942C2C5B54000DF6E3 /* CRLURLBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */; };
 		06894D92276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */; };
@@ -687,6 +688,7 @@
 		0648FC1327864783006519D1 /* Conversation+Join.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+Join.swift"; sourceTree = "<group>"; };
 		065FEA112B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCertificateEnrollmentSnoozerUseCase.swift; sourceTree = "<group>"; };
 		0664F2E52A0E25C200E5C34E /* RecurringActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringActionService.swift; sourceTree = "<group>"; };
+		066A3D572CDA5B840089C5C2 /* NeedsToRegisterMLSClientUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeedsToRegisterMLSClientUseCase.swift; sourceTree = "<group>"; };
 		0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilder.swift; sourceTree = "<group>"; };
 		0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilderTests.swift; sourceTree = "<group>"; };
 		06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessorTests.swift; sourceTree = "<group>"; };
@@ -2591,6 +2593,7 @@
 		EEE46E5528C5EF3B005F48D7 /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
+				066A3D572CDA5B840089C5C2 /* NeedsToRegisterMLSClientUseCase.swift */,
 				E9D6FC272CD4F201007924B8 /* ToFolderMovableConversation.swift */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
@@ -3437,6 +3440,7 @@
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				09BCDB8F1BCE7F000020DCC7 /* ZMAPSMessageDecoder.m in Sources */,
+				066A3D582CDA5B880089C5C2 /* NeedsToRegisterMLSClientUseCase.swift in Sources */,
 				E623B6382BD688D400F91B37 /* Caches.swift in Sources */,
 				E6BB79542C36B36E003B821B /* NetworkState.swift in Sources */,
 				546392721D79D5210094EC66 /* Application.swift in Sources */,

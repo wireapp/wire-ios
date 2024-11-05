@@ -64,7 +64,7 @@ final class AutomationHelperOperation: LaunchSequenceOperation {
         AutomationHelper.sharedHelper.installDebugDataIfNeeded()
 
         if AutomationHelper.sharedHelper.enableMLSSupport == true {
-            var flag = DeveloperFlag.enableMLSSupport
+            var flag = DeveloperFlag.enableMLSSupport// replace
             flag.isOn = true
         }
     }
