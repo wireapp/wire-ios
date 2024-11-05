@@ -30,25 +30,66 @@ public struct FolderPicker: View {
 
     private let showCloseButton: Bool
     private let options: [FolderPickerOption]
+    private let helpLink: URL
     @Binding private var selected: UUID?
 
     /// Creates a new instance of `FolderPicker`
     /// - Parameters:
     ///   - showCloseButton: Whether to show a close button in the navigation bar
     ///   - options: An array of `FolderPickerOption` to display in the picker
+    ///   - helpLink: A URL to a help page that explains how to add conversations to a folder
     ///   - selected: The `id` of the selected `FolderPickerOption`
 
     public init(
         showCloseButton: Bool,
         options: [FolderPickerOption],
+        helpLink: URL,
         selected: Binding<UUID?>
     ) {
         self.showCloseButton = showCloseButton
         self.options = options
+        self.helpLink = helpLink
         _selected = selected
     }
 
     public var body: some View {
+        content()
+            .background(Color.viewBackground)
+            .scrollContentBackground(.hidden)
+            .navigationTitle(
+                Text("folderPicker.title", tableName: "Localizable", bundle: .module)
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if showCloseButton {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CloseButton(
+                            action: didTapClose,
+                            accessibilityLabel: String(
+                                localized: "folderPicker.close.label",
+                                table: "Accessibility",
+                                bundle: .module
+                            )
+                        )
+                    }
+                }
+            }
+    }
+
+    private func didTapClose() {
+        dismiss()
+    }
+
+    @ViewBuilder
+    private func content() -> some View {
+        if options.isEmpty {
+            EmptyState(url: helpLink)
+        } else {
+            picker()
+        }
+    }
+
+    private func picker() -> some View {
         List {
             Picker("", selection: $selected) {
                 ForEach(options) { option in
@@ -62,54 +103,82 @@ public struct FolderPicker: View {
             .accentColor(Color(accentColor))
             .pickerStyle(.inline)
         }
-        .background(Color.viewBackground)
-        .scrollContentBackground(.hidden)
-        .navigationTitle(
-            Text("folderPicker.title", tableName: "Localizable", bundle: .module)
-        )
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if showCloseButton {
-                ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: String(
-                            localized: "folderPicker.close.label",
-                            table: "Accessibility",
-                            bundle: .module
+    }
+
+}
+
+private struct EmptyState: View {
+    let url: URL
+
+    var body: some View {
+        Group {
+            VStack {
+                Image(systemName: "folder")
+                    .font(.system(size: 40))
+                    .foregroundStyle(Color.secondaryText)
+                    .padding(.bottom, 16)
+
+                Text("folderPicker.emptyState.description", tableName: "Localizable", bundle: .module)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
+
+                Link(destination: url) {
+                    Text("folderPicker.emptyState.link.text", tableName: "Localizable", bundle: .module)
+                        .multilineTextAlignment(.center)
+                        .underline()
+                        .accessibilityLabel(
+                            Text(
+                                "folderPicker.emptyState.link.accessibilityLabel",
+                                tableName: "Accessibility",
+                                bundle: .module
+                            )
                         )
-                    )
+                        .accessibilityIdentifier("how-to-add-conversation-to-folder-link")
                 }
             }
+            .font(.textStyle(.body1))
+            .foregroundStyle(Color.primaryText)
+            .frame(maxWidth: 272)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-
-    private func didTapClose() {
-        dismiss()
-    }
-
 }
 
 // MARK: - Previews
 
 @available(iOS 17.0, *)
-#Preview {
-    @Previewable @State var isPresented = false
-    @Previewable @State var selected: UUID? = FolderPickerOption.previewData.first?.id
+#Preview("With Data") {
+    FolderPickerPreview(showCloseButton: true, options: FolderPickerOption.previewData)
+}
 
-    Button("Show Picker") {
-        isPresented.toggle()
-    }
-    .sheet(isPresented: $isPresented) {
-        NavigationStack {
-            FolderPicker(
-                showCloseButton: true,
-                options: FolderPickerOption.previewData,
-                selected: $selected
-            )
+@available(iOS 17.0, *)
+#Preview("Empty State") {
+    FolderPickerPreview(showCloseButton: false, options: [])
+}
+
+private struct FolderPickerPreview: View {
+    @State private var isPresented = false
+    @State private var selected: UUID?
+
+    let showCloseButton: Bool
+    let options: [FolderPickerOption]
+
+    var body: some View {
+        Button("Show Picker") {
+            isPresented.toggle()
         }
-        .presentationDragIndicator(.visible)
-        .presentationDetents([.medium, .large])
+        .sheet(isPresented: $isPresented) {
+            NavigationStack {
+                FolderPicker(
+                    showCloseButton: showCloseButton,
+                    options: options,
+                    helpLink: URL(string: "https://www.example.com")!,
+                    selected: $selected
+                )
+            }
+            .presentationDragIndicator(.visible)
+            .presentationDetents([.medium, .large])
+        }
     }
 }
 

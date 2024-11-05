@@ -10,6 +10,16 @@
           }
         }
       }
+    },
+    "folderPicker.emptyState.link.accessibilityLabel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open folder how to"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
