@@ -102,6 +102,19 @@ public protocol ConversationLocalStoreProtocol {
         removalDate: Date
     ) async
 
+    /// Updates access modes and roles to conversation.
+    /// - Parameters:
+    ///     - accessModes: The access modes to update (how users can join a conversation).
+    ///     - accessRoles: The access roles to update (which users are allowed to be participants in a conversation).
+    ///
+    /// See `ConversationAccessMode` and `ConversationAccessRole`
+
+    func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async
+
     /// Get local participants from a conversation
     ///
     /// - parameter conversation: The conversation to get the participants from.
@@ -478,6 +491,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func updateAccesses(
+        for conversation: ZMConversation,
+        accessModes: [String],
+        accessRoles: [String]
+    ) async {
+        await context.perform { [context] in
+            conversation.accessModeStrings = accessModes
+            conversation.accessRoleStringsV2 = accessRoles
+
+            context.saveOrRollback()
+        }
+    }
+
     public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
         await context.perform {
             conversation.mlsGroupID
@@ -762,14 +788,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         domain: String?,
         handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
     ) async -> (ZMConversation, MLSGroupID?) {
-        await context.perform { [self] in
-            let conversation = ZMConversation.fetchOrCreate(
-                with: conversationID,
-                domain: domain,
-                in: context
-            )
+        let conversation = await fetchOrCreateConversation(
+            with: conversationID,
+            domain: domain
+        )
 
-            return handler(conversation)
+        return await context.perform {
+            handler(conversation)
         }
     }
 

@@ -249,10 +249,10 @@ final class ConversationRepositoryTests: XCTestCase {
 
         let mlsGroupID = try await sut.pullMLSOneToOneConversation(
             userID: Scaffolding.userID.uuidString,
-            domain: Scaffolding.domain
+            userDomain: Scaffolding.domain
         )
 
-        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
+        let mlsConversation = await sut.fetchMLSConversation(groupID: mlsGroupID)
 
         // Then
 
@@ -343,7 +343,10 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.pullConversation(with: conversationID)
+        try await sut.pullConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
 
         // Then
 
@@ -373,13 +376,13 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         let localConversation = await sut.fetchConversation(
-            with: Scaffolding.conversationID,
+            id: Scaffolding.conversationID,
             domain: Scaffolding.domain
         )
 
         // Then
 
-        XCTAssertEqual(conversation, localConversation)
+        XCTAssertEqual(localConversation, conversation)
     }
 
     func testStoreConversation_It_Stores_Conversation_Locally() async throws {
@@ -395,7 +398,10 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        let localConversation = await sut.fetchConversation(with: id, domain: domain)
+        let localConversation = await sut.fetchConversation(
+            id: id,
+            domain: domain
+        )
 
         await context.perform {
             XCTAssertEqual(localConversation?.remoteIdentifier, id)
@@ -517,7 +523,10 @@ final class ConversationRepositoryTests: XCTestCase {
 
         do {
             // When
-            try await sut.pullConversation(with: conversationID)
+            try await sut.pullConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
         } catch {
             // Then
             XCTAssertTrue(error is ConversationRepositoryError)
