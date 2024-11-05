@@ -281,9 +281,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         accessModes: [String],
         accessRoles: [String]
     ) async {
-        await context.perform {
+        await context.perform { [context] in
             conversation.accessModeStrings = accessModes
             conversation.accessRoleStringsV2 = accessRoles
+            
+            context.saveOrRollback()
         }
     }
 
