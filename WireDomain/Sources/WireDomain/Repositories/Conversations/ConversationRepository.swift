@@ -76,20 +76,24 @@ public protocol ConversationRepositoryProtocol {
         removedAt date: Date
     ) async throws
 
-    /// Adds a participant to a conversation.
+    /// Adds a participant or updates its role in a conversation.
+    ///
     /// - Parameters:
-    ///     - conversationID: The conversation ID.
-    ///     - conversationDomain: The conversation domain if any.
     ///     - participantID: The participant ID.
     ///     - participantDomain: The participant domain if any.
     ///     - participantRole: The role of the user.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain if any.
+    ///
+    /// If user is already part of the conversation, its role will be updated.
+    /// If not, user will be added to the conversation.
 
-    func addParticipantToConversation(
-        conversationID: UUID,
-        conversationDomain: String?,
+    func addOrUpdateParticipant(
         participantID: UUID,
         participantDomain: String?,
-        participantRole: String
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
     ) async
 }
 
@@ -233,12 +237,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
-    public func addParticipantToConversation(
-        conversationID: UUID,
-        conversationDomain: String?,
+    public func addOrUpdateParticipant(
         participantID: UUID,
         participantDomain: String?,
-        participantRole: String
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
     ) async {
         let participant = userRepository.fetchOrCreateUser(
             with: participantID,
@@ -250,10 +254,10 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             domain: conversationDomain
         )
 
-        await conversationsLocalStore.addParticipant(
+        await conversationsLocalStore.addOrUpdateParticipant(
             participant,
             withRole: participantRole,
-            to: conversation
+            in: conversation
         )
     }
 

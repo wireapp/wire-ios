@@ -89,16 +89,20 @@ public protocol ConversationLocalStoreProtocol {
         date: Date
     ) async
 
-    /// Adds a participant to a conversation.
+    /// Adds a participant or updates its role in a conversation.
+    ///
     /// - Parameters:
-    ///     - user: The user to add.
+    ///     - user: The user to add or update.
     ///     - role: The role of the user.
-    ///     - conversation: The conversation to add the user to.
+    ///     - conversation: The conversation the user is part of.
+    ///
+    /// If user is already part of the conversation, its role will be updated.
+    /// If not, user will be added to the conversation.
 
-    func addParticipant(
+    func addOrUpdateParticipant(
         _ user: ZMUser,
         withRole role: String,
-        to conversation: ZMConversation
+        in conversation: ZMConversation
     ) async
 
     /// Updates the member muted and archived status.
@@ -182,10 +186,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func addParticipant(
+    public func addOrUpdateParticipant(
         _ user: ZMUser,
         withRole role: String,
-        to conversation: ZMConversation
+        in conversation: ZMConversation
     ) async {
         await context.perform { [context] in
             let role = Role.fetchOrCreateRole(
@@ -194,6 +198,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 in: context
             )
 
+            // If user is already part of the conversation, its role will be updated.
+            // If not, user will be added to the conversation.
             conversation.addParticipantAndUpdateConversationState(
                 user: user,
                 role: role

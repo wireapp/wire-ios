@@ -359,7 +359,7 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testAddParticipantToConversation_It_Adds_Participant() async {
+    func testAddOrUpdateParticipant_It_Adds_Participant_To_Conversation() async {
         // Mock
 
         let (addedUser, conversation) = await context.perform { [self] in
@@ -381,18 +381,53 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // When
 
-        await sut.addParticipantToConversation(
-            conversationID: Scaffolding.conversationID,
-            conversationDomain: nil,
+        await sut.addOrUpdateParticipant(
             participantID: UUID(),
             participantDomain: nil,
-            participantRole: ""
+            participantRole: "",
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: nil
         )
 
         // Then
 
         await context.perform {
             XCTAssertEqual(conversation.localParticipants.contains(addedUser), true)
+        }
+    }
+
+    func testAddOrUpdateParticipant_It_Updates_Participant_Role_In_Conversation() async throws {
+        // Mock
+
+        let (updatedUser, conversation) = await context.perform { [self] in
+            let updatedUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: [updatedUser],
+                in: context
+            )
+
+            return (updatedUser, conversation)
+        }
+
+        userRepository.fetchOrCreateUserWithDomain_MockValue = updatedUser
+
+        // When
+
+        await sut.addOrUpdateParticipant(
+            participantID: UUID(),
+            participantDomain: nil,
+            participantRole: ZMConversation.defaultAdminRoleName,
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: nil
+        )
+
+        // Then
+
+        try await context.perform {
+            let role = try XCTUnwrap(updatedUser.role(in: conversation))
+            XCTAssertEqual(role.name, ZMConversation.defaultAdminRoleName)
         }
     }
 

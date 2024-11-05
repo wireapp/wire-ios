@@ -257,16 +257,16 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(user, date)
     }
 
-    // MARK: - addParticipant
+    // MARK: - addOrUpdateParticipant
 
-    public var addParticipantWithRoleTo_Invocations: [(user: ZMUser, role: String, conversation: ZMConversation)] = []
-    public var addParticipantWithRoleTo_MockMethod: ((ZMUser, String, ZMConversation) async -> Void)?
+    public var addOrUpdateParticipantWithRoleIn_Invocations: [(user: ZMUser, role: String, conversation: ZMConversation)] = []
+    public var addOrUpdateParticipantWithRoleIn_MockMethod: ((ZMUser, String, ZMConversation) async -> Void)?
 
-    public func addParticipant(_ user: ZMUser, withRole role: String, to conversation: ZMConversation) async {
-        addParticipantWithRoleTo_Invocations.append((user: user, role: role, conversation: conversation))
+    public func addOrUpdateParticipant(_ user: ZMUser, withRole role: String, in conversation: ZMConversation) async {
+        addOrUpdateParticipantWithRoleIn_Invocations.append((user: user, role: role, conversation: conversation))
 
-        guard let mock = addParticipantWithRoleTo_MockMethod else {
-            fatalError("no mock for `addParticipantWithRoleTo`")
+        guard let mock = addOrUpdateParticipantWithRoleIn_MockMethod else {
+            fatalError("no mock for `addOrUpdateParticipantWithRoleIn`")
         }
 
         await mock(user, role, conversation)
@@ -395,19 +395,19 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         try await mock(participantID, participantDomain, date)
     }
 
-    // MARK: - addParticipantToConversation
+    // MARK: - addOrUpdateParticipant
 
-    public var addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_Invocations: [(conversationID: UUID, conversationDomain: String?, participantID: UUID, participantDomain: String?, participantRole: String)] = []
-    public var addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_MockMethod: ((UUID, String?, UUID, String?, String) async -> Void)?
+    public var addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_Invocations: [(participantID: UUID, participantDomain: String?, participantRole: String, conversationID: UUID, conversationDomain: String?)] = []
+    public var addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod: ((UUID, String?, String, UUID, String?) async -> Void)?
 
-    public func addParticipantToConversation(conversationID: UUID, conversationDomain: String?, participantID: UUID, participantDomain: String?, participantRole: String) async {
-        addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_Invocations.append((conversationID: conversationID, conversationDomain: conversationDomain, participantID: participantID, participantDomain: participantDomain, participantRole: participantRole))
+    public func addOrUpdateParticipant(participantID: UUID, participantDomain: String?, participantRole: String, conversationID: UUID, conversationDomain: String?) async {
+        addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_Invocations.append((participantID: participantID, participantDomain: participantDomain, participantRole: participantRole, conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole_MockMethod else {
-            fatalError("no mock for `addParticipantToConversationConversationIDConversationDomainParticipantIDParticipantDomainParticipantRole`")
+        guard let mock = addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain`")
         }
 
-        await mock(conversationID, conversationDomain, participantID, participantDomain, participantRole)
+        await mock(participantID, participantDomain, participantRole, conversationID, conversationDomain)
     }
 
 }

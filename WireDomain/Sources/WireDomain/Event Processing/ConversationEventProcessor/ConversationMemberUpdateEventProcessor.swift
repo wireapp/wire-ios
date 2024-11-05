@@ -68,12 +68,12 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
             return
         }
 
-        await conversationRepository.addParticipantToConversation(
-            conversationID: conversationID.uuid,
-            conversationDomain: conversationID.domain,
+        await conversationRepository.addOrUpdateParticipant(
             participantID: senderID.uuid,
             participantDomain: senderID.domain,
-            participantRole: role
+            participantRole: role,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain
         )
     }
 
