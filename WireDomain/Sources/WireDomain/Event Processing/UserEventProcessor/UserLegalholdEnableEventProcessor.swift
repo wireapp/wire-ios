@@ -40,9 +40,10 @@ struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProto
     func processEvent(_ event: UserLegalholdEnableEvent) async throws {
         let userID = event.userID
 
+        let selfUser = await userRepository.fetchSelfUser()
+
         let selfUserID = await context.perform {
-            let selfUser = userRepository.fetchSelfUser()
-            return selfUser.remoteIdentifier
+            selfUser.remoteIdentifier
         }
 
         guard userID == selfUserID else {

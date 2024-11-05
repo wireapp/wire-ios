@@ -83,7 +83,9 @@ final class UserClientsRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertNotNil(userClient)
+        await context.perform {
+            XCTAssertNotNil(userClient)
+        }
     }
 
     func testUpdatesClient() async throws {
@@ -93,10 +95,14 @@ final class UserClientsRepositoryTests: XCTestCase {
             with: Scaffolding.userClientID
         )
 
+        let clientID = await context.perform {
+            createdClient.client.remoteIdentifier!
+        }
+
         // When
 
         try await sut.updateClient(
-            with: createdClient.client.remoteIdentifier!,
+            with: clientID,
             from: Scaffolding.selfUserClient,
             isNewClient: createdClient.isNew
         )

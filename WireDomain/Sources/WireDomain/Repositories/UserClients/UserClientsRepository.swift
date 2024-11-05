@@ -62,6 +62,11 @@ public protocol UserClientsRepositoryProtocol {
     /// - parameter id: The client id.
 
     func deleteClient(with id: String) async
+
+    /// Indicates whether self user clients are active MLS clients.
+    /// - returns: A flag indicating whether all self user clients are active MLS clients.
+
+    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
@@ -88,9 +93,9 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func pullSelfClients() async throws {
         let remoteSelfClients = try await userClientsAPI.getSelfClients()
+        let selfUser = await userRepository.fetchSelfUser()
         let localSelfClients = await context.perform {
-            let selfUser = userRepository.fetchSelfUser()
-            return selfUser.clients
+            selfUser.clients
         }
 
         for remoteSelfClient in remoteSelfClients {
@@ -102,11 +107,13 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             )
         }
 
-        let deletedSelfClientsIDs = localSelfClients
-            .compactMap(\.remoteIdentifier)
-            .filter {
-                !remoteSelfClients.map(\.id).contains($0)
-            }
+        let deletedSelfClientsIDs = await context.perform {
+            localSelfClients
+                .compactMap(\.remoteIdentifier)
+                .filter {
+                    !remoteSelfClients.map(\.id).contains($0)
+                }
+        }
 
         for deletedSelfClientID in deletedSelfClientsIDs {
             await deleteClient(with: deletedSelfClientID)
@@ -137,16 +144,16 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
-        guard let localClient = UserClient.fetchExistingUserClient(
-            with: id,
-            in: context
-        ) else {
-            return WireLogger.userClient.error(
-                "Failed to find existing client with id: \(id.redactedAndTruncated())"
-            )
-        }
-
         await context.perform { [context] in
+
+            guard let localClient = UserClient.fetchExistingUserClient(
+                with: id,
+                in: context
+            ) else {
+                return WireLogger.userClient.error(
+                    "Failed to find existing client with id: \(id.redactedAndTruncated())"
+                )
+            }
 
             localClient.label = remoteClient.label
             localClient.type = remoteClient.type.toDomainModel()
@@ -198,15 +205,48 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     }
 
     public func deleteClient(with id: String) async {
-        guard let localClient = UserClient.fetchExistingUserClient(
-            with: id,
-            in: context
-        ) else {
+        let localClient = await context.perform {
+            let localClient = UserClient.fetchExistingUserClient(
+                with: id,
+                in: context
+            )
+            return localClient
+        }
+
+        guard let localClient else {
             return WireLogger.userClient.error(
                 "Failed to find existing client with id: \(id.redactedAndTruncated())"
             )
         }
 
         await localClient.deleteClientAndEndSession()
+    }
+
+    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        let selfUser = await userRepository.fetchSelfUser()
+
+        return await context.perform {
+            selfUser.clients.all { userClient in
+                let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
+
+                let isRecentlyActive: Bool = {
+                    if userClient.isSelfClient() {
+                        return true
+                    }
+
+                    guard let lastActiveDate = userClient.lastActiveDate else {
+                        return false
+                    }
+
+                    guard lastActiveDate <= Date() else {
+                        return true
+                    }
+
+                    return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
+                }()
+
+                return hasMLSIdentity && isRecentlyActive
+            }
+        }
     }
 }
