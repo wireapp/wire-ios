@@ -36,7 +36,7 @@ public struct FolderPicker: View {
                     Text(option.title)
                         .font(.textStyle(.body1))
                         .lineLimit(1)
-                        .foregroundStyle(option.id == selected ? Color(accentColor) : .black)
+                        .foregroundStyle(option.id == selected ? Color(accentColor) : .primaryText)
                         .tag(option.id)
                 }
             }
@@ -69,6 +69,8 @@ public struct FolderPicker: View {
         dismiss()
     }
 }
+
+// MARK: - Previews
 
 @available(iOS 17.0, *)
 #Preview {
