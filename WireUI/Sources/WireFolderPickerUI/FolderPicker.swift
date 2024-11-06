@@ -114,38 +114,6 @@ public struct FolderPicker: View {
 
 }
 
-private struct EmptyState: View {
-    let image: Image
-    let description: Text
-    let linkText: Text
-    let url: URL
-
-    var body: some View {
-        Group {
-            VStack {
-                image
-                    .font(.system(size: 40))
-                    .foregroundStyle(Color.secondaryText)
-                    .padding(.bottom, 16)
-
-                description
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 16)
-
-                Link(destination: url) {
-                    linkText
-                        .multilineTextAlignment(.center)
-                        .underline()
-                }
-            }
-            .font(.textStyle(.body1))
-            .foregroundStyle(Color.primaryText)
-            .frame(maxWidth: 272)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}
-
 // MARK: - Previews
 
 @available(iOS 17.0, *)
