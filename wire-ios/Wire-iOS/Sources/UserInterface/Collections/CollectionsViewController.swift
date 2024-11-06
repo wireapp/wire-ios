@@ -801,8 +801,10 @@ extension CollectionsViewController: CollectionCellDelegate {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            present(detailsViewController, animated: true)
+            let navigationController = UINavigationController(rootViewController: detailsViewController)
+            navigationController.modalPresentationStyle = .formSheet
 
+            present(navigationController, animated: true)
         default:
             delegate?.collectionsViewController(self, performAction: action, onMessage: message)
         }
