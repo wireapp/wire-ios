@@ -123,16 +123,19 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private func setupNavigatiomItem() {
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.titleView = TwoLineTitleView(
+
+        let titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
+
+        titleView.addInteraction(UILargeContentViewerInteraction())
+        navigationItem.titleView = titleView
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
 
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
     }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

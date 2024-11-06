@@ -237,7 +237,9 @@ public final class UserRepository: UserRepositoryProtocol {
     public func updateUser(
         from event: UserUpdateEvent
     ) async {
-        await userLocalStore.updateUser(from: event)
+        await userLocalStore.updateUser(
+            from: event
+        )
     }
 
     public func removePushToken() {
