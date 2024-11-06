@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Represents a folder in the system
+/// Represents a logical folder within the UI, uniquely identified and used to organize  conversations.
 public struct Folder: Equatable, Sendable {
     /// Unique identifier for the folder. Can be nil for temporary folders
     public let identifier: UUID?
