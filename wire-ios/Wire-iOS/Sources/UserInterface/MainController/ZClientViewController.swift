@@ -173,8 +173,6 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
@@ -453,16 +451,6 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    // MARK: - ColorSchemeControllerDidApplyChangesNotification
-
-    private func reloadCurrentConversation() {
-        guard let currentConversation else { return }
-
-        Task {
-            await mainCoordinator.showConversation(conversation: currentConversation, message: nil)
-        }
-    }
-
     // MARK: - Debug logging notifications
 
     @objc
@@ -509,11 +497,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    @objc
-    func contentSizeCategoryDidChange(_ notification: Notification?) {
-        reloadCurrentConversation()
     }
 
     private func setupAppearance() {

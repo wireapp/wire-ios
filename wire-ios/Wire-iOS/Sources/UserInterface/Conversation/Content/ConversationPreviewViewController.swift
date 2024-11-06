@@ -49,6 +49,8 @@ final class ConversationPreviewViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
+        DeveloperToolsViewModel.context.currentConversation = conversation
+
         super.init(nibName: nil, bundle: nil)
     }
 
