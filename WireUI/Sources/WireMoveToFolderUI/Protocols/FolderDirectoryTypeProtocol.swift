@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: SourceryAutoMockable
 /// Protocol for accessing folders in the system
 public protocol FolderDirectoryTypeProtocol {
 

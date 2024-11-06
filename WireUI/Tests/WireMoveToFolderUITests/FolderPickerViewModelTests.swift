@@ -21,7 +21,6 @@ import XCTest
 
 @testable import WireMoveToFolderUI
 
-@MainActor
 final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Properties
@@ -75,7 +74,6 @@ final class FolderPickerViewModelTests: XCTestCase {
 
         // WHEN
         await sut.select(folder)
-        try await sut.select(folder)
 
         // THEN
         XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.count, 1)
@@ -126,15 +124,11 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func createSUT(
-        conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil),
-        directory: MockFolderDirectoryTypeProtocol? = nil,
-        selectionUseCase: MockMoveConversationToFolderUseCaseType? = nil
-    ) {
+    private func createSUT(conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)) {
         sut = FolderPickerViewModel(
             conversation: conversation,
-            directory: directory ?? mockDirectory,
-            selectionUseCase: selectionUseCase ?? mockSelectionUseCase
+            directory: mockDirectory,
+            selectionUseCase: mockSelectionUseCase
         )
     }
 }

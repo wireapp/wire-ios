@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: SourceryAutoMockable
 /// Protocol for handling moving a conversation to a specified folder
 public protocol MoveConversationToFolderUseCaseType: Sendable {
     /// Moves a conversation to a specified folder

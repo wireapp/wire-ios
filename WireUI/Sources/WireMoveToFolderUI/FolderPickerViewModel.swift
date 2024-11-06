@@ -18,7 +18,6 @@
 
 import Foundation
 
-@MainActor
 public final class FolderPickerViewModel: ObservableObject {
     @Published private(set) var folders: [Folder] = []
 
