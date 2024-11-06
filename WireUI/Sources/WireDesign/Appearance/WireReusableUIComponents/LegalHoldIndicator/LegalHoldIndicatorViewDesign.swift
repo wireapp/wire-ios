@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 public struct LegalHoldIndicatorViewDesign {
-    public let foregroundColor = ColorTheme.Base.error
+    public let foregroundColor = Color(uiColor: ColorTheme.Base.error)
+    public init() {}
 }

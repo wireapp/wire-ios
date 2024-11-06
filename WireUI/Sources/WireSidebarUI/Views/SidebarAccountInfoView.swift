@@ -51,11 +51,11 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                 }
             }
             HStack {
-                Spacer()
-                    .frame(width: displayNameHeight + usernameHeight)
+                Rectangle()
+                    .frame(width: displayNameHeight + usernameHeight, height: 0)
                 LegalHoldIndicatorView()
                     .frame(height: usernameHeight)
-                Text("Legalhold")
+                Text("Legalhold") // TODO: string key
             }
         }
     }
