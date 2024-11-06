@@ -32,47 +32,61 @@ extension ConversationViewController {
         return conversation.voiceChannel?.addCallStateObserver(self)
     }
 
-    var audioCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.phone, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+    private var audioCallButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .audioCall), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "audioCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.voiceCallItemTapped(_:)), for: .touchUpInside)
+        let audioCallAction = UIAction { [weak self] _ in
+            self?.voiceCallItemTapped()
+        }
+        button.addAction(audioCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeAudioCall
+        button.largeContentImage = UIImage(resource: .audioCall)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
     }
 
-    var videoCallButton: UIButton {
-        let button = IconButton()
-        button.setIcon(.camera, size: .tiny, for: .normal)
-        button.setIconColor(IconColors.foregroundDefault, for: .normal)
+    private var videoCallButton: UIButton {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .videoCall), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
         button.accessibilityIdentifier = "videoCallBarButton"
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeVideoCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.videoCallItemTapped(_:)), for: .touchUpInside)
+        let videoCallAction = UIAction { [weak self] _ in
+            self?.videoCallItemTapped()
+        }
+        button.addAction(videoCallAction, for: .touchUpInside)
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(ButtonColors.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = CallActions.Label.makeVideoCall
+        button.largeContentImage = UIImage(resource: .videoCall)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return button
@@ -96,18 +110,33 @@ extension ConversationViewController {
     var joinCallButton: UIBarButtonItem {
         typealias Conversation = L10n.Accessibility.ConversationsList
 
-        let button = IconButton(fontSpec: .smallSemiboldFont)
-        button.adjustsTitleWhenHighlighted = true
-        button.adjustBackgroundImageWhenHighlighted = true
+        let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.RightAccessory.JoinButton.title, for: .normal)
+        button.titleLabel?.font = .font(for: .body2)
+        button.setTitleColor(SemanticColors.Label.textWhite, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.titleLabel?.adjustsFontForContentSizeCategory = false
+
         button.accessibilityLabel = Conversation.JoinButton.description
         button.accessibilityHint = Conversation.JoinButton.hint
         button.accessibilityTraits.insert(.startsMediaSession)
+
         button.backgroundColor = SemanticColors.Icon.backgroundJoinCall
-        button.addTarget(self, action: #selector(joinCallButtonTapped), for: .touchUpInside)
+
+        let joinAction = UIAction { [weak self] _ in
+            self?.joinCallButtonTapped()
+        }
+
+        button.addAction(joinAction, for: .touchUpInside)
+
         button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 2, right: 8)
-        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 24))
+        button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
         button.layer.cornerRadius = button.bounds.height / 2
+
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = Conversation.JoinButton.description
+
         return UIBarButtonItem(customView: button)
     }
 
@@ -117,7 +146,7 @@ extension ConversationViewController {
         let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
 
-        let button = UIBarButtonItem(icon: icon, target: self, action: action)
+        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
         button.tintColor = hasUnread ? UIColor.accent() : nil
@@ -126,11 +155,19 @@ extension ConversationViewController {
         return button
     }
 
-    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
         if view.isRightToLeft {
-            hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+            if hasUnreadInOtherConversations {
+                return UIImage(resource: .unreadForwardArrow)
+            } else {
+                return UIImage(resource: .forwardArrow)
+            }
         } else {
-            hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+            if hasUnreadInOtherConversations {
+                return UIImage(resource: .unreadBackArrow)
+            } else {
+                return UIImage(resource: .backArrow)
+            }
         }
     }
 
@@ -204,8 +241,7 @@ extension ConversationViewController {
         }
     }
 
-    @objc
-    func voiceCallItemTapped(_ sender: UIBarButtonItem) {
+    func voiceCallItemTapped() {
         view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
@@ -214,7 +250,7 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
+    func videoCallItemTapped() {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
@@ -223,7 +259,7 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
+    private dynamic func joinCallButtonTapped() {
         startCallController.joinCall()
     }
 
