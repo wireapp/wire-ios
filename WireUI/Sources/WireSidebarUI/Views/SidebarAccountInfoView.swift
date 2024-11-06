@@ -55,7 +55,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                     .frame(width: displayNameHeight + usernameHeight, height: 0)
                 LegalHoldIndicatorView()
                     .frame(height: usernameHeight)
-                Text("Legalhold") // TODO: string key
+                Text("sidebar.legalHold.title", bundle: .module)
             }
         }
     }
@@ -65,7 +65,8 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 4) {
                 Text(displayName)
-                    .font(.headline)
+                    .wireTextStyle(.h2) // TODO: fix correct style
+                    //.font(.headline) // TODO: wiretextstyle?
                     .foregroundStyle(displayNameColor)
                 if isE2EICertified {
                     Image(.certificateValid)
@@ -77,7 +78,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                 }
             }
             Text(username)
-                .font(.subheadline)
+                .font(.subheadline) // TODO: wiretextstyle?
                 .foregroundStyle(usernameColor)
         }
     }
@@ -86,7 +87,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
     private var determineLineHeights: some View {
         VStack {
             Text("W")
-                .font(.headline)
+                .font(.headline) // TODO: wiretextstyle?
                 .background(GeometryReader { geometryProxy in
                     Color.clear.preference(
                         key: DisplayNameHeightKey.self,
@@ -97,7 +98,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                     displayNameHeight = height
                 }
             Text("@")
-                .font(.subheadline)
+                .font(.subheadline) // TODO: wiretextstyle?
                 .background(GeometryReader { geometryProxy in
                     Color.clear.preference(
                         key: UsernameHeightKey.self,
