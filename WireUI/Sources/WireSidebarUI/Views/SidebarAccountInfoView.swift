@@ -48,30 +48,16 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
             // and being invisible
 
             ZStack {
-                displayNameAndUsername(displayName, username)
-                    .lineLimit(1)
-                    .layoutPriority(-1)
-                    .opacity(0)
-                    .disabled(true)
-                    .background(GeometryReader { geometryProxy in
-                        Color.clear.preference(
-                            key: ProfileSwitcherHeightKey.self,
-                            value: geometryProxy.size.height
-                        )
-                    })
-                    .onPreferenceChange(ProfileSwitcherHeightKey.self) { height in
-                        accountImageDiameter = height
-                    }
-
-                displayNameAndUsername(displayName, username)
+                determineLineHeights
+                displayNameAndUsername
             }
         }
     }
 
     @ViewBuilder
-    private func displayNameAndUsername(_ displayName: String, _ username: String) -> some View {
+    private var displayNameAndUsername: some View {
         VStack(alignment: .leading) {
-            HStack(spacing: 4) {
+            HStack(alignment: .bottom, spacing: 4) {
                 Text(displayName)
                     .font(.headline)
                     .foregroundStyle(displayNameColor)
@@ -85,6 +71,29 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
             Text(username)
                 .font(.subheadline)
                 .foregroundStyle(usernameColor)
+        }
+    }
+
+    @ViewBuilder
+    private var determineLineHeights: some View {
+        VStack(alignment: .leading) {
+            Text("W")
+                .font(.headline)
+            Text("W")
+                .font(.subheadline)
+        }
+        .lineLimit(1)
+        .layoutPriority(-1)
+        .opacity(0)
+        .disabled(true)
+        .background(GeometryReader { geometryProxy in
+            Color.clear.preference(
+                key: ProfileSwitcherHeightKey.self,
+                value: geometryProxy.size.height
+            )
+        })
+        .onPreferenceChange(ProfileSwitcherHeightKey.self) { height in
+            accountImageDiameter = height
         }
     }
 }
