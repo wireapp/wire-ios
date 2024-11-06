@@ -333,9 +333,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
 
-            if let duration {
-                systemMessage.duration = duration
-            }
+            systemMessage.duration = duration
 
             if let messageTimer {
                 systemMessage.messageTimer = NSNumber(value: messageTimer)
