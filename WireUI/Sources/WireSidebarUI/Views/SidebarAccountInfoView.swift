@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireFoundation
+import WireReusableUIComponents
 
 struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: View {
 
@@ -52,8 +53,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
             HStack {
                 Spacer()
                     .frame(width: displayNameHeight + usernameHeight)
-                Circle()
-                    .fill(Color.red)
+                LegalHoldIndicatorView()
                     .frame(height: usernameHeight)
                 Text("Legalhold")
             }
