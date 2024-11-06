@@ -16,22 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 
-/// Errors originating from `ConversationRepository`.
+extension NSManagedObjectContext {
 
-enum ConversationRepositoryError: Error {
+    /// Saves or rollback changes if saving fails
+    ///
+    /// This is a lighter implementation of the `saveOrRollback`objc- method for `WireDataModel`.
+    func saveOrRevert() throws {
+        guard hasChanges else { return }
 
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
+        do {
+            try save()
+        } catch {
+            rollback()
+            throw error
+        }
+    }
 
 }

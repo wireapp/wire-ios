@@ -18,20 +18,21 @@
 
 import Foundation
 
-/// Errors originating from `ConversationRepository`.
+/// An option to be displayed in the folder picker
 
-enum ConversationRepositoryError: Error {
+public struct FolderPickerOption: Identifiable, Hashable {
 
-    /// Conversation not found
+    /// The unique identifier of the option's corresponding folder
 
-    case conversationNotFound
+    public let id: UUID
 
-    /// Unable to delete conversation.
+    /// The option title
 
-    case failedToDeleteConversation(Error)
+    public let title: String
 
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
+    public init(id: UUID, title: String) {
+        self.id = id
+        self.title = title
+    }
 
 }

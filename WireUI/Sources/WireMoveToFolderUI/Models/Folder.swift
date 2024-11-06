@@ -18,20 +18,21 @@
 
 import Foundation
 
-/// Errors originating from `ConversationRepository`.
+/// Represents a logical folder within the UI, uniquely identified and used to organize  conversations.
+public struct Folder: Equatable, Sendable {
+    /// Unique identifier for the folder. Can be nil for temporary folders
+    public let identifier: UUID?
 
-enum ConversationRepositoryError: Error {
+    /// Display name of the folder.
+    public let name: String
 
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
-
+    /// Creates a new folder instance
+    /// - Parameters:
+    ///   - identifier: Unique identifier for the folder. Can be nil for temporary folders
+    ///   - name: Display name of the folder. Can be nil if not set
+    ///   - kind: The type of folder
+    public init(identifier: UUID?, name: String) {
+        self.identifier = identifier
+        self.name = name
+    }
 }

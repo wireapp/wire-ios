@@ -16,22 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Protocol for accessing folders in the system
+public protocol FolderDirectoryTypeProtocol {
 
-/// Errors originating from `ConversationRepository`.
-
-enum ConversationRepositoryError: Error {
-
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
+    /// Returns all available folders in the system
+    var allFolders: [Folder] { get }
 
 }

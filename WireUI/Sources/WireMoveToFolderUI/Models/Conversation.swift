@@ -15,23 +15,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-/// Errors originating from `ConversationRepository`.
+/// Represents a conversation in the context of folder operations
+public struct Conversation: Sendable {
+    /// Unique identifier for the conversation
+    public let identifier: UUID
 
-enum ConversationRepositoryError: Error {
+    /// Identifier of the folder containing this conversation. Nil if not in any folder
+    public let currentFolderIdentifier: UUID?
 
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
-
+    /// Creates a new conversation instance
+    /// - Parameters:
+    ///   - identifier: Unique identifier for the conversation
+    ///   - currentFolderIdentifier: Identifier of the containing folder, if any
+    public init(identifier: UUID, currentFolderIdentifier: UUID?) {
+        self.identifier = identifier
+        self.currentFolderIdentifier = currentFolderIdentifier
+    }
 }

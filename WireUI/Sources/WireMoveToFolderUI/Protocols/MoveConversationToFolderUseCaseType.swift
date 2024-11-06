@@ -16,22 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// Errors originating from `ConversationRepository`.
-
-enum ConversationRepositoryError: Error {
-
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
-
+/// Protocol for handling moving a conversation to a specified folder
+public protocol MoveConversationToFolderUseCaseType: Sendable {
+    /// Moves a conversation to a specified folder
+    /// - Parameters:
+    ///   - folder: The destination folder
+    ///   - conversation: The conversation to be moved
+    func invoke(folder: Folder, conversation: Conversation) async throws
 }

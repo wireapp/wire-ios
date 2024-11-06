@@ -16,22 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-/// Errors originating from `ConversationRepository`.
-
-enum ConversationRepositoryError: Error {
-
-    /// Conversation not found
-
-    case conversationNotFound
-
-    /// Unable to delete conversation.
-
-    case failedToDeleteConversation(Error)
-
-    /// Missing MLS group ID
-
-    case mlsConversationShouldHaveAGroupID
-
+public extension UIImage {
+    static let close = UIImage(resource: .close)
 }
