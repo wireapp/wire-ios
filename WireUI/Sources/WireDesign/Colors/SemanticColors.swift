@@ -134,7 +134,6 @@ public enum SemanticColors {
         public static let backgroundSeparatorCell = UIColor(light: .gray40, dark: .gray90)
         public static let backgroundSeparatorEditView = UIColor(light: .gray60, dark: .gray70)
         public static let backgroundConversationList = UIColor(light: .gray20, dark: .gray100)
-        public static let backgroundConversationListTableViewCell = UIColor(light: .white, dark: .gray95)
         public static let borderConversationListTableViewCell = UIColor(light: .gray40, dark: .gray90)
         public static let backgroundCollectionCell = UIColor(light: .white, dark: .gray90)
         public static let borderCollectionCell = UIColor(light: .gray30, dark: .gray80)

@@ -24,6 +24,16 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
+    /// Fetches and persists a conversation with a given ID.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation.
+
+    func pullConversation(
+        id: UUID,
+        domain: String
+    ) async throws
+
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -31,16 +41,30 @@ public protocol ConversationRepositoryProtocol {
     /// - returns: The `ZMConversation` found locally.
 
     func fetchConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation?
 
-    /// Fetches and persists a conversation with a given ID.
-    /// - parameter id: The conversation ID.
+    /// Stores a conversation locally.
+    /// - Parameters:
+    ///     - conversation: The conversation to update or create locally.
+    ///     - timestamp: The date the conversation was created or last modified.
 
-    func pullConversation(
-        with id: ConversationID
-    ) async throws
+    func storeConversation(
+        _ conversation: WireAPI.Conversation,
+        timestamp: Date
+    ) async
+
+    /// Fetches or creates a conversation locally.
+    /// - parameter id: The ID of the conversation.
+    /// - parameter domain: The domain of the conversation if any.
+    ///
+    /// - returns: The `ZMConversation` found or created locally.
+
+    func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?
+    ) async -> ZMConversation
 
     /// Fetches and persists all conversations
 
@@ -50,13 +74,13 @@ public protocol ConversationRepositoryProtocol {
     ///
     /// - parameters:
     ///     - userID: The user ID.
-    ///     - domain: The user domain.
+    ///     - userDomain: The user domain.
     ///
     /// - returns : The MLS group ID.
 
     func pullMLSOneToOneConversation(
         userID: String,
-        domain: String
+        userDomain: String
     ) async throws -> String
 
     /// Fetches a MLS conversation locally.
@@ -67,19 +91,74 @@ public protocol ConversationRepositoryProtocol {
     /// - returns : A MLS conversation.
 
     func fetchMLSConversation(
-        with groupID: String
+        groupID: String
     ) async -> ZMConversation?
 
-    /// Removes a given user from all conversations.
+    /// Removes a given user from all group conversations.
     ///
     /// - parameters:
-    ///     - user: The user to remove from the conversations.
-    ///     - removalDate: The date the user was removed from the conversations.
+    ///     - participantID: The user ID.
+    ///     - participantDomain: The user domain.
+    ///     - date: The date the user was removed from the conversations.
 
-    func removeFromConversations(
-        user: ZMUser,
-        removalDate: Date
+    func removeParticipantFromAllGroupConversations(
+        participantID: UUID,
+        participantDomain: String?,
+        removedAt date: Date
+    ) async throws
+
+    /// Adds a participant or updates its role in a conversation.
+    ///
+    /// - Parameters:
+    ///     - participantID: The participant ID.
+    ///     - participantDomain: The participant domain if any.
+    ///     - participantRole: The role of the user.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain if any.
+    ///
+    /// If user is already part of the conversation, its role will be updated.
+    /// If not, user will be added to the conversation.
+
+    func addOrUpdateParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
     ) async
+
+    /// Adds new participants to a conversation.
+    /// - Parameters:
+    ///     - newParticipants: The id, domain and role of the new participant.
+    ///     - sender: The user who added the participants.
+    ///     - date: The date the participants were added.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain.
+
+    func addParticipants(
+        _ participants: [(id: UUID, domain: String?, role: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        conversationID: UUID,
+        conversationDomain: String
+    ) async throws
+
+    /// Removes members from a conversation, deletes membership and wipe MLS group if needed.
+    ///
+    /// - Parameters:
+    ///     - userIDs: The users to remove.
+    ///     - conversation: The conversation the removed users are part of.
+    ///     - initiatedBy: The user (sender) that initiated that removal.
+    ///     - date: The date the members were removed.
+    ///     - reason: The reason the members were removed.
+
+    func removeMembers(
+        _ userIDs: Set<UserID>,
+        from conversation: ConversationID,
+        initiatedBy sender: UserID,
+        at date: Date,
+        reason: ConversationMemberLeaveReason
+    ) async throws
 
     /// Adds a system message to a given conversation.
     /// - parameters:
@@ -103,34 +182,36 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     private let conversationsAPI: any ConversationsAPI
     private let conversationsLocalStore: any ConversationLocalStoreProtocol
+    private let userRepository: any UserRepositoryProtocol
+    private let teamRepository: any TeamRepositoryProtocol
     private let backendInfo: BackendInfo
+    private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
 
     public init(
         conversationsAPI: any ConversationsAPI,
         conversationsLocalStore: any ConversationLocalStoreProtocol,
-        backendInfo: BackendInfo
+        userRepository: any UserRepositoryProtocol,
+        teamRepository: any TeamRepositoryProtocol,
+        backendInfo: BackendInfo,
+        mlsProvider: MLSProvider
     ) {
         self.conversationsAPI = conversationsAPI
         self.conversationsLocalStore = conversationsLocalStore
+        self.userRepository = userRepository
+        self.teamRepository = teamRepository
         self.backendInfo = backendInfo
+        self.mlsProvider = mlsProvider
     }
 
     // MARK: - Public
 
-    public func fetchConversation(
-        with id: UUID,
-        domain: String?
-    ) async -> ZMConversation? {
-        await conversationsLocalStore.fetchConversation(
-            with: id,
-            domain: domain
+    public func pullConversation(id: UUID, domain: String) async throws {
+        let qualifiedID = WireAPI.QualifiedID(uuid: id, domain: domain)
+        let conversationList = try await conversationsAPI.getConversations(
+            for: [qualifiedID]
         )
-    }
-
-    public func pullConversation(with id: ConversationID) async throws {
-        let conversationList = try await conversationsAPI.getConversations(for: [id])
 
         guard let conversation = conversationList.found.first else {
             throw ConversationRepositoryError.conversationNotFound
@@ -138,6 +219,38 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         await conversationsLocalStore.storeConversation(
             conversation,
+            timestamp: .now,
+            isFederationEnabled: backendInfo.isFederationEnabled
+        )
+    }
+
+    public func fetchConversation(
+        id: UUID,
+        domain: String?
+    ) async -> ZMConversation? {
+        await conversationsLocalStore.fetchConversation(
+            id: id,
+            domain: domain
+        )
+    }
+
+    public func fetchOrCreateConversation(
+        id: UUID,
+        domain: String?
+    ) async -> ZMConversation {
+        await conversationsLocalStore.fetchOrCreateConversation(
+            id: id,
+            domain: domain
+        )
+    }
+
+    public func storeConversation(
+        _ conversation: WireAPI.Conversation,
+        timestamp: Date
+    ) async {
+        await conversationsLocalStore.storeConversation(
+            conversation,
+            timestamp: timestamp,
             isFederationEnabled: backendInfo.isFederationEnabled
         )
     }
@@ -145,13 +258,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 
-        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment)
+        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { // only for api v0 (see `ConversationsAPIV0` method comment)
             let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
             qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain) }
         } else {
-            /// fallback to api versions > v0.
+            // fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
             qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
@@ -167,17 +280,17 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             for conversation in foundConversations {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversation(
+                    await storeConversation(
                         conversation,
-                        isFederationEnabled: backendInfo.isFederationEnabled
+                        timestamp: .now
                     )
                 }
             }
 
             for id in missingConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
-                        true,
+                    await conversationsLocalStore.storeConversation(
+                        needsBackendUpdate: true,
                         qualifiedId: id
                     )
                 }
@@ -195,11 +308,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func pullMLSOneToOneConversation(
         userID: String,
-        domain: String
+        userDomain: String
     ) async throws -> String {
         let mlsConversation = try await conversationsAPI.getMLSOneToOneConversation(
             userID: userID,
-            in: domain
+            in: userDomain
         )
 
         guard let mlsGroupID = mlsConversation.mlsGroupID else {
@@ -208,6 +321,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         await conversationsLocalStore.storeConversation(
             mlsConversation,
+            timestamp: .now,
             isFederationEnabled: backendInfo.isFederationEnabled
         )
 
@@ -215,7 +329,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func fetchMLSConversation(
-        with groupID: String
+        groupID: String
     ) async -> ZMConversation? {
         guard let mlsGroupID = MLSGroupID(base64Encoded: groupID) else {
             return nil
@@ -226,14 +340,146 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
-    public func removeFromConversations(
-        user: ZMUser,
-        removalDate: Date
-    ) async {
-        await conversationsLocalStore.removeFromConversations(
-            user: user,
-            removalDate: removalDate
+    public func removeParticipantFromAllGroupConversations(
+        participantID: UUID,
+        participantDomain: String?,
+        removedAt date: Date
+    ) async throws {
+        let user = try await userRepository.fetchUser(
+            id: participantID,
+            domain: participantDomain
         )
+
+        await conversationsLocalStore.removeParticipantFromAllGroupConversations(
+            user: user,
+            date: date
+        )
+    }
+
+    public func addOrUpdateParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        participantRole: String,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async {
+        let participant = await userRepository.fetchOrCreateUser(
+            id: participantID,
+            domain: participantDomain
+        )
+
+        let conversation = await fetchOrCreateConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        await conversationsLocalStore.addOrUpdateParticipant(
+            participant,
+            withRole: participantRole,
+            in: conversation
+        )
+    }
+
+    public func addParticipants(
+        _ participants: [(id: UUID, domain: String?, role: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        conversationID: UUID,
+        conversationDomain: String
+    ) async throws {
+        var conversation = await fetchConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        if conversation == nil {
+            // Sync conversation
+            try await pullConversation(
+                id: conversationID,
+                domain: conversationDomain
+            )
+
+            conversation = await fetchConversation(
+                id: conversationID,
+                domain: conversationDomain
+            )
+        }
+
+        guard let conversation else {
+            return WireLogger.eventProcessing.error(
+                "Member join update missing conversation, aborting... ",
+                attributes: [
+                    .conversationId: conversationID.safeForLoggingDescription
+                ]
+            )
+        }
+
+        try await conversationsLocalStore.addParticipants(
+            participants,
+            addedBy: sender,
+            atDate: date,
+            to: conversation
+        )
+    }
+
+    public func removeMembers(
+        _ userIDs: Set<UserID>,
+        from conversation: ConversationID,
+        initiatedBy sender: UserID,
+        at time: Date,
+        reason: ConversationMemberLeaveReason
+    ) async throws {
+        let id = conversation.uuid
+        let domain = conversation.domain
+        let removedUserIDs = userIDs
+
+        let conversation = await conversationsLocalStore.fetchOrCreateConversation(
+            id: id,
+            domain: domain
+        )
+
+        let removedUsers = await getRemovedUsers(from: removedUserIDs)
+        let participants = await conversationsLocalStore.localParticipants(in: conversation)
+
+        let sender = try await userRepository.fetchUser(
+            id: sender.uuid,
+            domain: sender.domain
+        )
+
+        if !participants.isDisjoint(with: removedUsers) {
+            let systemMessage = SystemMessage(
+                type: reason.toDomainModel(),
+                sender: sender,
+                timestamp: time
+            )
+
+            await addSystemMessage(systemMessage, to: conversation)
+        }
+
+        let isSelfUserRemoved = await isSelfUserRemoved(in: removedUserIDs)
+        let messageProtocol = await conversationsLocalStore.messageProtocol(for: conversation)
+
+        await conversationsLocalStore.removeParticipantsAndUpdateConversationState(
+            conversation: conversation,
+            users: Set(removedUsers),
+            initiatingUser: sender
+        )
+
+        let isMLSEnabled = mlsProvider.isMLSEnabled
+        let mlsService = mlsProvider.service
+
+        if isMLSEnabled {
+            let mlsGroupID = await conversationsLocalStore.fetchMLSGroupID(for: conversation)
+            if isSelfUserRemoved, let mlsGroupID, messageProtocol.isOne(of: .mls, .mixed) {
+                try await mlsService.wipeGroup(mlsGroupID)
+            }
+        }
+
+        guard reason == .userDeleted else {
+            return
+        }
+
+        await deleteMembership(for: removedUserIDs, time: time)
     }
 
     public func addSystemMessage(
@@ -246,4 +492,73 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
+    // MARK: - Private
+
+    private func getRemovedUsers(
+        from userIDs: Set<UserID>
+    ) async -> [WireDataModel.ZMUser] {
+        await withTaskGroup(of: WireDataModel.ZMUser.self) { taskGroup in
+            for userID in userIDs {
+                taskGroup.addTask { [self] in
+                    await userRepository.fetchOrCreateUser(
+                        id: userID.uuid,
+                        domain: userID.domain
+                    )
+                }
+            }
+
+            var users: [WireDataModel.ZMUser] = []
+
+            for await user in taskGroup {
+                users.append(user)
+            }
+
+            return users
+        }
+    }
+
+    private func isSelfUserRemoved(
+        in removedUsersIDs: Set<UserID>
+    ) async -> Bool {
+        await withTaskGroup(of: Bool.self) { taskGroup in
+            for removedUserID in removedUsersIDs {
+                taskGroup.addTask { [self] in
+                    do {
+                        return try await userRepository.isSelfUser(
+                            id: removedUserID.uuid,
+                            domain: removedUserID.domain
+                        )
+
+                    } catch {
+                        return false
+                    }
+                }
+            }
+
+            return await taskGroup.contains(true)
+        }
+    }
+
+    private func deleteMembership(
+        for userIDs: Set<UserID>,
+        time: Date
+    ) async {
+        await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for userID in userIDs {
+                taskGroup.addTask { [self] in
+                    do {
+                        try await teamRepository.deleteMembership(
+                            for: userID.uuid,
+                            domain: userID.domain,
+                            at: time
+                        )
+                    } catch {
+                        WireLogger.eventProcessing.error(
+                            "Unable to delete member with id: \(userID.uuid.safeForLoggingDescription)"
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

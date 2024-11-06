@@ -20,18 +20,13 @@ public enum MainConversationFilter: Sendable {
     case favorites, groups, oneOnOne
 }
 
-public protocol MainConversationFilterRepresentable: Sendable {
+extension MainConversationFilter: MainConversationFilterRepresentable {
 
-    init(_ mainConversationFilter: MainConversationFilter)
-    init?<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter?)
+    public init(_ mainConversationFilter: MainConversationFilter) {
+        self = mainConversationFilter
+    }
 
-    func mapToMainConversationFilter() -> MainConversationFilter
-}
-
-public extension MainConversationFilterRepresentable {
-
-    init?(mappingFrom conversationFilter: (some MainConversationFilterRepresentable)?) {
-        guard let conversationFilter else { return nil }
-        self.init(conversationFilter.mapToMainConversationFilter())
+    public func mapToMainConversationFilter() -> MainConversationFilter {
+        self
     }
 }

@@ -19,6 +19,7 @@
 import AVKit
 import Foundation
 import PassKit
+import WireMainNavigationUI
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
@@ -176,7 +177,8 @@ final class MessagePresenter: NSObject {
         targetView: UIView,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
@@ -188,7 +190,7 @@ final class MessagePresenter: NSObject {
         } else if Message.isFileTransfer(message), message.canBeDownloaded {
             openFileMessage(message, targetView: targetView)
         } else if Message.isImage(message), message.canBeShared {
-            openImageMessage(message, actionResponder: delegate, userSession: userSession, mainCoordinator: mainCoordinator)
+            openImageMessage(message, actionResponder: delegate, userSession: userSession, mainCoordinator: mainCoordinator, selfProfileUIBuilder: selfProfileUIBuilder)
         } else if let openableURL = message.textMessageData?.linkPreview?.openableURL {
             openableURL.open()
         }
@@ -204,13 +206,15 @@ final class MessagePresenter: NSObject {
         _ message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         let imageViewController = viewController(
             forImageMessage: message,
             actionResponder: delegate,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         if let imageViewController {
             // to allow image rotation, present the image viewer in full screen style
@@ -223,7 +227,8 @@ final class MessagePresenter: NSObject {
         forImageMessage message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -235,7 +240,8 @@ final class MessagePresenter: NSObject {
             actionResponder: delegate,
             isPreviewing: false,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -243,7 +249,8 @@ final class MessagePresenter: NSObject {
         forImageMessagePreview message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -255,7 +262,8 @@ final class MessagePresenter: NSObject {
             actionResponder: delegate,
             isPreviewing: true,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 

@@ -74,6 +74,10 @@ extension URL {
         BackendEnvironment.selfUserProfileLink
     }
 
+    static var wr_passwordReset: URL {
+        BackendEnvironment.accountsLink(path: "forgot")
+    }
+
 }
 
 // MARK: - BackendEnvironment Standard URLs

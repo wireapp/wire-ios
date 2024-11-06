@@ -45,7 +45,7 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Add_Legalhold_Request_Repo_Method() async throws {
         // Mock
 
-        userRepository.addLegalHoldRequestForClientIDLastPrekey_MockMethod = { _, _, _ in }
+        userRepository.addLegalHoldRequestUserIDClientIDLastPrekey_MockMethod = { _, _, _ in }
 
         // When
 
@@ -53,7 +53,7 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.addLegalHoldRequestForClientIDLastPrekey_Invocations.count, 1)
+        XCTAssertEqual(userRepository.addLegalHoldRequestUserIDClientIDLastPrekey_Invocations.count, 1)
     }
 
     private enum Scaffolding {

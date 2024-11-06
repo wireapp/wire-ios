@@ -18,11 +18,13 @@
 
 import UIKit
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -45,12 +47,14 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
@@ -119,16 +123,19 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private func setupNavigatiomItem() {
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.titleView = TwoLineTitleView(
+
+        let titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
+
+        titleView.addInteraction(UILargeContentViewerInteraction())
+        navigationItem.titleView = titleView
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
 
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
     }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -353,7 +360,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             selectedParticipants: selectedUsers,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         detailsViewController.delegate = self
@@ -378,7 +386,8 @@ extension GroupDetailsViewController {
             in: self,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -467,8 +476,9 @@ extension GroupDetailsViewController: ViewControllerDismisser {
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }
@@ -484,7 +494,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         navigationController?.pushViewController(viewController, animated: true)

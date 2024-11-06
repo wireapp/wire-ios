@@ -28,7 +28,6 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
@@ -42,7 +41,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
         snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     func testForEditingTextField() {

@@ -16,37 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireMainNavigationUI
 
-extension ConversationListViewController: MainConversationListProtocol {
-    // TODO: [WPB-6647] this is implemented correctly in the navigation overhaul epic branch
-    var conversationFilter: ConversationFilterType? {
-        get { .none }
-        set {}
+extension ConversationListViewController: MainConversationListUIProtocol {
+
+    var conversationFilter: ConversationFilter? {
+        get { listContentController.listViewModel.selectedFilter }
+        set { applyFilter(newValue) }
     }
-    var splitViewInterface: MainSplitViewState {
-        get { .collapsed }
-        set {}
+
+    var selectedConversation: ZMConversation? {
+        listContentController.listViewModel.selectedItem as? ZMConversation
     }
 }
 
-// MARK: -
+// MARK: - ConversationFilter + MainConversationFilterRepresentable
 
-extension ConversationFilterType: MainConversationFilterRepresentable {
+extension ConversationFilter: MainConversationFilterRepresentable {
 
-    init(_ mainConversationFilter: MainConversationFilter) {
+    public init(_ mainConversationFilter: MainConversationFilter) {
         switch mainConversationFilter {
         case .favorites: self = .favorites
         case .groups: self = .groups
-        case .oneOnOne: self = .oneToOneConversations
+        case .oneOnOne: self = .oneOnOne
         }
     }
 
-    func mapToMainConversationFilter() -> MainConversationFilter {
+    public func mapToMainConversationFilter() -> MainConversationFilter {
         switch self {
         case .favorites: .favorites
         case .groups: .groups
-        case .oneToOneConversations: .oneOnOne
+        case .oneOnOne: .oneOnOne
         }
     }
 }
