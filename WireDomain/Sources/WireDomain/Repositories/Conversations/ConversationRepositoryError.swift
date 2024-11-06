@@ -34,8 +34,4 @@ enum ConversationRepositoryError: Error {
 
     case mlsConversationShouldHaveAGroupID
 
-    /// Conversation not found
-
-    case conversationNotFound
-
 }

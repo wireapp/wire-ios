@@ -92,13 +92,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
             return (conversation, sender, addedUser, role)
         }
 
-        conversationRepository.fetchConversationWithDomain_MockMethod = { _, _ in conversation }
-        conversationRepository.pullConversationWith_MockMethod = { _ in }
-        conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
-        userRepository.fetchUserWithDomain_MockValue = sender
-        userRepository.fetchOrCreateUserWithDomain_MockValue = addedUser
-        conversationLocalStore.localParticipantsIn_MockValue = Set([sender])
-        conversationLocalStore.fetchOrCreateRoleIn_MockValue = role
+        conversationRepository.addParticipantsSenderDateConversationIDConversationDomain_MockMethod = { _, _, _, _, _ in }
 
         // When
 
@@ -106,16 +100,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationRepository.fetchConversationWithDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchUserWithDomain_Invocations.count, 1)
-        XCTAssertEqual(userRepository.fetchOrCreateUserWithDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.localParticipantsIn_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.fetchOrCreateRoleIn_Invocations.count, 1)
-
-        await context.perform {
-            XCTAssertTrue(conversation.localParticipants.contains(addedUser))
-        }
+        XCTAssertEqual(conversationRepository.addParticipantsSenderDateConversationIDConversationDomain_Invocations.count, 1)
     }
 
     private enum Scaffolding {

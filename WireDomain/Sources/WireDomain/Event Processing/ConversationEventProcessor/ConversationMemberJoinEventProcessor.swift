@@ -40,125 +40,29 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
 
     func processEvent(_ event: ConversationMemberJoinEvent) async throws {
         let conversationID = event.conversationID
-        let id = conversationID.uuid
-        let domain = conversationID.domain
+        let senderID = event.senderID
 
-        var conversation = await conversationRepository.fetchConversation(
-            with: id,
-            domain: domain
-        )
-
-        if conversation == nil {
-            // Sync conversation
-            try await conversationRepository.pullConversation(with: conversationID)
-            conversation = await conversationRepository.fetchConversation(
-                with: id,
-                domain: domain
-            )
+        let newParticipants = event.members.compactMap {
+            getParticipantInfo(from: $0)
         }
 
-        guard let conversation else {
-            return WireLogger.eventProcessing.error(
-                "Member join update missing conversation, aborting... ",
-                attributes: [
-                    .conversationId: id.safeForLoggingDescription
-                ]
-            )
-        }
-
-        try await addParticipants(
-            event.members,
-            to: conversation,
-            senderID: event.senderID,
-            timestamp: event.timestamp
+        try await conversationRepository.addParticipants(
+            newParticipants,
+            sender: (senderID.uuid, senderID.domain),
+            date: event.timestamp,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain
         )
     }
 
-    private func addParticipants(
-        _ members: [WireAPI.Conversation.Member],
-        to conversation: ZMConversation,
-        senderID: UserID,
-        timestamp: Date
-    ) async throws {
-        let usersAndRoles = await getUsersAndRoles(
-            members: members,
-            conversation: conversation
-        )
-
-        let users = Set(usersAndRoles.map(\.user))
-        let existingUsers = await conversationLocalStore.localParticipants(
-            in: conversation
-        )
-        let newUsers = users.subtracting(existingUsers)
-
-        if !newUsers.isEmpty, conversation.conversationType == .group {
-            let sender = try await userRepository.fetchUser(
-                with: senderID.uuid,
-                domain: senderID.domain
-            )
-
-            let systemMessage = SystemMessage(
-                type: .participantsAdded,
-                sender: sender,
-                users: newUsers,
-                clients: nil,
-                timestamp: timestamp
-            )
-
-            await conversationRepository.addSystemMessage(systemMessage, to: conversation)
-        }
-
-        conversation.addParticipantsAndUpdateConversationState(
-            usersAndRoles: usersAndRoles
-        )
-    }
-
-    private func getUsersAndRoles(
-        members: [WireAPI.Conversation.Member],
-        conversation: ZMConversation
-    ) async -> [(user: ZMUser, role: Role?)] {
-        typealias UserAndRole = (user: ZMUser, role: Role?)
-
-        return await withTaskGroup(of: UserAndRole?.self) { taskGroup in
-            for member in members {
-                taskGroup.addTask {
-                    await fetchUserAndRole(from: member, for: conversation)
-                }
-            }
-
-            var usersAndRoles: [UserAndRole?] = []
-
-            for await userAndRole in taskGroup {
-                usersAndRoles.append(userAndRole)
-            }
-
-            return usersAndRoles.compactMap { $0 }
-        }
-    }
-
-    private func fetchUserAndRole(
-        from member: WireAPI.Conversation.Member,
-        for conversation: ZMConversation
-    ) async -> (user: ZMUser, role: Role?)? {
+    private func getParticipantInfo(
+        from member: WireAPI.Conversation.Member
+    ) -> (id: UUID, domain: String?, role: String?)? {
         guard let userID = member.id ?? member.qualifiedID?.uuid else {
             return nil
         }
 
-        let user = userRepository.fetchOrCreateUser(
-            with: userID,
-            domain: member.qualifiedID?.domain
-        )
-
-        if let conversationRole = member.conversationRole {
-            let role = await conversationLocalStore.fetchOrCreateRole(
-                conversationRole,
-                in: conversation
-            )
-
-            return (user, role)
-        }
-
-        return (user, nil)
+        return (userID, member.qualifiedID?.domain, member.conversationRole)
     }
 
 }
