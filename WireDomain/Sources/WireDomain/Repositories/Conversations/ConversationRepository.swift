@@ -33,6 +33,7 @@ public protocol ConversationRepositoryProtocol {
         id: UUID,
         domain: String
     ) async throws
+
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.
@@ -92,6 +93,16 @@ public protocol ConversationRepositoryProtocol {
     func fetchMLSConversation(
         groupID: String
     ) async -> ZMConversation?
+
+    /// Deletes a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+
+    func deleteConversation(
+        id: UUID,
+        domain: String?
+    ) async throws
 
     /// Removes a given user from all group conversations.
     ///
@@ -212,7 +223,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         domain: String?
     ) async -> ZMConversation? {
         await conversationsLocalStore.fetchConversation(
-            with: id,
+            id: id,
             domain: domain
         )
     }
@@ -222,7 +233,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         domain: String?
     ) async -> ZMConversation {
         await conversationsLocalStore.fetchOrCreateConversation(
-            with: id,
+            id: id,
             domain: domain
         )
     }
@@ -319,7 +330,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         return await conversationsLocalStore.fetchMLSConversation(
-            with: mlsGroupID
+            groupID: mlsGroupID
         )
     }
 
@@ -337,6 +348,43 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             user: user,
             date: date
         )
+    }
+
+    public func deleteConversation(
+        id: UUID,
+        domain: String?
+    ) async throws {
+        guard let conversation = await fetchConversation(
+            id: id,
+            domain: domain
+        ) else {
+            return WireLogger.conversation.warn(
+                "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
+            )
+        }
+
+        let isMLSConversation = await conversationsLocalStore.isMLSConversation(
+            conversation
+        )
+
+        if isMLSConversation {
+            let mlsGroupID = await conversationsLocalStore.mlsGroupID(
+                for: conversation
+            )
+
+            if let mlsGroupID {
+                try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
+            }
+
+            await conversationsLocalStore.deleteConversation(
+                conversation
+            )
+
+        } else {
+            await conversationsLocalStore.deleteConversation(
+                conversation
+            )
+        }
     }
 
     public func addOrUpdateParticipant(
@@ -375,7 +423,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let removedUserIDs = userIDs
 
         let conversation = await conversationsLocalStore.fetchOrCreateConversation(
-            with: id,
+            id: id,
             domain: domain
         )
 
@@ -410,7 +458,10 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let mlsService = mlsProvider.service
 
         if isMLSEnabled {
-            let mlsGroupID = await conversationsLocalStore.fetchMLSGroupID(for: conversation)
+            let mlsGroupID = await conversationsLocalStore.mlsGroupID(
+                for: conversation
+            )
+
             if isSelfUserRemoved, let mlsGroupID, messageProtocol.isOne(of: .mls, .mixed) {
                 try await mlsService.wipeGroup(mlsGroupID)
             }

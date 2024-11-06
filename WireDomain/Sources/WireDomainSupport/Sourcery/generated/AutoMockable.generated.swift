@@ -163,37 +163,37 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - fetchConversation
 
-    public var fetchConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
-    public var fetchConversationWithDomain_MockValue: ZMConversation??
+    public var fetchConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationIdDomain_MockValue: ZMConversation??
 
-    public func fetchConversation(with id: UUID, domain: String?) async -> ZMConversation? {
-        fetchConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchConversation(id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchConversationWithDomain_MockMethod {
+        if let mock = fetchConversationIdDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchConversationWithDomain_MockValue {
+        } else if let mock = fetchConversationIdDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchConversationWithDomain`")
+            fatalError("no mock for `fetchConversationIdDomain`")
         }
     }
 
     // MARK: - fetchOrCreateConversation
 
-    public var fetchOrCreateConversationWithDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchOrCreateConversationWithDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
-    public var fetchOrCreateConversationWithDomain_MockValue: ZMConversation?
+    public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchOrCreateConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation)?
+    public var fetchOrCreateConversationIdDomain_MockValue: ZMConversation?
 
-    public func fetchOrCreateConversation(with id: UUID, domain: String?) async -> ZMConversation {
-        fetchOrCreateConversationWithDomain_Invocations.append((id: id, domain: domain))
+    public func fetchOrCreateConversation(id: UUID, domain: String?) async -> ZMConversation {
+        fetchOrCreateConversationIdDomain_Invocations.append((id: id, domain: domain))
 
-        if let mock = fetchOrCreateConversationWithDomain_MockMethod {
+        if let mock = fetchOrCreateConversationIdDomain_MockMethod {
             return await mock(id, domain)
-        } else if let mock = fetchOrCreateConversationWithDomain_MockValue {
+        } else if let mock = fetchOrCreateConversationIdDomain_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchOrCreateConversationWithDomain`")
+            fatalError("no mock for `fetchOrCreateConversationIdDomain`")
         }
     }
 
@@ -244,20 +244,40 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - fetchMLSConversation
 
-    public var fetchMLSConversationWith_Invocations: [WireDataModel.MLSGroupID] = []
-    public var fetchMLSConversationWith_MockMethod: ((WireDataModel.MLSGroupID) async -> ZMConversation?)?
-    public var fetchMLSConversationWith_MockValue: ZMConversation??
+    public var fetchMLSConversationGroupID_Invocations: [WireDataModel.MLSGroupID] = []
+    public var fetchMLSConversationGroupID_MockMethod: ((WireDataModel.MLSGroupID) async -> ZMConversation?)?
+    public var fetchMLSConversationGroupID_MockValue: ZMConversation??
 
-    public func fetchMLSConversation(with groupID: WireDataModel.MLSGroupID) async -> ZMConversation? {
-        fetchMLSConversationWith_Invocations.append(groupID)
+    public func fetchMLSConversation(groupID: WireDataModel.MLSGroupID) async -> ZMConversation? {
+        fetchMLSConversationGroupID_Invocations.append(groupID)
 
-        if let mock = fetchMLSConversationWith_MockMethod {
+        if let mock = fetchMLSConversationGroupID_MockMethod {
             return await mock(groupID)
-        } else if let mock = fetchMLSConversationWith_MockValue {
+        } else if let mock = fetchMLSConversationGroupID_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchMLSConversationWith`")
+            fatalError("no mock for `fetchMLSConversationGroupID`")
         }
+    }
+
+    // MARK: - wipeMLSGroup
+
+    public var wipeMLSGroupGroupID_Invocations: [WireDataModel.MLSGroupID] = []
+    public var wipeMLSGroupGroupID_MockError: Error?
+    public var wipeMLSGroupGroupID_MockMethod: ((WireDataModel.MLSGroupID) async throws -> Void)?
+
+    public func wipeMLSGroup(groupID: WireDataModel.MLSGroupID) async throws {
+        wipeMLSGroupGroupID_Invocations.append(groupID)
+
+        if let error = wipeMLSGroupGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = wipeMLSGroupGroupID_MockMethod else {
+            fatalError("no mock for `wipeMLSGroupGroupID`")
+        }
+
+        try await mock(groupID)
     }
 
     // MARK: - removeParticipantFromAllGroupConversations
@@ -437,24 +457,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(hasReadReceiptsEnabled, conversation)
     }
 
-    // MARK: - fetchMLSGroupID
-
-    public var fetchMLSGroupIDFor_Invocations: [ZMConversation] = []
-    public var fetchMLSGroupIDFor_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
-    public var fetchMLSGroupIDFor_MockValue: MLSGroupID??
-
-    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
-        fetchMLSGroupIDFor_Invocations.append(conversation)
-
-        if let mock = fetchMLSGroupIDFor_MockMethod {
-            return await mock(conversation)
-        } else if let mock = fetchMLSGroupIDFor_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLSGroupIDFor`")
-        }
-    }
-
     // MARK: - removeParticipantsAndUpdateConversationState
 
     public var removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_Invocations: [(conversation: ZMConversation, users: Set<ZMUser>, initiatingUser: ZMUser)] = []
@@ -468,6 +470,72 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(conversation, users, initiatingUser)
+    }
+
+    // MARK: - deleteConversation
+
+    public var deleteConversation_Invocations: [ZMConversation] = []
+    public var deleteConversation_MockMethod: ((ZMConversation) async -> Void)?
+
+    public func deleteConversation(_ conversation: ZMConversation) async {
+        deleteConversation_Invocations.append(conversation)
+
+        guard let mock = deleteConversation_MockMethod else {
+            fatalError("no mock for `deleteConversation`")
+        }
+
+        await mock(conversation)
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationIsDeletedRemotelyConversation_Invocations: [(isDeletedRemotely: Bool, conversation: ZMConversation)] = []
+    public var storeConversationIsDeletedRemotelyConversation_MockMethod: ((Bool, ZMConversation) async -> Void)?
+
+    public func storeConversation(isDeletedRemotely: Bool, conversation: ZMConversation) async {
+        storeConversationIsDeletedRemotelyConversation_Invocations.append((isDeletedRemotely: isDeletedRemotely, conversation: conversation))
+
+        guard let mock = storeConversationIsDeletedRemotelyConversation_MockMethod else {
+            fatalError("no mock for `storeConversationIsDeletedRemotelyConversation`")
+        }
+
+        await mock(isDeletedRemotely, conversation)
+    }
+
+    // MARK: - isMLSConversation
+
+    public var isMLSConversation_Invocations: [ZMConversation] = []
+    public var isMLSConversation_MockMethod: ((ZMConversation) async -> Bool)?
+    public var isMLSConversation_MockValue: Bool?
+
+    public func isMLSConversation(_ conversation: ZMConversation) async -> Bool {
+        isMLSConversation_Invocations.append(conversation)
+
+        if let mock = isMLSConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = isMLSConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isMLSConversation`")
+        }
+    }
+
+    // MARK: - mlsGroupID
+
+    public var mlsGroupIDFor_Invocations: [ZMConversation] = []
+    public var mlsGroupIDFor_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
+    public var mlsGroupIDFor_MockValue: MLSGroupID??
+
+    public func mlsGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
+        mlsGroupIDFor_Invocations.append(conversation)
+
+        if let mock = mlsGroupIDFor_MockMethod {
+            return await mock(conversation)
+        } else if let mock = mlsGroupIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `mlsGroupIDFor`")
+        }
     }
 
 }
@@ -609,6 +677,26 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         } else {
             fatalError("no mock for `fetchMLSConversationGroupID`")
         }
+    }
+
+    // MARK: - deleteConversation
+
+    public var deleteConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var deleteConversationIdDomain_MockError: Error?
+    public var deleteConversationIdDomain_MockMethod: ((UUID, String?) async throws -> Void)?
+
+    public func deleteConversation(id: UUID, domain: String?) async throws {
+        deleteConversationIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = deleteConversationIdDomain_MockError {
+            throw error
+        }
+
+        guard let mock = deleteConversationIdDomain_MockMethod else {
+            fatalError("no mock for `deleteConversationIdDomain`")
+        }
+
+        try await mock(id, domain)
     }
 
     // MARK: - removeParticipantFromAllGroupConversations

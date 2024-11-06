@@ -38,7 +38,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: The `ZMConversation` found locally.
 
     func fetchConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation?
 
@@ -49,7 +49,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - returns: The `ZMConversation` found or created locally.
 
     func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation
 
@@ -83,13 +83,20 @@ public protocol ConversationLocalStoreProtocol {
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:
-    ///     - groupID: The MLS group ID object.
+    ///     - groupID: The MLS group ID.
     ///
     /// - returns : A MLS conversation.
 
     func fetchMLSConversation(
-        with groupID: WireDataModel.MLSGroupID
+        groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation?
+
+    /// Wipes MLS group conversation.
+    /// - parameter id: The MLS group ID.
+
+    func wipeMLSGroup(
+        groupID: WireDataModel.MLSGroupID
+    ) async throws
 
     /// Removes a given user from all group conversations.
     ///
@@ -206,14 +213,6 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async
 
-    /// Fetches the MLS group ID (if any) from a conversation.
-    /// - parameter conversation: The conversation to get the MLS group ID from.
-    /// - returns: The MLS group ID for that conversation (if any)
-
-    func fetchMLSGroupID(
-        for conversation: ZMConversation
-    ) async -> MLSGroupID?
-
     /// Removes participants from conversation and updates conversation state.
     /// - Parameters:
     ///     - conversation: The conversation to remove the participants from.
@@ -225,6 +224,39 @@ public protocol ConversationLocalStoreProtocol {
         users: Set<ZMUser>,
         initiatingUser: ZMUser
     ) async
+
+    /// Deletes a conversation locally.
+    /// - Parameters:
+    ///     - conversation: The conversation to delete.
+
+    func deleteConversation(
+        _ conversation: ZMConversation
+    ) async
+
+    /// Stores a flag indicating whether a conversation is deleted remotely.
+    /// - Parameter isDeletedRemotely: A flag indicating whether the conversation is deleted remotely.
+    /// - Parameter conversation: The conversation to update the `isDeletedRemotely` flag for.
+
+    func storeConversation(
+        isDeletedRemotely: Bool,
+        conversation: ZMConversation
+    ) async
+
+    /// Indicates whether a conversation is a MLS one.
+    /// - parameter conversation: The conversation to check the flag for.
+    /// - returns: A flag indicating whether the conversation uses the MLS protocol.
+
+    func isMLSConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    /// Fetches the MLS group ID from a conversation.
+    /// - parameter conversation: The conversation to fetch the MLS group ID for.
+    /// - returns: The MLS conversation group ID.
+
+    func mlsGroupID(
+        for conversation: ZMConversation
+    ) async -> MLSGroupID?
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -236,7 +268,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let mlsService: MLSServiceInterface?
+    let mlsService: any MLSServiceInterface
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -245,7 +277,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public init(
         context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface?
+        mlsService: MLSServiceInterface
     ) {
         self.context = context
         self.mlsService = mlsService
@@ -282,7 +314,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func fetchConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation? {
         await context.perform { [context] in
@@ -295,7 +327,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func fetchOrCreateConversation(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMConversation {
         await context.perform { [context] in
@@ -442,7 +474,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         withQualifiedId qualifiedId: WireAPI.QualifiedID
     ) async {
         let conversation = await fetchOrCreateConversation(
-            with: qualifiedId.uuid,
+            id: qualifiedId.uuid,
             domain: qualifiedId.domain
         )
 
@@ -453,7 +485,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func fetchMLSConversation(
-        with groupID: WireDataModel.MLSGroupID
+        groupID: WireDataModel.MLSGroupID
     ) async -> ZMConversation? {
         await context.perform { [context] in
             ZMConversation.fetch(
@@ -568,6 +600,22 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func isMLSConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.messageProtocol == .mls
+        }
+    }
+
+    public func mlsGroupID(
+        for conversation: ZMConversation
+    ) async -> MLSGroupID? {
+        await context.perform {
+            conversation.mlsGroupID
+        }
+    }
+
     public func updateAccesses(
         for conversation: ZMConversation,
         accessModes: [String],
@@ -581,9 +629,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func fetchMLSGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
+    public func deleteConversation(_ conversation: ZMConversation) async {
+        await storeConversation(
+            isDeletedRemotely: true,
+            conversation: conversation
+        )
+    }
+
+    public func wipeMLSGroup(groupID: MLSGroupID) async throws {
+        try await mlsService.wipeGroup(groupID)
+    }
+
+    public func storeConversation(
+        isDeletedRemotely: Bool,
+        conversation: ZMConversation
+    ) async {
         await context.perform {
-            conversation.mlsGroupID
+            conversation.isDeletedRemotely = isDeletedRemotely
         }
     }
 
@@ -617,7 +679,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         isFederationEnabled: Bool
     ) async {
         let conversation = await fetchOrCreateConversation(
-            with: remoteConversationID,
+            id: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
         )
 
@@ -674,7 +736,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         isFederationEnabled: Bool
     ) async {
         let conversation = await fetchOrCreateConversation(
-            with: remoteConversationID,
+            id: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
         )
 
@@ -730,7 +792,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         var isInitialFetch = false
 
         let conversation = await fetchOrCreateConversation(
-            with: remoteConversationID,
+            id: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
         )
 
@@ -825,7 +887,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
 
         let conversation = await fetchOrCreateConversation(
-            with: remoteConversationID,
+            id: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
         )
 
@@ -933,7 +995,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
     ) async -> (ZMConversation, MLSGroupID?) {
         let conversation = await fetchOrCreateConversation(
-            with: conversationID,
+            id: conversationID,
             domain: domain
         )
 
