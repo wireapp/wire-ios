@@ -111,8 +111,6 @@ final class ConversationImagesViewController: UIViewController {
 
         self.imageMessages = self.collection.assetCollection.assets(for: imagesMatch)
         self.collection.assetCollectionDelegate.add(self)
-
-        self.createNavigationTitle()
     }
 
     deinit {
@@ -127,7 +125,7 @@ final class ConversationImagesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.PictureView.CloseButton.description
-
+        createNavigationTitle()
         if let navigationBar = navigationController?.navigationBar {
             navigationBar.isTranslucent = true
             navigationBar.barTintColor = SemanticColors.View.backgroundDefault
@@ -368,13 +366,17 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func createNavigationTitle() {
-        guard let sender = currentMessage.senderUser, let serverTimestamp = currentMessage.serverTimestamp else {
+        guard let sender = currentMessage.senderUser,
+              let serverTimestamp = currentMessage.serverTimestamp else {
             return
         }
-        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized.attributedString,
-                                                    second: serverTimestamp.formattedDate.attributedString)
-        navigationItem.titleView?.accessibilityTraits = .header
-        navigationItem.titleView?.accessibilityLabel = "\(sender.name ?? ""), \(serverTimestamp.formattedDate)"
+
+        let titleView = TwoLineTitleView(
+            first: (sender.name ?? "").attributedString,
+            second: serverTimestamp.formattedDate.attributedString)
+
+        titleView.addInteraction(UILargeContentViewerInteraction())
+        navigationItem.titleView = titleView
     }
 
     private func updateButtonsForMessage() {
