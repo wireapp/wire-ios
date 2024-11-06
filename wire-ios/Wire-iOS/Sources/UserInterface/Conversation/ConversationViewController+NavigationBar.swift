@@ -155,7 +155,7 @@ extension ConversationViewController {
         // Enable swipe-to-go-back gesture
         navigationController?.interactivePopGestureRecognizer?.delegate = self
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        
+
         return button
     }
 
@@ -223,7 +223,6 @@ extension ConversationViewController {
             items.append(searchBarButtonItem)
         }
 
-       
         return items
     }
 
@@ -274,11 +273,13 @@ extension ConversationViewController {
         }
     }
 }
+
 extension ConversationViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return navigationController?.viewControllers.count ?? 0 > 1
     }
 }
+
 extension ConversationViewController: CollectionsViewControllerDelegate {
 
     func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
