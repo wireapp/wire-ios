@@ -414,7 +414,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         return switch mainSplitViewState {
         case .collapsed:
             tabBarController.conversationListUI != nil &&
-            tabBarController.conversationUI == nil
+                tabBarController.conversationUI == nil
+
         case .expanded:
             splitViewController.conversationListUI != nil
         }
