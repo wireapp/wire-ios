@@ -69,7 +69,7 @@ final class MessageLocalStoreTests: XCTestCase {
                 taskGroup.addTask { [self] in
 
                     let conversation = await makeConversation(creator: user)
-                    conversationLocalStore.fetchConversationWithDomain_MockValue = conversation
+                    conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
 
                     // When
 

@@ -56,7 +56,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversationDomain: String?
     ) async {
         guard let conversation = await conversationLocalStore.fetchConversation(
-            with: conversationID,
+            id: conversationID,
             domain: conversationDomain
         ) else { return }
 
