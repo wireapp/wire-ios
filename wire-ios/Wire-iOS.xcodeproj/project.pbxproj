@@ -1406,6 +1406,7 @@
 		E9B8EB792A0CEB690056E417 /* MessageReactionsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */; };
 		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */; };
+		E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */ = {isa = PBXBuildFile; productRef = E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */; };
 		E9C014EB2BFBCB11002574FC /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EA2BFBCB11002574FC /* PickerView.swift */; };
 		E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */; };
 		E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */; };
@@ -3957,6 +3958,7 @@
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
+				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
 				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
@@ -8639,6 +8641,7 @@
 				59076F942C934A9800AE7529 /* WireAccountImageUI */,
 				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 				E92C8CC52C942A5C00E0F7F7 /* Inject */,
+				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11812,6 +11815,10 @@
 		E9816C992CC929FC00D77F22 /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
+		};
+		E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMoveToFolderUI;
 		};
 		E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */ = {
 			isa = XCSwiftPackageProductDependency;
