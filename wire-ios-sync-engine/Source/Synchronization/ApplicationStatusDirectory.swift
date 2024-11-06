@@ -32,7 +32,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public let syncStatus: SyncStatus
     public let operationStatus: OperationStatus
     public let requestCancellation: ZMRequestCancellation
-    public let analytics: AnalyticsType?
     public let teamInvitationStatus: TeamInvitationStatus
     public let assetDeletionStatus: AssetDeletionStatus
     public let callEventStatus: CallEventStatus
@@ -45,20 +44,18 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol,
-        analytics: AnalyticsType? = nil
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
         self.callEventStatus = CallEventStatus()
-        self.analytics = analytics
         self.teamInvitationStatus = TeamInvitationStatus()
         self.operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
         )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
                                                                    cookieProvider: cookieStorage,

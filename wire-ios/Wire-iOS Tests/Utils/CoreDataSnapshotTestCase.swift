@@ -79,7 +79,6 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUser.name = "selfUser"
         selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
-        selfUser.phoneNumber = "+123456789"
 
         ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
         if selfUserInTeam {

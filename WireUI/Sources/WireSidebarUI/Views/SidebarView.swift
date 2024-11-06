@@ -32,7 +32,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
-        _ accountImage: UIImage,
+        _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
@@ -44,7 +44,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
+        accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
@@ -101,7 +101,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
-                accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }
+                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) }
             )
         }
     }

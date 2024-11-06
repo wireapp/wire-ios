@@ -99,7 +99,12 @@ extension MessageActionsViewController: ReactionPickerDelegate {
     func didTapMoreEmojis() {
         let pickerController = CompleteReactionPickerViewController(selectedReactions: actionController?.message.selfUserReactions() ?? [])
         pickerController.delegate = self
-        present(pickerController, animated: true)
+
+        // Embed the pickerController in a UINavigationController
+        let navigationController = UINavigationController(rootViewController: pickerController)
+
+        // Present the navigation controller
+        present(navigationController, animated: true)
     }
 }
 
