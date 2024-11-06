@@ -372,7 +372,7 @@ final class ConversationImagesViewController: UIViewController {
         }
 
         let titleView = TwoLineTitleView(
-            first: (sender.name ?? "").localized.attributedString,
+            first: (sender.name ?? "").attributedString,
             second: serverTimestamp.formattedDate.attributedString)
 
         titleView.addInteraction(UILargeContentViewerInteraction())
