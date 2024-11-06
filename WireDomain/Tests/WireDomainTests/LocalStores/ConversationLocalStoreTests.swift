@@ -22,6 +22,7 @@ import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
 
 final class ConversationLocalStoreTests: XCTestCase {
@@ -154,6 +155,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testFetchMLSConversation_It_Retrieves_Conversation_Locally() async throws {
+        
         // Mock
         
         let mlsGroupID = try XCTUnwrap(
@@ -252,7 +254,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
-    func testRemoveParticipantFromConversation_It_Removes_Participant() async throws {
+    func testRemoveParticipantFromConversation_It_Removes_Participant() async {
         
         // Mock
 
@@ -344,7 +346,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         XCTAssertEqual(conversation, localConversation)
     }
 
-    func testDeleteConversation_It_Marks_Conversation_As_Deleted_Locally() async throws {
+    func testDeleteConversation_It_Marks_Conversation_As_Deleted_Locally() async {
         
         // Mock
 
@@ -363,7 +365,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
-    func testRemoveParticipants_It_Removes_Participant_From_A_Given_Conversation() async throws {
+    func testRemoveParticipants_It_Removes_Participant_From_A_Given_Conversation() async {
         
         // Mock
 
@@ -546,15 +548,25 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
+        
         static let selfUserId = UUID()
+        
         static let domain = "domain.com"
+        
         static let teamID = UUID()
+        
         static let userID = UUID()
+        
         static let otherUserID = UUID()
+        
         static let time = "2021-05-12T10:52:02.671Z"
+        
         static let teamConversationID = UUID()
+        
         static let anotherTeamConversationID = UUID()
+        
         static let conversationID = UUID()
+        
         static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         static func date(from string: String) -> Date {
@@ -562,16 +574,16 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
 
         static let groupConversation = Conversation(
-            id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
-            teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
+            id: .mockID1,
+            qualifiedID: .init(uuid: .mockID1, domain: domain),
+            teamID: .mockID2,
             type: .group,
             messageProtocol: .proteus,
             mlsGroupID: "",
             cipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
             epoch: 0,
             epochTimestamp: nil,
-            creator: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
+            creator: .mockID3,
             members: nil,
             name: nil,
             messageTimer: 0,

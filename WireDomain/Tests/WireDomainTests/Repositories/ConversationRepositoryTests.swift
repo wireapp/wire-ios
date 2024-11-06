@@ -195,6 +195,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
         
+        XCTAssertEqual(mlsGroupID, Scaffolding.conversation.mlsGroupID)
         XCTAssertEqual(conversationsAPI.getMLSOneToOneConversationUserIDIn_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.storeConversationTimestampIsFederationEnabled_Invocations.count, 1)
     }
@@ -297,6 +298,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
+        XCTAssertEqual(conversation, localConversation)
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
     }
 
@@ -367,7 +369,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
     }
 
-    func testStoreConversation_It_Invokes_Local_Store_Method() async throws {
+    func testStoreConversation_It_Invokes_Local_Store_Method() async {
         
         // Mock
         
@@ -442,7 +444,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
     }
 
-    func testAddOrUpdateParticipant_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
+    func testAddOrUpdateParticipant_It_Invokes_Local_Store_And_User_Repo_Methods() async {
         
         // Mock
 
@@ -515,7 +517,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.addParticipantsAddedByAtDateTo_Invocations.count, 1)
     }
 
-    func testAddSystemMessage_It_Invokes_Local_Store_Method() async throws {
+    func testAddSystemMessage_It_Invokes_Local_Store_Method() async {
         
         // Mock
 
@@ -552,7 +554,9 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
+        
         static let id = UUID()
+        
         static let domain = "domain.com"
         
         static let conversation = Conversation(
