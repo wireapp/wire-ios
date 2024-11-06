@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "folder.picker.empty.hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
