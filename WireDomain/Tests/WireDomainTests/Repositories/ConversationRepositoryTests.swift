@@ -374,6 +374,7 @@ final class ConversationRepositoryTests: XCTestCase {
         do {
             // When
             try await sut.pullConversation(with: conversationID)
+            XCTFail("it should have failed")
         } catch {
             // Then
             XCTAssertTrue(error is ConversationRepositoryError)
