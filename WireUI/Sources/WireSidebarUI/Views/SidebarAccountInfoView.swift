@@ -33,20 +33,16 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
     let isLegalHoldIndicatorVisible: Bool
     let accountImageView: () -> AccountImageView
 
-    @State private var accountImageDiameter: CGFloat = 0
+    @State private var displayNameHeight: CGFloat = 0
+    @State private var usernameHeight: CGFloat = 0
+    private var accountImageDiameter: CGFloat {
+        displayNameHeight + usernameHeight
+    }
 
     var body: some View {
         HStack {
             accountImageView()
                 .frame(width: accountImageDiameter, height: accountImageDiameter)
-
-            // Let the account image height be exactly the same as one line
-            // of the display name plus one line of the username (+ spacing)
-            // and not grow with the wrapped texts (otherwise everything
-            // together grows exponentially).
-            // Therefore layout the texts twice, one preventing to be line-wrapped
-            // and being invisible
-
             ZStack {
                 determineLineHeights
                 displayNameAndUsername
@@ -63,9 +59,11 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                     .foregroundStyle(displayNameColor)
                 if isE2EICertified {
                     Image(.certificateValid)
+                        .frame(height: usernameHeight)
                 }
                 if isVerified {
                     Image(.verified)
+                        .frame(height: usernameHeight)
                 }
             }
             Text(username)
@@ -76,25 +74,34 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
 
     @ViewBuilder
     private var determineLineHeights: some View {
-        VStack(alignment: .leading) {
+        VStack {
             Text("W")
                 .font(.headline)
-            Text("W")
+                .background(GeometryReader { geometryProxy in
+                    Color.clear.preference(
+                        key: DisplayNameHeightKey.self,
+                        value: geometryProxy.size.height
+                    )
+                })
+                .onPreferenceChange(DisplayNameHeightKey.self) { height in
+                    displayNameHeight = height
+                }
+            Text("@")
                 .font(.subheadline)
+                .background(GeometryReader { geometryProxy in
+                    Color.clear.preference(
+                        key: UsernameHeightKey.self,
+                        value: geometryProxy.size.height
+                    )
+                })
+                .onPreferenceChange(UsernameHeightKey.self) { height in
+                    usernameHeight = height
+                }
         }
         .lineLimit(1)
         .layoutPriority(-1)
         .opacity(0)
         .disabled(true)
-        .background(GeometryReader { geometryProxy in
-            Color.clear.preference(
-                key: ProfileSwitcherHeightKey.self,
-                value: geometryProxy.size.height
-            )
-        })
-        .onPreferenceChange(ProfileSwitcherHeightKey.self) { height in
-            accountImageDiameter = height
-        }
     }
 }
 
@@ -119,7 +126,14 @@ extension SidebarAccountInfoView {
     }
 }
 
-private struct ProfileSwitcherHeightKey: PreferenceKey {
+private struct DisplayNameHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+private struct UsernameHeightKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
