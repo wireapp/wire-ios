@@ -95,11 +95,39 @@ public protocol ConversationLocalStoreProtocol {
     ///
     /// - parameters:
     ///     - user: The user to remove from the conversations.
-    ///     - removalDate: The date the user was removed from the conversations.
+    ///     - date: The date the user was removed from the conversations.
 
-    func removeUserFromAllGroupConversations(
+    func removeParticipantFromAllGroupConversations(
         user: ZMUser,
-        removalDate: Date
+        date: Date
+    ) async
+
+    /// Adds a participant or updates its role in a conversation.
+    ///
+    /// - Parameters:
+    ///     - user: The user to add or update.
+    ///     - role: The role of the user.
+    ///     - conversation: The conversation the user is part of.
+    ///
+    /// If user is already part of the conversation, its role will be updated.
+    /// If not, user will be added to the conversation.
+
+    func addOrUpdateParticipant(
+        _ user: ZMUser,
+        withRole role: String,
+        in conversation: ZMConversation
+    ) async
+
+    /// Updates the member muted and archived status.
+    /// - Parameters:
+    ///     - mutedStatusInfo: The mute status and reference date.
+    ///     - archivedStatusInfo: The archived status and reference date.
+    ///     - localConversation: The conversation to update statuses for.
+
+    func updateMemberStatus(
+        mutedStatusInfo: (status: Int?, referenceDate: Date?),
+        archivedStatusInfo: (status: Bool?, referenceDate: Date?),
+        for localConversation: ZMConversation
     ) async
 
     /// Updates access modes and roles to conversation.
@@ -225,6 +253,34 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     // MARK: - Public
 
+    public func updateMemberStatus(
+        mutedStatusInfo: (status: Int?, referenceDate: Date?),
+        archivedStatusInfo: (status: Bool?, referenceDate: Date?),
+        for localConversation: ZMConversation
+    ) async {
+        await context.perform {
+            let mutedStatus = mutedStatusInfo.status
+            let mutedReference = mutedStatusInfo.referenceDate
+
+            if let mutedStatus, let mutedReference {
+                localConversation.updateMutedStatus(
+                    status: Int32(mutedStatus),
+                    referenceDate: mutedReference
+                )
+            }
+
+            let archivedStatus = archivedStatusInfo.status
+            let archivedReference = archivedStatusInfo.referenceDate
+
+            if let archivedStatus, let archivedReference {
+                localConversation.updateArchivedStatus(
+                    archived: archivedStatus,
+                    referenceDate: archivedReference
+                )
+            }
+        }
+    }
+
     public func fetchConversation(
         with id: UUID,
         domain: String?
@@ -247,6 +303,27 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 with: id,
                 domain: domain,
                 in: context
+            )
+        }
+    }
+
+    public func addOrUpdateParticipant(
+        _ user: ZMUser,
+        withRole role: String,
+        in conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            let role = Role.fetchOrCreateRole(
+                with: role,
+                teamOrConversation: .matching(conversation),
+                in: context
+            )
+
+            // If user is already part of the conversation, its role will be updated.
+            // If not, user will be added to the conversation.
+            conversation.addParticipantAndUpdateConversationState(
+                user: user,
+                role: role
             )
         }
     }
@@ -364,14 +441,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func storeFailedConversation(
         withQualifiedId qualifiedId: WireAPI.QualifiedID
     ) async {
-        await fetchOrCreateConversation(
-            conversationID: qualifiedId.uuid,
+        let conversation = await fetchOrCreateConversation(
+            with: qualifiedId.uuid,
             domain: qualifiedId.domain
-        ) {
-            $0.isPendingMetadataRefresh = true
-            $0.needsToBeUpdatedFromBackend = true
+        )
 
-            return ($0, $0.mlsGroupID)
+        await context.perform {
+            conversation.isPendingMetadataRefresh = true
+            conversation.needsToBeUpdatedFromBackend = true
         }
     }
 
@@ -436,9 +513,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func removeUserFromAllGroupConversations(
+    public func removeParticipantFromAllGroupConversations(
         user: ZMUser,
-        removalDate: Date
+        date: Date
     ) async {
         let allGroupConversations = await context.perform {
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
@@ -466,7 +543,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     type: .teamMemberLeave,
                     sender: user,
                     users: [user],
-                    timestamp: removalDate
+                    timestamp: date
                 )
 
                 await addSystemMessage(systemMessage, to: conversation)
@@ -476,7 +553,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     type: .participantsRemoved,
                     sender: user,
                     users: [user],
-                    timestamp: removalDate
+                    timestamp: date
                 )
 
                 await addSystemMessage(systemMessage, to: conversation)
@@ -539,27 +616,47 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
-        await fetchOrCreateConversation(
-            conversationID: remoteConversationID,
+        let conversation = await fetchOrCreateConversation(
+            with: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
-        ) { [self] in
-            $0.conversationType = .connection
+        )
+
+        await context.perform { [self] in
+            conversation.conversationType = .connection
 
             commonUpdate(
                 from: remoteConversation,
-                for: $0,
+                for: conversation,
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
-            assignMessageProtocol(from: remoteConversation, for: $0)
-            updateConversationStatus(from: remoteConversation, for: $0)
+            assignMessageProtocol(
+                from: remoteConversation,
+                for: conversation
+            )
 
-            $0.needsToBeUpdatedFromBackend = false
-            $0.isPendingInitialFetch = false
+            updateConversationStatus(
+                from: remoteConversation,
+                for: conversation
+            )
 
-            return ($0, $0.mlsGroupID)
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
         }
+
+        guard let selfMember = remoteConversation.members?.selfMember else {
+            return
+        }
+
+        let mutedStatusInfo = (selfMember.mutedStatus, selfMember.mutedReference)
+        let archivedStatusInfo = (selfMember.archived, selfMember.archivedReference)
+
+        await updateMemberStatus(
+            mutedStatusInfo: mutedStatusInfo,
+            archivedStatusInfo: archivedStatusInfo,
+            for: conversation
+        )
     }
 
     /// Updates or creates a conversation of type `self` locally.
@@ -576,27 +673,33 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         serverTimestamp: Date,
         isFederationEnabled: Bool
     ) async {
-        let (conversation, mlsGroupID) = await fetchOrCreateConversation(
-            conversationID: remoteConversationID,
+        let conversation = await fetchOrCreateConversation(
+            with: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
-        ) { [self] in
+        )
 
-            $0.conversationType = .`self`
-            $0.isPendingMetadataRefresh = false
+        let mlsGroupID = await context.perform {
+            conversation.mlsGroupID
+        }
+
+        await context.perform { [self] in
+            conversation.conversationType = .`self`
+            conversation.isPendingMetadataRefresh = false
 
             commonUpdate(
                 from: remoteConversation,
-                for: $0,
+                for: conversation,
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
-            updateMessageProtocol(from: remoteConversation, for: $0)
+            updateMessageProtocol(
+                from: remoteConversation,
+                for: conversation
+            )
 
-            $0.isPendingInitialFetch = false
-            $0.needsToBeUpdatedFromBackend = false
-
-            return ($0, $0.mlsGroupID)
+            conversation.isPendingInitialFetch = false
+            conversation.needsToBeUpdatedFromBackend = false
         }
 
         if mlsGroupID != nil {
@@ -626,38 +729,57 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         var isInitialFetch = false
 
-        let (conversation, _) = await fetchOrCreateConversation(
-            conversationID: remoteConversationID,
+        let conversation = await fetchOrCreateConversation(
+            with: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
-        ) { [self] in
+        )
 
-            isInitialFetch = $0.isPendingInitialFetch
+        await context.perform { [self] in
+            isInitialFetch = conversation.isPendingInitialFetch
 
-            $0.conversationType = .group
-            $0.remoteIdentifier = remoteConversationID
-            $0.isPendingMetadataRefresh = false
-            $0.isPendingInitialFetch = false
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = remoteConversationID
+            conversation.isPendingMetadataRefresh = false
+            conversation.isPendingInitialFetch = false
 
             commonUpdate(
                 from: remoteConversation,
-                for: $0,
+                for: conversation,
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
 
-            updateConversationStatus(from: remoteConversation, for: $0)
+            updateConversationStatus(
+                from: remoteConversation,
+                for: conversation
+            )
 
             if isInitialFetch {
-                assignMessageProtocol(from: remoteConversation, for: $0)
+                assignMessageProtocol(
+                    from: remoteConversation,
+                    for: conversation
+                )
             } else {
-                updateMessageProtocol(from: remoteConversation, for: $0)
+                updateMessageProtocol(
+                    from: remoteConversation,
+                    for: conversation
+                )
             }
 
             Flow.createGroup.checkpoint(
-                description: "conversation created remote id: \($0.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
+                description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
             )
+        }
 
-            return ($0, $0.mlsGroupID)
+        if let selfMember = remoteConversation.members?.selfMember {
+            let mutedStatusInfo = (selfMember.mutedStatus, selfMember.mutedReference)
+            let archivedStatusInfo = (selfMember.archived, selfMember.archivedReference)
+
+            await updateMemberStatus(
+                mutedStatusInfo: mutedStatusInfo,
+                archivedStatusInfo: archivedStatusInfo,
+                for: conversation
+            )
         }
 
         await updateMLSStatus(from: remoteConversation, for: conversation)
@@ -702,39 +824,61 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             return
         }
 
-        await fetchOrCreateConversation(
-            conversationID: remoteConversationID,
+        let conversation = await fetchOrCreateConversation(
+            with: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
-        ) { [self] in
+        )
+
+        await context.perform { [self] in
             let conversationType = BackendConversationType.clientConversationType(
                 rawValue: conversationTypeRawValue
             )
 
-            if $0.oneOnOneUser?.connection?.status == .sent {
-                $0.conversationType = .connection
+            if conversation.oneOnOneUser?.connection?.status == .sent {
+                conversation.conversationType = .connection
             } else {
-                $0.conversationType = conversationType
+                conversation.conversationType = conversationType
             }
 
-            assignMessageProtocol(from: remoteConversation, for: $0)
+            assignMessageProtocol(
+                from: remoteConversation,
+                for: conversation
+            )
+
             commonUpdate(
                 from: remoteConversation,
-                for: $0,
+                for: conversation,
                 serverTimestamp: serverTimestamp,
                 isFederationEnabled: isFederationEnabled
             )
-            updateConversationStatus(from: remoteConversation, for: $0)
-            linkOneOnOneUserIfNeeded(for: $0)
 
-            $0.needsToBeUpdatedFromBackend = false
-            $0.isPendingInitialFetch = false
+            linkOneOnOneUserIfNeeded(for: conversation)
 
-            if let otherUser = $0.localParticipantsExcludingSelf.first {
-                $0.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
+
+            updateConversationStatus(
+                from: remoteConversation,
+                for: conversation
+            )
+
+            if let otherUser = conversation.localParticipantsExcludingSelf.first {
+                conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
             }
-
-            return ($0, $0.mlsGroupID)
         }
+
+        guard let selfMember = remoteConversation.members?.selfMember else {
+            return
+        }
+
+        let mutedStatusInfo = (selfMember.mutedStatus, selfMember.mutedReference)
+        let archivedStatusInfo = (selfMember.archived, selfMember.archivedReference)
+
+        await updateMemberStatus(
+            mutedStatusInfo: mutedStatusInfo,
+            archivedStatusInfo: archivedStatusInfo,
+            for: conversation
+        )
     }
 
     /// A common update method for all conversations received, no matter the type of the conversation.

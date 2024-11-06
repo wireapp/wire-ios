@@ -23,11 +23,11 @@ import WireDataModelSupport
 import WireDomainSupport
 import XCTest
 
-final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
+final class ConversationMemberUpdateEventProcessorTests: XCTestCase {
 
-    private var sut: ConversationReceiptModeUpdateEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
+    private var sut: ConversationMemberUpdateEventProcessor!
     private var conversationRepository: MockConversationRepositoryProtocol!
+    private var userRepository: MockUserRepositoryProtocol!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -42,24 +42,25 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
         conversationRepository = MockConversationRepositoryProtocol()
+        userRepository = MockUserRepositoryProtocol()
         conversationLocalStore = MockConversationLocalStoreProtocol()
-        sut = ConversationReceiptModeUpdateEventProcessor(
-            userRepository: userRepository,
+
+        sut = ConversationMemberUpdateEventProcessor(
             conversationRepository: conversationRepository,
-            conversationLocalStore: conversationLocalStore
+            userRepository: userRepository,
+            localStore: conversationLocalStore
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
         modelHelper = nil
-        coreDataStack = nil
-        userRepository = nil
         conversationRepository = nil
+        userRepository = nil
         conversationLocalStore = nil
         sut = nil
+        coreDataStack = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
     }
@@ -69,20 +70,14 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
         // Mock
 
-        let (user, conversation) = await context.perform { [self] in
-            let user = modelHelper.createUser(in: context)
-            let conversation = modelHelper.createGroupConversation(in: context)
-
-            return (user, conversation)
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
         }
 
-        userRepository.fetchUserIdDomain_MockValue = user
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
-        conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_MockMethod = { _, _ in }
-        conversationLocalStore.isConversationArchived_MockValue = true
-        conversationLocalStore.conversationMutedMessageTypes_MockValue = MutedMessageTypes.none
-        conversationLocalStore.storeConversationIsArchivedFor_MockMethod = { _, _ in }
+        userRepository.isSelfUserIdDomain_MockMethod = { _, _ in true }
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
+        conversationRepository.addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_MockMethod = { _, _, _, _, _ in }
+        conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_MockMethod = { _, _, _ in }
 
         // When
 
@@ -90,22 +85,25 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.isConversationArchived_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.conversationMutedMessageTypes_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeConversationIsArchivedFor_Invocations.count, 1)
+        XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.addOrUpdateParticipantParticipantIDParticipantDomainParticipantRoleConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.updateMemberStatusMutedStatusInfoArchivedStatusInfoFor_Invocations.count, 1)
     }
 
     private enum Scaffolding {
-        static let id = UUID()
-        static let domain = "domain.com"
-        static let event = ConversationReceiptModeUpdateEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
-            newRecieptMode: 1
+        static let event = ConversationMemberUpdateEvent(
+            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
+            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            timestamp: .now,
+            memberChange: .init(
+                id: UserID(uuid: UUID(), domain: "domain.com"),
+                newRoleName: "",
+                newMuteStatus: nil,
+                muteStatusReferenceDate: .now,
+                newArchivedStatus: true,
+                archivedStatusReferenceDate: .now
+            )
         )
     }
 }
