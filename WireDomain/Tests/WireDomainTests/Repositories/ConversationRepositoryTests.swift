@@ -34,6 +34,7 @@ final class ConversationRepositoryTests: XCTestCase {
         domain: "example.com",
         isFederationEnabled: false
     )
+
     private var teamRepository: MockTeamRepositoryProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var mlsProvider: MLSProvider!
@@ -58,7 +59,7 @@ final class ConversationRepositoryTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: MockMLSServiceInterface(),
+            mlsService: mlsService,
             userLocalStore: userLocalStore
         )
         conversationsAPI = MockConversationsAPI()
@@ -491,7 +492,67 @@ final class ConversationRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localConversation, conversation)
+        XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testDeleteMLSConversation_It_Wipes_MLS_Group_And_Marks_MLS_Conversation_As_Deleted_Locally() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
+                mlsStatus: .ready,
+                conversationType: .group,
+                epoch: 0,
+                in: context
+            )
+        }
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+
+        // When
+
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(isDeletedRemotely, true)
+    }
+
+    func testDeleteProteusConversation_It_Marks_Conversation_As_Deleted_Remotely() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                in: context
+            )
+        }
+
+        // When
+
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(isDeletedRemotely, true)
     }
 
     func testStoreConversation_It_Stores_Conversation_Locally() async throws {
