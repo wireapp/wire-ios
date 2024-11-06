@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension SelfProfileViewController {
@@ -40,8 +41,11 @@ extension SelfProfileViewController {
     fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
-            self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
+        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showSettings()
+                self?.mainCoordinator.showSettingsContent(.init(.devices))
+            }
         }
 
         newLoginAlertController.addAction(actionManageDevices)
@@ -60,40 +64,6 @@ extension SelfProfileViewController {
             }
         }
     }
-
-    @discardableResult
-    func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
-        var resultViewController: UIViewController? = .none
-        // Let's assume for the moment that menu is only 2 levels deep
-        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
-
-            if let cellIdentifier = topCellDescriptor.identifier,
-               let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
-               let viewController = cellGroupDescriptor.generateViewController(),
-               cellIdentifier == identifier {
-                self.navigationController?.pushViewController(viewController, animated: false)
-                resultViewController = viewController
-            }
-
-            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
-                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
-                    if let cellIdentifier = cellDescriptor.identifier,
-                       let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
-                       let topViewController = topCellGroupDescriptor.generateViewController(),
-                       let viewController = cellGroupDescriptor.generateViewController(),
-                       cellIdentifier == identifier {
-                        self.navigationController?.pushViewController(topViewController, animated: false)
-                        self.navigationController?.pushViewController(viewController, animated: false)
-                        resultViewController = viewController
-                    }
-                })
-            }
-
-        })
-
-        return resultViewController
-    }
-
 }
 
 extension UIAlertController {
@@ -136,5 +106,4 @@ extension UIAlertController {
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }
-
 }

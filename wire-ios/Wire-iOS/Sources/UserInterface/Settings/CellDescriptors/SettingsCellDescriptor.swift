@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSettingsUI
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -37,12 +38,18 @@ import WireDesign
  * should be updated from the cell.
  */
 protocol SettingsCellDescriptorType: AnyObject {
-    static var cellType: SettingsTableCellProtocol.Type {get}
-    var visible: Bool {get}
-    var title: String {get}
-    var identifier: String? {get}
-    var group: SettingsGroupCellDescriptorType? {get}
+
+    static var cellType: SettingsTableCellProtocol.Type { get }
+
+    var visible: Bool { get }
+    var title: String { get }
+    var identifier: String? { get }
+    var group: (any SettingsGroupCellDescriptorType)? { get }
     var copiableText: String? { get }
+
+    /// If non-nil the item is a top-level item of the main settings menu.
+    /// For presenting the content the main coordinator is called.
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? { get }
 
     func select(_ value: SettingsPropertyValue, sender: UIView)
     func featureCell(_: SettingsCellType)
@@ -51,6 +58,10 @@ protocol SettingsCellDescriptorType: AnyObject {
 extension SettingsCellDescriptorType {
     var copiableText: String? {
         return nil
+    }
+
+    var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? {
+        .none
     }
 }
 
@@ -96,10 +107,11 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 }
 
 extension SettingsInternalGroupCellDescriptorType {
+
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
-            return section.allCellDescriptors()
-        })
+        items.flatMap { section in
+            section.allCellDescriptors()
+        }
     }
 }
 
@@ -108,7 +120,7 @@ protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorTy
 }
 
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
-    var settingsProperty: SettingsProperty {get}
+    var settingsProperty: SettingsProperty { get }
 }
 
 protocol SettingsControllerGeneratorType {
@@ -152,7 +164,11 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    typealias Cell = SettingsTableCell
+
     var visible: Bool = true
     let title: String
     let accessibilityBackButtonText: String
@@ -163,7 +179,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let previewGenerator: PreviewGeneratorType?
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
 
     var visibleItems: [SettingsSectionDescriptorType] {
         return self.items.filter {
@@ -171,9 +187,22 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+    let settingsCoordinator: AnySettingsCoordinator
+
     weak var viewController: UIViewController?
 
-    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .grouped, identifier: String? = .none, previewGenerator: PreviewGeneratorType? = .none, icon: StyleKitIcon? = nil, accessibilityBackButtonText: String) {
+    init(
+        items: [SettingsSectionDescriptorType],
+        title: String,
+        style: InternalScreenStyle = .grouped,
+        identifier: String? = .none,
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessibilityBackButtonText: String,
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.items = items
         self.title = title
         self.style = style
@@ -181,6 +210,8 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         self.previewGenerator = previewGenerator
         self.icon = icon
         self.accessibilityBackButtonText = accessibilityBackButtonText
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
+        self.settingsCoordinator = settingsCoordinator
     }
 
     func featureCell(_ cell: SettingsCellType) {
@@ -198,12 +229,13 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
+            controllerToPush.hidesBottomBarWhenPushed = true
             navigationController.pushViewController(controllerToPush, animated: true)
         }
     }
 
     func generateViewController() -> UIViewController? {
-        SettingsTableViewController(group: self)
+        SettingsTableViewController(group: self, settingsCoordinator: settingsCoordinator)
     }
 }
 

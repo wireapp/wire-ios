@@ -33,7 +33,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
     private let featureRepository: FeatureRepositoryInterface
     private let selfUserProvider: SelfUserProviderProtocol
-    private let logger = WireLogger(tag: "supported-protocols")
+    private let logger = WireLogger.supportedProtocols
 
     // MARK: - Life cycle
 

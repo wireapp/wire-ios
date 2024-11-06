@@ -18,32 +18,13 @@
 
 import SwiftUI
 
-final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
+final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListUIProtocol {
 
-    // MARK: - MainConversationListProtocol
+    // MARK: - MainConversationListUIProtocol
 
-    var conversationFilter: ConversationFilter?
-    var splitViewInterface: MainSplitViewState = .expanded
-
-    enum ConversationFilter: MainConversationFilterRepresentable {
-        case favorites, groups, oneOnOne
-
-        init(_ mainConversationFilter: MainConversationFilter) {
-            switch mainConversationFilter {
-            case .favorites: self = .favorites
-            case .groups: self = .groups
-            case .oneOnOne: self = .oneOnOne
-            }
-        }
-
-        func mapToMainConversationFilter() -> MainConversationFilter {
-            switch self {
-            case .favorites: .favorites
-            case .groups: .groups
-            case .oneOnOne: .oneOnOne
-            }
-        }
-    }
+    var conversationFilter: MainConversationFilter?
+    var selectedConversation: PreviewConversationModel?
+    var mainSplitViewState: MainSplitViewState = .expanded
 
     // MARK: - Life Cycle
 

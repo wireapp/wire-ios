@@ -29,6 +29,7 @@ final class UserRepositoryTests: XCTestCase {
     private var sut: UserRepository!
     private var usersAPI: MockUsersAPI!
     private var selfUsersAPI: MockSelfUserAPI!
+    private var userLocalStore: UserLocalStoreProtocol!
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
     private var conversationsRepository: MockConversationRepositoryProtocol!
     private var stack: CoreDataStack!
@@ -52,13 +53,13 @@ final class UserRepositoryTests: XCTestCase {
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
+        userLocalStore = UserLocalStore(context: context, userDefaults: mockUserDefaults)
         sut = UserRepository(
-            context: context,
             usersAPI: usersAPI,
             selfUserAPI: selfUsersAPI,
             conversationLabelsRepository: conversationLabelsRepository,
             conversationRepository: conversationsRepository,
-            sharedUserDefaults: mockUserDefaults
+            userLocalStore: userLocalStore
         )
     }
 
@@ -67,6 +68,7 @@ final class UserRepositoryTests: XCTestCase {
         stack = nil
         usersAPI = nil
         selfUsersAPI = nil
+        userLocalStore = nil
         conversationLabelsRepository = nil
         sut = nil
         mockUserDefaults.removePersistentDomain(
@@ -175,72 +177,20 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchOrCreateUserClient() async throws {
-        // Given
-
-        await context.perform { [self] in
-            let userClient = modelHelper.createSelfClient(
-                id: Scaffolding.userClientID,
-                in: context
-            )
-
-            XCTAssertEqual(userClient.remoteIdentifier, Scaffolding.userClientID)
-        }
-
-        // When
-
-        let userClient = try await sut.fetchOrCreateUserClient(
-            with: Scaffolding.userClientID
-        )
-
-        // Then
-
-        XCTAssertNotNil(userClient)
-    }
-
-    func testUpdatesUserClient() async throws {
-        // Given
-
-        let createdClient = try await sut.fetchOrCreateUserClient(
-            with: Scaffolding.userClientID
-        )
-
-        // When
-
-        try await sut.updateUserClient(
-            createdClient.client,
-            from: Scaffolding.remoteUserClient,
-            isNewClient: createdClient.isNew
-        )
-
-        // Then
-
-        try await context.perform { [context] in
-            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
-                with: Scaffolding.userClientID,
-                in: context
-            ))
-
-            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.userClientID)
-            XCTAssertEqual(updatedClient.type, .permanent)
-            XCTAssertEqual(updatedClient.label, Scaffolding.remoteUserClient.label)
-            XCTAssertEqual(updatedClient.model, Scaffolding.remoteUserClient.model)
-            XCTAssertEqual(updatedClient.deviceClass, .phone)
-        }
-    }
-
     func testFetchSelfUser() async {
         // Given
 
-        let selfUser = modelHelper.createSelfUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
-        let localSelfUser = sut.fetchSelfUser()
+        let localSelfUser = await sut.fetchSelfUser()
 
         // Then
 
@@ -252,15 +202,17 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchUser() async throws {
         // Given
 
-        let user = modelHelper.createUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        let user = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
-        let localUser = try await sut.fetchUser(with: Scaffolding.userID, domain: nil)
+        let localUser = try await sut.fetchUser(id: Scaffolding.userID, domain: nil)
 
         // Then
 
@@ -272,16 +224,18 @@ final class UserRepositoryTests: XCTestCase {
     func testAddLegalholdRequest() async throws {
         // Given
 
-        modelHelper.createSelfUser(
-            id: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
+        _ = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
 
         // When
 
         await sut.addLegalHoldRequest(
-            for: Scaffolding.userID,
+            userID: Scaffolding.userID,
             clientID: Scaffolding.userClientID,
             lastPrekey: Prekey(
                 id: Scaffolding.lastPrekeyId,
@@ -313,7 +267,7 @@ final class UserRepositoryTests: XCTestCase {
     }
 
     func testDeleteUserAccountForSelfUser() async throws {
-        let selfUser = await context.perform { [self] in
+        _ = await context.perform { [self] in
             modelHelper.createSelfUser(
                 id: Scaffolding.userID,
                 domain: nil,
@@ -338,7 +292,7 @@ final class UserRepositoryTests: XCTestCase {
         // When
 
         try await sut.deleteUserAccount(
-            with: Scaffolding.userID,
+            id: Scaffolding.userID,
             domain: nil,
             at: .now
         )
@@ -360,20 +314,23 @@ final class UserRepositoryTests: XCTestCase {
         }
 
         // Mock
-        conversationsRepository.removeFromConversationsUserRemovalDate_MockMethod = { _, _ in }
+        conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in }
 
         // When
 
         try await sut.deleteUserAccount(
-            with: Scaffolding.userID,
+            id: Scaffolding.userID,
             domain: nil,
             at: .now
         )
 
         // Then
 
-        XCTAssertEqual(user.isAccountDeleted, true)
-        XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
+        XCTAssertEqual(conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count, 1)
+
+        await context.perform {
+            XCTAssertEqual(user.isAccountDeleted, true)
+        }
     }
 
     func testUpdateUserProperty_It_Enables_Read_Receipts_Property() async throws {
@@ -396,9 +353,9 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [self] in
-            let selfUser = try XCTUnwrap(sut.fetchSelfUser())
+        let selfUser = await sut.fetchSelfUser()
 
+        await context.perform {
             XCTAssertEqual(selfUser.readReceiptsEnabled, true)
             XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
         }
@@ -442,8 +399,71 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testUpdateUser_It_Updates_User_Locally() async throws {
+        // Given
+
+        _ = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                handle: Scaffolding.existingHandle,
+                email: Scaffolding.existingEmail,
+                supportedProtocols: [.mls],
+                in: context
+            )
+        }
+
+        // When
+
+        await sut.updateUser(from: Scaffolding.event)
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
+            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
+            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
+        }
+    }
+
+    func testIsSelfUser_It_Returns_Correct_Flag() async throws {
+        // Mock
+
+        let (selfUser, notSelfUser) = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
+            let notSelfUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            return (selfUser, notSelfUser)
+        }
+
+        // When / Then isSelfUser == true
+
+        let isSelfUser = try await sut.isSelfUser(
+            id: Scaffolding.selfUserID,
+            domain: nil
+        )
+
+        XCTAssertEqual(isSelfUser, true)
+
+        // When / Then isSelfUser == false
+
+        let isNotSelfUser = try await sut.isSelfUser(
+            id: Scaffolding.userID,
+            domain: nil
+        )
+
+        XCTAssertEqual(isNotSelfUser, false)
+    }
+
     private enum Scaffolding {
+        static let selfUserID = UUID()
         static let userID = UUID()
+        static let domain = "domain.com"
+        static let existingHandle = "handle"
+        static let existingEmail = "test@wire.com"
         static let userPropertyKey = UserProperty.Key.wireReceiptMode
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
@@ -469,16 +489,6 @@ final class UserRepositoryTests: XCTestCase {
             ]
         )
 
-        static let remoteUserClient = WireAPI.UserClient(
-            id: userClientID,
-            type: .permanent,
-            activationDate: .now,
-            label: "test",
-            model: "test",
-            deviceClass: .phone,
-            capabilities: []
-        )
-
         nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
             target: userID,
             requester: nil,
@@ -490,7 +500,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let user1 = User(
-            id: QualifiedID(uuid: UUID(), domain: "example.com"),
+            id: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
@@ -504,6 +514,17 @@ final class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
 
+        static let event = UserUpdateEvent(
+            userID: userID,
+            accentColorID: nil,
+            name: "username",
+            handle: nil,
+            email: nil,
+            isSSOIDDeleted: nil,
+            assets: nil,
+            supportedProtocols: [.proteus, .mls]
+        )
+
         static let deviceToken = Data(repeating: 0x41, count: 10)
 
         nonisolated(unsafe) static let pushToken = PushToken(
@@ -514,6 +535,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let defaultsTestSuiteName = UUID().uuidString
+
     }
 
 }
