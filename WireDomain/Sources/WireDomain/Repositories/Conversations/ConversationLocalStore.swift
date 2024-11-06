@@ -31,17 +31,6 @@ import WireDataModel
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
-    /// Fetches a conversation locally.
-    /// - Parameters:
-    ///     - id: The ID of the conversation.
-    ///     - domain: The domain of the conversation if any.
-    /// - returns: The `ZMConversation` found locally.
-
-    func fetchConversation(
-        id: UUID,
-        domain: String?
-    ) async -> ZMConversation?
-
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -89,6 +78,17 @@ public protocol ConversationLocalStoreProtocol {
 
     func fetchMLSConversation(
         groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation?
+
+    /// Fetches a conversation locally.
+    /// - Parameters:
+    ///     - id: The ID of the conversation.
+    ///     - domain: The domain of the conversation if any.
+    /// - returns: The `ZMConversation` found locally.
+
+    func fetchConversation(
+        id: UUID,
+        domain: String?
     ) async -> ZMConversation?
 
     /// Wipes MLS group conversation.
