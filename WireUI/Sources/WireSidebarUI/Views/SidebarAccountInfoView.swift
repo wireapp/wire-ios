@@ -28,6 +28,9 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
 
     let displayName: String
     let username: String
+    let isE2EICertified: Bool
+    let isVerified: Bool
+    let isLegalHoldIndicatorVisible: Bool
     let accountImageView: () -> AccountImageView
 
     @State private var accountImageDiameter: CGFloat = 0
@@ -68,9 +71,17 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
     @ViewBuilder
     private func displayNameAndUsername(_ displayName: String, _ username: String) -> some View {
         VStack(alignment: .leading) {
-            Text(displayName)
-                .font(.headline)
-                .foregroundStyle(displayNameColor)
+            HStack(spacing: 4) {
+                Text(displayName)
+                    .font(.headline)
+                    .foregroundStyle(displayNameColor)
+                if isE2EICertified {
+                    Image(.certificateValid)
+                }
+                if isVerified {
+                    Image(.verified)
+                }
+            }
             Text(username)
                 .font(.subheadline)
                 .foregroundStyle(usernameColor)
@@ -83,11 +94,17 @@ extension SidebarAccountInfoView {
     init(
         _ displayName: String,
         _ username: String,
+        _ isE2EICertified: Bool, // TODO: rename isXYZVisible
+        _ isVerified: Bool,
+        _ isLegalHoldIndicatorVisible: Bool,
         _ accountImageView: @escaping () -> AccountImageView
     ) {
         self.init(
             displayName: displayName,
             username: username,
+            isE2EICertified: isE2EICertified,
+            isVerified: isE2EICertified,
+            isLegalHoldIndicatorVisible: isLegalHoldIndicatorVisible,
             accountImageView: accountImageView
         )
     }

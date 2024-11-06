@@ -20,7 +20,13 @@ import SwiftUI
 
 @ViewBuilder @MainActor
 func SidebarAccountInfoPreview() -> some View {
-    SidebarAccountInfoView(displayName: "Firstname Lastname", username: "@username") {
+    SidebarAccountInfoView(
+        displayName: "Firstname Lastname",
+        username: "@username",
+        isE2EICertified: true,
+        isVerified: true,
+        isLegalHoldIndicatorVisible: true
+    ) {
         MockAccountView()
     }
 }

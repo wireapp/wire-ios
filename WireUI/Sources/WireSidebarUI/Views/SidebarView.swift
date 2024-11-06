@@ -101,6 +101,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
+                isE2EICertified: false, // TODO: fix
+                isVerified: false, // TODO: fix
+                isLegalHoldIndicatorVisible: false,
                 accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) }
             )
         }
