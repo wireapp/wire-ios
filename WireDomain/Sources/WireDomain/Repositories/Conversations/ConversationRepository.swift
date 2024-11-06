@@ -137,6 +137,22 @@ public protocol ConversationRepositoryProtocol {
         conversationDomain: String?
     ) async
 
+    /// Adds new participants to a conversation.
+    /// - Parameters:
+    ///     - newParticipants: The id, domain and role of the new participant.
+    ///     - sender: The user who added the participants.
+    ///     - date: The date the participants were added.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain.
+
+    func addParticipants(
+        _ participants: [(id: UUID, domain: String?, role: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        conversationID: UUID,
+        conversationDomain: String
+    ) async throws
+
     /// Removes members from a conversation, deletes membership and wipe MLS group if needed.
     ///
     /// - Parameters:
@@ -411,6 +427,48 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
     }
 
+    public func addParticipants(
+        _ participants: [(id: UUID, domain: String?, role: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        conversationID: UUID,
+        conversationDomain: String
+    ) async throws {
+        var conversation = await fetchConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+
+        if conversation == nil {
+            // Sync conversation
+            try await pullConversation(
+                id: conversationID,
+                domain: conversationDomain
+            )
+
+            conversation = await fetchConversation(
+                id: conversationID,
+                domain: conversationDomain
+            )
+        }
+
+        guard let conversation else {
+            return WireLogger.eventProcessing.error(
+                "Member join update missing conversation, aborting... ",
+                attributes: [
+                    .conversationId: conversationID.safeForLoggingDescription
+                ]
+            )
+        }
+
+        try await conversationsLocalStore.addParticipants(
+            participants,
+            addedBy: sender,
+            atDate: date,
+            to: conversation
+        )
+    }
+
     public func removeMembers(
         _ userIDs: Set<UserID>,
         from conversation: ConversationID,
@@ -428,7 +486,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
 
         let removedUsers = await getRemovedUsers(from: removedUserIDs)
-        let participants = await conversationsLocalStore.getParticipants(from: conversation)
+        let participants = await conversationsLocalStore.localParticipants(in: conversation)
 
         let sender = try await userRepository.fetchUser(
             id: sender.uuid,
@@ -446,7 +504,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         let isSelfUserRemoved = await isSelfUserRemoved(in: removedUserIDs)
-        let messageProtocol = await conversationsLocalStore.getMessageProtocol(from: conversation)
+        let messageProtocol = await conversationsLocalStore.messageProtocol(for: conversation)
 
         await conversationsLocalStore.removeParticipantsAndUpdateConversationState(
             conversation: conversation,
