@@ -41,6 +41,7 @@ final class ConversationRepositoryTests: XCTestCase {
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
+    private var userLocalStore: MockUserLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -53,11 +54,13 @@ final class ConversationRepositoryTests: XCTestCase {
         userRepository = MockUserRepositoryProtocol()
         teamRepository = MockTeamRepositoryProtocol()
         coreDataStackHelper = CoreDataStackHelper()
+        userLocalStore = MockUserLocalStoreProtocol()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: mlsService
+            mlsService: mlsService,
+            userLocalStore: userLocalStore
         )
         conversationsAPI = MockConversationsAPI()
         userRepository = MockUserRepositoryProtocol()
@@ -85,6 +88,7 @@ final class ConversationRepositoryTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        userLocalStore = nil
     }
 
     // MARK: - Tests
@@ -406,6 +410,31 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testPullConversation_It_Throws_Error() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [],
+            notFound: [],
+            failed: []
+        )
+
+        do {
+            // When
+            try await sut.pullConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+
+            XCTFail("it should have failed")
+        } catch {
+            // Then
+            XCTAssertTrue(error is ConversationRepositoryError)
+        }
+    }
+
     func testAddOrUpdateParticipant_It_Adds_Participant_To_Conversation() async {
         // Mock
 
@@ -648,6 +677,54 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testAddParticipants_It_Adds_Participants_To_Conversation() async throws {
+        // Mock
+
+        let (conversation, sender, addedUser) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+
+            let addedUser = modelHelper.createUser(
+                qualifiedID: .init(uuid: Scaffolding.otherUserID, domain: Scaffolding.domain),
+                in: context
+            )
+
+            let sender = modelHelper.createUser(
+                qualifiedID: .init(uuid: Scaffolding.userID, domain: Scaffolding.domain),
+                in: context
+            )
+
+            return (conversation, sender, addedUser)
+        }
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
+        userLocalStore.fetchUserIdDomain_MockValue = sender
+
+        // When
+
+        try await sut.addParticipants(
+            [(Scaffolding.otherUserID,
+              Scaffolding.domain,
+              ZMConversation.defaultMemberRoleName)],
+            sender: (Scaffolding.userID, Scaffolding.domain),
+            date: .distantPast,
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
+
+        await context.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(addedUser))
+        }
+    }
+
     func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
         // Mock
 
@@ -683,29 +760,6 @@ final class ConversationRepositoryTests: XCTestCase {
                 messageType: .participantsAdded,
                 at: timestamp
             )
-        }
-    }
-
-    func testPullConversation_It_Throws_Error() async throws {
-        // Mock
-
-        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
-
-        conversationsAPI.getConversationsFor_MockValue = ConversationList(
-            found: [],
-            notFound: [],
-            failed: []
-        )
-
-        do {
-            // When
-            try await sut.pullConversation(
-                id: conversationID.uuid,
-                domain: conversationID.domain
-            )
-        } catch {
-            // Then
-            XCTAssertTrue(error is ConversationRepositoryError)
         }
     }
 
