@@ -73,7 +73,7 @@ final class FolderPickerViewModelTests: XCTestCase {
         createSUT(conversation: conversation)
 
         // WHEN
-        await sut.select(folder)
+        try await sut.select(folder)
 
         // THEN
         XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.count, 1)
