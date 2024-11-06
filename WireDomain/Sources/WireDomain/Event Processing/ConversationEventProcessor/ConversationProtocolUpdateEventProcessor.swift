@@ -35,7 +35,13 @@ struct ConversationProtocolUpdateEventProcessor: ConversationProtocolUpdateEvent
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationProtocolUpdateEvent) async throws {
-        try await repository.pullConversation(with: event.conversationID)
+        let id = event.conversationID.uuid
+        let domain = event.conversationID.domain
+
+        try await repository.pullConversation(
+            id: id,
+            domain: domain
+        )
     }
 
 }

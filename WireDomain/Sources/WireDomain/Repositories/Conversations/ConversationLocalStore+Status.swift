@@ -29,13 +29,6 @@ extension ConversationLocalStore {
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation
     ) {
-        if let selfMember = remoteConversation.members?.selfMember {
-            updateMemberStatus(
-                from: selfMember,
-                for: localConversation
-            )
-        }
-
         if let readReceiptMode = remoteConversation.readReceiptMode {
             localConversation.updateReceiptMode(readReceiptMode)
         }
@@ -109,27 +102,6 @@ extension ConversationLocalStore {
         await context.perform { [self] in
             localConversation.mlsStatus = newStatus
             context.saveOrRollback()
-        }
-    }
-
-    // MARK: - Member status
-
-    func updateMemberStatus(
-        from remoteConversation: WireAPI.Conversation.Member,
-        for localConversation: ZMConversation
-    ) {
-        let mutedStatus = remoteConversation.mutedStatus
-        let mutedReference = remoteConversation.mutedReference
-
-        if let mutedStatus, let mutedReference {
-            localConversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
-        }
-
-        let archived = remoteConversation.archived
-        let archivedReference = remoteConversation.archivedReference
-
-        if let archived, let archivedReference {
-            localConversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
     }
 

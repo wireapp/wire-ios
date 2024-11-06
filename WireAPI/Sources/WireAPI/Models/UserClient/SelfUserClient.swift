@@ -18,9 +18,9 @@
 
 import Foundation
 
-/// Client device for a user.
+/// Client device for a self user.
 
-public struct UserClient: Equatable, Identifiable, Codable, Sendable {
+public struct SelfUserClient: Equatable, Identifiable, Codable, Sendable {
 
     /// The unique id of the client.
 

@@ -23,11 +23,6 @@ import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
 
-/// Data Structure containing contextual information currently displayed view
-struct DeveloperToolsContext {
-    var currentUserClient: UserClient?
-}
-
 final class DeveloperToolsViewModel: ObservableObject {
 
     static var context: DeveloperToolsContext = DeveloperToolsContext()
@@ -207,8 +202,10 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupContextualItems() {
+        let context = Self.context
         let actionsProviders: [DeveloperToolsContextItemsProvider?] = [
-            UserClientDeveloperItemsProvider(context: Self.context)
+            UserClientDeveloperItemsProvider(context: context),
+            ConversationDeveloperActionsProvider(context: context)
             // add new builder here
         ]
 
