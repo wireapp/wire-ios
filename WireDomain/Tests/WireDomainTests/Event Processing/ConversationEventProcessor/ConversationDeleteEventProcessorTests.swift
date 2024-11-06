@@ -92,7 +92,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
             )
         }
 
-        repository.fetchConversationWithDomain_MockValue = conversation
+        repository.fetchConversationIdDomain_MockValue = conversation
         repository.deleteConversationIdDomain_MockError = Scaffolding.MockMLSError.failedToWipeGroup
 
         do {
