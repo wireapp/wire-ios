@@ -20,10 +20,59 @@ import SwiftUI
 
 public struct LegalHoldIndicatorView: View {
 
+    @Environment(\.legalHoldIndicatorColor) private var legalHoldIndicatorColor
+
     public init() {}
 
     public var body: some View {
-        Circle()
-            .fill(Color.red)
+        Text("O")
+            .foregroundStyle(.clear)
+            .background {
+                GeometryReader { geometry in
+                    ZStack {
+                        let diameter = min(geometry.size.width, geometry.size.height)
+
+                        Circle()
+                            .fill(legalHoldIndicatorColor)
+                            .opacity(0.3)
+
+                        Circle()
+                            .fill(legalHoldIndicatorColor)
+                            .frame(width: diameter * 10 / 18)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
     }
+}
+
+// MARK: - View Modifiers + Environment
+
+public extension View {
+    func legalHoldIndicatorColor(_ legalHoldIndicatorColor: Color) -> some View {
+        modifier(LegalHoldIndicatorColorViewModifier(legalHoldIndicatorColor: legalHoldIndicatorColor))
+    }
+}
+
+private extension EnvironmentValues {
+    var legalHoldIndicatorColor: Color {
+        get { self[LegalHoldIndicatorColorKey.self] }
+        set { self[LegalHoldIndicatorColorKey.self] = newValue }
+    }
+}
+
+struct LegalHoldIndicatorColorViewModifier: ViewModifier {
+    var legalHoldIndicatorColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.legalHoldIndicatorColor, legalHoldIndicatorColor)
+    }
+}
+
+private struct LegalHoldIndicatorColorKey: EnvironmentKey {
+    static let defaultValue = Color.red
+}
+
+#Preview {
+    LegalHoldIndicatorView()
 }

@@ -39,6 +39,7 @@ struct SidebarViewControllerBuilder {
             .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
             .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
             .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
+            .legalHoldIndicatorColor(LegalHoldIndicatorViewDesign().foregroundColor)
         }
         sidebarViewController.wireTextStyleMapping = .init()
         sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
