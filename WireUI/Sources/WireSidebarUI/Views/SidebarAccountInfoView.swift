@@ -35,17 +35,27 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
 
     @State private var displayNameHeight: CGFloat = 0
     @State private var usernameHeight: CGFloat = 0
-    private var accountImageDiameter: CGFloat {
-        displayNameHeight + usernameHeight
-    }
 
     var body: some View {
-        HStack {
-            accountImageView()
-                .frame(width: accountImageDiameter, height: accountImageDiameter)
-            ZStack {
-                determineLineHeights
-                displayNameAndUsername
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                accountImageView()
+                    .frame(
+                        width: displayNameHeight + usernameHeight,
+                        height: displayNameHeight + usernameHeight
+                    )
+                ZStack {
+                    determineLineHeights
+                    displayNameAndUsername
+                }
+            }
+            HStack {
+                Spacer()
+                    .frame(width: displayNameHeight + usernameHeight)
+                Circle()
+                    .fill(Color.red)
+                    .frame(height: usernameHeight)
+                Text("Legalhold")
             }
         }
     }
