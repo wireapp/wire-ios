@@ -199,9 +199,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             await context.perform {
                 newConversationMessage.text = userDefinedName
-            }
 
-            await context.perform {
                 guard let selfUserTeam = selfUser.team,
                       conversation.team == selfUserTeam else { return }
 
@@ -333,7 +331,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
 
-            systemMessage.duration = duration
+            if let duration {
+                systemMessage.duration = duration
+            }
 
             if let messageTimer {
                 systemMessage.messageTimer = NSNumber(value: messageTimer)

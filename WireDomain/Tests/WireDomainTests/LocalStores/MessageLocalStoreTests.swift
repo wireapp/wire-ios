@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-import WireDomainSupport
 @testable import WireDomain
+import WireDomainSupport
+import XCTest
 
 final class MessageLocalStoreTests: XCTestCase {
 
@@ -39,7 +39,7 @@ final class MessageLocalStoreTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        
+
         sut = MessageLocalStore(
             context: context,
             conversationLocalStore: conversationLocalStore
@@ -58,30 +58,29 @@ final class MessageLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testAddMessageToConversation_It_Adds_Correct_Message_To_Conversation() async {
-        
         // Mock
-        
+
         let user = await context.perform { [self] in
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
-        
+
         await withTaskGroup(of: Void.self) { taskGroup in
             for messageType in Scaffolding.allMessageTypes {
                 taskGroup.addTask { [self] in
-                    
+
                     let conversation = await makeConversation(creator: user)
                     conversationLocalStore.fetchConversationWithDomain_MockValue = conversation
-                    
+
                     // When
-                    
+
                     await sut.addSystemMessageToConversation(
                         messageType: messageType,
                         conversationID: UUID(),
                         conversationDomain: Scaffolding.domain1
                     )
-                    
+
                     // Then
-                    
+
                     await internalTest_assertConversationLastMessages(
                         messageType: messageType,
                         conversation: conversation
@@ -89,68 +88,65 @@ final class MessageLocalStoreTests: XCTestCase {
                 }
             }
         }
-
     }
-    
+
     private func internalTest_assertConversationLastMessages(
         messageType: MessageType,
         conversation: ZMConversation
     ) async {
-        
         let lastMessagesTypes = await context.perform {
             conversation.allMessages
                 .compactMap { $0 as? ZMSystemMessage }
                 .map(\.systemMessageType)
                 .sorted(by: { $0.rawValue < $1.rawValue })
         }
-        
+
         let expectedResults = expectedResults(given: messageType)
-        
+
         XCTAssertEqual(lastMessagesTypes.count, expectedResults.messagesCount)
         XCTAssertEqual(lastMessagesTypes, expectedResults.zmMessages)
     }
-    
+
     private func makeConversation(creator: ZMUser) async -> ZMConversation {
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
-            
+
             return conversation
         }
-        
+
         return conversation
     }
-    
+
     private func expectedResults(
         given messageType: MessageType
     ) -> (messagesCount: Int, zmMessages: [ZMSystemMessageType]) {
         switch messageType {
         case .federationTermination:
-            return (messagesCount: 1, [.domainsStoppedFederating])
+            (messagesCount: 1, [.domainsStoppedFederating])
         case .participantsRemovedAnonymously:
-            return (messagesCount: 1, [.participantsRemoved])
+            (messagesCount: 1, [.participantsRemoved])
         case .mlsMigrationMLSNotSupportedForSelfUser:
-            return (messagesCount: 1, [.mlsNotSupportedSelfUser])
+            (messagesCount: 1, [.mlsNotSupportedSelfUser])
         case .mlsMigrationMLSNotSupportedForOtherUser:
-            return (messagesCount: 1, [.mlsNotSupportedOtherUser])
+            (messagesCount: 1, [.mlsNotSupportedOtherUser])
         case .teamMemberRemoved:
-            return (messagesCount: 1, [.teamMemberLeave])
+            (messagesCount: 1, [.teamMemberLeave])
         case .participantRemoved:
-            return (messagesCount: 1, [.participantsRemoved])
+            (messagesCount: 1, [.participantsRemoved])
         case .newConversationCreated:
-            return (messagesCount: 2, [.newConversation, .readReceiptsOn])
+            (messagesCount: 2, [.newConversation, .readReceiptsOn])
         case .mlsMigrationStarted:
-            return (messagesCount: 1, [.mlsMigrationStarted])
+            (messagesCount: 1, [.mlsMigrationStarted])
         case .mlsMigrationPotentialGap:
-            return (messagesCount: 1, [.mlsMigrationPotentialGap])
+            (messagesCount: 1, [.mlsMigrationPotentialGap])
         case .mlsMigrationFinalized:
-            return (messagesCount: 1, [.mlsMigrationFinalized])
+            (messagesCount: 1, [.mlsMigrationFinalized])
         case .receiptModeIsOn:
-            return (messagesCount: 1, [.readReceiptsOn])
+            (messagesCount: 1, [.readReceiptsOn])
         }
     }
-
 
     private enum Scaffolding {
         static let conversationID = UUID()
@@ -159,7 +155,7 @@ final class MessageLocalStoreTests: XCTestCase {
         static let domain1 = "domain1.com"
         static let domain2 = "domain2.com"
         static let date = Date.now
-        
+
         static let allMessageTypes: [MessageType] = [
             .federationTermination(domains: [domain1, domain2], date: date),
             .mlsMigrationFinalized(sender: (id: userID, domain: domain1), date: date),
