@@ -43,7 +43,7 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         let isEnabled = event.newRecieptMode == 1
 
         let sender = try await userRepository.fetchUser(
-            with: senderID.uuid,
+            id: senderID.uuid,
             domain: senderID.domain
         )
 

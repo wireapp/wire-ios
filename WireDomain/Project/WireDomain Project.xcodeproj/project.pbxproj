@@ -25,6 +25,7 @@
 		C93961922C91B12800EA971A /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */; };
 		C96B74B12CDA33AB003A85EB /* ConversationAccessUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B74B02CDA33AB003A85EB /* ConversationAccessUpdateEventProcessorTests.swift */; };
+		C96B74EA2CDA812E003A85EB /* ConversationMemberUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B74E92CDA812E003A85EB /* ConversationMemberUpdateEventProcessorTests.swift */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 		C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C013C2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift */; };
 		C97C014B2CB00F92000683C5 /* OneOnOneResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */; };
@@ -168,6 +169,7 @@
 		C91F111A2C9C4B2B00BA5BE2 /* ConnectionsRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsRepository.swift; sourceTree = "<group>"; };
 		C91F111B2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsLocalStore.swift; sourceTree = "<group>"; };
 		C96B74B02CDA33AB003A85EB /* ConversationAccessUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
+		C96B74E92CDA812E003A85EB /* ConversationMemberUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C013C2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OneOnOneResolver.swift; path = ../../OneOnOneResolver.swift; sourceTree = "<group>"; };
 		C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverTests.swift; sourceTree = "<group>"; };
@@ -186,7 +188,7 @@
 		C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalStore.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
 		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
-		C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
+		C98433E32CC953C8009723D4 /* ConversationMemberUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberLeaveEventTests.swift; sourceTree = "<group>"; };
 		C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
@@ -407,7 +409,7 @@
 				01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */,
 				01D0DCA72C1C8C870076CB1C /* Products */,
 				01D0DCC02C1C8CBA0076CB1C /* Frameworks */,
-				C98433F92CCFD982009723D4 /* Recovered References */,
+				C96B74E82CDA8007003A85EB /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -451,6 +453,14 @@
 			path = ../Tests;
 			sourceTree = "<group>";
 		};
+		C96B74E82CDA8007003A85EB /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				C98433E32CC953C8009723D4 /* ConversationMemberUpdateEventProcessorTests.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		C97C01582CB40010000683C5 /* FederationEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
@@ -481,6 +491,7 @@
 			children = (
 				C98433F72CCFCFE5009723D4 /* ConversationProtocolUpdateEventProcessorTests.swift */,
 				C96B74B02CDA33AB003A85EB /* ConversationAccessUpdateEventProcessorTests.swift */,
+				C96B74E92CDA812E003A85EB /* ConversationMemberUpdateEventProcessorTests.swift */,
 				C98433FA2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
 				C97C01B72CBD6D3C000683C5 /* ConversationCreateEventProcessorTests.swift */,
 				C98433EB2CCA97AC009723D4 /* ConversationMemberLeaveEventTests.swift */,
@@ -502,14 +513,6 @@
 				C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */,
 			);
 			path = Mock;
-			sourceTree = "<group>";
-		};
-		C98433F92CCFD982009723D4 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				C98433DA2CC7C8D2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		C99322B42C986E3A0065E10F /* Team */ = {
@@ -1073,6 +1076,7 @@
 				C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */,
 				C97C01502CB01BDF000683C5 /* OneOnOneResolverTests.swift in Sources */,
 				C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */,
+				C96B74EA2CDA812E003A85EB /* ConversationMemberUpdateEventProcessorTests.swift in Sources */,
 				C9C8FDD12C9DBE0E00702B91 /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
 				C97C01542CB04626000683C5 /* UserDeleteEventProcessorTests.swift in Sources */,
 				C98433FB2CCFD9A2009723D4 /* ConversationReceiptModeUpdateEventProcessorTests.swift in Sources */,
