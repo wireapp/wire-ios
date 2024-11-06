@@ -56,4 +56,3 @@ public class MockMoveConversationToFolderUseCaseType: @unchecked Sendable, MoveC
         try await mock(folder, conversation)
     }
 }
-
