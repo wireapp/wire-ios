@@ -23,15 +23,15 @@ public struct Folder: Equatable, Sendable {
     /// Unique identifier for the folder. Can be nil for temporary folders
     public let identifier: UUID?
 
-    /// Display name of the folder. Can be nil if not set
-    public let name: String?
+    /// Display name of the folder.
+    public let name: String
 
     /// Creates a new folder instance
     /// - Parameters:
     ///   - identifier: Unique identifier for the folder. Can be nil for temporary folders
     ///   - name: Display name of the folder. Can be nil if not set
     ///   - kind: The type of folder
-    public init(identifier: UUID?, name: String?) {
+    public init(identifier: UUID?, name: String) {
         self.identifier = identifier
         self.name = name
     }
