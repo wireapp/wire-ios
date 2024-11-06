@@ -268,8 +268,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             await context.perform { [context] in
-                if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
-                   let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= date {
+                if let previousLastMessage = previousLastMessage as? ZMSystemMessage,
+                   previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
+                   let previousLastMessageTimestamp = previousLastMessage.serverTimestamp,
+                   previousLastMessageTimestamp <= date
+                {
                     context.delete(previousLastMessage)
                 }
             }
