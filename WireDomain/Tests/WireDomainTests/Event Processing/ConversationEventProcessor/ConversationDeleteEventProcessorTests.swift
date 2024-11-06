@@ -98,6 +98,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
         do {
             // When
             try await sut.processEvent(Scaffolding.event)
+            XCTFail("It should throw an error.")
         } catch {
             // Then
             XCTAssertTrue(error is ConversationDeleteEventProcessor.Error)
