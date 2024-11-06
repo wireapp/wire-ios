@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import SwiftUI
 import WireDesign
 
 struct FolderList: View {
     @ObservedObject var viewModel: FolderPickerViewModel
     let onSelect: (Folder) async throws -> Void
-    
+
     var body: some View {
         List(viewModel.folders, id: \.identifier) { folder in
             FolderRow(

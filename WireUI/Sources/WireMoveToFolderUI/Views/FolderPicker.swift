@@ -20,13 +20,14 @@ import SwiftUI
 import WireDesign
 
 public struct FolderPicker: View {
+
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
-    
+
     public init(viewModel: FolderPickerViewModel) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         NavigationStack {
             Group {
