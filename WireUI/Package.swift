@@ -41,11 +41,7 @@ let package = Package(
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
-<<<<<<< HEAD
-        .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),
-=======
         .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
->>>>>>> dec92aeefb (Introduce `CloseButton` to `FolderPicker`)
         .target(
             name: "WireMoveToFolderUISupport",
             dependencies: ["WireMoveToFolderUI"],
