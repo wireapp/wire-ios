@@ -341,6 +341,7 @@ public struct ModelHelper {
     @discardableResult
     public func createMLSConversation(
         id: UUID = UUID(),
+        domain: String? = "domain.com",
         mlsGroupID: MLSGroupID? = nil,
         mlsStatus: MLSGroupStatus = .ready,
         conversationType: ZMConversationType = .group,
@@ -350,7 +351,7 @@ public struct ModelHelper {
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = id
-        conversation.domain = "domain.com"
+        conversation.domain = domain
         conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .mls
         conversation.mlsStatus = mlsStatus
@@ -360,4 +361,18 @@ public struct ModelHelper {
 
         return conversation
     }
+
+    // MARK: Role
+
+    @discardableResult
+    public func createRole(
+        _ name: String = "member",
+        in context: NSManagedObjectContext
+    ) -> Role {
+        let role = Role.insertNewObject(in: context)
+        role.name = name
+
+        return role
+    }
+
 }
