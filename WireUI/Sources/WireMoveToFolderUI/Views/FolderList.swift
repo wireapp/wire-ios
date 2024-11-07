@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireSystem
 
 struct FolderList: View {
     @ObservedObject var viewModel: FolderPickerViewModel
@@ -33,13 +32,11 @@ struct FolderList: View {
                     Task {
                         do {
                             try await onSelect(folder)
-                        } catch {
-                            WireLogger.moveToFolder.error("Failed to select folder: \(folder.identifier)", error: error)
-                        }
+                        } catch { }
                     }
                 }
             )
-            .listRowBackground(ColorTheme.Backgrounds.surface)
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
         }
         .accessibilityIdentifier("list.folders")
     }
