@@ -241,7 +241,9 @@ final class ConversationViewController: UIViewController {
                     self?.conversation.isArchived = true
                 })
             }
-            self?.mainCoordinator.hideConversation()
+            Task {
+                await self?.mainCoordinator.hideConversation()
+            }
         }
     }
 
@@ -310,13 +312,17 @@ final class ConversationViewController: UIViewController {
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
-        mainCoordinator.hideConversation()
+        Task {
+            await mainCoordinator.hideConversation()
+        }
         return true
     }
 
     @objc
     func onBackButtonPressed(_ backButton: UIButton?) {
-        mainCoordinator.hideConversation()
+        Task {
+            await mainCoordinator.hideConversation()
+        }
     }
 
     private func setupContentViewController() {

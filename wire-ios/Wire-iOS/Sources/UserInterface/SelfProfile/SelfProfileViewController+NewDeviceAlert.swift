@@ -44,7 +44,7 @@ extension SelfProfileViewController {
         let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { [weak self] _ in
             Task {
                 await self?.mainCoordinator.showSettings()
-                self?.mainCoordinator.showSettingsContent(.init(.devices))
+                await self?.mainCoordinator.showSettingsContent(.init(.devices))
             }
         }
 

@@ -26,7 +26,9 @@ final class SettingsCoordinator: SettingsCoordinatorProtocol {
 
     init(mainCoordinator: some MainCoordinatorProtocol) {
         _showSettingsContent = { content in
-            mainCoordinator.showSettingsContent(.init(content.mapToMainSettingsContent()))
+            Task {
+                await mainCoordinator.showSettingsContent(.init(content.mapToMainSettingsContent()))
+            }
         }
     }
 
