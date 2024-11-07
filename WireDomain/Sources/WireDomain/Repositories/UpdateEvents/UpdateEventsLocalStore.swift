@@ -70,6 +70,8 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         case lastEventID
     }
 
+    // MARK: - Error
+    
     enum Error: Swift.Error {
         case failedToFetchStoredEvents(Swift.Error)
         case failedToDeleteStoredEvents(Swift.Error)
