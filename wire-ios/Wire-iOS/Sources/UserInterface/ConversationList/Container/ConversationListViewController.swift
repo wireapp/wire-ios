@@ -425,7 +425,7 @@ final class ConversationListViewController: UIViewController {
 
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
-        
+
         if !isEmptyPlaceholderVisible {
             navigationItem.searchController = searchController
         } else {
@@ -570,4 +570,3 @@ private extension NSAttributedString {
         return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
     }
 }
-
