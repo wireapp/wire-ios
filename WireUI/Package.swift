@@ -38,7 +38,7 @@ let package = Package(
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireMainNavigationUI", dependencies: ["WireFoundation"]),
+        .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
         .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),

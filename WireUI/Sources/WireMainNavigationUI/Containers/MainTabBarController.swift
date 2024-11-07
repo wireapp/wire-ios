@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
 
 // TODO: [WPB-11448] Bug: The call screen doesn't rotate to landscape
 
@@ -37,7 +36,7 @@ public final class MainTabBarController<
 
     public var conversationListUI: ConversationListUI? {
         get { _conversationListUI }
-        set { Task { await setConversationListUI(newValue, animated: false) } }
+        set { setConversationListUI(newValue, animated: false) }
     }
 
     public var archiveUI: ArchiveUI? {
@@ -47,17 +46,17 @@ public final class MainTabBarController<
 
     public var settingsUI: SettingsUI? {
         get { _settingsUI }
-        set { Task { await setSettingsUI(newValue, animated: false) } }
+        set { setSettingsUI(newValue, animated: false) }
     }
 
     public var conversationUI: ConversationUI? {
         get { _conversationUI }
-        set { Task { await setConversationUI(newValue, animated: false) } }
+        set { setConversationUI(newValue, animated: false) }
     }
 
     public var settingsContentUI: UIViewController? {
         get { _settingsContentUI }
-        set { Task { await setSettingsContentUI(newValue, animated: false) } }
+        set { setSettingsContentUI(newValue, animated: false) }
     }
 
     public var selectedContent: MainTabBarControllerContent {
@@ -194,11 +193,11 @@ public final class MainTabBarController<
 
     // MARK: - Accessors
 
-    private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) async {
+    private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
         _conversationListUI = conversationListUI
 
         let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
-        await conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
+        conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
@@ -210,15 +209,15 @@ public final class MainTabBarController<
         archiveNavigationController.view.layoutIfNeeded()
     }
 
-    private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) async {
+    private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         _settingsUI = settingsUI
 
         let viewControllers = [settingsUI].compactMap { $0 }
-        await settingsNavigationController.setViewControllers(viewControllers, animated: animated)
+        settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }
 
-    public func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) async {
+    public func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
         _conversationUI = conversationUI
 
         if conversationListUI == nil, conversationUI != nil {
@@ -226,11 +225,11 @@ public final class MainTabBarController<
         }
 
         let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
-        await conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
+        conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
 
-    public func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) async {
+    public func setSettingsContentUI(_ settingsContentUI: UIViewController?, animated: Bool) {
         _settingsContentUI = settingsContentUI
 
         if settingsUI == nil, settingsContentUI != nil {
@@ -238,7 +237,7 @@ public final class MainTabBarController<
         }
 
         let viewControllers = [settingsUI, settingsContentUI].compactMap { $0 }
-        await settingsNavigationController.setViewControllers(viewControllers, animated: animated)
+        settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }
 }

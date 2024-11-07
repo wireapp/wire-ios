@@ -107,7 +107,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         switch mainSplitViewState {
         case .collapsed:
             // if `showConversationList` is called while in collapsed mode, pop the conversation view controller
-            await tabBarController.setConversationUI(nil, animated: true)
+            tabBarController.setConversationUI(nil, animated: true)
 
         case .expanded:
             dismissArchiveIfNeeded()
@@ -144,7 +144,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         if mainSplitViewState == .collapsed, tabBarController.conversationUI != nil {
             // if the method is called while in collapsed mode, pop the conversation view controller
-            await tabBarController.setConversationUI(nil, animated: false)
+            tabBarController.setConversationUI(nil, animated: false)
         } else if splitViewController.conversationUI == nil {
             // display either the conversation or the placeholder in the secondary column
             splitViewController.conversationUI = tabBarController.conversationUI
@@ -185,39 +185,41 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.settingsUI = settingsUI
         }
 
-        await showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
+        showSettingsContent(.init(.account)) // TODO: [WPB-11347] make the selection visible
     }
 
     public func showConversation(
         conversation: ConversationModel,
         message: ConversationMessageModel?
-    ) async {
-        if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
-            splitViewController.hideSidebar()
-        }
+    ) {
+        Task {
+            if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
+                splitViewController.hideSidebar()
+            }
 
-        await dismissPresentedViewController()
+            await dismissPresentedViewController()
 
-        let conversationUI = conversationUIBuilder.build(
-            conversation: conversation,
-            message: nil,
-            mainCoordinator: self
-        )
-        if mainSplitViewState == .collapsed {
-            tabBarController.selectedContent = .conversations
-            let animated = tabBarController.conversationUI == nil
-            await tabBarController.setConversationUI(conversationUI, animated: animated)
-        } else {
-            splitViewController.conversationUI = conversationUI
+            let conversationUI = conversationUIBuilder.build(
+                conversation: conversation,
+                message: nil,
+                mainCoordinator: self
+            )
+            if mainSplitViewState == .collapsed {
+                tabBarController.selectedContent = .conversations
+                let animated = tabBarController.conversationUI == nil
+                tabBarController.setConversationUI(conversationUI, animated: animated)
+            } else {
+                splitViewController.conversationUI = conversationUI
+            }
         }
     }
 
-    public func hideConversation() async {
-        await tabBarController.setConversationUI(nil, animated: true)
+    public func hideConversation() {
+        tabBarController.setConversationUI(nil, animated: true)
         splitViewController.conversationUI = nil
     }
 
-    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) async {
+    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
         if mainSplitViewState == .expanded, splitViewController.splitBehavior == .overlay {
             splitViewController.hideSidebar()
         }
@@ -232,14 +234,15 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .collapsed:
             let animated = tabBarController.settingsContentUI == nil
             // TODO: [WPB-11347] make the selection visible in the settings ui overview list
-            await tabBarController.setSettingsContentUI(contentViewController, animated: animated)
+            tabBarController.setSettingsContentUI(contentViewController, animated: animated)
+
         case .expanded:
             splitViewController.settingsContentUI = contentViewController
         }
     }
 
-    public func hideSettingsContent() async {
-        await tabBarController.setSettingsContentUI(nil, animated: true)
+    public func hideSettingsContent() {
+        tabBarController.setSettingsContentUI(nil, animated: true)
         splitViewController.settingsContentUI = nil
     }
 
@@ -376,10 +379,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         let conversationListUI = tabBarController.conversationListUI ?? splitViewController.conversationListUI
         conversationListUI!.mainSplitViewState = .expanded
         if let settingsContentUIToSelect {
-            // TODO: [WPB-11347] make the selection visible
-            Task {
-                await showSettingsContent(settingsContentUIToSelect)
-            }
+            showSettingsContent(settingsContentUIToSelect) // TODO: [WPB-11347] make the selection visible
         }
     }
 
@@ -431,6 +431,7 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         case .collapsed:
             tabBarController.selectedContent == .conversations &&
                 tabBarController.conversationUI != nil
+
         case .expanded:
             splitViewController.conversationUI != nil
         }

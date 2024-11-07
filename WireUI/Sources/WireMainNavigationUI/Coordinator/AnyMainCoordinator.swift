@@ -27,9 +27,9 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     private let _showArchive: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
     private let _showConversation: @MainActor (_ conversation: ConversationModel, _ message: ConversationMessageModel?) async -> Void
-    private let _hideConversation: @MainActor () async -> Void
-    private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) async -> Void
-    private let _hideSettingsContent: @MainActor () async -> Void
+    private let _hideConversation: @MainActor () -> Void
+    private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
+    private let _hideSettingsContent: @MainActor () -> Void
     private let _presentViewController: @MainActor (_ viewController: UIViewController) async -> Void
     private let _dismissPresentedViewController: @MainActor () async -> Void
 
@@ -51,13 +51,13 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
             await mainCoordinator.showConversation(conversation: conversation, message: message)
         }
         _hideConversation = {
-            await mainCoordinator.hideConversation()
+            mainCoordinator.hideConversation()
         }
         _showSettingsContent = { topLevelMenuItem in
-            await mainCoordinator.showSettingsContent(topLevelMenuItem)
+            mainCoordinator.showSettingsContent(topLevelMenuItem)
         }
         _hideSettingsContent = {
-            await mainCoordinator.hideSettingsContent()
+            mainCoordinator.hideSettingsContent()
         }
         _presentViewController = { viewController in
             await mainCoordinator.presentViewController(viewController)
@@ -88,18 +88,18 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     }
 
     @MainActor
-    public func hideConversation() async {
-        await _hideConversation()
+    public func hideConversation() {
+        _hideConversation()
     }
 
     @MainActor
-    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) async {
-        await _showSettingsContent(topLevelMenuItem)
+    public func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) {
+        _showSettingsContent(topLevelMenuItem)
     }
 
     @MainActor
-    public func hideSettingsContent() async {
-        await _hideSettingsContent()
+    public func hideSettingsContent() {
+        _hideSettingsContent()
     }
 
     @MainActor
