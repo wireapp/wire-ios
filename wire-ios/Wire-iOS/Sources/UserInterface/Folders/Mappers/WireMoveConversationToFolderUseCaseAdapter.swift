@@ -24,23 +24,27 @@ struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCas
     private let useCase: ConversationFolderSelectionUseCaseProtocol
     private let directory: ConversationDirectoryType
     private let targetConversation: ZMConversation
+    private let context: NSManagedObjectContext
 
     init(
         useCase: ConversationFolderSelectionUseCaseProtocol,
         directory: ConversationDirectoryType,
-        conversation: ZMConversation
+        conversation: ZMConversation,
+        context: NSManagedObjectContext
     ) {
         self.useCase = useCase
         self.directory = directory
         self.targetConversation = conversation
+        self.context = context
     }
 
     func invoke(folder: Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
-        guard let wireFolder = directory.allFolders.first(where: { $0.remoteIdentifier == folder.identifier }) else {
-            throw FolderError.conversionFailed
+        try await context.perform {
+            guard let wireFolder = directory.allFolders.first(where: { $0.remoteIdentifier == folder.identifier }) else {
+                throw FolderError.conversionFailed
+            }
+            useCase.invoke(folder: wireFolder, conversation: targetConversation)
         }
-
-        useCase.invoke(folder: wireFolder, conversation: targetConversation)
     }
 
     private enum FolderError: Error {

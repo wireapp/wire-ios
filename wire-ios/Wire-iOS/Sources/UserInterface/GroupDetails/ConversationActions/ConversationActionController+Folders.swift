@@ -30,7 +30,8 @@ extension ConversationActionController {
         let folderPicker = builder.build(
             conversation: conversation,
             directory: directory,
-            useCase: useCase
+            useCase: useCase,
+            context: userSession.contextProvider.viewContext
         )
 
         present(folderPicker)

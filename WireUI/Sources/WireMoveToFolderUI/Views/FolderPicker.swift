@@ -36,7 +36,7 @@ public struct FolderPicker: View {
                 } else {
                     FolderList(
                         viewModel: viewModel,
-                        onSelect: { folder in
+                        onSelect: { @MainActor folder in
                             try await viewModel.select(folder)
                             dismiss()
                         }

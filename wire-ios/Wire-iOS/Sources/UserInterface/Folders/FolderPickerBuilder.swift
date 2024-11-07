@@ -27,13 +27,15 @@ struct FolderPickerBuilder {
     func build(
         conversation: ZMConversation,
         directory: ConversationDirectoryType,
-        useCase: ConversationFolderSelectionUseCaseProtocol
+        useCase: ConversationFolderSelectionUseCaseProtocol,
+        context: NSManagedObjectContext
     ) -> UIViewController {
         let directoryMapper = WireFolderDirectoryMapper(directory: directory)
         let useCaseMapper = WireMoveConversationToFolderUseCaseMapper(
             useCase: useCase,
             directory: directory,
-            conversation: conversation
+            conversation: conversation,
+            context: context
         )
 
         let viewModel = FolderPickerViewModel(

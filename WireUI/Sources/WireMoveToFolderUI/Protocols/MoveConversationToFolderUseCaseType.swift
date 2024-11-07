@@ -17,7 +17,7 @@
 //
 
 /// Protocol for handling moving a conversation to a specified folder
-public protocol MoveConversationToFolderUseCaseType: Sendable {
+public protocol MoveConversationToFolderUseCaseType {
     /// Moves a conversation to a specified folder
     /// - Parameters:
     ///   - folder: The destination folder
