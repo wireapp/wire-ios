@@ -83,10 +83,14 @@ public typealias TeamMembership = Member
 // MARK: - Transport
 
 private enum ResponseKey: String {
-    case user, permissions, createdBy = "created_by", createdAt = "created_at"
+    case user
+    case permissions
+    case createdBy = "created_by"
+    case createdAt = "created_at"
 
     enum Permissions: String {
-        case `self`, copy
+        case `self`
+        case copy
     }
 }
 

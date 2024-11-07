@@ -129,7 +129,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum SelectionState: String, CaseIterable {
-        case selected, unselected
+        case selected
+        case unselected
 
         var isSelected: Bool {
             if case .selected = self { return true }
@@ -138,7 +139,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum InteractionState: String, CaseIterable {
-        case enabled, disabled
+        case enabled
+        case disabled
 
         var isEnabled: Bool {
             if case .enabled = self { return true }

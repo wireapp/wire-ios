@@ -164,7 +164,9 @@ struct HandleChangeState {
     }
 
     enum HandleAvailability {
-        case unknown, available, taken
+        case unknown
+        case available
+        case taken
     }
 
     let currentHandle: String?

@@ -35,7 +35,9 @@ enum PlayingState: UInt, CustomStringConvertible {
 typealias RecordingLevel = Float
 
 enum AudioRecorderFormat {
-    case m4A, wav
+    case m4A
+    case wav
+
     func fileExtension() -> String {
         switch self {
         case .m4A:
@@ -56,7 +58,9 @@ enum AudioRecorderFormat {
 }
 
 enum AudioRecorderState: Equatable {
-    case initializing, recording(start: TimeInterval), stopped
+    case initializing
+    case recording(start: TimeInterval)
+    case stopped
 }
 
 enum RecordingError: Error {
