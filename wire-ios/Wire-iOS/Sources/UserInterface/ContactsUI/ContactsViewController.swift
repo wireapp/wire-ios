@@ -142,10 +142,9 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
+        view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        view.backgroundColor = .clear
-
-        tableView.backgroundColor = .clear
+        tableView.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.separatorStyle = .none
         tableView.sectionIndexBackgroundColor = .clear
         tableView.sectionIndexColor = .accent()
