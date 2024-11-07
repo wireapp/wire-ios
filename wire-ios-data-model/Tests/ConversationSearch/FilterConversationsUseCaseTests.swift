@@ -139,23 +139,23 @@ final class FilterConversationsUseCaseTests: XCTestCase {
     private let groupConversations = [
         MockConversation(
             name: "Wire Team",
-            participants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+            otherParticipants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
         ),
         MockConversation(
             name: "Announcements",
-            participants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
+            otherParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
         )
     ]
 
     private let oneOnOneConversations = [
-        MockConversation(name: "Pipaluk Bróðir", participants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
-        MockConversation(name: "Mariele", participants: ["Mariele", "Mneme Tiedemann"])
+        MockConversation(name: "Pipaluk Bróðir", otherParticipants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
+        MockConversation(name: "Mariele", otherParticipants: ["Mariele", "Mneme Tiedemann"])
     ]
 
     private let otherGroupConversations = [
-        MockConversation(name: "Guests", participants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
-        MockConversation(name: "Spaß", participants: ["Mneme Tiedemann"]),
-        MockConversation(name: "Essen", participants: ["Mneme Tiedemann"])
+        MockConversation(name: "Guests", otherParticipants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
+        MockConversation(name: "Spaß", otherParticipants: ["Mneme Tiedemann"]),
+        MockConversation(name: "Essen", otherParticipants: ["Mneme Tiedemann"])
     ]
 }
 
@@ -183,13 +183,13 @@ private struct MockContainer: MutableConversationContainer, CustomDebugStringCon
 private struct MockConversation: FilterableConversation, CustomDebugStringConvertible, Equatable {
 
     private(set) var name: String
-    private(set) var participants: [MockParticipant]
+    private(set) var otherParticipants: [MockParticipant]
 
     var debugDescription: String {
-        let participants = participants
+        let otherParticipants = otherParticipants
             .map(String.init(reflecting:))
             .joined(separator: ", ")
-        return "\(name)(\(participants))"
+        return "\(name)(\(otherParticipants) + self-user)"
     }
 }
 
