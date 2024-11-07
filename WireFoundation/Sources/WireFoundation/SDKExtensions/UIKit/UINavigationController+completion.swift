@@ -20,6 +20,8 @@ import SwiftUI
 
 public extension UINavigationController {
 
+    // MARK: - setViewControllers
+
     func setViewControllers(
         _ viewControllers: [UIViewController],
         animated: Bool,
@@ -33,6 +35,14 @@ public extension UINavigationController {
 
         coordinator.animate(alongsideTransition: nil) { _ in completion() }
     }
+
+    func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) async {
+        await withCheckedContinuation { continuation in
+            setViewControllers(viewControllers, animated: animated, completion: continuation.resume)
+        }
+    }
+
+    // MARK: - pushViewController
 
     func pushViewController(
         _ viewController: UIViewController,
@@ -53,6 +63,8 @@ public extension UINavigationController {
             pushViewController(viewController, animated: animated, completion: continuation.resume)
         }
     }
+
+    // MARK: - popViewController
 
     func popViewController(
         animated: Bool,
