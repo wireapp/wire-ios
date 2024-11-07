@@ -206,7 +206,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             )
             if mainSplitViewState == .collapsed {
                 tabBarController.selectedContent = .conversations
-                tabBarController.setConversationUI(conversationUI, animated: true) // TODO: animate only if conversation screen is not visible
+                let animated = tabBarController.conversationUI == nil
+                tabBarController.setConversationUI(conversationUI, animated: animated)
             } else {
                 splitViewController.conversationUI = conversationUI
             }
@@ -231,7 +232,9 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
         let contentViewController = settingsContentUIBuilder.build(topLevelMenuItem: topLevelMenuItem, mainCoordinator: self)
         switch mainSplitViewState {
         case .collapsed:
-            tabBarController.setSettingsContentUI(contentViewController, animated: true) // TODO: [WPB-11347] make the selection visible
+            let animated = tabBarController.settingsContentUI == nil
+            // TODO: [WPB-11347] make the selection visible in the settings ui overview list
+            tabBarController.setSettingsContentUI(contentViewController, animated: animated)
         case .expanded:
             splitViewController.settingsContentUI = contentViewController
         }
