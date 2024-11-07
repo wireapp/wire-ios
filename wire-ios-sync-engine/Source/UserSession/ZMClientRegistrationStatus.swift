@@ -292,9 +292,13 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
+
         let featureRepository = FeatureRepository(context: context)
         let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
         let isAllowedToRegisterMLSCLient = mlsFeature.isEnabled && (BackendInfo.apiVersion ?? .v0) >= .v5
+
+        /// Should: mlsFeature.isEnabled
+        /// Can: (BackendInfo.apiVersion ?? .v0) >= .v5 and mls is enabled on BE
 
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
     }

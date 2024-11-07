@@ -33,6 +33,7 @@ import Foundation
     case fetchingLabels
     case fetchingFeatureConfig
     case updateSelfSupportedProtocols
+    // add a case for mls and for quick sync
     case evaluate1on1ConversationsForMLS
     // following is quick sync only
     case fetchingMissedEvents
