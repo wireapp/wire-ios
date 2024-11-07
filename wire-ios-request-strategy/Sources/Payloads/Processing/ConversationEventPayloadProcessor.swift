@@ -173,7 +173,9 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn { // replace
+        let featureRepository = FeatureRepository(context: context)
+        let mlsFeature = await GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
             }
@@ -896,7 +898,10 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return } // replace
+        let featureRepository = FeatureRepository(context: context)
+        let mlsFeature = await GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        guard mlsFeature.isEnabled else { return }
+
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,

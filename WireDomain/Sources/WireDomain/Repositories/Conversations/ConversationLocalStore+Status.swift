@@ -53,7 +53,9 @@ extension ConversationLocalStore {
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return } // replace
+        let featureRepository = FeatureRepository(context: context)
+        let mlsFeature = await GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        guard mlsFeature.isEnabled else { return }
 
         await updateConversationIfNeeded(
             localConversation: localConversation,

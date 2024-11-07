@@ -202,7 +202,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
     }
 
-    private func isMLSEnabledOnBackend() async -> Bool {  // Attencion!
+    private func isMLSEnabledOnBackend() async -> Bool {
         do {
             _ = try await actionsProvider.fetchBackendPublicKeys(in: context.notificationContext)
             return true

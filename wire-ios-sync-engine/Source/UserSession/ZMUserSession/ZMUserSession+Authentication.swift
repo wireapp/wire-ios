@@ -45,7 +45,7 @@ extension ZMUserSession {
 
     public var isLoggedIn: Bool { // TODO jacob we don't want this to be public
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
-        let needsToRegisterMLSClient = needsToRegisterMLSClient.invoke()
+        let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync
 
         return isAuthenticated && !needsToRegisterClient && !waitingToRegisterMLSClient

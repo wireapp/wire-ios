@@ -325,10 +325,9 @@ public final class ZMUserSession: NSObject {
     }()
 
     public lazy var needsToRegisterMLSClient: NeedsToRegisterMLSClientUseCaseProtocol = {
-        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
         return NeedsToRegisterMLSClientUseCase(
             context: syncContext,
-            getMLSFeatureUseCase: getMLSFeatureUseCase)
+            mlsFeature: makeGetMLSFeatureUseCase().invoke())
     }()
 
     // MARK: Dependency Injection
@@ -928,7 +927,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
-        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+        let resolver = OneOnOneResolver(
+            migrator: OneOnOneMigrator(mlsService: mlsService),
+            mlsFeature: makeGetMLSFeatureUseCase().invoke())
 
         return ResolveOneOnOneConversationsUseCase(
             context: context,
@@ -938,7 +939,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }// replace
+        guard mlsFeature.isEnabled else { return }
 
         let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
@@ -949,7 +950,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func performPostQuickSyncE2EIActions() {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }// replace
+        guard mlsFeature.isEnabled else { return }
 
         checkExpiredCertificateRevocationLists()
         checkE2EICertificateExpiryStatus()

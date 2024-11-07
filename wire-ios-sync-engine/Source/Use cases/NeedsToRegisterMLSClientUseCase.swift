@@ -22,7 +22,7 @@ import WireDataModel
 
 public protocol NeedsToRegisterMLSClientUseCaseProtocol {
 
-    func invoke() -> Bool
+    func invoke() async -> Bool
 
 }
 
@@ -31,62 +31,60 @@ public protocol NeedsToRegisterMLSClientUseCaseProtocol {
 struct NeedsToRegisterMLSClientUseCase: NeedsToRegisterMLSClientUseCaseProtocol {
 
     private let context: NSManagedObjectContext
-    private let getMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol
+    private let mlsFeature: Feature.MLS
     private let actionsProvider: MLSActionsProvider
 
     public init(
         context: NSManagedObjectContext,
-        getMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol,
+        mlsFeature: Feature.MLS,
         actionsProvider: MLSActionsProvider = MLSActionsProvider()
     ) {
         self.context = context
-        self.getMLSFeatureUseCase = getMLSFeatureUseCase
+        self.mlsFeature = mlsFeature
         self.actionsProvider = actionsProvider
     }
 
-    public func invoke() -> Bool {
-        var isMLSEnabledOnBackend = false
-        guard !needsToRegisterClient else {
+    public func invoke() async -> Bool {
+        guard await !needsToRegisterClient() else {
             return false
         }
-        Task {
-            isMLSEnabledOnBackend = await containsBackendPublicKeys
-        }
+
+        let hasRegisteredMLSClient = await hasRegisteredMLSClient()
+        let isMLSEnabledOnBackend = await containsBackendPublicKeys()
+
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient && isMLSEnabledOnBackend
     }
 
     // MARK: - Helpers
 
-    private var needsToRegisterClient: Bool {
-        guard let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String else {
-            return true
+    private func needsToRegisterClient() async -> Bool {
+        return await context.perform {
+            guard let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String else {
+                return true
+            }
+            return clientID.isEmpty
         }
-        return clientID.isEmpty
     }
 
-    private var hasRegisteredMLSClient: Bool {
-        guard let selfClient = ZMUser.selfUser(in: context).selfClient() else {
-            return false
+    private func hasRegisteredMLSClient() async -> Bool {
+        return await context.perform {
+            return ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
         }
-        return selfClient.hasRegisteredMLSClient
     }
 
     private var isAllowedToRegisterMLSCLient: Bool {
-        let mlsFeature = getMLSFeatureUseCase.invoke()
         return mlsFeature.isEnabled && (BackendInfo.apiVersion ?? .v0) >= .v5
     }
 
-    private var containsBackendPublicKeys: Bool {
-        get async {
-            do {
-                _ = try await actionsProvider.fetchBackendPublicKeys(in: context.notificationContext)
-                return true
-            } catch FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled {
-                return false
-            } catch {
-                WireLogger.mls.warn("unexpected error fetching public keys: \(String(describing: error))")
-                return false
-            }
+    private func containsBackendPublicKeys() async -> Bool {
+        do {
+            _ = try await actionsProvider.fetchBackendPublicKeys(in: context.notificationContext)
+            return true
+        } catch FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled {
+            return false
+        } catch {
+            WireLogger.mls.warn("unexpected error fetching public keys: \(String(describing: error))")
+            return false
         }
     }
 

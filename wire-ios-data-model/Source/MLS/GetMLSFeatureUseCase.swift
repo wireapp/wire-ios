@@ -16,28 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import Foundation
-//import WireDataModel
-//
-//// sourcery: AutoMockable
-//public protocol GetMLSFeatureUseCaseProtocol {
-//    func invoke() -> Feature.MLS
-//    func invoke() async -> Feature.MLS
-//}
-//
-//public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
-//
-//    private let featureRepository: FeatureRepositoryInterface
-//
-//    public init(featureRepository: FeatureRepositoryInterface) {
-//        self.featureRepository = featureRepository
-//    }
-//
-//    public func invoke() -> Feature.MLS {
-//        featureRepository.fetchMLS()
-//    }
-//
-//    public func invoke() async -> Feature.MLS {
-//        await featureRepository.fetchMLS()
-//    }
-//}
+import Foundation
+
+// sourcery: AutoMockable
+public protocol GetMLSFeatureUseCaseProtocol {
+    func invoke() -> Feature.MLS
+    func invoke() async -> Feature.MLS
+}
+
+public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
+
+    private let featureRepository: FeatureRepositoryInterface
+
+    public init(featureRepository: FeatureRepositoryInterface) {
+        self.featureRepository = featureRepository
+    }
+
+    public func invoke() -> Feature.MLS {
+        featureRepository.fetchMLS()
+    }
+
+    public func invoke() async -> Feature.MLS {
+        await featureRepository.fetchMLS()
+    }
+}

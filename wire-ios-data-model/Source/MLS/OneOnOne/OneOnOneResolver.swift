@@ -37,15 +37,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
+    private let mlsFeature: Feature.MLS
 
     // MARK: - Initializer
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface?
+        migrator: OneOnOneMigratorInterface?,
+        mlsFeature: Feature.MLS
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
+        self.mlsFeature = mlsFeature
     }
 
     // MARK: - Resolve
@@ -76,7 +79,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
-        let mlsEnabled = DeveloperFlag.enableMLSSupport.isOn // replace
+        let mlsEnabled = mlsFeature.isEnabled
 
         switch messageProtocol {
         case .none where mlsEnabled:
