@@ -1383,7 +1383,7 @@
 		E966C5022CDCCD5E00BF1195 /* Folder+LabelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */; };
 		E966C5042CDCCDDA00BF1195 /* Conversation+ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */; };
 		E966C5082CDCD04E00BF1195 /* WireFolderDirectoryMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */; };
-		E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseAdapter.swift */; };
+		E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */; };
 		E966C50D2CDCD43200BF1195 /* FolderPickerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */; };
 		E96AB4F92C071BC300792DA9 /* FilterImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4F82C071BC300792DA9 /* FilterImageName.swift */; };
 		E96AB4FC2C07262400792DA9 /* FilterButtonStyleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */; };
@@ -3402,7 +3402,7 @@
 		E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+LabelType.swift"; sourceTree = "<group>"; };
 		E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+ZMConversation.swift"; sourceTree = "<group>"; };
 		E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireFolderDirectoryMapper.swift; sourceTree = "<group>"; };
-		E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireMoveConversationToFolderUseCaseAdapter.swift; sourceTree = "<group>"; };
+		E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireMoveConversationToFolderUseCaseMapper.swift; sourceTree = "<group>"; };
 		E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerBuilder.swift; sourceTree = "<group>"; };
 		E96AB4F82C071BC300792DA9 /* FilterImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageName.swift; sourceTree = "<group>"; };
 		E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonStyleHelper.swift; sourceTree = "<group>"; };
@@ -7832,7 +7832,7 @@
 		E966C50B2CDCD3F300BF1195 /* Mappers */ = {
 			isa = PBXGroup;
 			children = (
-				E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseAdapter.swift */,
+				E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */,
 				E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */,
 				E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */,
 				E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */,
@@ -9937,7 +9937,7 @@
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
-				E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseAdapter.swift in Sources */,
+				E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,

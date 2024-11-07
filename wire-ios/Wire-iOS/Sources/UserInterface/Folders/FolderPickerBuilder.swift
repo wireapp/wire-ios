@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
-import SwiftUI
 
 struct FolderPickerBuilder {
 

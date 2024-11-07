@@ -28,7 +28,7 @@ struct FolderRow: View {
         Button(action: action) {
             HStack {
                 Text(folder.name)
-                    .font(.textStyle(.body1))
+                    .font(isSelected ? .textStyle(.h3) : .textStyle(.body1))
                     .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
                 Spacer()
@@ -46,5 +46,8 @@ struct FolderRow: View {
 }
 
 #Preview {
-    FolderRow(folder: Folder(identifier: nil, name: "Friends"), isSelected: true) {}
+    FolderRow(
+        folder: Folder(identifier: nil, name: "Friends"),
+        isSelected: true
+    ) {}
 }

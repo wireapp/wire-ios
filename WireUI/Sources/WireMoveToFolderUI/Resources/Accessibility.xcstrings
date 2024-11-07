@@ -1,7 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-
+    "folderPicker.close.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close folder picker"
+          }
+        }
+      }
+    }
   },
   "version" : "1.0"
 }

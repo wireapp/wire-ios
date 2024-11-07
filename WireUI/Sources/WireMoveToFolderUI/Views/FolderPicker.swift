@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireReusableUIComponents
 
 public struct FolderPicker: View {
 
@@ -43,20 +44,22 @@ public struct FolderPicker: View {
                     )
                 }
             }
-            .navigationTitle("Move To")
+            .navigationTitle(Text("folder.picker.title", tableName: "Localizable", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                    .accessibilityIdentifier("button.folder.dismiss")
+                    CloseButton(
+                        action: didTapClose,
+                        accessibilityLabel: String(
+                            localized: "folderPicker.close.label",
+                            table: "Accessibility",
+                            bundle: .module
+                        )
+                    )
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        // TODO: Implement folder creation view
+                        // TODO: [WPB-12012] Implement folder creation view
                     } label: {
                         Image(systemName: "plus")
                             .accessibilityIdentifier("button.newfolder.create")
@@ -64,6 +67,10 @@ public struct FolderPicker: View {
                 }
             }
         }
+    }
+
+    private func didTapClose() {
+        dismiss()
     }
 }
 

@@ -11,6 +11,16 @@
           }
         }
       }
+    },
+    "folder.picker.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move To"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
