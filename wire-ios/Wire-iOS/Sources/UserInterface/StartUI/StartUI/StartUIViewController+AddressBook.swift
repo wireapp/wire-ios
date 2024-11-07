@@ -24,8 +24,6 @@ import WireMainNavigationUI
 extension StartUIViewController {
 
     var needsAddressBookPermission: Bool {
-
-        return true
         let shouldSkip = AutomationHelper.sharedHelper.skipFirstLoginAlerts || userSession.selfUser.hasTeam
         return !AddressBookHelper.sharedHelper.isAddressBookAccessGranted && !shouldSkip
     }
@@ -40,8 +38,6 @@ extension StartUIViewController {
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
-
-        // pop or something else here
         viewController.dismiss(animated: true)
     }
 
