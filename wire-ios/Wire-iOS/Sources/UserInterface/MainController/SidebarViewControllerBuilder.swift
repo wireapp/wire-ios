@@ -39,7 +39,6 @@ struct SidebarViewControllerBuilder {
             .availabilityIndicatorAwayColor(availabilityIndicatorDesign.awayColor)
             .availabilityIndicatorBusyColor(availabilityIndicatorDesign.busyColor)
             .availabilityIndicatorBackgroundViewColor(availabilityIndicatorDesign.backgroundViewColor)
-            .legalHoldIndicatorColor(LegalHoldIndicatorViewDesign().foregroundColor)
         }
         sidebarViewController.wireTextStyleMapping = .init()
         sidebarViewController.wireAccentColorMapping = WireAccentColorMapping()
@@ -48,6 +47,7 @@ struct SidebarViewControllerBuilder {
         sidebarViewController.sidebarBackgroundColor = sidebarDesign.backgroundColor
         sidebarViewController.sidebarAccountInfoViewDisplayNameColor = sidebarDesign.accountInfoViewDisplayNameColor
         sidebarViewController.sidebarAccountInfoViewUsernameColor = sidebarDesign.accountInfoViewUsernameColor
+        sidebarViewController.sidebarAccountInfoViewLegalHoldIndicatorColor = LegalHoldIndicatorViewDesign().foregroundColor
         sidebarViewController.sidebarMenuItemTitleForegroundColor = sidebarDesign.menuItemTitleForegroundColor
         sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
         sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign.menuItemIsSelectedTitleForegroundColor

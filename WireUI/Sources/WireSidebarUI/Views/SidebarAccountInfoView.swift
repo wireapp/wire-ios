@@ -24,6 +24,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
 
     @Environment(\.sidebarAccountInfoViewDisplayNameColor) private var displayNameColor
     @Environment(\.sidebarAccountInfoViewUsernameColor) private var usernameColor
+    @Environment(\.sidebarAccountInfoViewLegalHoldIndicatorColor) private var legalHoldIndicatorColor
 
     // MARK: - Life Cycle
 
@@ -50,11 +51,14 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                     displayNameAndUsername
                 }
             }
-            HStack {
+            HStack(spacing: 0) {
                 Rectangle()
                     .frame(width: displayNameHeight + usernameHeight, height: 0)
+                    .padding(.trailing, 8)
                 LegalHoldIndicatorView()
                     .frame(height: usernameHeight)
+                    .padding(.trailing, 4)
+                    .legalHoldIndicatorColor(legalHoldIndicatorColor)
                 Text("sidebar.legalHold.title", bundle: .module)
                     .wireTextStyle(.subline1)
             }
@@ -161,6 +165,10 @@ extension View {
     func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {
         modifier(SidebarAccountInfoViewUsernameColorViewModifier(sidebarAccountInfoViewUsernameColor: usernameColor))
     }
+
+    func sidebarAccountInfoViewLegalHoldIndicatorColor(_ legalHoldIndicatorColor: Color) -> some View {
+        modifier(SidebarAccountInfoViewLegalHoldIndicatorColorViewModifier(sidebarAccountInfoViewLegalHoldIndicatorColor: legalHoldIndicatorColor))
+    }
 }
 
 private extension EnvironmentValues {
@@ -172,6 +180,11 @@ private extension EnvironmentValues {
     var sidebarAccountInfoViewUsernameColor: Color {
         get { self[SidebarAccountInfoViewUsernameColorKey.self] }
         set { self[SidebarAccountInfoViewUsernameColorKey.self] = newValue }
+    }
+
+    var sidebarAccountInfoViewLegalHoldIndicatorColor: Color {
+        get { self[SidebarAccountInfoViewLegalHoldIndicatorColorKey.self] }
+        set { self[SidebarAccountInfoViewLegalHoldIndicatorColorKey.self] = newValue }
     }
 }
 
@@ -197,6 +210,18 @@ struct SidebarAccountInfoViewUsernameColorViewModifier: ViewModifier {
 
 private struct SidebarAccountInfoViewUsernameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary.opacity(0.7)
+}
+
+struct SidebarAccountInfoViewLegalHoldIndicatorColorViewModifier: ViewModifier {
+    var sidebarAccountInfoViewLegalHoldIndicatorColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarAccountInfoViewLegalHoldIndicatorColor, sidebarAccountInfoViewLegalHoldIndicatorColor)
+    }
+}
+
+private struct SidebarAccountInfoViewLegalHoldIndicatorColorKey: EnvironmentKey {
+    static let defaultValue = Color.red
 }
 
 // MARK: - Previews

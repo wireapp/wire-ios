@@ -29,6 +29,7 @@ final class SidebarModel: ObservableObject {
     @Published var sidebarBackgroundColor: UIColor = .systemGray5
     @Published var sidebarAccountInfoViewDisplayNameColor: UIColor = defaultTextColor
     @Published var sidebarAccountInfoViewUsernameColor: UIColor = .gray
+    @Published var sidebarAccountInfoViewLegalHoldIndicatorColor: UIColor = .red
     @Published var sidebarMenuHeaderForegroundColor: UIColor = defaultTextColor
     @Published var sidebarMenuItemTitleForegroundColor: UIColor = defaultTextColor
     @Published var sidebarMenuItemLinkIconForegroundColor: UIColor = .systemGray

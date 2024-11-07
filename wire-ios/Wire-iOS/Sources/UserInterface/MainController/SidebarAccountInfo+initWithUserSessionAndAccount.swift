@@ -25,7 +25,7 @@ extension SidebarAccountInfo {
     init(_ user: some UserType, _ accountImageSource: SidebarAccountInfo.AccountImageSource) {
         self.init(
             displayName: user.name ?? "",
-            username: user.handle ?? "",
+            username: "@\(user.handle ?? "")",
             accountImageSource: accountImageSource,
             availability: user.availability.mapToSidebarAccountInfoAvailability(),
             isE2EICertified: false, // TODO: fix
