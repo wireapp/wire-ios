@@ -64,7 +64,8 @@ enum AudioRecorderState: Equatable {
 }
 
 enum RecordingError: Error {
-    case toMaxDuration, toMaxSize
+    case toMaxDuration
+    case toMaxSize
 }
 
 protocol AudioRecorderType: AnyObject {

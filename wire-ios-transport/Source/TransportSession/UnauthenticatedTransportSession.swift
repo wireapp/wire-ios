@@ -225,7 +225,8 @@ private enum HeaderKey: String {
 }
 
 private enum UserKey: String {
-    case user, id
+    case user
+    case id
 }
 
 extension ZMTransportResponse {

@@ -650,6 +650,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         date: Date
     ) async {
         let allGroupConversations = await context.perform {
+            // swiftformat:disable:next redundantProperty
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
                 guard $0.conversation?.conversationType == .group else {
                     return nil
