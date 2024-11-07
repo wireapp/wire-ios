@@ -72,17 +72,16 @@ final class ConnectionsLocalStoreTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) async throws {
-        
         // Mock
-        
+
         let connection = Scaffolding.connection
 
         // When
-        
+
         try await sut.storeConnection(connection)
 
         // Then
-        
+
         try await context.perform { [context] in
             // There is a connection in the database.
             let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
@@ -111,7 +110,6 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     func testUpdateConnection_It_Successfully_Updates_Connection_Locally() async throws {
-        
         // Given
 
         let connection = Scaffolding.connection
@@ -121,7 +119,7 @@ final class ConnectionsLocalStoreTests: XCTestCase {
         try await sut.storeConnection(connection)
 
         // Then
-        
+
         try await context.perform { [context] in
             let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
 
@@ -157,4 +155,3 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
 }
-

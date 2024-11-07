@@ -20,8 +20,8 @@
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-import WireDomainSupport
 @testable import WireDomain
+import WireDomainSupport
 import XCTest
 
 final class ConnectionsRepositoryTests: XCTestCase {
@@ -33,7 +33,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
     override func setUp() async throws {
         connectionsAPI = MockConnectionsAPI()
         connectionsLocalStore = MockConnectionsLocalStoreProtocol()
-        
+
         sut = ConnectionsRepository(
             connectionsAPI: connectionsAPI,
             connectionsLocalStore: connectionsLocalStore
@@ -49,9 +49,8 @@ final class ConnectionsRepositoryTests: XCTestCase {
     // MARK: - Tests
 
     func testPullConnections_It_Invokes_Local_Store_Method() async throws {
-        
         // Mock
-        
+
         let connection = Scaffolding.connection
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
@@ -62,31 +61,30 @@ final class ConnectionsRepositoryTests: XCTestCase {
                 nextStart: "first"
             )
         })
-        
+
         connectionsLocalStore.storeConnection_MockMethod = { _ in }
 
         // When
-        
+
         try await sut.pullConnections()
 
         // Then
-        
+
         XCTAssertEqual(connectionsLocalStore.storeConnection_Invocations.count, 1)
     }
-    
+
     func testUpdateConnection_It_Invokes_Local_Store_Method() async throws {
-        
         // Mock
-        
+
         let connection = Scaffolding.connection
         connectionsLocalStore.storeConnection_MockMethod = { _ in }
 
         // When
-        
+
         try await sut.updateConnection(connection)
 
         // Then
-        
+
         XCTAssertEqual(connectionsLocalStore.storeConnection_Invocations.count, 1)
     }
 

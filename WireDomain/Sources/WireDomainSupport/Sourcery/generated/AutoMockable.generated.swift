@@ -963,6 +963,172 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
 }
 
+public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchMember
+
+    public var fetchMemberId_Invocations: [UUID] = []
+    public var fetchMemberId_MockMethod: ((UUID) async -> Member?)?
+    public var fetchMemberId_MockValue: Member??
+
+    public func fetchMember(id: UUID) async -> Member? {
+        fetchMemberId_Invocations.append(id)
+
+        if let mock = fetchMemberId_MockMethod {
+            return await mock(id)
+        } else if let mock = fetchMemberId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMemberId`")
+        }
+    }
+
+    // MARK: - selfUserID
+
+    public var selfUserID_Invocations: [Void] = []
+    public var selfUserID_MockMethod: (() async -> UUID)?
+    public var selfUserID_MockValue: UUID?
+
+    public func selfUserID() async -> UUID {
+        selfUserID_Invocations.append(())
+
+        if let mock = selfUserID_MockMethod {
+            return await mock()
+        } else if let mock = selfUserID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUserID`")
+        }
+    }
+
+    // MARK: - userMembership
+
+    public var userMembershipUser_Invocations: [ZMUser] = []
+    public var userMembershipUser_MockMethod: ((ZMUser) async -> Member?)?
+    public var userMembershipUser_MockValue: Member??
+
+    public func userMembership(user: ZMUser) async -> Member? {
+        userMembershipUser_Invocations.append(user)
+
+        if let mock = userMembershipUser_MockMethod {
+            return await mock(user)
+        } else if let mock = userMembershipUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `userMembershipUser`")
+        }
+    }
+
+    // MARK: - userDomain
+
+    public var userDomainUser_Invocations: [ZMUser] = []
+    public var userDomainUser_MockMethod: ((ZMUser) async -> String?)?
+    public var userDomainUser_MockValue: String??
+
+    public func userDomain(user: ZMUser) async -> String? {
+        userDomainUser_Invocations.append(user)
+
+        if let mock = userDomainUser_MockMethod {
+            return await mock(user)
+        } else if let mock = userDomainUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `userDomainUser`")
+        }
+    }
+
+    // MARK: - deleteMember
+
+    public var deleteMember_Invocations: [Member] = []
+    public var deleteMember_MockMethod: ((Member) async -> Void)?
+
+    public func deleteMember(_ member: Member) async {
+        deleteMember_Invocations.append(member)
+
+        guard let mock = deleteMember_MockMethod else {
+            fatalError("no mock for `deleteMember`")
+        }
+
+        await mock(member)
+    }
+
+    // MARK: - storeMember
+
+    public var storeMemberNeedsBackendUpdateMember_Invocations: [(needsBackendUpdate: Bool, member: Member)] = []
+    public var storeMemberNeedsBackendUpdateMember_MockMethod: ((Bool, Member) async -> Void)?
+
+    public func storeMember(needsBackendUpdate: Bool, member: Member) async {
+        storeMemberNeedsBackendUpdateMember_Invocations.append((needsBackendUpdate: needsBackendUpdate, member: member))
+
+        guard let mock = storeMemberNeedsBackendUpdateMember_MockMethod else {
+            fatalError("no mock for `storeMemberNeedsBackendUpdateMember`")
+        }
+
+        await mock(needsBackendUpdate, member)
+    }
+
+    // MARK: - storeTeam
+
+    public var storeTeamIdNameCreatorIDLogoIDLogoKey_Invocations: [(id: UUID, name: String, creatorID: UUID, logoID: String?, logoKey: String?)] = []
+    public var storeTeamIdNameCreatorIDLogoIDLogoKey_MockMethod: ((UUID, String, UUID, String?, String?) async -> Void)?
+
+    public func storeTeam(id: UUID, name: String, creatorID: UUID, logoID: String?, logoKey: String?) async {
+        storeTeamIdNameCreatorIDLogoIDLogoKey_Invocations.append((id: id, name: name, creatorID: creatorID, logoID: logoID, logoKey: logoKey))
+
+        guard let mock = storeTeamIdNameCreatorIDLogoIDLogoKey_MockMethod else {
+            fatalError("no mock for `storeTeamIdNameCreatorIDLogoIDLogoKey`")
+        }
+
+        await mock(id, name, creatorID, logoID, logoKey)
+    }
+
+    // MARK: - storeTeamRoles
+
+    public var storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations: [(selfTeamID: UUID, teamRolesInfo: [TeamLocalStore.TeamRoleInfo])] = []
+    public var storeTeamRolesSelfTeamIDTeamRolesInfo_MockError: Error?
+    public var storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod: ((UUID, [TeamLocalStore.TeamRoleInfo]) async throws -> Void)?
+
+    public func storeTeamRoles(selfTeamID: UUID, teamRolesInfo: [TeamLocalStore.TeamRoleInfo]) async throws {
+        storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations.append((selfTeamID: selfTeamID, teamRolesInfo: teamRolesInfo))
+
+        if let error = storeTeamRolesSelfTeamIDTeamRolesInfo_MockError {
+            throw error
+        }
+
+        guard let mock = storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod else {
+            fatalError("no mock for `storeTeamRolesSelfTeamIDTeamRolesInfo`")
+        }
+
+        try await mock(selfTeamID, teamRolesInfo)
+    }
+
+    // MARK: - storeTeamMembers
+
+    public var storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations: [(selfTeamID: UUID, teamMembersInfo: [TeamLocalStore.TeamMemberInfo])] = []
+    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockError: Error?
+    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod: ((UUID, [TeamLocalStore.TeamMemberInfo]) async throws -> Void)?
+
+    public func storeTeamMembers(selfTeamID: UUID, teamMembersInfo: [TeamLocalStore.TeamMemberInfo]) async throws {
+        storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.append((selfTeamID: selfTeamID, teamMembersInfo: teamMembersInfo))
+
+        if let error = storeTeamMembersSelfTeamIDTeamMembersInfo_MockError {
+            throw error
+        }
+
+        guard let mock = storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod else {
+            fatalError("no mock for `storeTeamMembersSelfTeamIDTeamMembersInfo`")
+        }
+
+        try await mock(selfTeamID, teamMembersInfo)
+    }
+
+}
+
 public class MockTeamRepositoryProtocol: TeamRepositoryProtocol {
 
     // MARK: - Life cycle

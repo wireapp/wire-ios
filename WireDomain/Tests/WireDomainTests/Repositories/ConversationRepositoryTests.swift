@@ -39,7 +39,7 @@ final class ConversationRepositoryTests: XCTestCase {
     private var mlsService: MockMLSServiceInterface!
     private var mlsProvider: MLSProvider!
     private var modelHelper: ModelHelper!
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
 
@@ -56,7 +56,7 @@ final class ConversationRepositoryTests: XCTestCase {
         conversationsLocalStore = MockConversationLocalStoreProtocol()
         conversationsAPI = MockConversationsAPI()
         userRepository = MockUserRepositoryProtocol()
-        
+
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
 
@@ -87,9 +87,8 @@ final class ConversationRepositoryTests: XCTestCase {
     // MARK: - Tests
 
     func testPullFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        
         // Mock
-        
+
         conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
                 element: [Scaffolding.id],
@@ -103,11 +102,11 @@ final class ConversationRepositoryTests: XCTestCase {
             notFound: [],
             failed: []
         )
-        
-        conversationsLocalStore.storeConversationTimestampIsFederationEnabled_MockMethod = { _, _, _ in}
+
+        conversationsLocalStore.storeConversationTimestampIsFederationEnabled_MockMethod = { _, _, _ in }
 
         // When
-       
+
         try await sut.pullConversations()
 
         // Then
@@ -118,7 +117,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testPullNotFoundConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        
         // Mock
 
         conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
@@ -134,22 +132,21 @@ final class ConversationRepositoryTests: XCTestCase {
             notFound: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
             failed: []
         )
-        
-        conversationsLocalStore.storeConversationNeedsBackendUpdateQualifiedId_MockMethod = { _, _ in}
+
+        conversationsLocalStore.storeConversationNeedsBackendUpdateQualifiedId_MockMethod = { _, _ in }
 
         // When
-        
+
         try await sut.pullConversations()
 
         // Then
-        
+
         XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.storeConversationNeedsBackendUpdateQualifiedId_Invocations.count, 1)
     }
 
     func testPullFailedConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        
         // Mock
 
         conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
@@ -165,22 +162,21 @@ final class ConversationRepositoryTests: XCTestCase {
             notFound: [],
             failed: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)]
         )
-        
-        conversationsLocalStore.storeFailedConversationWithQualifiedId_MockMethod = { _ in}
+
+        conversationsLocalStore.storeFailedConversationWithQualifiedId_MockMethod = { _ in }
 
         // When
-        
+
         try await sut.pullConversations()
 
         // Then
-        
+
         XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.storeFailedConversationWithQualifiedId_Invocations.count, 1)
     }
 
     func testPullMLSOneToOneConversation_It_Invokes_Local_Store_And_API_Methods() async throws {
-        
         // Mock
 
         conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversation
@@ -194,14 +190,13 @@ final class ConversationRepositoryTests: XCTestCase {
         )
 
         // Then
-        
+
         XCTAssertEqual(mlsGroupID, Scaffolding.conversation.mlsGroupID)
         XCTAssertEqual(conversationsAPI.getMLSOneToOneConversationUserIDIn_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.storeConversationTimestampIsFederationEnabled_Invocations.count, 1)
     }
 
     func testRemoveParticipantFromAllGroupConversations_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
-        
         // Mock
 
         let user = await context.perform { [self] in
@@ -223,11 +218,9 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.removeParticipantFromAllGroupConversationsUserDate_Invocations.count, 1)
-        
     }
 
     func testPullConversation_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
-        
         // Mock
 
         conversationsAPI.getConversationsFor_MockValue = ConversationList(
@@ -235,7 +228,7 @@ final class ConversationRepositoryTests: XCTestCase {
             notFound: [],
             failed: []
         )
-        
+
         conversationsLocalStore.storeConversationTimestampIsFederationEnabled_MockMethod = { _, _, _ in }
 
         // When
@@ -252,7 +245,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testPullConversation_It_Throws_Error() async throws {
-        
         // Mock
 
         conversationsAPI.getConversationsFor_MockValue = ConversationList(
@@ -276,7 +268,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testFetchConversation_It_Invokes_Local_Store_Method() async {
-        
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -286,7 +277,7 @@ final class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
         }
-        
+
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
 
         // When
@@ -303,7 +294,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testDeleteMLSConversation_It_Invokes_Local_Store_Methods() async throws {
-        
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -341,7 +331,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testDeleteProteusConversation_It_Invokes_Local_Store_Methods() async throws {
-       
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -361,18 +350,17 @@ final class ConversationRepositoryTests: XCTestCase {
             id: Scaffolding.id,
             domain: Scaffolding.domain
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.isMLSConversation_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.deleteConversation_Invocations.count, 1)
     }
 
     func testStoreConversation_It_Invokes_Local_Store_Method() async {
-        
         // Mock
-        
+
         conversationsLocalStore.storeConversationTimestampIsFederationEnabled_MockMethod = { _, _, _ in }
 
         // When
@@ -388,7 +376,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testRemoveMembers_It_Invokes_Local_Store_User_Repo_Team_Repo_And_MLS_Service_Methods() async throws {
-        
         // Mock
 
         let (conversation, selfUser, senderUser, removedUser) = await context.perform { [self] in
@@ -445,7 +432,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testAddOrUpdateParticipant_It_Invokes_Local_Store_And_User_Repo_Methods() async {
-        
         // Mock
 
         let (updatedUser, conversation) = await context.perform { [self] in
@@ -482,10 +468,9 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testAddParticipants_It_Invokes_Local_Store_Methods() async throws {
-        
         // Mock
 
-        let (conversation) = await context.perform { [self] in
+        let conversation = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.id,
                 domain: Scaffolding.domain,
@@ -494,10 +479,8 @@ final class ConversationRepositoryTests: XCTestCase {
             return conversation
         }
 
-
         conversationsLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationsLocalStore.addParticipantsAddedByAtDateTo_MockMethod = { _, _, _, _ in }
-        
 
         // When
 
@@ -518,7 +501,6 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testAddSystemMessage_It_Invokes_Local_Store_Method() async {
-        
         // Mock
 
         let (conversation, user) = await context.perform { [self] in
@@ -527,9 +509,9 @@ final class ConversationRepositoryTests: XCTestCase {
                 domain: Scaffolding.domain,
                 in: context
             )
-            
+
             let user = modelHelper.createUser(in: context)
-            
+
             return (conversation, user)
         }
 
@@ -538,7 +520,7 @@ final class ConversationRepositoryTests: XCTestCase {
             sender: user,
             timestamp: .distantPast
         )
-        
+
         conversationsLocalStore.addSystemMessageTo_MockMethod = { _, _ in }
 
         // When
@@ -554,11 +536,11 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        
+
         static let id = UUID()
-        
+
         static let domain = "domain.com"
-        
+
         static let conversation = Conversation(
             id: id,
             qualifiedID: .init(uuid: id, domain: domain),

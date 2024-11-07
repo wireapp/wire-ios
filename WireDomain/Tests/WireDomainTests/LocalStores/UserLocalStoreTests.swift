@@ -66,16 +66,15 @@ final class UserLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testPersistUser_It_Stores_User_Locally() async throws {
-        
         // Mock
-        
+
         await context.perform { [context] in
             // There is no user in the database.
             XCTAssertNil(ZMUser.fetch(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context))
         }
 
         // When
-        
+
         await sut.persistUser(from: Scaffolding.user1)
 
         // Then
@@ -101,7 +100,6 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testDeletePushToken_It_Removes_Token_From_Defaults() async throws {
-        
         // Mock
 
         let key = "PushToken"
@@ -118,9 +116,8 @@ final class UserLocalStoreTests: XCTestCase {
         let pushToken = mockUserDefaults.object(forKey: key)
         XCTAssertNil(pushToken)
     }
-    
+
     func testFetchSelfUser_It_Retrieves_Self_User_Locally() async {
-       
         // Mock
 
         let selfUser = await context.perform { [self] in
@@ -143,7 +140,6 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testFetchUser_It_Retrieves_User_Locally() async throws {
-        
         // Mock
 
         let user = await context.perform { [self] in
@@ -169,7 +165,6 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testAddSelfLegalholdRequest_It_Sets_Status_To_Pending_With_Legal_Hold_Request() async throws {
-        
         // Mock
 
         _ = await context.perform { [self] in
@@ -201,9 +196,8 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testPostAccountDeletedNotification_It_Posts_Account_Deleted_Notification() async {
-        
         // Given
-        
+
         let expectation = XCTestExpectation()
         let notificationName = AccountDeletedNotification.notificationName
 
@@ -229,7 +223,6 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testMarkAccountAsDeleted_It_Sets_Is_Account_Deleted_Flag_To_True() async {
-        
         // Mock
 
         let user = await context.perform { [self] in
@@ -252,7 +245,6 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     func testUpdateSelfUserReadReceipts_It_Enables_Read_Receipts_Property() async {
-        
         // Mock
 
         let selfUser = await context.perform { [self] in
@@ -264,7 +256,7 @@ final class UserLocalStoreTests: XCTestCase {
 
             selfUser.readReceiptsEnabled = false
             selfUser.readReceiptsEnabledChangedRemotely = false
-            
+
             return selfUser
         }
 
@@ -345,7 +337,7 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        
+
         static let selfUserID = UUID()
         static let userID = UUID()
         static let domain = "domain.com"
@@ -405,4 +397,3 @@ final class UserLocalStoreTests: XCTestCase {
     }
 
 }
-

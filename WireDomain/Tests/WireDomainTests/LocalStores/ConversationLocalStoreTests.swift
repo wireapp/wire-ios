@@ -30,7 +30,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     private var sut: ConversationLocalStore!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
-    
+
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -65,16 +65,15 @@ final class ConversationLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testStoreConversation_It_Stores_Conversation_Locally() async throws {
-        
         // Mock
-        
+
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let id = qualifiedID.uuid
         let domain = qualifiedID.domain
 
         // When
-        
+
         await sut.storeConversation(
             groupConversation,
             timestamp: .distantPast,
@@ -82,12 +81,12 @@ final class ConversationLocalStoreTests: XCTestCase {
         )
 
         // Then
-        
+
         let localConversation = await sut.fetchConversation(
             id: id,
             domain: domain
         )
-        
+
         await context.perform {
             XCTAssertNotNil(localConversation)
             XCTAssertEqual(localConversation?.remoteIdentifier, id)
@@ -96,25 +95,25 @@ final class ConversationLocalStoreTests: XCTestCase {
 
     func testStoreFailedConversation_It_Sets_Pending_Metadata_Refresh_And_Backend_Update_Flags_To_True() async throws {
         // Given
-        
+
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let id = qualifiedID.uuid
         let domain = qualifiedID.domain
 
         // When
-        
+
         await sut.storeFailedConversation(
             withQualifiedId: qualifiedID
         )
 
         // Then
-        
+
         let localConversation = await sut.fetchConversation(
             id: id,
             domain: domain
         )
-        
+
         await context.perform {
             XCTAssertEqual(localConversation?.isPendingMetadataRefresh, true)
             XCTAssertEqual(localConversation?.needsToBeUpdatedFromBackend, true)
@@ -122,42 +121,40 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testStoreConversation_It_Needs_Backend_Update() async throws {
-        
         // Mock
-        
+
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
         let id = qualifiedID.uuid
         let domain = qualifiedID.domain
-        
+
         await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(id: id, in: context)
             XCTAssertEqual(conversation.needsToBeUpdatedFromBackend, false)
         }
 
         // When
-        
+
         await sut.storeConversation(
             needsBackendUpdate: true,
             qualifiedId: qualifiedID
         )
 
         // Then
-        
+
         let localConversation = await sut.fetchConversation(
             id: id,
             domain: domain
         )
-        
+
         await context.perform {
             XCTAssertEqual(localConversation?.needsToBeUpdatedFromBackend, true)
         }
     }
 
     func testFetchMLSConversation_It_Retrieves_Conversation_Locally() async throws {
-        
         // Mock
-        
+
         let mlsGroupID = try XCTUnwrap(
             MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)
         )
@@ -183,7 +180,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testRemoveParticipantFromAllGroupConversation_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
-        
         // Mock
 
         let user = try await context.perform { [self] in
@@ -255,7 +251,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testRemoveParticipantFromConversation_It_Removes_Participant() async {
-        
         // Mock
 
         let (removedUser, remainingUsers, conversation) = await context.perform { [self] in
@@ -289,7 +284,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testAddOrUpdateParticipant_It_Adds_Participant_To_Conversation() async {
-        
         // Mock
 
         let (addedUser, conversation) = await context.perform { [self] in
@@ -323,7 +317,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testFetchConversation_It_Retrieves_Conversation_Locally() async {
-        
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -347,7 +340,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testDeleteConversation_It_Marks_Conversation_As_Deleted_Locally() async {
-        
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -366,7 +358,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testRemoveParticipants_It_Removes_Participant_From_A_Given_Conversation() async {
-        
         // Mock
 
         let (conversation, selfUser, senderUser, removedUser) = await context.perform { [self] in
@@ -386,7 +377,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
 
         // When
-        
+
         await sut.removeParticipantsAndUpdateConversationState(
             conversation: conversation,
             users: [removedUser],
@@ -403,7 +394,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testAddOrUpdateParticipant_It_Updates_Participant_Role_In_Conversation() async throws {
-        
         // Mock
 
         let (updatedUser, conversation) = await context.perform { [self] in
@@ -435,7 +425,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testAddParticipants_It_Adds_Participants_To_Conversation() async throws {
-        
         // Mock
 
         let (conversation, sender, addedUser) = await context.perform { [self] in
@@ -483,7 +472,6 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
-        
         // Mock
 
         let (conversation, user) = await context.perform { [self] in
@@ -548,25 +536,25 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        
+
         static let selfUserId = UUID()
-        
+
         static let domain = "domain.com"
-        
+
         static let teamID = UUID()
-        
+
         static let userID = UUID()
-        
+
         static let otherUserID = UUID()
-        
+
         static let time = "2021-05-12T10:52:02.671Z"
-        
+
         static let teamConversationID = UUID()
-        
+
         static let anotherTeamConversationID = UUID()
-        
+
         static let conversationID = UUID()
-        
+
         static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         static func date(from string: String) -> Date {
