@@ -37,7 +37,6 @@ struct FolderRow: View {
                     Image(systemName: "checkmark").foregroundColor(Color.primary)
                 }
             }
-
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("row.folder.\(folder.identifier?.uuidString ?? "")")
@@ -47,5 +46,5 @@ struct FolderRow: View {
 }
 
 #Preview {
-    FolderRow(folder: Folder(identifier: nil, name: "Friends"), isSelected: true) { }
+    FolderRow(folder: Folder(identifier: nil, name: "Friends"), isSelected: true) {}
 }
