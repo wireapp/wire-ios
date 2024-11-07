@@ -672,7 +672,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
-        ZClientViewController.shared?.present(navigationController, animated: true)
+        navigationController.presentOverAll(animated: true)
     }
 
 }
