@@ -89,8 +89,6 @@ extension ConversationLocalStore {
             }
         }
 
-        guard let mlsService else { return }
-
         let conversationExists: Bool
 
         do {
