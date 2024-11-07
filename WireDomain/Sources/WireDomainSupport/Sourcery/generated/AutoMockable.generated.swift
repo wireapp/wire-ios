@@ -1320,6 +1320,133 @@ class MockUpdateEventProcessorProtocol: UpdateEventProcessorProtocol {
 
 }
 
+class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - lastEventID
+
+    var lastEventID_Invocations: [Void] = []
+    var lastEventID_MockMethod: (() -> UUID?)?
+    var lastEventID_MockValue: UUID??
+
+    func lastEventID() -> UUID? {
+        lastEventID_Invocations.append(())
+
+        if let mock = lastEventID_MockMethod {
+            return mock()
+        } else if let mock = lastEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `lastEventID`")
+        }
+    }
+
+    // MARK: - storeLastEventID
+
+    var storeLastEventIDId_Invocations: [UUID] = []
+    var storeLastEventIDId_MockMethod: ((UUID) -> Void)?
+
+    func storeLastEventID(id: UUID) {
+        storeLastEventIDId_Invocations.append(id)
+
+        guard let mock = storeLastEventIDId_MockMethod else {
+            fatalError("no mock for `storeLastEventIDId`")
+        }
+
+        mock(id)
+    }
+
+    // MARK: - indexOfLastEventEnvelope
+
+    var indexOfLastEventEnvelope_Invocations: [Void] = []
+    var indexOfLastEventEnvelope_MockError: Error?
+    var indexOfLastEventEnvelope_MockMethod: (() async throws -> Int64)?
+    var indexOfLastEventEnvelope_MockValue: Int64?
+
+    func indexOfLastEventEnvelope() async throws -> Int64 {
+        indexOfLastEventEnvelope_Invocations.append(())
+
+        if let error = indexOfLastEventEnvelope_MockError {
+            throw error
+        }
+
+        if let mock = indexOfLastEventEnvelope_MockMethod {
+            return try await mock()
+        } else if let mock = indexOfLastEventEnvelope_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `indexOfLastEventEnvelope`")
+        }
+    }
+
+    // MARK: - persistEventEnvelope
+
+    var persistEventEnvelopeIndex_Invocations: [(data: Data, index: Int64)] = []
+    var persistEventEnvelopeIndex_MockError: Error?
+    var persistEventEnvelopeIndex_MockMethod: ((Data, Int64) async throws -> Void)?
+
+    func persistEventEnvelope(_ data: Data, index: Int64) async throws {
+        persistEventEnvelopeIndex_Invocations.append((data: data, index: index))
+
+        if let error = persistEventEnvelopeIndex_MockError {
+            throw error
+        }
+
+        guard let mock = persistEventEnvelopeIndex_MockMethod else {
+            fatalError("no mock for `persistEventEnvelopeIndex`")
+        }
+
+        try await mock(data, index)
+    }
+
+    // MARK: - fetchStoredEventEnvelopePayloads
+
+    var fetchStoredEventEnvelopePayloadsLimit_Invocations: [UInt] = []
+    var fetchStoredEventEnvelopePayloadsLimit_MockError: Error?
+    var fetchStoredEventEnvelopePayloadsLimit_MockMethod: ((UInt) async throws -> [Data])?
+    var fetchStoredEventEnvelopePayloadsLimit_MockValue: [Data]?
+
+    func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
+        fetchStoredEventEnvelopePayloadsLimit_Invocations.append(limit)
+
+        if let error = fetchStoredEventEnvelopePayloadsLimit_MockError {
+            throw error
+        }
+
+        if let mock = fetchStoredEventEnvelopePayloadsLimit_MockMethod {
+            return try await mock(limit)
+        } else if let mock = fetchStoredEventEnvelopePayloadsLimit_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchStoredEventEnvelopePayloadsLimit`")
+        }
+    }
+
+    // MARK: - deleteNextPendingEvents
+
+    var deleteNextPendingEventsLimit_Invocations: [UInt] = []
+    var deleteNextPendingEventsLimit_MockError: Error?
+    var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
+
+    func deleteNextPendingEvents(limit: UInt) async throws {
+        deleteNextPendingEventsLimit_Invocations.append(limit)
+
+        if let error = deleteNextPendingEventsLimit_MockError {
+            throw error
+        }
+
+        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
+            fatalError("no mock for `deleteNextPendingEventsLimit`")
+        }
+
+        try await mock(limit)
+    }
+
+}
+
 class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
     // MARK: - Life cycle
