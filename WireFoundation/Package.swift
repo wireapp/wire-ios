@@ -10,7 +10,8 @@ let package = Package(
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
         .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
-        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
+        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
+        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -21,7 +22,8 @@ let package = Package(
         .target(name: "WireFoundation"),
         .testTarget(
             name: "WireFoundationTests",
-            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
+            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"],
+            plugins: ["SnapshotTestReferenceDirectoryPlugin"]
         ),
         .target(
             name: "WireFoundationSupport",
@@ -45,7 +47,8 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        )
+        ),
+        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", capability: .buildTool())
     ]
 )
 
