@@ -45,7 +45,7 @@ extension ZMAddressBookContact {
 
         composeController.setMessageBody(invitationBody(), isHTML: false)
         composeController.setToRecipients([email])
-        ZClientViewController.shared?.present(composeController, animated: true, completion: .none)
+        composeController.presentOverAll(animated: true)
     }
 
     static func canInviteLocallyWithPhoneNumber() -> Bool {
@@ -58,7 +58,7 @@ extension ZMAddressBookContact {
         composeController.modalPresentationStyle = .formSheet
         composeController.body = invitationBody()
         composeController.recipients = [phoneNumber]
-        ZClientViewController.shared?.present(composeController, animated: true, completion: .none)
+        composeController.presentOverAll(animated: true)
     }
 
     private func invitationBody() -> String {

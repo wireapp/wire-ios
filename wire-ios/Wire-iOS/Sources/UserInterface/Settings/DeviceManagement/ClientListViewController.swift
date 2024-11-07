@@ -203,7 +203,7 @@ final class ClientListViewController: UIViewController,
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
             }
-            successEnrollmentViewController.presentTopmost()
+            successEnrollmentViewController.presentOverAll()
         }
         selectedDeviceInfoViewModel = viewModel
 

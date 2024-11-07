@@ -597,7 +597,7 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
-                viewController.presentTopmost(animated: animated, completion: completion)
+                viewController.presentOverAll(animated: animated, completion: completion)
             })
     }
 

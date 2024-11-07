@@ -192,7 +192,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let hostingViewController = UIHostingController(rootView: detailsView)
         wrapNavigationController.viewControllers = [hostingViewController]
         wrapNavigationController.isNavigationBarHidden = true
-        wrapNavigationController.presentTopmost()
+        wrapNavigationController.presentOverAll()
     }
 
     @MainActor

@@ -283,7 +283,7 @@ extension BlockerViewController {
         successEnrollmentViewController.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
         }
-        successEnrollmentViewController.presentTopmost()
+        successEnrollmentViewController.presentOverAll()
     }
 
 }
