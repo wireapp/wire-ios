@@ -56,6 +56,35 @@ import WireDataModel
 
 
 
+public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - storeConnection
+
+    public var storeConnection_Invocations: [Connection] = []
+    public var storeConnection_MockError: Error?
+    public var storeConnection_MockMethod: ((Connection) async throws -> Void)?
+
+    public func storeConnection(_ connectionPayload: Connection) async throws {
+        storeConnection_Invocations.append(connectionPayload)
+
+        if let error = storeConnection_MockError {
+            throw error
+        }
+
+        guard let mock = storeConnection_MockMethod else {
+            fatalError("no mock for `storeConnection`")
+        }
+
+        try await mock(connectionPayload)
+    }
+
+}
+
 public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
     // MARK: - Life cycle

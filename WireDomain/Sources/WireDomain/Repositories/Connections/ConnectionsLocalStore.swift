@@ -21,7 +21,8 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-protocol ConnectionsLocalStoreProtocol {
+// sourcery: AutoMockable
+public protocol ConnectionsLocalStoreProtocol {
 
     func storeConnection(
         _ connectionPayload: Connection
