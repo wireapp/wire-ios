@@ -25,8 +25,13 @@ public extension UINavigationController {
         animated: Bool,
         completion: @escaping () -> Void
     ) {
-        fatalError() // TODO: finish
-        //setViewControllers(<#T##viewControllers: [UIViewController]##[UIViewController]#>, animated: <#T##Bool#>)
+        setViewControllers(viewControllers, animated: animated)
+
+        guard animated, let coordinator = transitionCoordinator else {
+            return DispatchQueue.main.async { completion() }
+        }
+
+        coordinator.animate(alongsideTransition: nil) { _ in completion() }
     }
 
     func pushViewController(
