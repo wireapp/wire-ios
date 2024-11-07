@@ -84,4 +84,22 @@ public extension UINavigationController {
             popViewController(animated: animated, completion: continuation.resume)
         }
     }
+
+    // MARK: - popToRootViewController
+
+    func popToRootViewController(animated: Bool, completion: @escaping () -> Void) {
+        popToRootViewController(animated: animated)
+
+        guard animated, let coordinator = transitionCoordinator else {
+            return DispatchQueue.main.async { completion() }
+        }
+
+        coordinator.animate(alongsideTransition: nil) { _ in completion() }
+    }
+
+    func popToRootViewController(animated: Bool) async {
+        await withCheckedContinuation { continuation in
+            popToRootViewController(animated: animated, completion: continuation.resume)
+        }
+    }
 }
