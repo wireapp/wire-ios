@@ -36,14 +36,13 @@ public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
     func showConversation(conversation: ConversationModel, message: ConversationMessageModel?) async
-    /// This method will be called by the custom back button in the conversation content screen.
     @MainActor
-    func hideConversation()
+    func hideConversation() async
 
     @MainActor
-    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem)
+    func showSettingsContent(_ topLevelMenuItem: SettingsTopLevelMenuItem) async
     @MainActor
-    func hideSettingsContent()
+    func hideSettingsContent() async
 
     @MainActor
     func presentViewController(_ viewController: UIViewController) async

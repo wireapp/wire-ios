@@ -88,26 +88,26 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertNotNil(mockMainCoordinator.showConversation_Invocations.first?.message)
     }
 
-    func testHideConversationIsInvoked() {
+    func testHideConversationIsInvoked() async {
         // When
-        sut.hideConversation()
+        await sut.hideConversation()
 
         // Then
         XCTAssertEqual(mockMainCoordinator.hideConversation_Invocations.count, 1)
     }
 
-    func testShowSettingsContentIsInvoked() {
+    func testShowSettingsContentIsInvoked() async {
         // When
-        sut.showSettingsContent(.advanced)
+        await sut.showSettingsContent(.advanced)
 
         // Then
         XCTAssertEqual(mockMainCoordinator.showSettingsContent_Invocations.count, 1)
         XCTAssertEqual(mockMainCoordinator.showSettingsContent_Invocations.first, .advanced)
     }
 
-    func testHideSettingsContentIsInvoked() {
+    func testHideSettingsContentIsInvoked() async {
         // When
-        sut.hideSettingsContent()
+        await sut.hideSettingsContent()
 
         // Then
         XCTAssertEqual(mockMainCoordinator.hideSettingsContent_Invocations.count, 1)
