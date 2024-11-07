@@ -38,9 +38,7 @@ struct FolderList: View {
                     }
                 }
             )
-            .listRowBackground(
-                viewModel.isSelected(folder) ? Color(SemanticColors.View.backgroundUserCellHightLighted) : Color(SemanticColors.View.backgroundUserCell)
-            )
+            .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
         }
         .accessibilityIdentifier("list.folders")
     }

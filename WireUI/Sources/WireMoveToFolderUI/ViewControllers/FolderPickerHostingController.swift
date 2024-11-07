@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
-public final class FolderPickerViewController: UIHostingController<FolderPicker> {
+public final class FolderPickerHostingController: UIHostingController<FolderPicker> {
     private let viewModel: FolderPickerViewModel
 
     public init(viewModel: FolderPickerViewModel) {
@@ -27,7 +27,8 @@ public final class FolderPickerViewController: UIHostingController<FolderPicker>
         super.init(rootView: FolderPicker(viewModel: viewModel))
     }
 
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    @MainActor dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
