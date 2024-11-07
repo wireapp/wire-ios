@@ -39,7 +39,7 @@ struct FolderList: View {
                     }
                 }
             )
-            .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
+            .listRowBackground(ColorTheme.Backgrounds.surface)
         }
         .accessibilityIdentifier("list.folders")
     }

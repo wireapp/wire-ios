@@ -29,7 +29,7 @@ struct FolderRow: View {
             HStack {
                 Text(folder.name)
                     .font(isSelected ? .textStyle(.h3) : .textStyle(.body1))
-                    .foregroundStyle(Color(SemanticColors.Label.textDefault))
+                    .foregroundStyle(Color.primaryText)
 
                 Spacer()
 

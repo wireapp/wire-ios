@@ -44,6 +44,7 @@ public struct FolderPicker: View {
                     )
                 }
             }
+            .background(Color.viewBackground)
             .navigationTitle(Text("folder.picker.title", tableName: "Localizable", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
