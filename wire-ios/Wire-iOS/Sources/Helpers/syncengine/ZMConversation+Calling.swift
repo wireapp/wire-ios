@@ -109,7 +109,7 @@ extension ZMConversation {
             badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
                 handler(true)
             })
-            
+
             badConnectionController.presentOverAll(animated: true)
         } else {
             handler(false)

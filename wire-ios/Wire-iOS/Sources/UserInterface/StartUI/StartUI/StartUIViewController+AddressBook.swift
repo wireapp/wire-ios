@@ -42,7 +42,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
             // do nothing just dismiss
             return
         }
-        
+
         if let navigationController = viewController.navigationController {
             var viewControllers = navigationController.viewControllers
             _ = viewControllers.popLast()
