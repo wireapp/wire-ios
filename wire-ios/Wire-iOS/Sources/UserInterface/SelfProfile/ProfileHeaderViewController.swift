@@ -418,6 +418,7 @@ final class ProfileHeaderViewController: UIViewController {
     private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
         guard
             let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+            let profileDeepLink = selfUser.profileDeepLink,
             let handle = selfUser.handle
         else {
             return nil
@@ -425,6 +426,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         return UserQRCodeViewModel(
             profileLink: profileLink,
+            profileDeepLink: profileDeepLink,
             handle: handle
         )
     }
