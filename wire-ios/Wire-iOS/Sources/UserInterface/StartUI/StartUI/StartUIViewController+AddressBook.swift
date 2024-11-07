@@ -38,11 +38,16 @@ extension StartUIViewController {
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
-
+        guard !needsAddressBookPermission else {
+            // do nothing just dismiss
+            return
+        }
+        
         if let navigationController = viewController.navigationController {
-            navigationController.popViewController(animated: true) {
-                self.inviteMoreButtonTapped(nil)
-            }
+            var viewControllers = navigationController.viewControllers
+            _ = viewControllers.popLast()
+            viewControllers.append(ContactsViewController())
+            navigationController.setViewControllers(viewControllers, animated: true)
         } else {
             viewController.dismiss(animated: true) {
                 self.inviteMoreButtonTapped(nil)
