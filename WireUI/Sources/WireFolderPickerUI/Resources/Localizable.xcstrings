@@ -1,0 +1,17 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "folderPicker.title" : {
+      "comment" : "Title displayed in the navigation bar of the folder picker view",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folders"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

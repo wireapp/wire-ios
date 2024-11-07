@@ -97,26 +97,3 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     }
 
 }
-
-extension ConversationLegalHoldSystemMessageCell {
-
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-
-        if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation,
-            let clientViewController = ZClientViewController.shared {
-
-            LegalHoldDetailsViewController.present(
-                in: clientViewController,
-                conversation: conversation,
-                userSession: clientViewController.userSession,
-                mainCoordinator: MainCoordinator(zClientViewController: clientViewController)
-            )
-
-            return true
-        }
-
-        return false
-    }
-
-}

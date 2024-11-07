@@ -32,28 +32,33 @@ extension ConversationInputBarViewController {
         guard let parentViewController = self.parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
-        locationSelectionViewController.modalPresentationStyle = .popover
+        locationSelectionViewController.title = conversation.displayName
+        locationSelectionViewController.delegate = self
 
-        if let popover = locationSelectionViewController.popoverPresentationController {
+        let navigationController = UINavigationController(rootViewController: locationSelectionViewController)
+        navigationController.modalPresentationStyle = .popover
+
+        if let popover = navigationController.popoverPresentationController {
             popover.sourceView = sender.superview!
             popover.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
         }
 
-        locationSelectionViewController.title = conversation.displayName
-        locationSelectionViewController.delegate = self
-        parentViewController.present(locationSelectionViewController, animated: true)
+        parentViewController.present(navigationController, animated: true)
     }
 }
 
 extension ConversationInputBarViewController: LocationSelectionViewControllerDelegate {
 
-    func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData) {
+    func locationSelectionViewController(
+        _ viewController: LocationSelectionViewController,
+        didSelectLocationWithData locationData: LocationData
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         userSession.enqueue {
             do {
-                try conversation.appendLocation(with: locationData)
-                Analytics.shared.tagMediaActionCompleted(.location, inConversation: conversation)
+                let useCase = self.userSession.makeAppendLocationMessageUseCase()
+                try useCase.invoke(withLocationData: locationData, in: conversation)
             } catch {
                 Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
             }
