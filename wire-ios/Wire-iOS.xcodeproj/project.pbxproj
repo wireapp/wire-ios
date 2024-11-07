@@ -1381,6 +1381,7 @@
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
 		E966C5022CDCCD5E00BF1195 /* Folder+LabelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */; };
+		E966C5042CDCCDDA00BF1195 /* Conversation+ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */; };
 		E96AB4F92C071BC300792DA9 /* FilterImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4F82C071BC300792DA9 /* FilterImageName.swift */; };
 		E96AB4FC2C07262400792DA9 /* FilterButtonStyleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */; };
 		E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96C8830281706640003245E /* UIViewController+DynamicType.swift */; };
@@ -3396,6 +3397,7 @@
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+LabelType.swift"; sourceTree = "<group>"; };
+		E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+ZMConversation.swift"; sourceTree = "<group>"; };
 		E96AB4F82C071BC300792DA9 /* FilterImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageName.swift; sourceTree = "<group>"; };
 		E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonStyleHelper.swift; sourceTree = "<group>"; };
 		E96C8830281706640003245E /* UIViewController+DynamicType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DynamicType.swift"; sourceTree = "<group>"; };
@@ -5475,6 +5477,7 @@
 		7C440E7123472BF500D91B5F /* Folders */ = {
 			isa = PBXGroup;
 			children = (
+				E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */,
 				E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */,
 				7C440E7423472C5200D91B5F /* FolderCreationController.swift */,
 				7C440E7723472DFB00D91B5F /* FolderCreationNameSectionController.swift */,
