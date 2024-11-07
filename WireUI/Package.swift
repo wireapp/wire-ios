@@ -14,6 +14,7 @@ let package = Package(
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
+        .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
@@ -38,8 +39,8 @@ let package = Package(
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireIndividualToTeamMigration", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
-        .testTarget(name: "WireIndividualToTeamMigrationTests", dependencies: ["WireIndividualToTeamMigration"]),
+        .target(name: "WireIndividualToTeamMigrationUI", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
+        .testTarget(name: "WireIndividualToTeamMigrationUITests", dependencies: ["WireIndividualToTeamMigrationUI"]),
 
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),

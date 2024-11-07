@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct TeamNameView: View {
 
@@ -29,20 +30,22 @@ struct TeamNameView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Select a name for your team. You can change it at any time.")
+            Text(String.localized(key: "individualToTeam.teamName.body", bundle: .module))
+                .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
-            Text("Team name *")
-                .font(.caption)
-            TextField("Your team", text: $teamName)
+            Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module))
+                .wireTextStyle(.h4)
+            TextField(String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module), text: $teamName)
                 .textFieldStyle(.roundedBorder)
+                .wireTextStyle(.body1)
             Spacer()
             BackButton(
-                action: { },
-                title: "Back"
+                title: String.localized(key: "individualToTeam.button.back", bundle: .module),
+                action: { }
             )
             CallToActionButton(
-                title: "Continue",
+                title: String.localized(key: "individualToTeam.button.continue", bundle: .module),
                 action: { }
             )
         }

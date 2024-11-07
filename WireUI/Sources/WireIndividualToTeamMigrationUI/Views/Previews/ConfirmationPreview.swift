@@ -17,23 +17,17 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireFoundation
-import WireReusableUIComponents
 
-struct CallToActionButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(
-            action: action,
-            label: { Text(title) }
-        )
-        .foregroundStyle(.white)
-        .fontWeight(.bold)
-        .frame(height: 56)
-        .frame(maxWidth: .infinity)
-        .background(AccentColor.blue.color)
-        .cornerRadius(16)
-    }
+#Preview {
+    PageContainer(
+        content: {
+            ConfirmationView()
+        },
+        step: 3,
+        stepCount: 4,
+        stepTitle: String.localized(key: "individualToTeam.confirmation.title", bundle: .module)
+    )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

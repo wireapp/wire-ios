@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+struct IndividualToTeamMigrationResult {
 
-struct TeamPlanFeature: Hashable, Identifiable {
-    let id: String
-    let description: AttributedString
+}
 
-    init?(id: String, description: String) {
-        self.id = id
-        do {
-            self.description = try AttributedString(markdown: description)
-        } catch {
-            print("Failed to parse markdown for TeamPlanFeature: \(error)")
-            return nil
-        }
-    }
+protocol IndividualToTeamMigrationUseCase {
+    func migrateToTeam(password: String, teamName: String) async throws -> IndividualToTeamMigrationResult
 }

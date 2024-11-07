@@ -17,14 +17,23 @@
 //
 
 import SwiftUI
+import WireFoundation
+import WireReusableUIComponents
 
-#Preview {
-    WireIndividualToTeamMigrationContainerView(
-        content: {
-            TeamNameView()
-        },
-        step: 3,
-        stepCount: 4,
-        stepTitle: "Confirmation"
-    )
+struct CallToActionButton: View {
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(
+            action: action,
+            label: { Text(title) }
+        )
+        .foregroundStyle(.white)
+        .wireTextStyle(.buttonBig)
+        .frame(height: 56)
+        .frame(maxWidth: .infinity)
+        .background(AccentColor.blue.color)
+        .cornerRadius(16)
+    }
 }

@@ -40,27 +40,42 @@ import SwiftUI
 struct TeamPlanSelectionView: View {
 
     enum Action {
+        case goToPlans
         case goBack
         case `continue`
     }
 
     let features: [TeamPlanFeature]
-    let plansURL: URL
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Transform your personal account into a team account to get more out of your collaboration.")
+            Text(String.localized(key: "individualToTeam.planSelection.body", bundle: .module))
+                .wireTextStyle(.body1)
             Spacer()
                 .frame(height: 24)
-            List {
-                ForEach(features, content: FeatureDescriptionComponent.init(feature:))
-                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 0, trailing: 12))
+            VStack(alignment: .leading) {
+                ForEach(features) { feature in
+                    FeatureDescriptionComponent(feature: feature)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
+                    if feature != features.last {
+                        Divider()
+                    }
+                }
             }
-            .listStyle(.plain)
-            Text("[Learn more about Wire's plans](\(plansURL))")
+            // TODO: Add a "link" Text Style?
+            Button(
+                action: { },
+                label: {
+                    Text(String.localized(key: "individualToTeam.planSelection.url", bundle: .module))
+                        .tint(.primary)
+                        .underline()
+                }
+            )
+            .padding(.top, 4)
             Spacer()
             CallToActionButton(
-                title: "Continue",
+                title: String.localized(key: "individualToTeam.button.continue", bundle: .module),
                 action: { }
             )
         }

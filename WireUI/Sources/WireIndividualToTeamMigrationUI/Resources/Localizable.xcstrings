@@ -1,0 +1,306 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "individualToTeam.button.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "individualToTeam.button.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "individualToTeam.completion.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re now the owner of the team %@.\n\nGo to Team Management to: \n• Invite your first team members, and start working together\n• Customize your team settings"
+          }
+        }
+      }
+    },
+    "individualToTeam.completion.button.backToApp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back To Wire"
+          }
+        }
+      }
+    },
+    "individualToTeam.completion.button.teamManagement" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go To Team Management"
+          }
+        }
+      }
+    },
+    "individualToTeam.completion.headline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re now the owner of the team %@."
+          }
+        }
+      }
+    },
+    "individualToTeam.completion.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Congratulations %@!"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• You create a team and transfer your personal account into a team account\n• As the team owner you can invite and remove team members and  manage team settings\n• This change is permanent and irrevocable"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.passwordField.forgotPassword" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgot password?"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.passwordField.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.permanentMigrationCheckbox" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I understand that this migration from Personal to Team is permanent and cannot be undone."
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.termsCheckbox" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept our [Terms & Conditions](https://wire.com/en/terms-of-use-business) and [Privacy Policy](https://wire.com/en/privacy-policy)."
+          }
+        }
+      }
+    },
+    "individualToTeam.confirmation.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmation"
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transform your personal account into a team account to get more out of your collaboration."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.feature.adminConsole" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Admin Console**: Invite team members and manage settings."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.feature.collaboration" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Effortless Collaboration**: Communicate with guests and external parties."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.feature.enterprise" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Upgrade to Enterprise**: Get additional features and premium support."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.feature.meetings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Larger Meetings**: Join video conferences up to 150 participants."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.feature.status" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Availability Status**: Let your team know if you’re available, busy or away."
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team Account"
+          }
+        }
+      }
+    },
+    "individualToTeam.planSelection.url" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn more about Wire's plans"
+          }
+        }
+      }
+    },
+    "individualToTeam.plansURL" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://wire.com/en/pricing"
+          }
+        }
+      }
+    },
+    "individualToTeam.progressCount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %d of %d"
+          }
+        }
+      }
+    },
+    "individualToTeam.teamName.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a name for your team. You can change it at any time."
+          }
+        }
+      }
+    },
+    "individualToTeam.teamName.field.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your team"
+          }
+        }
+      }
+    },
+    "individualToTeam.teamName.field.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team name *"
+          }
+        }
+      }
+    },
+    "individualToTeam.teamName.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team Name"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

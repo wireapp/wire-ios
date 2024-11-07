@@ -17,38 +17,40 @@
 //
 
 import SwiftUI
+import WireDesign
+import WireFoundation
 
 #Preview {
-    WireIndividualToTeamMigrationContainerView(
+    PageContainer(
         content: {
-            TeamPleanSelectionView(
+            TeamPlanSelectionView(
                 features: [
                     .init(
                         id: "console",
-                        description: "**Admin Console**: Invite team members and manage settings."
+                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.adminConsole", bundle: .module)
                     ),
                     .init(
                         id: "collaboration",
-                        description: "**Effortless Collaboration**: Communicate with guests and external parties."
+                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.collaboration", bundle: .module)
                     ),
                     .init(
                         id: "meetings",
-                        description: "**Larger Meetings**: Join video conferences up to 150 participants."
+                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.meetings", bundle: .module)
                     ),
                     .init(
                         id: "status",
-                        description: "**Availability Status**: Let your team know if you’re available, busy or away."
+                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.status", bundle: .module)
                     ),
                     .init(
                         id: "enterprise",
-                        description: "**Upgrade to Enterprise**: Get additional features and premium support."
+                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.enterprise", bundle: .module)
                     )
-                ].compactMap { $0 },
-                plansURL: URL(string: "https://wire.com/en/pricing")!
+                ]
             )
         },
         step: 1,
         stepCount: 4,
         stepTitle: "Team Plan"
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
