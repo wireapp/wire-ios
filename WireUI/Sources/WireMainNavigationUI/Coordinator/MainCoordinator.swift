@@ -403,14 +403,14 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
     }
 
     // MARK: - Legacy Helpers
-// TODO: on iPhone when settings are visible, no notification is shown
+
     /// A notification should be shown if the conversation list is the topmost view controller.
     public var isConversationListVisible: Bool {
         guard splitViewController.presentedViewController == nil else { return false }
 
         return switch mainSplitViewState {
         case .collapsed:
-            tabBarController.conversationListUI != nil &&
+            tabBarController.selectedContent == .conversations &&
                 tabBarController.conversationUI == nil
 
         case .expanded:
@@ -425,7 +425,8 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
 
         return switch mainSplitViewState {
         case .collapsed:
-            tabBarController.conversationUI != nil
+            tabBarController.selectedContent == .conversations &&
+                tabBarController.conversationUI != nil
         case .expanded:
             splitViewController.conversationUI != nil
         }

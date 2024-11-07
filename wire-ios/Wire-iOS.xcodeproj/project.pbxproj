@@ -6285,7 +6285,6 @@
 				065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */,
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
-				E970F6E22CC900D8007A2CEB /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -7832,13 +7831,6 @@
 				E96AB4F82C071BC300792DA9 /* FilterImageName.swift */,
 			);
 			path = "ConversationListViewController+NavigationBar";
-			sourceTree = "<group>";
-		};
-		E970F6E22CC900D8007A2CEB /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {

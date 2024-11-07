@@ -671,6 +671,9 @@ final class ZClientViewController: UIViewController {
     ) {
         Task {
             await dismissAllModalControllers()
+            if mainTabBarController.selectedContent != .conversations {
+                await mainCoordinator.showConversationList(conversationFilter: .none)
+            }
 
             guard !conversation.isDeleted, conversation.managedObjectContext != nil else { return }
 
