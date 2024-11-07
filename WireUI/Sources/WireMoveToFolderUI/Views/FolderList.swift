@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireSystem
 
 struct FolderList: View {
     @ObservedObject var viewModel: FolderPickerViewModel
@@ -33,7 +34,7 @@ struct FolderList: View {
                         do {
                             try await onSelect(folder)
                         } catch {
-                            // Optionally handle error
+                            WireLogger.moveToFolder.error("Failed to select folder: \(folder.identifier)", error: error)
                         }
                     }
                 }
