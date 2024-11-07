@@ -36,12 +36,6 @@ public extension UINavigationController {
         coordinator.animate(alongsideTransition: nil) { _ in completion() }
     }
 
-    func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) async {
-        await withCheckedContinuation { continuation in
-            setViewControllers(viewControllers, animated: animated, completion: continuation.resume)
-        }
-    }
-
     // MARK: - pushViewController
 
     func pushViewController(
@@ -56,12 +50,6 @@ public extension UINavigationController {
         }
 
         coordinator.animate(alongsideTransition: nil) { _ in completion() }
-    }
-
-    func pushViewController(_ viewController: UIViewController, animated: Bool) async {
-        await withCheckedContinuation { continuation in
-            pushViewController(viewController, animated: animated, completion: continuation.resume)
-        }
     }
 
     // MARK: - popViewController
@@ -79,12 +67,6 @@ public extension UINavigationController {
         coordinator.animate(alongsideTransition: nil) { _ in completion() }
     }
 
-    func popViewController(animated: Bool) async {
-        await withCheckedContinuation { continuation in
-            popViewController(animated: animated, completion: continuation.resume)
-        }
-    }
-
     // MARK: - popToRootViewController
 
     func popToRootViewController(animated: Bool, completion: @escaping () -> Void) {
@@ -95,11 +77,5 @@ public extension UINavigationController {
         }
 
         coordinator.animate(alongsideTransition: nil) { _ in completion() }
-    }
-
-    func popToRootViewController(animated: Bool) async {
-        await withCheckedContinuation { continuation in
-            popToRootViewController(animated: animated, completion: continuation.resume)
-        }
     }
 }
