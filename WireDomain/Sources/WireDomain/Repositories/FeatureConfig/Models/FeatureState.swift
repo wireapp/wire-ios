@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-/// Errors originating from `FeatureConfigRepository`.
+/// The state of the feature
 
-enum FeatureConfigRepositoryError: Error {
-
-    /// Unable to fetch feature locally
-
-    case failedToFetchFeatureLocally
-
+struct FeatureState {
+    let name: Feature.Name
+    let isEnabled: Bool
+    let shouldNotifyUser: Bool
 }

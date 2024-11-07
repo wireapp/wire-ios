@@ -52,7 +52,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
                 featureConfigsAPI: MockFeatureConfigsAPI(),
-                context: context
+                featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
             userRepository: UserRepository(
                 usersAPI: MockUsersAPI(),
