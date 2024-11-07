@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-public struct SidebarView<AccountImageView>: View where AccountImageView: View {
+public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @Environment(\.sidebarMenuHeaderForegroundColor) private var menuHeaderForegroundColor
     @Environment(\.sidebarBackgroundColor) private var backgroundViewColor
@@ -35,6 +35,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
+    private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     @State private var iconSize: CGSize?
 
@@ -44,7 +45,8 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
+        accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView,
+        legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
@@ -52,6 +54,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
+        self.legalHoldIndicatorView = legalHoldIndicatorView
     }
 
     public var body: some View {
@@ -106,6 +109,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
                 accountImageView: {
                     accountImageView(accountInfo.accountImageSource, accountInfo.availability)
+                },
+                legalHoldIndicatorView: {
+                    EmptyView() // TODO: fix
                 }
             )
         }

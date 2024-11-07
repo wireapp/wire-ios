@@ -52,6 +52,9 @@ struct SidebarPreview: View {
                     supportAction: {},
                     accountImageView: { accountImage, availability in
                         MockAccountImageView(accountImage: accountImage, availability: availability)
+                    },
+                    legalHoldIndicatorView: {
+                        MockLegalHoldIndicatorView()
                     }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)
@@ -77,5 +80,12 @@ struct MockAccountImageView: View {
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.green)
         }
+    }
+}
+
+struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
     }
 }

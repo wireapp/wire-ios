@@ -20,7 +20,7 @@ import SwiftUI
 import WireFoundation
 import WireReusableUIComponents
 
-struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: View {
+struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @Environment(\.sidebarAccountInfoViewDisplayNameColor) private var displayNameColor
     @Environment(\.sidebarAccountInfoViewUsernameColor) private var usernameColor
@@ -34,6 +34,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
     let isVerified: Bool
     let isLegalHoldIndicatorVisible: Bool
     let accountImageView: () -> AccountImageView
+    let legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     @State private var displayNameHeight: CGFloat = 0
     @State private var usernameHeight: CGFloat = 0
@@ -55,10 +56,10 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                 Rectangle()
                     .frame(width: displayNameHeight + usernameHeight, height: 0)
                     .padding(.trailing, 8)
-                LegalHoldIndicatorView()
+                legalHoldIndicatorView()
                     .frame(height: usernameHeight)
                     .padding(.trailing, 4)
-                    .legalHoldIndicatorColor(legalHoldIndicatorColor)
+                    // .legalHoldIndicatorColor(legalHoldIndicatorColor) // TODO: clean up
                 Text("sidebar.legalHold.title", bundle: .module)
                     .wireTextStyle(.subline1)
             }
@@ -128,7 +129,8 @@ extension SidebarAccountInfoView {
         _ isE2EICertified: Bool,
         _ isVerified: Bool,
         _ isLegalHoldIndicatorVisible: Bool,
-        _ accountImageView: @escaping () -> AccountImageView
+        _ accountImageView: @escaping () -> AccountImageView,
+        _ legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.init(
             displayName: displayName,
@@ -136,7 +138,8 @@ extension SidebarAccountInfoView {
             isE2EICertified: isE2EICertified,
             isVerified: isE2EICertified,
             isLegalHoldIndicatorVisible: isLegalHoldIndicatorVisible,
-            accountImageView: accountImageView
+            accountImageView: accountImageView,
+            legalHoldIndicatorView: legalHoldIndicatorView
         )
     }
 }

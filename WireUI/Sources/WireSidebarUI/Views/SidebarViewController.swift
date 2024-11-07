@@ -109,6 +109,7 @@ public final class SidebarViewController: UIViewController {
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
+    TODO
 
     public init(
         accountImageView: @escaping AccountImageViewBuilder<some View>
@@ -129,7 +130,11 @@ public final class SidebarViewController: UIViewController {
         setupHostingController = { [weak self] in
             guard let self else { return }
 
-            let sidebarAdapter = SidebarAdapter(model: model, accountImageView: accountImageView)
+            let sidebarAdapter = SidebarAdapter(
+                model: model,
+                accountImageView: accountImageView,
+                legalHoldIndicatorView: <#T##() -> LegalHoldIndicatorView#>
+            )
             let hostingController = UIHostingController(rootView: sidebarAdapter)
             addChild(hostingController)
             hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -157,7 +162,7 @@ public final class SidebarViewController: UIViewController {
 
 // MARK: - SidebarAdapter
 
-private struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
+private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @ObservedObject fileprivate var model: SidebarModel
 
@@ -165,6 +170,7 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
+    private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     var body: some View {
         SidebarView(
@@ -173,7 +179,8 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountImageAction: model.accountImageAction,
             connectAction: model.connectAction,
             supportAction: model.supportAction,
-            accountImageView: accountImageView
+            accountImageView: accountImageView,
+            legalHoldIndicatorView: legalHoldIndicatorView
         )
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
