@@ -36,38 +36,18 @@
 //
 
 import SwiftUI
+import WireFoundation
+import WireReusableUIComponents
 
-struct ContainerView<Content: View>: View {
-    private let content: Content
-
-    private let step: Int
-    private let stepCount: Int
-    private let stepTitle: String
-
-    init(
-        @ViewBuilder content: () -> Content,
-        step: Int,
-        stepCount: Int,
-        stepTitle: String
-    ) {
-        self.content = content()
-        self.step = step
-        self.stepCount = stepCount
-        self.stepTitle = stepTitle
-    }
+struct FeatureDescriptionComponent: View {
+    let feature: TeamPlanFeature
 
     var body: some View {
-        VStack {
-            Text("Step \(step) of \(stepCount)")
-                .font(.caption)
-            Spacer()
-                .frame(height: 12)
-            Text(stepTitle)
-                .font(.title2)
-            Spacer(minLength: 36)
-            content
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(AccentColor.green.color)
+            Text(feature.description)
+                .wireTextStyle(.body1)
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 24)
     }
 }

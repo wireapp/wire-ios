@@ -36,17 +36,41 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireFoundation
-import WireReusableUIComponents
 
-struct FeatureDescriptionComponent: View {
-    let feature: TeamPlanFeature
+struct PageContainer<Content: View>: View {
+    private let content: Content
+
+    private let step: Int
+    private let stepCount: Int
+    private let stepTitle: String
+
+    init(
+        @ViewBuilder content: () -> Content,
+        step: Int,
+        stepCount: Int,
+        stepTitle: String
+    ) {
+        self.content = content()
+        self.step = step
+        self.stepCount = stepCount
+        self.stepTitle = stepTitle
+    }
 
     var body: some View {
-        HStack {
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(AccentColor.green.color)
-            Text(feature.description)
+        VStack {
+            Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
+                .wireTextStyle(.subline1)
+                .foregroundStyle(.gray)
+            Spacer()
+                .frame(height: 12)
+            Text(stepTitle)
+                .wireTextStyle(.h2)
+            Spacer(minLength: 36)
+            content
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 24)
     }
 }

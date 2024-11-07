@@ -18,13 +18,12 @@
 
 import SwiftUI
 
-#Preview {
-    WireIndividualToTeamMigrationContainerView(
-        content: {
-            CompletionView(profileName: "Some User", teamName: "Some Team")
-        },
-        step: 4,
-        stepCount: 4,
-        stepTitle: "Congratulations Some User!"
-    )
+struct TeamPlanFeature: Hashable, Identifiable {
+    let id: String
+    let description: AttributedString
+
+    init(id: String, description: AttributedString) {
+        self.id = id
+        self.description = description
+    }
 }

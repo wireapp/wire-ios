@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct CompletionView: View {
 
@@ -30,16 +31,16 @@ struct CompletionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("You’re now the owner of the team (\(teamName)).")
-            Text("Go to Team Management to:\n• Invite your first team members, and start working together\n• Customize your team settings")
+            Text(String.formated(key: "individualToTeam.completion.body", bundle: .module, teamName))
+                .wireTextStyle(.body1)
             Spacer()
 
             BackButton(
-                action: { },
-                title: "Back To Wire"
+                title: String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module),
+                action: { }
             )
             CallToActionButton(
-                title: "Go To Team Management",
+                title: String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module),
                 action: { }
             )
         }
