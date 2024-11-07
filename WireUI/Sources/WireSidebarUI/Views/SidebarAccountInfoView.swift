@@ -56,6 +56,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                 LegalHoldIndicatorView()
                     .frame(height: usernameHeight)
                 Text("sidebar.legalHold.title", bundle: .module)
+                    .wireTextStyle(.subline1)
             }
         }
     }
@@ -65,8 +66,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 4) {
                 Text(displayName)
-                    .wireTextStyle(.h2) // TODO: fix correct style
-                    //.font(.headline) // TODO: wiretextstyle?
+                    .wireTextStyle(.h3)
                     .foregroundStyle(displayNameColor)
                 if isE2EICertified {
                     Image(.certificateValid)
@@ -78,7 +78,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                 }
             }
             Text(username)
-                .font(.subheadline) // TODO: wiretextstyle?
+                .wireTextStyle(.subline1)
                 .foregroundStyle(usernameColor)
         }
     }
@@ -87,7 +87,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
     private var determineLineHeights: some View {
         VStack {
             Text("W")
-                .font(.headline) // TODO: wiretextstyle?
+                .wireTextStyle(.h3)
                 .background(GeometryReader { geometryProxy in
                     Color.clear.preference(
                         key: DisplayNameHeightKey.self,
@@ -98,7 +98,7 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
                     displayNameHeight = height
                 }
             Text("@")
-                .font(.subheadline) // TODO: wiretextstyle?
+                .wireTextStyle(.subline1)
                 .background(GeometryReader { geometryProxy in
                     Color.clear.preference(
                         key: UsernameHeightKey.self,
@@ -121,7 +121,7 @@ extension SidebarAccountInfoView {
     init(
         _ displayName: String,
         _ username: String,
-        _ isE2EICertified: Bool, // TODO: rename isXYZVisible
+        _ isE2EICertified: Bool,
         _ isVerified: Bool,
         _ isLegalHoldIndicatorVisible: Bool,
         _ accountImageView: @escaping () -> AccountImageView

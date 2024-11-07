@@ -101,10 +101,12 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
-                isE2EICertified: false, // TODO: fix
-                isVerified: false, // TODO: fix
-                isLegalHoldIndicatorVisible: false,
-                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) }
+                isE2EICertified: accountInfo.isE2EICertified,
+                isVerified: accountInfo.isVerified,
+                isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
+                accountImageView: {
+                    accountImageView(accountInfo.accountImageSource, accountInfo.availability)
+                }
             )
         }
     }
@@ -132,8 +134,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
         if addTopPadding {
-            text
-                .padding(.top)
+            text.padding(.top)
         } else {
             text
         }
@@ -162,7 +163,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text },
+            title: { text.wireTextStyle(.body1) },
             action: action
         )
     }
@@ -201,7 +202,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
-            title: { text },
+            title: { text.wireTextStyle(.body1) },
             action: { selectedMenuItem = menuItem }
         )
     }

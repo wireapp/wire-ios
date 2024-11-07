@@ -27,7 +27,10 @@ extension SidebarAccountInfo {
             displayName: user.name ?? "",
             username: user.handle ?? "",
             accountImageSource: accountImageSource,
-            availability: user.availability.mapToSidebarAccountInfoAvailability()
+            availability: user.availability.mapToSidebarAccountInfoAvailability(),
+            isE2EICertified: false, // TODO: fix
+            isVerified: false, // TODO: fix
+            isLegalHoldEnabled: false // TODO: fix
         )
     }
 }

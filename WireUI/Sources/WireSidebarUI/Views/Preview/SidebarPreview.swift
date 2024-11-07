@@ -29,7 +29,10 @@ struct SidebarPreview: View {
         displayName: "Firstname Lastname",
         username: "@username",
         accountImageSource: .image(.from(solidColor: .brown)),
-        availability: .away
+        availability: .away,
+        isE2EICertified: true,
+        isVerified: true,
+        isLegalHoldEnabled: true
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
