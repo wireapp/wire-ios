@@ -44,7 +44,10 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
+        accountImageView: @escaping (
+            _ accountImage: SidebarAccountInfo.AccountImageSource,
+            _ availability: SidebarAccountInfo.Availability?
+        ) -> AccountImageView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
@@ -95,8 +98,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    @ViewBuilder
-    private var accountInfoView: some View {
+    @ViewBuilder private var accountInfoView: some View {
         if let accountInfo {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
@@ -106,8 +108,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    @ViewBuilder
-    private var scrollableMenuItems: some View {
+    @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
             let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]

@@ -23,12 +23,16 @@ extension ZMConversation {
     @objc public static let defaultMemberRoleName = "wire_member"
 
     static func predicateSecureWithIgnored() -> NSPredicate {
-        return NSPredicate(format: "%K == %d", #keyPath(ZMConversation.securityLevel), ZMConversationSecurityLevel.secureWithIgnored.rawValue)
+        NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.securityLevel),
+            ZMConversationSecurityLevel.secureWithIgnored.rawValue
+        )
     }
 
     /// After changes to conversation security degradation logic we need
     /// to migrate all conversations from .secureWithIgnored to .notSecure
-    /// so that users wouldn't get degratation prompts to conversations that 
+    /// so that users wouldn't get degratation prompts to conversations that
     /// at any point in the past had been secure
     static func migrateAllSecureWithIgnored(in moc: NSManagedObjectContext) {
         let predicate = ZMConversation.predicateSecureWithIgnored()
@@ -75,18 +79,44 @@ extension ZMConversation {
                 let adminRole = conversation.getRoles().first(where: { $0.name == defaultAdminRoleName })
 
                 if let conversationTeam = conversation.team, conversationTeam == selfUser.team, selfUser.isTeamMember {
-                    participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: conversationTeam)
+                    participantRoleForSelfUser = getAParticipantRole(
+                        in: moc,
+                        adminRole: adminRole,
+                        user: selfUser,
+                        conversation: conversation,
+                        team: conversationTeam
+                    )
                 } else {
-                    participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: nil)
+                    participantRoleForSelfUser = getAParticipantRole(
+                        in: moc,
+                        adminRole: adminRole,
+                        user: selfUser,
+                        conversation: conversation,
+                        team: nil
+                    )
                 }
                 conversation.participantRoles.insert(participantRoleForSelfUser)
             }
         }
     }
 
-    static private func getAParticipantRole(in moc: NSManagedObjectContext, adminRole: Role?, user: ZMUser, conversation: ZMConversation, team: Team?) -> ParticipantRole {
-        let participantRoleForUser = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: conversation)
-        let customRole = Role.fetchOrCreateRole(with: defaultAdminRoleName, teamOrConversation: team != nil ? .team(team!) : .conversation(conversation), in: moc)
+    private static func getAParticipantRole(
+        in moc: NSManagedObjectContext,
+        adminRole: Role?,
+        user: ZMUser,
+        conversation: ZMConversation,
+        team: Team?
+    ) -> ParticipantRole {
+        let participantRoleForUser = ParticipantRole.create(
+            managedObjectContext: moc,
+            user: user,
+            conversation: conversation
+        )
+        let customRole = Role.fetchOrCreateRole(
+            with: defaultAdminRoleName,
+            teamOrConversation: team != nil ? .team(team!) : .conversation(conversation),
+            in: moc
+        )
 
         if let adminRole {
             participantRoleForUser.role = adminRole
@@ -97,7 +127,8 @@ extension ZMConversation {
     }
 
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity.
-    // After creating a new connection, we should add user to the participants roles, because we do not get it from the backend.
+    // After creating a new connection, we should add user to the participants roles, because we do not get it from the
+    // backend.
     static func addUserFromTheConnectionToTheParticipantRoles(in moc: NSManagedObjectContext) {
         guard let allConnections = ZMConnection.connections(inManagedObjectContext: moc) as? [ZMConnection] else {
             return
@@ -125,12 +156,15 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: moc)
 
         let groupConversationsFetch = ZMConversation.sortedFetchRequest(
-            with: NSPredicate(format: "%K == %d",
-                              ZMConversationConversationTypeKey,
-                              ZMConversationType.group.rawValue))
+            with: NSPredicate(
+                format: "%K == %d",
+                ZMConversationConversationTypeKey,
+                ZMConversationType.group.rawValue
+            )
+        )
 
         guard let conversations = moc.fetchOrAssert(request: groupConversationsFetch) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach {
@@ -143,7 +177,8 @@ extension ZMConversation {
         selfUser.team?.needsToDownloadRoles = true
     }
 
-    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the `lastServerSyncedActiveParticipants`.
+    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the
+    // `lastServerSyncedActiveParticipants`.
     // Those need to be migrated to the new relationship
     static func migrateUsersToParticipants(in moc: NSManagedObjectContext) {
 
@@ -152,7 +187,7 @@ extension ZMConversation {
         let request = ZMConversation.sortedFetchRequest()
 
         guard let conversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach { convo in
@@ -164,12 +199,14 @@ extension ZMConversation {
             convo.setValue(NSOrderedSet(), forKey: oldKey)
         }
     }
-    // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from accessRoleString, need to be migrated to the new relationship
+
+    // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from
+    // accessRoleString, need to be migrated to the new relationship
     static func forceToFetchConversationAccessRoles(in moc: NSManagedObjectContext) {
         let conversationsToFetch = ZMConversation.fetchRequest()
 
         guard let conversations = moc.fetchOrAssert(request: conversationsToFetch) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach {

@@ -104,7 +104,9 @@ private struct ProfileSwitcherHeightKey: PreferenceKey {
 
 extension View {
     func sidebarAccountInfoViewDisplayNameColor(_ displayNameColor: Color) -> some View {
-        modifier(SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor))
+        modifier(
+            SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor)
+        )
     }
 
     func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {

@@ -19,15 +19,15 @@
 import Foundation
 import WireDataModel
 
-extension ZMUserSession {
-    public func startEphemeralTimers() {
+public extension ZMUserSession {
+    func startEphemeralTimers() {
         syncManagedObjectContext.performGroupedBlock {
             self.syncManagedObjectContext.zm_createMessageObfuscationTimer()
         }
         managedObjectContext.zm_createMessageDeletionTimer()
     }
 
-    public func stopEphemeralTimers() {
+    func stopEphemeralTimers() {
         syncManagedObjectContext.performGroupedBlock {
             self.syncManagedObjectContext.zm_teardownMessageObfuscationTimer()
         }

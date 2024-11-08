@@ -28,25 +28,25 @@ class MockConversationDirectory: ConversationDirectoryType {
     var mockUnarchivedConversations: [ZMConversation] = []
 
     func createFolder(_ name: String) -> LabelType? {
-        return nil
+        nil
     }
 
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any {
-        return "token"
+        "token"
     }
 
     func conversations(by type: ConversationListType) -> [ZMConversation] {
         switch type {
         case .groups:
-            return mockGroupConversations
+            mockGroupConversations
         case .contacts:
-            return mockContactsConversations
+            mockContactsConversations
         case .favorites:
-            return mockFavoritesConversations
+            mockFavoritesConversations
         case .unarchived:
-            return mockUnarchivedConversations
+            mockUnarchivedConversations
         default:
-            return []
+            []
         }
     }
 

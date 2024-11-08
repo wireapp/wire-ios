@@ -24,8 +24,8 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
-        let sharedContainerURL = self.sharedContainerURL
-        let dispatchGroup = self.dispatchGroup
+        let sharedContainerURL = sharedContainerURL
+        let dispatchGroup = dispatchGroup
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {
@@ -39,7 +39,7 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
                         switch result {
                         case .success:
                             self?.loadSession(for: account, completion: { _ in })
-                        case .failure(let error):
+                        case let .failure(error):
                             WireLogger.ear.error("failed to migrate account: \(error)")
                         }
                     }

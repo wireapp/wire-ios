@@ -18,14 +18,13 @@
 
 import Foundation
 
-/**
- Preprocess the assets before they are uploaded.
- 
- - images are downscaled and converted to jpeg if they are too big
- - all assets are encrypted
- 
- */
-@objcMembers public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
+/// Preprocess the assets before they are uploaded.
+///
+/// - images are downscaled and converted to jpeg if they are too big
+/// - all assets are encrypted
+///
+@objcMembers
+public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
 
     /// Group to track preprocessing operations
     fileprivate let processingGroup: ZMSDispatchGroup
@@ -40,7 +39,8 @@ import Foundation
     let managedObjectContext: NSManagedObjectContext
 
     /// Creates a file processor
-    /// - note: All methods of this object should be called from the thread associated with the passed managedObjectContext
+    /// - note: All methods of this object should be called from the thread associated with the passed
+    /// managedObjectContext
     public init(managedObjectContext: NSManagedObjectContext) {
         self.processingGroup = ZMSDispatchGroup(label: "Asset Preprocessing")
         self.managedObjectContext = managedObjectContext
@@ -80,7 +80,9 @@ import Foundation
 
         // We only want to start processing originals.
         for asset in message.assets where asset.hasOriginal {
-            if asset.needsPreprocessing, let imageOperations = imageAssetPreprocessor?.operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
+            if asset.needsPreprocessing,
+               let imageOperations = imageAssetPreprocessor?
+               .operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
                 processingGroup.enter()
                 imageProcessingQueue.addOperations(imageOperations, waitUntilFinished: false)
             } else {
@@ -115,11 +117,17 @@ import Foundation
 
 extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 
-    public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
+    public func completedDownsampleOperation(
+        _ operation: ZMImageDownsampleOperationProtocol,
+        imageOwner: ZMImageOwner
+    ) {
         guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
 
         managedObjectContext.performGroupedBlock {
-            assetImageOwnerAdapter.asset.updateWithPreprocessedData(operation.downsampleImageData, imageProperties: operation.properties)
+            assetImageOwnerAdapter.asset.updateWithPreprocessedData(
+                operation.downsampleImageData,
+                imageProperties: operation.properties
+            )
             assetImageOwnerAdapter.asset.encrypt()
         }
     }
@@ -135,7 +143,7 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
-        return BlockOperation { [weak self] in
+        BlockOperation { [weak self] in
             self?.processingGroup.leave()
         }
     }
@@ -154,11 +162,11 @@ class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
     }
 
     func requiredImageFormats() -> NSOrderedSet {
-        return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
+        NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
     }
 
     func originalImageData() -> Data? {
-        return asset.original
+        asset.original
     }
 
 }

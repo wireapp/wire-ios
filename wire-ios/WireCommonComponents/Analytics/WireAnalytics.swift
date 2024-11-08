@@ -17,4 +17,4 @@
 //
 
 /// Namespace for analytics tools.
-public enum WireAnalytics { }
+public enum WireAnalytics {}

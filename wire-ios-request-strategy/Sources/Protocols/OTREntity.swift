@@ -86,7 +86,8 @@ private let ErrorLabel = "label"
 extension OTREntity {
 
     /// Which object this message depends on when sending
-    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation) -> ZMManagedObject? {
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation)
+        -> ZMManagedObject? {
 
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
@@ -96,8 +97,8 @@ extension OTREntity {
             return conversation
         }
 
-        if (conversation.conversationType == .oneOnOne || conversation.conversationType == .connection)
-            && conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
+        if conversation.conversationType == .oneOnOne || conversation.conversationType == .connection,
+           conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
             zmLog.debug("connection needs to be update from backend")
             return conversation.oneOnOneUser?.connection
         }
@@ -108,7 +109,7 @@ extension OTREntity {
     /// Which objects this message depends on when sending it to a list recipients
     public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: Set<ZMUser>) -> ZMManagedObject? {
         let recipientClients = recipients.flatMap {
-            return Array($0.clients)
+            Array($0.clients)
         }
 
         // If we discovered a new client we need fetch the client details before retrying
@@ -121,7 +122,11 @@ extension OTREntity {
 
     typealias ClientChanges = (missingClients: Set<UserClient>, deletedClients: Set<UserClient>)
 
-    func processEmptyUploadResponse(_ response: ZMTransportResponse, in conversation: ZMConversation, clientRegistrationDelegate: ClientRegistrationDelegate) -> ClientChanges {
+    func processEmptyUploadResponse(
+        _ response: ZMTransportResponse,
+        in conversation: ZMConversation,
+        clientRegistrationDelegate: ClientRegistrationDelegate
+    ) -> ClientChanges {
         guard !detectedDeletedSelfClient(in: response) else {
             clientRegistrationDelegate.didDetectCurrentClientDeletion()
             return (missingClients: Set(), deletedClients: Set())
@@ -176,7 +181,10 @@ extension OTREntity {
         return parseMissingClients(clientListByUser, in: conversation)
     }
 
-    private func parseMissingClients(_ clientListByUser: Payload.ClientListByUser, in conversation: ZMConversation) -> ClientChanges {
+    private func parseMissingClients(
+        _ clientListByUser: Payload.ClientListByUser,
+        in conversation: ZMConversation
+    ) -> ClientChanges {
         // 1) Parse the payload
 
         var changes: ZMConversationRemoteClientChangeSet = []
@@ -203,7 +211,11 @@ extension OTREntity {
 
             // Process deletions
             for deletedClientID in deletedClients {
-                if let client = UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: user, createIfNeeded: false) {
+                if let client = UserClient.fetchUserClient(
+                    withRemoteId: deletedClientID,
+                    forUser: user,
+                    createIfNeeded: false
+                ) {
                     allDeletedClients.insert(client)
                 }
             }
@@ -231,22 +243,22 @@ extension OTREntity {
         // If we for some reason miss the push the BE will repond with a 403 and 'unknown-client' label to our
         // next sending attempt and we will logout and delete the current selfClient then
         if response.httpStatus == ClientNotAuthorizedResponseStatus,
-            let payload = response.payload as? [String: AnyObject],
-            let label = payload[ErrorLabel] as? String,
-            label == UnknownClientLabel {
-            return true
+           let payload = response.payload as? [String: AnyObject],
+           let label = payload[ErrorLabel] as? String,
+           label == UnknownClientLabel {
+            true
         } else {
-            return false
+            false
         }
     }
 
     /// Adds clients to those missing for this message
     func registersNewMissingClients(_ missingClients: Set<UserClient>) {
-        guard missingClients.count > 0 else { return }
+        guard !missingClients.isEmpty else { return }
 
-        let selfClient = ZMUser.selfUser(in: self.context).selfClient()!
+        let selfClient = ZMUser.selfUser(in: context).selfClient()!
         selfClient.missesClients(missingClients)
-        self.missesRecipients(missingClients)
+        missesRecipients(missingClients)
 
         selfClient.addNewClientsToIgnored(missingClients)
     }

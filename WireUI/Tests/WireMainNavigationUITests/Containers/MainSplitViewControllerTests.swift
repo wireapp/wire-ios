@@ -146,7 +146,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearanceLandscape() {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1_024, height: 768))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1024, height: 768))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular
@@ -164,7 +164,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearancePortrait() {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1_024))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1024))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular

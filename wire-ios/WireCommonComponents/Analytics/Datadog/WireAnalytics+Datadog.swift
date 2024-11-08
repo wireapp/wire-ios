@@ -20,21 +20,21 @@ import WireAnalytics
 import WireSystem
 
 #if canImport(WireDatadog)
-import WireDatadog
+    import WireDatadog
 #endif
 
-extension WireAnalytics {
+public extension WireAnalytics {
 
     /// Namespace for Datadog analytics.
-    public enum Datadog {
+    enum Datadog {
 
         private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
-#if canImport(WireDatadog)
-            let builder = WireDatadogBuilder()
-            return builder.build()
-#else
-            return nil
-#endif
+            #if canImport(WireDatadog)
+                let builder = WireDatadogBuilder()
+                return builder.build()
+            #else
+                return nil
+            #endif
         }()
 
         /// SHA256 string to identify current device across app and extensions.
@@ -42,13 +42,14 @@ extension WireAnalytics {
             shared?.userIdentifier
         }
 
-        /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available, the function just returns.
+        /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available,
+        /// the function just returns.
         /// - Note: this should be called early and **has effect only once**
         public static func enable() {
             enableOnlyOnce.execute()
         }
 
-        static var enableOnlyOnce = OnceOnlyThreadSafeFunction({
+        static var enableOnlyOnce = OnceOnlyThreadSafeFunction {
             guard let shared else { return }
 
             shared.enable()
@@ -57,7 +58,7 @@ extension WireAnalytics {
             // pass tags to DataDog through WireLogger
             WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
             WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
-        })
+        }
     }
 }
 

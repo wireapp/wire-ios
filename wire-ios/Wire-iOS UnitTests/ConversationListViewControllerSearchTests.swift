@@ -52,7 +52,10 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         )
 
         // THEN
-        XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
+        XCTAssertEqual(
+            searchController.searchBar.placeholder,
+            L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+        )
     }
 
     func test_makeSearchController_withGroupsFilter() {
@@ -67,7 +70,10 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         )
 
         // THEN
-        XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
+        XCTAssertEqual(
+            searchController.searchBar.placeholder,
+            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+        )
     }
 
     func test_makeSearchController_withOneOnOneFilter() {
@@ -82,7 +88,10 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         )
 
         // THEN
-        XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
+        XCTAssertEqual(
+            searchController.searchBar.placeholder,
+            L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        )
     }
 
     func test_makeSearchController_expandedState() {

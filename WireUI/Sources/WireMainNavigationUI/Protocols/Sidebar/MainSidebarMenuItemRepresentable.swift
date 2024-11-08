@@ -18,7 +18,9 @@
 
 public protocol MainSidebarSelectableMenuItemRepresentable: Sendable {
     init(_ mainSidebarMenuItem: MainSidebarMenuItem)
-    init?<SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable>(mappingFrom selectableMenuItem: SidebarSelectableMenuItem?)
+    init?<SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable>(
+        mappingFrom selectableMenuItem: SidebarSelectableMenuItem?
+    )
     func mapToMainSidebarMenuItem() -> MainSidebarMenuItem
 }
 

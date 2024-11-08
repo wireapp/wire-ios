@@ -28,15 +28,18 @@ final class ProxyCredentialsViewController: UIViewController {
     var textFieldDidUpdateText: (ValidatedTextField) -> Void
     var activeFieldChange: (UITextField?) -> Void
 
-    init(backendURL: URL,
-         textFieldDidUpdateText: @escaping (ValidatedTextField) -> Void,
-         activeFieldChange: @escaping (UITextField?) -> Void) {
+    init(
+        backendURL: URL,
+        textFieldDidUpdateText: @escaping (ValidatedTextField) -> Void,
+        activeFieldChange: @escaping (UITextField?) -> Void
+    ) {
         self.backendURL = backendURL
         self.textFieldDidUpdateText = textFieldDidUpdateText
         self.activeFieldChange = activeFieldChange
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -62,7 +65,13 @@ final class ProxyCredentialsViewController: UIViewController {
     }()
 
     lazy var usernameInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .email, leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+        let textField = ValidatedTextField(
+            kind: .email,
+            leftInset: 8,
+            accessoryTrailingInset: 0,
+            cornerRadius: 0,
+            style: .default
+        )
         textField.showConfirmButton = false
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: .uppercased() when new design is implemented
@@ -74,7 +83,13 @@ final class ProxyCredentialsViewController: UIViewController {
     }()
 
     lazy var passwordInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+        let textField = ValidatedTextField(
+            kind: .password(.nonEmpty, isNew: false),
+            leftInset: 8,
+            accessoryTrailingInset: 0,
+            cornerRadius: 0,
+            style: .default
+        )
 
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: .uppercased() when new design is implemented
@@ -137,7 +152,8 @@ final class ProxyCredentialsViewController: UIViewController {
         ])
     }
 
-    @objc private func textInputDidChange(sender: ValidatedTextField) {
+    @objc
+    private func textInputDidChange(sender: ValidatedTextField) {
         textFieldDidUpdateText(sender)
     }
 }
@@ -154,11 +170,11 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.activeFieldChange(textField)
+        activeFieldChange(textField)
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        self.activeFieldChange(nil)
+        activeFieldChange(nil)
     }
 
 }

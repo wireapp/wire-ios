@@ -25,7 +25,7 @@ import ZipArchive
 
 extension SessionManager {
 
-    static private let workerQueue = DispatchQueue(label: "history-backup")
+    private static let workerQueue = DispatchQueue(label: "history-backup")
 
     // MARK: - Export
 
@@ -82,7 +82,7 @@ extension SessionManager {
         dispatchGroup: ZMSDispatchGroup,
         completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
-        ) {
+    ) {
         workerQueue.async(group: dispatchGroup) {
             let encrypted = result.flatMap { info in
                 do {
@@ -136,7 +136,10 @@ extension SessionManager {
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
             guard let self else {
-                completion(.failure(NSError(userSessionErrorCode: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                completion(.failure(NSError(
+                    userSessionErrorCode: .unknownError,
+                    userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"]
+                )))
                 return
             }
 
@@ -170,8 +173,8 @@ extension SessionManager {
             CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
                 from: url,
-                applicationContainer: self.sharedContainerURL,
-                dispatchGroup: self.dispatchGroup
+                applicationContainer: sharedContainerURL,
+                dispatchGroup: dispatchGroup
             ) { result in
                 completion(result.map { _ in })
             }
@@ -220,32 +223,33 @@ extension SessionManager {
     }
 
     private static func temporaryURL(for url: URL) -> URL {
-        return url.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
+        url.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
     }
 }
 
 // MARK: - Compressed Filename
 
-/// There are some external apps that users can use to transfer backup files, which can modify their attachments and change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
+/// There are some external apps that users can use to transfer backup files, which can modify their attachments and
+/// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
 private enum BackupFileExtensions: String, CaseIterable {
     case fileExtensionWithUnderscore = "ios_wbu"
     case fileExtensionWithHyphen = "ios-wbu"
 }
 
-fileprivate extension BackupMetadata {
+private extension BackupMetadata {
 
     static let nameAppName = "Wire"
     static let nameFileName = "Backup"
     static let fileExtension = BackupFileExtensions.fileExtensionWithUnderscore.rawValue
 
     private static let formatter: DateFormatter = {
-       let formatter = DateFormatter()
+        let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
         return formatter
     }()
 
     func backupFilename(for handle: String) -> String {
-        return "\(BackupMetadata.nameAppName)-\(handle)-\(BackupMetadata.nameFileName)_\(BackupMetadata.formatter.string(from: creationTime)).\(BackupMetadata.fileExtension)"
+        "\(BackupMetadata.nameAppName)-\(handle)-\(BackupMetadata.nameFileName)_\(BackupMetadata.formatter.string(from: creationTime)).\(BackupMetadata.fileExtension)"
     }
 }
 
@@ -253,10 +257,10 @@ fileprivate extension BackupMetadata {
 
 extension URL {
     func zipDirectory(to url: URL) -> Bool {
-        return SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
+        SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }
 
     func unzip(to url: URL) -> Bool {
-        return SSZipArchive.unzipFile(atPath: path, toDestination: url.path)
+        SSZipArchive.unzipFile(atPath: path, toDestination: url.path)
     }
 }

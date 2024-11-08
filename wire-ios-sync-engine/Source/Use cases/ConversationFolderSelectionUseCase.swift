@@ -33,9 +33,9 @@ public protocol ConversationFolderSelectionUseCaseProtocol {
 
 final class ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
 
-    public func invoke<Conversation: ToFolderMovableConversation>(
+    public func invoke(
         folder: LabelType,
-        conversation: Conversation
+        conversation: some ToFolderMovableConversation
     ) {
         conversation.moveToFolder(folder)
     }

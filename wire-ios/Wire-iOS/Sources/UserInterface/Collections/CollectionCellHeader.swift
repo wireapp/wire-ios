@@ -49,12 +49,12 @@ final class CollectionCellHeader: UIView {
 
         [nameLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-          nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: dateLabel.leadingAnchor),
-          dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-          nameLabel.topAnchor.constraint(equalTo: topAnchor),
-          nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-          dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
+            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            nameLabel.trailingAnchor.constraint(lessThanOrEqualTo: dateLabel.leadingAnchor),
+            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
         ])
     }
 

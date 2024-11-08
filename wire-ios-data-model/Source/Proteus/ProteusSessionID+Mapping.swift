@@ -22,7 +22,7 @@ import WireCryptobox
 public extension ProteusSessionID {
 
     func mapToEncryptionSessionID() -> EncryptionSessionIdentifier {
-        return EncryptionSessionIdentifier(
+        EncryptionSessionIdentifier(
             domain: domain,
             userId: userID,
             clientId: clientID

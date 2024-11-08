@@ -26,12 +26,13 @@ private enum WebsitePages {
 }
 
 enum TeamSource: Int {
-    case onboarding, settings
+    case onboarding
+    case settings
 
     var parameterValue: String {
         switch self {
-        case .onboarding: return "client_landing"
-        case .settings: return "client_settings"
+        case .onboarding: "client_landing"
+        case .settings: "client_settings"
         }
     }
 }
@@ -55,8 +56,10 @@ extension URL {
     static func manageTeam(source: TeamSource) -> URL {
         let baseURL = BackendEnvironment.shared.teamsURL
 
-        let queryItems = [URLQueryItem(name: "utm_source", value: source.parameterValue),
-                          URLQueryItem(name: "utm_term", value: "ios")]
+        let queryItems = [
+            URLQueryItem(name: "utm_source", value: source.parameterValue),
+            URLQueryItem(name: "utm_term", value: "ios")
+        ]
 
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
 

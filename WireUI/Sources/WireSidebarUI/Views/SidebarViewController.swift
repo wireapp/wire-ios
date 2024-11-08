@@ -110,7 +110,7 @@ public final class SidebarViewController: UIViewController {
     ) {
         super.init(nibName: nil, bundle: nil)
 
-        model = .init(accountImageAction: { [weak self] in
+        self.model = .init(accountImageAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
@@ -121,7 +121,7 @@ public final class SidebarViewController: UIViewController {
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
 
-        setupHostingController = { [weak self] in
+        self.setupHostingController = { [weak self] in
             guard let self else { return }
 
             let sidebarAdapter = SidebarAdapter(model: model, accountImageView: accountImageView)
@@ -144,7 +144,7 @@ public final class SidebarViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setupHostingController()
     }
@@ -176,7 +176,10 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
-        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(
+            uiColor: model
+                .sidebarMenuItemIsSelectedTitleForegroundColor
+        ))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

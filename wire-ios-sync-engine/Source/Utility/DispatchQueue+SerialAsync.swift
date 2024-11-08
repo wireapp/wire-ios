@@ -20,13 +20,13 @@ import Foundation
 
 public typealias AsyncAction = (_ whenDone: @escaping () -> Void) -> Void
 
-extension DispatchQueue {
+public extension DispatchQueue {
 
     // TODO: [WPB-10556] Contrary to its doc comment this method dispatches work to the main thread which surely is not
     // wanted. It is only used in one place. Lets delete it and achieve it's goal another way.
     /// Dispatches the @c action on the queue in the serial way, waiting for the completion call (whenDone).
-    public func serialAsync(do action: @escaping AsyncAction) {
-        self.async {
+    func serialAsync(do action: @escaping AsyncAction) {
+        async {
             let loadingGroup = DispatchGroup()
             loadingGroup.enter()
 

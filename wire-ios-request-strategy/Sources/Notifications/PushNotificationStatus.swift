@@ -42,7 +42,7 @@ open class PushNotificationStatus: NSObject {
 
     public var hasEventsToFetch: Bool {
         // swiftformat:disable:next isEmpty
-        return eventIdRanking.count > 0 && !isFetching
+        eventIdRanking.count > 0 && !isFetching
     }
 
     public init(
@@ -56,7 +56,8 @@ open class PushNotificationStatus: NSObject {
     /// Schedule to fetch an event with a given UUID
     ///
     /// - parameter eventId: UUID of the event to fetch
-    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when
+    /// there's no more events to fetch
     @objc(fetchEventId:completionHandler:)
     public func fetch(eventId: UUID, completionHandler: @escaping () -> Void) {
         fetch(eventId: eventId) { _ in
@@ -67,12 +68,19 @@ open class PushNotificationStatus: NSObject {
     /// Schedule to fetch an event with a given UUID
     ///
     /// - parameter eventId: UUID of the event to fetch
-    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when
+    /// there's no more events to fetch
 
     public func fetch(eventId: UUID, completionHandler: @escaping FetchCompletion) {
-        let logAttributes: LogAttributes = [LogAttributesKey.eventId: eventId.safeForLoggingDescription].merging(.safePublic, uniquingKeysWith: { _, new in new })
+        let logAttributes: LogAttributes = [LogAttributesKey.eventId: eventId.safeForLoggingDescription].merging(
+            .safePublic,
+            uniquingKeysWith: { _, new in new }
+        )
         guard eventId.isType1UUID else {
-            WireLogger.eventProcessing.error("Attempt to fetch event id not conforming to UUID type1", attributes: logAttributes)
+            WireLogger.eventProcessing.error(
+                "Attempt to fetch event id not conforming to UUID type1",
+                attributes: logAttributes
+            )
             completionHandler(.failure(.invalidEventID))
             return
         }
@@ -109,12 +117,19 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.safeForLoggingDescription), attributes: .safePublic)
+        WireLogger.updateEvent.info(
+            "finished fetching all available events, last event id: " +
+                String(describing: lastEventId?.safeForLoggingDescription),
+            attributes: .safePublic
+        )
 
         guard finished else { return }
 
         // We take all events that are older than or equal to lastEventId and add highest ranking event ID
-        for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(lastEventId: lastEventId, eventId: $0) || highestRankingEventId == $0 }) {
+        for eventId in completionHandlers.keys.filter({ self.lastEventIdIsNewerThan(
+            lastEventId: lastEventId,
+            eventId: $0
+        ) || highestRankingEventId == $0 }) {
             let completionHandler = completionHandlers.removeValue(forKey: eventId)
             completionHandler?(.success(()))
         }

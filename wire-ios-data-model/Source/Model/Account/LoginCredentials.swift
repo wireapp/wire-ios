@@ -18,11 +18,10 @@
 
 import Foundation
 
-/**
- * Contains the credentials used by a user to sign into the app.
- */
+/// Contains the credentials used by a user to sign into the app.
 
-@objc public class LoginCredentials: NSObject, Codable {
+@objc
+public class LoginCredentials: NSObject, Codable {
 
     @objc public let emailAddress: String?
     @objc public let hasPassword: Bool
@@ -35,7 +34,7 @@ import Foundation
     }
 
     public override var debugDescription: String {
-        return "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
+        "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -43,9 +42,9 @@ import Foundation
             return false
         }
 
-        let emailEquals = self.emailAddress == otherCredentials.emailAddress
-        let passwordEquals = self.hasPassword == otherCredentials.hasPassword
-        let companyLoginEquals = self.usesCompanyLogin == otherCredentials.usesCompanyLogin
+        let emailEquals = emailAddress == otherCredentials.emailAddress
+        let passwordEquals = hasPassword == otherCredentials.hasPassword
+        let companyLoginEquals = usesCompanyLogin == otherCredentials.usesCompanyLogin
 
         return emailEquals && passwordEquals && companyLoginEquals
     }

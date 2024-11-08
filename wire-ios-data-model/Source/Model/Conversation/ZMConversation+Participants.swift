@@ -19,51 +19,51 @@
 import Foundation
 import WireProtos
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
+    internal func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
         let nameDescriptor = NSSortDescriptor(key: "normalizedName", ascending: true)
         let sortedUser = (users as NSSet?)?.sortedArray(using: [nameDescriptor]) as? [ZMUser]
 
         return sortedUser ?? []
     }
 
-    @objc public var sortedActiveParticipants: [ZMUser] {
-        return sortedUsers(localParticipants)
+    @objc var sortedActiveParticipants: [ZMUser] {
+        sortedUsers(localParticipants)
     }
 
     /// Whether the roles defined for this conversation should be re-downloaded
-    @NSManaged public var needsToDownloadRoles: Bool
+    @NSManaged var needsToDownloadRoles: Bool
 
-    @objc
-    public var isSelfAnActiveMember: Bool {
-        return self.participantRoles.contains(where: { role -> Bool in
+    @objc var isSelfAnActiveMember: Bool {
+        participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
     }
+
     // MARK: - keyPathsForValuesAffecting
 
-    static var participantRolesKeys: [String] {
-        return [#keyPath(ZMConversation.participantRoles)]
+    internal static var participantRolesKeys: [String] {
+        [#keyPath(ZMConversation.participantRoles)]
     }
 
     @objc
-    public class func keyPathsForValuesAffectingActiveParticipants() -> Set<String> {
-        return Set(participantRolesKeys)
+    class func keyPathsForValuesAffectingActiveParticipants() -> Set<String> {
+        Set(participantRolesKeys)
     }
 
     @objc
-    public class func keyPathsForValuesAffectingLocalParticipants() -> Set<String> {
-        return Set(participantRolesKeys)
+    class func keyPathsForValuesAffectingLocalParticipants() -> Set<String> {
+        Set(participantRolesKeys)
     }
 
     @objc
-    public class func keyPathsForValuesAffectingLocalParticipantRoles() -> Set<String> {
-        return Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
+    class func keyPathsForValuesAffectingLocalParticipantRoles() -> Set<String> {
+        Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
     }
 
     @objc
-    public class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
+    class func keyPathsForValuesAffectingDisplayName() -> Set<String> {
         .init([
             ZMConversationConversationTypeKey,
             "participantRoles.user.name",
@@ -74,32 +74,29 @@ extension ZMConversation {
     }
 
     @objc
-    public class func keyPathsForValuesAffectingLocalParticipantsExcludingSelf() -> Set<String> {
-        return Set(ZMConversation.participantRolesKeys)
+    class func keyPathsForValuesAffectingLocalParticipantsExcludingSelf() -> Set<String> {
+        Set(ZMConversation.participantRolesKeys)
     }
 
     // MARK: - Participants methods
 
     /// Participants that are in the conversation, according to the local state,
     /// even if that state is not yet synchronized with the backend
-    @objc
-    public var localParticipantRoles: Set<ParticipantRole> {
-        return participantRoles
+    @objc var localParticipantRoles: Set<ParticipantRole> {
+        participantRoles
     }
 
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
-    @objc
-    public var localParticipants: Set<ZMUser> {
-        return Set(localParticipantRoles.compactMap { $0.user })
+    @objc var localParticipants: Set<ZMUser> {
+        Set(localParticipantRoles.compactMap(\.user))
     }
 
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
 
-    @objc
-    public var localParticipantsExcludingSelf: Set<ZMUser> {
-        return self.localParticipants.filter { !$0.isSelfUser }
+    @objc var localParticipantsExcludingSelf: Set<ZMUser> {
+        localParticipants.filter { !$0.isSelfUser }
     }
 
     // MARK: - Participant operations
@@ -116,8 +113,8 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role? = nil) {
-        self.addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
+    func addParticipantAndUpdateConversationState(user: ZMUser, role: Role? = nil) {
+        addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
     }
 
     /// Add participants to the conversation. The method will decide on its own whether
@@ -132,8 +129,8 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role? = nil) {
-        self.addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
+    func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role? = nil) {
+        addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
     }
 
     /// Add participants to the conversation. The method will decide on its own whether
@@ -147,10 +144,10 @@ extension ZMConversation {
     ///
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
-    public func addParticipantsAndUpdateConversationState(usersAndRoles: [(ZMUser, Role?)]) {
+    func addParticipantsAndUpdateConversationState(usersAndRoles: [(ZMUser, Role?)]) {
 
         // Is this a new conversation, or an existing one that is being updated?
-        let doesExistsOnBackend = self.remoteIdentifier != nil
+        let doesExistsOnBackend = remoteIdentifier != nil
 
         let addedRoles = usersAndRoles.compactMap { user, role -> ParticipantRole? in
             guard !user.isAccountDeleted else { return nil }
@@ -167,13 +164,16 @@ extension ZMConversation {
 
         let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: { $0.user?.isSelfUser == true })
         if addedSelfUser {
-            self.markToDownloadRolesIfNeeded()
-            self.needsToBeUpdatedFromBackend = true
+            markToDownloadRolesIfNeeded()
+            needsToBeUpdatedFromBackend = true
         }
 
         if !addedRoles.isEmpty {
-            self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
-            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }), addedSelfUser: addedSelfUser)
+            checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
+            checkIfVerificationLevelChanged(
+                addedUsers: Set(addedRoles.compactMap(\.user)),
+                addedSelfUser: addedSelfUser
+            )
         }
 
     }
@@ -185,12 +185,15 @@ extension ZMConversation {
 
     // Fetch an existing role or create a new one if needed
     // Returns whether it was created or found
-    private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
+    private func updateExistingOrCreateParticipantRole(
+        for user: ZMUser,
+        with role: Role?
+    ) -> (FetchOrCreation, ParticipantRole)? {
 
-        guard let moc = self.managedObjectContext else { return nil }
+        guard let moc = managedObjectContext else { return nil }
 
         // If the user is already there, just change the role
-        if let current = self.participantRoles.first(where: { $0.user == user }) {
+        if let current = participantRoles.first(where: { $0.user == user }) {
             if let role {
                 current.role = role
             }
@@ -209,19 +212,19 @@ extension ZMConversation {
     }
 
     private func checkIfArchivedStatusChanged(addedSelfUser: Bool) {
-        if addedSelfUser &&
-            self.mutedStatus == MutedMessageOptionValue.none.rawValue &&
-            self.isArchived {
-            self.isArchived = false
+        if addedSelfUser,
+           mutedStatus == MutedMessageOptionValue.none.rawValue,
+           isArchived {
+            isArchived = false
         }
     }
 
     private func checkIfVerificationLevelChanged(addedUsers: Set<ZMUser>, addedSelfUser: Bool) {
-        let clients = Set(addedUsers.flatMap { $0.clients })
-        self.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: addedUsers)
+        let clients = Set(addedUsers.flatMap(\.clients))
+        decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: addedUsers)
 
         if addedSelfUser {
-            self.increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
+            increaseSecurityLevelIfNeededAfterTrusting(clients: clients)
         }
     }
 
@@ -229,7 +232,7 @@ extension ZMConversation {
     ///
     /// The method will handle the case when the participant is not there, so it's safe to call
     /// it even if the user is not there.
-    public func removeParticipantsLocally(_ users: Set<ZMUser>) {
+    func removeParticipantsLocally(_ users: Set<ZMUser>) {
         guard let context = managedObjectContext else {
             return
         }
@@ -250,10 +253,10 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
+    func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
 
-        guard let moc = self.managedObjectContext else { return }
-        let existingUsers = Set(self.participantRoles.map { $0.user })
+        guard let moc = managedObjectContext else { return }
+        let existingUsers = Set(participantRoles.map(\.user))
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
 
@@ -268,9 +271,9 @@ extension ZMConversation {
         })
 
         if !removedUsers.isEmpty {
-            let removedSelf = removedUsers.contains(where: { $0.isSelfUser })
-            self.checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
-            self.checkIfVerificationLevelChanged(removedUsers: removedUsers)
+            let removedSelf = removedUsers.contains(where: \.isSelfUser)
+            checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
+            checkIfVerificationLevelChanged(removedUsers: removedUsers)
         }
     }
 
@@ -285,25 +288,25 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func removeParticipantAndUpdateConversationState(user: ZMUser, initiatingUser: ZMUser? = nil) {
-        self.removeParticipantsAndUpdateConversationState(users: [user], initiatingUser: initiatingUser)
+    func removeParticipantAndUpdateConversationState(user: ZMUser, initiatingUser: ZMUser? = nil) {
+        removeParticipantsAndUpdateConversationState(users: [user], initiatingUser: initiatingUser)
     }
 
     private func checkIfArchivedStatusChanged(removedSelfUser: Bool, initiatingUser: ZMUser?) {
         if removedSelfUser, let initiatingUser {
-            self.isArchived = initiatingUser.isSelfUser
+            isArchived = initiatingUser.isSelfUser
         }
     }
 
     private func checkIfVerificationLevelChanged(removedUsers: Set<ZMUser>) {
-        self.increaseSecurityLevelIfNeededAfterRemoving(users: removedUsers)
+        increaseSecurityLevelIfNeededAfterRemoving(users: removedUsers)
     }
 
     // MARK: - Conversation roles
 
     /// List of roles for the conversation whether it's linked with a team or not
     @objc
-    public func getRoles() -> Set<Role> {
+    func getRoles() -> Set<Role> {
         if let team {
             return team.roles
         }
@@ -311,7 +314,8 @@ extension ZMConversation {
     }
 
     /// Check if roles are missing, and mark them to download if needed
-    @objc public func markToDownloadRolesIfNeeded() {
+    @objc
+    func markToDownloadRolesIfNeeded() {
         guard
             conversationType == .group,
             !isTeamConversation
@@ -324,13 +328,14 @@ extension ZMConversation {
     }
 
     // MARK: - Utils
-    func has(participantWithId userId: Proteus_UserId?) -> Bool {
+
+    internal func has(participantWithId userId: Proteus_UserId?) -> Bool {
         guard let userId else { return false }
         return localParticipants.contains { $0.userId == userId }
     }
 }
 
-public extension Collection where Element == ZMUser {
+public extension Collection<ZMUser> {
 
     func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in

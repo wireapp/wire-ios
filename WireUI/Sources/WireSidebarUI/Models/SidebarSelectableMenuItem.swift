@@ -18,7 +18,10 @@
 
 public enum SidebarSelectableMenuItem: CaseIterable, Comparable, Sendable {
     // conversation filters
-    case all, favorites, groups, oneOnOne
+    case all
+    case favorites
+    case groups
+    case oneOnOne
     // archived conversations
     case archive
     // bottom

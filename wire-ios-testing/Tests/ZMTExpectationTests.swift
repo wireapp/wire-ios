@@ -25,12 +25,12 @@ class ZMTExpectationTests: ZMTBaseTest {
     func testNotificationExpectationNotSent() {
 
         var handlerIsCalled = false
-        self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
+        customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
             handlerIsCalled = true
             return true
         })
 
-        let receivedBeforeSending = self.waitForCustomExpectations(withTimeout: 0.01)
+        let receivedBeforeSending = waitForCustomExpectations(withTimeout: 0.01)
         XCTAssertFalse(receivedBeforeSending)
         XCTAssertFalse(handlerIsCalled)
     }
@@ -38,7 +38,7 @@ class ZMTExpectationTests: ZMTBaseTest {
     func testNotificationExpectationSent() {
 
         var handlerIsCalled = false
-        self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
+        customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
             handlerIsCalled = true
             return true
         })
@@ -46,7 +46,7 @@ class ZMTExpectationTests: ZMTBaseTest {
         NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: nil)
         XCTAssertTrue(handlerIsCalled)
 
-        let receivedAfterSending = self.waitForCustomExpectations(withTimeout: 0.2)
+        let receivedAfterSending = waitForCustomExpectations(withTimeout: 0.2)
         XCTAssertTrue(receivedAfterSending)
 
     }

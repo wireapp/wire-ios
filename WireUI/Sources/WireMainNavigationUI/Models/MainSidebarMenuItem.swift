@@ -18,7 +18,11 @@
 
 public enum MainSidebarMenuItem: Sendable {
     // conversation filters
-    case all, favorites, groups, oneOnOne, archive
+    case all
+    case favorites
+    case groups
+    case oneOnOne
+    case archive
     // bottom
     case settings
 }

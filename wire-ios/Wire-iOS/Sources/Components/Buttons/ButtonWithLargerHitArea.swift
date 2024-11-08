@@ -43,7 +43,7 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         accessibilityTraits = .button
     }
 
-     // MARK: - Overridden methods
+    // MARK: - Overridden methods
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         if isHidden || alpha == 0 || !isUserInteractionEnabled || !isEnabled {

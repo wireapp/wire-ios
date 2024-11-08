@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-fileprivate extension Notification {
+private extension Notification {
 
     var contextDidSaveData: [AnyHashable: AnyObject] {
         guard let info = userInfo else { return [:] }
@@ -24,8 +24,8 @@ fileprivate extension Notification {
         for (key, value) in info {
             guard let set = value as? NSSet else { continue }
             changes[key] = set.compactMap {
-                return ($0 as? NSManagedObject)?.objectID.uriRepresentation()
-                } as AnyObject
+                ($0 as? NSManagedObject)?.objectID.uriRepresentation()
+            } as AnyObject
         }
 
         return changes
@@ -35,16 +35,18 @@ fileprivate extension Notification {
 
 /// This class is used to persist `NSManagedObjectContext` change
 /// notifications in order to merge them into the main app contexts.
-@objcMembers public class ContextDidSaveNotificationPersistence: NSObject {
+@objcMembers
+public class ContextDidSaveNotificationPersistence: NSObject {
 
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
     public required init(accountContainer url: URL) {
-        objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
+        self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
     }
 
-    @discardableResult public func add(_ note: Notification) -> Bool {
-        return objectStore.store(note.contextDidSaveData)
+    @discardableResult
+    public func add(_ note: Notification) -> Bool {
+        objectStore.store(note.contextDidSaveData)
     }
 
     public func clear() {
@@ -52,12 +54,13 @@ fileprivate extension Notification {
     }
 
     public var storedNotifications: [[AnyHashable: AnyObject]] {
-        return objectStore.load()
+        objectStore.load()
     }
 
 }
 
-@objcMembers public class StorableTrackingEvent: NSObject {
+@objcMembers
+public class StorableTrackingEvent: NSObject {
 
     private static let eventNameKey = "eventName"
     private static let eventAttributesKey = "eventAttributes"
@@ -72,13 +75,13 @@ fileprivate extension Notification {
 
     public convenience init?(dictionary dict: [String: Any]) {
         guard let name = dict[StorableTrackingEvent.eventNameKey] as? String,
-            var attributes = dict[StorableTrackingEvent.eventAttributesKey] as? [String: Any] else { return nil }
+              var attributes = dict[StorableTrackingEvent.eventAttributesKey] as? [String: Any] else { return nil }
         attributes["timestamp"] = Date().transportString()
         self.init(name: name, attributes: attributes)
     }
 
     public func dictionaryRepresentation() -> [String: Any] {
-        return [
+        [
             StorableTrackingEvent.eventNameKey: name,
             StorableTrackingEvent.eventAttributesKey: attributes
         ]
@@ -86,15 +89,17 @@ fileprivate extension Notification {
 
 }
 
-@objcMembers public class ShareExtensionAnalyticsPersistence: NSObject {
+@objcMembers
+public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
 
     public required init(accountContainer url: URL) {
-        objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
+        self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
     }
 
-    @discardableResult public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
-        return objectStore.store(storableEvent.dictionaryRepresentation())
+    @discardableResult
+    public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
+        objectStore.store(storableEvent.dictionaryRepresentation())
     }
 
     public func clear() {
@@ -102,7 +107,7 @@ fileprivate extension Notification {
     }
 
     public var storedTrackingEvents: [StorableTrackingEvent] {
-        return objectStore.load().compactMap(StorableTrackingEvent.init)
+        objectStore.load().compactMap(StorableTrackingEvent.init)
     }
 }
 
@@ -112,9 +117,9 @@ private let zmLog = ZMSLog(tag: "shared object store")
 // It has to be added to WireDataModel module because it won't be resolved otherwise
 class SharedObjectTestClass: NSObject, NSCoding {
     var flag: Bool
-    override init() { flag = false }
+    override init() { self.flag = false }
     public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
-    public required init?(coder aDecoder: NSCoder) { flag = aDecoder.decodeBool(forKey: "flag") }
+    public required init?(coder aDecoder: NSCoder) { self.flag = aDecoder.decodeBool(forKey: "flag") }
 }
 
 /// This class is used to persist objects in a shared directory
@@ -132,7 +137,8 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         try! FileManager.default.createAndProtectDirectory(at: directory)
     }
 
-    @discardableResult public func store(_ object: T) -> Bool {
+    @discardableResult
+    public func store(_ object: T) -> Bool {
         do {
             var current = load()
             current.append(object)
@@ -166,7 +172,11 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         }
     }
 
-    public func unarchiver(_ unarchiver: NSKeyedUnarchiver, cannotDecodeObjectOfClassName name: String, originalClasses classNames: [String]) -> Swift.AnyClass? {
+    public func unarchiver(
+        _ unarchiver: NSKeyedUnarchiver,
+        cannotDecodeObjectOfClassName name: String,
+        originalClasses classNames: [String]
+    ) -> Swift.AnyClass? {
         let oldModulePrefix = "ZMCDataModel"
         if let modulePrefixRange = name.range(of: oldModulePrefix) {
             let fixedName = name.replacingCharacters(in: modulePrefixRange, with: "WireDataModel")

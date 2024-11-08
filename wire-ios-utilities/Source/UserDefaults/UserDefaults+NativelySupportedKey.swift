@@ -18,13 +18,13 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
 
-    public func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
+    func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
         value(forKey: key.rawValue) as? KeyType.ValueType
     }
 
-    public func setValue<KeyType: NativelySupportedUserDefaultsKey>(_ value: KeyType.ValueType, for key: KeyType) {
+    func setValue<KeyType: NativelySupportedUserDefaultsKey>(_ value: KeyType.ValueType, for key: KeyType) {
         setValue(value, forKey: key.rawValue)
     }
 }

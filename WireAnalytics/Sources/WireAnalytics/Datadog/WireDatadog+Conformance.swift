@@ -18,8 +18,8 @@
 
 #if canImport(WireDatadog)
 
-import WireDatadog
+    import WireDatadog
 
-extension WireDatadog: WireDatadogProtocol {}
+    extension WireDatadog: WireDatadogProtocol {}
 
 #endif

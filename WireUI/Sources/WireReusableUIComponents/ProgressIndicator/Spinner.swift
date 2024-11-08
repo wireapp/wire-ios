@@ -61,7 +61,7 @@ public final class Spinner: UIView {
         createSpinner()
     }
 
-    override public func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -81,7 +81,7 @@ public final class Spinner: UIView {
         spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
-    override public var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         spinner.image?.size ?? super.intrinsicContentSize
     }
 
@@ -89,7 +89,10 @@ public final class Spinner: UIView {
         isHidden = false
         stopAnimationInternal()
 
-        spinner.layer.add(ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0), forKey: "rotateAnimation")
+        spinner.layer.add(
+            ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0),
+            forKey: "rotateAnimation"
+        )
     }
 
     private func stopAnimationInternal() {
@@ -111,7 +114,12 @@ public final class Spinner: UIView {
 
         let spinner = Spinner()
         spinner.isAnimating = true
-        spinner.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        spinner.autoresizingMask = [
+            .flexibleLeftMargin,
+            .flexibleTopMargin,
+            .flexibleRightMargin,
+            .flexibleBottomMargin
+        ]
         container.addSubview(spinner)
         spinner.center = container.center
 

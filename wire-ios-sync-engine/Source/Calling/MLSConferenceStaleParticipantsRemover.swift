@@ -45,9 +45,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Life cycle
 
-    init(mlsService: MLSServiceInterface,
-         syncContext: NSManagedObjectContext,
-         removalTimeout: TimeInterval = defaultRemovalTimeout
+    init(
+        mlsService: MLSServiceInterface,
+        syncContext: NSManagedObjectContext,
+        removalTimeout: TimeInterval = defaultRemovalTimeout
     ) {
         self.mlsService = mlsService
         self.syncContext = syncContext
@@ -124,7 +125,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         }
     }
 
-    private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
+    private func newAndChangedParticipants(
+        between previous: [CallParticipant],
+        and current: [CallParticipant]
+    ) -> [CallParticipant] {
         var newAndChanged = [CallParticipant]()
 
         // Object to uniquely identify and compare participant
@@ -133,11 +137,16 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             var userId: AVSIdentifier
         }
 
-        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (UniqueKey(clientId: $0.clientId, userId: $0.userId), $0.state) })
+        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (
+            UniqueKey(clientId: $0.clientId, userId: $0.userId),
+            $0.state
+        ) })
 
         current.forEach { participant in
-            let participantUniqueKey = UniqueKey(clientId: participant.clientId,
-                                                 userId: participant.userId)
+            let participantUniqueKey = UniqueKey(
+                clientId: participant.clientId,
+                userId: participant.userId
+            )
             if let previousState = previousStates[participantUniqueKey], previousState != participant.state {
                 newAndChanged.append(participant)
             } else if previousStates[participantUniqueKey] == nil {
@@ -181,11 +190,17 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 }
             )
 
-            logger.info("started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
+            logger
+                .info(
+                    "started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription))"
+                )
         } catch TimerError.timerAlreadyExists {
             // timer already exists, do nothing
         } catch {
-            logger.warn("failed to start timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription)). error: (\(error))")
+            logger
+                .warn(
+                    "failed to start timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription)). error: (\(error))"
+                )
         }
     }
 
@@ -197,12 +212,18 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             let subconversationMembers = try await mlsService.subconversationMembers(for: groupID)
 
             guard subconversationMembers.contains(clientID) else {
-                logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
+                logger
+                    .info(
+                        "didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)"
+                    )
                 return
             }
 
             try await mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
-            logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
+            logger
+                .info(
+                    "removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))"
+                )
         } catch {
             logger.error("failed to remove stale participant from subconversation: \(String(reflecting: error))")
         }
@@ -221,7 +242,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
 }
 
-private extension Array where Element == CallParticipant {
+private extension [CallParticipant] {
 
     func excludingParticipant(withID userID: AVSIdentifier) -> Self {
         filter {

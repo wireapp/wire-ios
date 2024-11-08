@@ -26,7 +26,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         let showImage: Bool
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -38,7 +38,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return articleView
+        articleView
     }
 
     var configuration: Configuration?
@@ -66,8 +66,10 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     func configure(with object: Configuration, animated: Bool) {
         configuration = object
-        articleView.configure(withTextMessageData: object.textMessageData,
-                              obfuscated: object.isObfuscated)
+        articleView.configure(
+            withTextMessageData: object.textMessageData,
+            obfuscated: object.isObfuscated
+        )
 
         updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
@@ -82,14 +84,14 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        updateImageLayout(isRegular: self.traitCollection.horizontalSizeClass == .regular)
+        updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
 
 }
 
 extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     var url: URL? {
-        return configuration?.textMessageData.linkPreview?.openableURL
+        configuration?.textMessageData.linkPreview?.openableURL
     }
 }
 
@@ -109,14 +111,14 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
     }
 
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
+        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

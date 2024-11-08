@@ -48,7 +48,7 @@ public struct SidebarAccountInfo {
     public enum AccountImageSource: Equatable, Sendable {
         case image(UIImage)
         case text(_ initials: String)
-        
+
         public init() { self = .text("") }
     }
 }

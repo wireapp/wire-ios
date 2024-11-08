@@ -49,7 +49,8 @@ struct SidebarViewControllerBuilder {
         sidebarViewController.sidebarAccountInfoViewUsernameColor = sidebarDesign.accountInfoViewUsernameColor
         sidebarViewController.sidebarMenuItemTitleForegroundColor = sidebarDesign.menuItemTitleForegroundColor
         sidebarViewController.sidebarMenuItemLinkIconForegroundColor = sidebarDesign.menuItemLinkIconForegroundColor
-        sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign.menuItemIsSelectedTitleForegroundColor
+        sidebarViewController.sidebarMenuItemIsSelectedTitleForegroundColor = sidebarDesign
+            .menuItemIsSelectedTitleForegroundColor
 
         return sidebarViewController
     }

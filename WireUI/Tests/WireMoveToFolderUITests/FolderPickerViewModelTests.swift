@@ -124,7 +124,10 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func createSUT(conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)) {
+    private func createSUT(conversation: Conversation = Conversation(
+        identifier: UUID(),
+        currentFolderIdentifier: nil
+    )) {
         sut = FolderPickerViewModel(
             conversation: conversation,
             directory: mockDirectory,

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMClientMessagesTests_ResetSession: BaseZMClientMessageTests {
 
@@ -25,7 +25,10 @@ class ZMClientMessagesTests_ResetSession: BaseZMClientMessageTests {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
         let resetSessionMessage = GenericMessage(clientAction: .resetSession)
-        let data = ["sender": String.randomClientIdentifier(), "text": try? resetSessionMessage.serializedData().base64EncodedString()]
+        let data = [
+            "sender": String.randomClientIdentifier(),
+            "text": try? resetSessionMessage.serializedData().base64EncodedString()
+        ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
 

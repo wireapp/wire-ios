@@ -112,7 +112,11 @@ extension View {
     }
 
     func sidebarMenuItemIsSelectedTitleForegroundColor(_ isSelectedTitleForegroundColor: Color) -> some View {
-        modifier(SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(isSelectedTitleForegroundColor: isSelectedTitleForegroundColor))
+        modifier(
+            SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(
+                isSelectedTitleForegroundColor: isSelectedTitleForegroundColor
+            )
+        )
     }
 }
 

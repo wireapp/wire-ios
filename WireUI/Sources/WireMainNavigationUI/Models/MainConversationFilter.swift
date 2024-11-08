@@ -17,7 +17,9 @@
 //
 
 public enum MainConversationFilter: Sendable {
-    case favorites, groups, oneOnOne
+    case favorites
+    case groups
+    case oneOnOne
 }
 
 extension MainConversationFilter: MainConversationFilterRepresentable {
