@@ -107,12 +107,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 isE2EICertified: accountInfo.isE2EICertified,
                 isVerified: accountInfo.isVerified,
                 isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
-                accountImageView: {
-                    accountImageView(accountInfo.accountImageSource, accountInfo.availability)
-                },
-                legalHoldIndicatorView: {
-                    EmptyView() // TODO: fix
-                }
+                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) },
+                legalHoldIndicatorView: { legalHoldIndicatorView() }
             )
         }
     }

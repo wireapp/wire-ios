@@ -23,10 +23,8 @@ import WireFoundation
 func SidebarViewControllerPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
     let sidebarViewController = SidebarViewController(
-        accountImageView: { accountImage, availability in
-            AnyView(MockAccountImageView(accountImage: accountImage, availability: availability))
-        },
-        legalHoldIndicatorView: { Circle().fill(.green) } // TODO: fix
+        accountImageView: { _, _ in MockAccountImageView() },
+        legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
     )
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
@@ -42,6 +40,26 @@ func SidebarViewControllerPreview() -> UIViewController {
     splitViewController.view.backgroundColor = .init(white: 0.9, alpha: 1)
 
     return splitViewController
+}
+
+private struct MockAccountImageView: View {
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Circle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(Color.brown)
+            Circle()
+                .frame(width: 14, height: 14)
+                .foregroundStyle(Color.green)
+        }
+    }
+}
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.green)
+    }
 }
 
 private final class EmptyViewController: UIHostingController<AnyView> {

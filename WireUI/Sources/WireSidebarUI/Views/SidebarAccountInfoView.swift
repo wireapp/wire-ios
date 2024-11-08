@@ -18,13 +18,11 @@
 
 import SwiftUI
 import WireFoundation
-import WireReusableUIComponents
 
 struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @Environment(\.sidebarAccountInfoViewDisplayNameColor) private var displayNameColor
     @Environment(\.sidebarAccountInfoViewUsernameColor) private var usernameColor
-    @Environment(\.sidebarAccountInfoViewLegalHoldIndicatorColor) private var legalHoldIndicatorColor
 
     // MARK: - Life Cycle
 
@@ -59,7 +57,6 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
                 legalHoldIndicatorView()
                     .frame(height: usernameHeight)
                     .padding(.trailing, 4)
-                    // .legalHoldIndicatorColor(legalHoldIndicatorColor) // TODO: clean up
                 Text("sidebar.legalHold.title", bundle: .module)
                     .wireTextStyle(.subline1)
             }

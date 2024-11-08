@@ -37,3 +37,10 @@ private struct MockAccountView: View {
             .foregroundStyle(Color.primary)
     }
 }
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
+    }
+}

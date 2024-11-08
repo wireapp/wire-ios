@@ -69,11 +69,6 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarAccountInfoViewUsernameColor = newValue }
     }
 
-    public var sidebarAccountInfoViewLegalHoldIndicatorColor: UIColor {
-        get { model.sidebarAccountInfoViewLegalHoldIndicatorColor }
-        set { model.sidebarAccountInfoViewLegalHoldIndicatorColor = newValue }
-    }
-
     public var sidebarMenuHeaderForegroundColor: UIColor {
         get { model.sidebarMenuHeaderForegroundColor }
         set { model.sidebarMenuHeaderForegroundColor = newValue }
@@ -186,7 +181,6 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
         .sidebarAccountInfoViewUsernameColor(.init(uiColor: model.sidebarAccountInfoViewUsernameColor))
-        .sidebarAccountInfoViewLegalHoldIndicatorColor(.init(uiColor: model.sidebarAccountInfoViewLegalHoldIndicatorColor))
         .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))

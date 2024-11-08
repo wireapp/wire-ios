@@ -68,7 +68,7 @@ struct SidebarPreview: View {
     }
 }
 
-struct MockAccountImageView: View {
+private struct MockAccountImageView: View {
     @State private(set) var accountImage: SidebarAccountInfo.AccountImageSource
     @State private(set) var availability: SidebarAccountInfo.Availability?
     var body: some View {
@@ -83,7 +83,7 @@ struct MockAccountImageView: View {
     }
 }
 
-struct MockLegalHoldIndicatorView: View {
+private struct MockLegalHoldIndicatorView: View {
     var body: some View {
         Circle()
             .fill(.red)
