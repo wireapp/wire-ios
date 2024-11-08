@@ -98,9 +98,9 @@ final class EmptyPlaceholderView: UIView {
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
 
-            arrowView.topAnchor.constraint(equalTo: topAnchor),
+            arrowView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
-            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -arrowOffset),
+            arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
 
             connectWithPeopleButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10),
             connectWithPeopleButton.centerXAnchor.constraint(equalTo: centerXAnchor)
