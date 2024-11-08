@@ -847,8 +847,10 @@ extension ZMUserTests_Swift {
         sut.markAccountAsDeleted(at: Date())
 
         // then
+        // swiftlint:disable todo_requires_jira_link
         XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
         XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
+        // swiftlint:enable todo_requires_jira_link
     }
 
     func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {

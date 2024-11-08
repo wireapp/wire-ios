@@ -602,7 +602,8 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         ])
     }
 
-    /// FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
+    // swiftlint:disable:next todo_requires_jira_link
+    // FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it
     func test_Group_SelfUser_NoSCIM() {
         // GIVEN
         selfUser.availability = .busy

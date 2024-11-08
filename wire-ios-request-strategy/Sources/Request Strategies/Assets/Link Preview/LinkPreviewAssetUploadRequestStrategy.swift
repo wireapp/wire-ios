@@ -63,7 +63,8 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
     /// Processors
     fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
-    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO replace with AssetPreprocessor
+    // swiftlint:disable:next todo_requires_jira_link
+    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO: replace with AssetPreprocessor
 
     /// Upstream sync
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!

@@ -77,7 +77,8 @@ final class ProxyCredentialsViewController: UIViewController {
         let textField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
 
         // swiftlint:disable:next todo_requires_jira_link
-        textField.placeholder = Credentials.Password.placeholder.capitalized // TODO: .uppercased() when new design is implemented
+        // TODO: .uppercased() when new design is implemented
+        textField.placeholder = Credentials.Password.placeholder.capitalized
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()

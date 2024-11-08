@@ -171,24 +171,29 @@ public final class ZMUserSession: NSObject {
     var cRLsChecker: CertificateRevocationListsChecker?
     var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
-    public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.viewContext
+    // swiftlint:disable:next todo_requires_jira_link
+    public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
+        coreDataStack.viewContext
     }
 
-    public var syncManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.syncContext
+    // swiftlint:disable:next todo_requires_jira_link
+    public var syncManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
+        coreDataStack.syncContext
     }
 
-    public var searchManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.searchContext
+    // swiftlint:disable:next todo_requires_jira_link
+    public var searchManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
+        coreDataStack.searchContext
     }
 
-    public var sharedContainerURL: URL { // TODO jacob we don't want this to be public
-        return coreDataStack.applicationContainer
+    // swiftlint:disable:next todo_requires_jira_link
+    public var sharedContainerURL: URL { // TODO: jacob we don't want this to be public
+        coreDataStack.applicationContainer
     }
 
-    public var selfUserClient: UserClient? { // TODO jacob we don't want this to be public
-        return ZMUser.selfUser(in: managedObjectContext).selfClient()
+    // swiftlint:disable:next todo_requires_jira_link
+    public var selfUserClient: UserClient? { // TODO: jacob we don't want this to be public
+        ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
     public var userProfile: UserProfile {

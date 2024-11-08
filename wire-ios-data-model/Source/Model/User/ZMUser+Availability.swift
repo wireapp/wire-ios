@@ -116,7 +116,8 @@ extension ZMUser {
         }
 
         set {
-            guard isSelfUser else { return } // TODO move this setter to ZMEditableUserType
+            // swiftlint:disable:next todo_requires_jira_link
+            guard isSelfUser else { return } // TODO: move this setter to ZMEditableUserType
 
             updateAvailability(newValue)
         }

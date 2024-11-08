@@ -38,7 +38,9 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String { // TODO move constant into shared framework
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
             return !clientId.isEmpty
         }
 

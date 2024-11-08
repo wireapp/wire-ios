@@ -76,8 +76,9 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return groupConversations.items
         case .favorites:
             return favoriteConversations.items
-        case .folder(let label):
-            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
+        case let .folder(label):
+            // swiftlint:disable:next todo_requires_jira_link
+            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO: jacob make optional?
             return (listsByFolder[objectID] as? ConversationList)?.items ?? []
         }
     }

@@ -120,7 +120,8 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
             validName = name
             textField.endEditing(true)
         case .error:
-            // TODO show error
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: show error
             textField.endEditing(true)
         }
     }

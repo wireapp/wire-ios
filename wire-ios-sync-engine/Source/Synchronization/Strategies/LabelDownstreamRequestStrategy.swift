@@ -108,7 +108,8 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         fetchRequest.predicate = predicate
 
         let deletedLabels = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO jacob consider doing a batch delete
+        // swiftlint:disable:next todo_requires_jira_link
+        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO: jacob consider doing a batch delete
         managedObjectContext.saveOrRollback()
     }
 

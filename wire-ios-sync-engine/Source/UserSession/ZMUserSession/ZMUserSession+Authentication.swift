@@ -43,7 +43,8 @@ extension ZMUserSession {
     ///
     /// NOTE: This property should only be called on the main queue.
 
-    public var isLoggedIn: Bool { // TODO jacob we don't want this to be public
+    // swiftlint:disable:next todo_requires_jira_link
+    public var isLoggedIn: Bool { // TODO: jacob we don't want this to be public
         let needsToRegisterClient = ZMClientRegistrationStatus.needsToRegisterClient(in: managedObjectContext)
         let needsToRegisterMLSClient = ZMClientRegistrationStatus.needsToRegisterMLSClient(in: managedObjectContext)
         let waitingToRegisterMLSClient = needsToRegisterMLSClient && !hasCompletedInitialSync

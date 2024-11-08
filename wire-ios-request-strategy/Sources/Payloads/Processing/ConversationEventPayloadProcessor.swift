@@ -153,7 +153,8 @@ struct ConversationEventPayloadProcessor {
 
         let (isSelfUserRemoved, messageProtocol) = await context.perform {
             if !conversation.localParticipants.isDisjoint(with: removedUsers) {
-                // TODO jacob refactor to append method on conversation
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(
                     from: originalEvent,
                     in: context
@@ -230,8 +231,9 @@ struct ConversationEventPayloadProcessor {
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if newUsers && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if newUsers, conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
 
@@ -242,8 +244,10 @@ struct ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser),
+               conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
             conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
@@ -265,8 +269,10 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        if conversation.userDefinedName != payload.data.name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
-            // TODO jacob refactor to append method on conversation
+        if conversation.userDefinedName != payload.data.name
+            || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: jacob refactor to append method on conversation
             _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
 
@@ -396,7 +402,8 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        // TODO jacob refactor to append method on conversation
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
