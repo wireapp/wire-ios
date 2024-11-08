@@ -65,12 +65,12 @@ public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
 
     // MARK: - storeConnection
 
-    public var storeConnection_Invocations: [Connection] = []
+    public var storeConnection_Invocations: [ConnectionInfo] = []
     public var storeConnection_MockError: Error?
-    public var storeConnection_MockMethod: ((Connection) async throws -> Void)?
+    public var storeConnection_MockMethod: ((ConnectionInfo) async throws -> Void)?
 
-    public func storeConnection(_ connectionPayload: Connection) async throws {
-        storeConnection_Invocations.append(connectionPayload)
+    public func storeConnection(_ connectionInfo: ConnectionInfo) async throws {
+        storeConnection_Invocations.append(connectionInfo)
 
         if let error = storeConnection_MockError {
             throw error
@@ -80,7 +80,7 @@ public class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
             fatalError("no mock for `storeConnection`")
         }
 
-        try await mock(connectionPayload)
+        try await mock(connectionInfo)
     }
 
 }
@@ -1967,44 +1967,6 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         mock()
     }
 
-    // MARK: - fetchOrCreateUserClient
-
-    public var fetchOrCreateUserClientId_Invocations: [String] = []
-    public var fetchOrCreateUserClientId_MockMethod: ((String) async -> (client: WireDataModel.UserClient, isNew: Bool))?
-    public var fetchOrCreateUserClientId_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
-
-    public func fetchOrCreateUserClient(id: String) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        fetchOrCreateUserClientId_Invocations.append(id)
-
-        if let mock = fetchOrCreateUserClientId_MockMethod {
-            return await mock(id)
-        } else if let mock = fetchOrCreateUserClientId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchOrCreateUserClientId`")
-        }
-    }
-
-    // MARK: - updateUserClient
-
-    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
-    public var updateUserClientFromIsNewClient_MockError: Error?
-    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.SelfUserClient, Bool) async throws -> Void)?
-
-    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
-        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
-
-        if let error = updateUserClientFromIsNewClient_MockError {
-            throw error
-        }
-
-        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
-            fatalError("no mock for `updateUserClientFromIsNewClient`")
-        }
-
-        try await mock(localClient, remoteClient, isNewClient)
-    }
-
     // MARK: - addSelfLegalHoldRequest
 
     public var addSelfLegalHoldRequestUserIDClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: WireDataModel.LegalHoldRequest.Prekey)] = []
@@ -2128,32 +2090,32 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - persistUser
 
-    public var persistUserFrom_Invocations: [WireAPI.User] = []
-    public var persistUserFrom_MockMethod: ((WireAPI.User) async -> Void)?
+    public var persistUserUserInfo_Invocations: [NewUserInfo] = []
+    public var persistUserUserInfo_MockMethod: ((NewUserInfo) async -> Void)?
 
-    public func persistUser(from user: WireAPI.User) async {
-        persistUserFrom_Invocations.append(user)
+    public func persistUser(userInfo: NewUserInfo) async {
+        persistUserUserInfo_Invocations.append(userInfo)
 
-        guard let mock = persistUserFrom_MockMethod else {
-            fatalError("no mock for `persistUserFrom`")
+        guard let mock = persistUserUserInfo_MockMethod else {
+            fatalError("no mock for `persistUserUserInfo`")
         }
 
-        await mock(user)
+        await mock(userInfo)
     }
 
     // MARK: - updateUser
 
-    public var updateUserFrom_Invocations: [UserUpdateEvent] = []
-    public var updateUserFrom_MockMethod: ((UserUpdateEvent) async -> Void)?
+    public var updateUserUserUpdateInfo_Invocations: [UserUpdateInfo] = []
+    public var updateUserUserUpdateInfo_MockMethod: ((UserUpdateInfo) async -> Void)?
 
-    public func updateUser(from event: UserUpdateEvent) async {
-        updateUserFrom_Invocations.append(event)
+    public func updateUser(userUpdateInfo: UserUpdateInfo) async {
+        updateUserUserUpdateInfo_Invocations.append(userUpdateInfo)
 
-        guard let mock = updateUserFrom_MockMethod else {
-            fatalError("no mock for `updateUserFrom`")
+        guard let mock = updateUserUserUpdateInfo_MockMethod else {
+            fatalError("no mock for `updateUserUserUpdateInfo`")
         }
 
-        await mock(event)
+        await mock(userUpdateInfo)
     }
 
 }

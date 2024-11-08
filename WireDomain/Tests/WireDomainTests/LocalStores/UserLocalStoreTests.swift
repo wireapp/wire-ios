@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
 import WireDomainSupport
 import XCTest
+import WireTestingPackage
 
 final class UserLocalStoreTests: XCTestCase {
 
@@ -70,31 +69,31 @@ final class UserLocalStoreTests: XCTestCase {
 
         await context.perform { [context] in
             // There is no user in the database.
-            XCTAssertNil(ZMUser.fetch(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context))
+            XCTAssertNil(ZMUser.fetch(with: Scaffolding.userInfo.userID.uuid, domain: Scaffolding.userInfo.userID.domain, in: context))
         }
 
         // When
 
-        await sut.persistUser(from: Scaffolding.user1)
+        await sut.persistUser(userInfo: Scaffolding.userInfo)
 
         // Then
         try await context.perform { [context] in
             // There is a user in the database.
             let user = try XCTUnwrap(
                 ZMUser.fetch(
-                    with: Scaffolding.user1.id.uuid,
-                    domain: Scaffolding.user1.id.domain,
+                    with: Scaffolding.userInfo.userID.uuid,
+                    domain: Scaffolding.userInfo.userID.domain,
                     in: context
                 )
             )
-            XCTAssertEqual(user.remoteIdentifier, Scaffolding.user1.id.uuid)
-            XCTAssertEqual(user.name, Scaffolding.user1.name)
-            XCTAssertEqual(user.handle, Scaffolding.user1.handle)
-            XCTAssertEqual(user.teamIdentifier, Scaffolding.user1.teamID)
-            XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.user1.accentID))
-            XCTAssertEqual(user.isAccountDeleted, Scaffolding.user1.deleted)
-            XCTAssertEqual(user.emailAddress, Scaffolding.user1.email)
-            XCTAssertEqual(user.supportedProtocols, Scaffolding.user1.supportedProtocols?.toDomainModel())
+            XCTAssertEqual(user.remoteIdentifier, Scaffolding.userInfo.userID.uuid)
+            XCTAssertEqual(user.name, Scaffolding.userInfo.name)
+            XCTAssertEqual(user.handle, Scaffolding.userInfo.handle)
+            XCTAssertEqual(user.teamIdentifier, Scaffolding.userInfo.teamID)
+            XCTAssertEqual(user.accentColorValue, Int16(Scaffolding.userInfo.accentID))
+            XCTAssertEqual(user.isAccountDeleted, Scaffolding.userInfo.deleted)
+            XCTAssertEqual(user.emailAddress, Scaffolding.userInfo.email)
+            XCTAssertEqual(user.supportedProtocols, Scaffolding.userInfo.supportedProtocols)
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
     }
@@ -290,7 +289,7 @@ final class UserLocalStoreTests: XCTestCase {
 
         // When
 
-        await sut.updateUser(from: Scaffolding.event)
+        await sut.updateUser(userUpdateInfo: Scaffolding.userUpdateInfo)
 
         // Then
 
@@ -298,7 +297,7 @@ final class UserLocalStoreTests: XCTestCase {
             let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
 
             XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
-            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
+            XCTAssertEqual(updatedUser.name, Scaffolding.userUpdateInfo.name)
             XCTAssertEqual(updatedUser.handle, Scaffolding.existingHandle) /// ensuring handle is not updated to nil
             XCTAssertEqual(updatedUser.emailAddress, Scaffolding.existingEmail) /// ensuring email is not updated to nil
             XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
@@ -338,12 +337,12 @@ final class UserLocalStoreTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static let selfUserID = UUID()
-        static let userID = UUID()
+        static let selfUserID = UUID.mockID1
+        static let userID = UUID.mockID2
         static let domain = "domain.com"
         static let existingHandle = "handle"
         static let existingEmail = "test@wire.com"
-        static let userClientID = UUID().uuidString
+        static let userClientID = UUID.mockID4.uuidString
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
@@ -356,30 +355,32 @@ final class UserLocalStoreTests: XCTestCase {
                 key: Data(base64Encoded: base64encodedString)!
             )
         )
-
-        static let user1 = User(
-            id: QualifiedID(uuid: userID, domain: domain),
+        
+        static let userInfo = NewUserInfo(
+            userID: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
             accentID: 1,
-            assets: [],
+            previewAssetKey: nil,
+            completeAssetKey: nil,
             deleted: false,
             email: "john.doe@example.com",
-            expiresAt: nil,
-            service: nil,
-            supportedProtocols: [.mls],
-            legalholdStatus: .disabled
+            expiresAt: .now,
+            serviceID: nil,
+            serviceProvider: nil,
+            supportedProtocols: [.mls]
         )
-
-        static let event = UserUpdateEvent(
+        
+        static let userUpdateInfo = UserUpdateInfo(
             userID: userID,
             accentColorID: nil,
             name: "username",
             handle: nil,
             email: nil,
             isSSOIDDeleted: nil,
-            assets: nil,
+            previewAssetKey: nil,
+            completeAssetKey: nil,
             supportedProtocols: [.proteus, .mls]
         )
 
@@ -392,7 +393,7 @@ final class UserLocalStoreTests: XCTestCase {
             tokenType: .voip
         )
 
-        static let defaultsTestSuiteName = UUID().uuidString
+        static let defaultsTestSuiteName = UUID.mockID1.uuidString
 
     }
 

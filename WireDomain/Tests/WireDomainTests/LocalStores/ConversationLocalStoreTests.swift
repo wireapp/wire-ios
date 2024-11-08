@@ -537,23 +537,23 @@ final class ConversationLocalStoreTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static let selfUserId = UUID()
+        static let selfUserId = UUID.mockID1
 
         static let domain = "domain.com"
 
-        static let teamID = UUID()
+        static let teamID = UUID.mockID2
 
-        static let userID = UUID()
+        static let userID = UUID.mockID3
 
-        static let otherUserID = UUID()
+        static let otherUserID = UUID.mockID4
 
         static let time = "2021-05-12T10:52:02.671Z"
 
-        static let teamConversationID = UUID()
+        static let teamConversationID = UUID.mockID5
 
-        static let anotherTeamConversationID = UUID()
+        static let anotherTeamConversationID = UUID.mockID6
 
-        static let conversationID = UUID()
+        static let conversationID = UUID.mockID7
 
         static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 

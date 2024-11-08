@@ -23,6 +23,7 @@ import WireDataModelSupport
 @testable import WireDomain
 import WireDomainSupport
 import XCTest
+import WireTestingPackage
 
 final class UserClientsRepositoryTests: XCTestCase {
 
@@ -169,8 +170,8 @@ final class UserClientsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let userClientID = UUID().uuidString
-        static let otherUserClientID = UUID().uuidString
+        static let userClientID = UUID.mockID1.uuidString
+        static let otherUserClientID = UUID.mockID2.uuidString
 
         static let selfUserClient = WireAPI.SelfUserClient(
             id: userClientID,

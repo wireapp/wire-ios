@@ -90,7 +90,7 @@ final class UserRepositoryTests: XCTestCase {
             failed: []
         )
 
-        userLocalStore.persistUserFrom_MockMethod = { _ in }
+        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
 
         // When
 
@@ -98,7 +98,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userLocalStore.persistUserFrom_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
     }
 
     func testPullKnownUsers_It_Invokes_Local_Store_Methods() async throws {
@@ -117,7 +117,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         userLocalStore.fetchUsersQualifiedIDs_MockValue = [Scaffolding.user1.id.toDomainModel()]
-        userLocalStore.persistUserFrom_MockMethod = { _ in }
+        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
 
         // When
 
@@ -126,7 +126,7 @@ final class UserRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchUsersQualifiedIDs_Invocations.count, 1)
-        XCTAssertEqual(userLocalStore.persistUserFrom_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
     }
 
     func testRemovesPushToken_It_Invokes_Local_Store_Method() {
@@ -344,7 +344,7 @@ final class UserRepositoryTests: XCTestCase {
     func testUpdateUser_It_Updates_User_Locally_It_Invokes_Local_Store_Method() async {
         // Mock
 
-        userLocalStore.updateUserFrom_MockMethod = { _ in }
+        userLocalStore.updateUserUserUpdateInfo_MockMethod = { _ in }
 
         // When
 
@@ -352,7 +352,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userLocalStore.updateUserFrom_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.updateUserUserUpdateInfo_Invocations.count, 1)
     }
 
     func testIsSelfUser_It_Returns_True() async throws {

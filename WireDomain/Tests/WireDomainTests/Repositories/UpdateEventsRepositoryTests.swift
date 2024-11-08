@@ -252,16 +252,16 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         // MARK: - Local domain
 
         static let localDomain = "local.com"
-        static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+        static let selfUserID = UserID(uuid: .mockID1, domain: localDomain)
         static let selfClientID = "abcd1234"
-        static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+        static let conversationID = ConversationID(uuid: .mockID2, domain: localDomain)
 
         static let lastEventID = UUID(uuidString: "571d22a5-026c-48b4-90bf-78d00354f121")!
 
         // MARK: - Other domain
 
         static let otherDomain = "other.com"
-        static let aliceID = UserID(uuid: UUID(), domain: otherDomain)
+        static let aliceID = UserID(uuid: .mockID3, domain: otherDomain)
         static let aliceClientID = "efgh5678"
 
         // MARK: - Pending events
@@ -335,12 +335,12 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             messageRecipientClientID: selfClientID
         )
 
-        static let id1 = UUID(uuidString: "d92f875d-9599-4469-886e-39addaffdad7")!
-        static let id2 = UUID(uuidString: "a826994f-082b-4d1e-9655-df8e1c7dccbf")!
-        static let id3 = UUID(uuidString: "000e7674-6fbe-4099-b081-10c5757c37f2")!
-        static let id4 = UUID(uuidString: "94d2dbb9-7a81-411d-b009-41a58cdae13b")!
-        static let id5 = UUID(uuidString: "9ec9d043-150b-4b4e-b916-33bf04e8c74f")!
-        static let id6 = UUID(uuidString: "9924114a-9773-436e-b1f8-b7cf32385ca2")!
+        static let id1 = UUID.mockID1
+        static let id2 = UUID.mockID2
+        static let id3 = UUID.mockID3
+        static let id4 = UUID.mockID4
+        static let id5 = UUID.mockID5
+        static let id6 = UUID.mockID6
 
         static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
         static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)

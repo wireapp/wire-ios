@@ -23,6 +23,7 @@ import WireDataModelSupport
 @testable import WireDomain
 import WireDomainSupport
 import XCTest
+import WireTestingPackage
 
 final class ConversationRepositoryTests: XCTestCase {
 
@@ -537,7 +538,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static let id = UUID()
+        static let id = UUID.mockID1
 
         static let domain = "domain.com"
 

@@ -226,7 +226,7 @@ public final class UserRepository: UserRepositoryProtocol {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             for user in userList.found {
-                await userLocalStore.persistUser(from: user)
+                await userLocalStore.persistUser(userInfo: user.toDomainModel())
             }
 
         } catch {
@@ -238,7 +238,7 @@ public final class UserRepository: UserRepositoryProtocol {
         from event: UserUpdateEvent
     ) async {
         await userLocalStore.updateUser(
-            from: event
+            userUpdateInfo: event.toDomainModel()
         )
     }
 

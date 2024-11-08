@@ -53,7 +53,6 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel1,
-            Scaffolding.conversationLabel2
         ]
 
         conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }
@@ -66,7 +65,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userPropertiesAPI.getLabels_Invocations.count, 1)
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 2)
+        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
         XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
     }
 

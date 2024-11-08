@@ -265,7 +265,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             ),
             .mls(.init(
                 status: .enabled,
-                protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                protocolToggleUsers: [.mockID1],
                 defaultProtocol: .proteus,
                 allowedCipherSuites: [
                     .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,

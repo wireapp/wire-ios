@@ -23,6 +23,7 @@ import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 import XCTest
+import WireTestingPackage
 
 final class TeamRepositoryTests: XCTestCase {
 
@@ -274,28 +275,28 @@ final class TeamRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let userID = UUID()
-        static let selfUserID = UUID()
-        static let teamID = UUID()
-        static let selfTeamID = UUID()
+        static let userID = UUID.mockID1
+        static let selfUserID = UUID.mockID2
+        static let teamID = UUID.mockID3
+        static let selfTeamID = UUID.mockID4
         static let domain = "example.com"
-        static let membershipID = UUID()
-        static let teamCreatorID = UUID()
+        static let membershipID = UUID.mockID5
+        static let teamCreatorID = UUID.mockID6
         static let teamName = "Team Foo"
-        static let logoID = UUID().uuidString
-        static let logoKey = UUID().uuidString
-        static let splashScreenID = UUID().uuidString
+        static let logoID = UUID.mockID1.uuidString
+        static let logoKey = UUID.mockID2.uuidString
+        static let splashScreenID = UUID.mockID3.uuidString
         static let conversationID = UUID()
 
-        static let member1ID = UUID()
+        static let member1ID = UUID.mockID4
         static let member1CreationDate = Date()
-        static let member1CreatorID = UUID()
+        static let member1CreatorID = UUID.mockID2
         static let member1legalholdStatus = LegalholdStatus.enabled
         static let member1Permissions = Permissions.admin.rawValue
 
-        static let member2ID = UUID()
+        static let member2ID = UUID.mockID2
         static let member2CreationDate = Date()
-        static let member2CreatorID = UUID()
+        static let member2CreatorID = UUID.mockID4
         static let member2legalholdStatus = LegalholdStatus.pending
         static let member2Permissions = Permissions.member.rawValue
     }

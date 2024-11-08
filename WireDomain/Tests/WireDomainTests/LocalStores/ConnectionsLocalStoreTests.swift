@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
@@ -139,19 +138,21 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        nonisolated(unsafe) static let member1ID = WireDataModel.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
+        nonisolated(unsafe) static let conversationID = WireDataModel.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
+        nonisolated(unsafe) static let member2ID = WireDataModel.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
-        static let connectionStatus = ConnectionStatus.accepted
+        static let connectionStatus = ZMConnectionStatus.accepted
 
-        static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                                   receiverID: Scaffolding.member2ID.uuid,
-                                                   receiverQualifiedID: Scaffolding.member2ID,
-                                                   conversationID: Scaffolding.conversationID.uuid,
-                                                   qualifiedConversationID: Scaffolding.conversationID,
-                                                   lastUpdate: Scaffolding.lastUpdate,
-                                                   status: Scaffolding.connectionStatus)
+        static let connection = ConnectionInfo(
+            senderID: Scaffolding.member1ID.uuid,
+            receiverID: Scaffolding.member2ID.uuid,
+            receiverQualifiedID: Scaffolding.member2ID,
+            conversationID: Scaffolding.conversationID.uuid,
+            qualifiedConversationID: Scaffolding.conversationID,
+            lastUpdate: Scaffolding.lastUpdate,
+            status: Scaffolding.connectionStatus
+        )
     }
 
 }
