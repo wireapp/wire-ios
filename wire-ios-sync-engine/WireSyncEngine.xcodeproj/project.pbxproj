@@ -456,6 +456,7 @@
 		E91180DF2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91180DE2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift */; };
 		E91180E12CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */; };
 		E914CCBC2CDE269B0067F409 /* ConversationFolderCreationUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBB2CDE26980067F409 /* ConversationFolderCreationUseCase.swift */; };
+		E914CCBE2CDE378D0067F409 /* ConversationFolderCreationUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBD2CDE378D0067F409 /* ConversationFolderCreationUseCaseTests.swift */; };
 		E948DB142C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */; };
 		E955D3DF2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */; };
 		E955D3E32C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */; };
@@ -1172,6 +1173,7 @@
 		E91180DE2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleMessageReactionUseCase.swift; sourceTree = "<group>"; };
 		E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+SelfUserReactions.swift"; sourceTree = "<group>"; };
 		E914CCBB2CDE26980067F409 /* ConversationFolderCreationUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFolderCreationUseCase.swift; sourceTree = "<group>"; };
+		E914CCBD2CDE378D0067F409 /* ConversationFolderCreationUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFolderCreationUseCaseTests.swift; sourceTree = "<group>"; };
 		E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendLocationMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationType+ZMConversationType.swift"; sourceTree = "<group>"; };
 		E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessageUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1453,6 +1455,7 @@
 		018A3DBD2B0799CA00EB3D6B /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
+				E914CCBD2CDE378D0067F409 /* ConversationFolderCreationUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
 				EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */,
 				EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */,
@@ -3275,6 +3278,7 @@
 				7C419ED821F8D81D00B95770 /* EventProcessingTrackerTests.swift in Sources */,
 				707CEBB727B515B200E080A4 /* ZMUserSessionTests+SecurityClassification.swift in Sources */,
 				25D57F1D2BA892720038521E /* MessagingTest+Swift.swift in Sources */,
+				E914CCBE2CDE378D0067F409 /* ConversationFolderCreationUseCaseTests.swift in Sources */,
 				85D8522CF8DE246DDD5BD12C /* MockEntity.m in Sources */,
 				EF2CB12A22D5E5BF00350B0A /* TeamImageAssetUpdateStrategyTests.swift in Sources */,
 				3E288A6C19C859210031CFCE /* NotificationObservers.m in Sources */,

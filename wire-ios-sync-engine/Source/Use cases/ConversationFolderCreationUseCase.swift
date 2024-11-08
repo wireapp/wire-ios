@@ -24,7 +24,7 @@ public protocol ConversationFolderCreationUseCaseProtocol {
     /// Creates a new conversation folder with the specified name
     /// - Parameter name: The name of the folder to be created
     /// - Returns: The created `LabelType`, or `nil` if creation fails
-    func invoke(with name: String) -> LabelType?
+    func invoke(with name: String) async -> LabelType?
 }
 
 // MARK: - ConversationFolderCreationUseCase
@@ -43,16 +43,19 @@ public struct ConversationFolderCreationUseCase: ConversationFolderCreationUseCa
 
     // MARK: - Public Interface
 
-    public func invoke(with name: String) -> LabelType? {
-        var created = false
-        let label = Label.fetchOrCreate(
-            remoteIdentifier: UUID(),
-            create: true,
-            in: managedObjectContext,
-            created: &created
-        )
-        label?.name = name
-        label?.kind = .folder
-        return label
+    public func invoke(with name: String) async -> LabelType? {
+        await managedObjectContext.perform {
+            var created = false
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: UUID(),
+                create: true,
+                in: managedObjectContext,
+                created: &created
+            )
+            label?.name = name
+            label?.kind = .folder
+            return label
+
+        }
     }
 }
