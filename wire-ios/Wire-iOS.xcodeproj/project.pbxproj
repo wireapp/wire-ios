@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -3899,6 +3899,10 @@
 		F1FEA14D21DCEB1700790A54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		065A5ADB279B07AC002D4D1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -4683,6 +4687,7 @@
 		598108B02B7F6D480021A0A9 /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				595C04172CDE85E800DF6C57 /* MainController */,
 				5902F8E12BF7B14F00F1D392 /* ConversationList */,
 				5922E92C2BA06889001A7B01 /* E2EIdentity */,
 				598108B12B7F6D4E0021A0A9 /* GroupDetails */,
@@ -8646,6 +8651,9 @@
 			);
 			dependencies = (
 				BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				595C04172CDE85E800DF6C57 /* MainController */,
 			);
 			name = "Wire-iOS-Tests";
 			packageProductDependencies = (
