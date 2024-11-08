@@ -60,7 +60,7 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
             .prebuildCommand(
                 displayName: "Generating \(outputFile)",
                 executable: .init("/bin/zsh"),
-                arguments: ["-c", "cd \(target.directory) && pwd"],
+                arguments: ["-c", "cd \(target.directory) && find . -name \"*.swift\""],
                 outputFilesDirectory: generatedSourcesDir
             )
         ]

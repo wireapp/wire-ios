@@ -22,7 +22,7 @@ let package = Package(
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
+        //.package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
         .package(name: "WireFoundation", path: "../WireFoundation")
@@ -57,7 +57,7 @@ let package = Package(
 
         .target(
             name: "WireSettingsUI",
-            plugins: [.plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")]
+            plugins: [/*.plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")*/]
         ),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
