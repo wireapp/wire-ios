@@ -64,7 +64,7 @@ final class FolderPickerViewModelTests: XCTestCase {
     }
 
     // MARK: - Folder Selection
-
+    @MainActor
     func test_select_invokesUseCase() async throws {
         // GIVEN
         let folder = Folder(identifier: UUID(), name: "Work")
