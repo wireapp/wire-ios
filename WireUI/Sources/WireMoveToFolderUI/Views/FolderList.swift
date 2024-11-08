@@ -32,7 +32,10 @@ struct FolderList: View {
                     Task {
                         do {
                             try await onSelect(folder)
-                        } catch {}
+                        } catch {
+                            // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
+                            assertionFailure("Failed to select folder: \(error.localizedDescription)")
+                        }
                     }
                 }
             )
