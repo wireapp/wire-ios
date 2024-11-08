@@ -742,7 +742,7 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged {
                 sidebarUpdateNeeded = true
             }
 
