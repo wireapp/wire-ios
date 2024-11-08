@@ -18,17 +18,6 @@
 
 import WireDataModel
 
-// MARK: - ConversationFolderCreationUseCaseProtocol
-
-public protocol ConversationFolderCreationUseCaseProtocol {
-    /// Creates a new conversation folder with the specified name
-    /// - Parameter name: The name of the folder to be created
-    /// - Returns: The created `LabelType`, or `nil` if creation fails
-    func invoke(with name: String) async -> LabelType?
-}
-
-// MARK: - ConversationFolderCreationUseCase
-
 public struct ConversationFolderCreationUseCase: ConversationFolderCreationUseCaseProtocol {
 
     // MARK: - Properties
