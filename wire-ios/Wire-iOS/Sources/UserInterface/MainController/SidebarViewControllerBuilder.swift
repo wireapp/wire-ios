@@ -20,8 +20,8 @@ import SwiftUI
 import WireAccountImageUI
 import WireDesign
 import WireFoundation
-import WireSidebarUI
 import WireReusableUIComponents
+import WireSidebarUI
 
 struct SidebarViewControllerBuilder {
 

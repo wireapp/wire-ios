@@ -724,7 +724,7 @@ final class ZClientViewController: UIViewController {
 
     private func updateCachedAccountInfo() async {
         do {
-            cachedAccountInfo =  SidebarAccountInfo(userSession.selfUser, cachedAccountImage, cachedAccountInfo.isE2EICertified)
+            cachedAccountInfo = SidebarAccountInfo(userSession.selfUser, cachedAccountImage, cachedAccountInfo.isE2EICertified)
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
