@@ -91,7 +91,7 @@ final class EmptyPlaceholderView: UIView {
         arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         connectWithPeopleButton.translatesAutoresizingMaskIntoConstraints = false
-        let arrowOffset: CGFloat = isIPadRegular() ? 30 : 20 // TODO: [WPB-11948] will this be correct after rotation?
+        let arrowOffset: CGFloat = isIPadRegular() ? 30 : 20
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
