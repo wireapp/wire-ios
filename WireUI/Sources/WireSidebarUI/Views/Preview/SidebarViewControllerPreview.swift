@@ -58,7 +58,7 @@ private struct MockAccountImageView: View {
 private struct MockLegalHoldIndicatorView: View {
     var body: some View {
         Circle()
-            .fill(.green)
+            .fill(.red)
     }
 }
 
@@ -90,6 +90,12 @@ private func PreviewTextStyleMapping() -> WireTextStyleMapping {
         switch textStyle {
         case .h2:
             .title3.bold()
+        case .h3:
+            .headline
+        case .body1:
+            .body
+        case .subline1:
+            .caption
         default:
             fatalError("not implemented for preview yet")
         }

@@ -50,12 +50,8 @@ struct SidebarPreview: View {
                     accountImageAction: {},
                     connectAction: {},
                     supportAction: {},
-                    accountImageView: { accountImage, availability in
-                        MockAccountImageView(accountImage: accountImage, availability: availability)
-                    },
-                    legalHoldIndicatorView: {
-                        MockLegalHoldIndicatorView()
-                    }
+                    accountImageView: { _, _ in MockAccountImageView() },
+                    legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)
             }, content: {
@@ -69,8 +65,6 @@ struct SidebarPreview: View {
 }
 
 private struct MockAccountImageView: View {
-    @State private(set) var accountImage: SidebarAccountInfo.AccountImageSource
-    @State private(set) var availability: SidebarAccountInfo.Availability?
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Circle()
