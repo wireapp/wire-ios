@@ -16,25 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
+import Foundation
 
-struct EmptyState: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            Text("folder.picker.empty.hint", tableName: "Localizable", bundle: .module)
-                .foregroundColor(Color.primaryText)
-                .font(.textStyle(.subline1))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-                .accessibilityIdentifier("folder.picker.empty")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            Spacer()
-        }
-    }
-}
-
-#Preview {
-    EmptyState()
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .path
