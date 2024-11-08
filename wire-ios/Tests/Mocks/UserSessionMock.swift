@@ -337,6 +337,10 @@ final class UserSessionMock: UserSession {
         SubmitCallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 
+    func makeConversationFolderCreationUseCase() -> ConversationFolderCreationUseCaseProtocol {
+        ConversationFolderCreationUseCase(managedObjectContext: self.syncContext)
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(
