@@ -44,7 +44,6 @@ public struct ConversationFolderCreationUseCase: ConversationFolderCreationUseCa
             label?.name = name
             label?.kind = .folder
             return label
-
         }
     }
 }
