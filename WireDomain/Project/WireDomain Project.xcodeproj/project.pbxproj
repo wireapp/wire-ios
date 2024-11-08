@@ -52,6 +52,9 @@
 		C96B757D2CDDEDF8003A85EB /* ConversationLabelsLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B757C2CDDEDF8003A85EB /* ConversationLabelsLocalStore.swift */; };
 		C96B757F2CDDEEAE003A85EB /* ConversationLabelsModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B757E2CDDEEAE003A85EB /* ConversationLabelsModelMappings.swift */; };
 		C96B75822CDDEEDC003A85EB /* ConversationLabelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B75812CDDEEDC003A85EB /* ConversationLabelInfo.swift */; };
+		C96B75852CDDFBBE003A85EB /* TeamRoleInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B75842CDDFBBE003A85EB /* TeamRoleInfo.swift */; };
+		C96B75872CDDFBC9003A85EB /* TeamMemberInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B75862CDDFBC9003A85EB /* TeamMemberInfo.swift */; };
+		C96B75892CDDFBFB003A85EB /* TeamModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B75882CDDFBFB003A85EB /* TeamModelMappings.swift */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
 		C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C013C2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift */; };
 		C97C014B2CB00F92000683C5 /* OneOnOneResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */; };
@@ -216,6 +219,9 @@
 		C96B757C2CDDEDF8003A85EB /* ConversationLabelsLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLabelsLocalStore.swift; sourceTree = "<group>"; };
 		C96B757E2CDDEEAE003A85EB /* ConversationLabelsModelMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLabelsModelMappings.swift; sourceTree = "<group>"; };
 		C96B75812CDDEEDC003A85EB /* ConversationLabelInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLabelInfo.swift; sourceTree = "<group>"; };
+		C96B75842CDDFBBE003A85EB /* TeamRoleInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamRoleInfo.swift; sourceTree = "<group>"; };
+		C96B75862CDDFBC9003A85EB /* TeamMemberInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberInfo.swift; sourceTree = "<group>"; };
+		C96B75882CDDFBFB003A85EB /* TeamModelMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamModelMappings.swift; sourceTree = "<group>"; };
 		C97C013C2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertiesDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C014A2CB00F92000683C5 /* OneOnOneResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OneOnOneResolver.swift; path = ../../OneOnOneResolver.swift; sourceTree = "<group>"; };
 		C97C014F2CB01BDF000683C5 /* OneOnOneResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverTests.swift; sourceTree = "<group>"; };
@@ -557,6 +563,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		C96B75832CDDFBB6003A85EB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C96B75842CDDFBBE003A85EB /* TeamRoleInfo.swift */,
+				C96B75862CDDFBC9003A85EB /* TeamMemberInfo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		C97C01582CB40010000683C5 /* FederationEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
@@ -610,8 +625,10 @@
 		C99322B42C986E3A0065E10F /* Team */ = {
 			isa = PBXGroup;
 			children = (
+				C96B75832CDDFBB6003A85EB /* Models */,
 				C99322B22C986E3A0065E10F /* TeamRepository.swift */,
 				C96B75622CDCBA10003A85EB /* TeamLocalStore.swift */,
+				C96B75882CDDFBFB003A85EB /* TeamModelMappings.swift */,
 				C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */,
 			);
 			path = Team;
@@ -1080,6 +1097,7 @@
 				C96B75632CDCBA10003A85EB /* TeamLocalStore.swift in Sources */,
 				C97C014B2CB00F92000683C5 /* OneOnOneResolver.swift in Sources */,
 				C99322D52C986E3A0065E10F /* UserModelMappings.swift in Sources */,
+				C96B75872CDDFBC9003A85EB /* TeamMemberInfo.swift in Sources */,
 				C91F111D2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift in Sources */,
 				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
@@ -1124,6 +1142,7 @@
 				C99322DF2C986E3A0065E10F /* ConversationLocalStore+Group.swift in Sources */,
 				C99322DE2C986E3A0065E10F /* ConversationLocalStore.swift in Sources */,
 				EEAD0A242C46ACEA00CC8658 /* UserLegalholdEnableEventProcessor.swift in Sources */,
+				C96B75892CDDFBFB003A85EB /* TeamModelMappings.swift in Sources */,
 				C99322D72C986E3A0065E10F /* UserRepositoryError.swift in Sources */,
 				EEAD0A132C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift in Sources */,
 				EEAD0A262C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift in Sources */,
@@ -1132,6 +1151,7 @@
 				C96B757F2CDDEEAE003A85EB /* ConversationLabelsModelMappings.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EECC35A82C2EB70400679448 /* SyncState.swift in Sources */,
+				C96B75852CDDFBBE003A85EB /* TeamRoleInfo.swift in Sources */,
 				C99322D82C986E3A0065E10F /* UpdateEventsRepository.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */,

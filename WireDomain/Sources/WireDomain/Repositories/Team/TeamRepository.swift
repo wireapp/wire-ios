@@ -105,7 +105,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         let teamRoles = try await fetchSelfTeamRolesRemotely()
 
         let teamRolesInfo = teamRoles.map {
-            TeamLocalStore.TeamRoleInfo(role: $0.name, actions: $0.actions.map(\.name))
+            $0.toDomainModel()
         }
 
         try await teamLocalStore.storeTeamRoles(
@@ -118,12 +118,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         let teamMembers = try await fetchSelfTeamMembersRemotely()
 
         let teamMembersInfo = teamMembers.map {
-            TeamLocalStore.TeamMemberInfo(
-                id: $0.userID,
-                selfPermission: $0.permissions?.selfPermissions,
-                creatorID: $0.creatorID,
-                creationDate: $0.creationDate
-            )
+            $0.toDomainModel()
         }
 
         try await teamLocalStore.storeTeamMembers(
@@ -207,33 +202,6 @@ public class TeamRepository: TeamRepositoryProtocol {
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-}
-
-private extension ConversationAction {
-
-    var name: String {
-        switch self {
-        case .addConversationMember:
-            "add_conversation_member"
-        case .removeConversationMember:
-            "remove_conversation_member"
-        case .modifyConversationName:
-            "modify_conversation_name"
-        case .modifyConversationMessageTimer:
-            "modify_conversation_message_timer"
-        case .modifyConversationReceiptMode:
-            "modify_conversation_receipt_mode"
-        case .modifyConversationAccess:
-            "modify_conversation_access"
-        case .modifyOtherConversationMember:
-            "modify_other_conversation_member"
-        case .leaveConversation:
-            "leave_conversation"
-        case .deleteConversation:
-            "delete_conversation"
         }
     }
 

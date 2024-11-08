@@ -1138,11 +1138,11 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
     // MARK: - storeTeamRoles
 
-    public var storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations: [(selfTeamID: UUID, teamRolesInfo: [TeamLocalStore.TeamRoleInfo])] = []
+    public var storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations: [(selfTeamID: UUID, teamRolesInfo: [TeamRoleInfo])] = []
     public var storeTeamRolesSelfTeamIDTeamRolesInfo_MockError: Error?
-    public var storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod: ((UUID, [TeamLocalStore.TeamRoleInfo]) async throws -> Void)?
+    public var storeTeamRolesSelfTeamIDTeamRolesInfo_MockMethod: ((UUID, [TeamRoleInfo]) async throws -> Void)?
 
-    public func storeTeamRoles(selfTeamID: UUID, teamRolesInfo: [TeamLocalStore.TeamRoleInfo]) async throws {
+    public func storeTeamRoles(selfTeamID: UUID, teamRolesInfo: [TeamRoleInfo]) async throws {
         storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations.append((selfTeamID: selfTeamID, teamRolesInfo: teamRolesInfo))
 
         if let error = storeTeamRolesSelfTeamIDTeamRolesInfo_MockError {
@@ -1158,11 +1158,11 @@ public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
     // MARK: - storeTeamMembers
 
-    public var storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations: [(selfTeamID: UUID, teamMembersInfo: [TeamLocalStore.TeamMemberInfo])] = []
+    public var storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations: [(selfTeamID: UUID, teamMembersInfo: [TeamMemberInfo])] = []
     public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockError: Error?
-    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod: ((UUID, [TeamLocalStore.TeamMemberInfo]) async throws -> Void)?
+    public var storeTeamMembersSelfTeamIDTeamMembersInfo_MockMethod: ((UUID, [TeamMemberInfo]) async throws -> Void)?
 
-    public func storeTeamMembers(selfTeamID: UUID, teamMembersInfo: [TeamLocalStore.TeamMemberInfo]) async throws {
+    public func storeTeamMembers(selfTeamID: UUID, teamMembersInfo: [TeamMemberInfo]) async throws {
         storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.append((selfTeamID: selfTeamID, teamMembersInfo: teamMembersInfo))
 
         if let error = storeTeamMembersSelfTeamIDTeamMembersInfo_MockError {

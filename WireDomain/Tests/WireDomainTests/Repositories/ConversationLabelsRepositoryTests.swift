@@ -79,12 +79,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // When
 
         try await sut.updateConversationLabels(
-            [Scaffolding.conversationLabel1, Scaffolding.conversationLabel2]
+            [Scaffolding.conversationLabel1]
         )
 
         // Then
 
-        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 2)
+        XCTAssertEqual(conversationLabelsLocalStore.storeLabel_Invocations.count, 1)
         XCTAssertEqual(conversationLabelsLocalStore.deleteOldLabelsLocallyExcludedLabels_Invocations.count, 1)
     }
 

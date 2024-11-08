@@ -301,7 +301,7 @@ final class TeamLocalStoreTests: XCTestCase {
         static let member2CreatorID = UUID()
         static let member2Permissions = Permissions.member.rawValue
 
-        static let teamRolesInfo: [TeamLocalStore.TeamRoleInfo] = [
+        static let teamRolesInfo: [TeamRoleInfo] = [
             .init(
                 role: "admin",
                 actions: ["add_conversation_member", "delete_conversation"]
@@ -312,7 +312,7 @@ final class TeamLocalStoreTests: XCTestCase {
             )
         ]
 
-        static let teamMembersInfo: [TeamLocalStore.TeamMemberInfo] = [
+        static let teamMembersInfo: [TeamMemberInfo] = [
             .init(
                 id: member1ID,
                 selfPermission: Scaffolding.member1Permissions,

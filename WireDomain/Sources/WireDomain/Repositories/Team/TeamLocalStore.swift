@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -87,7 +86,7 @@ public protocol TeamLocalStoreProtocol {
 
     func storeTeamRoles(
         selfTeamID: UUID,
-        teamRolesInfo: [TeamLocalStore.TeamRoleInfo]
+        teamRolesInfo: [TeamRoleInfo]
     ) async throws
 
     /// Stores team members locally.
@@ -97,7 +96,7 @@ public protocol TeamLocalStoreProtocol {
 
     func storeTeamMembers(
         selfTeamID: UUID,
-        teamMembersInfo: [TeamLocalStore.TeamMemberInfo]
+        teamMembersInfo: [TeamMemberInfo]
     ) async throws
 }
 
@@ -109,20 +108,6 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
         /// The local team instance was not found in the database.
 
         case teamNotFoundLocally
-    }
-
-    // MARK: - Models
-
-    public struct TeamRoleInfo: Sendable {
-        let role: String
-        let actions: [String]
-    }
-
-    public struct TeamMemberInfo: Sendable {
-        let id: UUID
-        let selfPermission: Int64?
-        let creatorID: UUID?
-        let creationDate: Date?
     }
 
     // MARK: - Properties
