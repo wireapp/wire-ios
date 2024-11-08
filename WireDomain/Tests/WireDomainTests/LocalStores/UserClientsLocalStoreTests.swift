@@ -152,7 +152,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString
 
-        static let selfUserClientInfo = UserClientsLocalStore.UserClientInfo(
+        static let selfUserClientInfo = UserClientInfo(
             id: userClientID,
             label: "test",
             type: .permanent,

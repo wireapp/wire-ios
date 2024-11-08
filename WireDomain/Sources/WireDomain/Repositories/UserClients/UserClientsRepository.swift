@@ -133,29 +133,10 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
-        // prepare data for local store
-
-        let userClientInfo = UserClientsLocalStore.UserClientInfo(
-            id: remoteClient.id,
-            label: remoteClient.label,
-            type: remoteClient.type.toDomainModel(),
-            activationDate: remoteClient.activationDate,
-            model: remoteClient.model,
-            deviceClass: remoteClient.deviceClass?.toDomainModel(),
-            lastActiveDate: remoteClient.lastActiveDate,
-            mlsPublicKeys: .init(
-                ed25519: remoteClient.mlsPublicKeys?.ed25519,
-                ed448: remoteClient.mlsPublicKeys?.ed448,
-                p256: remoteClient.mlsPublicKeys?.p256,
-                p384: remoteClient.mlsPublicKeys?.p384,
-                p512: remoteClient.mlsPublicKeys?.p512
-            )
-        )
-
         await userClientsLocalStore.updateClient(
             id: id,
             isNewClient: isNewClient,
-            userClientInfo: userClientInfo
+            userClientInfo: remoteClient.toDomainModel()
         )
     }
 

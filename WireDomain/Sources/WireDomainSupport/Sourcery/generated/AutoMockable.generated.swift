@@ -1748,10 +1748,10 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
 
     // MARK: - updateClient
 
-    public var updateClientIdIsNewClientUserClientInfo_Invocations: [(id: String, isNewClient: Bool, userClientInfo: UserClientsLocalStore.UserClientInfo)] = []
-    public var updateClientIdIsNewClientUserClientInfo_MockMethod: ((String, Bool, UserClientsLocalStore.UserClientInfo) async -> Void)?
+    public var updateClientIdIsNewClientUserClientInfo_Invocations: [(id: String, isNewClient: Bool, userClientInfo: UserClientInfo)] = []
+    public var updateClientIdIsNewClientUserClientInfo_MockMethod: ((String, Bool, UserClientInfo) async -> Void)?
 
-    public func updateClient(id: String, isNewClient: Bool, userClientInfo: UserClientsLocalStore.UserClientInfo) async {
+    public func updateClient(id: String, isNewClient: Bool, userClientInfo: UserClientInfo) async {
         updateClientIdIsNewClientUserClientInfo_Invocations.append((id: id, isNewClient: isNewClient, userClientInfo: userClientInfo))
 
         guard let mock = updateClientIdIsNewClientUserClientInfo_MockMethod else {
