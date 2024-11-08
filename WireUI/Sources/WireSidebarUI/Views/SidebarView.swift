@@ -45,8 +45,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView
-        accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView,
+        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo

@@ -22,9 +22,12 @@ import WireFoundation
 @MainActor
 func SidebarViewControllerPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
-    let sidebarViewController = SidebarViewController { accountImage, availability in
-        AnyView(MockAccountImageView(accountImage: accountImage, availability: availability))
-    }
+    let sidebarViewController = SidebarViewController(
+        accountImageView: { accountImage, availability in
+            AnyView(MockAccountImageView(accountImage: accountImage, availability: availability))
+        },
+        legalHoldIndicatorView: { Circle().fill(.green) } // TODO: fix
+    )
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
     sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()

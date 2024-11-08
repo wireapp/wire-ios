@@ -109,10 +109,11 @@ public final class SidebarViewController: UIViewController {
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
-    TODO
+    public typealias LegalHoldIndicatorViewBuilder<LegalHoldIndicatorView> = () -> LegalHoldIndicatorView
 
     public init(
-        accountImageView: @escaping AccountImageViewBuilder<some View>
+        accountImageView: @escaping AccountImageViewBuilder<some View>,
+        legalHoldIndicatorView: @escaping LegalHoldIndicatorViewBuilder<some View>
     ) {
         super.init(nibName: nil, bundle: nil)
 
@@ -133,7 +134,7 @@ public final class SidebarViewController: UIViewController {
             let sidebarAdapter = SidebarAdapter(
                 model: model,
                 accountImageView: accountImageView,
-                legalHoldIndicatorView: <#T##() -> LegalHoldIndicatorView#>
+                legalHoldIndicatorView: legalHoldIndicatorView
             )
             let hostingController = UIHostingController(rootView: sidebarAdapter)
             addChild(hostingController)

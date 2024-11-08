@@ -25,10 +25,10 @@ func SidebarAccountInfoPreview() -> some View {
         username: "@username",
         isE2EICertified: true,
         isVerified: true,
-        isLegalHoldIndicatorVisible: true
-    ) {
-        MockAccountView()
-    }
+        isLegalHoldIndicatorVisible: true,
+        accountImageView: { MockAccountView() },
+        legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
+    )
 }
 
 private struct MockAccountView: View {
