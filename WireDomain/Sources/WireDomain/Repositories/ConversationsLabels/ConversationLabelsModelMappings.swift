@@ -16,19 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 
-/// Errors originating from `ConversationLabelsRepository`.
+extension WireAPI.ConversationLabel {
 
-enum ConversationLabelsRepositoryError: Error, Equatable {
-
-    /// Unable to pull labels from backend
-
-    case failedToCollectLabelsRemotely
-
-    /// Unable to delete label locally
-
-    case failedToDeleteStoredLabels
+    func toDomainModel() -> ConversationLabelInfo {
+        .init(
+            id: id,
+            name: name,
+            type: type,
+            conversationIDs: conversationIDs
+        )
+    }
 
 }

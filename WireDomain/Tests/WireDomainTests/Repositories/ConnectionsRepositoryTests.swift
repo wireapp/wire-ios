@@ -89,19 +89,21 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
-        static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
+        static let member1ID = WireAPI.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireAPI.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 
-        static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                                   receiverID: Scaffolding.member2ID.uuid,
-                                                   receiverQualifiedID: Scaffolding.member2ID,
-                                                   conversationID: Scaffolding.conversationID.uuid,
-                                                   qualifiedConversationID: Scaffolding.conversationID,
-                                                   lastUpdate: Scaffolding.lastUpdate,
-                                                   status: Scaffolding.connectionStatus)
+        static let connection = WireAPI.Connection(
+            senderID: Scaffolding.member1ID.uuid,
+            receiverID: Scaffolding.member2ID.uuid,
+            receiverQualifiedID: Scaffolding.member2ID,
+            conversationID: Scaffolding.conversationID.uuid,
+            qualifiedConversationID: Scaffolding.conversationID,
+            lastUpdate: Scaffolding.lastUpdate,
+            status: Scaffolding.connectionStatus
+        )
     }
 
 }

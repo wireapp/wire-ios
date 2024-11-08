@@ -134,6 +134,55 @@ public class MockConnectionsRepositoryProtocol: ConnectionsRepositoryProtocol {
 
 }
 
+public class MockConversationLabelsLocalStoreProtocol: ConversationLabelsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - storeLabel
+
+    public var storeLabel_Invocations: [ConversationLabelInfo] = []
+    public var storeLabel_MockError: Error?
+    public var storeLabel_MockMethod: ((ConversationLabelInfo) async throws -> Void)?
+
+    public func storeLabel(_ conversationLabel: ConversationLabelInfo) async throws {
+        storeLabel_Invocations.append(conversationLabel)
+
+        if let error = storeLabel_MockError {
+            throw error
+        }
+
+        guard let mock = storeLabel_MockMethod else {
+            fatalError("no mock for `storeLabel`")
+        }
+
+        try await mock(conversationLabel)
+    }
+
+    // MARK: - deleteOldLabelsLocally
+
+    public var deleteOldLabelsLocallyExcludedLabels_Invocations: [[ConversationLabelInfo]] = []
+    public var deleteOldLabelsLocallyExcludedLabels_MockError: Error?
+    public var deleteOldLabelsLocallyExcludedLabels_MockMethod: (([ConversationLabelInfo]) async throws -> Void)?
+
+    public func deleteOldLabelsLocally(excludedLabels: [ConversationLabelInfo]) async throws {
+        deleteOldLabelsLocallyExcludedLabels_Invocations.append(excludedLabels)
+
+        if let error = deleteOldLabelsLocallyExcludedLabels_MockError {
+            throw error
+        }
+
+        guard let mock = deleteOldLabelsLocallyExcludedLabels_MockMethod else {
+            fatalError("no mock for `deleteOldLabelsLocallyExcludedLabels`")
+        }
+
+        try await mock(excludedLabels)
+    }
+
+}
+
 public class MockConversationLabelsRepositoryProtocol: ConversationLabelsRepositoryProtocol {
 
     // MARK: - Life cycle

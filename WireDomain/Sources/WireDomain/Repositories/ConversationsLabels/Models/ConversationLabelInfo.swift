@@ -17,18 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 
-/// Errors originating from `ConversationLabelsRepository`.
-
-enum ConversationLabelsRepositoryError: Error, Equatable {
-
-    /// Unable to pull labels from backend
-
-    case failedToCollectLabelsRemotely
-
-    /// Unable to delete label locally
-
-    case failedToDeleteStoredLabels
-
+public struct ConversationLabelInfo: Sendable {
+    let id: UUID
+    let name: String?
+    let type: Int16
+    let conversationIDs: [UUID]
 }

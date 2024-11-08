@@ -24,7 +24,7 @@ protocol FeatureConfigLocalStoreProtocol {
     /// Fetches a feature locally.
     /// - parameter name: The name of the feature.
     /// - returns: The feature found locally
-    
+
     func fetchFeature(
         name: Feature.Name
     ) async throws -> Feature
@@ -52,7 +52,7 @@ protocol FeatureConfigLocalStoreProtocol {
     ///     - name: The name of the feature
     ///     - isEnabled: Whether the feature is enabled.
     ///     - config: The config of the feature if any.
-    
+
     func storeFeature(
         name: Feature.Name,
         isEnabled: Bool,
