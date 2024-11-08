@@ -31,7 +31,9 @@ public protocol ConversationFolderSelectionUseCaseProtocol {
 
 // MARK: - ConversationFolderSelectionUseCase
 
-final class ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
+public struct ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
+
+    public init() {}
 
     public func invoke<Conversation: ToFolderMovableConversation>(
         folder: LabelType,
