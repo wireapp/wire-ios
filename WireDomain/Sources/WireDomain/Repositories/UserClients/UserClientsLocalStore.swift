@@ -56,7 +56,7 @@ public protocol UserClientsLocalStoreProtocol {
     func updateClient(
         id: String,
         isNewClient: Bool,
-        userClientInfo: UserClientsLocalStore.UserClientInfo
+        userClientInfo: UserClientInfo
     ) async
 
     /// Indicates whether self user clients are active MLS clients.
@@ -66,27 +66,6 @@ public protocol UserClientsLocalStoreProtocol {
 }
 
 public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
-
-    // MARK: - Models
-
-    public struct UserClientInfo: Sendable {
-        let id: String
-        let label: String?
-        let type: WireDataModel.DeviceType
-        let activationDate: Date
-        let model: String?
-        let deviceClass: WireDataModel.DeviceClass?
-        let lastActiveDate: Date?
-        let mlsPublicKeys: UserClientInfo.MLSPublicKeys?
-
-        struct MLSPublicKeys {
-            let ed25519: String?
-            let ed448: String?
-            let p256: String?
-            let p384: String?
-            let p512: String?
-        }
-    }
 
     // MARK: - Properties
 
