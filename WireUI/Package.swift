@@ -61,7 +61,11 @@ let package = Package(
         ),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
-        .target(name: "WireSidebarUI", dependencies: ["WireFoundation"]),
+        .target(
+            name: "WireSidebarUI",
+            dependencies: ["WireFoundation"],
+            plugins: [.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")]
+        ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )

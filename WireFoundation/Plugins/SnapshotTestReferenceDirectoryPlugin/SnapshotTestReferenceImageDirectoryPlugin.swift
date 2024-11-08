@@ -28,6 +28,17 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
         context: PluginContext,
         target: Target
     ) throws -> [Command] {
+
+        let u = target.directory
+            .removingLastComponent()
+            .removingLastComponent()
+            .removingLastComponent()
+            .appending("scripts")
+            .string
+
+        let v = target.directory.appending("swiftgen.yml")
+
+
         // Define the directory for generated sources
         let generatedSourcesDir = context.pluginWorkDirectory.appending("SnapshotTestReferenceDirectoryPlugin")
         try FileManager.default.createDirectory(
@@ -60,7 +71,7 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
             .prebuildCommand(
                 displayName: "Generating \(outputFile)",
                 executable: .init("/bin/zsh"),
-                arguments: ["-c", "cd \(target.directory) && find . -name \"*.swift\""],
+                arguments: ["-c", "\"\(u)/run-swiftgen.sh\" --config \"\(v)\""],
                 outputFilesDirectory: generatedSourcesDir
             )
         ]
