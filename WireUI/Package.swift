@@ -13,13 +13,17 @@ let package = Package(
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
+        .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
+        .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(path: "../SourceryPlugin"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
@@ -32,8 +36,20 @@ let package = Package(
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
+        .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
+
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
+
+        .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),
+        .target(
+            name: "WireMoveToFolderUISupport",
+            dependencies: ["WireMoveToFolderUI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+            ]
+        ),
+        .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),

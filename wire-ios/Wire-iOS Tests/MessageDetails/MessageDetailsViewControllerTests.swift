@@ -463,10 +463,14 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let navigationController = UINavigationController(rootViewController: detailsViewController)
+
         detailsViewController.reloadData()
         configuration?(detailsViewController)
+
+        // Verify the snapshot
         snapshotHelper.verify(
-            matching: detailsViewController,
+            matching: navigationController,
             file: file,
             testName: testName,
             line: line

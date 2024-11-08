@@ -287,13 +287,13 @@ private extension AppDelegate {
     private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
-        createAppRootRouter(launchOptions)
+        createAppRootRouter()
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    private func createAppRootRouter(_ launchOptions: LaunchOptions) {
+    private func createAppRootRouter() {
 
-        guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
+        guard let sessionManager = createSessionManager() else {
             fatalError("sessionManager is not created")
         }
 
@@ -305,7 +305,7 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {
+    private func createSessionManager() -> SessionManager? {
         guard
             let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),

@@ -50,7 +50,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     let log = ZMSLog(tag: "Authentication")
 
     /// The navigation controller that presents the authentication interface.
-    weak var presenter: UINavigationController? {
+    private(set) weak var presenter: UINavigationController? {
         didSet { activityIndicator = presenter.map { .init(view: $0.view) } }
     }
 
@@ -128,6 +128,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         statusProvider: AuthenticationStatusProvider
     ) {
         self.presenter = presenter
+        self.activityIndicator = BlockingActivityIndicator.init(view: presenter.view)
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
         self.featureProvider = featureProvider

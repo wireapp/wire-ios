@@ -155,7 +155,11 @@ extension ConversationContentViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            parent?.present(detailsViewController, animated: true)
+
+            let navigationController = UINavigationController(rootViewController: detailsViewController)
+            navigationController.modalPresentationStyle = .formSheet
+
+            parent?.present(navigationController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
             activityIndicator.start()

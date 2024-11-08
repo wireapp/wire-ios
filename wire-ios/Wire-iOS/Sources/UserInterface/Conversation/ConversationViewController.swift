@@ -134,6 +134,7 @@ final class ConversationViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
+        DeveloperToolsViewModel.context.currentConversation = conversation
 
         inputBarController = ConversationInputBarViewController(
             conversation: conversation,

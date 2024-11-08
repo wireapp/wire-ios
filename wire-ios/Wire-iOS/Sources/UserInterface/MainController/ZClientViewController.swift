@@ -173,8 +173,6 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
@@ -419,47 +417,15 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Animated conversation switch
-    func dismissAllModalControllers(callback: Completion?) {
-        let dismissAction = {
-            if let rightViewController = self.mainSplitViewController.viewController(for: .secondary),
-               rightViewController.presentedViewController != nil {
-                rightViewController.dismiss(animated: false, completion: callback)
-            } else if let presentedViewController = self.conversationListViewController.presentedViewController {
-                // This is a workaround around the fact that the transitioningDelegate of the settings
-                // view controller is not called when the transition is not being performed animated.
-                // This sounds like a bug in UIKit (Radar incoming) as I would expect the custom animator
-                // being called with `transitionContext.isAnimated == false`. As this is not the case
-                // we have to restore the proper pre-presentation state here.
-                let conversationView = self.conversationListViewController.view
-                if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
-                        conversationView?.layer.transform = CATransform3DIdentity
-                        conversationView?.alpha = 1
-                    }
-                }
 
-                presentedViewController.dismiss(animated: true, completion: callback)
-            } else if self.presentedViewController != nil {
-                self.dismiss(animated: false, completion: callback)
-            } else {
-                callback?()
-            }
-        }
-
+    func dismissAllModalControllers() async {
         if userSession.ringingCallConversation != nil {
-            dismissAction()
+            await mainCoordinator.dismissPresentedViewController()
         } else {
-            minimizeCallOverlay(animated: true, completion: dismissAction)
-        }
-    }
-
-    // MARK: - ColorSchemeControllerDidApplyChangesNotification
-
-    private func reloadCurrentConversation() {
-        guard let currentConversation else { return }
-
-        Task {
-            await mainCoordinator.showConversation(conversation: currentConversation, message: nil)
+            await withCheckedContinuation { continuation in
+                minimizeCallOverlay(animated: true, completion: continuation.resume)
+            }
+            await mainCoordinator.dismissPresentedViewController()
         }
     }
 
@@ -509,11 +475,6 @@ final class ZClientViewController: UIViewController {
             // selectListItemWhenNoPreviousItemSelected()
             return false
         }
-    }
-
-    @objc
-    func contentSizeCategoryDidChange(_ notification: Notification?) {
-        reloadCurrentConversation()
     }
 
     private func setupAppearance() {
@@ -708,18 +669,20 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11620] dismiss animation is missing
-        dismissAllModalControllers { [weak self] in
-            guard
-                let self,
-                !conversation.isDeleted,
-                conversation.managedObjectContext != nil
-            else { return }
-
-            Task {
-                await self.mainCoordinator.dismissPresentedViewController()
-                self.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+        Task {
+            await dismissAllModalControllers()
+            if mainTabBarController.selectedContent != .conversations {
+                await mainCoordinator.showConversationList(conversationFilter: .none)
             }
+
+            guard !conversation.isDeleted, conversation.managedObjectContext != nil else { return }
+
+            conversationListViewController.viewModel.select(
+                conversation: conversation,
+                scrollTo: message,
+                focusOnView: focus,
+                animated: animated
+            )
         }
     }
 

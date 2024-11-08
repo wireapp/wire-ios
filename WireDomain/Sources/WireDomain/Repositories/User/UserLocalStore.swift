@@ -37,18 +37,18 @@ public protocol UserLocalStoreProtocol {
     /// - returns : A  local`ZMUser`.
 
     func fetchUser(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async throws -> ZMUser
 
     /// Fetches or creates a user locally.
     ///
     /// - parameters:
-    ///     - uuid: The user id to fetch or create locally.
+    ///     - id: The user id to fetch or create locally.
     ///     - domain: The user domain when federated.
 
     func fetchOrCreateUser(
-        with uuid: UUID,
+        id: UUID,
         domain: String?
     ) async -> ZMUser
 
@@ -63,7 +63,7 @@ public protocol UserLocalStoreProtocol {
     /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
 
     func fetchOrCreateUserClient(
-        with id: String
+        id: String
     ) async -> (client: WireDataModel.UserClient, isNew: Bool)
 
     /// Updates the user client informations locally.
@@ -75,7 +75,7 @@ public protocol UserLocalStoreProtocol {
 
     func updateUserClient(
         _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws
 
@@ -91,7 +91,7 @@ public protocol UserLocalStoreProtocol {
     /// achieved by collecting the content of such communication for later auditing.
 
     func addSelfLegalHoldRequest(
-        for userID: UUID,
+        userID: UUID,
         clientID: String,
         lastPrekey: WireDataModel.LegalHoldRequest.Prekey
     ) async
@@ -136,10 +136,6 @@ public protocol UserLocalStoreProtocol {
     // TODO: [WPB-10727] Merge these two methods into a single method (also no API objects should be passed to local store)
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: move to ClientLocalStore when related branch is merged
-    func allSelfUserClientsAreActiveMLSClients() async -> Bool
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -169,38 +165,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: move to ClientLocalStore when related branch is merged
-    public func allSelfUserClientsAreActiveMLSClients() async -> Bool {
-        let selfUser = await fetchSelfUser()
-
-        return await context.perform {
-            selfUser.clients.all { userClient in
-                let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
-
-                let isRecentlyActive: Bool = {
-                    if userClient.isSelfClient() {
-                        return true
-                    }
-
-                    guard let lastActiveDate = userClient.lastActiveDate else {
-                        return false
-                    }
-
-                    guard lastActiveDate <= Date() else {
-                        return true
-                    }
-
-                    return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
-                }()
-
-                return hasMLSIdentity && isRecentlyActive
-            }
-        }
-    }
-
     public func fetchUser(
-        with id: UUID,
+        id: UUID,
         domain: String?
     ) async throws -> ZMUser {
         try await context.perform { [context] in
@@ -217,12 +183,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func fetchOrCreateUser(
-        with uuid: UUID,
+        id: UUID,
         domain: String? = nil
     ) async -> ZMUser {
         await context.perform { [context] in
             ZMUser.fetchOrCreate(
-                with: uuid,
+                with: id,
                 domain: domain,
                 in: context
             )
@@ -253,7 +219,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async throws -> (user: ZMUser, isSelfUser: Bool) {
-        let user = try await fetchUser(with: id, domain: domain)
+        let user = try await fetchUser(id: id, domain: domain)
 
         let isSelfUser = await context.perform {
             user.isSelfUser
@@ -270,7 +236,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func addSelfLegalHoldRequest(
-        for userID: UUID,
+        userID: UUID,
         clientID: String,
         lastPrekey: WireDataModel.LegalHoldRequest.Prekey
     ) async {
@@ -289,7 +255,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func fetchOrCreateUserClient(
-        with id: String
+        id: String
     ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
         let localUserClient = await context.perform { [context] in
             if let existingClient = UserClient.fetchExistingUserClient(
@@ -330,7 +296,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly, merge this method with updateUser method.
     public func persistUser(from user: WireAPI.User) async {
         let persistedUser = await fetchOrCreateUser(
-            with: user.id.uuid,
+            id: user.id.uuid,
             domain: user.id.domain
         )
 
@@ -357,7 +323,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
     public func updateUser(from event: UserUpdateEvent) async {
         let user = await fetchOrCreateUser(
-            with: event.userID
+            id: event.userID
         )
 
         await context.perform {
@@ -412,7 +378,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     // TODO: refactor, do not pass API object (WireAPI.UserClient) directly
     public func updateUserClient(
         _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.UserClient,
+        from remoteClient: WireAPI.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         await context.perform { [context] in
