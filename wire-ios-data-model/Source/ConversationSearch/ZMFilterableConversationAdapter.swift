@@ -26,8 +26,9 @@ public struct ZMFilterableConversationAdapter: FilterableConversation {
         conversation.normalizedUserDefinedName ?? conversation.displayName?.normalizedForSearch() as String? ?? ""
     }
 
-    public var participants: [Participant] {
+    public var otherParticipants: [Participant] {
         conversation.localParticipants
+            .filter { !$0.isSelfUser }
             .map { localParticipant in
                 .init(name: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
             }

@@ -117,6 +117,7 @@ public protocol SessionManagerSwitchingDelegate: AnyObject {
 
 @objc
 public protocol ForegroundNotificationResponder: AnyObject {
+    @MainActor
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool
 }
 

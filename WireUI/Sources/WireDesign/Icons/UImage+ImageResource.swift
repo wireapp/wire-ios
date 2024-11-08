@@ -18,6 +18,6 @@
 
 import UIKit
 
-protocol ViewControllerDismisser: AnyObject {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?)
+public extension UIImage {
+    static let close = UIImage(resource: .close)
 }

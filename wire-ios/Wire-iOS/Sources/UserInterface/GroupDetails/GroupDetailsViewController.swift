@@ -470,7 +470,9 @@ private extension GroupDetailsViewController {
 
 extension GroupDetailsViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true, completion: completion)
+        navigationController?.popViewController(animated: true) {
+            completion?()
+        }
     }
 }
 

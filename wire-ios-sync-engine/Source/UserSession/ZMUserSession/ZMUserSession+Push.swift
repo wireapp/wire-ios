@@ -174,10 +174,10 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         // need to switch to that context
         self.managedObjectContext.perform {
             let responder = self.sessionManager?.foregroundNotificationResponder
-            let shouldPresent = responder?.shouldPresentNotification(with: userInfo)
+            let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
 
             var options = UNNotificationPresentationOptions()
-            if shouldPresent ?? true { options = [.list, .banner, .sound] }
+            if shouldPresent { options = [.list, .banner, .sound] }
 
             completionHandler(options)
         }

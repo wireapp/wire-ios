@@ -239,24 +239,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
-    // MARK: - fetchConversation
-
-    public var fetchConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
-    public var fetchConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
-    public var fetchConversationIdDomain_MockValue: ZMConversation??
-
-    public func fetchConversation(id: UUID, domain: String?) async -> ZMConversation? {
-        fetchConversationIdDomain_Invocations.append((id: id, domain: domain))
-
-        if let mock = fetchConversationIdDomain_MockMethod {
-            return await mock(id, domain)
-        } else if let mock = fetchConversationIdDomain_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchConversationIdDomain`")
-        }
-    }
-
     // MARK: - fetchOrCreateConversation
 
     public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
@@ -335,6 +317,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `fetchMLSConversationGroupID`")
+        }
+    }
+
+    // MARK: - fetchConversation
+
+    public var fetchConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
+    public var fetchConversationIdDomain_MockMethod: ((UUID, String?) async -> ZMConversation?)?
+    public var fetchConversationIdDomain_MockValue: ZMConversation??
+
+    public func fetchConversation(id: UUID, domain: String?) async -> ZMConversation? {
+        fetchConversationIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let mock = fetchConversationIdDomain_MockMethod {
+            return await mock(id, domain)
+        } else if let mock = fetchConversationIdDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationIdDomain`")
         }
     }
 
@@ -921,6 +921,54 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         await mock(message, conversation)
+    }
+
+}
+
+public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - addSystemMessageToConversation
+
+    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations: [(messageType: MessageType, conversationID: UUID, conversationDomain: String?)] = []
+    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod: ((MessageType, UUID, String?) async -> Void)?
+
+    public func addSystemMessageToConversation(messageType: MessageType, conversationID: UUID, conversationDomain: String?) async {
+        addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
+
+        guard let mock = addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `addSystemMessageToConversationMessageTypeConversationIDConversationDomain`")
+        }
+
+        await mock(messageType, conversationID, conversationDomain)
+    }
+
+}
+
+public class MockMessageRepositoryProtocol: MessageRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - addMessageToConversation
+
+    public var addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations: [(messageType: MessageType, conversationID: UUID, conversationDomain: String?)] = []
+    public var addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod: ((MessageType, UUID, String?) async -> Void)?
+
+    public func addMessageToConversation(messageType: MessageType, conversationID: UUID, conversationDomain: String?) async {
+        addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
+
+        guard let mock = addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `addMessageToConversationMessageTypeConversationIDConversationDomain`")
+        }
+
+        await mock(messageType, conversationID, conversationDomain)
     }
 
 }

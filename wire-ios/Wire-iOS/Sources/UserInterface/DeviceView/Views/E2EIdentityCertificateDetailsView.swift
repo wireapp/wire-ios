@@ -51,7 +51,8 @@ struct E2EIdentityCertificateDetailsView: View {
                         didDismiss?()
                     },
                     label: {
-                        Image(.close)
+                        Image
+                            .close
                             .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 )
