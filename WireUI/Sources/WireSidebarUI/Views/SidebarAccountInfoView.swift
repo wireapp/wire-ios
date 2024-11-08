@@ -50,15 +50,17 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
                     displayNameAndUsername
                 }
             }
-            HStack(spacing: 0) {
-                Rectangle()
-                    .frame(width: displayNameHeight + usernameHeight, height: 0)
-                    .padding(.trailing, 8)
-                legalHoldIndicatorView()
-                    .frame(height: usernameHeight)
-                    .padding(.trailing, 4)
-                Text("sidebar.legalHold.title", bundle: .module)
-                    .wireTextStyle(.subline1)
+            if isLegalHoldIndicatorVisible {
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .frame(width: displayNameHeight + usernameHeight, height: 0)
+                        .padding(.trailing, 8)
+                    legalHoldIndicatorView()
+                        .frame(height: usernameHeight)
+                        .padding(.trailing, 4)
+                    Text("sidebar.legalHold.title", bundle: .module)
+                        .wireTextStyle(.subline1)
+                }
             }
         }
     }
