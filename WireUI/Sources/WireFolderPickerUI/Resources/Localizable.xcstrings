@@ -1,11 +1,27 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-      "shouldTranslate" : false
+    "folderPicker.emptyState.description" : {
+      "comment" : "The text to be displayed when there are no folders to choose from",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your conversations to folders to stay organized."
+          }
+        }
+      }
     },
-    "folderPicker.close.label" : {
-      "shouldTranslate" : false
+    "folderPicker.emptyState.link.text" : {
+      "comment" : "The link text for documentation on how to add a conversation to a folder",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to add a conversation to a folder"
+          }
+        }
+      }
     },
     "folderPicker.title" : {
       "comment" : "Title displayed in the navigation bar of the folder picker view",
@@ -17,9 +33,6 @@
           }
         }
       }
-    },
-    "Show Picker" : {
-      "shouldTranslate" : false
     }
   },
   "version" : "1.0"
