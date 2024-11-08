@@ -1,36 +1,17 @@
-input_dir: Resources
-output_dir: ${DERIVED_SOURCES_DIR}
+# Every input/output paths in the rest of the config will then be expressed relative to these.
 
-files:
-  inputs:
-    - SomeRandomVideos
-  outputs:
-    templateName: structured-swift5
-    output: Files.swift
-fonts:
-  inputs:
-    - Main Fonts
-    - Other Fonts
-  outputs:
-    templateName: swift5
-    output: Fonts.swift
-ib:
-  inputs: .
-  outputs:
-    - templateName: scenes-swift5
-      output: Storyboards Scenes.swift
-    - templateName: segues-swift5
-      output: Storyboards Segues.swift
+input_dir: Resources/en.lproj/
+output_dir: ./Generated/
+
+# Generate constants for your localized strings.
+
 strings:
   inputs:
-    - Base.lproj/Localizable.strings
-    - Base.lproj/Localizable.stringsdict
+    - Resources/Base.lproj/Accessibility.strings
+    - Resources/Base.lproj/InfoPlist.strings
+    - Resources/Base.lproj/Localizable.strings
+    - Resources/Base.lproj/Localizable.stringsdict
+  filter: 
   outputs:
     - templateName: structured-swift5
-      output: Strings.generated.swift
-xcassets:
-  inputs:
-    - Style.xcassets
-  outputs:
-    templateName: swift5
-    output: Assets.swift
+      output: Strings+Generated.swift

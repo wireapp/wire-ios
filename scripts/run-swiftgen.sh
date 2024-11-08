@@ -31,7 +31,4 @@ if [[ ! -f "$SWIFTGEN" ]]; then
     echo "❌ Executable is missing, please run the setup script!"
 fi
 
-(
-    cd "$REPO_ROOT/wire-ios"
-    "$SWIFTGEN" "$@"
-)
+"$SWIFTGEN" "$@"

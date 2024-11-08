@@ -9044,7 +9044,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftgen.sh --config swiftgen.yml\n";
+			shellScript = "../scripts/run-swiftgen.sh --config \"$PROJECT_DIR/swiftgen.yml\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
