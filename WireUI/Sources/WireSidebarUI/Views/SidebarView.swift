@@ -115,15 +115,15 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 selectableMenuItem(conversationFilter)
             }
 
-            menuItemHeader("sidebar.contacts.title")
+            menuItemHeader(L10n.Sidebar.Contacts.title)
             nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
 
     @ViewBuilder
-    private func menuItemHeader(_ key: LocalizedStringKey, addTopPadding: Bool = true) -> some View {
-        let text = Text(key, bundle: .module)
+    private func menuItemHeader(_ title: String, addTopPadding: Bool = true) -> some View {
+        let text = Text(title)
             .foregroundStyle(menuHeaderForegroundColor)
             .wireTextStyle(.h2)
             .padding(.horizontal, 8)
