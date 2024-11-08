@@ -32,7 +32,7 @@ struct FolderList: View {
                     Task {
                         do {
                             try await onSelect(folder)
-                        } catch { }
+                        } catch {}
                     }
                 }
             )

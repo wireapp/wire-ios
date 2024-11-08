@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireDesign
 import WireMoveToFolderUISupport
 import WireTestingPackage
 import XCTest
-import SwiftUI
 
 @testable import WireMoveToFolderUI
 
