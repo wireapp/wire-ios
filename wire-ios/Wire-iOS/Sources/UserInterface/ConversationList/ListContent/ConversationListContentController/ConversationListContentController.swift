@@ -46,7 +46,7 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
-    private var emptyPlaceholderView: UIStackView!
+    private var emptySearchPlaceholderView: UIStackView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
@@ -99,6 +99,7 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
+        emptySearchPlaceholderView.isHidden = true
 
         scrollToCurrentSelection(animated: false)
 
@@ -114,6 +115,10 @@ final class ConversationListContentController: UICollectionViewController {
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
+    }
+
+    override func viewDidLoad() {
+        setupEmptyPlaceholder()
     }
 
     private func activeMediaPlayerChanged() {
@@ -267,6 +272,7 @@ final class ConversationListContentController: UICollectionViewController {
     /// ensures that the list selection state matches that of the model.
     func ensureCurrentSelection() {
         guard let selectedItem = listViewModel.selectedItem else { return }
+        //listViewModel.sections
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems
 

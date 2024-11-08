@@ -22,8 +22,7 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     var isEmptyPlaceholderVisible: Bool {
-        let totalItems = listContentController.listViewModel.sections.map { $0.items.count }.reduce(0, +)
-        return totalItems == 0
+        return listContentController.listViewModel.isEmptyList
     }
 
     var emptyPlaceholderForSelectedFilter: EmptyPlaceholder {
