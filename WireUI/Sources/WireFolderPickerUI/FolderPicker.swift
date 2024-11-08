@@ -50,7 +50,7 @@ public struct FolderPicker: View {
 
     public var body: some View {
         List {
-            Picker("", selection: $selected) {
+            Picker(selection: $selected) {
                 ForEach(options) { option in
                     Text(option.title)
                         .font(.textStyle(.body1))
@@ -58,6 +58,8 @@ public struct FolderPicker: View {
                         .foregroundStyle(option.id == selected ? Color(accentColor) : .primaryText)
                         .tag(option.id)
                 }
+            } label: {
+                Text(verbatim: "")
             }
             .accentColor(Color(accentColor))
             .pickerStyle(.inline)
@@ -97,8 +99,10 @@ public struct FolderPicker: View {
     @Previewable @State var isPresented = false
     @Previewable @State var selected: UUID? = FolderPickerOption.previewData.first?.id
 
-    Button("Show Picker") {
+    Button {
         isPresented.toggle()
+    } label: {
+        Text(verbatim: "Show Picker")
     }
     .sheet(isPresented: $isPresented) {
         NavigationStack {
