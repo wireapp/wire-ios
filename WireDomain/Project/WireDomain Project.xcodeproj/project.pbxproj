@@ -71,12 +71,12 @@
 		C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */; };
 		C97C01D72CC13E1A000683C5 /* UserLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
+		C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433CF2CC26A1D009723D4 /* MLSProvider.swift */; };
 		C98433E72CCA868F009723D4 /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433E62CCA868F009723D4 /* MessageRepository.swift */; };
 		C98433E92CCA86CA009723D4 /* MessageLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433E82CCA86CA009723D4 /* MessageLocalStore.swift */; };
 		C98433EF2CCB7EE6009723D4 /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433EE2CCB7EE6009723D4 /* MessageType.swift */; };
 		C98433F12CCBC251009723D4 /* MessageRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F02CCBC251009723D4 /* MessageRepositoryTests.swift */; };
 		C98433F52CCBC290009723D4 /* MessageLocalStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */; };
-		C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433CF2CC26A1D009723D4 /* MLSProvider.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
 		C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B52C986E3A0065E10F /* SelfUserProvider.swift */; };
@@ -242,12 +242,12 @@
 		C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalStore.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
+		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		C98433E62CCA868F009723D4 /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
 		C98433E82CCA86CA009723D4 /* MessageLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStore.swift; sourceTree = "<group>"; };
 		C98433EE2CCB7EE6009723D4 /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		C98433F02CCBC251009723D4 /* MessageRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepositoryTests.swift; sourceTree = "<group>"; };
 		C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStoreTests.swift; sourceTree = "<group>"; };
-		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -399,7 +399,6 @@
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
 				017F67992C20801800B6E02D /* Repositories */,
-				C98433F32CCBC26E009723D4 /* LocalStores */,
 			);
 			name = WireDomain;
 			path = WireDomainTests;
@@ -540,6 +539,7 @@
 			children = (
 				C96B756E2CDCFFEB003A85EB /* Mock */,
 				C96B755C2CDBB176003A85EB /* ConversationLocalStoreTests.swift */,
+				C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */,
 				C96B757A2CDDEDC4003A85EB /* ConversationLabelsLocalStoreTests.swift */,
 				C96B75762CDD154C003A85EB /* UpdateEventsLocalStoreTests.swift */,
 				C96B755E2CDBCD24003A85EB /* UserLocalStoreTests.swift */,
@@ -651,14 +651,6 @@
 				C98433EE2CCB7EE6009723D4 /* MessageType.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		C98433F32CCBC26E009723D4 /* LocalStores */ = {
-			isa = PBXGroup;
-			children = (
-				C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */,
-			);
-			path = LocalStores;
 			sourceTree = "<group>";
 		};
 		C99322B42C986E3A0065E10F /* Team */ = {
