@@ -159,25 +159,40 @@ final class ConversationListContentController: UICollectionViewController {
     private func setupEmptyPlaceholder() {
 
         let titleLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
-            style: .h3,
-            color: SemanticColors.Label.textDefault
-        )
-        titleLabel.textAlignment = .center
-
-        let descriptionLabel = DynamicFontLabel(
-            text: L10n.Localizable.ArchivedList.EmptyPlaceholder.subheadline,
+            text: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone,
             style: .body1,
-            color: SemanticColors.Label.baseSecondaryText
+            color: ColorTheme.Base.secondaryText
         )
-        descriptionLabel.numberOfLines = 0
-        descriptionLabel.textAlignment = .center
 
-        emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
-        emptyPlaceholderView.axis = .vertical
-        emptyPlaceholderView.spacing = 2
-        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(emptyPlaceholderView)
+        let newConversationButton = DynamicFontButton(style: .body1)
+        newConversationButton.setTitleColor(ColorTheme.Base.primary, for: .normal)
+
+        let image = UIImage.imageForIcon(.plus, size: StyleKitIcon.Size.tiny.rawValue, color: ColorTheme.Backgrounds.background)
+        let newIcon = createRoundIconImage(icon: image, iconSize: 10, backgroundColor: ColorTheme.Base.primary, imageSize: 20)
+
+        let spacing: CGFloat = 10 // Amount of spacing
+        newConversationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing / 2, bottom: 0, right: spacing / 2)
+        newConversationButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing / 2, bottom: 0, right: -spacing / 2)
+
+        newConversationButton.setImage(newIcon, for: .normal)
+        newConversationButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
+        newConversationButton.layer.cornerRadius = 18
+        newConversationButton.layer.masksToBounds = true
+
+        newConversationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 42, bottom: 10, right: 42)
+        newConversationButton.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone , for: .normal)
+        newConversationButton.accessibilityIdentifier = "new-conversation.button"
+
+        titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 0
+
+        emptySearchPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, newConversationButton])
+        emptySearchPlaceholderView.axis = .vertical
+        emptySearchPlaceholderView.spacing = 15
+        emptySearchPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        emptySearchPlaceholderView.alignment = .center
+        emptySearchPlaceholderView.distribution = .equalSpacing
+        view.addSubview(emptySearchPlaceholderView)
         NSLayoutConstraint.activate([
 
             emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -190,6 +205,29 @@ final class ConversationListContentController: UICollectionViewController {
 
             emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
+    }
+
+    func createRoundIconImage(icon: UIImage, iconSize: CGFloat, backgroundColor: UIColor, imageSize: CGFloat) -> UIImage? {
+        // Create a UIView with a circular shape
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: imageSize, height: imageSize))
+        view.backgroundColor = backgroundColor
+        view.layer.cornerRadius = imageSize / 2
+        view.clipsToBounds = true
+
+        // Create an UIImageView for the icon and center it in the view
+        let iconImageView = UIImageView(image: icon.withRenderingMode(.alwaysTemplate))
+        //iconImageView.tintColor = ColorTheme.Backgrounds.background
+        iconImageView.contentMode = .scaleAspectFit
+        iconImageView.frame = CGRect(x: (imageSize - iconSize) / 2, y: (imageSize - iconSize) / 2, width: iconSize, height: iconSize)
+        view.addSubview(iconImageView)
+
+        // Render the view into a UIImage
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
+        view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return image
     }
 
     // MARK: - section header
