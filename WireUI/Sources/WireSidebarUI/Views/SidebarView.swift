@@ -32,8 +32,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
-        _ accountImage: SidebarAccountInfo.AccountImageSource,
-        _ availability: SidebarAccountInfo.Availability?
+        _ accountImage: AccountImageSource,
+        _ availability: Availability?
     ) -> AccountImageView
     private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
@@ -45,6 +45,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
+        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView
         accountImageView: @escaping (_ accountImage: SidebarAccountInfo.AccountImageSource, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
@@ -212,6 +213,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             action: { selectedMenuItem = menuItem }
         )
     }
+
+    public typealias AccountImageSource = SidebarAccountInfo.AccountImageSource
+    public typealias Availability = SidebarAccountInfo.Availability
 }
 
 // MARK: - View Modifiers + Environment
