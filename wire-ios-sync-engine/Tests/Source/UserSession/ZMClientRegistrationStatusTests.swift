@@ -576,7 +576,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -593,7 +593,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertTrue(sut.needsToRegisterMLSCLient)
+            XCTAssertTrue(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -609,7 +609,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             enableMLS()
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -618,11 +618,11 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.remoteIdentifier = UUID()
-            DeveloperFlag.enableMLSSupport.enable(false)
+            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .disabled))
             BackendInfo.apiVersion = .v5
 
             // then
-            XCTAssertFalse(sut.needsToRegisterMLSCLient)
+            XCTAssertFalse(sut.needsToRegisterMLSClient)
         }
     }
 
@@ -778,8 +778,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
     @objc
     private func enableMLS() {
-        DeveloperFlag.storage = .temporary()
-        DeveloperFlag.enableMLSSupport.enable(true)
+        FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         BackendInfo.apiVersion = .v5
     }
 

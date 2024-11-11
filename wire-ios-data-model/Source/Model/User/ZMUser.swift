@@ -52,6 +52,13 @@ extension ZMUser: UserType {
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
+    var isMLSEnabled: Bool {
+        guard let context = managedObjectContext else { return false }
+        let featureRepository = FeatureRepository(context: context)
+        let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        return mlsFeature.isEnabled
+    }
+
     public var accentColor: AccentColor? {
         get { .init(rawValue: accentColorValue) }
         set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
@@ -148,11 +155,9 @@ extension ZMUser: UserType {
     public var canCreateMLSGroups: Bool {
         guard
             let id = remoteIdentifier,
-            let context = managedObjectContext
+            let context = managedObjectContext,
+            (BackendInfo.apiVersion ?? .v0) >= .v5
         else {
-            return false
-        }
-        guard (BackendInfo.apiVersion ?? .v0) >= .v5 else {
             return false
         }
 
@@ -496,9 +501,7 @@ extension ZMUser: UserConnections {
 
         let mlsService = syncContext.performAndWait { syncContext.mlsService }
         let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
-        let featureRepository = FeatureRepository(context: syncContext)
-        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
-        let resolver = OneOnOneResolver(migrator: migrator, mlsFeature: getMLSFeatureUseCase.invoke())
+        let resolver = OneOnOneResolver(migrator: migrator, mlsEnabled: isMLSEnabled)
 
         accept(
             oneOnOneResolver: resolver,

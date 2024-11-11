@@ -37,18 +37,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
-    private let mlsFeature: Feature.MLS
+    private let mlsEnabled: Bool
 
     // MARK: - Initializer
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
-        mlsFeature: Feature.MLS
+        mlsEnabled: Bool
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
-        self.mlsFeature = mlsFeature
+        self.mlsEnabled = mlsEnabled
     }
 
     // MARK: - Resolve
@@ -78,8 +78,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
-
-        let mlsEnabled = mlsFeature.isEnabled
 
         switch messageProtocol {
         case .none where mlsEnabled:

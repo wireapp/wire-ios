@@ -75,7 +75,6 @@ public final class AutomationHelper: NSObject {
 
     public private(set) var preferredAPIVersion: APIVersion?
     public private(set) var allowMLSGroupCreation: Bool?
-    public private(set) var enableMLSSupport: Bool?
 
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
@@ -111,7 +110,6 @@ public final class AutomationHelper: NSObject {
         }
 
         allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
-        enableMLSSupport = arguments.hasFlag(AutomationKey.enableMLSSupport.rawValue)
 
         super.init()
     }
@@ -134,7 +132,6 @@ public final class AutomationHelper: NSObject {
         case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
-        case enableMLSSupport = "enable-mls-support"
     }
     /// Returns the login email and password credentials if set in the given arguments
     private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {

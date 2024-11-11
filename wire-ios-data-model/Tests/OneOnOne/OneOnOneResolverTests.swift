@@ -314,7 +314,7 @@ final class OneOnOneResolverTests: XCTestCase {
         OneOnOneResolver(
             protocolSelector: mockProtocolSelector,
             migrator: mockMigrator,
-            mlsFeature: mockRepository.fetchMLS_MockValue!
+            mlsEnabled: mockRepository.fetchMLS_MockValue?.isEnabled ?? false
         )
     }
 

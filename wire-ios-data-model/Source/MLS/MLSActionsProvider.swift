@@ -102,7 +102,7 @@ protocol MLSActionsProviderProtocol {
 
 }
 
-public final class MLSActionsProvider: MLSActionsProviderProtocol {
+final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     public init() {}
 
