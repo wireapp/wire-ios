@@ -63,6 +63,7 @@ final class ConversationListViewController: UIViewController {
             }
         }
         button.addAction(action, for: .touchUpInside)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
 
