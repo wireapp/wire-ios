@@ -57,7 +57,7 @@ public enum FolderCreationError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .emptyName:
-            return "Folder name cannot be empty"
+            "Folder name cannot be empty"
         }
     }
 }

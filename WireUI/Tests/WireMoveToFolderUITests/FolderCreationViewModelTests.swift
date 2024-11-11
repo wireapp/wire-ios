@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireMoveToFolderUISupport
+import XCTest
 
 @testable import WireMoveToFolderUI
 
@@ -40,57 +40,57 @@ final class FolderCreationViewModelTests: XCTestCase {
         sut = nil
         mockUseCase = nil
     }
-    
+
     // MARK: - Creation State
-    
+
     func test_init_canCreateIsFalse() {
         // GIVEN & WHEN
         createSUT()
-        
+
         // THEN
         XCTAssertFalse(sut.canCreate)
     }
-    
+
     func test_setEmptyName_canCreateIsFalse() {
         // GIVEN
         createSUT()
-        
+
         // WHEN
         sut.name = ""
-        
+
         // THEN
         XCTAssertFalse(sut.canCreate)
     }
-    
+
     func test_setWhitespaceName_canCreateIsFalse() {
         // GIVEN
         createSUT()
-        
+
         // WHEN
         sut.name = "   "
-        
+
         // THEN
         XCTAssertFalse(sut.canCreate)
     }
-    
+
     func test_setValidName_canCreateIsTrue() {
         // GIVEN
         createSUT()
-        
+
         // WHEN
         sut.name = "Work"
-        
+
         // THEN
         XCTAssertTrue(sut.canCreate)
     }
-    
+
     // MARK: - Folder Creation
-    
+
     func test_createFolder_withEmptyName_throwsError() async {
         // GIVEN
         createSUT()
         sut.name = ""
-        
+
         // WHEN & THEN
         do {
             _ = try await sut.createFolder()
@@ -99,12 +99,12 @@ final class FolderCreationViewModelTests: XCTestCase {
             XCTAssertEqual(error as? FolderCreationError, .emptyName)
         }
     }
-    
+
     func test_createFolder_withWhitespaceName_throwsError() async {
         // GIVEN
         createSUT()
         sut.name = "   "
-        
+
         // WHEN & THEN
         do {
             _ = try await sut.createFolder()
@@ -113,13 +113,13 @@ final class FolderCreationViewModelTests: XCTestCase {
             XCTAssertEqual(error as? FolderCreationError, .emptyName)
         }
     }
-    
+
     func test_createFolder_withValidName_callsUseCase() async throws {
         // GIVEN
         createSUT()
         sut.name = "Work"
         let expectedFolder = Folder(identifier: UUID(), name: "Work")
-        mockUseCase.invokeName_MockMethod = { (name: String) in expectedFolder }
+        mockUseCase.invokeName_MockMethod = { (_: String) in expectedFolder }
 
         // WHEN
         let folder = try await sut.createFolder()
@@ -137,7 +137,7 @@ final class FolderCreationViewModelTests: XCTestCase {
         struct TestError: Error {}
         let expectedError = TestError()
         mockUseCase.invokeName_MockError = expectedError
-        
+
         // WHEN & THEN
         do {
             _ = try await sut.createFolder()
@@ -147,9 +147,9 @@ final class FolderCreationViewModelTests: XCTestCase {
             XCTAssertEqual(mockUseCase.invokeName_Invocations.first, "Work")
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private func createSUT() {
         sut = FolderCreationViewModel(useCase: mockUseCase)
     }
