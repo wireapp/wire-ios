@@ -338,7 +338,8 @@ final class ConversationListViewController: UIViewController {
         }
         emptyPlaceholderView = EmptyPlaceholderView(
             content: emptyPlaceholderForSelectedFilter,
-            connectWithPeopleAction: connectWithPeopleAction)
+            connectWithPeopleAction: connectWithPeopleAction
+        )
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
@@ -373,7 +374,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyPlaceholderView.topAnchor.constraint(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
