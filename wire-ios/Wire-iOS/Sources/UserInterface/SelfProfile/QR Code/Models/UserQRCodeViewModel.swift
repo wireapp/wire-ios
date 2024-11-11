@@ -27,10 +27,11 @@ final class UserQRCodeViewModel: ObservableObject {
 
     init(
         profileLink: String,
+        profileDeepLink: String,
         handle: String
     ) {
         self.profileLink = profileLink
-        let qrCodeImage = QRCodeGenerator.generateQRCode(from: profileLink)
+        let qrCodeImage = QRCodeGenerator.generateQRCode(from: profileDeepLink)
         let overlaySize = CGSize(width: qrCodeImage.size.width * 0.25, height: qrCodeImage.size.height * 0.25)
         self.profileLinkQRCode = qrCodeImage.addImageCentered(
             UIImage(resource: .Wire.roundIcon),
