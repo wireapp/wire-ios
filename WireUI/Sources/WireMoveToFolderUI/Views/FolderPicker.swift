@@ -21,7 +21,6 @@ import WireDesign
 import WireReusableUIComponents
 
 public struct FolderPicker: View {
-
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
 
@@ -35,13 +34,7 @@ public struct FolderPicker: View {
                 if viewModel.folders.isEmpty {
                     EmptyState()
                 } else {
-                    FolderList(
-                        viewModel: viewModel,
-                        onSelect: { @MainActor folder in
-                            try await viewModel.select(folder)
-                            dismiss()
-                        }
-                    )
+                    folderList
                 }
             }
             .background(Color.viewBackground)
@@ -68,6 +61,28 @@ public struct FolderPicker: View {
                 }
             }
         }
+    }
+
+    private var folderList: some View {
+        List(viewModel.folders, id: \.identifier) { folder in
+            FolderRow(
+                folder: folder,
+                isSelected: viewModel.isSelected(folder),
+                action: {
+                    Task {
+                        do {
+                            try await viewModel.select(folder)
+                            dismiss()
+                        } catch {
+                            // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
+                            assertionFailure("Failed to select folder: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            )
+            .listRowBackground(Color(ColorTheme.Backgrounds.surface))
+        }
+        .accessibilityIdentifier("list.folders")
     }
 
     private func didTapClose() {
