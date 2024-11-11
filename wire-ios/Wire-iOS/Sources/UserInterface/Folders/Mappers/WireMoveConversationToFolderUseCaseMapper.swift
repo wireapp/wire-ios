@@ -20,13 +20,32 @@ import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
 
-struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCaseType {
+/// A mapper that bridges the UI layer's move-to-folder operation with the core domain layer.
+/// It translates between the UI's representation of folders/conversations and the core domain model's representation.
+///
+/// This type implements the adapter pattern to:
+/// - Convert UI-layer folder/conversation models to domain models
+/// - Handle the actual movement of conversations between folders using the core domain useCase
+/// - Provide error handling for failed conversions
+///
+/// Example usage:
+/// ```
+/// let mapper = WireMoveConversationToFolderUseCaseMapper(...)
+/// try await mapper.invoke(folder: uiFolder, conversation: uiConversation)
+/// ```
+public struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCaseType {
     private let useCase: ConversationFolderSelectionUseCaseProtocol
     private let directory: ConversationDirectoryType
     private let targetConversation: ZMConversation
     private let context: NSManagedObjectContext
 
-    init(
+    /// Initializes the mapper with required dependencies
+    /// - Parameters:
+    ///   - useCase: The core domain use case that handles the actual folder selection logic
+    ///   - directory: Provides access to all available folders in the system
+    ///   - conversation: The conversation to be moved (in domain model form)
+    ///   - context: The managed object context for performing Core Data operations
+    public init(
         useCase: ConversationFolderSelectionUseCaseProtocol,
         directory: ConversationDirectoryType,
         conversation: ZMConversation,
@@ -38,7 +57,12 @@ struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCas
         self.context = context
     }
 
-    func invoke(folder: Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+    /// Moves a conversation to a specified folder
+    /// - Parameters:
+    ///   - folder: The destination folder (in UI model form)
+    ///   - conversation: The conversation to be moved (in UI model form)
+    /// - Throws: FolderError.conversionFailed if the UI folder cannot be mapped to a domain folder
+    public func invoke(folder: Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
         try await context.perform {
             guard let wireFolder = directory.allFolders.first(where: { $0.remoteIdentifier == folder.identifier }) else {
                 throw FolderError.conversionFailed
@@ -48,6 +72,7 @@ struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCas
     }
 
     private enum FolderError: Error {
+        /// Thrown when a UI folder model cannot be converted to a domain folder model
         case conversionFailed
     }
 }
