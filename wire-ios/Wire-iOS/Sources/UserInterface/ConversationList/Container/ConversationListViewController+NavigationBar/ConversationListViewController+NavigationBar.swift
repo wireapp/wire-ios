@@ -24,6 +24,8 @@ import WireDesign
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireFolderPickerUI
+import SwiftUI
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
@@ -199,13 +201,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter == .oneOnOne
         )
 
+        let foldersAction = createFolderFilterAction(
+            isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
+        )
+
         // Create the menu
         let filterMenu = UIMenu(
             children: [
                 allConversationsAction,
                 favoritesAction,
                 groupsAction,
-                oneToOneConversationsAction
+                oneToOneConversationsAction,
+                foldersAction
             ]
         )
 
@@ -399,5 +406,74 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
+    }
+
+    // MARK: Folder Picker
+
+    private func createFolderFilterAction(isSelected: Bool)  -> UIAction {
+        let action = UIAction(
+            title: L10n.Localizable.ConversationList.Filter.Folders.title,
+            image: FilterButtonStyleHelper.makeActionImage(
+                named: FilterImageName.folder.rawValue,
+                isSelected: isSelected
+            )
+        ) { [weak mainCoordinator, weak self] _ in
+            guard let self, let mainCoordinator else { return }
+
+            let folders: [FolderPickerOption] = self.viewModel.userSession.conversationDirectory.allFolders.compactMap {
+                guard let id = $0.remoteIdentifier, let title = $0.name else { return nil }
+
+                return FolderPickerOption(id: id, title: title)
+            }
+
+            Task { @MainActor in
+                let viewController = self.makeFolderPickerViewController(options: folders)
+                await mainCoordinator.presentViewController(viewController)
+
+            }
+        }
+
+        action.accessibilityLabel = if isSelected {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.Selected.description
+        } else {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.description
+        }
+
+        return action
+    }
+
+    private func makeFolderPickerViewController(options: [FolderPickerOption]) -> UIViewController {
+        let selected = Binding<FolderPickerOption?>(
+            get: {
+                self.conversationFilter?.folderData.map { FolderPickerOption(id: $0.id, title: $0.name) }
+            },
+            set: { [mainCoordinator] option, _ in
+                Task {
+                    if let option = option {
+                        await mainCoordinator.showConversationList(
+                            conversationFilter: .folder(id: option.id, name: option.title)
+                        )
+                    }
+                    await  mainCoordinator.dismissPresentedViewController()
+                }
+            }
+        )
+
+        let navigationStack = NavigationStack {
+            FolderPicker(
+                showCloseButton: true,
+                options: options,
+                helpLink: WireURLs.shared.howToAddAConversationToACustomFolder,
+                selected: selected
+            )
+        }
+
+        let hostingController = UIHostingController(rootView: navigationStack)
+        if let sheet = hostingController.sheetPresentationController {
+            sheet.detents = [.medium(), .large()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        return hostingController
     }
 }
