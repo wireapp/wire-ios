@@ -91,12 +91,13 @@ struct SwiftGenPlugin: BuildToolPlugin {
     /// Entry point for creating build commands for targets in Swift packages.
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
 
+        target.directory
         let tool = try context.tool(named: "swiftgen")
         return [
             .prebuildCommand(
                 displayName: "Running \(tool)",
                 executable: .init(tool.path.string),
-                arguments: ["--help"],
+                arguments: [],
                 outputFilesDirectory: context.pluginWorkDirectory
             )
         ]
@@ -122,13 +123,19 @@ extension SwiftGenPlugin: XcodeBuildToolPlugin {
     // Entry point for creating build commands for targets in Xcode projects.
     func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
 
+        let configFile = context.xcodeProject.directoryURL.appending(path: "swiftgen.yml", directoryHint: .notDirectory)
+
+        //let outputFilesDirectory = context.xcodeProject.directoryURL.appending(path: "Generated", directoryHint: .isDirectory)
+        let outputFilesDirectory = context.pluginWorkDirectoryURL
+        print("outputFilesDirectory", outputFilesDirectory.path())
         let tool = try context.tool(named: "swiftgen")
         return [
             .prebuildCommand(
                 displayName: "Running \(tool)",
-                executable: .init(tool.path.string),
-                arguments: ["--help"],
-                outputFilesDirectory: context.pluginWorkDirectory
+                executable: tool.url,
+                arguments: ["--config", configFile.path()],
+                environment: ["GENERATED": outputFilesDirectory.path()],
+                outputFilesDirectory: outputFilesDirectory
             )
         ]
 

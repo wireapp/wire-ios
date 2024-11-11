@@ -8590,7 +8590,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
 			buildPhases = (
-				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
 				E64120D52C1C7A820097526C /* Run Sourcery */,
 				8F42C534199244A700288E4D /* Sources */,
 				8F42C535199244A700288E4D /* Frameworks */,
@@ -9028,25 +9027,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "../scripts/run-swiftgen.sh --config swiftgenShareExtension.yml\n";
-		};
-		EEF9786E25D2923A00F7333E /* Run SwiftGen */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Run SwiftGen";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftgen.sh --config \"$PROJECT_DIR/swiftgen.yml\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
