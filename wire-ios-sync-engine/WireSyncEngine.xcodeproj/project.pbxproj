@@ -32,6 +32,7 @@
 		0648FC1427864783006519D1 /* Conversation+Join.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0648FC1327864783006519D1 /* Conversation+Join.swift */; };
 		065FEA122B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065FEA112B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift */; };
 		0664F2E62A0E25C200E5C34E /* RecurringActionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0664F2E52A0E25C200E5C34E /* RecurringActionService.swift */; };
+		066A3D6E2CDD27670089C5C2 /* UserType+DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A3D6D2CDD27600089C5C2 /* UserType+DeepLink.swift */; };
 		0678D9922C2C53D3000DF6E3 /* CRLURLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */; };
 		0678D9942C2C5B54000DF6E3 /* CRLURLBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */; };
 		06894D92276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */; };
@@ -685,6 +686,7 @@
 		0648FC1327864783006519D1 /* Conversation+Join.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Conversation+Join.swift"; sourceTree = "<group>"; };
 		065FEA112B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCertificateEnrollmentSnoozerUseCase.swift; sourceTree = "<group>"; };
 		0664F2E52A0E25C200E5C34E /* RecurringActionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringActionService.swift; sourceTree = "<group>"; };
+		066A3D6D2CDD27600089C5C2 /* UserType+DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserType+DeepLink.swift"; sourceTree = "<group>"; };
 		0678D9912C2C53D3000DF6E3 /* CRLURLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilder.swift; sourceTree = "<group>"; };
 		0678D9932C2C5B54000DF6E3 /* CRLURLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRLURLBuilderTests.swift; sourceTree = "<group>"; };
 		06894D91276BA7FA00DA4E33 /* StartLoginURLActionProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessorTests.swift; sourceTree = "<group>"; };
@@ -2622,6 +2624,7 @@
 		EFF9403C2240FE12004F3115 /* DeepLink */ = {
 			isa = PBXGroup;
 			children = (
+				066A3D6D2CDD27600089C5C2 /* UserType+DeepLink.swift */,
 				EFF9403D2240FE5D004F3115 /* URL+DeepLink.swift */,
 				EFF9403F2240FF12004F3115 /* DeepLinkError.swift */,
 			);
@@ -3474,6 +3477,7 @@
 				5498162D1A432BC800A7CE2E /* ZMMissingUpdateEventsTranscoder.m in Sources */,
 				549816451A432BC800A7CE2E /* ZMOperationLoop.m in Sources */,
 				D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */,
+				066A3D6E2CDD27670089C5C2 /* UserType+DeepLink.swift in Sources */,
 				F9AB00221F0CDAF00037B437 /* CacheFileRelocator.swift in Sources */,
 				EEE46E5728C5EF56005F48D7 /* FetchUserClientsUseCase.swift in Sources */,
 				E965B10C2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift in Sources */,
