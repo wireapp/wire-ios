@@ -18,20 +18,9 @@
 
 import WireDataModel
 
-// MARK: - ConversationFolderSelectionUseCaseProtocol
-
-public protocol ConversationFolderSelectionUseCaseProtocol {
-
-    func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    )
-
-}
-
 // MARK: - ConversationFolderSelectionUseCase
 
-public struct ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
+public struct ConversationFolderSelectionUseCase {
 
     public init() {}
 

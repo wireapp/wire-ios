@@ -360,7 +360,7 @@ extension ZMUserSession: UserSession {
         return SubmitCallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeConversationFolderSelectionUseCase() -> ConversationFolderSelectionUseCaseProtocol {
+    public func makeConversationFolderSelectionUseCase() -> ConversationFolderSelectionUseCase {
         return ConversationFolderSelectionUseCase()
     }
 
