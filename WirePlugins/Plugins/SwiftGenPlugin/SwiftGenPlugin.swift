@@ -116,41 +116,6 @@ struct SwiftGenPlugin: BuildToolPlugin {
     }
 }
 
-#if canImport(XcodeProjectPlugin)
-import XcodeProjectPlugin
-
-extension SwiftGenPlugin: XcodeBuildToolPlugin {
-    // Entry point for creating build commands for targets in Xcode projects.
-    func createBuildCommands(context: XcodePluginContext, target: XcodeTarget) throws -> [Command] {
-
-        let configFile = context.xcodeProject.directoryURL.appending(path: "swiftgen.yml", directoryHint: .notDirectory)
-
-        //let outputFilesDirectory = context.xcodeProject.directoryURL.appending(path: "Generated", directoryHint: .isDirectory)
-        let outputFilesDirectory = context.pluginWorkDirectoryURL
-        print("outputFilesDirectory", outputFilesDirectory.path())
-        let tool = try context.tool(named: "swiftgen")
-        return [
-            .prebuildCommand(
-                displayName: "Running \(tool)",
-                executable: tool.url,
-                arguments: ["--config", configFile.path()],
-                environment: ["GENERATED": outputFilesDirectory.path()],
-                outputFilesDirectory: outputFilesDirectory
-            )
-        ]
-
-        // Find the code generator tool to run (replace this with the actual one).
-        let generatorTool = try context.tool(named: "my-code-generator")
-
-        // Construct a build command for each source file with a particular suffix.
-        return target.inputFiles.map(\.path).compactMap {
-            createBuildCommand(for: $0, in: context.pluginWorkDirectory, with: generatorTool.path)
-        }
-    }
-}
-
-#endif
-
 extension SwiftGenPlugin {
     /// Shared function that returns a configured build command if the input files is one that should be processed.
     func createBuildCommand(for inputPath: Path, in outputDirectoryPath: Path, with generatorToolPath: Path) -> Command? {
