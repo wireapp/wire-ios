@@ -31,7 +31,7 @@ public struct FolderPicker: View {
     private let showCloseButton: Bool
     private let options: [FolderPickerOption]
     private let helpLink: URL
-    @Binding private var selected: UUID?
+    @Binding private var selected: FolderPickerOption?
 
     /// Creates a new instance of `FolderPicker`
     /// - Parameters:
@@ -44,7 +44,7 @@ public struct FolderPicker: View {
         showCloseButton: Bool,
         options: [FolderPickerOption],
         helpLink: URL,
-        selected: Binding<UUID?>
+        selected: Binding<FolderPickerOption?>
     ) {
         self.showCloseButton = showCloseButton
         self.options = options
@@ -101,8 +101,8 @@ public struct FolderPicker: View {
                     Text(option.title)
                         .font(.textStyle(.body1))
                         .lineLimit(1)
-                        .foregroundStyle(option.id == selected ? Color(accentColor) : .primaryText)
-                        .tag(option.id)
+                        .foregroundStyle(option.id == selected?.id ? Color(accentColor) : .primaryText)
+                        .tag(option)
                 }
             } label: {
                 Text(verbatim: "")
@@ -128,7 +128,7 @@ public struct FolderPicker: View {
 
 private struct FolderPickerPreview: View {
     @State private var isPresented = true
-    @State private var selected: UUID?
+    @State private var selected: FolderPickerOption?
 
     let showCloseButton: Bool
     let options: [FolderPickerOption]
