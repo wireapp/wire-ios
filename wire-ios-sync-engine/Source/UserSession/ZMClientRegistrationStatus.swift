@@ -123,8 +123,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
 
-    private let needsToRegisterMLSClientUseCase: NeedsToRegisterMLSClientUseCaseProtocol
-
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
@@ -135,9 +133,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         self.coreCryptoProvider = coreCryptoProvider
         let featureRepository = FeatureRepository(context: context)
         let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
-        self.needsToRegisterMLSClientUseCase = NeedsToRegisterMLSClientUseCase(
-            context: context,
-            mlsFeature: getMLSFeatureUseCase.invoke())
 
         super.init()
 

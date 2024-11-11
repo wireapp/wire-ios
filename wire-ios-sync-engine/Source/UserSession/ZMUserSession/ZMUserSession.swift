@@ -324,12 +324,6 @@ public final class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
-    public lazy var needsToRegisterMLSClient: NeedsToRegisterMLSClientUseCaseProtocol = {
-        return NeedsToRegisterMLSClientUseCase(
-            context: syncContext,
-            mlsFeature: makeGetMLSFeatureUseCase().invoke())
-    }()
-
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
