@@ -47,17 +47,6 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        ),
-
-        .binaryTarget(
-            name: "swiftgen",
-            url: "https://github.com/SwiftGen/SwiftGen/releases/download/6.6.3/swiftgen-6.6.3.artifactbundle.zip",
-            checksum: "caf1feaf93dd32bc5037f0b6ded8d0f4fe28ab5d2f6e5c3edf2572006ba0b7eb"
-        ),
-        .plugin(
-            name: "SwiftGenPlugin",
-            capability: .buildTool(),
-            dependencies: ["swiftgen"]
         )
     ]
 )

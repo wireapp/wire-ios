@@ -25,7 +25,8 @@ let package = Package(
         //.package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireFoundation"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(name: "WireAccountImageUI", dependencies: ["WireFoundation"]),
@@ -64,7 +65,7 @@ let package = Package(
         .target(
             name: "WireSidebarUI",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SwiftGenPlugin", package: "WireFoundation")]
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]

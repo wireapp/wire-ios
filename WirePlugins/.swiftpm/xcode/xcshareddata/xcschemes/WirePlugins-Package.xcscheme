@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SnapshotTestReferenceDirectoryPlugin"
-               BuildableName = "SnapshotTestReferenceDirectoryPlugin"
-               BlueprintName = "SnapshotTestReferenceDirectoryPlugin"
+               BlueprintIdentifier = "SwiftGenPlugin"
+               BuildableName = "SwiftGenPlugin"
+               BlueprintName = "SwiftGenPlugin"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SnapshotTestReferenceDirectoryPlugin"
-            BuildableName = "SnapshotTestReferenceDirectoryPlugin"
-            BlueprintName = "SnapshotTestReferenceDirectoryPlugin"
+            BlueprintIdentifier = "SwiftGenPlugin"
+            BuildableName = "SwiftGenPlugin"
+            BlueprintName = "SwiftGenPlugin"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
