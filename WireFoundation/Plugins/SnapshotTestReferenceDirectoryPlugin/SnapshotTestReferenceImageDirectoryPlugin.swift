@@ -29,6 +29,23 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
         target: Target
     ) throws -> [Command] {
 
+        do {
+            let tool = try context.tool(named: "swiftgen")
+            print("tool", tool.path)
+            return [
+                // We actually just want to inform the build system about the genrated fileusing the
+                // `outputFilesDirectory` argument. The executable with the provided arguments does nothing.
+                .prebuildCommand(
+                    displayName: "Running \(tool)",
+                    executable: .init(tool.path.string),
+                    arguments: ["--help"],
+                    outputFilesDirectory: context.pluginWorkDirectory
+                )
+            ]
+        } catch {
+            print(String(reflecting: error))
+        }
+
         let u = target.directory
             .removingLastComponent()
             .removingLastComponent()
