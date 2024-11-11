@@ -2833,6 +2833,10 @@ internal enum L10n {
       internal enum SearchBar {
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
+        /// Search %@
+        internal static func foldersPlaceholder(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.search_bar.foldersPlaceholder", String(describing: p1), fallback: "Search %@")
+        }
         /// Search groups
         internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
         /// Search 1:1 conversations
