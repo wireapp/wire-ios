@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
         .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
-        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"])
+        .plugin(name: "SwiftGenPlugin", targets: ["SwiftGenPlugin"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -23,7 +23,7 @@ let package = Package(
         .testTarget(
             name: "WireFoundationTests",
             dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"],
-            plugins: ["SnapshotTestReferenceDirectoryPlugin"]
+            plugins: ["SwiftGenPlugin"]
         ),
         .target(
             name: "WireFoundationSupport",
@@ -55,7 +55,7 @@ let package = Package(
             checksum: "caf1feaf93dd32bc5037f0b6ded8d0f4fe28ab5d2f6e5c3edf2572006ba0b7eb"
         ),
         .plugin(
-            name: "SnapshotTestReferenceDirectoryPlugin",
+            name: "SwiftGenPlugin",
             capability: .buildTool(),
             dependencies: ["swiftgen"]
         )

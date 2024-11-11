@@ -64,7 +64,7 @@ let package = Package(
         .target(
             name: "WireSidebarUI",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")]
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WireFoundation")]
         ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
