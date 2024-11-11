@@ -109,7 +109,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @ViewBuilder
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
-            menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
+            menuItemHeader(L10n.Sidebar.ConversationFilter.title, addTopPadding: false)
             let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
@@ -143,13 +143,13 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         let action: () -> Void
         switch menuItem {
         case .connect:
-            text = Text("sidebar.contacts.connect.title", bundle: .module)
+            text = Text(L10n.Sidebar.Contacts.Connect.title)
             icon = "person.badge.plus"
             isLink = false
             action = connectAction
 
         case .support:
-            text = Text("sidebar.support.title", bundle: .module)
+            text = Text(L10n.Sidebar.Support.title)
             icon = "questionmark.circle"
             isLink = true
             action = supportAction
@@ -169,27 +169,27 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         let icon: String
         switch menuItem {
         case .all:
-            text = Text("sidebar.conversation_filter.all.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.All.title)
             icon = "text.bubble"
 
         case .favorites:
-            text = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
             icon = "star"
 
         case .groups:
-            text = Text("sidebar.conversation_filter.groups.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Groups.title)
             icon = "person.3"
 
         case .oneOnOne:
-            text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
 
         case .archive:
-            text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
             icon = "archivebox"
 
         case .settings:
-            text = Text("sidebar.settings.title", bundle: .module)
+            text = Text(L10n.Sidebar.Settings.title)
             icon = "gearshape"
         }
 
