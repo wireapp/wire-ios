@@ -21,7 +21,7 @@ import XCTest
 
 @testable import WireSyncEngine
 
-final class ConversationFolderCreationUseCaseTests: XCTestCase {
+final class CreateConversationFolderUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
