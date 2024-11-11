@@ -3585,6 +3585,33 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
+public class MockGetMLSFeatureUseCaseProtocol: GetMLSFeatureUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Feature.MLS)?
+    public var invoke_MockValue: Feature.MLS?
+
+    public func invoke() -> Feature.MLS {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle

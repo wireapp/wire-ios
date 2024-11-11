@@ -167,14 +167,14 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
 
+        if await !isMLSEnabledOnBackend() {
+            return .cannotStart(reason: .backendDoesntSupportMLS)
+        }
+
         let features = await fetchFeatures()
 
         if features.mls.status == .disabled {
             return .cannotStart(reason: .mlsIsNotEnabled)
-        }
-
-        if await !isMLSEnabledOnBackend() {
-            return .cannotStart(reason: .backendDoesntSupportMLS)
         }
 
         if !features.mls.config.supportedProtocols.contains(.mls) {

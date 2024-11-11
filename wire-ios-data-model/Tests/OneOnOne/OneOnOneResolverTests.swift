@@ -28,6 +28,7 @@ final class OneOnOneResolverTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
     private var mockMigrator: MockActorOneOnOneMigrator!
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
+    private var mockRepository: MockFeatureRepositoryInterface!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
     private var oldDeveloperFlagStorage: UserDefaults!
@@ -36,7 +37,8 @@ final class OneOnOneResolverTests: XCTestCase {
         try await super.setUp()
 
         oldDeveloperFlagStorage = DeveloperFlag.storage
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
 
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
@@ -311,7 +313,8 @@ final class OneOnOneResolverTests: XCTestCase {
     private func makeResolver() -> OneOnOneResolver {
         OneOnOneResolver(
             protocolSelector: mockProtocolSelector,
-            migrator: mockMigrator
+            migrator: mockMigrator,
+            mlsFeature: mockRepository.fetchMLS_MockValue!
         )
     }
 

@@ -53,10 +53,6 @@ final class OneOnOneResolverTests: XCTestCase {
             isMLSEnabled: true,
             target: .user(id: Scaffolding.receiverQualifiedID)
         )
-
-        DeveloperFlag.storage = UserDefaults(suiteName: Scaffolding.defaultsSuiteName)!
-        var flag = DeveloperFlag.enableMLSSupport
-        flag.isOn = true
     }
 
     override func tearDown() async throws {
@@ -65,7 +61,6 @@ final class OneOnOneResolverTests: XCTestCase {
         sut = nil
         modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
-        DeveloperFlag.storage.removePersistentDomain(forName: Scaffolding.defaultsSuiteName)
         coreDataStackHelper = nil
     }
 

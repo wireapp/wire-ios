@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModelSupport
-@testable import WireSyncEngine
+@testable import WireDataModel
+@testable import WireDataModelSupport
 import XCTest
 
 final class GetMLSFeatureUseCaseTests: XCTestCase {
