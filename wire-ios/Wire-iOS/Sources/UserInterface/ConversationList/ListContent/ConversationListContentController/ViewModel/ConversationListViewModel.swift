@@ -434,6 +434,13 @@ final class ConversationListViewModel: NSObject {
             kinds = [.favorites]
         case .oneOnOne:
             kinds = [.contacts, .contactRequests]
+        case let .folder(id, _):
+            if let folder = conversationDirectory.allFolders.first(where: { $0.remoteIdentifier == id }) {
+                kinds = [.folder(label: folder)]
+            } else {
+                // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented
+                kinds = [] // This is a valid state. E.g. the folder was deleted remotely.
+            }
         case .none:
             kinds = [.conversations, .contactRequests]
         }

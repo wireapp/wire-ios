@@ -143,6 +143,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
         case (.collapsed, _):
             L10n.Localizable.List.title
+        case (.expanded, .folder):
+            L10n.Localizable.ConversationList.Filter.Folders.title
         }
     }
 
@@ -168,7 +170,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         var selectedFilterImage: UIImage
 
         switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneOnOne:
+        case .favorites, .groups, .oneOnOne, .folder:
             selectedFilterImage = filledFilterImage
         case .none:
             selectedFilterImage = defaultFilterImage
@@ -286,6 +288,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
+
+        case .folder:
+            return isSelected ? accessibilityLocale.Folders.Selected.description : accessibilityLocale.Folders.description
 
         case .none:
             return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale.AllConversations.description

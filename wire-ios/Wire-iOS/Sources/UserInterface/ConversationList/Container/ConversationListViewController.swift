@@ -76,6 +76,8 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Groups.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case let .folder(_, name):
+            return name
         case .none:
             return ""
         }
@@ -414,6 +416,8 @@ final class ConversationListViewController: UIViewController {
             return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
         case .oneOnOne:
             return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case let .folder(_, name):
+            return L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
     }
 
