@@ -174,10 +174,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     func testForShowingNoConversationsFilteredByGroups() {
         // GIVEN
-        let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: false)
-        ]
         userSession.mockConversationDirectory.mockGroupConversations = []
 
         // WHEN
@@ -207,10 +203,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     func testForShowingNoConversationsFilteredByFavourites() {
         // GIVEN
-        let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: true)
-        ]
         userSession.mockConversationDirectory.mockFavoritesConversations = []
 
         // WHEN
