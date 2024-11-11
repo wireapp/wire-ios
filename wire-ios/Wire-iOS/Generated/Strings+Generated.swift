@@ -677,6 +677,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Favorites, selected")
           }
         }
+        internal enum Folders {
+          /// Folders
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.description", fallback: "Folders")
+          internal enum Selected {
+            /// Folder, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.selected.description", fallback: "Folder, selected")
+          }
+        }
         internal enum Groups {
           /// Show all group conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.description", fallback: "Show all group conversations")
@@ -2788,6 +2796,10 @@ internal enum L10n {
         internal enum Favorites {
           /// Favorites
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
+        }
+        internal enum Folders {
+          /// Folders
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.folders.title", fallback: "Folders")
         }
         internal enum Groups {
           /// Groups
