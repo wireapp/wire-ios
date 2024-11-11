@@ -28,7 +28,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     private var coreDataFixture: CoreDataFixture!
     private var userSession: UserSessionMock!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var zClientViewController: ZClientViewController!
+    private var window: UIWindow!
     private var sut: ConversationListViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
 
@@ -36,32 +40,66 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     override func setUp() async throws {
 
         coreDataFixture = .init()
+        coreDataStack.account.imageData = mockImageData
 
         let selfUser = try XCTUnwrap(coreDataFixture.selfUser)
         userSession = .init(selfUser: selfUser, selfUserLegalHoldSubject: selfUser, editableSelfUser: selfUser)
         userSession.coreDataStack = coreDataFixture.coreDataStack
+        userSession.mockConversationList = ConversationList(
+            allConversations: [/*mockConversation!*/],
+            filteringPredicate: NSPredicate(value: true),
+            managedObjectContext: coreDataStack.viewContext,
+            description: "all conversations"
+        )
 
-        let zClientViewController = ZClientViewController(account: coreDataStack.account, userSession: userSession, trackingManager: nil)
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
+        snapshotHelper = .init()
+
+        zClientViewController = ZClientViewController(
+            account: coreDataStack.account,
+            userSession: userSession,
+            trackingManager: nil
+        )
+
+        /*
         sut = .init(
             account: coreDataStack.account,
             selfUserLegalHoldSubject: coreDataFixture.selfUser,
             userSession: userSession,
             zClientViewController: zClientViewController,
             mainCoordinator: .init(mainCoordinator: zClientViewController.mainCoordinator),
-            isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol(),
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
         )
+         */
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = zClientViewController
+        window.makeKeyAndVisible()
+
+        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
+        zClientViewController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
     }
 
-    override class func tearDown() {
+    override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+        zClientViewController = nil
         userSession = nil
         coreDataFixture = nil
+        window.isHidden = true
+        window = nil
     }
-}
+
+    func testSomething() {
+        snapshotHelper.verify(matching: zClientViewController)
+    }
+
 
 /*
 
@@ -294,9 +332,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: tabBarController)
     }
+ */
 
     // MARK: - Helper Methods
 
+    /*
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
         var conversations: [ZMConversation] = []
 
@@ -311,6 +351,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         }
         return conversations
     }
+     */
 
     private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
         let predicate = NSPredicate { _, _ in
@@ -319,4 +360,3 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
 }
-*/
