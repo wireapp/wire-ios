@@ -481,6 +481,7 @@ final class ConversationListViewController: UIViewController {
         // TODO: this needs to be called as a result of an empty list of conversations, not directly from selecting a filter
         if isEmptyPlaceholderVisible {
             navigationItem.searchController = nil
+            navigationItem.hidesSearchBarWhenScrolling = false
         } else if navigationItem.searchController == nil {
             navigationItem.searchController = Self.makeSearchController()
             let filter = listContentController.listViewModel.selectedFilter
@@ -488,6 +489,9 @@ final class ConversationListViewController: UIViewController {
         }
         navigationController?.view.setNeedsLayout()
         navigationController?.view.layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.navigationItem.hidesSearchBarWhenScrolling = true
+        }
     }
 
     @objc
