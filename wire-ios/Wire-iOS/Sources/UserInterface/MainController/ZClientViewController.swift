@@ -114,7 +114,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
-    private lazy var conversationListViewController = ConversationListViewController(
+    private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,

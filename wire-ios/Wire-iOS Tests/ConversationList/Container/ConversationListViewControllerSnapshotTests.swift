@@ -27,13 +27,14 @@ import XCTest
 final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     private var coreDataFixture: CoreDataFixture!
+    private var modelHelper: ModelHelper!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var zClientViewController: ZClientViewController!
     private var window: UIWindow!
-    private var sut: ConversationListViewController!
     private var snapshotHelper: SnapshotHelper!
 
+    private var sut: ConversationListViewController! { zClientViewController.conversationListViewController }
     private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
 
     @MainActor
@@ -41,6 +42,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         coreDataFixture = .init()
         coreDataStack.account.imageData = mockImageData
+
+        modelHelper = .init()
 
         let selfUser = try XCTUnwrap(coreDataFixture.selfUser)
         userSession = .init(selfUser: selfUser, selfUserLegalHoldSubject: selfUser, editableSelfUser: selfUser)
@@ -88,18 +91,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        sut = nil
         zClientViewController = nil
         userSession = nil
+        modelHelper = nil
         coreDataFixture = nil
         window.isHidden = true
         window = nil
     }
-
-    func testSomething() {
-        snapshotHelper.verify(matching: zClientViewController)
-    }
-
 
 /*
 
@@ -195,11 +193,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         mockGetUserAccountImageSourceUseCase = nil
     }
 
-    // MARK: - View Controller
+ */
 
     func testForNoConversations() {
         window.rootViewController = nil
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForEverythingArchived() {
@@ -208,7 +206,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         window.rootViewController = nil
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     // MARK: - Snapshot Tests for Filter View
@@ -231,7 +229,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.none)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     @MainActor
@@ -247,10 +245,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         // WHEN
         sut.hideNoContactLabel(animated: false)
         sut.applyFilter(.groups)
-        await Task.yield()
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByGroups() {
@@ -262,7 +259,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingConversationsFilteredByFavourites() {
@@ -279,7 +276,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByFavourites() {
@@ -291,7 +288,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingConversationsFilteredByOneOnOne() throws {
@@ -312,7 +309,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByOneOnOne() throws {
@@ -330,13 +327,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: zClientViewController)
     }
- */
 
     // MARK: - Helper Methods
 
-    /*
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
         var conversations: [ZMConversation] = []
 
@@ -351,7 +346,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         }
         return conversations
     }
-     */
 
     private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
         let predicate = NSPredicate { _, _ in
