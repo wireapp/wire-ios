@@ -318,6 +318,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus
             ),
+            FetchBackendMLSPublicKeysRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory

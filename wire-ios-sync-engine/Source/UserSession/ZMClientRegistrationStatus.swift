@@ -117,7 +117,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var isWaitingForMLSClientToBeRegistered: Bool = false
     private var isWaitingForClientsToBeDeleted: Bool = false
     private var isGeneratingPrekeys: Bool = false
-//    private var needsToRegisterMLSClient: Bool = false
     private var isMLSEnabledOnBackend: Bool = false
     private let actionsProvider = MLSActionsProvider()
 
@@ -295,12 +294,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
         let featureRepository = FeatureRepository(context: context)
         let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
-        let isAllowedToRegisterMLSCLient = mlsFeature.isEnabled && (BackendInfo.apiVersion ?? .v0) >= .v5
 
-        /// Should: mlsFeature.isEnabled
-        /// Can: (BackendInfo.apiVersion ?? .v0) >= .v5 and mls is enabled on BE
-
-        return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
+        let shouldRegisterMLSCLient = mlsFeature.isEnabled
+        let canRegisterMLSCLient = BackendInfo.isMLSEnabledOnBackend
+    
+        return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
 
     private func containsBackendPublicKeys(in context: NSManagedObjectContext) async -> Bool {

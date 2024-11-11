@@ -26,6 +26,7 @@ public enum BackendInfo {
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
+        case isMLSEnabledOnBackend = "isMLSEnabledOnBackend"
 // add a case for mls
     }
 
@@ -64,6 +65,11 @@ public enum BackendInfo {
     public static var isFederationEnabled: Bool {
         get { storage.bool(forKey: Key.isFederationEnabled.rawValue) }
         set { storage.set(newValue, forKey: Key.isFederationEnabled.rawValue) }
+    }
+
+    public static var isMLSEnabledOnBackend: Bool {
+        get { storage.bool(forKey: Key.isMLSEnabledOnBackend.rawValue) }
+        set { storage.set(newValue, forKey: Key.isMLSEnabledOnBackend.rawValue) }
     }
 
     private static func apiVersion(for key: Key) -> APIVersion? {

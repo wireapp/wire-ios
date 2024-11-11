@@ -32,8 +32,8 @@ import Foundation
     case fetchingLegalHoldStatus
     case fetchingLabels
     case fetchingFeatureConfig
+    case fetchingBackendMLSPublicKeys
     case updateSelfSupportedProtocols
-    // add a case for mls and for quick sync
     case evaluate1on1ConversationsForMLS
     // following is quick sync only
     case fetchingMissedEvents
@@ -77,6 +77,8 @@ import Foundation
             return "fetchingLabels"
         case .fetchingFeatureConfig:
             return "fetchingFeatureConfig"
+        case .fetchingBackendMLSPublicKeys:
+            return "fetchingBackendMLSPublicKeys"
         case .updateSelfSupportedProtocols:
             return "updateSelfSupportedProtocols"
         case .evaluate1on1ConversationsForMLS:

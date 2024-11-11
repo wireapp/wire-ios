@@ -56,7 +56,8 @@ private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
             domain: domain,
             isFederationEnabled: federation,
             supportedVersions: Set(supported.compactMap(APIVersion.init)),
-            developmentVersions: Set(development?.compactMap(APIVersion.init) ?? [])
+            developmentVersions: Set(development?.compactMap(APIVersion.init) ?? []),
+            isMLSEnabledOnBackend: false
         )
     }
 
