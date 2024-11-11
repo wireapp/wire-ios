@@ -109,7 +109,6 @@ final class ConversationListViewController: UIViewController {
             updateNavigationItem()
             applyColorTheme()
             updateFilterContainerView()
-            navigationItem.searchController?.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
         }
     }
 
@@ -391,15 +390,11 @@ final class ConversationListViewController: UIViewController {
         : ColorTheme.Backgrounds.surface
     }
 
-    static func makeSearchController(
-            filter: ConversationFilter?,
-            mainSplitViewState: MainSplitViewState,
-            isEmptyPlaceholderVisible: Bool
-    ) -> UISearchController {
+    static func makeSearchController(filter: ConversationFilter?) -> UISearchController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
+        //searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
         return searchController
     }
@@ -419,9 +414,7 @@ final class ConversationListViewController: UIViewController {
 
     private func setupSearchController() {
         let searchController = ConversationListViewController.makeSearchController(
-            filter: listContentController.listViewModel.selectedFilter,
-            mainSplitViewState: mainSplitViewState,
-            isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
+            filter: listContentController.listViewModel.selectedFilter
         )
 
         searchController.searchResultsUpdater = self
@@ -432,6 +425,7 @@ final class ConversationListViewController: UIViewController {
             navigationItem.searchController = nil
         }
         navigationItem.preferredSearchBarPlacement = .stacked
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.

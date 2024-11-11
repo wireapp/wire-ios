@@ -27,11 +27,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter? = nil
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .collapsed,
-            isEmptyPlaceholderVisible: false
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
@@ -45,11 +41,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter = .favorites
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .collapsed,
-            isEmptyPlaceholderVisible: false
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
@@ -60,11 +52,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter = .groups
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .collapsed,
-            isEmptyPlaceholderVisible: false
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
@@ -75,11 +63,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter = .oneOnOne
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .collapsed,
-            isEmptyPlaceholderVisible: false
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertEqual(searchController.searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
@@ -90,11 +74,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter? = nil
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .expanded,
-            isEmptyPlaceholderVisible: false
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertFalse(searchController.hidesNavigationBarDuringPresentation)
@@ -105,15 +85,10 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter? = nil
 
         // WHEN
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: filter,
-            mainSplitViewState: .collapsed,
-            isEmptyPlaceholderVisible: true
-        )
+        let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
         XCTAssertFalse(searchController.obscuresBackgroundDuringPresentation)
         XCTAssertFalse(searchController.searchBar.isTranslucent)
     }
-
 }
