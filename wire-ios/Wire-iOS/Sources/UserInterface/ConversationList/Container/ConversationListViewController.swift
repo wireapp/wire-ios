@@ -392,12 +392,11 @@ final class ConversationListViewController: UIViewController {
         : ColorTheme.Backgrounds.surface
     }
 
-    static func makeSearchController(filter: ConversationFilter?) -> UISearchController {
+    static func makeSearchController() -> UISearchController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
         searchController.hidesNavigationBarDuringPresentation = true
-        searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
         return searchController
     }
 
@@ -415,11 +414,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupSearchController() {
-        let searchController = Self.makeSearchController(
-            filter: listContentController.listViewModel.selectedFilter
-        )
+        let filter = listContentController.listViewModel.selectedFilter
+        let searchController = Self.makeSearchController()
         searchController.searchResultsUpdater = self
-        //if !isEmptyPlaceholderVisible {
+        searchController.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
         navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -479,7 +477,17 @@ final class ConversationListViewController: UIViewController {
         }
         updateFilterContainerView()
         configureEmptyPlaceholder()
-        navigationItem.searchController?.searchBar.isHidden = isEmptyPlaceholderVisible
+
+        // TODO: this needs to be called as a result of an empty list of conversations, not directly from selecting a filter
+        if isEmptyPlaceholderVisible {
+            navigationItem.searchController = nil
+        } else if navigationItem.searchController == nil {
+            navigationItem.searchController = Self.makeSearchController()
+            let filter = listContentController.listViewModel.selectedFilter
+            navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        }
+        navigationController?.view.setNeedsLayout()
+        navigationController?.view.layoutIfNeeded()
     }
 
     @objc
