@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public protocol ConversationFolderCreationUseCaseProtocol {
+public protocol CreateConversationFolderUseCaseProtocol {
     /// Creates a new conversation folder with the specified name
     /// - Parameter name: The name of the folder to be created
     /// - Returns: The created `LabelType`, or `nil` if creation fails

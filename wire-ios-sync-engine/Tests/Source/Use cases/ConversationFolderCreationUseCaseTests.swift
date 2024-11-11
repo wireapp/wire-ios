@@ -27,7 +27,7 @@ final class ConversationFolderCreationUseCaseTests: XCTestCase {
 
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
-    private var sut: ConversationFolderCreationUseCase!
+    private var sut: CreateConversationFolderUseCase!
 
     private var managedObjectContext: NSManagedObjectContext {
         return stack.syncContext
@@ -37,7 +37,7 @@ final class ConversationFolderCreationUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         stack = try await coreDataStackHelper.createStack()
-        sut = ConversationFolderCreationUseCase(managedObjectContext: managedObjectContext)
+        sut = CreateConversationFolderUseCase(managedObjectContext: managedObjectContext)
     }
 
     // MARK: - tearDown

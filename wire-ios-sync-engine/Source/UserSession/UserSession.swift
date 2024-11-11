@@ -269,7 +269,7 @@ public protocol UserSession: AnyObject {
 
     func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol
 
-    func makeConversationFolderCreationUseCase() -> ConversationFolderCreationUseCaseProtocol
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
