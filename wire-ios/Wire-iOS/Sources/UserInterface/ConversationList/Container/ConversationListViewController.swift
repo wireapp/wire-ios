@@ -176,6 +176,8 @@ final class ConversationListViewController: UIViewController {
 
         hideNoContactLabel(animated: false)
         viewModel.viewController = self
+
+        setupSearchController()
     }
 
     @available(*, unavailable)
@@ -208,8 +210,6 @@ final class ConversationListViewController: UIViewController {
 
         applyColorTheme()
 
-        setupSearchController()
-
         setContentScrollView(listContentController.collectionView)
     }
 
@@ -238,6 +238,8 @@ final class ConversationListViewController: UIViewController {
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
+
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
 
     override func viewDidLayoutSubviews() {
@@ -394,7 +396,7 @@ final class ConversationListViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        //searchController.hidesNavigationBarDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = true
         searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
         return searchController
     }
@@ -413,17 +415,12 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupSearchController() {
-        let searchController = ConversationListViewController.makeSearchController(
+        let searchController = Self.makeSearchController(
             filter: listContentController.listViewModel.selectedFilter
         )
-
         searchController.searchResultsUpdater = self
-
-        if !isEmptyPlaceholderVisible {
-            navigationItem.searchController = searchController
-        } else {
-            navigationItem.searchController = nil
-        }
+        //if !isEmptyPlaceholderVisible {
+        navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
         navigationItem.hidesSearchBarWhenScrolling = false
     }
@@ -480,9 +477,9 @@ final class ConversationListViewController: UIViewController {
         } else {
             setupRightNavigationBarButtonItems_SplitView()
         }
-        setupSearchController()
         updateFilterContainerView()
         configureEmptyPlaceholder()
+        navigationItem.searchController?.searchBar.isHidden = isEmptyPlaceholderVisible
     }
 
     @objc
