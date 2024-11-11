@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -8603,6 +8603,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				591094F12CE2080D00E7FB38 /* PBXTargetDependency */,
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
@@ -8794,6 +8795,7 @@
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
 				E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */,
+				591094EF2CE207FA00E7FB38 /* XCLocalSwiftPackageReference "../WirePlugins" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -10818,6 +10820,10 @@
 			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
 			targetProxy = 168A16B11D9597C2005CFA6C /* PBXContainerItemProxy */;
 		};
+		591094F12CE2080D00E7FB38 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 591094F02CE2080D00E7FB38 /* SwiftGenPlugin */;
+		};
 		BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
@@ -11630,6 +11636,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		591094EF2CE207FA00E7FB38 /* XCLocalSwiftPackageReference "../WirePlugins" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../WirePlugins;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -11717,6 +11730,11 @@
 		590DCA092C971AFF002D0A2C /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+		};
+		591094F02CE2080D00E7FB38 /* SwiftGenPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 591094EF2CE207FA00E7FB38 /* XCLocalSwiftPackageReference "../WirePlugins" */;
+			productName = "plugin:SwiftGenPlugin";
 		};
 		5929CB212CA6C9C800070488 /* WireConversationListUI */ = {
 			isa = XCSwiftPackageProductDependency;
