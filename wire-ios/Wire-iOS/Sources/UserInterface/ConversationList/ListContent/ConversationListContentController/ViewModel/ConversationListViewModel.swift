@@ -408,25 +408,8 @@ final class ConversationListViewModel: NSObject {
     private func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
-        var kinds: [Section.Kind]
-        if folderEnabled {
-            kinds = [
-                .contactRequests,
-                .favorites,
-                .groups,
-                .contacts
-            ]
-
-            let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
-            kinds.append(contentsOf: folders)
-        } else {
-            kinds = [
-                .contactRequests,
-                .conversations
-            ]
-        }
-
         // Filter sections based on the selected filter
+        let kinds: [Section.Kind]
         switch selectedFilter {
         case .groups:
             kinds = [.groups]
@@ -439,7 +422,7 @@ final class ConversationListViewModel: NSObject {
                 kinds = [.folder(label: folder)]
             } else {
                 // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented
-                kinds = [] // This is a valid state. E.g. the folder was deleted remotely.
+                kinds = []
             }
         case .none:
             kinds = [.conversations, .contactRequests]
