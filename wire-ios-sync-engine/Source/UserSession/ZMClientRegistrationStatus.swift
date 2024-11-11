@@ -117,8 +117,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private var isWaitingForMLSClientToBeRegistered: Bool = false
     private var isWaitingForClientsToBeDeleted: Bool = false
     private var isGeneratingPrekeys: Bool = false
-    private var isMLSEnabledOnBackend: Bool = false
-    private let actionsProvider = MLSActionsProvider()
 
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
@@ -131,16 +129,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         self.managedObjectContext = context
         self.cookieProvider = cookieProvider
         self.coreCryptoProvider = coreCryptoProvider
-        let featureRepository = FeatureRepository(context: context)
-        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
 
         super.init()
 
         observeClientUpdates()
         observeProfileUpdates()
-        WaitingGroupTask(context: context) {
-            self.isMLSEnabledOnBackend = await self.containsBackendPublicKeys(in: context)
-        }
     }
 
     @objc
@@ -267,7 +260,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var needsToRegisterMLSClient: Bool {
-        return Self.needsToRegisterMLSClient(in: managedObjectContext) && isMLSEnabledOnBackend
+        return Self.needsToRegisterMLSClient(in: managedObjectContext)
     }
 
     @objc(needsToRegisterClientInContext:)
@@ -277,34 +270,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return clientID.isEmpty
         } else {
             return true
-        }
-    }
-
-    @objc(needsToRegisterMLSClientInContext:)
-    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
-        guard !self.needsToRegisterClient(in: context) else {
-            return false
-        }
-        let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-
-        let featureRepository = FeatureRepository(context: context)
-        let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
-
-        let shouldRegisterMLSCLient = mlsFeature.isEnabled
-        let canRegisterMLSCLient = BackendInfo.isMLSEnabledOnBackend
-    
-        return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
-    }
-
-    private func containsBackendPublicKeys(in context: NSManagedObjectContext) async -> Bool {
-        do {
-            _ = try await actionsProvider.fetchBackendPublicKeys(in: context.notificationContext)
-            return true
-        } catch FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled {
-            return false
-        } catch {
-            WireLogger.mls.warn("unexpected error fetching public keys: \(String(describing: error))")
-            return false
         }
     }
 
@@ -662,6 +627,22 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public var needsToEnrollE2EI: Bool {
         return FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+    }
+
+    @objc(needsToRegisterMLSClientInContext:)
+    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+        guard !self.needsToRegisterClient(in: context) else {
+            return false
+        }
+        let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
+
+        let featureRepository = FeatureRepository(context: context)
+        let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+
+        let shouldRegisterMLSCLient = mlsFeature.isEnabled
+        let canRegisterMLSCLient = BackendInfo.isMLSEnabledOnBackend
+
+        return !hasRegisteredMLSClient && shouldRegisterMLSCLient && canRegisterMLSCLient
     }
 
     public func willGeneratePrekeys() {
