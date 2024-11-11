@@ -141,8 +141,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen"
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "en" : {
@@ -213,8 +213,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите дважды, чтобы открыть список архивных бесед"
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "sl" : {
@@ -265,8 +265,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Liste der letzten Unterhaltungen"
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "en" : {
@@ -337,8 +337,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Список недавних бесед"
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "sl" : {
@@ -389,8 +389,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen"
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "en" : {
@@ -461,8 +461,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите дважды, чтобы открыть список последних бесед"
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "sl" : {
@@ -637,8 +637,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppeltippen, um Einstellungen zu öffnen"
+            "state" : "new",
+            "value" : "Double tap to open Settings"
           }
         },
         "en" : {
@@ -709,8 +709,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите дважды, чтобы открыть настройки"
+            "state" : "new",
+            "value" : "Double tap to open Settings"
           }
         },
         "sl" : {
