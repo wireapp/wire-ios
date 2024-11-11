@@ -113,7 +113,6 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var encryptionProtocolSection = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
-        section.isHidden = true
         section.tapAction = { sender in
             self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
                 self?.values.encryptionProtocol = encryptionProtocol
