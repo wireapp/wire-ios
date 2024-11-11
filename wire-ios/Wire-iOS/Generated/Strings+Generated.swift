@@ -14,7 +14,11 @@ internal enum L10n {
     internal enum AboutSettings {
       internal enum BackButton {
         /// Go back to About
-        internal static let description = L10n.tr("Accessibility", "aboutSettings.backButton.description", fallback: "Go back to About")
+        int
+
+
+
+          ernal static let description = L10n.tr("Accessibility", "aboutSettings.backButton.description", fallback: "Go back to About")
       }
     }
     internal enum AccountPage {
@@ -25,6 +29,21 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "accountPage.availabilityStatus.hint", fallback: "Double tap to change status")
       }
       internal enum BackButton {
+        /// Go back to account overview
+        internal static let description = L10n.tr("Accessibility", "accountPage.backButton.description", fallback: "Go back to account overview")
+      }
+      internal enum CloseButton {
+        /// Close account overview
+        internal static let description = L10n.tr("Accessibility", "accountPage.closeButton.description", fallback: "Close account overview")
+      }
+      internal enum Handle {
+        /// Username
+        internal static let description = L10n.tr("Accessibility", "accountPage.handle.description", fallback: "Username")
+      }
+      internal enum Name {
+        /// Profile name
+        internal static let description = L10n.tr("Accessibility", "accountPage.name.description", fallback: "Profile name")
+      }
       internal enum ProfilePicture {
         /// Profile picture
         internal static let description = L10n.tr("Accessibility", "accountPage.profilePicture.description", fallback: "Profile picture")

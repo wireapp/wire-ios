@@ -19,7 +19,9 @@ internal enum L10n {
       internal enum File {
         /// You can send files up to %@
         internal static func tooBig(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "share_extension.content.file.too_big", String(describing: p1), fallback: "You can send files up to %@")
+          return L1
+
+            0n.tr("Localizable", "share_extension.content.file.too_big", String(describing: p1), fallback: "You can send files up to %@")
         }
         /// Unsupported attachment
         internal static let unsupportedAttachment = L10n.tr("Localizable", "share_extension.content.file.unsupported_attachment", fallback: "Unsupported attachment")

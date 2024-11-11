@@ -21,8 +21,7 @@ let package = Package(
         .target(name: "WireFoundation"),
         .testTarget(
             name: "WireFoundationTests",
-            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"],
-            plugins: [/*"SwiftGenPlugin"*/]
+            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
         ),
         .target(
             name: "WireFoundationSupport",
@@ -50,7 +49,8 @@ let package = Package(
     ]
 )
 
-for target in package.targets where [.regular, .executable, .test].contains(target.type) {
+for target in package.targets {
+    guard target.type != .plugin else { continue }
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),

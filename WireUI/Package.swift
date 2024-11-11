@@ -22,7 +22,6 @@ let package = Package(
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
     ],
     dependencies: [
-        //.package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
         .package(path: "../WireFoundation"),
@@ -56,10 +55,7 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
-        .target(
-            name: "WireSettingsUI",
-            plugins: [/*.plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")*/]
-        ),
+        .target(name: "WireSettingsUI"),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
         .target(
