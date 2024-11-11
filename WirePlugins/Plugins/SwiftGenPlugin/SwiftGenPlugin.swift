@@ -24,7 +24,7 @@ struct SwiftGenPlugin: BuildToolPlugin {
     /// Entry point for creating build commands for targets in Swift packages.
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
         // regarding the warning: https://github.com/swiftlang/swift-package-manager/issues/7870
-        let configFile = URL(fileURLWithPath: target.directory.appending(subpath: "swiftgen.yml").string)
+        let configFile = URL(fileURLWithPath: target.directory.appending(subpath: ".swiftgen.yml").string)
         let outputFilesDirectory = context.pluginWorkDirectoryURL
         let tool = try context.tool(named: "swiftgen")
         return [
