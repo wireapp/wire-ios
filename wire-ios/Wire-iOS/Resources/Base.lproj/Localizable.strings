@@ -136,6 +136,7 @@
 "conversation_list.filter.favorites.title" = "Favorites";
 "conversation_list.filter.groups.title" = "Groups";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Remove";
 
