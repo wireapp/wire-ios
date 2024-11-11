@@ -49,7 +49,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         userSession = .init(selfUser: selfUser, selfUserLegalHoldSubject: selfUser, editableSelfUser: selfUser)
         userSession.coreDataStack = coreDataFixture.coreDataStack
         userSession.mockConversationList = ConversationList(
-            allConversations: [/*mockConversation!*/],
+            allConversations: [],
             filteringPredicate: NSPredicate(value: true),
             managedObjectContext: coreDataStack.viewContext,
             description: "all conversations"
@@ -66,22 +66,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             trackingManager: nil
         )
 
-        /*
-        sut = .init(
-            account: coreDataStack.account,
-            selfUserLegalHoldSubject: coreDataFixture.selfUser,
-            userSession: userSession,
-            zClientViewController: zClientViewController,
-            mainCoordinator: .init(mainCoordinator: zClientViewController.mainCoordinator),
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
-            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
-        )
-         */
-
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = zClientViewController
+        let existingWindow = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow
+        window = UIWindow()
+        (existingWindow ?? window).rootViewController = zClientViewController
         window.makeKeyAndVisible()
 
         await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
@@ -98,102 +85,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         window.isHidden = true
         window = nil
     }
-
-/*
-
-// MARK: - ConversationListViewControllerSnapshotTests
-
-final class ConversationListViewControllerSnapshotTests: XCTestCase {
-
-    // MARK: - Properties
-
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: ConversationListViewController!
-    private var window: UIWindow!
-    private var tabBarController: MainCoordinatorDependencies.TabBarController!
-    private var userSession: UserSessionMock!
-    private var coreDataFixture: CoreDataFixture!
-    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
-    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
-    private var modelHelper: ModelHelper!
-    private var snapshotHelper: SnapshotHelper!
-
-    // MARK: - setUp
-
-    @MainActor
-    override func setUp() async throws {
-
-        mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
-        accentColor = .blue
-
-        coreDataFixture = .init()
-
-        userSession = .init()
-        userSession.coreDataStack = coreDataFixture.coreDataStack
-
-        mockIsSelfUserE2EICertifiedUseCase = .init()
-        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
-
-        mockGetUserAccountImageSourceUseCase = .init()
-        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
-
-        modelHelper = ModelHelper()
-
-        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
-        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
-        selfUser.accentColor = .red
-
-        let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(
-            account: account,
-            selfUserLegalHoldSubject: selfUser,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mockMainCoordinator,
-            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
-        )
-
-        sut = ConversationListViewController(
-            viewModel: viewModel,
-            zClientViewController: .init(account: account, userSession: userSession, trackingManager: nil),
-            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
-            connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
-            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
-        )
-        sut.mainSplitViewState = .collapsed
-
-        tabBarController = .init()
-        tabBarController.conversationListUI = sut
-
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-
-        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
-        UIView.setAnimationsEnabled(false)
-    }
-
-    // MARK: - tearDown
-
-    override func tearDown() {
-        snapshotHelper = nil
-        window.isHidden = true
-        window.rootViewController = nil
-        window = nil
-        tabBarController = nil
-        sut = nil
-        mockIsSelfUserE2EICertifiedUseCase = nil
-        userSession = nil
-        coreDataFixture = nil
-        modelHelper = nil
-        mockMainCoordinator = nil
-        mockGetUserAccountImageSourceUseCase = nil
-    }
-
- */
 
     func testForNoConversations() {
         window.rootViewController = nil
