@@ -14,11 +14,7 @@ internal enum L10n {
     internal enum AboutSettings {
       internal enum BackButton {
         /// Go back to About
-        int
-
-
-
-          ernal static let description = L10n.tr("Accessibility", "aboutSettings.backButton.description", fallback: "Go back to About")
+        internal static let description = L10n.tr("Accessibility", "aboutSettings.backButton.description", fallback: "Go back to About")
       }
     }
     internal enum AccountPage {

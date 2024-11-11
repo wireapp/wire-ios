@@ -46,13 +46,7 @@ struct SwiftGenPlugin: BuildToolPlugin {
             .prebuildCommand(
                 displayName: "Replace CVarArg by any CVarArg",
                 executable: try! context.tool(named: "sed").url,
-                arguments: ["-i.bak", "s/CVarArg/any CVarArg/", outputFile.path()],
-                outputFilesDirectory: outputFilesDirectory
-            ),
-            .prebuildCommand(
-                displayName: "Remove .bak file",
-                executable: try! context.tool(named: "rm").url,
-                arguments: ["-vf", outputFile.path() + ".bak"],
+                arguments: ["-i", "", "s/CVarArg/any CVarArg/g", outputFile.path()],
                 outputFilesDirectory: outputFilesDirectory
             )
         ]

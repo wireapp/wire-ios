@@ -70,6 +70,7 @@ echo ""
 
 echo "ℹ️  Resolve Swift Packages for Scripts..."
 xcrun --sdk macosx swift package --package-path scripts resolve
+xcrun --sdk macosx swift package --package-path WirePlugins resolve
 xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
 echo ""
 

@@ -35,22 +35,17 @@ let package = Package(
         ),
 
         .binaryTarget(
-            name: "LicensePlist.artifactbundle",
+            name: "LicensePlist",
             url: "https://github.com/mono0926/LicensePlist/releases/download/3.25.1/LicensePlistBinary-macos.artifactbundle.zip",
             checksum: "a80181eeed49396dae5d3ce6fc339f33a510299b068fd6b4f507483db78f7f30"
         ),
         .binaryTarget(
-            name: "SwiftLintBinary.artifactbundle",
+            name: "SwiftLintBinary",
             url: "https://github.com/realm/SwiftLint/releases/download/0.57.0/SwiftLintBinary-macos.artifactbundle.zip",
             checksum: "a1bbafe57538077f3abe4cfb004b0464dcd87e8c23611a2153c675574b858b3a"
         ),
         .binaryTarget(
-            name: "swiftgen.artifactbundle",
-            url: "https://github.com/SwiftGen/SwiftGen/releases/download/6.6.3/swiftgen-6.6.3.artifactbundle.zip",
-            checksum: "caf1feaf93dd32bc5037f0b6ded8d0f4fe28ab5d2f6e5c3edf2572006ba0b7eb"
-        ),
-        .binaryTarget(
-            name: "swiftformat.artifactbundle",
+            name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.0/swiftformat.artifactbundle.zip",
             checksum: "edf4ed2f1664ad621ae71031ff915e0c6ef80ad66e87ea0e5a10c3580a27a6dd"
         )
