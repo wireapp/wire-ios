@@ -19,7 +19,7 @@
 import WireAnalytics
 import WireSystem
 
-#if canImport(WireDatadog)
+#if canImport(DatadogCore)
 import WireDatadog
 #endif
 
@@ -29,7 +29,7 @@ extension WireAnalytics {
     public enum Datadog {
 
         private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
-#if canImport(WireDatadog)
+#if canImport(DatadogCore)
             let builder = WireDatadogBuilder()
             return builder.build()
 #else
