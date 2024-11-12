@@ -104,7 +104,7 @@ class IndividualToTeamMigrationViewController: UIViewController {
         case .toPlans:
             let vc = hostedView(
                 for: .teamPlanSelection(features: features),
-                stepIndex: (navigationController?.children.count ?? 0 + 1),
+                stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
                 target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
@@ -113,30 +113,30 @@ class IndividualToTeamMigrationViewController: UIViewController {
         case .toTeamName:
             let vc = hostedView(
                 for: .teamName,
-                stepIndex: (navigationController?.children.count ?? 0 + 1),
+                stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
                 target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: false)
+            childController.pushViewController(vc, animated: true)
         case .toConfirmation:
             let vc = hostedView(
                 for: .confirmation,
-                stepIndex: (navigationController?.children.count ?? 0 + 1),
+                stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
                 target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: false)
+            childController.pushViewController(vc, animated: true)
         case .toCompletion:
             let vc = hostedView(
                 for: .completion(profileName: "Profile Name", teamName: "Some Team"),
-                stepIndex: (navigationController?.children.count ?? 0 + 1),
+                stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
                 target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
-            childController.pushViewController(vc, animated: false)
+            childController.pushViewController(vc, animated: true)
         case .toApp:
             break
         case .toTeamManagement:
