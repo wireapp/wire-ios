@@ -17,48 +17,27 @@
 //
 
 import SwiftUI
-import WireDesign
 
-extension View {
-    func cancellationSheet(
-        isPresented: Binding<Bool>,
-        onContinue: @escaping @MainActor @Sendable () -> Void,
-        onLeave: @escaping @MainActor @Sendable () -> Void
-    ) -> some View {
-        modifier(CancellationViewModifier(
-            isPresented: isPresented,
-            onContinue: onContinue,
-            onLeave: onLeave
-        ))
-    }
-}
-
-struct CancellationViewModifier: ViewModifier {
-    @Binding var isPresented: Bool
-
-    let onContinue: @MainActor @Sendable () -> Void
-    let onLeave: @MainActor @Sendable () -> Void
-
-    func body(content: Content) -> some View {
-        content
-            .confirmationDialog(
-                String.localized(key: "individualToTeam.cancellation.title", bundle: .module),
-                isPresented: $isPresented,
-                titleVisibility: .visible,
-                actions: {
-                    Button(
-                        String.localized(key: "individualToTeam.cancellation.leave", bundle: .module),
-                        role: .destructive,
-                        action: onLeave
-                    )
-                    Button(
-                        String.localized(key: "individualToTeam.cancellation.continue", bundle: .module),
-                        role: .cancel,
-                        action: onContinue
-                    )
-                    .foregroundStyle(.primary)
-                    .wireTextStyle(.buttonBig)
-                }
-            )
-    }
+@MainActor
+internal func cancellationSheetFactory(
+    onLeave: @escaping @MainActor @Sendable () -> Void,
+    onContinue: @escaping @MainActor @Sendable () -> Void
+) -> UIAlertController {
+    let alert = UIAlertController(
+        title: String.localized(key: "individualToTeam.cancellation.title", bundle: .module),
+        message: String.localized(key: "individualToTeam.cancellation.body", bundle: .module),
+        preferredStyle: .actionSheet
+    )
+    alert.addAction(UIAlertAction(
+        title: String.localized(key: "individualToTeam.cancellation.leave", bundle: .module),
+        style: .destructive,
+        handler: { _ in onLeave() }
+    ))
+    alert.addAction(UIAlertAction(
+        title: String.localized(key: "individualToTeam.cancellation.continue", bundle: .module),
+        style: .cancel,
+        handler: { _ in onContinue() }
+    ))
+    alert.view.tintColor = UIColor(.primary)
+    return alert
 }
