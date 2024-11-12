@@ -23,7 +23,7 @@ import WireFoundation
 #Preview {
     PageContainer(
         content: {
-            CompletionView(profileName: "Some User", teamName: "Some Team")
+            CompletionView(profileName: "Some User", teamName: "Some Team") { _ in }
         },
         step: 4,
         stepCount: 4,

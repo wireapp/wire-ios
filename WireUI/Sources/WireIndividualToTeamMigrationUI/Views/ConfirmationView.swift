@@ -21,39 +21,18 @@ import WireDesign
 
 struct ConfirmationView: View {
 
-    enum Action {
-        case goBack
+    enum Action: Sendable {
         case `continue`
     }
 
-    @State var password: String = ""
+    let actionCallback: (Action) -> Void
     @State var migrationConfirmed: Bool = false
     @State var termsAccepted: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 56) {
             Text(String.localized(key: "individualToTeam.confirmation.body", bundle: .module))
                 .wireTextStyle(.body1)
-            VStack(alignment: .leading) {
-                Text(String.localized(key: "individualToTeam.confirmation.passwordField.title", bundle: .module))
-                    .wireTextStyle(.h4)
-                TextField("", text: $password)
-                    .textFieldStyle(.roundedBorder)
-                    .wireTextStyle(.body1)
-            }
-            HStack {
-                Spacer()
-                Button(
-                    action: { },
-                    label: {
-                        Text(String.localized(key: "individualToTeam.confirmation.passwordField.forgotPassword", bundle: .module))
-                            .wireTextStyle(.subline1)
-                            .foregroundStyle(.gray)
-                    }
-                )
-                .buttonStyle(.plain)
-            }
-            Spacer()
             VStack(alignment: .leading, spacing: 16) {
                 Checkbox(
                     isChecked: $migrationConfirmed,
@@ -64,15 +43,13 @@ struct ConfirmationView: View {
                     title: .localizedMarkdown(key: "individualToTeam.confirmation.termsCheckbox", bundle: .module)
                 )
             }
+            Spacer()
             VStack(alignment: .leading) {
-                BackButton(
-                    title: String.localized(key: "individualToTeam.button.back", bundle: .module),
-                    action: { }
-                )
                 CallToActionButton(
-                    title: String.localized(key: "individualToTeam.button.continue", bundle: .module),
-                    action: { }
+                    action: { actionCallback(.continue) },
+                    title: String.localized(key: "individualToTeam.button.continue", bundle: .module)
                 )
+                .disabled(!(migrationConfirmed && termsAccepted))
             }
         }
     }

@@ -23,7 +23,7 @@ import WireFoundation
 #Preview {
     PageContainer(
         content: {
-            ConfirmationView()
+            ConfirmationView() { _ in }
         },
         step: 3,
         stepCount: 4,

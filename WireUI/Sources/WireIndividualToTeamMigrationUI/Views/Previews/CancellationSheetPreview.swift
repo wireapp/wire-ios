@@ -16,10 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct IndividualToTeamMigrationResult {
+import SwiftUI
+import WireDesign
+import WireFoundation
 
-}
-
-protocol IndividualToTeamMigrationUseCase {
-    func migrateToTeam(password: String, teamName: String) async throws -> IndividualToTeamMigrationResult
+#Preview {
+    PageContainer(
+        content: {
+            EmptyView()
+        },
+        step: 0,
+        stepCount: 4,
+        stepTitle: "CancellationSheetExample"
+    )
+    .cancellationSheet(
+        isPresented: .constant(true),
+        onContinue: { },
+        onLeave: { }
+    )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }
