@@ -34,7 +34,8 @@ import WireSyncEngine
 /// try await mapper.invoke(folder: uiFolder, conversation: uiConversation)
 /// ```
 public struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolderUseCaseType {
-    private let useCase: ConversationFolderSelectionUseCaseProtocol
+
+    private let useCase: ConversationFolderSelectionUseCase
     private let directory: ConversationDirectoryType
     private let targetConversation: ZMConversation
     private let context: NSManagedObjectContext
@@ -46,7 +47,7 @@ public struct WireMoveConversationToFolderUseCaseMapper: MoveConversationToFolde
     ///   - conversation: The conversation to be moved (in domain model form)
     ///   - context: The managed object context for performing Core Data operations
     public init(
-        useCase: ConversationFolderSelectionUseCaseProtocol,
+        useCase: ConversationFolderSelectionUseCase,
         directory: ConversationDirectoryType,
         conversation: ZMConversation,
         context: NSManagedObjectContext
