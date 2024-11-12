@@ -29,5 +29,5 @@ public struct IndividualToTeamMigrationResult {
 }
 
 public protocol IndividualToTeamMigrationUseCase {
-    func migrateToTeam(teamName: String) async throws -> IndividualToTeamMigrationResult
+    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

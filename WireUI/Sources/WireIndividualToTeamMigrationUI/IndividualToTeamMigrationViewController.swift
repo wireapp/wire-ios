@@ -92,19 +92,12 @@ class IndividualToTeamMigrationViewController: UIViewController {
     func transition(to transition: Transition) {
         switch transition {
         case .toCancellationAlert:
-            let alert = UIAlertController(
-                title: String.localized(key: "individualToTeam.cancellation.title", bundle: .module),
-                message: String.localized(key: "individualToTeam.cancellation.body", bundle: .module),
-                preferredStyle: .actionSheet
-            )
-            alert.addAction(UIAlertAction(
-                title: String.localized(key: "individualToTeam.cancellation.continue", bundle: .module),
-                style: .default
-            ))
-            alert.addAction(UIAlertAction(
-                title: String.localized(key: "individualToTeam.cancellation.leave"),
-                style: .destructive
-            ))
+            let alert = cancellationSheetFactory(
+                onLeave: { [weak self] in
+                    self?.transition(to: .toApp)
+                }, onContinue: { [weak self] in
+                    self?.transition(to: .dismissCancellationAlert)
+                })
             childController.present(alert, animated: true)
         case .dismissCancellationAlert:
             childController.dismiss(animated: true)
