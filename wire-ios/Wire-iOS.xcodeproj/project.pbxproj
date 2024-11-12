@@ -1361,7 +1361,6 @@
 		E9398D312B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */; };
 		E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D322B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift */; };
 		E93DA61A2913F38A00A0F17C /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93DA6192913F38A00A0F17C /* LinkButton.swift */; };
-		E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E942A38C28A2AC3A00C3092F /* NavigationController.swift */; };
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
 		E94784EB278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */; };
 		E94784ED278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */; };
@@ -3378,7 +3377,6 @@
 		E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationSupportCellDescription.swift; sourceTree = "<group>"; };
 		E9398D322B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSystemMessageMlsSupportSnapshotTests.swift; sourceTree = "<group>"; };
 		E93DA6192913F38A00A0F17C /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
-		E942A38C28A2AC3A00C3092F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
 		E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewModel.swift; sourceTree = "<group>"; };
 		E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewController.swift; sourceTree = "<group>"; };
@@ -5631,7 +5629,6 @@
 				A949418823E09489001B0373 /* SplitViewController.swift */,
 				1682AEC2204840E7003A052A /* SectionCollectionViewController.swift */,
 				5E028DED21F9C34D00E5512A /* AuthenticationNavigationBar.swift */,
-				E942A38C28A2AC3A00C3092F /* NavigationController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -9768,7 +9765,6 @@
 				F1A989D01FD1630300B8A82E /* SecondaryViewDescription.swift in Sources */,
 				E90052782C34A52C00020291 /* WireTextField.swift in Sources */,
 				6328BBAD2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift in Sources */,
-				E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */,
 				87F18BBC1E01577C00C69D9B /* FileMessageViewState.swift in Sources */,
 				D56A2D44207DFC9E00DB59F5 /* BackupRestoreController+Failed.swift in Sources */,
 				D51894792050490E00C095C1 /* ActionCell.swift in Sources */,
