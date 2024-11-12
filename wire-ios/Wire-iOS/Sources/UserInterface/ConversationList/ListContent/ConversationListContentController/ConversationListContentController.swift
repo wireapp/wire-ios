@@ -186,7 +186,7 @@ final class ConversationListContentController: UICollectionViewController {
         newConversationButton.layer.masksToBounds = true
 
         newConversationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 42, bottom: 10, right: 42)
-        newConversationButton.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone , for: .normal)
+        newConversationButton.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone, for: .normal)
         newConversationButton.accessibilityIdentifier = "new-conversation.button"
 
         titleLabel.textAlignment = .center
@@ -201,15 +201,15 @@ final class ConversationListContentController: UICollectionViewController {
         view.addSubview(emptySearchPlaceholderView)
         NSLayoutConstraint.activate([
 
-            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptySearchPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptySearchPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
+            emptySearchPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            emptySearchPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptySearchPlaceholderView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptySearchPlaceholderView.bottomAnchor, multiplier: 1),
 
-            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+            emptySearchPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
     }
 
