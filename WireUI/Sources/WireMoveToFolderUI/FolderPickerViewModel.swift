@@ -18,6 +18,7 @@
 
 import Foundation
 
+@MainActor
 public final class FolderPickerViewModel: ObservableObject {
 
     // MARK: - Properties
@@ -58,12 +59,9 @@ public final class FolderPickerViewModel: ObservableObject {
         let conversationID = conversation.identifier
         guard let folderID = folder.identifier else { return }
 
-        let task = Task.detached { [weak self] in
-            guard let self else { return }
+        let task = Task.detached { [conversationID, folderID, updateConversationFolderUseCase] in
             try await updateConversationFolderUseCase.invoke(conversationID: conversationID, folderID: folderID)
-
         }
         try await task.value
-
     }
 }

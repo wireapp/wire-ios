@@ -47,6 +47,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Initialization
 
+    @MainActor
     func test_init_loadsFoldersFromDirectory() {
         // GIVEN
         let folders = [
@@ -101,6 +102,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Selection State
 
+    @MainActor
     func test_isSelected_returnsTrue_whenFolderMatchesCurrentFolder() {
         // GIVEN
         let folderID = UUID()
@@ -115,6 +117,7 @@ final class FolderPickerViewModelTests: XCTestCase {
         XCTAssertTrue(isSelected)
     }
 
+    @MainActor
     func test_isSelected_returnsFalse_whenFolderDoesNotMatchCurrentFolder() {
         // GIVEN
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
@@ -128,6 +131,7 @@ final class FolderPickerViewModelTests: XCTestCase {
         XCTAssertFalse(isSelected)
     }
 
+    @MainActor
     func test_isSelected_returnsFalse_whenFolderIdentifierIsNil() {
         // GIVEN
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: UUID())
@@ -143,6 +147,7 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func createSUT(conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)) {
         sut = FolderPickerViewModel(
             conversation: conversation,
