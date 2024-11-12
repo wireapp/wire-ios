@@ -91,7 +91,6 @@ final class EmptyPlaceholderView: UIView {
         arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         connectWithPeopleButton.translatesAutoresizingMaskIntoConstraints = false
-        let arrowOffset: CGFloat = isIPadRegular() ? 30 : 20
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -121,4 +120,45 @@ final class EmptyPlaceholderView: UIView {
         connectWithPeopleButton.isHidden = !content.showButton
     }
 
+}
+
+final class EmptyPlaceholderContainerView: UIView {
+    let placeholderView: EmptyPlaceholderView
+    let searchResultsView: EmptyConversationSearchResultsView
+    
+    // MARK: - Init
+
+    init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
+        self.placeholderView = EmptyPlaceholderView(content: content, connectWithPeopleAction: connectWithPeopleAction)
+        self.searchResultsView = EmptyConversationSearchResultsView(newConversationAction: connectWithPeopleAction)
+        
+        super.init(frame: .zero)
+        
+        setupConstraints()
+    }
+
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func hideSearchResult(_ hidden: Bool) {
+        searchResultsView.isHidden = hidden
+        placeholderView.isHidden = !hidden
+    }
+    
+    // MARK: - Setup
+
+    private func setupConstraints() {
+        [placeholderView, searchResultsView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            addSubview($0)
+            NSLayoutConstraint.activate([
+                $0.bottomAnchor.constraint(equalTo: bottomAnchor),
+                $0.topAnchor.constraint(equalTo: topAnchor),
+                $0.leadingAnchor.constraint(equalTo: leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: trailingAnchor)
+            ])
+        }
+    }
+        
 }

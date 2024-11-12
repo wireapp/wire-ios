@@ -102,7 +102,8 @@ final class ConversationListViewController: UIViewController {
     weak var accountImageView: AccountImageView?
 
     let networkStatusViewController = NetworkStatusViewController()
-    private var emptyPlaceholderView: EmptyPlaceholderView!
+    private var emptyPlaceholderView: EmptyPlaceholderContainerView!
+    
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
@@ -336,15 +337,17 @@ final class ConversationListViewController: UIViewController {
         let connectWithPeopleAction = UIAction { [weak self] _ in
             self?.presentConnectUI()
         }
-        emptyPlaceholderView = EmptyPlaceholderView(
+        emptyPlaceholderView = EmptyPlaceholderContainerView(
             content: emptyPlaceholderForSelectedFilter,
             connectWithPeopleAction: connectWithPeopleAction)
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
     func configureEmptyPlaceholder() {
-        emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.placeholderView.configure(with: emptyPlaceholderForSelectedFilter)
+
         emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
+        emptyPlaceholderView.hideSearchResult(listContentController.listViewModel.appliedSearchText.isEmpty)
     }
 
     private func setupNetworkStatusBar() {

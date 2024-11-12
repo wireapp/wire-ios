@@ -224,6 +224,7 @@ final class ConversationListViewModel: NSObject {
     
     var isEmptyList: Bool {
         let totalItems = sections.map { $0.items.count }.reduce(0, +)
+        print("🤓", totalItems)
         return totalItems == 0
     }
 

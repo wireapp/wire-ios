@@ -99,8 +99,7 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
-        emptySearchPlaceholderView.isHidden = true
-
+        
         scrollToCurrentSelection(animated: false)
 
         token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
@@ -110,17 +109,13 @@ final class ConversationListContentController: UICollectionViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         if let token {
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
     }
-
-    override func viewDidLoad() {
-        setupEmptyPlaceholder()
-    }
-
+    
     private func activeMediaPlayerChanged() {
         DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
@@ -132,8 +127,6 @@ final class ConversationListContentController: UICollectionViewController {
     func reload() {
         collectionView.reloadData()
         ensureCurrentSelection()
-
-        emptySearchPlaceholderView.isHidden = listViewModel.appliedSearchText.isEmpty || !listViewModel.isEmptyList
 
         // we MUST call layoutIfNeeded here because otherwise bad things happen when we close the archive, reload the conv
         // and then unarchive all at the same time
@@ -147,7 +140,6 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func setupViews() {
-        setupEmptyPlaceholder()
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
@@ -160,79 +152,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
-    }
-
-    private func setupEmptyPlaceholder() {
-
-        let titleLabel = DynamicFontLabel(
-            text: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone,
-            style: .body1,
-            color: ColorTheme.Base.secondaryText
-        )
-
-        let newConversationButton = DynamicFontButton(style: .body1)
-        newConversationButton.setTitleColor(ColorTheme.Base.primary, for: .normal)
-
-        let image = UIImage.imageForIcon(.plus, size: StyleKitIcon.Size.tiny.rawValue, color: ColorTheme.Backgrounds.background)
-        let newIcon = createRoundIconImage(icon: image, iconSize: 10, backgroundColor: ColorTheme.Base.primary, imageSize: 20)
-
-        let spacing: CGFloat = 10
-        newConversationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing / 2, bottom: 0, right: spacing / 2)
-        newConversationButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing / 2, bottom: 0, right: -spacing / 2)
-
-        newConversationButton.setImage(newIcon, for: .normal)
-        newConversationButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
-        newConversationButton.layer.cornerRadius = 18
-        newConversationButton.layer.masksToBounds = true
-
-        newConversationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 42, bottom: 10, right: 42)
-        newConversationButton.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone, for: .normal)
-        newConversationButton.accessibilityIdentifier = "new-conversation.button"
-
-        titleLabel.textAlignment = .center
-        titleLabel.numberOfLines = 0
-
-        emptySearchPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, newConversationButton])
-        emptySearchPlaceholderView.axis = .vertical
-        emptySearchPlaceholderView.spacing = 15
-        emptySearchPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
-        emptySearchPlaceholderView.alignment = .center
-        emptySearchPlaceholderView.distribution = .equalSpacing
-        view.addSubview(emptySearchPlaceholderView)
-        NSLayoutConstraint.activate([
-
-            emptySearchPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptySearchPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            emptySearchPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            emptySearchPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptySearchPlaceholderView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptySearchPlaceholderView.bottomAnchor, multiplier: 1),
-
-            emptySearchPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
-        ])
-    }
-
-    func createRoundIconImage(icon: UIImage, iconSize: CGFloat, backgroundColor: UIColor, imageSize: CGFloat) -> UIImage? {
-        // Create a UIView with a circular shape
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: imageSize, height: imageSize))
-        view.backgroundColor = backgroundColor
-        view.layer.cornerRadius = imageSize / 2
-        view.clipsToBounds = true
-
-        // Create an UIImageView for the icon and center it in the view
-        let iconImageView = UIImageView(image: icon.withRenderingMode(.alwaysTemplate))
-        iconImageView.contentMode = .scaleAspectFit
-        iconImageView.frame = CGRect(x: (imageSize - iconSize) / 2, y: (imageSize - iconSize) / 2, width: iconSize, height: iconSize)
-        view.addSubview(iconImageView)
-
-        // Render the view into a UIImage
-        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
-        view.layer.render(in: UIGraphicsGetCurrentContext()!)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return image
     }
 
     // MARK: - section header
@@ -272,7 +191,6 @@ final class ConversationListContentController: UICollectionViewController {
     /// ensures that the list selection state matches that of the model.
     func ensureCurrentSelection() {
         guard let selectedItem = listViewModel.selectedItem else { return }
-        //listViewModel.sections
 
         let selectedIndexPaths = collectionView.indexPathsForSelectedItems
 
