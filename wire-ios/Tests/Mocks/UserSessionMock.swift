@@ -337,7 +337,7 @@ final class UserSessionMock: UserSession {
         SubmitCallQualitySurveyUseCase(analyticsEventTracker: nil)
     }
 
-    func makeConversationFolderSelectionUseCase() -> ConversationFolderSelectionUseCaseProtocol {
+    func makeConversationFolderSelectionUseCase() -> ConversationFolderSelectionUseCase {
         ConversationFolderSelectionUseCase()
     }
 
