@@ -18,43 +18,15 @@
 
 import Foundation
 
-/// Supported TLS versions.
+struct UpgradeToTeamResponseEnvelopeV7: Decodable, ToAPIModelConvertible, Sendable {
 
-public enum TLSVersion {
+    /// The team's ID.
+    public let teamId: UUID
 
-    /// TLS version 1.2
+    /// The team's name.
+    public let teamName: String
 
-    case v1_2
-
-    /// TLS version 1.3
-
-    case v1_3
-
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        return string.flatMap(TLSVersion.init) ?? .v1_2
+    func toAPIModel() -> UpgradeAccountEnvelope {
+        UpgradeAccountEnvelope(teamId: teamId, teamName: teamName)
     }
-
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
-    }
-
-    var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            .TLSv12
-
-        case .v1_3:
-            .TLSv13
-        }
-    }
-
 }

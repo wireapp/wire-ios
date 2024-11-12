@@ -16,46 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// A builder for `AccountsAPI`.
 
-/// A builder of `ConnectionsAPI`.
+public struct AccountsAPIBuilder {
 
-public struct ConnectionsAPIBuilder {
-
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
     /// - Parameter httpClient: A http client.
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
-    /// Make a versioned `ConnectionsAPI`.
+    /// Make a versioned `AccountsAPI`.
     ///
     /// - Parameter version: An api version.
-    /// - Returns: A versioned `ConnectionsAPI`.
+    /// - Returns: A versioned `AccountsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any ConnectionsAPI {
+    public func makeAPI(for version: APIVersion) -> any AccountsAPI {
         switch version {
         case .v0:
-            ConnectionsAPIV0(httpClient: httpClient)
+            return AccountsAPIV0(apiService: apiService)
         case .v1:
-            ConnectionsAPIV1(httpClient: httpClient)
+            return AccountsAPIV1(apiService: apiService)
         case .v2:
-            ConnectionsAPIV2(httpClient: httpClient)
+            return AccountsAPIV2(apiService: apiService)
         case .v3:
-            ConnectionsAPIV3(httpClient: httpClient)
+            return AccountsAPIV3(apiService: apiService)
         case .v4:
-            ConnectionsAPIV4(httpClient: httpClient)
+            return AccountsAPIV4(apiService: apiService)
         case .v5:
-            ConnectionsAPIV5(httpClient: httpClient)
+            return AccountsAPIV5(apiService: apiService)
         case .v6:
-            ConnectionsAPIV6(httpClient: httpClient)
+            return AccountsAPIV6(apiService: apiService)
         case .v7:
-            ConnectionsAPIV7(httpClient: httpClient)
+            return AccountsAPIV7(apiService: apiService)
         }
     }
-
 }

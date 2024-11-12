@@ -18,43 +18,28 @@
 
 import Foundation
 
-/// Supported TLS versions.
+/// A container for update events.
 
-public enum TLSVersion {
+public struct UpgradeAccountEnvelope: Equatable, Codable, Sendable {
 
-    /// TLS version 1.2
+    /// The team's ID.
+    public let teamId: UUID
 
-    case v1_2
+    /// The team's name.
+    public let teamName: String
 
-    /// TLS version 1.3
+    /// Create a new `UpgradeAccountEnvelope`.
+    ///
+    /// - Parameters:
+    ///   - teamId: The team's ID.
+    ///   - teamName: The team's name.
 
-    case v1_3
-
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        return string.flatMap(TLSVersion.init) ?? .v1_2
-    }
-
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
-    }
-
-    var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            .TLSv12
-
-        case .v1_3:
-            .TLSv13
-        }
+    public init(
+        teamId: UUID,
+        teamName: String
+    ) {
+        self.teamId = teamId
+        self.teamName = teamName
     }
 
 }

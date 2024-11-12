@@ -18,43 +18,9 @@
 
 import Foundation
 
-/// Supported TLS versions.
+class UpdateEventsAPIV7: UpdateEventsAPIV6 {
 
-public enum TLSVersion {
-
-    /// TLS version 1.2
-
-    case v1_2
-
-    /// TLS version 1.3
-
-    case v1_3
-
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        return string.flatMap(TLSVersion.init) ?? .v1_2
+    override var apiVersion: APIVersion {
+        .v7
     }
-
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
-    }
-
-    var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            .TLSv12
-
-        case .v1_3:
-            .TLSv13
-        }
-    }
-
 }

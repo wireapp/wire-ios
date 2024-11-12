@@ -16,45 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `ConversationsAPI`.
+public enum AccountsAPIError: Error {
+    /// An error occurred while encoding the request body.
+    case invalidRequestBody
 
-/// Supported TLS versions.
+    /// A request url is not invalid.
+    case invalidURL
 
-public enum TLSVersion {
+    /// Unsupported endpoint for API version
+    case unsupportedEndpointForAPIVersion
 
-    /// TLS version 1.2
+    /// The user is already in a team
+    case userAlreadyInATeam
 
-    case v1_2
-
-    /// TLS version 1.3
-
-    case v1_3
-
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        return string.flatMap(TLSVersion.init) ?? .v1_2
-    }
-
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
-    }
-
-    var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            .TLSv12
-
-        case .v1_3:
-            .TLSv13
-        }
-    }
-
+    /// The user could not be found
+    case userNotFound
 }

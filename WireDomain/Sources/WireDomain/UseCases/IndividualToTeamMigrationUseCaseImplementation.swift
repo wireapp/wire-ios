@@ -1,0 +1,52 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import WireAPI
+import WireSystem
+
+public struct IndividualToTeamMigrationResult {
+    public let teamID: UUID
+    public let teamName: String
+
+    public init(teamID: UUID, teamName: String) {
+        self.teamID = teamID
+        self.teamName = teamName
+    }
+}
+
+public struct IndividualToTeamMigrationUseCase {
+    private let accountsAPI: AccountsAPI
+    private let logger: WireLogger = WireLogger(tag: "individual-to-team-migration")
+
+    public init(apiService: APIServiceProtocol) {
+        self.accountsAPI = AccountsAPIBuilder(apiService: apiService).build()
+    }
+
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+        logger.debug("Migrating individual account to team account")
+        do {
+            let upgradeResult = try await accountsAPI.upgradeToTeam(teamName: teamName)
+            logger.debug("Individual account migrated to team account")
+            return IndividualToTeamMigrationResult(teamID: upgradeResult.teamId, teamName: upgradeResult.teamName)
+        } catch {
+            logger.debug("Failed to migrate individual account to team account")
+            throw error
+        }
+    }
+}

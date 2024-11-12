@@ -17,10 +17,36 @@
 //
 
 import avs
+import WireAPI
 import WireDataModel
+
+
+final class InMemoryAuthenticationStorage: AuthenticationStorage {
+
+    private var accessToken: WireAPI.AccessToken?
+    private var cookieData: Data?
+
+    func storeAccessToken(_ accessToken: WireAPI.AccessToken) {
+        self.accessToken = accessToken
+    }
+
+    func fetchAccessToken() -> WireAPI.AccessToken? {
+        accessToken
+    }
+
+    func storeCookieData(_ cookieData: Data?) {
+        self.cookieData = cookieData
+    }
+
+    func fetchCookieData() -> Data? {
+        cookieData
+    }
+
+}
 
 open class AuthenticatedSessionFactory {
 
+    let apiService: APIServiceProtocol
     let appVersion: String
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
@@ -42,6 +68,12 @@ open class AuthenticatedSessionFactory {
         reachability: Reachability,
         minTLSVersion: String?
     ) {
+        self.apiService = APIService(
+            backendURL: environment.backendURL,
+            // TODO: Use the authentication storage from https://github.com/wireapp/wire-ios/pull/2084
+            authenticationStorage: InMemoryAuthenticationStorage(),
+            minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+        )
         self.appVersion = appVersion
         self.mediaManager = mediaManager
         self.flowManager = flowManager
@@ -74,6 +106,7 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
+            apiService: apiService,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),

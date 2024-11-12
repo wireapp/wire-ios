@@ -18,43 +18,18 @@
 
 import Foundation
 
-/// Supported TLS versions.
+class AccountsAPIV0: AccountsAPI, VersionedAPI {
+    let apiService: any APIServiceProtocol
 
-public enum TLSVersion {
-
-    /// TLS version 1.2
-
-    case v1_2
-
-    /// TLS version 1.3
-
-    case v1_3
-
-    public static func minVersionFrom(_ string: String?) -> TLSVersion {
-        return string.flatMap(TLSVersion.init) ?? .v1_2
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
+    var apiVersion: APIVersion {
+        .v0
     }
 
-    var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            .TLSv12
-
-        case .v1_3:
-            .TLSv13
-        }
+    func upgradeToTeam(teamName: String) async throws -> UpgradeAccountEnvelope {
+        throw AccountsAPIError.unsupportedEndpointForAPIVersion
     }
-
 }
