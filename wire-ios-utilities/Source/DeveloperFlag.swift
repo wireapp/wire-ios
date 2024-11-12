@@ -40,7 +40,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "Turn on to show the MLS toggle when creating a new group."
 
         case .proteusViaCoreCrypto:
-            return "Turn on to use CoreCrypto for proteus messaging. "
+            return "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
             return "Turn on to force database loading failure in the process of database migration"
