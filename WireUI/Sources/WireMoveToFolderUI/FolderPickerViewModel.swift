@@ -58,10 +58,6 @@ public final class FolderPickerViewModel: ObservableObject {
     public func select(_ folder: Folder) async throws {
         let conversationID = conversation.identifier
         guard let folderID = folder.identifier else { return }
-
-        let task = Task.detached { [conversationID, folderID, updateConversationFolderUseCase] in
-            try await updateConversationFolderUseCase.invoke(conversationID: conversationID, folderID: folderID)
-        }
-        try await task.value
+        try await updateConversationFolderUseCase.invoke(conversationID: conversationID, folderID: folderID)
     }
 }

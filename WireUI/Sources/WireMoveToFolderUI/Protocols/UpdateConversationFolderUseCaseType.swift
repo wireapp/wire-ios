@@ -19,10 +19,11 @@
 import Foundation
 
 /// Protocol for handling moving a conversation to a specified folder
-public protocol UpdateConversationFolderUseCaseType: Sendable {
+public protocol UpdateConversationFolderUseCaseType {
     /// Moves a conversation to a specified folder
     /// - Parameters:
     ///   - conversationID: The ID of the conversation to be moved
     ///   - folderID: The folderID of the folder to move the conversation
+    @MainActor
     func invoke(conversationID: UUID, folderID: UUID) async throws
 }
