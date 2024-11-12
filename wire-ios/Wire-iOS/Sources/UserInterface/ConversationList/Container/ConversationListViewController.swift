@@ -489,6 +489,7 @@ final class ConversationListViewController: UIViewController {
         }
         navigationController?.view.setNeedsLayout()
         navigationController?.view.layoutIfNeeded()
+        listContentController.collectionView.scrollRectToVisible(.zero, animated: false)
         DispatchQueue.main.async {
             self.navigationItem.hidesSearchBarWhenScrolling = true
         }
