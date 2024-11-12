@@ -20,6 +20,7 @@ import WireDataModel
 import WireMoveToFolderUI
 
 struct WireFolderDirectoryMapper: FolderDirectoryTypeProtocol {
+
     private let directory: ConversationDirectoryType
 
     init(directory: ConversationDirectoryType) {

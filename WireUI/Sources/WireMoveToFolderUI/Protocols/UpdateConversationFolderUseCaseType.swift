@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 /// Protocol for handling moving a conversation to a specified folder
-public protocol MoveConversationToFolderUseCaseType {
+public protocol UpdateConversationFolderUseCaseType {
     /// Moves a conversation to a specified folder
     /// - Parameters:
-    ///   - folder: The destination folder
-    ///   - conversation: The conversation to be moved
-    func invoke(folder: Folder, conversation: Conversation) async throws
+    ///   - conversationID: The ID of the conversation to be moved
+    ///   - folderID: The folderID of the folder to move the conversation
+    func invoke(conversationID: UUID, folderID: UUID) async throws
 }

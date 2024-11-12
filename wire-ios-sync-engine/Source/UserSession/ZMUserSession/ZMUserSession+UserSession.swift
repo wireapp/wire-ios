@@ -360,8 +360,8 @@ extension ZMUserSession: UserSession {
         return SubmitCallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
-    public func makeConversationFolderSelectionUseCase() -> ConversationFolderSelectionUseCase {
-        return ConversationFolderSelectionUseCase()
+    public func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
+        return UpdateConversationFolderUseCase(context: self.syncContext)
     }
 
 }

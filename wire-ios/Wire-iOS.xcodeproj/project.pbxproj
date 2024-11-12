@@ -1369,6 +1369,7 @@
 		E94BF7872ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7862ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift */; };
 		E94BF7892ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */; };
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
+		E958B8622CE36FFC00CAC461 /* Conversation+ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E958B8612CE36FF200CAC461 /* Conversation+ZMConversation.swift */; };
 		E95B0A142B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */; };
 		E95B0A162B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A152B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift */; };
 		E95B0A182B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B0A172B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift */; };
@@ -1380,10 +1381,8 @@
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
-		E966C5022CDCCD5E00BF1195 /* Folder+LabelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */; };
-		E966C5042CDCCDDA00BF1195 /* Conversation+ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */; };
 		E966C5082CDCD04E00BF1195 /* WireFolderDirectoryMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */; };
-		E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */; };
+		E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */; };
 		E966C50D2CDCD43200BF1195 /* FolderPickerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */; };
 		E96AB4F92C071BC300792DA9 /* FilterImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4F82C071BC300792DA9 /* FilterImageName.swift */; };
 		E96AB4FC2C07262400792DA9 /* FilterButtonStyleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */; };
@@ -3388,6 +3387,7 @@
 		E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateSecureGuestLink+DownStyle.swift"; sourceTree = "<group>"; };
 		E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = GermanLocaleTests.xctestplan; sourceTree = "<group>"; };
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
+		E958B8612CE36FF200CAC461 /* Conversation+ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+ZMConversation.swift"; sourceTree = "<group>"; };
 		E95B0A132B55991E0088B778 /* ConversationNewDeviceSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E95B0A152B559A440088B778 /* ConversationMissingMessagesSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissingMessagesSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E95B0A172B559AD30088B778 /* ConversationSessionResetSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSessionResetSystemMessageCellDescription.swift; sourceTree = "<group>"; };
@@ -3399,10 +3399,8 @@
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
-		E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+LabelType.swift"; sourceTree = "<group>"; };
-		E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+ZMConversation.swift"; sourceTree = "<group>"; };
 		E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireFolderDirectoryMapper.swift; sourceTree = "<group>"; };
-		E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireMoveConversationToFolderUseCaseMapper.swift; sourceTree = "<group>"; };
+		E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift"; sourceTree = "<group>"; };
 		E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerBuilder.swift; sourceTree = "<group>"; };
 		E96AB4F82C071BC300792DA9 /* FilterImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageName.swift; sourceTree = "<group>"; };
 		E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonStyleHelper.swift; sourceTree = "<group>"; };
@@ -5483,6 +5481,7 @@
 		7C440E7123472BF500D91B5F /* Folders */ = {
 			isa = PBXGroup;
 			children = (
+				E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */,
 				E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */,
 				E966C50B2CDCD3F300BF1195 /* Mappers */,
 				7C440E7423472C5200D91B5F /* FolderCreationController.swift */,
@@ -7832,10 +7831,8 @@
 		E966C50B2CDCD3F300BF1195 /* Mappers */ = {
 			isa = PBXGroup;
 			children = (
-				E966C5092CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift */,
+				E958B8612CE36FF200CAC461 /* Conversation+ZMConversation.swift */,
 				E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */,
-				E966C5032CDCCDCE00BF1195 /* Conversation+ZMConversation.swift */,
-				E966C5012CDCCD5400BF1195 /* Folder+LabelType.swift */,
 			);
 			path = Mappers;
 			sourceTree = "<group>";
@@ -9625,7 +9622,6 @@
 				54D355E025559BFC0004DAC7 /* ActiveCallRouter.swift in Sources */,
 				EF266C612003B75C00A8C136 /* BreathLoadingBar.swift in Sources */,
 				59B404672CAB05CA00CC33BF /* SettingsCoordinator.swift in Sources */,
-				E966C5022CDCCD5E00BF1195 /* Folder+LabelType.swift in Sources */,
 				5E21344F21E3628F00273D0D /* AuthenticationLoginCredentialsInputHandler.swift in Sources */,
 				BFE4186F209B706600503C7C /* CallInfoViewControllerAccessoryType.swift in Sources */,
 				EE997A1A2507A851008336D2 /* Logging.swift in Sources */,
@@ -9937,7 +9933,7 @@
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
-				E966C50A2CDCD0E200BF1195 /* WireMoveConversationToFolderUseCaseMapper.swift in Sources */,
+				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,
@@ -10307,7 +10303,7 @@
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
-				E966C5042CDCCDDA00BF1195 /* Conversation+ZMConversation.swift in Sources */,
+				E958B8622CE36FFC00CAC461 /* Conversation+ZMConversation.swift in Sources */,
 				06231BDB2CB6CB9300BFCFE3 /* EmptyPlaceholderView.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
 				5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */,

@@ -26,18 +26,18 @@ public final class FolderPickerViewModel: ObservableObject {
 
     private let conversation: Conversation
     private let directory: any FolderDirectoryTypeProtocol
-    private let selectionUseCase: any MoveConversationToFolderUseCaseType
+    private let updateConversationFolderUseCase: any UpdateConversationFolderUseCaseType
 
     // MARK: - Initialization
 
     public init(
         conversation: Conversation,
         directory: any FolderDirectoryTypeProtocol,
-        selectionUseCase: any MoveConversationToFolderUseCaseType
+        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseType
     ) {
         self.conversation = conversation
         self.directory = directory
-        self.selectionUseCase = selectionUseCase
+        self.updateConversationFolderUseCase = updateConversationFolderUseCase
         loadFolders()
     }
 
@@ -55,9 +55,13 @@ public final class FolderPickerViewModel: ObservableObject {
     }
 
     public func select(_ folder: Folder) async throws {
+        let conversationID = conversation.identifier
+        guard let folderID = folder.identifier else { return }
+
         let task = Task.detached { [weak self] in
-            guard let self else { return}
-            try await selectionUseCase.invoke(folder: folder, conversation: self.conversation)
+            guard let self else { return }
+            try await updateConversationFolderUseCase.invoke(conversationID: conversationID, folderID: folderID)
+
         }
         try await task.value
 

@@ -18,14 +18,12 @@
 
 import WireDataModel
 import WireMoveToFolderUI
+import WireSyncEngine
 
-extension Folder {
+extension UpdateConversationFolderUseCase: UpdateConversationFolderUseCaseType {
 
-    init(_ label: LabelType) {
-        self.init(
-            identifier: label.remoteIdentifier,
-            name: label.name ?? ""
-        )
+    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+        guard let folderID = folder.identifier else { return }
+        try self.invoke(conversationID: conversation.identifier, folderID: folderID)
     }
-
 }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngineSupport
+import WireDataModelSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -25,37 +25,48 @@ final class ConversationFolderSelectionUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var mockConversation: MockToFolderMovableConversation!
-    private var sut: ConversationFolderSelectionUseCase!
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private var stack: CoreDataStack!
+    private var sut: UpdateConversationFolderUseCase!
+
+    private var managedObjectContext: NSManagedObjectContext {
+        return stack.syncContext
+    }
 
     // MARK: - setUp
 
-    override func setUp() {
-        mockConversation = .init()
-        sut = ConversationFolderSelectionUseCase()
+    override func setUp() async throws {
+        stack = try await coreDataStackHelper.createStack()
+        sut = UpdateConversationFolderUseCase(context: managedObjectContext)
     }
 
     // MARK: - tearDown
 
-    override func tearDown() {
-        mockConversation = nil
+    override func tearDown() async throws {
+        stack = nil
         sut = nil
+        try coreDataStackHelper.cleanupDirectory()
     }
-
     // MARK: - Tests
 
-    func testInvoke_ShouldMoveConversationToSpecifiedFolder() {
+    func testInvoke_ShouldMoveConversationToSpecifiedFolder() throws {
         // GIVEN
-        let expectedFolder = MockLabelType(kind: .folder, name: "Test Folder")
-        mockConversation.moveToFolder_MockMethod = { _ in }
+        let conversationID = UUID()
+        let folderID = UUID()
+        let folder = Label.insertNewObject(in: managedObjectContext)
+        folder.remoteIdentifier = folderID
+        folder.name = "Test Folder"
+        folder.kind = .folder
+
+        let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
+        conversation.remoteIdentifier = conversationID
+
+        try managedObjectContext.save()
 
         // WHEN
-        sut.invoke(folder: expectedFolder, conversation: mockConversation)
+        try sut.invoke(conversationID: conversationID, folderID: folderID)
 
         // THEN
-        XCTAssertEqual(mockConversation.moveToFolder_Invocations.count, 1)
-        XCTAssertEqual(mockConversation.moveToFolder_Invocations.first?.kind, expectedFolder.kind)
-        XCTAssertEqual(mockConversation.moveToFolder_Invocations.first?.name, expectedFolder.name)
+        XCTAssertEqual(conversation.folder?.remoteIdentifier, folderID)
     }
-
 }

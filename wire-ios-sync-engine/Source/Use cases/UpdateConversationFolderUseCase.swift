@@ -18,16 +18,19 @@
 
 import WireDataModel
 
-// MARK: - ConversationFolderSelectionUseCase
+public struct UpdateConversationFolderUseCase {
 
-public struct ConversationFolderSelectionUseCase {
+    private let context: NSManagedObjectContext
 
-    public init() {}
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
 
-    public func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    ) {
+    public func invoke(conversationID: UUID, folderID: UUID) throws {
+        guard let folder = Label.fetch(with: folderID, in: context) else { return }
+        guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else { return }
+
         conversation.moveToFolder(folder)
     }
+    
 }

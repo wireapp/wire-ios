@@ -18,7 +18,6 @@
 
 import WireMoveToFolderUISupport
 import XCTest
-
 @testable import WireMoveToFolderUI
 
 final class FolderPickerViewModelTests: XCTestCase {
@@ -27,14 +26,14 @@ final class FolderPickerViewModelTests: XCTestCase {
 
     private var sut: FolderPickerViewModel!
     private var mockDirectory: MockFolderDirectoryTypeProtocol!
-    private var mockSelectionUseCase: MockMoveConversationToFolderUseCaseType!
+    private var mockUpdateFolderUseCase: MockUpdateConversationFolderUseCase!
 
     // MARK: - setUp
 
     @MainActor
     override func setUp() async throws {
         mockDirectory = MockFolderDirectoryTypeProtocol()
-        mockSelectionUseCase = MockMoveConversationToFolderUseCaseType()
+        mockUpdateFolderUseCase = MockUpdateConversationFolderUseCase()
     }
 
     // MARK: - tearDown
@@ -43,7 +42,7 @@ final class FolderPickerViewModelTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         mockDirectory = nil
-        mockSelectionUseCase = nil
+        mockUpdateFolderUseCase = nil
     }
 
     // MARK: - Initialization
@@ -70,15 +69,34 @@ final class FolderPickerViewModelTests: XCTestCase {
         // GIVEN
         let folder = Folder(identifier: UUID(), name: "Work")
         let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)
-        mockSelectionUseCase.invokeFolderConversation_MockMethod = { _, _ in }
+        mockUpdateFolderUseCase.invoke_MockMethod = { _, _ in }
         createSUT(conversation: conversation)
 
         // WHEN
         try await sut.select(folder)
 
         // THEN
-        XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.count, 1)
-        XCTAssertEqual(mockSelectionUseCase.invokeFolderConversation_Invocations.first?.folder, folder)
+        XCTAssertEqual(mockUpdateFolderUseCase.invoke_Invocations.count, 1)
+        XCTAssertEqual(mockUpdateFolderUseCase.invoke_Invocations.first?.conversationID, conversation.identifier)
+        XCTAssertEqual(mockUpdateFolderUseCase.invoke_Invocations.first?.folderID, folder.identifier)
+    }
+
+    @MainActor
+    func test_select_throwsError_whenUseCaseThrows() async {
+        // GIVEN
+        let folder = Folder(identifier: UUID(), name: "Work")
+        let conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)
+        let expectedError = NSError(domain: "test", code: 1)
+        mockUpdateFolderUseCase.invoke_MockError = expectedError
+        createSUT(conversation: conversation)
+
+        // WHEN/THEN
+        do {
+            try await sut.select(folder)
+            XCTFail("Expected error to be thrown")
+        } catch {
+            XCTAssertEqual(error as NSError, expectedError)
+        }
     }
 
     // MARK: - Selection State
@@ -129,7 +147,7 @@ final class FolderPickerViewModelTests: XCTestCase {
         sut = FolderPickerViewModel(
             conversation: conversation,
             directory: mockDirectory,
-            selectionUseCase: mockSelectionUseCase
+            updateConversationFolderUseCase: mockUpdateFolderUseCase
         )
     }
 }

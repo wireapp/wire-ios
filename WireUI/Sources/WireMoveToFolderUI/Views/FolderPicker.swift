@@ -100,7 +100,7 @@ public struct FolderPicker: View {
                     Folder(identifier: UUID(), name: "Personal")
                 ]
             ),
-            selectionUseCase: PreviewMoveConversationToFolderUseCase()
+            updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
         )
     )
 }
@@ -109,6 +109,7 @@ struct PreviewFolderDirectory: FolderDirectoryTypeProtocol {
     let allFolders: [Folder]
 }
 
-struct PreviewMoveConversationToFolderUseCase: MoveConversationToFolderUseCaseType {
-    func invoke(folder: Folder, conversation: Conversation) async throws {}
+struct PreviewMoveConversationToFolderUseCase: UpdateConversationFolderUseCaseType {
+    func invoke(conversationID: UUID, folderID: UUID) async throws { }
+    
 }
