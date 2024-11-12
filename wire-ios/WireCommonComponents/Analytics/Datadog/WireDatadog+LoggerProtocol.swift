@@ -18,7 +18,6 @@
 
 #if canImport(WireDatadog)
 
-import DatadogLogs
 import WireAnalytics
 import WireDatadog
 import WireSystem
