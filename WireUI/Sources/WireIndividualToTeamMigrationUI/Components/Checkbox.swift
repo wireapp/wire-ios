@@ -34,7 +34,7 @@ struct Checkbox: View {
     }
 
     var body: some View {
-        HStack() {
+        HStack {
             Button(action: {
                 isChecked.toggle()
             }, label: {
