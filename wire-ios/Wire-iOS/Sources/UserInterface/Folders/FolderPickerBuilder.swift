@@ -23,7 +23,6 @@ import WireMoveToFolderUI
 import WireSyncEngine
 
 struct FolderPickerBuilder {
-
     func build(
         conversation: ZMConversation,
         directory: ConversationDirectoryType,
@@ -33,11 +32,10 @@ struct FolderPickerBuilder {
         let directoryMapper = WireFolderDirectoryMapper(directory: directory)
         let useCase = UpdateConversationFolderUseCase(context: context)
 
-
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
-            directory: directoryMapper,
-            selectionUseCase: useCase
+            directory: directoryMapper,                  
+            updateConversationFolderUseCase: useCase
         )
 
         return FolderPickerHostingController(viewModel: viewModel)

@@ -27,6 +27,7 @@ final class ConversationFolderSelectionUseCaseTests: XCTestCase {
 
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
+    private let modelHelper = ModelHelper()
     private var sut: UpdateConversationFolderUseCase!
 
     private var managedObjectContext: NSManagedObjectContext {
@@ -49,24 +50,18 @@ final class ConversationFolderSelectionUseCaseTests: XCTestCase {
     }
     // MARK: - Tests
 
-    func testInvoke_ShouldMoveConversationToSpecifiedFolder() throws {
+    func testInvoke_ShouldMoveConversationToSpecifiedFolder() async throws {
         // GIVEN
-        let conversationID = UUID()
-        let folderID = UUID()
-        let folder = Label.insertNewObject(in: managedObjectContext)
-        folder.remoteIdentifier = folderID
-        folder.name = "Test Folder"
-        folder.kind = .folder
+        try await managedObjectContext.perform { [self] in
+            let folder = modelHelper.createFolder(in: managedObjectContext)
+            let conversation = modelHelper.createGroupConversation(in: managedObjectContext)
+            let folderID = try XCTUnwrap(folder.remoteIdentifier)
+            // WHEN
+            try sut.invoke(conversationID: conversation.remoteIdentifier, folderID: folderID)
 
-        let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
-        conversation.remoteIdentifier = conversationID
+            // THEN
+            XCTAssertEqual(conversation.folder?.remoteIdentifier, folderID)
 
-        try managedObjectContext.save()
-
-        // WHEN
-        try sut.invoke(conversationID: conversationID, folderID: folderID)
-
-        // THEN
-        XCTAssertEqual(conversation.folder?.remoteIdentifier, folderID)
+        }
     }
 }

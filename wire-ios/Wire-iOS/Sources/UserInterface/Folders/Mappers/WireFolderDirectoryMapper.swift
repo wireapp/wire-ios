@@ -19,8 +19,10 @@
 import WireDataModel
 import WireMoveToFolderUI
 
-struct WireFolderDirectoryMapper: FolderDirectoryTypeProtocol {
+import WireDataModel
+import WireMoveToFolderUI
 
+struct WireFolderDirectoryMapper: FolderDirectoryTypeProtocol {
     private let directory: ConversationDirectoryType
 
     init(directory: ConversationDirectoryType) {
@@ -28,6 +30,8 @@ struct WireFolderDirectoryMapper: FolderDirectoryTypeProtocol {
     }
 
     var allFolders: [Folder] {
-        directory.allFolders.map(Folder.init)
+        directory.allFolders.map { label -> Folder in
+            Folder(identifier: label.remoteIdentifier, name: label.name ?? "") 
+        }
     }
 }

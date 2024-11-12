@@ -24,6 +24,6 @@ extension UpdateConversationFolderUseCase: UpdateConversationFolderUseCaseType {
 
     public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
         guard let folderID = folder.identifier else { return }
-        try self.invoke(conversationID: conversation.identifier, folderID: folderID)
+        try await self.invoke(conversationID: conversation.identifier, folderID: folderID)
     }
 }

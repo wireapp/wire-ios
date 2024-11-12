@@ -26,11 +26,13 @@ public struct UpdateConversationFolderUseCase {
         self.context = context
     }
 
-    public func invoke(conversationID: UUID, folderID: UUID) throws {
-        guard let folder = Label.fetch(with: folderID, in: context) else { return }
-        guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else { return }
-
-        conversation.moveToFolder(folder)
+    public func invoke(conversationID: UUID, folderID: UUID) async throws {
+        await context.perform {
+            guard let folder = Label.fetch(with: folderID, in: context) else { return }
+            guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else { return }
+            
+            conversation.moveToFolder(folder)
+        }
     }
     
 }
