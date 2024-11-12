@@ -71,7 +71,8 @@ final class BackendInfoAPITests: XCTestCase {
                 domain: "example.com",
                 isFederationEnabled: true,
                 supportedVersions: [.v0, .v1, .v2],
-                developmentVersions: []
+                developmentVersions: [],
+                isMLSEnabledOnBackend: false
             )
         )
     }
@@ -98,7 +99,8 @@ final class BackendInfoAPITests: XCTestCase {
                 domain: "example.com",
                 isFederationEnabled: true,
                 supportedVersions: [.v0, .v1, .v2],
-                developmentVersions: [.v3]
+                developmentVersions: [.v3],
+                isMLSEnabledOnBackend: false
             )
         )
     }
