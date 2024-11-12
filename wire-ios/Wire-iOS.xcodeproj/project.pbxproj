@@ -322,6 +322,7 @@
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
+		590835EF2CE397AC00C18CAE /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 590835EE2CE397AC00C18CAE /* WireAnalytics */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
@@ -4012,6 +4013,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				590835EF2CE397AC00C18CAE /* WireAnalytics in Frameworks */,
 				59D4B50E2CE3765A00F8B70F /* WireDatadog in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
 			);
@@ -8709,6 +8711,7 @@
 			name = WireCommonComponents;
 			packageProductDependencies = (
 				59D4B50D2CE3765A00F8B70F /* WireDatadog */,
+				590835EE2CE397AC00C18CAE /* WireAnalytics */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -11720,6 +11723,10 @@
 		59076F962C934AA100AE7529 /* WireAccountImageUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAccountImageUI;
+		};
+		590835EE2CE397AC00C18CAE /* WireAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAnalytics;
 		};
 		590DCA072C971A56002D0A2C /* WireSidebarUI */ = {
 			isa = XCSwiftPackageProductDependency;
