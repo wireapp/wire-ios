@@ -503,6 +503,7 @@ final class ConversationListViewController: UIViewController {
             .trimmingCharacters(in: .whitespaces)
             .lowercased() ?? ""
         listContentController.listViewModel.appliedSearchText = searchText
+        configureEmptyPlaceholder()
     }
 
     // MARK: - Selection Management

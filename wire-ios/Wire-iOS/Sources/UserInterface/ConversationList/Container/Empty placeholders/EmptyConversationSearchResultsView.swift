@@ -67,7 +67,6 @@ final class EmptyConversationSearchResultsView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        stackView.backgroundColor = .red
         addSubview(stackView)
         NSLayoutConstraint.activate([
             

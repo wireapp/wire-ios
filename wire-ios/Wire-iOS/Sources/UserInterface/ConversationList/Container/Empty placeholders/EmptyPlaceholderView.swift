@@ -134,6 +134,8 @@ final class EmptyPlaceholderContainerView: UIView {
         
         super.init(frame: .zero)
         
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
+
         setupConstraints()
     }
 
