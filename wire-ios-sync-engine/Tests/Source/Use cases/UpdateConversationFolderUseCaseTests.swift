@@ -52,16 +52,30 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
 
     func testInvoke_ShouldMoveConversationToSpecifiedFolder() async throws {
         // GIVEN
-        try await managedObjectContext.perform { [self] in
+        var folderID: UUID!
+        var conversationID: UUID!
+
+        managedObjectContext.performAndWait {
             let folder = modelHelper.createFolder(in: managedObjectContext)
             let conversation = modelHelper.createGroupConversation(in: managedObjectContext)
-            let folderID = try XCTUnwrap(folder.remoteIdentifier)
-            // WHEN
-            try sut.invoke(conversationID: conversation.remoteIdentifier, folderID: folderID)
-
-            // THEN
-            XCTAssertEqual(conversation.folder?.remoteIdentifier, folderID)
-
+            folderID = folder.remoteIdentifier
+            conversationID = conversation.remoteIdentifier
         }
+
+        folderID = try XCTUnwrap(folderID)
+        conversationID = try XCTUnwrap(conversationID)
+
+        // WHEN
+        try await sut.invoke(conversationID: conversationID, folderID: folderID)
+
+        // THEN
+        var updatedFolderID: UUID?
+        managedObjectContext.performAndWait {
+            if let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext) {
+                updatedFolderID = conversation.folder?.remoteIdentifier
+            }
+        }
+
+        XCTAssertEqual(updatedFolderID, folderID)
     }
 }
