@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Countly
 import Foundation
 import WireAnalytics
 
 protocol CountlyInstance {
     func recordEvent(_ key: String, segmentation: [String: String]?)
-    func start(with config: WireCountlyConfig)
+    func start(with config: CountlyConfig)
 
     static func sharedInstance() -> Self
 }
 
-extension WireCountly: CountlyInstance {}
+extension Countly: CountlyInstance {}

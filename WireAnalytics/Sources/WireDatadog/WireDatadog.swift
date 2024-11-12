@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 #if canImport(DatadogCore)
 
 import CryptoKit
@@ -24,7 +26,6 @@ import DatadogCrashReporting
 import DatadogLogs
 import DatadogRUM
 import DatadogTrace
-import UIKit
 
 public final class WireDatadog {
 
@@ -139,6 +140,20 @@ public final class WireDatadog {
             with: "",
             options: [.regularExpression]
         )
+    }
+}
+
+#else
+
+public final class WireDatadog {
+    public init(
+        applicationID: String,
+        buildVersion: String,
+        buildNumber: String,
+        clientToken: String,
+        identifierForVendor: UUID?,
+        environmentName: String
+    ) {
     }
 }
 
