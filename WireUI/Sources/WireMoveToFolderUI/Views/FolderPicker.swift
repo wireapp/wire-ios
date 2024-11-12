@@ -110,6 +110,6 @@ struct PreviewFolderDirectory: FolderDirectoryTypeProtocol {
 }
 
 struct PreviewMoveConversationToFolderUseCase: UpdateConversationFolderUseCaseType {
-    func invoke(conversationID: UUID, folderID: UUID) async throws { }
-    
+    func invoke(conversationID: UUID, folderID: UUID) async throws {}
+
 }

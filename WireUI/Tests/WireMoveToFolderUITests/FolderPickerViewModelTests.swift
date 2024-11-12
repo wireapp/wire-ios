@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireMoveToFolderUI
 import WireMoveToFolderUISupport
 import XCTest
-@testable import WireMoveToFolderUI
 
 final class FolderPickerViewModelTests: XCTestCase {
 

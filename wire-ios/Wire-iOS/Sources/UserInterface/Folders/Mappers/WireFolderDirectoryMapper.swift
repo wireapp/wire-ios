@@ -28,7 +28,7 @@ struct WireFolderDirectoryMapper: FolderDirectoryTypeProtocol {
 
     var allFolders: [Folder] {
         directory.allFolders.map { label -> Folder in
-            Folder(identifier: label.remoteIdentifier, name: label.name ?? "") 
+            Folder(identifier: label.remoteIdentifier, name: label.name ?? "")
         }
     }
 }
