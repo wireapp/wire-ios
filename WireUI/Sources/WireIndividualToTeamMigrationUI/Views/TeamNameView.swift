@@ -21,11 +21,11 @@ import WireDesign
 
 struct TeamNameView: View {
 
-    enum Action {
-        case goBack
+    enum Action: Sendable {
         case `continue`(teamName: String)
     }
 
+    let actionCallback: (Action) -> Void
     @State var teamName: String = ""
 
     var body: some View {
@@ -40,14 +40,11 @@ struct TeamNameView: View {
                 .textFieldStyle(.roundedBorder)
                 .wireTextStyle(.body1)
             Spacer()
-            BackButton(
-                title: String.localized(key: "individualToTeam.button.back", bundle: .module),
-                action: { }
-            )
             CallToActionButton(
-                title: String.localized(key: "individualToTeam.button.continue", bundle: .module),
-                action: { }
+                action: { actionCallback(.continue(teamName: teamName)) },
+                title: String.localized(key: "individualToTeam.button.continue", bundle: .module)
             )
+            .disabled(teamName.isEmpty)
         }
     }
 }

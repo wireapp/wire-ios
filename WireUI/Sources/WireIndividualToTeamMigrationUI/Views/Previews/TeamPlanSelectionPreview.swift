@@ -46,11 +46,11 @@ import WireFoundation
                         description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.enterprise", bundle: .module)
                     )
                 ]
-            )
+            ) { _ in }
         },
         step: 1,
         stepCount: 4,
-        stepTitle: "Team Plan"
+        stepTitle: String.localized(key: "individualToTeam.planSelection.title", bundle: .module)
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

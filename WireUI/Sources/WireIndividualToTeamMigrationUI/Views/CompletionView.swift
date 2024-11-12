@@ -21,13 +21,20 @@ import WireDesign
 
 struct CompletionView: View {
 
-    enum Action {
+    enum Action: Sendable {
         case goBack
         case goToTeamManagement
     }
 
+    let actionCallback: (Action) -> Void
     let profileName: String
     let teamName: String
+
+    init(profileName: String, teamName: String, actionCallback: @escaping (Action) -> Void) {
+        self.actionCallback = actionCallback
+        self.profileName = profileName
+        self.teamName = teamName
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -37,11 +44,11 @@ struct CompletionView: View {
 
             BackButton(
                 title: String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module),
-                action: { }
+                action: { actionCallback(.goBack) }
             )
             CallToActionButton(
-                title: String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module),
-                action: { }
+                action: { actionCallback(.goToTeamManagement) },
+                title: String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module)
             )
         }
     }

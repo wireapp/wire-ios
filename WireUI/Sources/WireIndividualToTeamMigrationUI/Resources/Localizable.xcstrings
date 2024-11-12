@@ -26,6 +26,50 @@
         }
       }
     },
+    "individualToTeam.cancellation.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When you leave now, you lose your progress and need to restart the team creation."
+          }
+        }
+      }
+    },
+    "individualToTeam.cancellation.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Team Creation"
+          }
+        }
+      }
+    },
+    "individualToTeam.cancellation.leave" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Without Saving"
+          }
+        }
+      }
+    },
+    "individualToTeam.cancellation.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave without saving?"
+          }
+        }
+      }
+    },
     "individualToTeam.completion.body" : {
       "extractionState" : "manual",
       "localizations" : {

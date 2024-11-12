@@ -16,17 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-class IndividualToTeamMigrationViewController: UIViewController {
-    enum Step {
-        case teamPlanSelection
-        case teamName
-        case confirmation
-        case completion(userName: String, teamName: String)
-    }
+public struct IndividualToTeamMigrationResult {
+    public let teamID: UUID
+    public let teamName: String
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    public init(teamID: UUID, teamName: String) {
+        self.teamID = teamID
+        self.teamName = teamName
     }
+}
+
+public protocol IndividualToTeamMigrationUseCase {
+    func migrateToTeam(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

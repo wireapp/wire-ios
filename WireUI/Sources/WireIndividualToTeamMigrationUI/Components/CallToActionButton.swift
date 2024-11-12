@@ -21,19 +21,21 @@ import WireFoundation
 import WireReusableUIComponents
 
 struct CallToActionButton: View {
-    let title: String
+    @Environment(\.isEnabled) private var isEnabled
+
     let action: () -> Void
+    let title: String
 
     var body: some View {
         Button(
             action: action,
             label: { Text(title) }
         )
-        .foregroundStyle(.white)
+        .foregroundStyle(isEnabled ? .white : .primary)
         .wireTextStyle(.buttonBig)
         .frame(height: 56)
         .frame(maxWidth: .infinity)
-        .background(AccentColor.blue.color)
+        .background(isEnabled ? AccentColor.blue.color : .gray)
         .cornerRadius(16)
     }
 }

@@ -24,7 +24,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireFoundation"),
+        .package(path: "../SourceryPlugin"),
+        .package(name: "WireDomainPackage", path: "../WireDomain"),
+        .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -39,7 +41,14 @@ let package = Package(
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireIndividualToTeamMigrationUI", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
+        .target(
+            name: "WireIndividualToTeamMigrationUI",
+            dependencies: [
+                .product(name: "WireDomainAPI", package: "WireDomainPackage"),
+                "WireFoundation",
+                "WireReusableUIComponents"
+            ]
+        ),
         .testTarget(name: "WireIndividualToTeamMigrationUITests", dependencies: ["WireIndividualToTeamMigrationUI"]),
 
         .target(name: "WireMainNavigationUI"),

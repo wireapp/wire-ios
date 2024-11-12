@@ -23,7 +23,7 @@ import WireFoundation
 #Preview {
     PageContainer(
         content: {
-            TeamNameView()
+            TeamNameView() { _ in }
         },
         step: 2,
         stepCount: 4,
