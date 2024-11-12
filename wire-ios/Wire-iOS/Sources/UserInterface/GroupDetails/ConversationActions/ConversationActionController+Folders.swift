@@ -21,22 +21,22 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationActionController {
-
     func openMoveToFolder(for conversation: ZMConversation) {
         guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
         let useCase = userSession.makeConversationFolderSelectionUseCase()
 
-        let builder = FolderPickerBuilder()
-        let folderPicker = builder.build(
-            conversation: conversation,
-            directory: directory,
-            useCase: useCase,
-            context: userSession.contextProvider.viewContext
-        )
+        Task { @MainActor in
+            let builder = FolderPickerBuilder()
+            let folderPicker = builder.build(
+                conversation: conversation,
+                directory: directory,
+                useCase: useCase,
+                context: userSession.contextProvider.viewContext
+            )
 
-        present(folderPicker)
+            present(folderPicker)
+        }
     }
-
 }
 
 extension ConversationActionController: FolderPickerViewControllerDelegate {
