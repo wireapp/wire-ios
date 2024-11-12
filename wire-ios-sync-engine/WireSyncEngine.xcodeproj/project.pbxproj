@@ -468,7 +468,6 @@
 		E96970592C8F354F009F037C /* AppendFileMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */; };
 		E97296252C4A784300C4F1DB /* MessageAppendableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */; };
 		E97296282C4AA7D300C4F1DB /* AppendImageMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */; };
-		E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A602C5BBF13009C41DE /* WireAPI */; };
 		E9816C942CC925C400D77F22 /* AnalyticsEventTrackerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C932CC925AC00D77F22 /* AnalyticsEventTrackerProvider.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
 		E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = E998FE8D2C184C9800EAA672 /* UserCredentials.swift */; };
@@ -1430,7 +1429,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9816C8E2CC9231500D77F22 /* WireAPI in Frameworks */,
 				661A37632C5C0E6100FD511C /* WireAPI in Frameworks */,
 				E9C60E922C259F3C004E5F13 /* WireAnalytics in Frameworks */,
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,

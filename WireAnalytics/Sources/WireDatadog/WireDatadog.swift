@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+#if canImport(DatadogCore)
+
 import CryptoKit
 import DatadogCore
 import DatadogCrashReporting
@@ -139,3 +141,5 @@ public final class WireDatadog {
         )
     }
 }
+
+#endif

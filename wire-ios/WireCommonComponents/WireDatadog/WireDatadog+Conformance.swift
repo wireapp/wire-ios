@@ -18,8 +18,9 @@
 
 #if canImport(WireDatadog)
 
+import WireAnalytics
 import WireDatadog
 
-extension WireDatadog: WireDatadogProtocol {}
+extension WireDatadog: @retroactive WireDatadogProtocol {}
 
 #endif

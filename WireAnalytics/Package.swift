@@ -19,20 +19,14 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies() + [
+            dependencies: [
                 .product(name: "Countly", package: "countly-sdk-ios")
             ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
-            dependencies: [
-                .product(name: "DatadogCore", package: "dd-sdk-ios"),
-                .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-                .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-                .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-                .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ],
+            dependencies: resolveWireAnalyticsDependencies(),
             swiftSettings: swiftSettings
         ),
         .target(
@@ -55,7 +49,13 @@ let package = Package(
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        ["WireDatadog"]
+        [
+            .product(name: "DatadogCore", package: "dd-sdk-ios"),
+            .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
+            .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+            .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+            .product(name: "DatadogTrace", package: "dd-sdk-ios")
+        ]
     } else {
         []
     }
