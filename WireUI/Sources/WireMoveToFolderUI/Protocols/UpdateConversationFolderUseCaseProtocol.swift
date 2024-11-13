@@ -19,7 +19,7 @@
 import Foundation
 
 /// Protocol for handling moving a conversation to a specified folder
-public protocol UpdateConversationFolderUseCaseType {
+public protocol UpdateConversationFolderUseCaseProtocol {
     /// Moves a conversation to a specified folder
     /// - Parameters:
     ///   - conversationID: The ID of the conversation to be moved
