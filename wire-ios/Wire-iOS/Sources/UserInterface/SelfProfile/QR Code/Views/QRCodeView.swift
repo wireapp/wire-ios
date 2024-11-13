@@ -123,7 +123,7 @@ extension QRCodeView {
     NavigationView {
         QRCodeView(viewModel: UserQRCodeViewModel(
             profileLink: "http://link,knfieoqrngorengoejnbgjroqekgnbojqre3bgqjore3bgn3ejjeqrlw3bglrejkbgnjorqwbglejrqg",
-            handle: "handle"
-        ))
+            profileDeepLink: "wire://link",
+            handle: "handle"))
     }
 }

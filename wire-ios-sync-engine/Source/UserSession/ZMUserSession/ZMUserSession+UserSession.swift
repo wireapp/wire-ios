@@ -361,6 +361,10 @@ extension ZMUserSession: UserSession {
         SubmitCallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
+    public func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol {
+        return CreateConversationFolderUseCase(managedObjectContext: syncContext)
+    }
+
 }
 
 extension UInt64 {

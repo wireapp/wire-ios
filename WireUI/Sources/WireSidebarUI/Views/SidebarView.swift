@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-public struct SidebarView<AccountImageView>: View where AccountImageView: View {
+public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @Environment(\.sidebarMenuHeaderForegroundColor) private var menuHeaderForegroundColor
     @Environment(\.sidebarBackgroundColor) private var backgroundViewColor
@@ -32,9 +32,10 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
-        _ accountImage: SidebarAccountInfo.AccountImageSource,
-        _ availability: SidebarAccountInfo.Availability?
+        _ accountImage: AccountImageSource,
+        _ availability: Availability?
     ) -> AccountImageView
+    private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     @State private var iconSize: CGSize?
 
@@ -44,10 +45,8 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (
-            _ accountImage: SidebarAccountInfo.AccountImageSource,
-            _ availability: SidebarAccountInfo.Availability?
-        ) -> AccountImageView
+        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView,
+        legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
@@ -55,6 +54,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
+        self.legalHoldIndicatorView = legalHoldIndicatorView
     }
 
     public var body: some View {
@@ -103,7 +103,11 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
-                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) }
+                isE2EICertified: accountInfo.isE2EICertified,
+                isVerified: accountInfo.isVerified,
+                isLegalHoldIndicatorVisible: accountInfo.isLegalHoldEnabled,
+                accountImageView: { accountImageView(accountInfo.accountImageSource, accountInfo.availability) },
+                legalHoldIndicatorView: { legalHoldIndicatorView() }
             )
         }
     }
@@ -130,8 +134,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
         if addTopPadding {
-            text
-                .padding(.top)
+            text.padding(.top)
         } else {
             text
         }
@@ -160,7 +163,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text },
+            title: { text.wireTextStyle(.body1) },
             action: action
         )
     }
@@ -199,10 +202,13 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
-            title: { text },
+            title: { text.wireTextStyle(.body1) },
             action: { selectedMenuItem = menuItem }
         )
     }
+
+    public typealias AccountImageSource = SidebarAccountInfo.AccountImageSource
+    public typealias Availability = SidebarAccountInfo.Availability
 }
 
 // MARK: - View Modifiers + Environment

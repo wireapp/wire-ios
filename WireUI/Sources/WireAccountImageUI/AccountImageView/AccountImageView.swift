@@ -31,7 +31,7 @@ public final class AccountImageView: UIView {
     // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
-    private let initialsLabelSizeMultiplier: CGFloat = 7 / 10
+    private let initialsLabelSizeMultiplier: CGFloat = 3 / 5
 
     enum Defaults {
         static let imageViewBorderWidth: CGFloat = 1
@@ -177,7 +177,7 @@ public final class AccountImageView: UIView {
             return constraint
         })
 
-        initialsLabel.font = .systemFont(ofSize: 100, weight: .light)
+        initialsLabel.font = .systemFont(ofSize: 100, weight: .regular)
         initialsLabel.textAlignment = .center
         initialsLabel.adjustsFontSizeToFitWidth = true
         initialsLabel.minimumScaleFactor = 0.1

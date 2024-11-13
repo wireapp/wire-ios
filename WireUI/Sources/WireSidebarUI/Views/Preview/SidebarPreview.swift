@@ -29,7 +29,10 @@ struct SidebarPreview: View {
         displayName: "Firstname Lastname",
         username: "@username",
         accountImageSource: .image(.from(solidColor: .brown)),
-        availability: .away
+        availability: .away,
+        isE2EICertified: true,
+        isVerified: true,
+        isLegalHoldEnabled: true
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
@@ -47,9 +50,8 @@ struct SidebarPreview: View {
                     accountImageAction: {},
                     connectAction: {},
                     supportAction: {},
-                    accountImageView: { accountImage, availability in
-                        MockAccountImageView(accountImage: accountImage, availability: availability)
-                    }
+                    accountImageView: { _, _ in MockAccountImageView() },
+                    legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)
             }, content: {
@@ -62,9 +64,7 @@ struct SidebarPreview: View {
     }
 }
 
-struct MockAccountImageView: View {
-    @State private(set) var accountImage: SidebarAccountInfo.AccountImageSource
-    @State private(set) var availability: SidebarAccountInfo.Availability?
+private struct MockAccountImageView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Circle()
@@ -74,5 +74,12 @@ struct MockAccountImageView: View {
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.green)
         }
+    }
+}
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
     }
 }

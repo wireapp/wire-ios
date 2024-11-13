@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SidebarMenuItemView: View {
+struct SidebarMenuItemView<TitleView: View>: View {
 
     // MARK: - Constants
 
@@ -48,7 +48,7 @@ struct SidebarMenuItemView: View {
     /// If `true`, ".fill" will be appended to the value of the `icon` property.
     private(set) var isHighlighted = false
 
-    private(set) var title: () -> Text
+    private(set) var title: () -> TitleView
     private(set) var action: () -> Void
 
     // MARK: -
