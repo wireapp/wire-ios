@@ -167,10 +167,6 @@ extension View {
     func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {
         modifier(SidebarAccountInfoViewUsernameColorViewModifier(sidebarAccountInfoViewUsernameColor: usernameColor))
     }
-
-    func sidebarAccountInfoViewLegalHoldIndicatorColor(_ legalHoldIndicatorColor: Color) -> some View {
-        modifier(SidebarAccountInfoViewLegalHoldIndicatorColorViewModifier(sidebarAccountInfoViewLegalHoldIndicatorColor: legalHoldIndicatorColor))
-    }
 }
 
 private extension EnvironmentValues {
@@ -182,11 +178,6 @@ private extension EnvironmentValues {
     var sidebarAccountInfoViewUsernameColor: Color {
         get { self[SidebarAccountInfoViewUsernameColorKey.self] }
         set { self[SidebarAccountInfoViewUsernameColorKey.self] = newValue }
-    }
-
-    var sidebarAccountInfoViewLegalHoldIndicatorColor: Color {
-        get { self[SidebarAccountInfoViewLegalHoldIndicatorColorKey.self] }
-        set { self[SidebarAccountInfoViewLegalHoldIndicatorColorKey.self] = newValue }
     }
 }
 
@@ -212,18 +203,6 @@ struct SidebarAccountInfoViewUsernameColorViewModifier: ViewModifier {
 
 private struct SidebarAccountInfoViewUsernameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary.opacity(0.7)
-}
-
-struct SidebarAccountInfoViewLegalHoldIndicatorColorViewModifier: ViewModifier {
-    var sidebarAccountInfoViewLegalHoldIndicatorColor: Color
-    func body(content: Content) -> some View {
-        content
-            .environment(\.sidebarAccountInfoViewLegalHoldIndicatorColor, sidebarAccountInfoViewLegalHoldIndicatorColor)
-    }
-}
-
-private struct SidebarAccountInfoViewLegalHoldIndicatorColorKey: EnvironmentKey {
-    static let defaultValue = Color.red
 }
 
 // MARK: - Previews

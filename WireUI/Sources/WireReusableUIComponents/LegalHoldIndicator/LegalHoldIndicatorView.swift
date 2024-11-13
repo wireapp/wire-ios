@@ -70,7 +70,9 @@ struct LegalHoldIndicatorColorViewModifier: ViewModifier {
 }
 
 private struct LegalHoldIndicatorColorKey: EnvironmentKey {
-    static let defaultValue = Color.red
+    /// Intentionally setting a wrong color so that it becomes quickly
+    /// visible when the correct color isn't overridden.
+    static let defaultValue = Color.mint
 }
 
 #Preview {
