@@ -416,6 +416,7 @@ final class ConversationListViewController: UIViewController {
     private func setupSearchController() {
         let filter = listContentController.listViewModel.selectedFilter
         let searchController = Self.makeSearchController()
+        searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
         searchController.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
         navigationItem.searchController = searchController
