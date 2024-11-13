@@ -38,7 +38,7 @@ public final class CreateFolderViewModel: ObservableObject {
         self.useCase = useCase
     }
 
-    // MARK: - Public Inreface
+    // MARK: - Public Interface
 
     public func createFolder() async throws -> Folder {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
