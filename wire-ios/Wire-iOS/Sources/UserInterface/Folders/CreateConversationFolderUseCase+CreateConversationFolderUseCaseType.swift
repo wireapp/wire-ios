@@ -20,7 +20,7 @@ import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
 
-extension CreateConversationFolderUseCase: CreateConversationFolderUseCaseType {
+extension CreateConversationFolderUseCase: @retroactive CreateConversationFolderUseCaseType {
 
     public func invoke(name: String) async throws -> Folder {
         guard let labelType = try await self.fetchLabelType(for: name) else {
