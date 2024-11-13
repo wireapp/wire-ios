@@ -2337,7 +2337,7 @@
 		594211BE2C90542C00576053 /* FilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211C02C90547200576053 /* URL+uniformType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+uniformType.swift"; sourceTree = "<group>"; };
 		594211C22C9054A000576053 /* SharedPreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedPreviewGenerator.swift; sourceTree = "<group>"; };
-		594211C42C9056F600576053 /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; name = AutoMockable.stencil; path = ../../../SourceryPlugin/Stencils/AutoMockable.stencil; sourceTree = "<group>"; };
+		594211C42C9056F600576053 /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		594211C52C9056F600576053 /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		594211C62C9057F700576053 /* AggregateFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregateFilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211C82C90587400576053 /* ImageFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilePreviewGenerator.swift; sourceTree = "<group>"; };
