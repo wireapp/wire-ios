@@ -272,7 +272,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.listContentController.listViewModel.appliedSearchText = "XXX"
 
         // WHEN
-
+        // note here the searchBar is not presented but within the app it is
         sut.hideNoContactLabel(animated: false)
 
         // THEN
