@@ -50,19 +50,17 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
     }
     // MARK: - Tests
 
-    func testInvoke_ShouldMoveConversationToSpecifiedFolder() async throws {
+    func testInvokeShouldMoveConversationToSpecifiedFolder() async throws {
         // GIVEN
-        let (folderID, conversationID) = try await managedObjectContext.perform { [self] in
+        let folderID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+        let conversationID = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+
+        await managedObjectContext.perform { [self] in
             let folder = modelHelper.createFolder(in: managedObjectContext)
+            folder.remoteIdentifier = folderID
+
             let conversation = modelHelper.createGroupConversation(in: managedObjectContext)
-
-            guard let folderID = folder.remoteIdentifier,
-                  let conversationID = conversation.remoteIdentifier else {
-                XCTFail("Failed to create test objects with valid IDs")
-                throw TestError.setupFailed
-            }
-
-            return (folderID, conversationID)
+            conversation.remoteIdentifier = conversationID
         }
 
         // WHEN
@@ -70,14 +68,10 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
 
         // THEN
         let updatedFolderID = await managedObjectContext.perform { [self] in
-            ZMConversation.fetch(with: conversationID, in: managedObjectContext)?
-                .folder?.remoteIdentifier
+            ZMConversation.fetch(with: conversationID, in: managedObjectContext)?.folder?.remoteIdentifier
         }
 
         XCTAssertEqual(updatedFolderID, folderID)
     }
 
-    private enum TestError: Error {
-        case setupFailed
-    }
 }
