@@ -260,6 +260,24 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: tabBarController)
     }
 
+    func testForShowingNoConversationsFilteredBySearchTerm() throws {
+        // GIVEN
+        let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user1.name = "Alice"
+
+        let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user2.name = "Bob"
+
+        userSession.mockConversationDirectory.mockContactsConversations = []
+        sut.listContentController.listViewModel.appliedSearchText = "XXX"
+
+        // WHEN
+
+        sut.hideNoContactLabel(animated: false)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
     // MARK: - Helper Methods
 
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
