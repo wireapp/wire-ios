@@ -28,6 +28,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
 
     private(set) var accountImageAction: () -> Void
+    private(set) var foldersAction: (CGRect) -> Void
     private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
@@ -43,6 +44,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
+        foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView,
@@ -51,6 +53,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
+        self.foldersAction = foldersAction
         self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
@@ -117,7 +120,14 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
-            let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
+            let conversationFilters: [SidebarSelectableMenuItem] = [
+                .all,
+                .favorites,
+                .groups,
+                .oneOnOne,
+                .folders,
+                .archive
+            ]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
             }
@@ -152,13 +162,13 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text("sidebar.contacts.connect.title", bundle: .module)
             icon = "person.badge.plus"
             isLink = false
-            action = connectAction
+            action = { connectAction() }
 
         case .support:
             text = Text("sidebar.support.title", bundle: .module)
             icon = "questionmark.circle"
             isLink = true
-            action = supportAction
+            action = { supportAction() }
         }
 
         return SidebarMenuItemView(
@@ -166,7 +176,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             iconSize: iconSize,
             isLink: isLink,
             title: { text.wireTextStyle(.body1) },
-            action: action
+            action: { _ in action() }
         )
     }
 
@@ -203,13 +213,21 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "gearshape"
         }
 
+        let action: (CGRect) -> Void
+        switch menuItem {
+        case .folders:
+            action = foldersAction
+        default:
+            action = { _ in selectedMenuItem = menuItem }
+        }
+
         return SidebarMenuItemView(
             icon: icon,
             iconSize: iconSize,
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
             title: { text.wireTextStyle(.body1) },
-            action: { selectedMenuItem = menuItem }
+            action: action
         )
     }
 

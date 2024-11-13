@@ -49,12 +49,13 @@ struct SidebarMenuItemView<TitleView: View>: View {
     private(set) var isHighlighted = false
 
     private(set) var title: () -> TitleView
-    private(set) var action: () -> Void
+    private(set) var action: (CGRect) -> Void
+    @State private var frame: CGRect = .zero
 
     // MARK: -
 
     var body: some View {
-        Button(action: action) {
+        Button(action: { action(frame) }) {
             HStack {
                 Label {
                     title()
@@ -87,6 +88,13 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .cornerRadius(backgroundCornerRadius)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        .onGeometryChange(for: CGRect.self) { proxy in
+            proxy.frame(in: .global)
+        } action: { newValue in
+            frame = newValue
+        }
+
+
     }
 }
 

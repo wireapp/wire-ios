@@ -117,6 +117,8 @@ public final class SidebarViewController: UIViewController {
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, foldersAction: { [weak self] rect in
+            self?.delegate?.sidebarViewController(self!, didTapFoldersAt: rect)
         }, connectAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
@@ -173,6 +175,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            foldersAction: model.foldersAction,
             connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView,

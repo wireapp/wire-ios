@@ -41,16 +41,19 @@ final class SidebarModel: ObservableObject {
 
     let accountImageAction: () -> Void
     let menuItemAction: (_ selectedMenuItem: SidebarSelectableMenuItem) -> Void
+    let foldersAction: (CGRect) -> Void
     let connectAction: () -> Void
     let supportAction: () -> Void
 
     init(
         accountImageAction: @escaping () -> Void,
-        menuItemAction: @escaping (_: SidebarSelectableMenuItem) -> Void,
+        menuItemAction: @escaping (SidebarSelectableMenuItem) -> Void,
+        foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void
     ) {
         self.accountImageAction = accountImageAction
+        self.foldersAction = foldersAction
         self.menuItemAction = menuItemAction
         self.connectAction = connectAction
         self.supportAction = supportAction

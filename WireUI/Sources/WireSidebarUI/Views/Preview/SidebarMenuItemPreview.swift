@@ -33,21 +33,21 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Regular") },
-                    action: { print("show all conversations") }
+                    action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "gamecontroller",
                     iconSize: iconSize,
                     isHighlighted: true,
                     title: { Text("Initially highlighted") },
-                    action: { print("show all conversations") }
+                    action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "person.3",
                     iconSize: iconSize,
                     isLink: true,
                     title: { Text("Initially highlighted") },
-                    action: { print("show all conversations") }
+                    action: { _  in print("show all conversations") }
                 )
             }
             .overlay {
@@ -68,14 +68,14 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Small Icon") },
-                    action: { print("show all conversations") }
+                    action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "brain",
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Little larger Icon") },
-                    action: { print("show all conversations") }
+                    action: { _ in print("show all conversations") }
                 )
             }
             .overlay {

@@ -55,7 +55,11 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+            conversationDirectory: userSession.conversationDirectory,
+            conversationFilter: { [weak self] in self?.conversationListViewController.conversationFilter }
+        )
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
