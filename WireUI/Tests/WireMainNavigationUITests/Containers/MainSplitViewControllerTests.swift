@@ -113,7 +113,6 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.conversationUI = nil
 
         // Then
-        await Task.yield()
         XCTAssertEqual(conversationUI, nil)
     }
 
@@ -127,7 +126,6 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.archiveUI = .init()
 
         // Then
-        await Task.yield()
         XCTAssertEqual(conversationListUI, nil)
     }
 
@@ -141,7 +139,6 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.settingsUI = .init()
 
         // Then
-        await Task.yield()
         XCTAssertEqual(conversationListUI, nil)
     }
 

@@ -25,7 +25,7 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
-    func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
+    func advancedGroup(userSession: UserSession) -> any SettingsCellDescriptorType {
         let items = [
             troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
@@ -36,7 +36,9 @@ extension SettingsCellDescriptorFactory {
             items: items,
             title: SelfSettingsAdvancedLocale.title,
             icon: .settingsAdvanced,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: .advanced,
+            settingsCoordinator: settingsCoordinator
         )
     }
 
@@ -104,7 +106,9 @@ extension SettingsCellDescriptorFactory {
         let debuggingToolsGroup = SettingsGroupCellDescriptor(
             items: [findUnreadConversationSection],
             title: L10n.Localizable.Self.Settings.Advanced.DebuggingTools.title,
-            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description
+            accessibilityBackButtonText: L10n.Accessibility.AdvancedSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator
         )
 
         // Section
