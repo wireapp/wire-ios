@@ -31,13 +31,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var zClientViewController: ZClientViewController!
+    private var window: UIWindow!
     private var snapshotHelper: SnapshotHelper!
 
     private var sut: ConversationListViewController! { zClientViewController.conversationListViewController }
     private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
-    private var window: UIWindow! {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
-        return windowScene.keyWindow
+    private var windowScene: UIWindowScene! {
+        UIApplication.shared.connectedScenes.first as? UIWindowScene
     }
 
     @MainActor
@@ -69,12 +69,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             trackingManager: nil
         )
 
-        window.rootViewController = zClientViewController
-        //window.makeKeyAndVisible()
 
-        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
-        zClientViewController.overrideUserInterfaceStyle = .dark
-        UIView.setAnimationsEnabled(false)
     }
 
     override func tearDown() {
@@ -83,10 +78,21 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         userSession = nil
         modelHelper = nil
         coreDataFixture = nil
+        window.isHidden = true
+        window = nil
     }
 
-    func testForNoConversations() {
-        snapshotHelper.verify(matching: window)
+    @MainActor
+    func testForNoConversations() async {
+        window = .init(windowScene: windowScene)
+        window.rootViewController = zClientViewController
+        window.makeKeyAndVisible()
+
+        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
+        zClientViewController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForEverythingArchived() {
@@ -94,7 +100,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversation.isArchived = true
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     // MARK: - Snapshot Tests for Filter View
@@ -117,7 +124,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.none)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     @MainActor
@@ -135,7 +143,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByGroups() {
@@ -147,7 +156,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingConversationsFilteredByFavourites() {
@@ -164,7 +174,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByFavourites() {
@@ -176,10 +187,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
-    func testForShowingConversationsFilteredByOneOnOne() throws {
+    @MainActor
+    func testForShowingConversationsFilteredByOneOnOne() async throws {
         // GIVEN
         let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         user1.name = "Alice"
@@ -197,7 +210,14 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window = .init(windowScene: windowScene)
+        window.rootViewController = zClientViewController
+        window.makeKeyAndVisible()
+
+        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
+        zClientViewController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     func testForShowingNoConversationsFilteredByOneOnOne() throws {
@@ -215,7 +235,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: window)
+        window.rootViewController = nil
+        snapshotHelper.verify(matching: zClientViewController)
     }
 
     // MARK: - Helper Methods
