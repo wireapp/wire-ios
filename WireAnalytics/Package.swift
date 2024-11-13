@@ -62,6 +62,7 @@ func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
 }
 
 func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
+    return true
     if let value {
         ProcessInfo.processInfo.environment[name] == value
     } else {
