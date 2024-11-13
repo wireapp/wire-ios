@@ -27,7 +27,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "\"Move the conversation \\\"%@\\\" to a new folder.\";"
+            "value" : "Move the conversation %@ to a new folder."
           }
         }
       }
