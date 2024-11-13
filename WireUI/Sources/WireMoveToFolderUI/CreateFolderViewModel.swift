@@ -18,7 +18,8 @@
 
 import Foundation
 
-public final class FolderCreationViewModel: ObservableObject {
+@MainActor
+public final class CreateFolderViewModel: ObservableObject {
 
     // MARK: - Properties
 

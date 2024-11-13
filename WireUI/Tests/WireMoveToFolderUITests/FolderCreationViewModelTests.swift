@@ -25,7 +25,7 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: FolderCreationViewModel!
+    private var sut: CreateFolderViewModel!
     private var mockUseCase: MockFolderCreationUseCaseType!
 
     // MARK: - setUp
@@ -151,6 +151,6 @@ final class FolderCreationViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     private func createSUT() {
-        sut = FolderCreationViewModel(useCase: mockUseCase)
+        sut = CreateFolderViewModel(useCase: mockUseCase)
     }
 }
