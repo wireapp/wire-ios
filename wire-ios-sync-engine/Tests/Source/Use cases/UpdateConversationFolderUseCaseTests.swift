@@ -52,8 +52,8 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
 
     func testInvokeShouldMoveConversationToSpecifiedFolder() async throws {
         // GIVEN
-        let folderID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-        let conversationID = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+        let folderID = UUID()
+        let conversationID = UUID()
 
         await managedObjectContext.perform { [self] in
             let folder = modelHelper.createFolder(in: managedObjectContext)
