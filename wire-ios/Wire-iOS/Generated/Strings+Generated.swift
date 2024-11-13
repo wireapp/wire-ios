@@ -3493,8 +3493,6 @@ internal enum L10n {
       internal static let on = L10n.tr("Localizable", "general.on", fallback: "On")
       /// Open Wire Settings
       internal static let openSettings = L10n.tr("Localizable", "general.open_settings", fallback: "Open Wire Settings")
-      /// or
-      internal static let or = L10n.tr("Localizable", "general.or", fallback: "or")
       /// Paste
       internal static let paste = L10n.tr("Localizable", "general.paste", fallback: "Paste")
       /// Service

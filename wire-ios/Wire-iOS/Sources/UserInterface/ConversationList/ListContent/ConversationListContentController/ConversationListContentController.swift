@@ -318,7 +318,6 @@ final class ConversationListContentController: UICollectionViewController {
     // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        print("Kate numberOfSections: \(listViewModel.sectionCount)")
         return listViewModel.sectionCount
     }
 

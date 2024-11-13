@@ -214,11 +214,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    var isEmptyFavoritePlaceholderVisible: Bool {
-        // archivedConversations.isEmpty
-        return false
-    }
-
     // Local copies of the lists.
     private var sections: [Section] = []
 
@@ -405,12 +400,12 @@ final class ConversationListViewModel: NSObject {
 
     }
 
-    func reloadConversationList() {//
+    func reloadConversationList() {
         updateAllSections()
         delegate?.listViewModelShouldBeReloaded()
     }
 
-    private func updateAllSections() {//
+    private func updateAllSections() {
         sections = createSections()
     }
 
