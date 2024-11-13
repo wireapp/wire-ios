@@ -246,7 +246,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.
     private func renderedImage() -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: window.bounds.size)
-        return renderer.image { ctx in
+        return renderer.image { _ in
             window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
         }
     }
