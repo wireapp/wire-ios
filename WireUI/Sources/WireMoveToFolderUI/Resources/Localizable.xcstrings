@@ -12,6 +12,26 @@
         }
       }
     },
+    "folder.creation.name.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximun 64 characters"
+          }
+        }
+      }
+    },
+    "folder.creation.name.header" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"Move the conversation \\\"%@\\\" to a new folder.\";"
+          }
+        }
+      }
+    },
     "folder.creation.name.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
