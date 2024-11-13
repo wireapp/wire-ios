@@ -24,10 +24,16 @@ public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
     private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
+    let conversationName: String
 
-    public init(viewModel: FolderPickerViewModel, createFolderUseCase: any CreateConversationFolderUseCaseProtocol) {
+    public init(
+        viewModel: FolderPickerViewModel,
+        createFolderUseCase: any CreateConversationFolderUseCaseProtocol,
+        conversationName: String
+    ) {
         self.viewModel = viewModel
         self.createFolderUseCase = createFolderUseCase
+        self.conversationName = conversationName
     }
 
     public var body: some View {
@@ -57,7 +63,7 @@ public struct FolderPicker: View {
                     NavigationLink {
                         CreateFolder(
                             viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
-                            conversationName: "Default Conversation" // Adjust as needed
+                            conversationName: conversationName
                         )
                     } label: {
                         Image(systemName: "plus")
@@ -106,7 +112,7 @@ public struct FolderPicker: View {
                 ]
             ),
             updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
-        ), createFolderUseCase: PreviewCreateConversationFolderUseCase()
+        ), createFolderUseCase: PreviewCreateConversationFolderUseCase(), conversationName: "Test"
     )
 }
 

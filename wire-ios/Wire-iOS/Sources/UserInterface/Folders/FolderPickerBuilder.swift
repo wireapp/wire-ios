@@ -33,12 +33,12 @@ struct FolderPickerBuilder {
         let directoryMapper = WireFolderDirectoryMapper(directory: directory)
         let useCase = UpdateConversationFolderUseCase(context: context)
         let createConversationFolderUseCase = CreateConversationFolderUseCase(managedObjectContext: context)
-
+        let conversationName = conversation.displayName ?? conversation.displayNameWithFallback
         let viewModel = FolderPickerViewModel(
             conversation: Conversation(conversation),
             directory: directoryMapper,
             updateConversationFolderUseCase: useCase
         )
-        return FolderPickerHostingController(viewModel: viewModel, createFolderUseCase: createConversationFolderUseCase)
+        return FolderPickerHostingController(viewModel: viewModel, createFolderUseCase: createConversationFolderUseCase, conversationName: conversationName)
     }
 }
