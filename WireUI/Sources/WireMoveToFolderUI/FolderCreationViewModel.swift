@@ -29,11 +29,11 @@ public final class FolderCreationViewModel: ObservableObject {
         }
     }
 
-    private let useCase: any FolderCreationUseCaseType
+    private let useCase: any CreateConversationFolderUseCaseType
 
     // MARK: - Lifecycle
 
-    public init(useCase: any FolderCreationUseCaseType) {
+    public init(useCase: any CreateConversationFolderUseCaseType) {
         self.useCase = useCase
     }
 

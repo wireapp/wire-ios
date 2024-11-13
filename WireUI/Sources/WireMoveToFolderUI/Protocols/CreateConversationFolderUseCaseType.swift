@@ -17,7 +17,7 @@
 //
 
 /// Protocol for handling creating a folder
-public protocol FolderCreationUseCaseType: Sendable {
+public protocol CreateConversationFolderUseCaseType: Sendable {
     /// Creates a folder
     /// - Parameters:
     ///   - name: The name of the folder to create
