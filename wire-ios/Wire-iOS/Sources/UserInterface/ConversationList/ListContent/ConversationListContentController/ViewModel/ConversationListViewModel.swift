@@ -215,16 +215,15 @@ final class ConversationListViewModel: NSObject {
     }
 
     var isEmptyFavoritePlaceholderVisible: Bool {
-        //archivedConversations.isEmpty
+        // archivedConversations.isEmpty
         return false
     }
 
     // Local copies of the lists.
     private var sections: [Section] = []
-    
+
     var isEmptyList: Bool {
         let totalItems = sections.map { $0.items.count }.reduce(0, +)
-        print("🤓", totalItems)
         return totalItems == 0
     }
 

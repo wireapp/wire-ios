@@ -99,7 +99,7 @@ final class ConversationListContentController: UICollectionViewController {
         guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
-        
+
         scrollToCurrentSelection(animated: false)
 
         token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
@@ -109,13 +109,13 @@ final class ConversationListContentController: UICollectionViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         if let token {
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
     }
-    
+
     private func activeMediaPlayerChanged() {
         DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {

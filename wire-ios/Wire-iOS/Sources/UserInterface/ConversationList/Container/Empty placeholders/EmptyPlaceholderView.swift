@@ -20,92 +20,92 @@ import UIKit
 import WireDesign
 
 final class EmptyPlaceholderView: UIView {
-    
+
     var titleLabel: DynamicFontLabel!
     var descriptionLabel: SubheadlineTextView!
     var stackView: UIStackView!
-    
+
     let arrowView: UIImageView = {
         let arrow = UIImageView()
         arrow.image = UIImage(resource: .ConversationList.arrow)
         arrow.contentMode = .scaleToFill
         return arrow
     }()
-    
+
     let connectWithPeopleButton: DynamicFontButton = {
         let button = DynamicFontButton(style: .body1)
         button.setTitleColor(ColorTheme.Base.primary, for: .normal)
         button.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
         button.layer.cornerRadius = 18
         button.layer.masksToBounds = true
-        
+
         button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 12, bottom: 10, right: 12)
         button.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Oneonone.button, for: .normal)
         button.accessibilityIdentifier = "connect-with-people.button"
-        
+
         return button
     }()
-    
+
     // MARK: - Init
-    
+
     init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
         super.init(frame: .zero)
-        
+
         setup(content, connectWithPeopleAction: connectWithPeopleAction)
     }
-    
+
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Setup
-    
+
     private func setup(_ content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
         backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
         titleLabel = DynamicFontLabel(
             text: content.headline,
             style: .h2,
             color: ColorTheme.Backgrounds.onSurfaceVariant)
-        
+
         descriptionLabel = SubheadlineTextView(
             attributedText: content.subheadline,
             style: .body1,
             color: ColorTheme.Backgrounds.onSurfaceVariant)
-        
+
         titleLabel.textAlignment = .center
         descriptionLabel.textAlignment = .center
         arrowView.isHidden = !content.showArrow
-        
+
         stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
         stackView.axis = .vertical
         stackView.spacing = 2
-        
+
         connectWithPeopleButton.isHidden = !content.showButton
         connectWithPeopleButton.addAction(connectWithPeopleAction, for: .touchUpInside)
-        
+
         [arrowView, stackView, connectWithPeopleButton].forEach(addSubview)
         createConstraints()
     }
-    
+
     private func createConstraints() {
         arrowView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         connectWithPeopleButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
-            
+
             arrowView.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
             arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
-            
+
             connectWithPeopleButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10),
             connectWithPeopleButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
-    
+
     func configure(with content: ConversationListViewController.EmptyPlaceholder) {
         titleLabel.text = content.headline
         let paragraphStyle = NSMutableParagraphStyle()
@@ -119,7 +119,7 @@ final class EmptyPlaceholderView: UIView {
         arrowView.isHidden = !content.showArrow
         connectWithPeopleButton.isHidden = !content.showButton
     }
-    
+
 }
 
 final class EmptyPlaceholderContainerView: UIView {
@@ -127,37 +127,36 @@ final class EmptyPlaceholderContainerView: UIView {
     private(set) var searchResultsView: EmptyConversationSearchResultsView!
     var connectWithPeopleAction: () -> Void
     // MARK: - Init
-    
+
     init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: @escaping () -> Void) {
         self.connectWithPeopleAction = connectWithPeopleAction
         super.init(frame: .zero)
-        
+
         self.searchResultsView = EmptyConversationSearchResultsView(newConversationAction: { [weak self] in
             self?.connectWithPeopleAction()
         })
-        
-        
+
         let action = UIAction { [weak self] _ in
             self?.connectWithPeopleAction()
         }
         self.placeholderView = EmptyPlaceholderView(content: content, connectWithPeopleAction: action)
-        
+
         backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
-        
+
         setupConstraints()
     }
-    
+
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func hideSearchResult(_ hidden: Bool) {
         searchResultsView.isHidden = hidden
         placeholderView.isHidden = !hidden
     }
-    
+
     // MARK: - Setup
-    
+
     private func setupConstraints() {
         [placeholderView, searchResultsView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -170,5 +169,5 @@ final class EmptyPlaceholderContainerView: UIView {
             ])
         }
     }
-    
+
 }

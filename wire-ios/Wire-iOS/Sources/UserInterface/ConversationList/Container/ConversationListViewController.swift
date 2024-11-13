@@ -103,7 +103,7 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     private var emptyPlaceholderView: EmptyPlaceholderContainerView!
-    
+
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
