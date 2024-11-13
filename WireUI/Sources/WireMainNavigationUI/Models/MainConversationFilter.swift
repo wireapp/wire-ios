@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum MainConversationFilter: Sendable {
+public enum MainConversationFilter: Sendable, Equatable {
     case favorites, groups, oneOnOne, folder(id: UUID, name: String)
 }
 
