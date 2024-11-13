@@ -23,7 +23,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
         .package(path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
@@ -47,7 +46,7 @@ let package = Package(
             name: "WireMoveToFolderUISupport",
             dependencies: ["WireMoveToFolderUI"],
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),

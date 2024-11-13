@@ -130,7 +130,4 @@
    <FileRef
       location = "group:WirePlugins">
    </FileRef>
-   <FileRef
-      location = "group:SourceryPlugin">
-   </FileRef>
 </Workspace>

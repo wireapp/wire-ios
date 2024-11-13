@@ -6,11 +6,22 @@ import PackageDescription
 let package = Package(
     name: "WirePlugins",
     products: [
-        .plugin(
-            name: "SwiftGenPlugin",
-            targets: ["SwiftGenPlugin"]),
+        .plugin(name: "SourceryPlugin", targets: ["SourceryPlugin"]),
+        .plugin(name: "SwiftGenPlugin", targets: ["SwiftGenPlugin"])
     ],
     targets: [
+        .binaryTarget(
+            name: "sourcery",
+            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.2.4/sourcery-2.2.4.artifactbundle.zip",
+            checksum: "79282fd22949653dcaf0ab6a215d33a913ce09840f577c5959b7e94292b12bd4"
+        ),
+        .plugin(
+            name: "SourceryPlugin",
+            capability: .buildTool(),
+            dependencies: ["sourcery"],
+            exclude: ["./Stencils/AutoMockable.stencil"]
+        ),
+
         .plugin(
             name: "SwiftGenPlugin",
             capability: .buildTool(),
