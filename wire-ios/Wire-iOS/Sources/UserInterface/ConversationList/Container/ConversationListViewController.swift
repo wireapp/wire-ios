@@ -428,6 +428,7 @@ final class ConversationListViewController: UIViewController {
             isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
         )
 
+        searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
 
         if !isEmptyPlaceholderVisible {

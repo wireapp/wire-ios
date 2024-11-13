@@ -56,3 +56,30 @@ public class MockMoveConversationToFolderUseCaseType: @unchecked Sendable, MoveC
         try await mock(folder, conversation)
     }
 }
+
+public class MockFolderCreationUseCaseType: @unchecked Sendable, FolderCreationUseCaseType {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - invoke
+
+    public var invokeName_Invocations: [String] = []
+    public var invokeName_MockError: (any Error)?
+    public var invokeName_MockMethod: ((String) async throws -> Folder)?
+
+    public func invoke(name: String) async throws -> Folder {
+        invokeName_Invocations.append(name)
+
+        if let error = invokeName_MockError {
+            throw error
+        }
+
+        guard let mock = invokeName_MockMethod else {
+            fatalError("no mock for `invokeName`")
+        }
+
+        return try await mock(name)
+    }
+}

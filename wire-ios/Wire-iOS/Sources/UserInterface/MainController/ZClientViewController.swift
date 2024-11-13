@@ -39,6 +39,9 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
+    private(set) var cachedAccountInfo = SidebarAccountInfo() {
+        didSet { sidebarViewController.accountInfo = cachedAccountInfo }
+    }
 
     private(set) var conversationRootViewController: UIViewController?
 
@@ -296,7 +299,7 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
+        sidebarViewController.accountInfo = cachedAccountInfo
         sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
         sidebarViewController.delegate = sidebarViewControllerDelegate
 
@@ -311,6 +314,7 @@ final class ZClientViewController: UIViewController {
 
         Task {
             await updateCachedAccountImage()
+            await updateCachedAccountInfo()
         }
     }
 
@@ -717,6 +721,16 @@ final class ZClientViewController: UIViewController {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }
     }
+
+    private func updateCachedAccountInfo() async {
+        do {
+            cachedAccountInfo = SidebarAccountInfo(userSession.selfUser, cachedAccountImage, cachedAccountInfo.isE2EICertified)
+            let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
+            cachedAccountInfo.isE2EICertified = isE2EICertified
+        } catch {
+            WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
+        }
+    }
 }
 
 // MARK: - ZClientViewController + UserObserving
@@ -728,7 +742,7 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged {
                 sidebarUpdateNeeded = true
             }
 
@@ -744,9 +758,8 @@ extension ZClientViewController: UserObserving {
             }
 
             if sidebarUpdateNeeded {
-                let selfUser = userSession.selfUser
-                sidebarViewController.accountInfo = .init(selfUser, cachedAccountImage)
-                sidebarViewController.wireAccentColor = .init(rawValue: selfUser.accentColorValue) ?? .default
+                await updateCachedAccountInfo()
+                sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
             }
         }
     }
