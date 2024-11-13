@@ -52,30 +52,32 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
 
     func testInvoke_ShouldMoveConversationToSpecifiedFolder() async throws {
         // GIVEN
-        var folderID: UUID!
-        var conversationID: UUID!
-
-        await managedObjectContext.perform { [self] in
+        let (folderID, conversationID) = try await managedObjectContext.perform { [self] in
             let folder = modelHelper.createFolder(in: managedObjectContext)
             let conversation = modelHelper.createGroupConversation(in: managedObjectContext)
-            folderID = folder.remoteIdentifier
-            conversationID = conversation.remoteIdentifier
-        }
 
-        folderID = try XCTUnwrap(folderID)
-        conversationID = try XCTUnwrap(conversationID)
+            guard let folderID = folder.remoteIdentifier,
+                  let conversationID = conversation.remoteIdentifier else {
+                XCTFail("Failed to create test objects with valid IDs")
+                throw TestError.setupFailed
+            }
+
+            return (folderID, conversationID)
+        }
 
         // WHEN
         try await sut.invoke(conversationID: conversationID, folderID: folderID)
 
         // THEN
-        var updatedFolderID: UUID?
-        await managedObjectContext.perform { [self] in
-            if let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext) {
-                updatedFolderID = conversation.folder?.remoteIdentifier
-            }
+        let updatedFolderID = await managedObjectContext.perform { [self] in
+            ZMConversation.fetch(with: conversationID, in: managedObjectContext)?
+                .folder?.remoteIdentifier
         }
 
         XCTAssertEqual(updatedFolderID, folderID)
+    }
+
+    private enum TestError: Error {
+        case setupFailed
     }
 }
