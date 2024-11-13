@@ -67,8 +67,8 @@ public enum BackendInfo {
     }
 
     public static var isMLSEnabled: Bool {
-        get { storage.bool(forKey: Key.isMLSEnabledOnBackend.rawValue) }
-        set { storage.set(newValue, forKey: Key.isMLSEnabledOnBackend.rawValue) }
+        get { storage.bool(forKey: Key.isMLSEnabled.rawValue) }
+        set { storage.set(newValue, forKey: Key.isMLSEnabled.rawValue) }
     }
 
     private static func apiVersion(for key: Key) -> APIVersion? {

@@ -44,11 +44,11 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
-        mlsEnabled: Bool
+        isMLSEnabled: Bool
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
-        self.mlsEnabled = mlsEnabled
+        self.isMLSEnabled = isMLSEnabled
     }
 
     // MARK: - Resolve
@@ -80,9 +80,9 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
         switch messageProtocol {
-        case .none where mlsEnabled:
+        case .none where isMLSEnabled:
             return await resolveCommonUserProtocolNone(with: userID, in: context)
-        case .mls where mlsEnabled:
+        case .mls where isMLSEnabled:
             return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
             return await resolveCommonUserProtocolProteus(with: userID, in: context)

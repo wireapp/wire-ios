@@ -139,7 +139,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
         let oneOnOneResolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
-            mlsEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+            isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
 
         let strategies: [Any] = [
 

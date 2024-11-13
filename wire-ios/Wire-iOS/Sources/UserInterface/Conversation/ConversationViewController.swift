@@ -415,7 +415,7 @@ final class ConversationViewController: UIViewController {
                 let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
                 let resolver = await OneOnOneResolver(
                     migrator: OneOnOneMigrator(mlsService: mlsService),
-                    mlsEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+                    isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {

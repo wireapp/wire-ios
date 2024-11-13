@@ -87,7 +87,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
                 var action = FetchBackendMLSPublicKeysAction()
                 let backendPublicKeys = try await action.perform(in: managedObjectContext.notificationContext)
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-                BackendInfo.isMLSEnabledOnBackend = hasValidKeys && (BackendInfo.apiVersion ?? .v0) >= .v5
+                BackendInfo.isMLSEnabled = hasValidKeys && (BackendInfo.apiVersion ?? .v0) >= .v5
 
                 WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
 
@@ -97,7 +97,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
             } catch {
                 WireLogger.mls.error("slow sync failed fetch backend MLS public keys!")
 
-                BackendInfo.isMLSEnabledOnBackend = false
+                BackendInfo.isMLSEnabled = false
                 await managedObjectContext.perform {
                     syncStatus.failCurrentSyncPhase(phase: syncPhase)
                 }
