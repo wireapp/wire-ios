@@ -37,7 +37,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
-    private let mlsEnabled: Bool
+    private let isMLSEnabled: Bool
 
     // MARK: - Initializer
 
