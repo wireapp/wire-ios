@@ -339,6 +339,7 @@ final class UserSessionMock: UserSession {
 
     func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
         UpdateConversationFolderUseCase(context: self.syncContext)
+    }
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol {
         CreateConversationFolderUseCase(managedObjectContext: self.syncContext)
