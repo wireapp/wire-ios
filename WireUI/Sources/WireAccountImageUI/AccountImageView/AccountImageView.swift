@@ -139,6 +139,7 @@ public final class AccountImageView: UIView {
         let accountImageViewWrapper = UIView()
         accountImageViewWrapper.translatesAutoresizingMaskIntoConstraints = false
         accountImageViewWrapper.clipsToBounds = true
+        accountImageViewWrapper.accessibilityLabel = "Profile picture"
         addSubview(accountImageViewWrapper)
         NSLayoutConstraint.activate([
             // make sure it's in the center, even if the surrounding view is not a square

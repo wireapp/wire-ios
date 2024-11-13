@@ -49,6 +49,7 @@ struct SidebarMenuItemView: View {
     private(set) var isHighlighted = false
 
     private(set) var title: () -> Text
+    private(set) var accessibilityText: Text
     private(set) var action: () -> Void
 
     // MARK: -
@@ -85,6 +86,7 @@ struct SidebarMenuItemView: View {
             .padding(.vertical, 12)
             .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
+            .accessibilityLabel(accessibilityText)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }

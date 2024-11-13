@@ -71,9 +71,11 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
             Text(displayName)
                 .font(.headline)
                 .foregroundStyle(displayNameColor)
+                .accessibilityLabel("Profile name \(displayName)")
             Text(username)
                 .font(.subheadline)
                 .foregroundStyle(usernameColor)
+                .accessibilityLabel("Username \(username)")
         }
     }
 }
