@@ -30,6 +30,10 @@ public struct BackendInfo: Equatable {
 
     public let isFederationEnabled: Bool
 
+    /// Whether the backend supports MLS.
+
+    public let isMLSEnabled: Bool
+
     /// All production ready api versions supported by the local backend.
 
     public let supportedVersions: Set<APIVersion>
@@ -37,9 +41,5 @@ public struct BackendInfo: Equatable {
     /// All api versions currently under development by the local backend.
 
     public let developmentVersions: Set<APIVersion>
-
-    /// Whether the backend supports MLS.
-
-    public let isMLSEnabled: Bool
 
 }
