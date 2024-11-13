@@ -456,6 +456,9 @@
 		E910CF142CABF65E00B30E87 /* ToggleMessageReactionUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E910CF132CABF65E00B30E87 /* ToggleMessageReactionUseCaseTests.swift */; };
 		E91180DF2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91180DE2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift */; };
 		E91180E12CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */; };
+		E914CCBC2CDE269B0067F409 /* CreateConversationFolderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */; };
+		E914CCBE2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBD2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift */; };
+		E914CCC02CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */; };
 		E948DB142C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */; };
 		E955D3DF2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */; };
 		E955D3E32C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */; };
@@ -1172,6 +1175,9 @@
 		E910CF132CABF65E00B30E87 /* ToggleMessageReactionUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleMessageReactionUseCaseTests.swift; sourceTree = "<group>"; };
 		E91180DE2CA6E86400DD63E2 /* ToggleMessageReactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleMessageReactionUseCase.swift; sourceTree = "<group>"; };
 		E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+SelfUserReactions.swift"; sourceTree = "<group>"; };
+		E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCase.swift; sourceTree = "<group>"; };
+		E914CCBD2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCaseTests.swift; sourceTree = "<group>"; };
+		E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCaseProtocol.swift; sourceTree = "<group>"; };
 		E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendLocationMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationType+ZMConversationType.swift"; sourceTree = "<group>"; };
 		E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessageUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1453,6 +1459,7 @@
 		018A3DBD2B0799CA00EB3D6B /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
+				E914CCBD2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift */,
 				16D74BF52B5A961800160298 /* ChangeUsernameUseCaseTests.swift */,
 				EEA58F0F2B70D59F006DEE32 /* CreateTeamOneOnOneConversationUseCaseTests.swift */,
 				EE8B934D2B838AFD00D5E670 /* GetE2eIdentityCertificatesUseCaseTests.swift */,
@@ -2593,6 +2600,8 @@
 		EEE46E5528C5EF3B005F48D7 /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
+				E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */,
+				E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */,
 				E9D6FC272CD4F201007924B8 /* ToFolderMovableConversation.swift */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
@@ -3275,6 +3284,7 @@
 				7C419ED821F8D81D00B95770 /* EventProcessingTrackerTests.swift in Sources */,
 				707CEBB727B515B200E080A4 /* ZMUserSessionTests+SecurityClassification.swift in Sources */,
 				25D57F1D2BA892720038521E /* MessagingTest+Swift.swift in Sources */,
+				E914CCBE2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift in Sources */,
 				85D8522CF8DE246DDD5BD12C /* MockEntity.m in Sources */,
 				EF2CB12A22D5E5BF00350B0A /* TeamImageAssetUpdateStrategyTests.swift in Sources */,
 				3E288A6C19C859210031CFCE /* NotificationObservers.m in Sources */,
@@ -3514,6 +3524,7 @@
 				161ACB2423F432CC00ABFF33 /* SessionManager+URLActions.swift in Sources */,
 				BF3C1B1720DBE254001CE126 /* Conversation+MessageDestructionTimeout.swift in Sources */,
 				1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */,
+				E914CCC02CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift in Sources */,
 				E623B63A2BD68DAE00F91B37 /* UserSessionDependencies.swift in Sources */,
 				16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */,
 				EE5B85202CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift in Sources */,
@@ -3590,6 +3601,7 @@
 				EE5AAF3A2874E8C70018FA01 /* BackendEnvironmentProvider+Reachability.swift in Sources */,
 				1634958B1F0254CB004E80DB /* ServerConnection.swift in Sources */,
 				54034F381BB1A6D900F4ED62 /* ZMUserSession+Logs.swift in Sources */,
+				E914CCBC2CDE269B0067F409 /* CreateConversationFolderUseCase.swift in Sources */,
 				549816471A432BC800A7CE2E /* ZMSyncStrategy.m in Sources */,
 				54BFDF681BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift in Sources */,
 				16DCB91C213449620002E910 /* ZMOperationLoop+PushChannel.swift in Sources */,
