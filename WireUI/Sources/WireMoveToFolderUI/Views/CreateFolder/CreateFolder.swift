@@ -65,7 +65,7 @@ public struct CreateFolder: View {
         Text(
             String(
                 format: NSLocalizedString(
-                    "move_conversation_to_new_folder",
+                    "folder.creation.name.header",
                     tableName: "Localizable",
                     bundle: .module,
                     comment: ""
