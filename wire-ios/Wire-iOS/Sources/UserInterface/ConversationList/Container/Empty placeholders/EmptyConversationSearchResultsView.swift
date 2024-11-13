@@ -20,42 +20,6 @@ import SwiftUI
 import UIKit
 import WireDesign
 
-private struct EmptyView: View {
-    var newConversationAction: () -> Void
-
-    var body: some View {
-        VStack {
-            Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone)
-                .font(.textStyle(.body1))
-                .foregroundStyle(Color.secondaryText)
-                .multilineTextAlignment(.center)
-                .lineLimit(nil)
-
-            Button(action: {
-                newConversationAction()
-            }, label: {
-                HStack {
-                    Image(systemName: "plus")
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 20, height: 20)
-                        .background(Circle().fill(Color(ColorTheme.Base.primary)))
-
-                    Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone)
-                        .font(.textStyle(.body1))
-                        .foregroundStyle(Color(ColorTheme.Base.primary))
-                        .padding(.leading, 4)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 7)
-
-            })
-            .accessibilityIdentifier("new-conversation.button")
-            .background(Capsule().fill(Color.viewBackground))
-        }
-    }
-}
-
 final class EmptyConversationSearchResultsView: UIView {
 
     var newConversationAction: () -> Void
@@ -92,5 +56,41 @@ final class EmptyConversationSearchResultsView: UIView {
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
 
+    }
+}
+
+private struct EmptyView: View {
+    var newConversationAction: () -> Void
+
+    var body: some View {
+        VStack {
+            Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone)
+                .font(.textStyle(.body1))
+                .foregroundStyle(Color.secondaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+
+            Button(action: {
+                newConversationAction()
+            }, label: {
+                HStack {
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 20, height: 20)
+                        .background(Circle().fill(Color(ColorTheme.Base.primary)))
+
+                    Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone)
+                        .font(.textStyle(.body1))
+                        .foregroundStyle(Color(ColorTheme.Base.primary))
+                        .padding(.leading, 4)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+
+            })
+            .accessibilityIdentifier("new-conversation.button")
+            .background(Capsule().fill(Color.viewBackground))
+        }
     }
 }
