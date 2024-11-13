@@ -30,11 +30,11 @@ public final class CreateFolderViewModel: ObservableObject {
         }
     }
 
-    private let useCase: any CreateConversationFolderUseCaseType
+    private let useCase: any CreateConversationFolderUseCaseProtocol
 
     // MARK: - Lifecycle
 
-    public init(useCase: any CreateConversationFolderUseCaseType) {
+    public init(useCase: any CreateConversationFolderUseCaseProtocol) {
         self.useCase = useCase
     }
 
