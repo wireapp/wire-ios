@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -24,6 +24,7 @@
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
 		010497DB2940F4F40046124D /* ProxyCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */; };
 		010497E12940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */; };
+		010D391E2CDBB0730038FA95 /* ConversationListViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010D391D2CDBB0730038FA95 /* ConversationListViewController+UISearchBarDelegate.swift */; };
 		011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */; };
 		013638F42BF6A23200A68F89 /* DeveloperToolsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */; };
 		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
@@ -1996,6 +1997,7 @@
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
 		010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationShowCustomBackendInfoHandler.swift; sourceTree = "<group>"; };
+		010D391D2CDBB0730038FA95 /* ConversationListViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
 		011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileClientViewModel.swift; sourceTree = "<group>"; };
 		013638F32BF6A23200A68F89 /* DeveloperToolsPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsPresenter.swift; sourceTree = "<group>"; };
 		0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -3899,6 +3901,10 @@
 		F1FEA14D21DCEB1700790A54 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		065A5ADB279B07AC002D4D1E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -4683,6 +4689,7 @@
 		598108B02B7F6D480021A0A9 /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				595C04172CDE85E800DF6C57 /* MainController */,
 				5902F8E12BF7B14F00F1D392 /* ConversationList */,
 				5922E92C2BA06889001A7B01 /* E2EIdentity */,
 				598108B12B7F6D4E0021A0A9 /* GroupDetails */,
@@ -8315,6 +8322,7 @@
 				060A368E2CBCF0A90066908C /* Empty placeholders */,
 				E96AB4FA2C0722F900792DA9 /* ConversationListViewController+NavigationBar */,
 				EFA145F3231EA4980073BA5E /* ConversationListViewController.swift */,
+				010D391D2CDBB0730038FA95 /* ConversationListViewController+UISearchBarDelegate.swift */,
 				8784D4561E81832F007A6867 /* ConversationListViewController+NetworkStatusBarDelegate.swift */,
 				EF3CBC092147D81700566295 /* ConversationListViewController+PushPermissions.swift */,
 				BFAAB2421DEDB21E00CBC096 /* ConversationListViewController+Transitions.swift */,
@@ -8646,6 +8654,9 @@
 			);
 			dependencies = (
 				BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				595C04172CDE85E800DF6C57 /* MainController */,
 			);
 			name = "Wire-iOS-Tests";
 			packageProductDependencies = (
@@ -9782,6 +9793,7 @@
 				87D56DF61E003A5300DFF722 /* CollectionsViewController.swift in Sources */,
 				EE6C212928438B3A0031EFB9 /* SettingsCellDescriptorFactory+Developer.swift in Sources */,
 				5965E9732C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift in Sources */,
+				010D391E2CDBB0730038FA95 /* ConversationListViewController+UISearchBarDelegate.swift in Sources */,
 				5E766D9B211472C0005242B4 /* AuthenticationFlowStep.swift in Sources */,
 				E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */,
 				EE6CA1832A8BBDDB006725CE /* ConversationCreationValues.swift in Sources */,
