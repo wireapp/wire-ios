@@ -18,56 +18,67 @@
 
 import UIKit
 import WireDesign
+import SwiftUI
+
+private struct EmptyView: View {
+    var newConversationAction: () -> Void
+
+    var body: some View {
+        VStack {
+            Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone)
+                .font(.textStyle(.body1))
+                .foregroundStyle(Color.secondaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+            
+            Button(action: {
+                newConversationAction()
+            }, label: {
+                HStack {
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 20, height: 20)
+                        .background(Circle().fill(Color(ColorTheme.Base.primary)))
+                        
+                    Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone)
+                        .font(.textStyle(.body1))
+                        .foregroundStyle(Color(ColorTheme.Base.primary))
+                        .padding(.leading, 4)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 7)
+                
+            })
+            .accessibilityIdentifier("new-conversation.button")
+            .background(Capsule().fill(Color.viewBackground))
+        }
+    }
+}
 
 final class EmptyConversationSearchResultsView: UIView {
     
-    var newConversationAction: UIAction
+    var newConversationAction: () -> Void
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+   
+    private var hostingViewController: UIHostingController<EmptyView>!
     
-    init(newConversationAction: UIAction) {
+    init(newConversationAction: @escaping () -> Void) {
         self.newConversationAction = newConversationAction
        
         super.init(frame: .zero)
+
+        self.hostingViewController = UIHostingController(rootView: EmptyView(newConversationAction: { [weak self] in
+            self?.newConversationAction()
+        }))
         
-        let titleLabel = DynamicFontLabel(
-            text: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone,
-            style: .body1,
-            color: ColorTheme.Base.secondaryText
-        )
-        
-        let newConversationButton = DynamicFontButton(style: .body1)
-        newConversationButton.setTitleColor(ColorTheme.Base.primary, for: .normal)
-        
-        let image = UIImage.imageForIcon(.plus, size: StyleKitIcon.Size.tiny.rawValue, color: ColorTheme.Backgrounds.background)
-        let newIcon = createRoundIconImage(icon: image, iconSize: 10, backgroundColor: ColorTheme.Base.primary, imageSize: 20)
-        
-        let spacing: CGFloat = 10
-        newConversationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing / 2, bottom: 0, right: spacing / 2)
-        newConversationButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing / 2, bottom: 0, right: -spacing / 2)
-        
-        newConversationButton.setImage(newIcon, for: .normal)
-        newConversationButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
-        newConversationButton.layer.cornerRadius = 18
-        newConversationButton.layer.masksToBounds = true
-        
-        newConversationButton.addAction(newConversationAction, for: .touchUpInside)
-        newConversationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 42, bottom: 10, right: 42)
-        newConversationButton.setTitle(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.phone, for: .normal)
-        newConversationButton.accessibilityIdentifier = "new-conversation.button"
-        
-        titleLabel.textAlignment = .center
-        titleLabel.numberOfLines = 0
-        
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, newConversationButton])
-        stackView.axis = .vertical
-        stackView.spacing = 15
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.alignment = .center
-        stackView.distribution = .equalSpacing
-        addSubview(stackView)
+        self.addSubview(hostingViewController.view)
+        hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        let stackView = hostingViewController!.view!
+        stackView.backgroundColor = .clear
         NSLayoutConstraint.activate([
             
             stackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
@@ -83,25 +94,42 @@ final class EmptyConversationSearchResultsView: UIView {
         
     }
 }
-
-fileprivate func createRoundIconImage(icon: UIImage, iconSize: CGFloat, backgroundColor: UIColor, imageSize: CGFloat) -> UIImage? {
-    // Create a UIView with a circular shape
-    let view = UIView(frame: CGRect(x: 0, y: 0, width: imageSize, height: imageSize))
-    view.backgroundColor = backgroundColor
-    view.layer.cornerRadius = imageSize / 2
-    view.clipsToBounds = true
-    
-    // Create an UIImageView for the icon and center it in the view
-    let iconImageView = UIImageView(image: icon.withRenderingMode(.alwaysTemplate))
-    iconImageView.contentMode = .scaleAspectFit
-    iconImageView.frame = CGRect(x: (imageSize - iconSize) / 2, y: (imageSize - iconSize) / 2, width: iconSize, height: iconSize)
-    view.addSubview(iconImageView)
-    
-    // Render the view into a UIImage
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
-    view.layer.render(in: UIGraphicsGetCurrentContext()!)
-    let image = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    
-    return image
-}
+ /*
+ let titleLabel = DynamicFontLabel(
+     text: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.phone,
+     style: .body1,
+     color: ColorTheme.Base.secondaryText
+ )
+ 
+ let newConversationButton = DynamicFontButton(style: .body1)
+newConversationButton.setTitleColor(Color(ColorTheme.Base.primary.color), for: .normal)
+ 
+ let image = UIImage.imageForIcon(.plus, size: StyleKitIcon.Size.tiny.rawValue, color: ColorTheme.Backgrounds.background)
+ let newIcon = createRoundIconImage(icon: image, iconSize: 10, backgroundColor: ColorTheme.Base.primary, imageSize: 20)
+ 
+ let spacing: CGFloat = 10
+ newConversationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing / 2, bottom: 0, right: spacing / 2)
+ newConversationButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing / 2, bottom: 0, right: -spacing / 2)
+ 
+ newConversationButton.setImage(newIcon, for: .normal)
+ newConversationButton.setBackgroundImageColor(ColorTheme.Backgrounds.background, for: .normal)
+ newConversationButton.layer.cornerRadius = 18
+ newConversationButton.layer.masksToBounds = true
+ 
+ newConversationButton.addAction(newConversationAction, for: .touchUpInside)
+ newConversationButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 42, bottom: 10, right: 42)
+ newConversationButton.setTitle(
+     , for: .normal)
+ newConversationButton.accessibilityIdentifier = "new-conversation.button"
+ 
+ titleLabel.textAlignment = .center
+ titleLabel.numberOfLines = 0
+ 
+ let stackView = UIStackView(arrangedSubviews: [titleLabel, newConversationButton])
+ stackView.axis = .vertical
+ stackView.spacing = 15
+ stackView.translatesAutoresizingMaskIntoConstraints = false
+ stackView.alignment = .center
+ stackView.distribution = .equalSpacing
+ addSubview(stackView)
+ */

@@ -334,7 +334,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        let connectWithPeopleAction = UIAction { [weak self] _ in
+        let connectWithPeopleAction: () -> Void = { [weak self] in
             self?.presentConnectUI()
         }
         emptyPlaceholderView = EmptyPlaceholderContainerView(
