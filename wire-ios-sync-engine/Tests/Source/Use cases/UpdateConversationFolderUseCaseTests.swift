@@ -55,7 +55,7 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
         var folderID: UUID!
         var conversationID: UUID!
 
-        managedObjectContext.performAndWait {
+        await managedObjectContext.perform { [self] in
             let folder = modelHelper.createFolder(in: managedObjectContext)
             let conversation = modelHelper.createGroupConversation(in: managedObjectContext)
             folderID = folder.remoteIdentifier
@@ -70,7 +70,7 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
 
         // THEN
         var updatedFolderID: UUID?
-        managedObjectContext.performAndWait {
+        await managedObjectContext.perform { [self] in
             if let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext) {
                 updatedFolderID = conversation.folder?.remoteIdentifier
             }
