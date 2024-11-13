@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFolderPickerUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
-import WireFolderPickerUI
-import SwiftUI
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
@@ -410,7 +410,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     // MARK: Folder Picker
 
-    private func createFolderFilterAction(isSelected: Bool)  -> UIAction {
+    private func createFolderFilterAction(isSelected: Bool) -> UIAction {
         let action = UIAction(
             title: L10n.Localizable.ConversationList.Filter.Folders.title,
             image: FilterButtonStyleHelper.makeActionImage(
@@ -449,7 +449,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             },
             set: { [mainCoordinator] option, _ in
                 Task {
-                    if let option = option {
+                    if let option {
                         await mainCoordinator.showConversationList(
                             conversationFilter: .folder(id: option.id, name: option.title)
                         )
