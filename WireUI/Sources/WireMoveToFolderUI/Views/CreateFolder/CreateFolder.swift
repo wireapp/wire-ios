@@ -50,6 +50,7 @@ public struct CreateFolder: View {
         VStack(alignment: .leading, spacing: 8) {
             descriptionText
                 .padding(.horizontal)
+                .padding(.top, 16)
 
             VStack(alignment: .leading, spacing: 4) {
                 folderNameField
@@ -77,13 +78,19 @@ public struct CreateFolder: View {
     }
 
     private var folderNameField: some View {
-        TextField(
-            localized("folder.creation.name.placeholder"),
-            text: $viewModel.name
-        )
-        .textFieldStyle(.plain)
-        .autocorrectionDisabled()
-        .accessibilityIdentifier("input.newfolder.name")
+        ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.gray, lineWidth: 1)
+                .frame(height: 48)
+            TextField(
+                localized("folder.creation.name.placeholder"),
+                text: $viewModel.name
+            )
+            .padding(.horizontal, 8)
+            .textFieldStyle(.plain)
+            .autocorrectionDisabled()
+            .accessibilityIdentifier("input.newfolder.name")
+        }
     }
 
     private var footerText: some View {
