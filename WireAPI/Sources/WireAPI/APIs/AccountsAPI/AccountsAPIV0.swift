@@ -29,7 +29,7 @@ class AccountsAPIV0: AccountsAPI, VersionedAPI {
         .v0
     }
 
-    func upgradeToTeam(teamName: String) async throws -> UpgradeAccountEnvelope {
+    func upgradeToTeam(teamName: String) async throws -> UpgradedAccountTeam {
         throw AccountsAPIError.unsupportedEndpointForAPIVersion
     }
 }

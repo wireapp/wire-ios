@@ -24,7 +24,7 @@ public struct AccountsAPIBuilder {
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter apiService: An api service.
 
     public init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
@@ -38,21 +38,21 @@ public struct AccountsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any AccountsAPI {
         switch version {
         case .v0:
-            return AccountsAPIV0(apiService: apiService)
+            AccountsAPIV0(apiService: apiService)
         case .v1:
-            return AccountsAPIV1(apiService: apiService)
+            AccountsAPIV1(apiService: apiService)
         case .v2:
-            return AccountsAPIV2(apiService: apiService)
+            AccountsAPIV2(apiService: apiService)
         case .v3:
-            return AccountsAPIV3(apiService: apiService)
+            AccountsAPIV3(apiService: apiService)
         case .v4:
-            return AccountsAPIV4(apiService: apiService)
+            AccountsAPIV4(apiService: apiService)
         case .v5:
-            return AccountsAPIV5(apiService: apiService)
+            AccountsAPIV5(apiService: apiService)
         case .v6:
-            return AccountsAPIV6(apiService: apiService)
+            AccountsAPIV6(apiService: apiService)
         case .v7:
-            return AccountsAPIV7(apiService: apiService)
+            AccountsAPIV7(apiService: apiService)
         }
     }
 }

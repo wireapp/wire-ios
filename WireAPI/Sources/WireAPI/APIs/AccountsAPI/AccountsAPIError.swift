@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `ConversationsAPI`.
+/// Errors originating from `AccountsAPI`.
 public enum AccountsAPIError: Error {
     /// An error occurred while encoding the request body.
     case invalidRequestBody

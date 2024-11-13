@@ -70,10 +70,10 @@ struct ResponseParser<Success> {
         return copy
     }
 
-    func failure<E: Error>(
+    func failure(
         code: HTTPStatusCode,
         label: String = "",
-        error: E
+        error: some Error
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { _, data in

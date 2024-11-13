@@ -24,5 +24,5 @@ public protocol AccountsAPI {
     ///
     ///
 
-    func upgradeToTeam(teamName: String) async throws -> UpgradeAccountEnvelope
+    func upgradeToTeam(teamName: String) async throws -> UpgradedAccountTeam
 }

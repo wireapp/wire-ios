@@ -18,7 +18,9 @@
 
 import Foundation
 
-struct UpgradeToTeamResponseEnvelopeV7: Decodable, ToAPIModelConvertible, Sendable {
+/// The upgraded account's team information.
+
+public struct UpgradedAccountTeam: Equatable, Sendable {
 
     /// The team's ID.
     public let teamId: UUID
@@ -26,7 +28,18 @@ struct UpgradeToTeamResponseEnvelopeV7: Decodable, ToAPIModelConvertible, Sendab
     /// The team's name.
     public let teamName: String
 
-    func toAPIModel() -> UpgradeAccountEnvelope {
-        UpgradeAccountEnvelope(teamId: teamId, teamName: teamName)
+    /// Create a new `UpgradedAccountTeam`.
+    ///
+    /// - Parameters:
+    ///   - teamId: The team's ID.
+    ///   - teamName: The team's name.
+
+    public init(
+        teamId: UUID,
+        teamName: String
+    ) {
+        self.teamId = teamId
+        self.teamName = teamName
     }
+
 }

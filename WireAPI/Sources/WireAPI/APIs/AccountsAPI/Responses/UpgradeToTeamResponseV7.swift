@@ -18,9 +18,7 @@
 
 import Foundation
 
-/// A container for update events.
-
-public struct UpgradeAccountEnvelope: Equatable, Codable, Sendable {
+struct UpgradeToTeamResponseV7: Decodable, ToAPIModelConvertible, Sendable {
 
     /// The team's ID.
     public let teamId: UUID
@@ -28,18 +26,7 @@ public struct UpgradeAccountEnvelope: Equatable, Codable, Sendable {
     /// The team's name.
     public let teamName: String
 
-    /// Create a new `UpgradeAccountEnvelope`.
-    ///
-    /// - Parameters:
-    ///   - teamId: The team's ID.
-    ///   - teamName: The team's name.
-
-    public init(
-        teamId: UUID,
-        teamName: String
-    ) {
-        self.teamId = teamId
-        self.teamName = teamName
+    func toAPIModel() -> UpgradedAccountTeam {
+        UpgradedAccountTeam(teamId: teamId, teamName: teamName)
     }
-
 }

@@ -45,7 +45,7 @@ public struct IndividualToTeamMigrationUseCase {
             logger.debug("Individual account migrated to team account")
             return IndividualToTeamMigrationResult(teamID: upgradeResult.teamId, teamName: upgradeResult.teamName)
         } catch {
-            logger.debug("Failed to migrate individual account to team account")
+            logger.error("Failed to migrate individual account to team account")
             throw error
         }
     }

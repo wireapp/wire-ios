@@ -23,7 +23,7 @@ class AccountsAPIV7: AccountsAPIV6 {
         .v7
     }
 
-    override func upgradeToTeam(teamName: String) async throws -> UpgradeAccountEnvelope {
+    override func upgradeToTeam(teamName: String) async throws -> UpgradedAccountTeam {
         let components = URLComponents(string: "upgrade-personal-to-team")
 
         guard let url = components?.url else {
@@ -52,7 +52,7 @@ class AccountsAPIV7: AccountsAPIV6 {
         )
 
         return try ResponseParser()
-            .success(code: .ok, type: UpgradeToTeamResponseEnvelopeV7.self)
+            .success(code: .ok, type: UpgradeToTeamResponseV7.self)
             .failure(code: .forbidden, label: "user-already-in-a-team", error: AccountsAPIError.userAlreadyInATeam)
             .failure(code: .notFound, label: "not-found", error: AccountsAPIError.userNotFound)
             .parse(code: response.statusCode, data: data)
