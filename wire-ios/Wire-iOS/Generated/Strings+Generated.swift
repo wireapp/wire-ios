@@ -2790,8 +2790,9 @@ internal enum L10n {
             /// No results found.
             internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.ipad", fallback: "No results found.")
             /// No conversations could be found.
+            /// 
             /// Connect with people or start a new group conversation:
-            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.phone", fallback: "No conversations could be found.\nConnect with people or start a new group conversation:")
+            internal static let phone = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.subheadline.phone", fallback: "No conversations could be found.\n\nConnect with people or start a new group conversation:")
           }
         }
       }
