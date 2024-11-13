@@ -369,7 +369,7 @@ extension ConversationLocalStore {
               let content = genericMessage.content else {
             
             if let sender = try? await userLocalStore.fetchUser(
-                with: senderID,
+                id: senderID,
                 domain: senderDomain
             ) {
                 let systemMessage = SystemMessage(
@@ -404,7 +404,7 @@ extension ConversationLocalStore {
         // Verifies that a sender of an update event is part of the conversation. If they are not,
         // it means that our local state is out of sync and we need to update the list of participants.
         guard let sender = try? await userLocalStore.fetchUser(
-            with: senderID,
+            id: senderID,
             domain: senderDomain
         ) else {
             return
