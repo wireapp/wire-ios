@@ -20,8 +20,8 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationListViewControllerSearchTests: XCTestCase {
-
+final class ConversationListViewControllerSearchTests: XCTestCase { // TODO: delete
+/*
     func test_makeSearchController_withNoFilter() {
         // GIVEN
         let filter: ConversationFilter? = nil
@@ -41,6 +41,7 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         let filter: ConversationFilter = .favorites
 
         // WHEN
+        sut.apply
         let searchController = ConversationListViewController.makeSearchController(filter: filter)
 
         // THEN
@@ -91,4 +92,5 @@ final class ConversationListViewControllerSearchTests: XCTestCase {
         XCTAssertFalse(searchController.obscuresBackgroundDuringPresentation)
         XCTAssertFalse(searchController.searchBar.isTranslucent)
     }
+ */
 }

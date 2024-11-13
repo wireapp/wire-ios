@@ -478,20 +478,11 @@ final class ConversationListViewController: UIViewController {
         updateFilterContainerView()
         configureEmptyPlaceholder()
 
-        // TODO: this needs to be called as a result of an empty list of conversations, not directly from selecting a filter
-        if isEmptyPlaceholderVisible {
-            navigationItem.searchController = nil
-            navigationItem.hidesSearchBarWhenScrolling = false
-        } else if navigationItem.searchController == nil {
-            navigationItem.searchController = Self.makeSearchController()
-            let filter = listContentController.listViewModel.selectedFilter
-            navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
-        }
-        navigationController?.view.setNeedsLayout()
-        navigationController?.view.layoutIfNeeded()
-        listContentController.collectionView.scrollRectToVisible(.zero, animated: false)
-        DispatchQueue.main.async {
-            self.navigationItem.hidesSearchBarWhenScrolling = true
+        let filter = listContentController.listViewModel.selectedFilter
+        navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        if #available(iOS 16.4, *) {
+            // This should actually be done as a result of an empty list of conversations, not directly when selecting a filter.
+            navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
         }
     }
 
