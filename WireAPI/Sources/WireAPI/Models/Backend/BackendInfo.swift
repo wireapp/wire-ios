@@ -38,8 +38,8 @@ public struct BackendInfo: Equatable {
 
     public let developmentVersions: Set<APIVersion>
 
-    /// Whether the backend has MLS public keys.
+    /// Whether the backend supports MLS.
 
-    public let isMLSEnabledOnBackend: Bool
+    public let isMLSEnabled: Bool
 
 }
