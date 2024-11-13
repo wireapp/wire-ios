@@ -23,9 +23,11 @@ import WireReusableUIComponents
 public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
+    private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
 
-    public init(viewModel: FolderPickerViewModel) {
+    public init(viewModel: FolderPickerViewModel, createFolderUseCase: any CreateConversationFolderUseCaseProtocol) {
         self.viewModel = viewModel
+        self.createFolderUseCase = createFolderUseCase
     }
 
     public var body: some View {
@@ -53,7 +55,10 @@ public struct FolderPicker: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        // TODO: [WPB-12012] Implement folder creation view
+                        CreateFolder(
+                            viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
+                            conversationName: "Default Conversation" // Adjust as needed
+                        )
                     } label: {
                         Image(systemName: "plus")
                             .accessibilityIdentifier("button.newfolder.create")
@@ -101,7 +106,7 @@ public struct FolderPicker: View {
                 ]
             ),
             updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
-        )
+        ), createFolderUseCase: PreviewCreateConversationFolderUseCase()
     )
 }
 
@@ -113,3 +118,10 @@ struct PreviewMoveConversationToFolderUseCase: UpdateConversationFolderUseCaseTy
     func invoke(conversationID: UUID, folderID: UUID) async throws {}
 
 }
+
+struct PreviewCreateConversationFolderUseCase: CreateConversationFolderUseCaseProtocol {
+    func invoke(name: String) async throws -> Folder {
+        Folder(identifier: UUID(), name: "Test")
+    }
+}
+
