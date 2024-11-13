@@ -42,6 +42,13 @@ public struct UpdateConversationFolderUseCase {
             }
 
             conversation.moveToFolder(folder)
+
+            do {
+                try context.save()
+            } catch {
+                context.rollback()
+                throw error
+            }
         }
     }
 
