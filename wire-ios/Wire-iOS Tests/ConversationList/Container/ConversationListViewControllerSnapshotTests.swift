@@ -36,9 +36,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     private var sut: ConversationListViewController! { zClientViewController.conversationListViewController }
     private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
-    private var windowScene: UIWindowScene! {
-        UIApplication.shared.connectedScenes.first as? UIWindowScene
-    }
+    private var windowScene: UIWindowScene! { UIApplication.shared.connectedScenes.first as? UIWindowScene }
+    private var searchBar: UISearchBar! { sut.navigationItem.searchController?.searchBar }
 
     @MainActor
     override func setUp() async throws {
@@ -68,8 +67,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             userSession: userSession,
             trackingManager: nil
         )
-
-
+        window = .init(windowScene: windowScene)
+        window.backgroundColor = .systemBackground
+        window.overrideUserInterfaceStyle = .dark
+        window.rootViewController = zClientViewController
+        window.makeKeyAndVisible()
     }
 
     override func tearDown() {
@@ -82,17 +84,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         window = nil
     }
 
-    @MainActor
-    func testForNoConversations() async {
-        window = .init(windowScene: windowScene)
-        window.rootViewController = zClientViewController
-        window.makeKeyAndVisible()
-
-        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
-        zClientViewController.overrideUserInterfaceStyle = .dark
-        UIView.setAnimationsEnabled(false)
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+    func testForNoConversations() {
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForEverythingArchived() {
@@ -100,8 +94,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversation.isArchived = true
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     // MARK: - Snapshot Tests for Filter View
@@ -124,8 +117,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.none)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     @MainActor
@@ -143,8 +136,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByGroups() {
@@ -156,8 +149,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingConversationsFilteredByFavourites() {
@@ -174,8 +167,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByFavourites() {
@@ -187,12 +180,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
-    @MainActor
-    func testForShowingConversationsFilteredByOneOnOne() async throws {
+    //
+    func testForShowingConversationsFilteredByOneOnOne() throws {
         // GIVEN
         let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         user1.name = "Alice"
@@ -210,14 +203,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        window = .init(windowScene: windowScene)
-        window.rootViewController = zClientViewController
-        window.makeKeyAndVisible()
-
-        await fulfillment(of: [viewIfLoadedExpectation(for: zClientViewController)], timeout: 5)
-        zClientViewController.overrideUserInterfaceStyle = .dark
-        UIView.setAnimationsEnabled(false)
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByOneOnOne() throws {
@@ -235,8 +222,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: zClientViewController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     // MARK: - Helper Methods
@@ -256,10 +243,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         return conversations
     }
 
-    private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
-        let predicate = NSPredicate { _, _ in
-            viewController.viewIfLoaded != nil
+    /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.
+    private func renderedImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: window.bounds.size)
+        return renderer.image { ctx in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
         }
-        return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
 }
