@@ -16,11 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for handling creating a folder
-public protocol CreateConversationFolderUseCaseType {
-    /// Creates a folder
-    /// - Parameters:
-    ///   - name: The name of the folder to create
-    @MainActor
-    func invoke(name: String) async throws -> Folder
+import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
+
+extension CreateConversationFolderUseCase: CreateConversationFolderUseCaseType {
+
+    public func invoke(name: String) async throws -> Folder {
+        guard let labelType = try await self.fetchLabelType(for: name) else {
+            throw FolderCreationError.invalidLabelType
+        }
+        return Folder(labelType)
+    }
+
+    private func fetchLabelType(for name: String) async throws -> LabelType? {
+        return await self.invoke(with: name)
+    }
+
+    private enum FolderCreationError: Error {
+        case invalidLabelType
+    }
+
 }

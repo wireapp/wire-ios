@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for handling creating a folder
-public protocol CreateConversationFolderUseCaseType {
-    /// Creates a folder
-    /// - Parameters:
-    ///   - name: The name of the folder to create
-    @MainActor
-    func invoke(name: String) async throws -> Folder
+import WireMoveToFolderUI
+import WireDataModel
+
+extension Folder {
+    
+    init(_ label: LabelType) {
+        self.init(
+            identifier: label.remoteIdentifier,
+            name: label.name ?? ""
+        )
+    }
 }
