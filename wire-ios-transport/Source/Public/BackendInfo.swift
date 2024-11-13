@@ -66,7 +66,7 @@ public enum BackendInfo {
         set { storage.set(newValue, forKey: Key.isFederationEnabled.rawValue) }
     }
 
-    public static var isMLSEnabledOnBackend: Bool {
+    public static var isMLSEnabled: Bool {
         get { storage.bool(forKey: Key.isMLSEnabledOnBackend.rawValue) }
         set { storage.set(newValue, forKey: Key.isMLSEnabledOnBackend.rawValue) }
     }
