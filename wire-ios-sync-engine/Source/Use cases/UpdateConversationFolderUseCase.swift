@@ -35,10 +35,10 @@ public struct UpdateConversationFolderUseCase {
     public func invoke(conversationID: UUID, folderID: UUID) async throws {
         try await context.perform {
             guard let folder = Label.fetch(with: folderID, in: context) else {
-                throw UpdateConversationFolderError.folderNotFound
+                throw Failure.folderNotFound
             }
             guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else {
-                throw UpdateConversationFolderError.conversationNotFound
+                throw Failure.conversationNotFound
             }
 
             conversation.moveToFolder(folder)
@@ -47,7 +47,7 @@ public struct UpdateConversationFolderUseCase {
 
     // MARK: - Error
 
-    private enum UpdateConversationFolderError: Error {
+    public enum Failure: Error {
         case folderNotFound
         case conversationNotFound
     }
