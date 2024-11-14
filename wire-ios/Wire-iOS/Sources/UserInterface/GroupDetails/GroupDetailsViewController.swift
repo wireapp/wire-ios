@@ -550,7 +550,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
-        menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 }
