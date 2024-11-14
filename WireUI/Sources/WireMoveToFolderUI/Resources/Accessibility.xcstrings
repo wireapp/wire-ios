@@ -9,36 +9,6 @@
             "value" : "Close folder picker"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -46,12 +16,6 @@
           }
         },
         "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "el" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
@@ -75,18 +39,6 @@
             "value" : "Close folder picker"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -94,36 +46,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
@@ -141,49 +63,13 @@
             "value" : "Close folder picker"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
@@ -201,61 +87,13 @@
             "value" : "Close folder picker"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
@@ -268,18 +106,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Close folder picker"
