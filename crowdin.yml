@@ -74,8 +74,8 @@ files: [
   "multilingual": true,
  },
   {
-   "source" : "/WireUI/Sources/WireMoveToFolderPickerUI/Resources/Accessibility.xcstrings",
-   "dest" : "/App/WireMoveToFolderPickerUI/Resources/Accessibility.xcstrings",
+   "source" : "/WireUI/Sources/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
+   "dest" : "/App/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
    "translation" : "%original_path%/%original_file_name%",
    "multilingual": true,
  },

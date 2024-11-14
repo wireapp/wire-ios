@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Legal hold";
+
 "sidebar.conversation_filter.title" = "Các cuộc hội thoại";
 "sidebar.conversation_filter.all.title" = "Tất cả";
 "sidebar.conversation_filter.favorites.title" = "Các ưa thích";

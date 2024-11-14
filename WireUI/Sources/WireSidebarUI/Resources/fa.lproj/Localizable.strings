@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Legal hold";
+
 "sidebar.conversation_filter.title" = "گفتگو";
 "sidebar.conversation_filter.all.title" = "همه";
 "sidebar.conversation_filter.favorites.title" = "علاقه‌مندی‌ها";
