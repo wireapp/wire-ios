@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
@@ -31,11 +32,11 @@ struct CallToActionButton: View {
             action: action,
             label: { Text(title) }
         )
-        .foregroundStyle(isEnabled ? .white : .primary)
+        .foregroundStyle(Color(uiColor: isEnabled ? ColorTheme.Buttons.Primary.onEnabled : ColorTheme.Buttons.Primary.onDisabled))
         .wireTextStyle(.buttonBig)
         .frame(height: 56)
         .frame(maxWidth: .infinity)
-        .background(isEnabled ? AccentColor.blue.color : .gray)
+        .background(Color(uiColor: isEnabled ? ColorTheme.Buttons.Primary.enabled : ColorTheme.Buttons.Primary.disabled))
         .cornerRadius(16)
     }
 }

@@ -103,6 +103,9 @@
         }
       }
     },
+    "individualToTeam.completion.closeButton.accessibilityLabel" : {
+
+    },
     "individualToTeam.completion.headline" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -135,6 +138,9 @@
           }
         }
       }
+    },
+    "individualToTeam.confirmation.closeButton.accessibilityLabel" : {
+
     },
     "individualToTeam.confirmation.passwordField.forgotPassword" : {
       "extractionState" : "manual",
@@ -201,6 +207,9 @@
           }
         }
       }
+    },
+    "individualToTeam.planSelection.closeButton.accessibilityLabel" : {
+
     },
     "individualToTeam.planSelection.feature.adminConsole" : {
       "extractionState" : "manual",
@@ -311,6 +320,9 @@
           }
         }
       }
+    },
+    "individualToTeam.teamName.closeButton.accessibilityLabel" : {
+
     },
     "individualToTeam.teamName.field.placeholder" : {
       "extractionState" : "manual",

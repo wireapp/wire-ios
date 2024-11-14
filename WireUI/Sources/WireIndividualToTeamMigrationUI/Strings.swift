@@ -39,7 +39,11 @@ extension String {
         String(format: .localized(key: key, bundle: bundle), arguments)
     }
 
+    static func localizedAccessibilityLabel(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
+        String(localized: key, table: "Accessibility", bundle: bundle)
+    }
+
     static func localized(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
-        String(localized: key, bundle: bundle)
+        String(localized: key, table: "Localizable", bundle: bundle)
     }
 }

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct Checkbox: View {
     @Binding var isChecked: Bool
@@ -41,11 +42,11 @@ struct Checkbox: View {
                 if isChecked {
                     Image(systemName: "checkmark.square.fill")
                         .font(.system(size: 24))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color(uiColor: ColorTheme.Buttons.Primary.enabled))
                 } else {
                     Image(systemName: "square")
                         .font(.system(size: 24))
-                        .backgroundStyle(.gray)
+                        .backgroundStyle(Color(uiColor: ColorTheme.Buttons.Secondary.disabled))
                 }
             })
             .buttonStyle(.plain)
