@@ -89,8 +89,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close folder picker"
+            "state" : "translated",
+            "value" : "Закрыть выбор папок"
           }
         },
         "sl" : {
