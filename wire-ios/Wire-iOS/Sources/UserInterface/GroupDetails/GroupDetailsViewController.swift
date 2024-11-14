@@ -486,14 +486,6 @@ private extension GroupDetailsViewController {
     }
 }
 
-extension GroupDetailsViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true) {
-            completion?()
-        }
-    }
-}
-
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
@@ -542,7 +534,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: userSession)
-        menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 
