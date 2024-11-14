@@ -18,27 +18,37 @@
 
 import Foundation
 
+@MainActor
 public final class FolderPickerViewModel: ObservableObject {
+
+    // MARK: - Properties
+
     @Published private(set) var folders: [Folder] = []
 
     private let conversation: Conversation
     private let directory: any FolderDirectoryTypeProtocol
-    private let selectionUseCase: any MoveConversationToFolderUseCaseType
+    private let updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
+
+    // MARK: - Initialization
 
     public init(
         conversation: Conversation,
         directory: any FolderDirectoryTypeProtocol,
-        selectionUseCase: any MoveConversationToFolderUseCaseType
+        updateConversationFolderUseCase: any UpdateConversationFolderUseCaseProtocol
     ) {
         self.conversation = conversation
         self.directory = directory
-        self.selectionUseCase = selectionUseCase
+        self.updateConversationFolderUseCase = updateConversationFolderUseCase
         loadFolders()
     }
+
+    // MARK: - Private interface
 
     private func loadFolders() {
         folders = directory.allFolders
     }
+
+    // MARK: - Public interface
 
     public func isSelected(_ folder: Folder) -> Bool {
         guard let folderID = folder.identifier else { return false }
@@ -46,6 +56,8 @@ public final class FolderPickerViewModel: ObservableObject {
     }
 
     public func select(_ folder: Folder) async throws {
-        try await selectionUseCase.invoke(folder: folder, conversation: conversation)
+        let conversationID = conversation.identifier
+        guard let folderID = folder.identifier else { return }
+        try await updateConversationFolderUseCase.invoke(conversationID: conversationID, folderID: folderID)
     }
 }
