@@ -17,14 +17,6 @@
 //
 
 import UIKit
-import WireSystem
-
-enum Anchor {
-    case top
-    case bottom
-    case leading
-    case trailing
-}
 
 extension UIView {
 
