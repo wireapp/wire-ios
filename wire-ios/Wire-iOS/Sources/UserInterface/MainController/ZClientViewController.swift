@@ -126,7 +126,13 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+            conversationDirectory: userSession.conversationDirectory,
+            conversationFilter: { [weak self] in
+                self?.conversationFilter()
+            }
+        )
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -730,6 +736,10 @@ final class ZClientViewController: UIViewController {
         } catch {
             WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
+    }
+
+    private func conversationFilter() -> ConversationFilter? {
+        conversationListViewController.conversationFilter
     }
 }
 

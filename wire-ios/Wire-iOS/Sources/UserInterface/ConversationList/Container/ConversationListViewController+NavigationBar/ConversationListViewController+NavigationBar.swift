@@ -420,16 +420,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         ) { [weak mainCoordinator, weak self] _ in
             guard let self, let mainCoordinator else { return }
 
-            let folders: [FolderPickerOption] = self.viewModel.userSession.conversationDirectory.allFolders.compactMap {
-                guard let id = $0.remoteIdentifier, let title = $0.name else { return nil }
+            Task { @MainActor [folderPickerViewControllerBuilder] in
+                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                if let sheet = viewController.sheetPresentationController {
+                    sheet.detents = [.medium(), .large()]
+                    sheet.prefersGrabberVisible = true
+                }
 
-                return FolderPickerOption(id: id, title: title)
-            }
-
-            Task { @MainActor in
-                let viewController = self.makeFolderPickerViewController(options: folders)
                 await mainCoordinator.presentViewController(viewController)
-
             }
         }
 
@@ -440,40 +438,5 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
 
         return action
-    }
-
-    private func makeFolderPickerViewController(options: [FolderPickerOption]) -> UIViewController {
-        let selected = Binding<FolderPickerOption?>(
-            get: {
-                self.conversationFilter?.folderData.map { FolderPickerOption(id: $0.id, title: $0.name) }
-            },
-            set: { [mainCoordinator] option, _ in
-                Task {
-                    if let option {
-                        await mainCoordinator.showConversationList(
-                            conversationFilter: .folder(id: option.id, name: option.title)
-                        )
-                    }
-                    await  mainCoordinator.dismissPresentedViewController()
-                }
-            }
-        )
-
-        let navigationStack = NavigationStack {
-            FolderPicker(
-                showCloseButton: true,
-                options: options,
-                helpLink: WireURLs.shared.howToAddAConversationToACustomFolder,
-                selected: selected
-            )
-        }
-
-        let hostingController = UIHostingController(rootView: navigationStack)
-        if let sheet = hostingController.sheetPresentationController {
-            sheet.detents = [.medium(), .large()]
-            sheet.prefersGrabberVisible = true
-        }
-
-        return hostingController
     }
 }

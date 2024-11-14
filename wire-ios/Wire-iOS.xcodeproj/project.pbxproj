@@ -1167,6 +1167,7 @@
 		BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */; };
 		CB366A902CC7DE410083701F /* ArchivedListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB366A8F2CC7DE410083701F /* ArchivedListViewModelTests.swift */; };
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
+		CB43DBC42CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
 		D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FA292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift */; };
@@ -3247,6 +3248,7 @@
 		BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationRenamedCellTests.swift; sourceTree = "<group>"; };
 		BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSnapshotTestCase.swift; sourceTree = "<group>"; };
 		CB366A8F2CC7DE410083701F /* ArchivedListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewModelTests.swift; sourceTree = "<group>"; };
+		CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerViewControllerBuilder.swift; sourceTree = "<group>"; };
 		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoConvert.swift"; sourceTree = "<group>"; };
 		CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
@@ -5484,6 +5486,7 @@
 				7C440E7723472DFB00D91B5F /* FolderCreationNameSectionController.swift */,
 				7C440E7923472E9900D91B5F /* FolderCreationNameCell.swift */,
 				7C440E82234B35CB00D91B5F /* FolderPickerViewController.swift */,
+				CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */,
 			);
 			path = Folders;
 			sourceTree = "<group>";
@@ -9825,6 +9828,7 @@
 				5E936E8F20B590530060E6AA /* UIDevice+Platform.swift in Sources */,
 				EF1A461A21AD60510009B6B9 /* ReceiptOptionsSectionController.swift in Sources */,
 				63497734268CBDAE00824A05 /* CallGridAction.swift in Sources */,
+				CB43DBC42CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift in Sources */,
 				EE2DF7602875E2E20028ECA2 /* PreferredAPIVersionViewModel.swift in Sources */,
 				5E423CD92295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift in Sources */,
 				EEB8A2D01F628D1100958881 /* Settings+Account.swift in Sources */,
