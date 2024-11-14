@@ -398,14 +398,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
 }
 
-// MARK: - ViewControllerDismisser
-
-extension MessageDetailsContentViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        viewController.dismiss(animated: true, completion: nil)
-    }
-}
-
 // MARK: - ProfileViewControllerDelegate
 
 extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
