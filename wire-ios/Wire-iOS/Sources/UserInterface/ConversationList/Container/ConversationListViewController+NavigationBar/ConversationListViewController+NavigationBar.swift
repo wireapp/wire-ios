@@ -143,10 +143,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Groups.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
-        case (.collapsed, _):
-            L10n.Localizable.List.title
         case (.expanded, .folder):
             L10n.Localizable.ConversationList.Filter.Folders.title
+        case (.collapsed, _):
+            L10n.Localizable.List.title
         }
     }
 
