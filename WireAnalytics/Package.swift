@@ -24,7 +24,6 @@ let package = Package(
             name: "WireAnalytics",
             dependencies: [
                 .product(name: "Countly", package: "countly-sdk-ios"),
-                .target(name: "WireDatadog")
             ],
             swiftSettings: swiftSettings
         ),
@@ -76,7 +75,6 @@ func datadogFiles() -> [String] {
 }
 
 func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
-    return true
     if let value {
         ProcessInfo.processInfo.environment[name] == value
     } else {
