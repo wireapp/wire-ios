@@ -32,7 +32,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    private let viewModel: GroupParticipantsDetailViewModel
+    let viewModel: GroupParticipantsDetailViewModel
     private let collectionViewController: SectionCollectionViewController
 
     private lazy var searchController: UISearchController = {
@@ -125,7 +125,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     // MARK: - Setup
 
-    private func setupViews() {
+    func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         // Setup search controller
@@ -165,7 +165,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     // MARK: - Private Methods
 
-    private func handleParticipantsChange() {
+    func handleParticipantsChange() {
         collectionViewController.sections = computeSections()
         collectionViewController.collectionView?.reloadData()
 
