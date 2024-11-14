@@ -35,18 +35,21 @@ final class GroupParticipantsDetailViewController: UIViewController {
     private let viewModel: GroupParticipantsDetailViewModel
     private let collectionViewController: SectionCollectionViewController
 
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.searchBar.delegate = self
+        controller.searchResultsUpdater = self
+        return controller
+    }()
+
     private lazy var collectionView: UICollectionView = {
         let collection = UICollectionView(forGroupedSections: ())
         collection.accessibilityIdentifier = "group_details.full_list"
         collection.contentInset = .zero
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
-    }()
-
-    private lazy var searchViewController: SearchHeaderViewController = {
-        let controller = SearchHeaderViewController(userSelection: .init())
-        controller.view.translatesAutoresizingMaskIntoConstraints = false
-        return controller
     }()
 
     // State tracking
@@ -125,8 +128,10 @@ final class GroupParticipantsDetailViewController: UIViewController {
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        addToSelf(searchViewController)
-        searchViewController.delegate = viewModel
+        // Setup search controller
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
 
         view.addSubview(collectionView)
         collectionViewController.collectionView = collectionView
@@ -135,11 +140,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            searchViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            searchViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-
-            collectionView.topAnchor.constraint(equalTo: searchViewController.view.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -216,6 +217,27 @@ final class GroupParticipantsDetailViewController: UIViewController {
             showSectionCount: false,
             userSession: viewModel.userSession
         )
+    }
+}
+
+// MARK: - UISearchResultsUpdating
+
+extension GroupParticipantsDetailViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else { return }
+        viewModel.updateSearch(query: searchText)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension GroupParticipantsDetailViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        viewModel.updateSearch(query: "")
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
 }
 
