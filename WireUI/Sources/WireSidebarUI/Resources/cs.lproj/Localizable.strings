@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Legal hold";
+
 "sidebar.conversation_filter.title" = "Konverzace";
 "sidebar.conversation_filter.all.title" = "Vše";
 "sidebar.conversation_filter.favorites.title" = "Oblíbené";

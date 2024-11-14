@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Правовий захист";
+
 "sidebar.conversation_filter.title" = "Розмови";
 "sidebar.conversation_filter.all.title" = "Всі";
 "sidebar.conversation_filter.favorites.title" = "Вподобання";
