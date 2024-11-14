@@ -117,7 +117,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
-    private lazy var conversationListViewController = ConversationListViewController(
+    private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
@@ -126,7 +126,8 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
