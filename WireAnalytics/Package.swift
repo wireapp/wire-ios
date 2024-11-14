@@ -3,6 +3,9 @@
 import Foundation
 import PackageDescription
 
+// You can enable/disable Datadog for debugging by overriding the boolean.
+let datadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
+
 let package = Package(
     name: "WireAnalytics",
     platforms: [.iOS(.v16), .macOS(.v12)],
@@ -19,20 +22,18 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies() + [
-                .product(name: "Countly", package: "countly-sdk-ios")
+            dependencies: [
+                .product(name: "Countly", package: "countly-sdk-ios"),
+                .target(name: "WireDatadog")
             ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
-            dependencies: [
-                .product(name: "DatadogCore", package: "dd-sdk-ios"),
-                .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-                .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-                .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-                .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ],
+            dependencies: datadogDependencies(),
+            path: "Sources/WireDatadog",
+            exclude: ["WireFakeDatadog.swift"],
+            sources: datadogFiles(),
             swiftSettings: swiftSettings
         ),
         .target(
@@ -52,12 +53,25 @@ let package = Package(
     ]
 )
 
-func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
-    // You can enable/disable Datadog for debugging by overriding the boolean.
-    if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        ["WireDatadog"]
+func datadogDependencies() -> [Target.Dependency] {
+    if datadogEnabled {
+        [
+            .product(name: "DatadogCore", package: "dd-sdk-ios"),
+            .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
+            .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+            .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+            .product(name: "DatadogTrace", package: "dd-sdk-ios")
+        ]
     } else {
         []
+    }
+}
+
+func datadogFiles() -> [String] {
+    if datadogEnabled {
+        ["WireDatadog.swift"]
+    } else {
+        ["WireFakeDatadog.swift"]
     }
 }
 

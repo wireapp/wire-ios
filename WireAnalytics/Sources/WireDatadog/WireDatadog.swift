@@ -32,7 +32,7 @@ public final class WireDatadog {
     private let logLevel: LogLevel = .debug
 
     public private(set) var userIdentifier: String
-    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
+    private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
     public init(
         applicationID: String,
@@ -121,6 +121,14 @@ public final class WireDatadog {
         )
     }
 
+    public func addAttribute(forKey key: String, value: String) {
+        logger?.addTag(withKey: key, value: value)
+    }
+    
+    public func removeAttribute(forKey key: String) {
+        logger?.removeAttribute(forKey: key)
+    }
+    
     // MARK: Static Helpers
 
     private static func hashedDatadogUserIdentifier(_ uuid: UUID) -> String {
