@@ -28,26 +28,17 @@ enum Anchor {
 
 extension UIView {
 
-    /// fit self in a container view
-    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with 2 pt:
-    ///
-    /// self.fitIn(view: container, insets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
-    ///
+    /// Fits `self` within a specified container view with optional insets.
     /// - Parameters:
-    ///   - view: the container view to fit in
-    ///   - insets: a UIEdgeInsets for inset of self.
+    ///   - view: The container view in which to fit `self`.
+    ///   - insets: Insets to apply on each side of `self` relative to the container.
     func fitIn(view: UIView, insets: UIEdgeInsets = .zero) {
         translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(fitInConstraints(view: view, insets: insets))
-    }
-
-    func fitInConstraints(view: UIView,
-                          insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
-        return [
-            leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.leading),
-            trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.trailing),
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.left),
+            trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.right),
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),
             bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
-        ]
+        ])
     }
 }
