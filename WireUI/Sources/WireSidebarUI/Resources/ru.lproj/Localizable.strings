@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Юридические ограничения";
+
 "sidebar.conversation_filter.title" = "Беседы";
 "sidebar.conversation_filter.all.title" = "Все";
 "sidebar.conversation_filter.favorites.title" = "Избранное";
