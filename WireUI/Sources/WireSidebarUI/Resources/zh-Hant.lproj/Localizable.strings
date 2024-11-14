@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Legal hold";
+
 "sidebar.conversation_filter.title" = "對話";
 "sidebar.conversation_filter.all.title" = "全部";
 "sidebar.conversation_filter.favorites.title" = "我的最愛";
