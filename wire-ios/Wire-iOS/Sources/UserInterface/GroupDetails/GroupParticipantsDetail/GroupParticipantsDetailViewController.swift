@@ -24,24 +24,41 @@ import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
-    private let mainCoordinator: AnyMainCoordinator
-    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
-    private let collectionView = UICollectionView(forGroupedSections: ())
-    private let searchViewController = SearchHeaderViewController(userSelection: .init())
-    let viewModel: GroupParticipantsDetailViewModel
-    private let collectionViewController: SectionCollectionViewController
+    // MARK: - Types
 
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
 
-    // used for scrolling and fading selected cells
-    private var firstLayout = true
-    private var firstLoad = true
+    // MARK: - Properties
+
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    private let viewModel: GroupParticipantsDetailViewModel
+    private let collectionViewController: SectionCollectionViewController
+
+    private lazy var collectionView: UICollectionView = {
+        let collection = UICollectionView(forGroupedSections: ())
+        collection.accessibilityIdentifier = "group_details.full_list"
+        collection.contentInset = .zero
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        return collection
+    }()
+
+    private lazy var searchViewController: SearchHeaderViewController = {
+        let controller = SearchHeaderViewController(userSelection: .init())
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        return controller
+    }()
+
+    // State tracking
+    private var isFirstLayout = true
 
     weak var delegate: GroupDetailsUserDetailPresenter?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
     }
+
+    // MARK: - Initialization
 
     init(
         selectedParticipants: [UserType],
@@ -65,68 +82,63 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupViews()
-        createConstraints()
+        setupConstraints()
+        configureViewModel()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if firstLayout {
-            firstLayout = false
+        if isFirstLayout {
+            isFirstLayout = false
             scrollToFirstHighlightedUser()
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        firstLoad = false
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupNavigationBarTitle(L10n.Localizable.Participants.All.title)
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
 
+        configureNavigationBar()
         collectionViewController.collectionView?.reloadData()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        coordinator.animate(alongsideTransition: { _ in
-            self.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
-        })
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate { [weak self] _ in
+            self?.collectionViewController.collectionView?.collectionViewLayout.invalidateLayout()
+        }
     }
 
-    func setupViews() {
-        addToSelf(searchViewController)
-        searchViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        searchViewController.delegate = viewModel
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(collectionView)
+    // MARK: - Setup
 
+    private func setupViews() {
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+
+        addToSelf(searchViewController)
+        searchViewController.delegate = viewModel
+
+        view.addSubview(collectionView)
         collectionViewController.collectionView = collectionView
         collectionViewController.sections = computeSections()
-        viewModel.participantsDidChange = participantsDidChange
-
-        collectionView.accessibilityIdentifier = "group_details.full_list"
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
-    private func createConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             searchViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
             searchViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
             collectionView.topAnchor.constraint(equalTo: searchViewController.view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -134,7 +146,25 @@ final class GroupParticipantsDetailViewController: UIViewController {
         ])
     }
 
-    func participantsDidChange() {
+    private func configureViewModel() {
+        viewModel.participantsDidChange = { [weak self] in
+            self?.handleParticipantsChange()
+        }
+    }
+
+    private func configureNavigationBar() {
+        setupNavigationBarTitle(L10n.Localizable.Participants.All.title)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
+    }
+
+    // MARK: - Private Methods
+
+    private func handleParticipantsChange() {
         collectionViewController.sections = computeSections()
         collectionViewController.collectionView?.reloadData()
 
@@ -144,58 +174,59 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     private func scrollToFirstHighlightedUser() {
-        if let indexPath = viewModel.indexPathOfFirstSelectedParticipant {
-            collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
-        }
+        guard let indexPath = viewModel.indexPathOfFirstSelectedParticipant else { return }
+        collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
     }
 
     private func computeSections() -> [CollectionViewSectionController] {
         var sections = [CollectionViewSectionController]()
 
         if !viewModel.admins.isEmpty {
-            sections.append(
-                ParticipantsSectionController(
-                    participants: viewModel.admins,
-                    userStatuses: viewModel.userStatuses,
-                    conversationRole: .admin,
-                    conversation: viewModel.conversation,
-                    delegate: self,
-                    totalParticipantsCount: viewModel.admins.count,
-                    clipSection: false,
-                    showSectionCount: false,
-                    userSession: viewModel.userSession
-                )
-            )
+            sections.append(createParticipantsSection(
+                participants: viewModel.admins,
+                role: .admin,
+                count: viewModel.admins.count
+            ))
         }
 
         if !viewModel.members.isEmpty {
-            sections.append(
-                ParticipantsSectionController(
-                    participants: viewModel.members,
-                    userStatuses: viewModel.userStatuses,
-                    conversationRole: .member,
-                    conversation: viewModel.conversation,
-                    delegate: self,
-                    totalParticipantsCount: viewModel.members.count,
-                    clipSection: false,
-                    showSectionCount: false,
-                    userSession: viewModel.userSession
-                )
-            )
+            sections.append(createParticipantsSection(
+                participants: viewModel.members,
+                role: .member,
+                count: viewModel.members.count
+            ))
         }
 
         return sections
     }
 
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        viewModel.participants[indexPath.row].isSelfUser == false
+    private func createParticipantsSection(
+        participants: [UserType],
+        role: ConversationRole,
+        count: Int
+    ) -> ParticipantsSectionController {
+        return ParticipantsSectionController(
+            participants: participants,
+            userStatuses: viewModel.userStatuses,
+            conversationRole: role,
+            conversation: viewModel.conversation,
+            delegate: self,
+            totalParticipantsCount: count,
+            clipSection: false,
+            showSectionCount: false,
+            userSession: viewModel.userSession
+        )
     }
 }
 
-extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
+// MARK: - GroupDetailsSectionControllerDelegate
 
+extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
     func presentDetails(for user: UserType) {
-        guard let conversation = viewModel.conversation as? ZMConversation else { return }
+        guard
+            !user.isSelfUser,
+            let conversation = viewModel.conversation as? ZMConversation
+        else { return }
 
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
@@ -205,9 +236,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
-        if !user.isSelfUser {
-            navigationController?.pushViewController(viewController, animated: true)
-        }
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
 
     func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType) {
@@ -215,7 +245,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
-
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
@@ -227,11 +256,11 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         detailsViewController.delegate = self
         navigationController?.pushViewController(detailsViewController, animated: animated)
     }
-
 }
 
-extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
+// MARK: - ProfileViewControllerDelegate
 
+extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         Task {
             await mainCoordinator.showConversationList(conversationFilter: .none)
