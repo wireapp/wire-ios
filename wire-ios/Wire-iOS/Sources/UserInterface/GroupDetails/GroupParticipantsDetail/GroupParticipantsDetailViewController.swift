@@ -201,7 +201,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: nil,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
