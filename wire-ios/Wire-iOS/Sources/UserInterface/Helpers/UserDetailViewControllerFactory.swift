@@ -36,7 +36,7 @@ enum UserDetailViewControllerFactory {
         user: UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
-        viewControllerDismisser: ViewControllerDismisser,
+        viewControllerDismisser: ViewControllerDismisser?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol

@@ -201,7 +201,7 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self,
+            viewControllerDismisser: nil,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -229,15 +229,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         navigationController?.pushViewController(detailsViewController, animated: animated)
     }
 
-}
-
-extension GroupParticipantsDetailViewController: ViewControllerDismisser {
-
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true) {
-            completion?()
-        }
-    }
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
