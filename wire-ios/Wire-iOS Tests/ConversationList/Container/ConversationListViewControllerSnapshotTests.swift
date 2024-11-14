@@ -31,10 +31,10 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var zClientViewController: ZClientViewController!
+    private var sut: ConversationListViewController!
     private var window: UIWindow!
     private var snapshotHelper: SnapshotHelper!
 
-    private var sut: ConversationListViewController! { zClientViewController.conversationListViewController }
     private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
     private var windowScene: UIWindowScene! { UIApplication.shared.connectedScenes.first as? UIWindowScene }
     private var searchBar: UISearchBar! { sut.navigationItem.searchController?.searchBar }
@@ -67,14 +67,32 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             userSession: userSession,
             trackingManager: nil
         )
+
+        sut = .init(
+            account: coreDataStack.account,
+            selfUserLegalHoldSubject: selfUser,
+            userSession: userSession,
+            zClientViewController: zClientViewController,
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
+            selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
+        )
+        sut.mainSplitViewState = .collapsed
+        let tabBarController = ZClientViewController.MainCoordinator.TabBarController()
+        tabBarController.applyMainTabBarControllerAppearance()
+        tabBarController.conversationListUI = sut
+
         window = .init(windowScene: windowScene)
         window.backgroundColor = .systemBackground
         window.overrideUserInterfaceStyle = .dark
-        window.rootViewController = zClientViewController
+        window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
 
     override func tearDown() {
+        sut = nil
         snapshotHelper = nil
         zClientViewController = nil
         userSession = nil
@@ -121,8 +139,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: renderedImage())
     }
 
-    @MainActor
-    func testForShowingConversationsFilteredByGroups() async {
+    func testForShowingConversationsFilteredByGroups() {
         // GIVEN
         let conversationData = [
             (name: "iOS Team", isFavorite: false),
