@@ -31,7 +31,6 @@ let package = Package(
             name: "WireDatadog",
             dependencies: datadogDependencies(),
             path: "Sources/WireDatadog",
-            exclude: ["WireFakeDatadog.swift"],
             sources: datadogFiles(),
             swiftSettings: swiftSettings
         ),
