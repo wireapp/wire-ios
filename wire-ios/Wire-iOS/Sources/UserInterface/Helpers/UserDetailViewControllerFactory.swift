@@ -48,7 +48,7 @@ enum UserDetailViewControllerFactory {
                 actionType: .removeService(conversation),
                 userSession: userSession
             )
-            serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
+
             return serviceDetailViewController
 
         } else {
