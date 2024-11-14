@@ -30,6 +30,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     private var modelHelper: ModelHelper!
     private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
     private var zClientViewController: ZClientViewController!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
@@ -43,8 +44,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     override func setUp() async throws {
 
         coreDataFixture = .init()
-        coreDataStack.account.imageData = mockImageData
-
         modelHelper = .init()
 
         let selfUser = try XCTUnwrap(coreDataFixture.selfUser)
@@ -60,6 +59,9 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
+        mockGetUserAccountImageSourceUseCase = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
+
         snapshotHelper = .init()
 
         zClientViewController = ZClientViewController(
@@ -67,7 +69,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             userSession: userSession,
             trackingManager: nil
         )
-
         sut = .init(
             account: coreDataStack.account,
             selfUserLegalHoldSubject: selfUser,
@@ -77,9 +78,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
+            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         sut.mainSplitViewState = .collapsed
+
         let tabBarController = ZClientViewController.MainCoordinator.TabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
         tabBarController.conversationListUI = sut
@@ -89,6 +92,10 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         window.overrideUserInterfaceStyle = .dark
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
+
+        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
     }
 
     override func tearDown() {
@@ -96,6 +103,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = nil
         zClientViewController = nil
         userSession = nil
+        mockGetUserAccountImageSourceUseCase = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         modelHelper = nil
         coreDataFixture = nil
         window.isHidden = true
@@ -258,6 +267,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             conversations.append(conversation)
         }
         return conversations
+    }
+
+    private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
+        let predicate = NSPredicate { _, _ in
+            viewController.viewIfLoaded != nil
+        }
+        return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
 
     /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.

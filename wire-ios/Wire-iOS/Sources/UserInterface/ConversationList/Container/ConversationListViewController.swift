@@ -123,7 +123,8 @@ final class ConversationListViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
-        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
+        getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -131,7 +132,7 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             mainCoordinator: mainCoordinator,
-            getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
+            getUserAccountImageSourceUseCase: getUserAccountImageSourceUseCase
         )
         self.init(
             viewModel: viewModel,

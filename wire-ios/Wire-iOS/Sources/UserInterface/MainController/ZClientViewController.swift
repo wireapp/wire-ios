@@ -126,7 +126,8 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
