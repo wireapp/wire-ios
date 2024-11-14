@@ -452,8 +452,8 @@ private extension MainSidebarMenuItem {
             self = .groups
         case .oneOnOne:
             self = .oneOnOne
-        case .folder(let id, let name):
-            self = .folder(id: id, name: name)
+        case .folder:
+            self = .folders
         }
     }
 }

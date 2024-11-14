@@ -29,7 +29,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .favorites: self = .favorites
         case .groups: self = .groups
         case .oneOnOne: self = .oneOnOne
-        case let .folder(id, name): self = .folder(id: id, name: name)
+        case .folders: self = .folders
         case .archive: self = .archive
         case .settings: self = .settings
         }
@@ -41,7 +41,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .favorites: .favorites
         case .groups: .groups
         case .oneOnOne: .oneOnOne
-        case let .folder(id, name): .folder(id: id, name: name)
+        case .folders: .folders
         case .archive: .archive
         case .settings: .settings
         }

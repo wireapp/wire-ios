@@ -20,7 +20,7 @@ import Foundation
 
 public enum MainSidebarMenuItem: Sendable, Equatable {
     // conversation filters
-    case all, favorites, groups, oneOnOne, archive, folder(id: UUID, name: String)
+    case all, favorites, groups, oneOnOne, archive, folders
     // bottom
     case settings
 }

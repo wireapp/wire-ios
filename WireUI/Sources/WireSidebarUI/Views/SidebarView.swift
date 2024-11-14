@@ -190,7 +190,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
             icon = "person"
 
-        case .folder:
+        case .folders:
             text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
             icon = "folder"
 

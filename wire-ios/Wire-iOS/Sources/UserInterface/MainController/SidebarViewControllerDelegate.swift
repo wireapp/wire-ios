@@ -57,8 +57,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .groups)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
-            case let .folder(id, name):
-                await mainCoordinator.showConversationList(conversationFilter: .folder(id: id, name: name))
+            case .folders:
+                break // Tapping on folder is handled elsewhere
             case .archive:
                 await mainCoordinator.showArchive()
             case .settings:

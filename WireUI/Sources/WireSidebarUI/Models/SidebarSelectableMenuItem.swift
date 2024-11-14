@@ -20,7 +20,7 @@ import Foundation
 
 public enum SidebarSelectableMenuItem: Comparable, Sendable, Hashable {
     // conversation filters
-    case all, favorites, groups, oneOnOne, folder(id: UUID, name: String)
+    case all, favorites, groups, oneOnOne, folders
     // archived conversations
     case archive
     // bottom
