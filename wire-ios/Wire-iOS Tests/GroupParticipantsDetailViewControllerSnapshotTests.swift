@@ -40,7 +40,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 }
 
-final class GroupParticipantsDetailViewControllerTests: XCTestCase {
+final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
 
     // MARK: Properties
 
