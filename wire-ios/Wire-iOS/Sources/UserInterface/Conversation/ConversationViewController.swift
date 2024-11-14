@@ -249,6 +249,12 @@ final class ConversationViewController: UIViewController {
         super.viewWillAppear(animated)
         isAppearing = true
         updateGuestsBarVisibility()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [self] in
+            let context = userSession.contextProvider.viewContext
+            let selfUser = ZMUser.selfUser(in: context)
+            ZClientViewController.shared?.openClientListScreen(for: selfUser)
+        }
     }
 
     override func didMove(toParent parent: UIViewController?) {
