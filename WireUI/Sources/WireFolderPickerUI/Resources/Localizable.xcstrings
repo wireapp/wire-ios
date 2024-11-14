@@ -10,36 +10,6 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -50,12 +20,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fügen Sie Ihre Unterhaltungen Ordnern hinzu, um organisiert zu bleiben."
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
           }
         },
         "en" : {
@@ -76,18 +40,6 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -95,36 +47,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -142,49 +64,13 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -202,61 +88,13 @@
             "value" : "Add your conversations to folders to stay organized."
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Добавляйте беседы в папки, чтобы сохранять их упорядоченность."
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -269,18 +107,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Add your conversations to folders to stay organized."
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Add your conversations to folders to stay organized."
@@ -309,36 +135,6 @@
             "value" : "How to add a conversation to a folder"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -346,12 +142,6 @@
           }
         },
         "de" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "el" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
@@ -375,18 +165,6 @@
             "value" : "How to add a conversation to a folder"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -394,36 +172,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
@@ -441,49 +189,13 @@
             "value" : "How to add a conversation to a folder"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
@@ -501,61 +213,13 @@
             "value" : "How to add a conversation to a folder"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Как добавить беседу в папку"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
@@ -568,18 +232,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "How to add a conversation to a folder"
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "How to add a conversation to a folder"
@@ -608,36 +260,6 @@
             "value" : "Folders"
           }
         },
-        "be" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "bg" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "ca" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "cs" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -648,12 +270,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ordner"
-          }
-        },
-        "el" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
           }
         },
         "en" : {
@@ -674,18 +290,6 @@
             "value" : "Folders"
           }
         },
-        "eu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "fa" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -693,36 +297,6 @@
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "he" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "hr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "hu" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -740,49 +314,13 @@
             "value" : "Folders"
           }
         },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
           }
         },
-        "lv" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "ms" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "my" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "nl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -800,61 +338,13 @@
             "value" : "Folders"
           }
         },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "ro" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Папки"
           }
         },
-        "si" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
         "sl" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "sr-CS" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "sr-SP" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mappar"
-          }
-        },
-        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -867,18 +357,6 @@
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "ur-PK" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Folders"
-          }
-        },
-        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
