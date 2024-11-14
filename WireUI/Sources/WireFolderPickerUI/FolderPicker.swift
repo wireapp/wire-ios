@@ -90,7 +90,12 @@ public struct FolderPicker: View {
                 url: helpLink
             )
         } else {
-            picker()
+            if #available(iOS 17.0, *) {
+                picker()
+                    .contentMargins(.top, 16)
+            } else {
+                picker()
+            }
         }
     }
 
@@ -105,7 +110,7 @@ public struct FolderPicker: View {
                         .tag(option)
                 }
             } label: {
-                Text(verbatim: "")
+                EmptyView()
             }
             .accentColor(Color(accentColor))
             .pickerStyle(.inline)
