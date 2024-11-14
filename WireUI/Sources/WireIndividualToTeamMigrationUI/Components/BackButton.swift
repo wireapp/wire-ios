@@ -18,6 +18,7 @@
 
 
 import SwiftUI
+import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
@@ -36,7 +37,7 @@ struct BackButton: View {
         .frame(maxWidth: .infinity)
         .overlay {
             RoundedRectangle(cornerRadius: 16)
-                .stroke(.gray, lineWidth: 1)
+                .stroke(Color(uiColor: ColorTheme.Strokes.outline), lineWidth: 1)
         }
         .cornerRadius(16)
     }

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import UIKit
+import WireDesign
 import WireDomainAPI
 
 class IndividualToTeamMigrationViewController: UIViewController {
@@ -33,6 +34,19 @@ class IndividualToTeamMigrationViewController: UIViewController {
                 return .localized(key: titleStringKey, bundle: .module)
             case .completion(let profileName, _):
                 return .formated(key: titleStringKey, bundle: .module, profileName)
+            }
+        }
+
+        var closeButtonAccessibilityLabel: String {
+            switch self {
+            case .teamPlanSelection:
+                return .localizedAccessibilityLabel(key: "individualToTeam.planSelection.closeButton.accessibilityLabel", bundle: .module)
+            case .teamName:
+                return .localizedAccessibilityLabel(key: "individualToTeam.teamName.closeButton.accessibilityLabel", bundle: .module)
+            case .confirmation:
+                return .localizedAccessibilityLabel(key: "individualToTeam.confirmation.closeButton.accessibilityLabel", bundle: .module)
+            case .completion:
+                return .localizedAccessibilityLabel(key: "individualToTeam.completion.closeButton.accessibilityLabel", bundle: .module)
             }
         }
 
@@ -171,15 +185,15 @@ private func hostedView(
         )
     )
     vc.title = step.title
-    vc.navigationItem.rightBarButtonItem = UIBarButtonItem(
-        image: UIImage(systemName: "xmark"),
-        style: .plain,
-        target: target,
-        action: #selector(IndividualToTeamMigrationViewController.onDismissTapped)
+    vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+        action: UIAction { _ in
+            transitionCallback(.toCancellationAlert)
+        },
+        accessibilityLabel: step.closeButtonAccessibilityLabel
     )
     // Hide navigation bar title
     vc.navigationItem.titleView = UIView()
-    vc.navigationItem.rightBarButtonItem?.tintColor = .darkText
+    vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
     return vc
 }
 @MainActor

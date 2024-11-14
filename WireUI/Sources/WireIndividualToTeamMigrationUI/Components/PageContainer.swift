@@ -43,7 +43,7 @@ struct PageContainer<Content: View>: View {
         VStack {
             Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
                 .wireTextStyle(.subline1)
-                .foregroundStyle(.gray)
+                .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
             Spacer()
                 .frame(height: 12)
             Text(stepTitle)
