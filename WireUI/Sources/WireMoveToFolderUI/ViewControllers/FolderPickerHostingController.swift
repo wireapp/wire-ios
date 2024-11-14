@@ -16,27 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import SwiftUI
+import UIKit
 
-// MARK: - ConversationFolderSelectionUseCaseProtocol
+public final class FolderPickerHostingController: UIHostingController<FolderPicker> {
+    private let viewModel: FolderPickerViewModel
 
-public protocol ConversationFolderSelectionUseCaseProtocol {
+    public init(viewModel: FolderPickerViewModel) {
+        self.viewModel = viewModel
+        super.init(rootView: FolderPicker(viewModel: viewModel))
+    }
 
-    func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    )
-
-}
-
-// MARK: - ConversationFolderSelectionUseCase
-
-final class ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
-
-    public func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    ) {
-        conversation.moveToFolder(folder)
+    @available(*, unavailable)
+    @MainActor dynamic required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -67,4 +67,16 @@ files: [
    "translation" : "%original_path%/%original_file_name%",
    "multilingual": true,
  },
+  {
+  "source" : "/WireUI/Sources/WireMoveToFolderUI/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireMoveToFolderUI/Resources/Localizable.xcstrings",
+  "translation" : "%original_path%/%original_file_name%",
+  "multilingual": true,
+ },
+  {
+   "source" : "/WireUI/Sources/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
+   "dest" : "/App/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
+   "translation" : "%original_path%/%original_file_name%",
+   "multilingual": true,
+ },
 ]

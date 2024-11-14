@@ -113,7 +113,6 @@ final class ConversationListViewController: UIViewController {
             updateNavigationItem()
             applyColorTheme()
             updateFilterContainerView()
-            navigationItem.searchController?.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
         }
     }
 
@@ -129,7 +128,8 @@ final class ConversationListViewController: UIViewController {
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
+        getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -137,7 +137,7 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
             mainCoordinator: mainCoordinator,
-            getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
+            getUserAccountImageSourceUseCase: getUserAccountImageSourceUseCase
         )
         self.init(
             viewModel: viewModel,
@@ -185,6 +185,8 @@ final class ConversationListViewController: UIViewController {
 
         hideNoContactLabel(animated: false)
         viewModel.viewController = self
+
+        setupSearchController()
     }
 
     @available(*, unavailable)
@@ -217,8 +219,6 @@ final class ConversationListViewController: UIViewController {
 
         applyColorTheme()
 
-        setupSearchController()
-
         setContentScrollView(listContentController.collectionView)
     }
 
@@ -247,6 +247,8 @@ final class ConversationListViewController: UIViewController {
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
+
+        navigationItem.hidesSearchBarWhenScrolling = true
     }
 
     override func viewDidLayoutSubviews() {
@@ -346,7 +348,8 @@ final class ConversationListViewController: UIViewController {
         }
         emptyPlaceholderView = EmptyPlaceholderView(
             content: emptyPlaceholderForSelectedFilter,
-            connectWithPeopleAction: connectWithPeopleAction)
+            connectWithPeopleAction: connectWithPeopleAction
+        )
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
@@ -381,7 +384,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
-            emptyPlaceholderView.topAnchor.constraint(equalTo: view.topAnchor),
+            emptyPlaceholderView.topAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.topAnchor),
             emptyPlaceholderView.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
             emptyPlaceholderView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             emptyPlaceholderView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
@@ -398,16 +401,11 @@ final class ConversationListViewController: UIViewController {
         : ColorTheme.Backgrounds.surface
     }
 
-    static func makeSearchController(
-            filter: ConversationFilter?,
-            mainSplitViewState: MainSplitViewState,
-            isEmptyPlaceholderVisible: Bool
-    ) -> UISearchController {
+    static func makeSearchController() -> UISearchController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
-        searchController.hidesNavigationBarDuringPresentation = mainSplitViewState == .collapsed
-        searchController.searchBar.placeholder = searchPlaceholderText(for: filter)
+        searchController.hidesNavigationBarDuringPresentation = true
         return searchController
     }
 
@@ -427,21 +425,14 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupSearchController() {
-        let searchController = ConversationListViewController.makeSearchController(
-            filter: listContentController.listViewModel.selectedFilter,
-            mainSplitViewState: mainSplitViewState,
-            isEmptyPlaceholderVisible: isEmptyPlaceholderVisible
-        )
-
+        let filter = listContentController.listViewModel.selectedFilter
+        let searchController = Self.makeSearchController()
         searchController.searchBar.delegate = self
         searchController.searchResultsUpdater = self
-
-        if !isEmptyPlaceholderVisible {
-            navigationItem.searchController = searchController
-        } else {
-            navigationItem.searchController = nil
-        }
+        searchController.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        navigationItem.searchController = searchController
         navigationItem.preferredSearchBarPlacement = .stacked
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
@@ -496,9 +487,15 @@ final class ConversationListViewController: UIViewController {
         } else {
             setupRightNavigationBarButtonItems_SplitView()
         }
-        setupSearchController()
         updateFilterContainerView()
         configureEmptyPlaceholder()
+
+        let filter = listContentController.listViewModel.selectedFilter
+        navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
+        if #available(iOS 16.4, *) {
+            // This should actually be done as a result of an empty list of conversations, not directly when selecting a filter.
+            navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
+        }
     }
 
     @objc

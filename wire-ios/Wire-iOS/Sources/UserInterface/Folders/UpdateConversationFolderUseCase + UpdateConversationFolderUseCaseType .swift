@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for handling moving a conversation to a specified folder
-public protocol MoveConversationToFolderUseCaseType: Sendable {
-    /// Moves a conversation to a specified folder
-    /// - Parameters:
-    ///   - folder: The destination folder
-    ///   - conversation: The conversation to be moved
-    func invoke(folder: Folder, conversation: Conversation) async throws
+import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
+
+extension UpdateConversationFolderUseCase: UpdateConversationFolderUseCaseProtocol {
+
+    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+        guard let folderID = folder.identifier else { return }
+        try await self.invoke(conversationID: conversation.identifier, folderID: folderID)
+    }
 }
