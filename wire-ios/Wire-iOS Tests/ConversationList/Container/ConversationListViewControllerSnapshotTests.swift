@@ -79,6 +79,10 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
             createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+                conversationDirectory: userSession.conversationDirectory,
+                conversationFilter: { nil }
+            ),
             getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         sut.mainSplitViewState = .collapsed
