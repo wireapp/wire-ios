@@ -47,13 +47,13 @@ public protocol TeamRepositoryProtocol {
 
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.
-    /// - Parameter teamID: The ID of the team.
-    /// - Parameter time: The time the member left the team.
+    /// - Parameter domain: The domain of the team member.
+    /// - Parameter date: The time the member left the team.
 
     func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
-        at time: Date
+        userID: UUID,
+        domain: String?,
+        date: Date
     ) async throws
 
     /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
@@ -67,13 +67,15 @@ public protocol TeamRepositoryProtocol {
 
 }
 
-public final class TeamRepository: TeamRepositoryProtocol {
+public class TeamRepository: TeamRepositoryProtocol {
 
     // MARK: - Properties
 
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create TeamLocalStore
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
@@ -97,24 +99,42 @@ public final class TeamRepository: TeamRepositoryProtocol {
         await storeTeamLocally(team)
     }
 
+    public func pullSelfTeamRoles() async throws {
+        let teamRoles = try await fetchSelfTeamRolesRemotely()
+        try await storeTeamRolesLocally(teamRoles)
+    }
+
+    public func pullSelfTeamMembers() async throws {
+        let teamMembers = try await fetchSelfTeamMembersRemotely()
+        try await storeTeamMembersLocally(teamMembers)
+    }
+
     public func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
-        at time: Date
+        userID: UUID,
+        domain: String?,
+        date: Date
     ) async throws {
-        let user = try await userRepository.fetchUser(with: userID, domain: nil)
+        let user = try await userRepository.fetchUser(
+            id: userID,
+            domain: domain
+        )
 
         let member = try await context.perform {
             guard let member = user.membership else {
-                throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
+                throw TeamRepositoryError.userNotAMemberInTeam(user: userID)
             }
 
             return member
         }
 
-        await userRepository.deleteUserAccount(
-            for: user,
-            at: time
+        let domain = await context.perform {
+            user.domain
+        }
+
+        try await userRepository.deleteUserAccount(
+            id: userID,
+            domain: domain,
+            at: date
         )
 
         await context.perform { [context] in
@@ -138,19 +158,10 @@ public final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
-    public func pullSelfTeamRoles() async throws {
-        let teamRoles = try await fetchSelfTeamRolesRemotely()
-        try await storeTeamRolesLocally(teamRoles)
-    }
-
-    public func pullSelfTeamMembers() async throws {
-        let teamMembers = try await fetchSelfTeamMembersRemotely()
-        try await storeTeamMembersLocally(teamMembers)
-    }
-
     public func pullSelfLegalholdInfo() async throws {
-        let (selfUserID, selfClientID) = await context.perform { [userRepository] in
-            let selfUser = userRepository.fetchSelfUser()
+        let selfUser = await userRepository.fetchSelfUser()
+
+        let (selfUserID, selfClientID) = await context.perform {
             let selfUserID: UUID = selfUser.remoteIdentifier
             let selfClientID = selfUser.selfClient()?.remoteIdentifier
 
@@ -166,13 +177,13 @@ public final class TeamRepository: TeamRepositoryProtocol {
             }
 
             await userRepository.addLegalHoldRequest(
-                for: selfUserID,
+                userID: selfUserID,
                 clientID: selfClientID,
                 lastPrekey: selfUserLegalHold.prekey
             )
 
         case .disabled:
-            try await userRepository.disableUserLegalHold()
+            await userRepository.disableUserLegalHold()
 
         default:
             break
@@ -180,8 +191,10 @@ public final class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo {
-        let selfUserID: UUID = await context.perform { [userRepository] in
-            userRepository.fetchSelfUser().remoteIdentifier
+        let selfUser = await userRepository.fetchSelfUser()
+
+        let selfUserID: UUID = await context.perform {
+            selfUser.remoteIdentifier
         }
 
         return try await teamsAPI.getLegalholdInfo(
@@ -201,13 +214,13 @@ public final class TeamRepository: TeamRepositoryProtocol {
     }
 
     private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
-        await context.perform { [context, userRepository] in
+        let selfUser = await userRepository.fetchSelfUser()
+
+        await context.perform { [context] in
             let team = WireDataModel.Team.fetchOrCreate(
                 with: teamAPIModel.id,
                 in: context
             )
-
-            let selfUser = userRepository.fetchSelfUser()
 
             _ = WireDataModel.Member.getOrUpdateMember(
                 for: selfUser,
@@ -226,8 +239,6 @@ public final class TeamRepository: TeamRepositoryProtocol {
             team.needsToBeUpdatedFromBackend = false
         }
     }
-
-    // MARK: - Pull self team roles
 
     private func fetchSelfTeamRolesRemotely() async throws -> [WireAPI.ConversationRole] {
         do {
@@ -277,8 +288,6 @@ public final class TeamRepository: TeamRepositoryProtocol {
             team.needsToDownloadRoles = false
         }
     }
-
-    // MARK: - Pull self team members
 
     private func fetchSelfTeamMembersRemotely() async throws -> [WireAPI.TeamMember] {
         do {

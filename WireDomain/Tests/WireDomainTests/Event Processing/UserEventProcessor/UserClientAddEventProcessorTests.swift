@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
@@ -28,50 +26,51 @@ import XCTest
 
 final class UserClientAddEventProcessorTests: XCTestCase {
 
-    var sut: UserClientAddEventProcessor!
+    private var sut: UserClientAddEventProcessor!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
+    private var context: NSManagedObjectContext {
+        stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
-        coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
-        coreDataStack = try await coreDataStackHelper.createStack()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
         sut = UserClientAddEventProcessor(
-            repository: UserRepository(
-                context: context,
-                usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI(),
-                conversationRepository: MockConversationRepositoryProtocol()
-            )
+            repository: userClientsRepository
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
-        sut = nil
+        stack = nil
         modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        sut = nil
+        userClientsRepository = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Adds_A_Self_User_Client() async throws {
-        // Given
+    func testProcessEvent_It_Invokes_User_Repo_Methods() async throws {
+        // Mock
 
-        await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-            let selfUser = ZMUser.selfUser(in: context)
-            XCTAssertEqual(selfUser.clients.count, 0)
+        let userClient = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
         }
+
+        userClientsRepository.fetchOrCreateClientWith_MockMethod = { _ in
+            (userClient, true)
+        }
+
+        userClientsRepository.updateClientWithFromIsNewClient_MockMethod = { _, _, _ in }
 
         // When
 
@@ -79,82 +78,14 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-            XCTAssertEqual(selfUser.clients.count, 1)
-
-            let newClient = try XCTUnwrap(selfUser.clients.first)
-            XCTAssertEqual(newClient.remoteIdentifier, Scaffolding.clientID)
-        }
+        XCTAssertEqual(userClientsRepository.fetchOrCreateClientWith_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.updateClientWithFromIsNewClient_Invocations.count, 1)
     }
 
-    func testProcessEvent_It_Does_Not_Add_A_Self_User_Client_If_Client_Already_Exists() async throws {
-        // Given
-
-        await context.perform { [self] in
-            modelHelper.createSelfUser(in: context)
-            let client = modelHelper.createSelfClient(id: Scaffolding.clientID, in: context)
-            let selfUser = ZMUser.selfUser(in: context)
-            XCTAssertEqual(selfUser.clients.count, 1)
-        }
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        try await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-            XCTAssertEqual(selfUser.clients.count, 1)
-
-            let existingClient = WireDataModel.UserClient.fetchExistingUserClient(
-                with: Scaffolding.clientID,
-                in: context
-            )
-
-            let newClient = try XCTUnwrap(selfUser.clients.first)
-            XCTAssertEqual(newClient, existingClient)
-        }
-    }
-
-    func testProcessEvent_It_Updates_User_Client() async throws {
-        // Given
-
-        modelHelper.createSelfClient(
-            id: Scaffolding.clientID,
-            in: context
-        )
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        try await context.perform { [context] in
-            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
-                with: Scaffolding.clientID,
-                in: context
-            ))
-
-            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.clientID)
-            XCTAssertEqual(updatedClient.type, .permanent)
-            XCTAssertEqual(updatedClient.label, Scaffolding.event.client.label)
-            XCTAssertEqual(updatedClient.model, Scaffolding.event.client.model)
-            XCTAssertEqual(updatedClient.deviceClass, .phone)
-        }
-    }
-
-}
-
-private extension UserClientAddEventProcessorTests {
-    enum Scaffolding {
-        static let clientID = "94766bd92f56923d"
-
-        nonisolated(unsafe) static let event = UserClientAddEvent(
-            client: UserClient(
-                id: clientID,
+    private enum Scaffolding {
+        static let event = UserClientAddEvent(
+            client: SelfUserClient(
+                id: "94766bd92f56923d",
                 type: .permanent,
                 activationDate: .now,
                 label: "test",
@@ -167,4 +98,5 @@ private extension UserClientAddEventProcessorTests {
             )
         )
     }
+
 }

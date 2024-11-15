@@ -22,7 +22,9 @@ import WireDataModel
 
 @testable import WireDomain
 
+/// Since stencil does not handle generics properly, we need to create this mock manually.
 class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
+
     // MARK: - Life cycle
 
     // MARK: - pullFeatureConfigs

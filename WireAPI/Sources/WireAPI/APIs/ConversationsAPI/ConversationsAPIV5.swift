@@ -43,6 +43,10 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         userID: String,
         in domain: String
     ) async throws -> Conversation {
+        guard !userID.isEmpty, !domain.isEmpty else {
+            throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
+        }
+
         let resourcePath = "\(pathPrefix)/conversations/one2one/\(domain)/\(userID)"
 
         let request = HTTPRequest(

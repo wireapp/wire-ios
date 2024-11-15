@@ -23,7 +23,7 @@ jobs:
         github.event.changes.labels == null
       )
     container:
-      image: ghcr.io/realm/swiftlint:0.55.1
+      image: ghcr.io/realm/swiftlint:0.57.0
 
     steps:
       - uses: actions/checkout@v4

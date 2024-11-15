@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Vous)";
 
@@ -61,8 +59,8 @@
 "peoplepicker.header.directory" = "Se connecter";
 "peoplepicker.header.federation" = "Se connecter à un autre domaine";
 
-"peoplepicker.group.title.singular" = "Ajouter des Participants";
-"peoplepicker.group.title.plural" = "Ajouter des Participants (%d)";
+"peoplepicker.group.title.singular" = "Sélectionner des participants";
+"peoplepicker.group.title.plural" = "Sélectionner des participants (%d)";
 "peoplepicker.group.skip" = "Passer";
 "peoplepicker.group.done" = "Terminer";
 "peoplepicker.group.create" = "Créer";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invitez d'autres contacts";
 "peoplepicker.invite_team_members" = "Invitez des contacts à rejoindre votre équipe";
 "peoplepicker.quick-action.open-conversation" = "Ouvrir";
-"peoplepicker.quick-action.create-conversation" = "Créer un groupe";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Gérer les Services";
 
 "peoplepicker.federation.domain_unvailable" = "Le domaine fédéré n'est actuellement pas disponible. [En savoir plus](%@)";
@@ -127,6 +123,23 @@
 "conversation_list.empty.all_archived.message" = "Tout a été archivé";
 "conversation_list.empty.no_contacts.message" = "Commencez une conversation ou créez un groupe.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoris";
+"conversation_list.filter.groups.title" = "Groupes";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Dossiers";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Supprimer";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Rejoindre";
@@ -134,6 +147,15 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Appuyez pour activer.";
 "conversation_list.header.self_team.accessibility_value.active" = "Actif.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Nouveaux messages.";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Bienvenue";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "dans les contacts";
@@ -155,8 +177,8 @@
 
 // Archived List
 "archived_list.title" = "archives";
-"archived_list.empty_placeholder.headline" = "Nothing archived yet";
-"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
+"archived_list.empty_placeholder.headline" = "Aucune archive pour le moment";
+"archived_list.empty_placeholder.subheadline" = "Pour garder votre liste de conversations bien rangée, déplacez les conversations inutilisées ici. Vous pouvez toujours les désarchiver plus tard.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Les conversations commencent ici";
@@ -300,10 +322,10 @@
 "conversation.input_bar.message_too_long.message" = "Vous pouvez envoyer des messages de %d caractères maximum.";
 
 "conversation.create.group_name.title" = "Créer un groupe";
-"conversation.create.group_name.placeholder" = "Nom du groupe";
+"conversation.create.group_name.label" = "Nom du groupe";
 "conversation.create.guidance.empty" = "Au moins un caractère";
 "conversation.create.guidance.toolong" = "Trop de caractères";
-"conversation.create.options.title" = "Options";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Invités : %@, Services : %@, Accusés de lecture : %@";
 "conversation.create.guests.title" = "Autoriser les invités";
 "conversation.create.guests.subtitle" = "Rendre cette conversation accessible à des personnes externes à votre équipe.";
@@ -311,15 +333,15 @@
 "conversation.create.services.subtitle" = "Ouvrir cette conversation aux services.";
 "conversation.create.receipts.title" = "Accusés de lecture";
 "conversation.create.receipts.subtitle" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
-"conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
-"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.title" = "Protocole";
+"conversation.create.mls.subtitle" = "Sélectionnez MLS pour créer un groupe en utilisant le protocole Messaging Layer Security.";
+"conversation.create.mls.picker_title" = "Sélectionner un protocole";
 "conversation.create.mls.cancel" = "Annuler";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.title" = "Le groupe ne peut pas être créé";
 "conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "En savoir plus";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Annuler la création du groupe";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -335,8 +357,8 @@
 // Conversation banner
 "conversation.banner.guests" = "Invités";
 "conversation.banner.services" = "Services";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
+"conversation.banner.externals" = "Externes";
+"conversation.banner.remotes" = "Utilisateurs fédérés";
 "conversation.banner.are_present" = "%@ sont présents";
 "conversation.banner.are_active" = "%@ sont actifs";
 "conversation.banner.separator" = " et ";
@@ -389,7 +411,7 @@
 "location.unauthorized_alert.cancel" = "Annuler";
 "location.unauthorized_alert.settings" = "Paramètres";
 
-"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.title" = "L'emplacement ne peut pas être envoyé.";
 "location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
 
 // Twitter
@@ -998,7 +1020,7 @@
 "group_details.receipt_options_cell.description" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
-"group_details.message_protocol.title" = "Protocol";
+"group_details.message_protocol.title" = "Protocole";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
 "group_details.conversation_admins_header.title" = "Admins du groupe";
@@ -1032,8 +1054,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Paramètres";
 "self.profile" = "Profil";
 "self.account" = "Compte";
@@ -1151,6 +1179,15 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Envoyer des données d'utilisation anonymes";
 "self.settings.privacy_analytics_menu.description.title" = "Les données d'utilisation permettent à Wire de comprendre comment l'application est utilisée et comment elle peut être améliorée. Les données sont anonymes et n'incluent pas le contenu de vos communications (messages, fichiers ou appels).";
+
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
+
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Refuser";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Politique de confidentialité";
 
 // Change Username
 

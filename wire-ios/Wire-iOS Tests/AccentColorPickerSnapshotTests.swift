@@ -36,7 +36,6 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         selfUser = MockUserType.createDefaultSelfUser()
         selfUser.accentColorValue = AccentColor.default.rawValue
@@ -52,8 +51,6 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
         selfUser = nil
         userSession = nil
         sut = nil
-
-        super.tearDown()
     }
 
     // MARK: - Snapshot Test

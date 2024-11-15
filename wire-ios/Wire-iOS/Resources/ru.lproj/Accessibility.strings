@@ -182,6 +182,11 @@
 
 "profile.backButton.description" = "Вернуться к сведениям о беседе";
 "profile.closeButton.description" = "Закрыть профиль";
+"profile.shareProfileButton.description" = "Поделитесь своим профилем с помощью QR-кода или ссылки";
+
+"shareProfile.closeButton.description" = "Закрыть просмотр возможности поделиться профилем";
+"shareProfile.backButton.description" = "Вернуться к вашему профилю";
+"shareProfile.qrCode.description" = "QR-код";
 
 "accountPage.availabilityStatus.description" = "Статус";
 "accountPage.availabilityStatus.hint" = "Нажмите дважды, чтобы изменить статус";
@@ -199,7 +204,7 @@
 "contactsList.memberIcon.description" = "Участник";
 "contactsList.userCell.hint" = "Нажмите дважды, чтобы открыть беседу";
 "contactsList.pendingConnection.hint" = "Нажмите дважды для открытия профиля";
-"contactsList.closeButton.description" = "Закрыть список контактов";
+"contactsList.cancelButton.description" = "Закрыть список контактов";
 
 "servicesList.serviceCell.hint" = "Нажмите дважды, чтобы открыть сведения о сервисе";
 
@@ -221,6 +226,23 @@
 "conversationsList.joinButton.hint" = "Нажмите дважды, чтобы присоединиться к вызову";
 "conversationsList.connectionRequest.description" = "Ожидание подтверждения запроса";
 "conversationsList.connectionRequest.hint" = "Нажмите дважды для открытия профиля";
+
+"conversationList.startConversationButton.description" = "Создать группу или найти друзей";
+"conversationsList.filterButton.description" = "Отфильтровать беседы";
+
+"conversationsList.filter_menu_options.allConversations.description" = "Показать все беседы";
+"conversationsList.filter_menu_options.favorites.description" = "Показать все избранные беседы";
+"conversationsList.filter_menu_options.groups.description" = "Показать все групповые беседы";
+"conversationsList.filter_menu_options.oneOnOne.description" = "Показать все беседы 1:1";
+"conversationsList.filter_menu_options.folders.description" = "Папки";
+
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Все беседы, выбраны";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Избранные, выбраны";
+"conversationsList.filter_menu_options.groups.selected.description" = "Группы, выбраны";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Беседы один на один, выбраны";
+"conversationsList.filter_menu_options.folders.selected.description" = "Папка, выбрана";
+
+"conversationsList.filter_view.removeButton.descritpion" = "Удалить фильтр бесед";
 
 "conversationAnnouncement.text.description" = "Текстовое сообщение получено от %@";
 "conversationAnnouncement.picture.description" = "Изображение получено от %@";

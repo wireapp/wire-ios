@@ -83,9 +83,13 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
             message: message,
             preferredDisplayMode: preferredDisplayMode,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
-        parent?.present(messageDetailsViewController, animated: true)
+        let navigationController = UINavigationController(rootViewController: messageDetailsViewController)
+        navigationController.modalPresentationStyle = .formSheet
+
+        parent?.present(navigationController, animated: true)
     }
 
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView) {

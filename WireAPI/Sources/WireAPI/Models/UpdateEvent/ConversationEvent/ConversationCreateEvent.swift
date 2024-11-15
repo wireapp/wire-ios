@@ -38,4 +38,16 @@ public struct ConversationCreateEvent: Equatable, Codable, Sendable {
 
     public let conversation: Conversation
 
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        conversation: Conversation
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.conversation = conversation
+    }
+
 }

@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a team member left the team.
 
-public struct TeamMemberLeaveEvent: Equatable, Codable {
+public struct TeamMemberLeaveEvent: Equatable, Codable, Sendable {
 
     /// The team id.
 

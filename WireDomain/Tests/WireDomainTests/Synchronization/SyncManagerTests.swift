@@ -47,7 +47,6 @@ final class SyncManagerTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         mlsService = MockMLSServiceInterface()
@@ -87,7 +86,6 @@ final class SyncManagerTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
         sut = nil
         modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -353,8 +351,8 @@ final class SyncManagerTests: XCTestCase {
         teamRepository.pullSelfTeamMembers_MockMethod = {}
         connectionsRepository.pullConnections_MockMethod = {}
         conversationsRepository.pullConversations_MockMethod = {}
-        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = UUID().uuidString
-        conversationsRepository.fetchMLSConversationWith_MockValue = conversation
+        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = UUID().uuidString
+        conversationsRepository.fetchMLSConversationGroupID_MockValue = conversation
         userRepository.pullKnownUsers_MockMethod = {}
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
@@ -362,7 +360,7 @@ final class SyncManagerTests: XCTestCase {
         teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
         userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
-        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
         mlsService.conversationExistsGroupID_MockValue = true
         mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
@@ -412,8 +410,8 @@ final class SyncManagerTests: XCTestCase {
         teamRepository.pullSelfTeamMembers_MockMethod = {}
         connectionsRepository.pullConnections_MockMethod = {}
         conversationsRepository.pullConversations_MockMethod = {}
-        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = UUID().uuidString
-        conversationsRepository.fetchMLSConversationWith_MockValue = conversation
+        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = UUID().uuidString
+        conversationsRepository.fetchMLSConversationGroupID_MockValue = conversation
         userRepository.pullKnownUsers_MockMethod = {}
         conversationLabelsRepository.pullConversationLabels_MockMethod = {}
         featureConfigsRepository.pullFeatureConfigs_MockMethod = {}
@@ -421,7 +419,7 @@ final class SyncManagerTests: XCTestCase {
         teamRepository.pullSelfLegalholdInfo_MockMethod = {}
         pushSupportedProtocolsUseCase.invoke_MockMethod = {}
         userRepository.fetchAllUserIDsWithOneOnOneConversation_MockMethod = { [] }
-        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
         mlsService.conversationExistsGroupID_MockValue = true
         mlsService.establishGroupForWithRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
@@ -447,7 +445,7 @@ final class SyncManagerTests: XCTestCase {
         static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)
         static let aliceID = UserID(uuid: UUID(), domain: localDomain)
 
-        static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: UserClient(
+        static let event1 = UpdateEvent.user(.clientAdd(UserClientAddEvent(client: SelfUserClient(
             id: "userClientID",
             type: .permanent,
             activationDate: .now,

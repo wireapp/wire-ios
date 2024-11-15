@@ -43,6 +43,7 @@ disabled_rules:
   - nesting
   - no_fallthrough_only
   - notification_center_detachment
+  - optional_data_string_conversion
   - todo
   - type_body_length
   - type_name
@@ -107,4 +108,4 @@ line_length:
   warning: 500
   error: 500
 
-swiftlint_version: 0.55.1
+swiftlint_version: 0.57.0

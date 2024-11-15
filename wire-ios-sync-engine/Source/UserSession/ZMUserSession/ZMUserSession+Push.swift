@@ -170,18 +170,14 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
     func handleInAppNotification(with userInfo: NotificationUserInfo,
                                  categoryIdentifier: String,
                                  completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        if categoryIdentifier == PushNotificationCategory.incomingCall.rawValue {
-            self.handleTrackingOnCallNotification(with: userInfo)
-        }
-
         // foreground notification responder exists on the UI context, so we
         // need to switch to that context
         self.managedObjectContext.perform {
             let responder = self.sessionManager?.foregroundNotificationResponder
-            let shouldPresent = responder?.shouldPresentNotification(with: userInfo)
+            let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
 
             var options = UNNotificationPresentationOptions()
-            if shouldPresent ?? true { options = [.list, .banner, .sound] }
+            if shouldPresent { options = [.list, .banner, .sound] }
 
             completionHandler(options)
         }

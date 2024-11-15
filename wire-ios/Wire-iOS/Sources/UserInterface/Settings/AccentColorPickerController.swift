@@ -17,10 +17,8 @@
 //
 
 import SwiftUI
-import WireDataModel
 import WireFoundation
 import WireSyncEngine
-import WireUtilities
 
 final class AccentColorPickerController: UIHostingController<AccentColorPicker> {
 
@@ -43,7 +41,7 @@ final class AccentColorPickerController: UIHostingController<AccentColorPicker> 
                 }
             }
         )
-
         super.init(rootView: colorPickerView)
+        navigationItem.title = L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized
     }
 }

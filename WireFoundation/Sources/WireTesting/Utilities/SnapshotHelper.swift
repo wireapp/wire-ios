@@ -138,6 +138,8 @@ public struct SnapshotHelper {
         file: StaticString = #file,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image(
@@ -146,7 +148,7 @@ public struct SnapshotHelper {
                 traits: traits
             ),
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -175,6 +177,8 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
 
         let failure = verifySnapshot(
@@ -182,7 +186,7 @@ public struct SnapshotHelper {
             as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
             record: recording,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -207,11 +211,13 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -249,6 +255,8 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
 
         for (config, name) in allDevices {
@@ -256,7 +264,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image(on: config, perceptualPrecision: perceptualPrecision),
                 named: name,
-                snapshotDirectory: snapshotDirectory(file: file),
+                snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -282,6 +290,8 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         for (config, name) in SnapshotHelper.phoneConfigs {
             let failure = verifySnapshot(
                 of: value,
@@ -289,7 +299,7 @@ public struct SnapshotHelper {
                     on: config,
                     perceptualPrecision: perceptualPrecision
                 ),
-                named: name, snapshotDirectory: snapshotDirectory(file: file),
+                named: name, snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -315,11 +325,13 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image,
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -344,6 +356,8 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         [
             "extra-small": UIContentSizeCategory.extraSmall,
             "small": .small,
@@ -364,7 +378,7 @@ public struct SnapshotHelper {
                     traits: .init(preferredContentSizeCategory: contentSize)
                 ),
                 named: name,
-                snapshotDirectory: snapshotDirectory(file: file),
+                snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -382,5 +396,14 @@ public struct SnapshotHelper {
 
         let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
         return NSString.path(withComponents: [snapshotReferenceDirectory, filePath])
+    }
+
+    private func setArtifactsDirectoryIfNeeded(basedOn snapshotDirectory: String) {
+        let artifactsDirectory = URL(fileURLWithPath: snapshotDirectory)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("SnapshotResults")
+            .path
+        setenv("SNAPSHOT_ARTIFACTS", artifactsDirectory, 0)
     }
 }

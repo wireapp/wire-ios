@@ -28,7 +28,15 @@ struct UserDeleteEventDecoder {
             forKey: .qualifiedID
         )
 
-        return UserDeleteEvent(qualifiedUserID: qualifiedUserID)
+        let time = try container.decodeIfPresent(
+            UTCTimeMillis.self,
+            forKey: .time
+        )
+
+        return UserDeleteEvent(
+            qualifiedUserID: qualifiedUserID,
+            time: time?.date ?? .now
+        )
     }
 
 }

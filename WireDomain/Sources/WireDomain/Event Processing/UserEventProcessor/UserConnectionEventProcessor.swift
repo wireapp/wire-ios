@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process user connection events.
 
@@ -32,9 +33,16 @@ protocol UserConnectionEventProcessorProtocol {
 
 struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
-    func processEvent(_: UserConnectionEvent) async throws {
-        // TODO: [WPB-10191]
-        assertionFailure("not implemented yet")
-    }
+    let connectionsRepository: any ConnectionsRepositoryProtocol
+    let oneOnOneResolver: any OneOnOneResolverProtocol
 
+    func processEvent(_ event: UserConnectionEvent) async throws {
+        let connection = event.connection
+
+        try await connectionsRepository.updateConnection(connection)
+
+        if connection.status == .accepted {
+            try await oneOnOneResolver.invoke()
+        }
+    }
 }

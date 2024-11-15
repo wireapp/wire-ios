@@ -583,6 +583,27 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testGetMLSOneToOneConversation_Failure_UserID_And_Domain_Empty() async throws {
+        // Given
+
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "testGetMLSOneOnOneConversationV5SuccessResponse200"
+        )
+
+        let sut = APIVersion.v5.buildAPI(client: httpClient)
+
+        // Then
+
+        await XCTAssertThrowsError(ConversationsAPIError.userAndDomainShouldNotBeEmpty) {
+            // When
+            try await sut.getMLSOneToOneConversation(
+                userID: "",
+                in: ""
+            )
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"

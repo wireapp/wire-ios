@@ -37,8 +37,8 @@ struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
 
     func processEvent(_ event: TeamMemberLeaveEvent) async throws {
         try await repository.deleteMembership(
-            forUser: event.userID,
-            fromTeam: event.teamID,
+            for: event.userID,
+            domain: nil,
             at: event.time
         )
     }

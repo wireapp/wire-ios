@@ -16,55 +16,79 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
+import WireDomainSupport
 import XCTest
 
-@testable import WireAPI
-@testable import WireDomain
+final class ConversationRepositoryTests: XCTestCase {
 
-class ConversationRepositoryTests: XCTestCase {
-
-    var sut: ConversationRepository!
-    var conversationsAPI: MockConversationsAPI!
-    var conversationsLocalStore: ConversationLocalStoreProtocol!
-    let backendInfo: ConversationRepository.BackendInfo = .init(
+    private var sut: ConversationRepository!
+    private var conversationsAPI: MockConversationsAPI!
+    private var conversationsLocalStore: ConversationLocalStoreProtocol!
+    private var userRepository: MockUserRepositoryProtocol!
+    private let backendInfo: ConversationRepository.BackendInfo = .init(
         domain: "example.com",
         isFederationEnabled: false
     )
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
 
-    var context: NSManagedObjectContext {
+    private var teamRepository: MockTeamRepositoryProtocol!
+    private var mlsService: MockMLSServiceInterface!
+    private var mlsProvider: MLSProvider!
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+    private var userLocalStore: MockUserLocalStoreProtocol!
+
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
         try await super.setUp()
+        mlsService = MockMLSServiceInterface()
+        mlsProvider = MLSProvider(service: mlsService, isMLSEnabled: true)
+        userRepository = MockUserRepositoryProtocol()
+        teamRepository = MockTeamRepositoryProtocol()
+        coreDataStackHelper = CoreDataStackHelper()
+        userLocalStore = MockUserLocalStoreProtocol()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
             context: context,
-            mlsService: MockMLSServiceInterface()
+            mlsService: mlsService,
+            userLocalStore: userLocalStore
         )
         conversationsAPI = MockConversationsAPI()
+        userRepository = MockUserRepositoryProtocol()
 
         sut = ConversationRepository(
             conversationsAPI: conversationsAPI,
             conversationsLocalStore: conversationsLocalStore,
-            backendInfo: backendInfo
+            userRepository: userRepository,
+            teamRepository: teamRepository,
+            backendInfo: backendInfo,
+            mlsProvider: mlsProvider
         )
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
+        userRepository = nil
+        teamRepository = nil
+        mlsProvider = nil
+        mlsService = nil
         conversationsLocalStore = nil
         stack = nil
         conversationsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
+        userLocalStore = nil
     }
 
     // MARK: - Tests
@@ -222,8 +246,29 @@ class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testRemoveFromConversations_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
-        // Given
+    func testGetMLSOneToOneConversation() async throws {
+        // Mock
+
+        mockConversationsAPI()
+
+        // When
+
+        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
+            userID: Scaffolding.userID.uuidString,
+            userDomain: Scaffolding.domain
+        )
+
+        let mlsConversation = await sut.fetchMLSConversation(groupID: mlsGroupID)
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
+        }
+    }
+
+    func testRemoveParticipantFromConversation_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
+        // Mock
 
         let user = try await context.perform { [self] in
             let (team, users, _) = modelHelper.createTeam(
@@ -233,7 +278,7 @@ class ConversationRepositoryTests: XCTestCase {
                 context: context
             )
 
-            let otherConversation = modelHelper.createGroupConversation(
+            modelHelper.createGroupConversation(
                 id: Scaffolding.anotherTeamConversationID,
                 with: users,
                 team: team,
@@ -241,7 +286,7 @@ class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
 
-            let anotherConversation = modelHelper.createGroupConversation(
+            modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 with: Set(users),
                 domain: nil,
@@ -257,9 +302,15 @@ class ConversationRepositoryTests: XCTestCase {
 
         let timestamp = Scaffolding.date(from: Scaffolding.time)
 
+        userRepository.fetchUserIdDomain_MockValue = user
+
         // When
 
-        await sut.removeFromConversations(user: user, removalDate: timestamp)
+        try await sut.removeParticipantFromAllGroupConversations(
+            participantID: Scaffolding.userID,
+            participantDomain: nil,
+            removedAt: timestamp
+        )
 
         // Then
 
@@ -274,15 +325,15 @@ class ConversationRepositoryTests: XCTestCase {
 
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
 
-            try checkLastMessage(
+            try internalTest_checkLastMessage(
                 in: teamConversation,
-                isLeaveMessageFor: user,
+                messageType: .teamMemberLeave,
                 at: timestamp
             )
 
-            try checkLastMessage(
+            try internalTest_checkLastMessage(
                 in: teamAnotherConversation,
-                isLeaveMessageFor: user,
+                messageType: .teamMemberLeave,
                 at: timestamp
             )
 
@@ -291,16 +342,445 @@ class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    private func checkLastMessage(
+    func testRemoveParticipantFromConversation_It_Removes_Participant() async throws {
+        // Mock
+
+        let (removedUser, remainingUsers, conversation) = await context.perform { [self] in
+            let user1 = modelHelper.createUser(in: context)
+            let user2 = modelHelper.createUser(in: context)
+            let user3 = modelHelper.createUser(in: context)
+            let removedUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: [removedUser, user1, user2, user3],
+                in: context
+            )
+
+            return (removedUser, [user1, user2, user3], conversation)
+        }
+
+        userRepository.fetchUserIdDomain_MockValue = removedUser
+
+        // When
+
+        try await sut.removeParticipantFromAllGroupConversations(
+            participantID: Scaffolding.userID,
+            participantDomain: nil,
+            removedAt: .now
+        )
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(conversation.localParticipants, Set(remainingUsers))
+            XCTAssertEqual(conversation.localParticipants.contains(removedUser), false)
+        }
+    }
+
+    func testPullConversation_It_Retrieves_Conversation_Locally() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [Scaffolding.conversationGroupType],
+            notFound: [],
+            failed: []
+        )
+
+        // When
+
+        try await sut.pullConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        // Then
+
+        await context.perform { [context] in
+            let localConversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+
+            XCTAssertNotNil(localConversation)
+            XCTAssertEqual(localConversation?.remoteIdentifier, conversationID.uuid)
+        }
+    }
+
+    func testPullConversation_It_Throws_Error() async throws {
+        // Mock
+
+        let conversationID = try XCTUnwrap(Scaffolding.conversationGroupType.qualifiedID)
+
+        conversationsAPI.getConversationsFor_MockValue = ConversationList(
+            found: [],
+            notFound: [],
+            failed: []
+        )
+
+        do {
+            // When
+            try await sut.pullConversation(
+                id: conversationID.uuid,
+                domain: conversationID.domain
+            )
+
+            XCTFail("it should have failed")
+        } catch {
+            // Then
+            XCTAssertTrue(error is ConversationRepositoryError)
+        }
+    }
+
+    func testAddOrUpdateParticipant_It_Adds_Participant_To_Conversation() async {
+        // Mock
+
+        let (addedUser, conversation) = await context.perform { [self] in
+            let user1 = modelHelper.createUser(in: context)
+            let user2 = modelHelper.createUser(in: context)
+            let user3 = modelHelper.createUser(in: context)
+            let addedUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: [user1, user2, user3],
+                in: context
+            )
+
+            return (addedUser, conversation)
+        }
+
+        userRepository.fetchOrCreateUserIdDomain_MockValue = addedUser
+
+        // When
+
+        await sut.addOrUpdateParticipant(
+            participantID: UUID(),
+            participantDomain: nil,
+            participantRole: "",
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: nil
+        )
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(conversation.localParticipants.contains(addedUser), true)
+        }
+    }
+
+    func testFetchConversation_It_Retrieves_Conversation_Locally() async {
+        // Given
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+        }
+
+        // When
+
+        let localConversation = await sut.fetchConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(conversation, localConversation)
+    }
+
+    func testDeleteMLSConversation_It_Wipes_MLS_Group_And_Marks_MLS_Conversation_As_Deleted_Locally() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                mlsGroupID: MLSGroupID(base64Encoded: Scaffolding.base64EncodedString),
+                mlsStatus: .ready,
+                conversationType: .group,
+                epoch: 0,
+                in: context
+            )
+        }
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+
+        // When
+
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(isDeletedRemotely, true)
+    }
+
+    func testDeleteProteusConversation_It_Marks_Conversation_As_Deleted_Remotely() async throws {
+        // Mock
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                in: context
+            )
+        }
+
+        // When
+
+        try await sut.deleteConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain
+        )
+
+        // Then
+
+        let isDeletedRemotely = await context.perform {
+            conversation.isDeletedRemotely
+        }
+
+        XCTAssertEqual(isDeletedRemotely, true)
+    }
+
+    func testStoreConversation_It_Stores_Conversation_Locally() async throws {
+        // Given
+
+        let groupConversation = Scaffolding.conversationGroupType
+        let id = try XCTUnwrap(groupConversation.qualifiedID?.uuid)
+        let domain = try XCTUnwrap(groupConversation.qualifiedID?.domain)
+
+        // When
+
+        await sut.storeConversation(Scaffolding.conversationGroupType, timestamp: .now)
+
+        // Then
+
+        let localConversation = await sut.fetchConversation(
+            id: id,
+            domain: domain
+        )
+
+        await context.perform {
+            XCTAssertEqual(localConversation?.remoteIdentifier, id)
+            XCTAssertEqual(localConversation?.teamRemoteIdentifier, groupConversation.teamID)
+            XCTAssertEqual(localConversation?.conversationType, .group)
+            XCTAssertEqual(localConversation?.messageProtocol, .proteus)
+            XCTAssertEqual(localConversation?.epoch, 0)
+            XCTAssertEqual(localConversation?.hasReadReceiptsEnabled, false)
+            XCTAssertEqual(localConversation?.accessMode, [.invite])
+            XCTAssertEqual(localConversation?.accessRoles, [.teamMember])
+        }
+    }
+
+    func testRemoveMembers() async throws {
+        // Mock
+
+        let removedMembersIDs = [UserID(uuid: Scaffolding.otherUserID, domain: Scaffolding.domain)]
+        let conversationID = ConversationID(uuid: Scaffolding.conversationID, domain: Scaffolding.domain)
+        let sender = UserID(uuid: Scaffolding.userID, domain: Scaffolding.domain)
+
+        let (conversation, selfUser, senderUser, removedUser) = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.selfUserId, in: context)
+            let senderUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+            let removedUser = modelHelper.createUser(id: Scaffolding.otherUserID, in: context)
+            let mlsGroupID = MLSGroupID(base64Encoded: Scaffolding.base64EncodedString)
+
+            let mlsConversation = modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID,
+                mlsGroupID: mlsGroupID,
+                with: [senderUser, selfUser, removedUser],
+                in: context
+            )
+
+            return (mlsConversation, selfUser, senderUser, removedUser)
+        }
+
+        userRepository.fetchOrCreateUserIdDomain_MockValue = removedUser
+        userRepository.fetchUserIdDomain_MockValue = senderUser
+        userRepository.isSelfUserIdDomain_MockValue = true
+        mlsService.wipeGroup_MockMethod = { _ in }
+        teamRepository.deleteMembershipUserIDDomainDate_MockMethod = { _, _, _ in }
+
+        // When
+
+        try await sut.removeMembers(
+            Set(removedMembersIDs),
+            from: conversationID,
+            initiatedBy: sender,
+            at: .now,
+            reason: .userDeleted
+        )
+
+        // Then
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.deleteMembershipUserIDDomainDate_Invocations.count, 1)
+
+        let newParticipants = await context.perform {
+            conversation.localParticipants
+        }
+
+        await context.perform {
+            XCTAssertEqual(newParticipants, [selfUser, senderUser])
+            XCTAssertFalse(newParticipants.contains(removedUser)) // user was successfuly removed from conversation
+        }
+    }
+
+    func testAddOrUpdateParticipant_It_Updates_Participant_Role_In_Conversation() async throws {
+        // Mock
+
+        let (updatedUser, conversation) = await context.perform { [self] in
+            let updatedUser = modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: [updatedUser],
+                in: context
+            )
+
+            return (updatedUser, conversation)
+        }
+
+        userRepository.fetchOrCreateUserIdDomain_MockValue = updatedUser
+
+        // When
+
+        await sut.addOrUpdateParticipant(
+            participantID: UUID(),
+            participantDomain: nil,
+            participantRole: ZMConversation.defaultAdminRoleName,
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: nil
+        )
+
+        // Then
+
+        try await context.perform {
+            let role = try XCTUnwrap(updatedUser.role(in: conversation))
+            XCTAssertEqual(role.name, ZMConversation.defaultAdminRoleName)
+        }
+    }
+
+    func testAddParticipants_It_Adds_Participants_To_Conversation() async throws {
+        // Mock
+
+        let (conversation, sender, addedUser) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+
+            let addedUser = modelHelper.createUser(
+                qualifiedID: .init(uuid: Scaffolding.otherUserID, domain: Scaffolding.domain),
+                in: context
+            )
+
+            let sender = modelHelper.createUser(
+                qualifiedID: .init(uuid: Scaffolding.userID, domain: Scaffolding.domain),
+                in: context
+            )
+
+            return (conversation, sender, addedUser)
+        }
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
+        userLocalStore.fetchUserIdDomain_MockValue = sender
+
+        // When
+
+        try await sut.addParticipants(
+            [(Scaffolding.otherUserID,
+              Scaffolding.domain,
+              ZMConversation.defaultMemberRoleName)],
+            sender: (Scaffolding.userID, Scaffolding.domain),
+            date: .distantPast,
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain
+        )
+
+        // Then
+
+        XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
+
+        await context.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(addedUser))
+        }
+    }
+
+    func testAddSystemMessage_It_Adds_System_Message_To_Conversation() async throws {
+        // Mock
+
+        let (conversation, user) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                domain: Scaffolding.domain,
+                in: context
+            )
+
+            let user = modelHelper.createUser(in: context)
+
+            return (conversation, user)
+        }
+
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
+
+        let systemMessage = SystemMessage(
+            type: .participantsAdded,
+            sender: user,
+            timestamp: timestamp
+        )
+
+        // When
+
+        await sut.addSystemMessage(systemMessage, to: conversation)
+
+        // Then
+
+        try await context.perform { [self] in
+            try internalTest_checkLastMessage(
+                in: conversation,
+                messageType: .participantsAdded,
+                at: timestamp
+            )
+        }
+    }
+
+    private func internalTest_checkLastMessage(
         in conversation: ZMConversation,
-        isLeaveMessageFor user: ZMUser,
+        messageType: ZMSystemMessageType,
         at timestamp: Date
     ) throws {
-        let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage, "Last message is not system message")
+        let lastMessage = try XCTUnwrap(
+            conversation.lastMessage as? ZMSystemMessage,
+            "Last message is not system message"
+        )
 
-        XCTAssertEqual(lastMessage.systemMessageType, .teamMemberLeave, "System message is not teamMemberLeave: but '\(lastMessage.systemMessageType.rawValue)")
+        XCTAssertEqual(
+            lastMessage.systemMessageType,
+            messageType, "System message is not \(messageType.rawValue): but '\(lastMessage.systemMessageType.rawValue)"
+        )
 
-        let serverTimeStamp = try XCTUnwrap(lastMessage.serverTimestamp, "System message should have timestamp")
+        let serverTimeStamp = try XCTUnwrap(
+            lastMessage.serverTimestamp, "System message should have timestamp"
+        )
 
         XCTAssertEqual(
             serverTimeStamp.timeIntervalSince1970,
@@ -309,78 +789,10 @@ class ConversationRepositoryTests: XCTestCase {
         )
     }
 
-    func testGetMLSOneToOneConversation() async throws {
-        // Mock
-
-        mockConversationsAPI()
-
-        // When
-
-        let mlsGroupID = try await sut.pullMLSOneToOneConversation(
-            userID: Scaffolding.userID.uuidString,
-            domain: Scaffolding.domain
-        )
-
-        let mlsConversation = await sut.fetchMLSConversation(with: mlsGroupID)
-
-        // Then
-
-        XCTAssertEqual(mlsConversation?.remoteIdentifier, Scaffolding.conversationOneOnOneType.id)
-    }
-
-}
-
-extension ConversationRepositoryTests {
-
-    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
-        ZMConversation.fetchObjects(
-            withRemoteIdentifiers: Set(ids),
-            in: context
-        ) as! Set<ZMConversation>
-    }
-
-    private func mockSelfUser() -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: context)
-        selfUser.remoteIdentifier = Scaffolding.selfUserId
-        selfUser.domain = backendInfo.domain
-
-        let client = UserClient.insertNewObject(in: context)
-        client.remoteIdentifier = UUID().uuidString
-        client.user = selfUser
-        context.saveOrRollback()
-
-        return selfUser
-    }
-
-    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
-        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.id!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
-            .init(
-                element: [Scaffolding.conversationSelfType.qualifiedID!],
-                hasMore: false,
-                nextStart: .init()
-            )
-        })
-
-        conversationsAPI.getConversationsFor_MockValue = .init(
-            found: conversationList.found,
-            notFound: conversationList.notFound,
-            failed: conversationList.failed
-        )
-
-        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
-    }
-
     private enum Scaffolding {
         static let teamID = UUID()
         static let userID = UUID()
+        static let otherUserID = UUID()
         static let time = "2021-05-12T10:52:02.671Z"
         static let teamConversationID = UUID()
         static let anotherTeamConversationID = UUID()
@@ -391,9 +803,7 @@ extension ConversationRepositoryTests {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
 
-        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
-
-        nonisolated(unsafe) static let conversationList = ConversationList(
+        static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,
                     conversationConnectionType,
@@ -402,7 +812,7 @@ extension ConversationRepositoryTests {
             failed: [conversationFailed]
         )
 
-        nonisolated(unsafe) static let conversationListError = ConversationList(
+        static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,
@@ -521,6 +931,8 @@ extension ConversationRepositoryTests {
             lastEventTime: nil
         )
 
+        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+
         static let conversationNotFound = WireAPI.QualifiedID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4aa")!,
             domain: "example.com"
@@ -532,6 +944,56 @@ extension ConversationRepositoryTests {
         )
 
         static let selfUserId = UUID()
+    }
+
+}
+
+extension ConversationRepositoryTests {
+
+    private func fetchConversations(withIds ids: [UUID]) -> Set<ZMConversation> {
+        ZMConversation.fetchObjects(
+            withRemoteIdentifiers: Set(ids),
+            in: context
+        ) as! Set<ZMConversation>
+    }
+
+    private func mockSelfUser() -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = Scaffolding.selfUserId
+        selfUser.domain = backendInfo.domain
+
+        let client = UserClient.insertNewObject(in: context)
+        client.remoteIdentifier = UUID().uuidString
+        client.user = selfUser
+        context.saveOrRollback()
+
+        return selfUser
+    }
+
+    private func mockConversationsAPI(conversationList: WireAPI.ConversationList = Scaffolding.conversationList) {
+        conversationsAPI.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.id!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+            .init(
+                element: [Scaffolding.conversationSelfType.qualifiedID!],
+                hasMore: false,
+                nextStart: .init()
+            )
+        })
+
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: conversationList.found,
+            notFound: conversationList.notFound,
+            failed: conversationList.failed
+        )
+
+        conversationsAPI.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversationOneOnOneType
     }
 
 }

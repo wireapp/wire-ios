@@ -168,7 +168,8 @@ extension ConversationViewController {
                 conversation: conversation,
                 context: .deviceList,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
@@ -180,7 +181,8 @@ extension ConversationViewController {
                 selectedParticipants: [],
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             let navigationController = participantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
@@ -193,7 +195,8 @@ extension ConversationViewController {
             in: self,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 

@@ -16,39 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
+import XCTest
 
 final class TeamDeleteEventProcessorTests: XCTestCase {
 
-    var sut: TeamDeleteEventProcessor!
+    private var sut: TeamDeleteEventProcessor!
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
 
-    var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
-
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = TeamDeleteEventProcessor(
             context: context
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
@@ -73,6 +71,8 @@ final class TeamDeleteEventProcessorTests: XCTestCase {
         // When
 
         try await sut.processEvent()
+
+        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
 }

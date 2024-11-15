@@ -40,4 +40,5 @@ public protocol ConversationsAPI {
         userID: String,
         in domain: String
     ) async throws -> Conversation
+
 }
