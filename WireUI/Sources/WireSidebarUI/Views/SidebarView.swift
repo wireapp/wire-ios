@@ -162,13 +162,13 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text("sidebar.contacts.connect.title", bundle: .module)
             icon = "person.badge.plus"
             isLink = false
-            action = { connectAction() }
+            action = connectAction
 
         case .support:
             text = Text("sidebar.support.title", bundle: .module)
             icon = "questionmark.circle"
             isLink = true
-            action = { supportAction() }
+            action = supportAction
         }
 
         return SidebarMenuItemView(
