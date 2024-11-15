@@ -68,6 +68,7 @@ final class TrackingManager: NSObject, TrackingInterface {
     }
 
     func enableAnalytics() async throws {
+        sessionManager.activeUserSession
         try await sessionManager.makeEnableAnalyticsUseCase().invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = false
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
