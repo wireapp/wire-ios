@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import DatadogLogs
 import WireAnalytics
 import WireDatadog
 import WireSystem
@@ -81,7 +80,7 @@ extension WireDatadog: WireSystem.LoggerProtocol {
     // MARK: Helpers
 
     private func log(
-        level: LogLevel,
+        level: WireDatadog.LogLevel,
         message: any LogConvertible,
         error: Error? = nil,
         attributes: [LogAttributes] = []
