@@ -47,7 +47,8 @@ struct SwiftGenPlugin: BuildToolPlugin {
                 displayName: "Replace CVarArg by any CVarArg",
                 executable: try! context.tool(named: "sed").url,
                 arguments: ["-i", "", "s/CVarArg/any CVarArg/g", outputFile.path()],
-                outputFilesDirectory: outputFilesDirectory
+                // fix duplicate build file warning by providing a non-existent path
+                outputFilesDirectory: outputFilesDirectory.appending(path: "tmp", directoryHint: .isDirectory)
             )
         ]
     }
