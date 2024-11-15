@@ -265,7 +265,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         user2.name = "Bob"
 
         userSession.mockConversationDirectory.mockContactsConversations = []
-        sut.listContentController.listViewModel.appliedSearchText = "XXX"
+        sut.navigationItem.searchController?.searchBar.text = "XXX"
+        sut.applySearchText()
 
         // WHEN
         // note here the searchBar is not presented but within the app it is
