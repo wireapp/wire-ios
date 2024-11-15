@@ -29,7 +29,7 @@ public final class WireDatadog {
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: LogLevel = .debug
+    private let logLevel: WireDatadog.LogLevel = .debug
 
     public private(set) var userIdentifier: String
     private(set) var logger: (any DatadogLogs.LoggerProtocol)?
@@ -72,7 +72,7 @@ public final class WireDatadog {
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: logLevel
+            remoteLogThreshold: logLevel.datadogLevel
         )
         logger = Logger.create(with: loggerConfiguration)
     }
@@ -96,7 +96,7 @@ public final class WireDatadog {
         Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
-            level: logLevel,
+            level: logLevel.datadogLevel,
             message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
@@ -151,17 +151,17 @@ public final class WireDatadog {
 extension WireDatadog.LogLevel {
     var datadogLevel: LogLevel {
         switch self {
-        case debug:
+        case .debug:
             .debug
-        case info:
+        case .info:
             .info
-        case notice:
+        case .notice:
             .notice
-        case warn:
+        case .warn:
             .warn
-        case error:
+        case .error:
             .error
-        case critical:
+        case .critical:
             .critical
         }
     }
