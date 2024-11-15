@@ -129,6 +129,7 @@
 "conversation_list.search_bar.favoritesPlaceholder" = "Favoriten suchen";
 "conversation_list.search_bar.groupsPlaceholder" = "Gruppe suchen";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "1:1 Unterhaltung suchen";
+"conversation_list.search_bar.foldersPlaceholder" = "%@ suchen";
 
 
 // Conversation List - Filter Conversations
@@ -136,6 +137,7 @@
 "conversation_list.filter.favorites.title" = "Favoriten";
 "conversation_list.filter.groups.title" = "Gruppen";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"conversation_list.filter.folders.title" = "Ordner";
 "conversation_list.filter_label.text" = "Gefiltert nach %@";
 "conversation_list.filter.remove_button.title" = "Entfernen";
 
