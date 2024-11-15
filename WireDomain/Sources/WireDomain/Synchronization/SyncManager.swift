@@ -40,8 +40,8 @@ protocol SyncManagerProtocol {
 
 final class SyncManager: SyncManagerProtocol {
 
-    enum Error: Swift.Error {
-        case failedToPerformSlowSync(Swift.Error)
+    enum Failure: Error {
+        case failedToPerformSlowSync(Error)
     }
 
     // MARK: - Properties
@@ -111,7 +111,7 @@ final class SyncManager: SyncManagerProtocol {
             let oneOnOneResolver = makeOneOnOneResolver()
             try await oneOnOneResolver.resolveAllOneOnOneConversations()
         } catch {
-            throw Error.failedToPerformSlowSync(error)
+            throw Failure.failedToPerformSlowSync(error)
         }
     }
 

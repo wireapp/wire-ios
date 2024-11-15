@@ -429,8 +429,9 @@ final class SyncManagerTests: XCTestCase {
 
         do {
             try await sut.performSlowSync()
+            XCTFail("this test should raise an error")
         } catch {
-            let syncError = try XCTUnwrap(error as? SyncManager.Error)
+            let syncError = try XCTUnwrap(error as? SyncManager.Failure)
 
             switch syncError {
             case .failedToPerformSlowSync(let error):

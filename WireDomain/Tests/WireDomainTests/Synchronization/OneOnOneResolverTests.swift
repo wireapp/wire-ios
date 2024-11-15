@@ -249,7 +249,8 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsEpoch: UInt64 = 0
     ) throws -> (selfUser: ZMUser,
                  user: ZMUser,
-                 mlsConversation: ZMConversation) {
+                 mlsConversation: ZMConversation)
+    {
         let user = modelHelper.createUser(
             id: Scaffolding.receiverQualifiedID.uuid,
             domain: Scaffolding.receiverQualifiedID.domain,

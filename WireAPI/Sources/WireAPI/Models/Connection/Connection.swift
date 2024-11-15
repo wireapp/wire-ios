@@ -54,7 +54,8 @@ public struct Connection: Equatable, Codable {
                 conversationID: UUID?,
                 qualifiedConversationID: QualifiedID?,
                 lastUpdate: Date,
-                status: ConnectionStatus) {
+                status: ConnectionStatus)
+    {
         self.senderID = senderID
         self.receiverID = receiverID
         self.receiverQualifiedID = receiverQualifiedID
