@@ -44,4 +44,8 @@ extension SessionManager {
         )
     }
 
+    public var canEnableTracking: Bool {
+        analyticsService.canEnableTracking
+    }
+
 }
