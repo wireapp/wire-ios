@@ -216,9 +216,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 mention</string>
+        <string>1 omnämnande</string>
         <key>other</key>
-        <string>%d mentions</string>
+        <string>%d omnämnanden</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.reply</key>

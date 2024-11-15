@@ -27,6 +27,9 @@ final class DatabaseStatisticsController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = ColorTheme.Backgrounds.background
+
         stackView.axis = .vertical
         stackView.alignment = .fill
         stackView.spacing = 15
@@ -36,14 +39,12 @@ final class DatabaseStatisticsController: UIViewController {
         stackView.addArrangedSubview(spinner)
         spinner.startAnimating()
 
-        edgesForExtendedLayout = []
-
         view.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-          stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 
@@ -90,6 +91,9 @@ final class DatabaseStatisticsController: UIViewController {
                 }
 
                 let allConversations = ZMConversation.fetchRequest()
+
+                let version = syncMoc.persistentStoreCoordinator?.managedObjectModel.version ?? "unknown"
+                self.addRow(title: "Version", contents: version)
 
                 let conversationsCount = try syncMoc.count(for: allConversations)
                 self.addRow(title: "Number of conversations", contents: "\(conversationsCount)")

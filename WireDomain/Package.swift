@@ -5,14 +5,14 @@ import PackageDescription
 
 let package = Package(
     name: "WireDomainPackage",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
         .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(path: "../WirePlugins"),
         .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
@@ -27,7 +27,7 @@ let package = Package(
             dependencies: ["WireDomainPkg"],
             path: "./Sources/PackageSupport",
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(

@@ -38,7 +38,7 @@ extension MarkdownTextView {
         guard attributedText.wholeRange.contains(index) else { return }
 
         let attributes = attributedText.attributes(at: index, effectiveRange: nil)
-        guard attributes[NSAttributedString.Key.attachment] as? MentionTextAttachment != nil else { return }
+        guard attributes[NSAttributedString.Key.attachment] is MentionTextAttachment else { return }
 
         guard let start = position(from: beginningOfDocument, offset: index) else { return }
         guard let end = position(from: start, offset: 1) else { return }

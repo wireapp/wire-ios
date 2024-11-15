@@ -26,15 +26,49 @@ protocol ConversationAccessUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation access update event.
 
-    func processEvent(_ event: ConversationAccessUpdateEvent) async throws
+    func processEvent(_ event: ConversationAccessUpdateEvent) async
 
 }
 
 struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationAccessUpdateEvent) async throws {
-        // TODO: [WPB-10164]
-        assertionFailure("not implemented yet")
+    let repository: any ConversationRepositoryProtocol
+    let localStore: any ConversationLocalStoreProtocol
+
+    func processEvent(_ event: ConversationAccessUpdateEvent) async {
+        let conversationID = event.conversationID
+
+        let localConversation = await repository.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+
+        let accessRoles = if let legacyAccessRole = event.legacyAccessRole {
+            getAccessRoles(from: legacyAccessRole)
+        } else {
+            event.accessRoles ?? [.teamMember, .nonTeamMember, .service]
+        }
+
+        await localStore.updateAccesses(
+            for: localConversation,
+            accessModes: event.accessModes.map(\.rawValue),
+            accessRoles: accessRoles.map(\.rawValue)
+        )
+    }
+
+    private func getAccessRoles(
+        from legacyRole: ConversationAccessRoleLegacy
+    ) -> Set<ConversationAccessRole> {
+        switch legacyRole {
+        case .team:
+            [.teamMember]
+        case .activated:
+            [.teamMember, .nonTeamMember, .guest]
+        case .nonActivated:
+            [.teamMember, .nonTeamMember, .guest, .service]
+        case .private:
+            []
+        }
     }
 
 }

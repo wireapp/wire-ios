@@ -6,5 +6,5 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireSyncEngine"]
-  autoMockableImports: []
+  autoMockableImports: ["WireAnalytics"]
  

@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process conversation member leave events.
 
@@ -32,9 +33,24 @@ protocol ConversationMemberLeaveEventProcessorProtocol {
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
 
-    func processEvent(_: ConversationMemberLeaveEvent) async throws {
-        // TODO: [WPB-10169]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case failedToRemoveMembers(userIDs: Set<UserID>)
+    }
+
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationMemberLeaveEvent) async throws {
+        do {
+            try await repository.removeMembers(
+                event.removedUserIDs,
+                from: event.conversationID,
+                initiatedBy: event.senderID,
+                at: event.timestamp,
+                reason: event.reason
+            )
+        } catch {
+            throw Error.failedToRemoveMembers(userIDs: event.removedUserIDs)
+        }
     }
 
 }

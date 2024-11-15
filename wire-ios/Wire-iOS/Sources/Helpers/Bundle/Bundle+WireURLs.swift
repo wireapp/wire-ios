@@ -57,9 +57,6 @@ struct WireURLs: Codable {
     /// Link to the license information page.
     let licenseInformation: URL
 
-    /// Link to the password reset page.
-    let passwordReset: URL
-
     /// Link to the support page where the user can submit a support request for various issues.
     let askSupportArticle: URL
 
@@ -90,6 +87,12 @@ struct WireURLs: Codable {
     /// Shown in various places (e.g. system messages, warnings, error messages).
     let endToEndIdentityInfo: URL
 
+    /// Link to an article explaining how to add a conversation to your favourites folder.
+    let howToAddConversationToYourFavourites: URL
+
+    /// Link to an article explaining how to add a conversation to a custom folder.
+    let howToAddAConversationToACustomFolder: URL
+
     static var shared: WireURLs = {
         do {
             return try WireURLs(forResource: "url", withExtension: "json")
@@ -117,7 +120,6 @@ struct WireURLs: Codable {
         case privacyPolicy
         case legal
         case licenseInformation
-        case passwordReset
         case askSupportArticle
         case reportAbuse
         case wireEnterpriseInfo
@@ -127,6 +129,8 @@ struct WireURLs: Codable {
         case federationInfo
         case mlsInfo
         case endToEndIdentityInfo
+        case howToAddConversationToYourFavourites
+        case howToAddAConversationToACustomFolder
     }
 
     enum WireURLsError: Error {

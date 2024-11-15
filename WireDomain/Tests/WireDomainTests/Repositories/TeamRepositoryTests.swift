@@ -267,14 +267,14 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Mock
 
-        userRespository.fetchUserWithDomain_MockValue = user
-        userRespository.deleteUserAccountForAt_MockMethod = { _, _ in }
+        userRespository.deleteUserAccountIdDomainAt_MockMethod = { _, _, _ in }
+        userRespository.fetchUserIdDomain_MockValue = user
 
         // When
 
         try await sut.deleteMembership(
-            forUser: Scaffolding.userID,
-            fromTeam: Scaffolding.teamID,
+            for: Scaffolding.userID,
+            domain: nil,
             at: Scaffolding.date(from: Scaffolding.time)
         )
 

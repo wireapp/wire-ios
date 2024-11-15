@@ -134,6 +134,12 @@ extension Calling: MessageCapable {
     }
 }
 
+extension InCallEmoji: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.inCallEmoji = self
+    }
+}
+
 extension WireProtos.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self

@@ -127,6 +127,9 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
         case .calling:
             return "calling"
 
+        case .inCallEmoji:
+            return "inCallEmoji"
+
         case .asset:
             return "asset"
 
