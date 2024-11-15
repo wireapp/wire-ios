@@ -52,7 +52,10 @@ let package = Package(
 )
 
 func datadogDependencies() -> [Target.Dependency] {
-    guard datadogEnabled else { return [] }
+    guard datadogEnabled else {
+        // note: in this case SPM will warn that the dd-sdk-ios is not used
+        return []
+    }
     return [
         .product(name: "DatadogCore", package: "dd-sdk-ios"),
         .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
