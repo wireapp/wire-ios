@@ -32,7 +32,7 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
     
-    let repository: any ConversationRepositoryProtocol
+    let repository: any MessageRepositoryProtocol
 
     func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
         let message = event.message
@@ -41,9 +41,12 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let subconversation = event.subconversation
         let date = event.timestamp
         
-        await repository.addMessage(
-            .mls(encryptedMessage: message,
-                 subconversation: subconversation,
+        let decryptedMessages = event.decryptedMessages.map {
+            (message: $0.message, senderClientID: $0.senderClientID)
+        }
+        
+        await repository.addMessageToConversation(
+            .mls(decryptedMessages: decryptedMessages,
                  conversationID: conversationID.uuid,
                  conversationDomain: conversationID.domain,
                  senderID: senderID.uuid,

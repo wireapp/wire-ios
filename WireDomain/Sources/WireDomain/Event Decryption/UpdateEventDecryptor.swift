@@ -36,25 +36,42 @@ protocol UpdateEventDecryptorProtocol {
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
-    private let context: NSManagedObjectContext
+    private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
+    private let messageRepository: any MessageRepositoryProtocol
 
     init(
         proteusService: any ProteusServiceInterface,
-        context: NSManagedObjectContext
+        mlsService: any MLSServiceInterface,
+        mlsDecryptionService: any MLSDecryptionServiceInterface,
+        userClientsRepository: any UserClientsRepositoryProtocol,
+        messageRepository: any MessageRepositoryProtocol,
+        userRepository: any UserRepositoryProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
-        proteusMessageDecryptor = ProteusMessageDecryptor(
+        self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
-            managedObjectContext: context
+            userClientsRepository: userClientsRepository,
+            userRepository: userRepository
         )
-        self.context = context
+        
+        self.mlsMessageDecryptor = MLSMessageDecryptor(
+            mlsDecryptionService: mlsDecryptionService,
+            mlsService: mlsService,
+            conversationLocalStore: conversationLocalStore
+        )
+        
+        self.messageRepository = messageRepository
+        
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
-        context: NSManagedObjectContext
+        mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
+        messageRepository: any MessageRepositoryProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
-        self.context = context
+        self.mlsMessageDecryptor = mlsMessageDecryptor
+        self.messageRepository = messageRepository
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
@@ -93,6 +110,24 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         attributes: logAttributes
                     )
                 }
+                
+            case .conversation(.mlsMessageAdd(let eventData)):
+                
+                WireLogger.updateEvent.info(
+                    "decrypting MLS event...",
+                    attributes: logAttributes
+                )
+
+                do {
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedEventData(from: eventData)
+                    decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
+
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS event, dropping: \(error.localizedDescription)",
+                        attributes: logAttributes
+                    )
+                }
 
             default:
                 // No decryption needed.
@@ -111,33 +146,20 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         if error == .outdatedMessage || error == .duplicateMessage {
             return
         }
+        
+        let systemMessageType: SystemMessageType = .decryptionFailed(
+            sender: (eventData.senderID.uuid, eventData.senderID.domain),
+            senderClientID: eventData.messageSenderClientID,
+            errorCode: error.rawValue,
+            date: eventData.timestamp
+        )
+        
+        await messageRepository.addSystemMessageToConversation(
+            messageType: systemMessageType,
+            conversationID: eventData.conversationID.uuid,
+            conversationDomain: eventData.conversationID.domain
+        )
 
-        await context.perform { [context] in
-            guard
-                let conversation = ZMConversation.fetch(
-                    with: eventData.conversationID.uuid,
-                    domain: eventData.conversationID.domain,
-                    in: context
-                ),
-                let sender = ZMUser.fetch(
-                    with: eventData.senderID.uuid,
-                    domain: eventData.senderID.domain,
-                    in: context
-                ),
-                let senderClient = sender.clients.first(where: {
-                    $0.remoteIdentifier == eventData.messageSenderClientID
-                })
-            else {
-                return
-            }
-
-            conversation.appendDecryptionFailedSystemMessage(
-                at: eventData.timestamp,
-                sender: sender,
-                client: senderClient,
-                errorCode: error.rawValue
-            )
-        }
     }
 
 }

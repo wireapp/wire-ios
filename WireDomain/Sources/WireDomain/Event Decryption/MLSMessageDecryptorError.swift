@@ -16,19 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// The contents of a message, typically as a base-64 encoded
-/// Protobuf string.
-
-public struct MessageContent: Equatable, Codable {
-
-    /// Encrypted message content.
-
-    public let encryptedMessage: String
-
-    /// Unencrypted message content.
-
-    public var decryptedMessage: String?
+enum MLSMessageDecryptorError: Error {
+    
+    case conversationNotFound
+    
+    case missingMLSGroupID
+    
+    case mlsConversationNotReady
 
 }
+

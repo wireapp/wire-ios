@@ -22,11 +22,19 @@ import WireDataModel
 /// Facilitate access to message related domain objects.
 public protocol MessageRepositoryProtocol {
 
-    func addMessageToConversation(
-        messageType: MessageType,
+    func addSystemMessageToConversation(
+        messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async
+    
+    /// Adds a message to a given conversation.
+    /// - parameter messageType: The type of message to add (MLS or Proteus)
+
+    func addMessageToConversation(
+        _ messageType: MessageType
+    ) async
+
 
 }
 
@@ -35,17 +43,20 @@ public class MessageRepository: MessageRepositoryProtocol {
     // MARK: - Properties
 
     private let localStore: any MessageLocalStoreProtocol
+    private let conversationRepository: any ConversationRepositoryProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        localStore: any MessageLocalStoreProtocol
+        localStore: any MessageLocalStoreProtocol,
+        conversationRepository: any ConversationRepositoryProtocol
     ) {
         self.localStore = localStore
+        self.conversationRepository = conversationRepository
     }
 
-    public func addMessageToConversation(
-        messageType: MessageType,
+    public func addSystemMessageToConversation(
+        messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async {
@@ -55,4 +66,91 @@ public class MessageRepository: MessageRepositoryProtocol {
             conversationDomain: conversationDomain
         )
     }
+    
+    public func addMessageToConversation(
+        _ messageType: MessageType
+    ) async {
+        switch messageType {
+        case .mls(let decryptedMessages, let conversationID, let conversationDomain, let senderID, let senderDomain, let date):
+
+            await addMLSClientMessage(
+                decryptedMessages: decryptedMessages,
+                conversation: (conversationID, conversationDomain),
+                sender: (senderID, senderDomain),
+                date: date
+            )
+            
+        case .proteus(let message, let messageExternalData, let conversationID, let conversationDomain, let senderID, let senderDomain, let senderClientID, let recipientClientID, let date):
+            
+            await addProteusMessage(
+                message,
+                externalData: messageExternalData,
+                conversation: (conversationID, conversationDomain),
+                sender: (senderID, senderDomain),
+                senderClientID: senderClientID,
+                recipientClientID: recipientClientID,
+                date: date
+            )
+        }
+    }
+
+    // MARK: - Private
+    
+    private func addProteusMessage(
+        _ message: String,
+        externalData: String?,
+        conversation: (id: UUID, domain: String),
+        sender: (id: UUID, domain: String),
+        senderClientID: String,
+        recipientClientID: String,
+        date: Date
+    ) async {
+        
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversation.id,
+            domain: conversation.domain
+        ) else {
+            return WireLogger.proteus.error(
+                "failed to add proteus message: conversation not found in db"
+            )
+        }
+        
+        await localStore.addProteusMessage(
+            message,
+            externalData: externalData,
+            conversation: conversation,
+            senderID: sender.id,
+            senderDomain: sender.domain,
+            senderClientID: senderClientID,
+            recipientClientID: recipientClientID,
+            date: date
+        )
+
+    }
+    
+    private func addMLSClientMessage(
+        decryptedMessages: [(message: String, senderClientID: String?)],
+        conversation: (id: UUID, domain: String),
+        sender: (id: UUID, domain: String),
+        date: Date?
+    ) async {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversation.id,
+            domain: conversation.domain
+        ) else {
+            return WireLogger.mls.error(
+                "failed to add mls message: conversation not found in db"
+            )
+        }
+
+        await localStore.addMLSMessages(
+            decryptedMessages: decryptedMessages,
+            mlsConversation: conversation,
+            senderID: sender.id,
+            senderDomain: sender.domain,
+            date: date
+        )
+    }
+
+
 }

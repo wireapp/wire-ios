@@ -245,27 +245,6 @@ public protocol ConversationLocalStoreProtocol {
         users: Set<ZMUser>,
         initiatingUser: ZMUser
     ) async
-    
-    // TODO: [WPB-11839] move to MessageRepository
-    /// Adds a MLS message to a given conversation
-    /// - Parameters:
-    ///     - encryptedMessage: The encrypted MLS message that was received.
-    ///     - mlsGroupID: The MLS group ID.
-    ///     - mlsConversation: The MLS conversation.
-    ///     - senderID: The ID of the user who sent the message.
-    ///     - senderDomain: The domain of the user who sent the message.
-    ///     - subconversation: The subconversation name if any.
-    ///     - date: The date the message was received.
-
-    func addMLSMessage(
-        _ encryptedMessage: String,
-        mlsGroupID: MLSGroupID,
-        mlsConversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String,
-        subconversation: String?,
-        date: Date?
-    ) async
 
     /// Fetches or creates a role locally.
     /// - Parameters:
@@ -326,6 +305,15 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
+    
+    /// Stores the commit pending proposal date locally.
+    /// - Parameter commitPendingProposalDate: The date to update.
+    /// - Parameter conversation: The conversation to update the `commitPendingProposalDate` flag for.
+
+    func storeConversation(
+        commitPendingProposalDate: Date,
+        conversation: ZMConversation
+    ) async
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -338,7 +326,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     let context: NSManagedObjectContext
     let mlsService: any MLSServiceInterface
-    let decryptionService: any MLSDecryptionServiceInterface
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -349,12 +336,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public init(
         context: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
-        decryptionService: any MLSDecryptionServiceInterface,
         userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
         self.mlsService = mlsService
-        self.decryptionService = decryptionService
         self.userLocalStore = userLocalStore
     }
 
@@ -656,6 +641,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus == .ready
         }
+    }
+    
+    public func storeConversation(
+        commitPendingProposalDate: Date,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.commitPendingProposalDate = commitPendingProposalDate
+        }
+        
     }
 
     public func conversationMutedMessageTypes(

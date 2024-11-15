@@ -18,54 +18,26 @@
 
 import Foundation
 
-public enum MessageType: Sendable {
-    case federationTermination(
-        domains: [String],
-        date: Date
+public enum MessageType {
+    case mls(
+        decryptedMessages: [(message: String, senderClientID: String?)],
+        conversationID: UUID,
+        conversationDomain: String,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date?
     )
-
-    case participantsRemovedAnonymously(
-        participants: [(id: UUID, domain: String?)],
+    
+    case proteus(
+        message: String,
+        externalData: String?,
+        conversationID: UUID,
+        conversationDomain: String,
+        senderID: UUID,
+        senderDomain: String,
+        senderClientID: String,
+        recipientClientID: String,
         date: Date
-    )
-
-    case mlsMigrationMLSNotSupportedForSelfUser
-
-    case mlsMigrationMLSNotSupportedForOtherUser(
-        otherUser: (id: UUID, domain: String?)
-    )
-
-    case teamMemberRemoved(
-        member: (id: UUID, domain: String?),
-        date: Date
-    )
-
-    case participantRemoved(
-        participant: (id: UUID, domain: String?),
-        sender: (id: UUID, domain: String?),
-        date: Date
-    )
-
-    case newConversationCreated(
-        date: Date
-    )
-
-    case mlsMigrationStarted(
-        sender: (id: UUID, domain: String?),
-        date: Date
-    )
-
-    case mlsMigrationPotentialGap(
-        sender: (id: UUID, domain: String?),
-        date: Date
-    )
-
-    case mlsMigrationFinalized(
-        sender: (id: UUID, domain: String?),
-        date: Date
-    )
-
-    case receiptModeIsOn(
-        date: Date
+        
     )
 }

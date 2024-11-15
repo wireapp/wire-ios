@@ -28,6 +28,8 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol UserClientsRepositoryProtocol {
+    
+    func fetchSelfClient() async -> WireDataModel.UserClient?
 
     /// Pulls and stores self user clients locally.
     /// Deletes no longer relevant clients locally.
@@ -67,6 +69,31 @@ public protocol UserClientsRepositoryProtocol {
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
+    
+    func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async
+    
+    func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async
+    
+    func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID?
+    
+    func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async
+    
+    func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> WireDataModel.UserClient?
 }
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
@@ -137,6 +164,72 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         }
 
         return localUserClient
+    }
+    
+    public func fetchSelfClient() async -> WireDataModel.UserClient? {
+        let selfUser = await userRepository.fetchSelfUser()
+        
+        return await context.perform {
+            selfUser.selfClient()
+        }
+    }
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: Move to UserClientsLocalStore when related PR is merged
+    public func storeClient(
+        discoveryDate: Date,
+        client: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            client.discoveryDate = discoveryDate
+        }
+    }
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: Move to UserClientsLocalStore when related PR is merged
+    public func addNewClientToIgnored(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.addNewClientToIgnored(newClient)
+        }
+    }
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: Move to UserClientsLocalStore when related PR is merged
+    public func proteusSessionID(
+        for client: WireDataModel.UserClient
+    ) async -> ProteusSessionID? {
+        await context.perform {
+            client.proteusSessionID
+        }
+    }
+    
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: Move to UserClientsLocalStore when related PR is merged
+    public func clientSessionCreated(
+        selfClient: WireDataModel.UserClient,
+        newClient: WireDataModel.UserClient
+    ) async {
+        await context.perform {
+            selfClient.decrementNumberOfRemainingProteusKeys()
+            selfClient.updateSecurityLevelAfterDiscovering([newClient])
+        }
+    }
+    
+    public func fetchClient(
+        id: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) async -> UserClient? {
+        await context.perform {
+            UserClient.fetchUserClient(
+                withRemoteId: id,
+                forUser: user,
+                createIfNeeded: createIfNeeded
+            )
+        }
     }
 
     public func updateClient(
@@ -249,4 +342,11 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             }
         }
     }
+    
+//    public func updateSecurityLevel(selfClient: UserClient) async {
+//        await context.perform {
+//            selfClient.decrementNumberOfRemainingProteusKeys()
+//            selfClient.updateSecurityLevelAfterDiscovering([context.senderClient])
+//        }
+//    }
 }

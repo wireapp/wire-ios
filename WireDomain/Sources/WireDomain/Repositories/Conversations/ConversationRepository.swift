@@ -180,12 +180,6 @@ public protocol ConversationRepositoryProtocol {
         to conversation: ZMConversation
     ) async
 
-    /// Adds a message to a given conversation.
-    /// - parameter messageType: The type of message to add (MLS or Proteus)
-    // TODO: [WPB-11839] move to MessageRepository
-    func addMessage(
-        _ messageType: ConversationRepository.MessageType
-    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -194,20 +188,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let domain: String
         let isFederationEnabled: Bool
     }
-    
-    public enum MessageType {
-        case mls(
-            encryptedMessage: String,
-            subconversation: String?,
-            conversationID: UUID,
-            conversationDomain: String,
-            senderID: UUID,
-            senderDomain: String,
-            date: Date?
-        )
-        
-        case proteus // TODO: [WPB-10174]
-    }
 
     // MARK: - Properties
 
@@ -215,6 +195,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let conversationsLocalStore: any ConversationLocalStoreProtocol
     private let userRepository: any UserRepositoryProtocol
     private let teamRepository: any TeamRepositoryProtocol
+    private let userClientsRepository: any UserClientsRepositoryProtocol
     private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
@@ -225,6 +206,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         conversationsLocalStore: any ConversationLocalStoreProtocol,
         userRepository: any UserRepositoryProtocol,
         teamRepository: any TeamRepositoryProtocol,
+        userClientsRepository: any UserClientsRepositoryProtocol,
         backendInfo: BackendInfo,
         mlsProvider: MLSProvider
     ) {
@@ -232,6 +214,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.conversationsLocalStore = conversationsLocalStore
         self.userRepository = userRepository
         self.teamRepository = teamRepository
+        self.userClientsRepository = userClientsRepository
         self.backendInfo = backendInfo
         self.mlsProvider = mlsProvider
     }
@@ -560,67 +543,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.addSystemMessage(
             message,
             to: conversation
-        )
-    }
-
-    public func addMessage(
-        _ messageType: MessageType
-    ) async {
-        switch messageType {
-        case .mls(let encryptedMessage, let subconversation, let conversationID, let conversationDomain, let senderID, let senderDomain, let date):
-
-            await addMLSClientMessage(
-                encryptedMessage: encryptedMessage,
-                subconversation: subconversation,
-                conversation: (conversationID, conversationDomain),
-                sender: (senderID, senderDomain),
-                date: date
-            )
-            
-        case .proteus:
-            // TODO: [WPB-10174]
-            break
-        }
-    }
-
-    // MARK: - Private
-    
-    private func addMLSClientMessage(
-        encryptedMessage: String,
-        subconversation: String?,
-        conversation: (id: UUID, domain: String),
-        sender: (id: UUID, domain: String),
-        date: Date?
-    ) async {
-        guard let conversation = await fetchConversation(
-            id: conversation.id,
-            domain: conversation.domain
-        ) else {
-            return WireLogger.mls.error(
-                "failed to add mls message: conversation not found in db"
-            )
-        }
-        
-        guard let mlsGroupID = await conversationsLocalStore.mlsGroupID(for: conversation) else {
-            return WireLogger.mls.error(
-                "failed to add mls message: missing MLS group ID"
-            )
-        }
-        
-        guard await conversationsLocalStore.isConversationMLSReady(conversation) else {
-            return WireLogger.mls.warn(
-                "failed to add mls message: conversation is not ready"
-            )
-        }
-        
-        await conversationsLocalStore.addMLSMessage(
-            encryptedMessage,
-            mlsGroupID: mlsGroupID,
-            mlsConversation: conversation,
-            senderID: sender.id,
-            senderDomain: sender.domain,
-            subconversation: subconversation,
-            date: date
         )
     }
 

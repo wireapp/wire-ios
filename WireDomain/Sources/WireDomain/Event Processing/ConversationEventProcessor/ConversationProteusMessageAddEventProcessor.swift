@@ -31,10 +31,35 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
 }
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
+    
+    let messageRepository: any MessageRepositoryProtocol
 
-    func processEvent(_: ConversationProteusMessageAddEvent) async throws {
-        // TODO: [WPB-10174]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
+        let senderID = event.senderID
+        let conversationID = event.conversationID
+        let messageContent = event.message
+        let messageExternalData = event.externalData
+        let messageSenderClientID = event.messageSenderClientID
+        let messageRecipientClientID = event.messageRecipientClientID
+        let timestamp = event.timestamp
+        
+
+        // Message should be decrypted see `ProteusEventDecryptor`
+        guard let decryptedMessage = messageContent.decryptedMessage else {
+            return
+        }
+        
+        let messageType: MessageType = .proteus(
+            message: decryptedMessage,
+            externalData: messageExternalData?.encryptedMessage,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            senderID: senderID.uuid,
+            senderDomain: senderID.domain,
+            senderClientID: messageSenderClientID,
+            recipientClientID: messageRecipientClientID,
+            date: timestamp
+        )
     }
 
 }
