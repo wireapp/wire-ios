@@ -54,6 +54,9 @@ extension ConversationListViewController {
                 subheadline: Strings.Oneonone.subheadline(domain).attributedString,
                 showArrow: !isIPadRegular(),
                 showButton: isIPadRegular())
+        case .folder:
+            // FIXME: [WPB-13905] Disallow this state
+            return EmptyPlaceholder(subheadline: "".attributedString)
         }
     }
 

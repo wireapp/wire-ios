@@ -24,73 +24,76 @@ import XCTest
 
 @testable import Wire
 
-// MARK: - ConversationListViewControllerSnapshotTests
-
 final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
-    // MARK: - Properties
-
-    private var mockMainCoordinator: MockMainCoordinator!
-    private var sut: ConversationListViewController!
-    private var window: UIWindow!
-    private var tabBarController: MainCoordinatorDependencies.TabBarController!
-    private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
+    private var modelHelper: ModelHelper!
+    private var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var mockGetUserAccountImageSourceUseCase: MockGetUserAccountImageSourceUseCaseProtocol!
-    private var modelHelper: ModelHelper!
+    private var zClientViewController: ZClientViewController!
+    private var sut: ConversationListViewController!
+    private var window: UIWindow!
     private var snapshotHelper: SnapshotHelper!
 
-    // MARK: - setUp
+    private var coreDataStack: CoreDataStack! { coreDataFixture.coreDataStack }
+    private var windowScene: UIWindowScene! { UIApplication.shared.connectedScenes.first as? UIWindowScene }
+    private var searchBar: UISearchBar! { sut.navigationItem.searchController?.searchBar }
 
     @MainActor
     override func setUp() async throws {
 
-        mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
-        accentColor = .blue
-
         coreDataFixture = .init()
+        modelHelper = .init()
 
-        userSession = .init()
+        let selfUser = try XCTUnwrap(coreDataFixture.selfUser)
+        userSession = .init(selfUser: selfUser, selfUserLegalHoldSubject: selfUser, editableSelfUser: selfUser)
         userSession.coreDataStack = coreDataFixture.coreDataStack
+        userSession.mockConversationList = ConversationList(
+            allConversations: [],
+            filteringPredicate: NSPredicate(value: true),
+            managedObjectContext: coreDataStack.viewContext,
+            description: "all conversations"
+        )
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
         mockGetUserAccountImageSourceUseCase = .init()
-        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .init()
+        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
 
-        modelHelper = ModelHelper()
+        snapshotHelper = .init()
 
-        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
-        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
-        selfUser.accentColor = .red
-
-        let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(
-            account: account,
+        zClientViewController = ZClientViewController(
+            account: coreDataStack.account,
+            userSession: userSession,
+            trackingManager: nil
+        )
+        sut = .init(
+            account: coreDataStack.account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
+            zClientViewController: zClientViewController,
+            mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mockMainCoordinator,
-            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
-        )
-
-        sut = ConversationListViewController(
-            viewModel: viewModel,
-            zClientViewController: .init(account: account, userSession: userSession, trackingManager: nil),
-            mainCoordinator: .init(mainCoordinator: mockMainCoordinator),
             connectViewControllerBuilder: MockConnectViewControllerBuilderProtocol(),
             selfProfileViewControllerBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol()
+            createGroupConversationViewControllerBuilder: MockCreateGroupConversationViewControllerBuilderProtocol(),
+            folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+                conversationDirectory: userSession.conversationDirectory,
+                conversationFilter: { nil }
+            ),
+            getUserAccountImageSourceUseCase: mockGetUserAccountImageSourceUseCase
         )
         sut.mainSplitViewState = .collapsed
 
-        tabBarController = .init()
+        let tabBarController = ZClientViewController.MainCoordinator.TabBarController()
+        tabBarController.applyMainTabBarControllerAppearance()
         tabBarController.conversationListUI = sut
 
-        window = UIWindow(frame: UIScreen.main.bounds)
+        window = .init(windowScene: windowScene)
+        window.backgroundColor = .systemBackground
+        window.overrideUserInterfaceStyle = .dark
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
 
@@ -99,28 +102,22 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         UIView.setAnimationsEnabled(false)
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
-        snapshotHelper = nil
-        window.isHidden = true
-        window.rootViewController = nil
-        window = nil
-        tabBarController = nil
         sut = nil
-        mockIsSelfUserE2EICertifiedUseCase = nil
+        snapshotHelper = nil
+        zClientViewController = nil
         userSession = nil
-        coreDataFixture = nil
-        modelHelper = nil
-        mockMainCoordinator = nil
         mockGetUserAccountImageSourceUseCase = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
+        modelHelper = nil
+        coreDataFixture = nil
+        window.isHidden = true
+        window = nil
     }
 
-    // MARK: - View Controller
-
     func testForNoConversations() {
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForEverythingArchived() {
@@ -128,8 +125,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversation.isArchived = true
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-        window.rootViewController = nil
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     // MARK: - Snapshot Tests for Filter View
@@ -152,7 +148,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.none)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.placeholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingConversationsFilteredByGroups() {
@@ -169,15 +166,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByGroups() {
         // GIVEN
-        let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: false)
-        ]
         userSession.mockConversationDirectory.mockGroupConversations = []
 
         // WHEN
@@ -185,7 +179,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.groups)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingConversationsFilteredByFavourites() {
@@ -202,15 +197,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByFavourites() {
         // GIVEN
-        let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: true)
-        ]
         userSession.mockConversationDirectory.mockFavoritesConversations = []
 
         // WHEN
@@ -218,9 +210,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.favorites)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
+    //
     func testForShowingConversationsFilteredByOneOnOne() throws {
         // GIVEN
         let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
@@ -239,7 +233,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredByOneOnOne() throws {
@@ -257,7 +252,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.applyFilter(.oneOnOne)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
     }
 
     func testForShowingNoConversationsFilteredBySearchTerm() throws {
@@ -276,7 +272,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.hideNoContactLabel(animated: false)
 
         // THEN
-        snapshotHelper.verify(matching: tabBarController)
+        snapshotHelper.verify(matching: renderedImage())
     }
     // MARK: - Helper Methods
 
@@ -300,5 +296,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             viewController.viewIfLoaded != nil
         }
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
+    }
+
+    /// Without this helper the layout around the navigation item's search bar breaks when rendering the snapshot.
+    private func renderedImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: window.bounds.size)
+        return renderer.image { _ in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
     }
 }

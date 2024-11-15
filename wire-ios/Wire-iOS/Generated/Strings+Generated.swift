@@ -665,32 +665,40 @@ internal enum L10n {
           /// Show all conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.description", fallback: "Show all conversations")
           internal enum Selected {
-            /// Show all conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "Show all conversations")
+            /// All conversations, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "All conversations, selected")
           }
         }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
           internal enum Selected {
-            /// Show all favorite conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Show all favorite conversations")
+            /// Favorites, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Favorites, selected")
+          }
+        }
+        internal enum Folders {
+          /// Folders
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.description", fallback: "Folders")
+          internal enum Selected {
+            /// Folder, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.folders.selected.description", fallback: "Folder, selected")
           }
         }
         internal enum Groups {
           /// Show all group conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.description", fallback: "Show all group conversations")
           internal enum Selected {
-            /// Show all group conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Show all group conversations")
+            /// Groups, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Groups, selected")
           }
         }
         internal enum OneOnOne {
           /// Show all one on one conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
           internal enum Selected {
-            /// Show all one on one conversations
-            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "Show all one on one conversations")
+            /// One-to-one conversations, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "One-to-one conversations, selected")
           }
         }
       }
@@ -2805,6 +2813,10 @@ internal enum L10n {
           /// Favorites
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
         }
+        internal enum Folders {
+          /// Folders
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.folders.title", fallback: "Folders")
+        }
         internal enum Groups {
           /// Groups
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.groups.title", fallback: "Groups")
@@ -2849,6 +2861,10 @@ internal enum L10n {
       internal enum SearchBar {
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
+        /// Search %@
+        internal static func foldersPlaceholder(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.search_bar.foldersPlaceholder", String(describing: p1), fallback: "Search %@")
+        }
         /// Search groups
         internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
         /// Search 1:1 conversations
