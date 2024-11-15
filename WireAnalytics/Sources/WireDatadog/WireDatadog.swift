@@ -152,17 +152,17 @@ extension WireDatadog.LogLevel {
     var datadogLevel: LogLevel {
         switch self {
         case debug:
-            return .debug
+            .debug
         case info:
-            return .info
+            .info
         case notice:
-            return .notice
+            .notice
         case warn:
-            return .warn
+            .warn
         case error:
-            return .error
+            .error
         case critical:
-            return .critical
+            .critical
         }
     }
 }
