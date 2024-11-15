@@ -1166,6 +1166,8 @@
 		BFFE943C1E7839D10025AD75 /* ConversationRenamedCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */; };
 		BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */; };
 		CB366A902CC7DE410083701F /* ArchivedListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB366A8F2CC7DE410083701F /* ArchivedListViewModelTests.swift */; };
+		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
+		CB43DBC42CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
 		D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FA292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift */; };
@@ -1438,7 +1440,6 @@
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
 		E9E49A5D2CBED6FD0026801A /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E49A5C2CBED6FD0026801A /* SectionFooterView.swift */; };
 		E9E49A5F2CBED7FB0026801A /* SectionTableFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E49A5E2CBED7FB0026801A /* SectionTableFooter.swift */; };
-		E9E4BFC62CD11F4200A04713 /* ConversationListViewControllerSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4BFC52CD11F4200A04713 /* ConversationListViewControllerSearchTests.swift */; };
 		E9F0BC292BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */; };
 		E9F2D63E2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */; };
 		E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */; };
@@ -3250,6 +3251,7 @@
 		BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationRenamedCellTests.swift; sourceTree = "<group>"; };
 		BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSnapshotTestCase.swift; sourceTree = "<group>"; };
 		CB366A8F2CC7DE410083701F /* ArchivedListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewModelTests.swift; sourceTree = "<group>"; };
+		CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerViewControllerBuilder.swift; sourceTree = "<group>"; };
 		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoConvert.swift"; sourceTree = "<group>"; };
 		CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
@@ -3451,7 +3453,6 @@
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
 		E9E49A5C2CBED6FD0026801A /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		E9E49A5E2CBED7FB0026801A /* SectionTableFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionTableFooter.swift; sourceTree = "<group>"; };
-		E9E4BFC52CD11F4200A04713 /* ConversationListViewControllerSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerSearchTests.swift; sourceTree = "<group>"; };
 		E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapshotTesting+UITableViewCell.swift"; sourceTree = "<group>"; };
 		E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStartedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
@@ -3945,6 +3946,7 @@
 				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
 				592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */,
 				EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */,
+				CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */,
 				EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */,
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
@@ -5493,6 +5495,7 @@
 				7C440E7723472DFB00D91B5F /* FolderCreationNameSectionController.swift */,
 				7C440E7923472E9900D91B5F /* FolderCreationNameCell.swift */,
 				7C440E82234B35CB00D91B5F /* FolderPickerViewController.swift */,
+				CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */,
 			);
 			path = Folders;
 			sourceTree = "<group>";
@@ -7647,7 +7650,6 @@
 				2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */,
 				E6A09CD62C2ECA960069C15A /* SystemSettingsTests.swift */,
 				E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */,
-				E9E4BFC52CD11F4200A04713 /* ConversationListViewControllerSearchTests.swift */,
 			);
 			path = "Wire-iOS UnitTests";
 			sourceTree = "<group>";
@@ -8655,6 +8657,7 @@
 				59076F942C934A9800AE7529 /* WireAccountImageUI */,
 				590DCA072C971A56002D0A2C /* WireSidebarUI */,
 				E92C8CC52C942A5C00E0F7F7 /* Inject */,
+				CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */,
 				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
 			);
 			productName = "ZClient iOS";
@@ -9842,6 +9845,7 @@
 				5E936E8F20B590530060E6AA /* UIDevice+Platform.swift in Sources */,
 				EF1A461A21AD60510009B6B9 /* ReceiptOptionsSectionController.swift in Sources */,
 				63497734268CBDAE00824A05 /* CallGridAction.swift in Sources */,
+				CB43DBC42CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift in Sources */,
 				EE2DF7602875E2E20028ECA2 /* PreferredAPIVersionViewModel.swift in Sources */,
 				5E423CD92295674900A5DB3A /* ConversationViewController+PrivacyAlert.swift in Sources */,
 				EEB8A2D01F628D1100958881 /* Settings+Account.swift in Sources */,
@@ -10749,7 +10753,6 @@
 				E6579E582AFFA024004E7FD8 /* MockZiphyClient.swift in Sources */,
 				E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */,
 				E6579E752AFFA36D004E7FD8 /* AppLockModule.MockPresenter.swift in Sources */,
-				E9E4BFC62CD11F4200A04713 /* ConversationListViewControllerSearchTests.swift in Sources */,
 				E6579E6D2AFFA029004E7FD8 /* MockConversation.m in Sources */,
 				E6579E5B2AFFA024004E7FD8 /* Account+Mock.swift in Sources */,
 				E6579E432AFF9D33004E7FD8 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */,
@@ -11821,6 +11824,10 @@
 		59D038262C85D31E009FE583 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMainNavigationUI;
+		};
+		CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFolderPickerUI;
 		};
 		CB4E15112C81CC81005DDEC8 /* Down */ = {
 			isa = XCSwiftPackageProductDependency;

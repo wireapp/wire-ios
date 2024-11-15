@@ -135,6 +135,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             .wireTextStyle(.h2)
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
+            .accessibilityAddTraits(.isHeader)
         if addTopPadding {
             text.padding(.top)
         } else {
@@ -144,18 +145,21 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     private func nonselectableMenuItem(_ menuItem: SidebarNonselectableMenuItem) -> some View {
         let text: Text
+        let accessibilityLabel: Text
         let icon: String
         let isLink: Bool
         let action: () -> Void
         switch menuItem {
         case .connect:
             text = Text(L10n.Sidebar.Contacts.Connect.title)
+            accessibilityLabel = Text("sidebar.contacts.connect.title", bundle: .module)
             icon = "person.badge.plus"
             isLink = false
             action = connectAction
 
         case .support:
             text = Text(L10n.Sidebar.Support.title)
+            accessibilityLabel = Text("sidebar.support.description", tableName: "Accessibility", bundle: .module)
             icon = "questionmark.circle"
             isLink = true
             action = supportAction
@@ -166,6 +170,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             iconSize: iconSize,
             isLink: isLink,
             title: { text.wireTextStyle(.body1) },
+            accessibilityLabel: { accessibilityLabel },
             action: action
         )
     }
@@ -173,30 +178,42 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     private func selectableMenuItem(_ menuItem: SidebarSelectableMenuItem) -> some View {
         let text: Text
         let icon: String
+        let accessibilityLabel: Text
         switch menuItem {
         case .all:
             text = Text(L10n.Sidebar.ConversationFilter.All.title)
             icon = "text.bubble"
+            accessibilityLabel = Text("sidebar.conversation_filter.all.title", bundle: .module)
 
         case .favorites:
             text = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
             icon = "star"
+            accessibilityLabel = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
 
         case .groups:
             text = Text(L10n.Sidebar.ConversationFilter.Groups.title)
             icon = "person.3"
+            accessibilityLabel = Text("sidebar.conversation_filter.groups.title", bundle: .module)
 
         case .oneOnOne:
             text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
+            accessibilityLabel = Text("sidebar.conversation_filter.oneOnOneConversations.description", tableName: "Accessibility", bundle: .module)
+
+        case .folders:
+            text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            icon = "folder"
+            accessibilityLabel = Text("sidebar.conversation_filter.folders.title", bundle: .module)
 
         case .archive:
             text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
             icon = "archivebox"
+            accessibilityLabel = Text("sidebar.conversation_filter.archived.title", bundle: .module)
 
         case .settings:
             text = Text(L10n.Sidebar.Settings.title)
             icon = "gearshape"
+            accessibilityLabel = Text("sidebar.settings.description", tableName: "Accessibility", bundle: .module)
         }
 
         return SidebarMenuItemView(
@@ -205,6 +222,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             isLink: false,
             isHighlighted: selectedMenuItem == menuItem,
             title: { text.wireTextStyle(.body1) },
+            accessibilityLabel: { accessibilityLabel },
             action: { selectedMenuItem = menuItem }
         )
     }

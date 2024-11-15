@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SidebarSelectableMenuItem: CaseIterable, Comparable, Sendable {
+import Foundation
+
+public enum SidebarSelectableMenuItem: Comparable, Sendable, Hashable {
     // conversation filters
-    case all, favorites, groups, oneOnOne
+    case all, favorites, groups, oneOnOne, folders
     // archived conversations
     case archive
     // bottom
