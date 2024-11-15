@@ -49,9 +49,7 @@ final class OneOnOneResolverTests: XCTestCase {
             context: context,
             userRepository: userRepository,
             conversationsRepository: conversationsRepository,
-            mlsService: mlsService,
-            isMLSEnabled: true,
-            target: .user(id: Scaffolding.receiverQualifiedID)
+            mlsProvider: .init(service: mlsService, isMLSEnabled: true)
         )
 
         DeveloperFlag.storage = UserDefaults(suiteName: Scaffolding.defaultsSuiteName)!
@@ -93,12 +91,13 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
         XCTAssert(mlsService.establishGroupForWithRemovalKeys_Invocations.isEmpty)
         XCTAssert(mlsService.joinGroupWith_Invocations.isEmpty)
+        XCTAssertEqual(userRepository.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
     }
 
     func testProcessEvent_It_Resolves_MLS_Conversation_Epoch_Zero() async throws {
@@ -123,7 +122,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -170,7 +169,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -204,7 +203,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -243,7 +242,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -277,7 +276,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         // When
 
-        try await sut.invoke()
+        try await sut.resolveAllOneOnOneConversations()
 
         // Then
 
@@ -346,6 +345,7 @@ final class OneOnOneResolverTests: XCTestCase {
     ) {
         userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
+        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
         conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID.uuidString
         conversationsRepository.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation

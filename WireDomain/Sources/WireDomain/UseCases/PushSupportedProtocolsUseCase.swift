@@ -20,7 +20,6 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
-
 // sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend
 public protocol PushSupportedProtocolsUseCaseProtocol {
@@ -35,7 +34,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
         case ongoing
         case finalised
     }
-    
+
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
     let userClientsRepository: any UserClientsRepositoryProtocol

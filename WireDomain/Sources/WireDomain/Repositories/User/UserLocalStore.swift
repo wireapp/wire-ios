@@ -133,7 +133,13 @@ public protocol UserLocalStoreProtocol {
 
     func markAccountAsDeleted(for user: ZMUser) async
 
-    // TODO: [WPB-10727] Merge these two methods into a single method (also no API objects should be passed to local store)
+    /// Fetches all user IDs that have a one on one conversation
+    /// - returns: A list of users' qualified IDs.
+
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
+    // TODO: [WPB-10727] Merge these methods into a single method (also no API objects should be passed to local store)
+    func persistSelfUser(from selfUser: WireAPI.SelfUser) async
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
 }
@@ -192,6 +198,26 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 domain: domain,
                 in: context
             )
+        }
+    }
+
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        try await context.perform { [context] in
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+            request.predicate = predicate
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error(
+                            "Missing user's qualifiedID"
+                        )
+                        return nil
+                    }
+                    return userID
+                }
         }
     }
 
@@ -300,23 +326,53 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             domain: user.id.domain
         )
 
-        await context.perform {
-            guard user.deleted == false else {
-                return persistedUser.markAccountAsDeleted(at: Date())
-            }
+        let previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
+        let completeProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
 
-            persistedUser.name = user.name
-            persistedUser.handle = user.handle
-            persistedUser.teamIdentifier = user.teamID
-            persistedUser.accentColorValue = Int16(user.accentID)
-            persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
-            persistedUser.previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-            persistedUser.emailAddress = user.email
-            persistedUser.expiresAt = user.expiresAt
-            persistedUser.serviceIdentifier = user.service?.id.transportString()
-            persistedUser.providerIdentifier = user.service?.provider.transportString()
-            persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
-            persistedUser.needsToBeUpdatedFromBackend = false
+        await updateUserMetadata(
+            persistedUser,
+            deleted: user.deleted == true,
+            name: user.name,
+            handle: user.handle,
+            teamID: user.teamID,
+            accentID: user.accentID,
+            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
+            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
+            email: user.email,
+            expiresAt: user.expiresAt,
+            serviceIdentifier: user.service?.id.transportString(),
+            providerIdentifier: user.service?.provider.transportString(),
+            supportedProtocols: user.supportedProtocols?.toDomainModel() ?? [.proteus]
+        )
+    }
+
+    public func persistSelfUser(
+        from selfUser: WireAPI.SelfUser
+    ) async {
+        let persistedSelfUser = await fetchSelfUser()
+        let previewProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .preview })?.key
+        let completeProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .complete })?.key
+
+        await updateUserMetadata(
+            persistedSelfUser,
+            deleted: selfUser.deleted == true,
+            name: selfUser.name,
+            handle: selfUser.handle,
+            teamID: selfUser.teamID,
+            accentID: selfUser.accentID,
+            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
+            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
+            email: selfUser.email,
+            expiresAt: selfUser.expiresAt,
+            serviceIdentifier: selfUser.service?.id.transportString(),
+            providerIdentifier: selfUser.service?.provider.transportString(),
+            supportedProtocols: selfUser.supportedProtocols?.toDomainModel() ?? [.proteus]
+        )
+
+        await context.perform {
+            persistedSelfUser.remoteIdentifier = selfUser.qualifiedID.uuid
+            persistedSelfUser.domain = selfUser.qualifiedID.domain
+            persistedSelfUser.managedBy = selfUser.managedBy?.rawValue
         }
     }
 
@@ -429,6 +485,43 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             selfUser.selfClient()?.addNewClientToIgnored(localClient)
             selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+        }
+    }
+
+    // MARK: - Private
+
+    private func updateUserMetadata(
+        _ user: ZMUser,
+        deleted: Bool,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        accentID: Int,
+        previewProfileAssetIdentifier: String?,
+        completeProfileAssetIdentifier: String?,
+        email: String?,
+        expiresAt: Date?,
+        serviceIdentifier: String?,
+        providerIdentifier: String?,
+        supportedProtocols: Set<WireDataModel.MessageProtocol>
+    ) async {
+        await context.perform {
+            guard deleted == false else {
+                return user.markAccountAsDeleted(at: .now)
+            }
+
+            user.name = name
+            user.handle = handle
+            user.teamIdentifier = teamID
+            user.accentColorValue = Int16(accentID)
+            user.previewProfileAssetIdentifier = previewProfileAssetIdentifier
+            user.completeProfileAssetIdentifier = completeProfileAssetIdentifier
+            user.emailAddress = email
+            user.expiresAt = expiresAt
+            user.serviceIdentifier = serviceIdentifier
+            user.providerIdentifier = providerIdentifier
+            user.supportedProtocols = supportedProtocols
+            user.needsToBeUpdatedFromBackend = false
         }
     }
 
