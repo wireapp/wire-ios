@@ -40,6 +40,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         case .favorites: self = .favorites
         case .groups: self = .groups
         case .oneOnOne: self = .oneOnOne
+        case let .folder(id, name): self = .folder(id: id, name: name)
         }
     }
 
@@ -48,6 +49,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         case .favorites: .favorites
         case .groups: .groups
         case .oneOnOne: .oneOnOne
+        case let .folder(id, name): .folder(id: id, name: name)
         }
     }
 }

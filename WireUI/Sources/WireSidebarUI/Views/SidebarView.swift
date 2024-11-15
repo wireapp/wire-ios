@@ -190,6 +190,10 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
             icon = "person"
 
+        case .folders:
+            text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            icon = "folder"
+
         case .archive:
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"

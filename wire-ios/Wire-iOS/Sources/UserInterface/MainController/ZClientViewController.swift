@@ -127,6 +127,12 @@ final class ZClientViewController: UIViewController {
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+            conversationDirectory: userSession.conversationDirectory,
+            conversationFilter: { [weak self] in
+                self?.conversationFilter()
+            }
+        ),
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
@@ -733,6 +739,10 @@ final class ZClientViewController: UIViewController {
         } catch {
             WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
+    }
+
+    private func conversationFilter() -> ConversationFilter? {
+        conversationListViewController.conversationFilter
     }
 }
 

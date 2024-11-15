@@ -36,6 +36,7 @@ final class ConversationListViewController: UIViewController {
     let selfProfileViewControllerBuilder: any SelfProfileViewControllerBuilderProtocol
     let createGroupConversationUIBuilder: any CreateGroupConversationViewControllerBuilderProtocol
     let conversationListCoordinator: any ConversationListCoordinatorProtocol
+    let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -63,6 +64,7 @@ final class ConversationListViewController: UIViewController {
             }
         }
         button.addAction(action, for: .touchUpInside)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
     }()
 
@@ -75,6 +77,8 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Groups.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case let .folder(_, name):
+            return name
         case .none:
             return ""
         }
@@ -124,6 +128,7 @@ final class ConversationListViewController: UIViewController {
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
         createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
@@ -140,7 +145,8 @@ final class ConversationListViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             connectViewControllerBuilder: connectViewControllerBuilder,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder
+            createGroupConversationViewControllerBuilder: createGroupConversationViewControllerBuilder,
+            folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
         )
     }
 
@@ -150,7 +156,8 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         connectViewControllerBuilder: some ConnectViewControllerBuilderProtocol,
         selfProfileViewControllerBuilder: some SelfProfileViewControllerBuilderProtocol,
-        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol
+        createGroupConversationViewControllerBuilder: some CreateGroupConversationViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -158,6 +165,7 @@ final class ConversationListViewController: UIViewController {
         self.connectViewControllerBuilder = connectViewControllerBuilder
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
         self.createGroupConversationUIBuilder = createGroupConversationViewControllerBuilder
+        self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
         let conversationListCoordinator = ConversationListCoordinator(mainCoordinator: mainCoordinator)
         self.conversationListCoordinator = conversationListCoordinator
 
@@ -411,6 +419,8 @@ final class ConversationListViewController: UIViewController {
             return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
         case .oneOnOne:
             return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case let .folder(_, name):
+            return L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
     }
 
