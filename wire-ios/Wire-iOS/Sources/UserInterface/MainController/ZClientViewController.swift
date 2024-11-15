@@ -118,7 +118,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
-    private lazy var folderPickerViewControllerBuilder =  FolderPickerViewControllerBuilder(
+    private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
         conversationDirectory: userSession.conversationDirectory,
         conversationFilter: { [weak self] in
             self?.conversationFilter()

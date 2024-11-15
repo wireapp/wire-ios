@@ -55,7 +55,9 @@ struct SidebarMenuItemView<TitleView: View>: View {
     // MARK: -
 
     var body: some View {
-        Button(action: { action(frame) }) {
+        Button {
+            action(frame)
+        } label: {
             HStack {
                 Label {
                     title()
@@ -93,8 +95,6 @@ struct SidebarMenuItemView<TitleView: View>: View {
         } action: { newValue in
             frame = newValue
         }
-
-
     }
 }
 

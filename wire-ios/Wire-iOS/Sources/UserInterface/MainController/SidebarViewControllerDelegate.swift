@@ -56,8 +56,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
             if let popover = folderPicker.popoverPresentationController,
                let view = viewController.view,
-               let window = view.window
-            {
+               let window = view.window {
                 popover.sourceView = view
                 popover.sourceRect = view.convert(rect, from: window)
             }

@@ -213,12 +213,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "gearshape"
         }
 
-        let action: (CGRect) -> Void
-        switch menuItem {
+        let action: (CGRect) -> Void = switch menuItem {
         case .folders:
-            action = foldersAction
+            foldersAction
         default:
-            action = { _ in selectedMenuItem = menuItem }
+            { _ in selectedMenuItem = menuItem }
         }
 
         return SidebarMenuItemView(

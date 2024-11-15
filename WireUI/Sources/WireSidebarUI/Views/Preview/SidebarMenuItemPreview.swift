@@ -47,7 +47,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isLink: true,
                     title: { Text("Initially highlighted") },
-                    action: { _  in print("show all conversations") }
+                    action: { _ in print("show all conversations") }
                 )
             }
             .overlay {
