@@ -23,6 +23,7 @@
 "sidebar.conversation_filter.favorites.title" = "Favoriten";
 "sidebar.conversation_filter.groups.title" = "Gruppen";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"sidebar.conversation_filter.folders.title" = "Ordner";
 "sidebar.conversation_filter.archived.title" = "Archiv";
 
 "sidebar.contacts.title" = "Kontakte";

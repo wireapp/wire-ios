@@ -33,13 +33,15 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Regular") },
+                    accessibilityLabel: { Text("Regular") },
                     action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "gamecontroller",
                     iconSize: iconSize,
                     isHighlighted: true,
-                    title: { Text("Initially highlighted") },
+                    title: { Text("Initially highlighted") }, 
+                    accessibilityLabel: { Text("Initially highlighted") },
                     action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
@@ -47,6 +49,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isLink: true,
                     title: { Text("Initially highlighted") },
+                    accessibilityLabel: { Text("Initially highlighted") },
                     action: { _ in print("show all conversations") }
                 )
             }
@@ -67,7 +70,8 @@ struct SidebarMenuItemPreview: View {
                     icon: "text.bubble",
                     iconSize: iconSize,
                     isHighlighted: false,
-                    title: { Text("Small Icon") },
+                    title: { Text("Small Icon") }, 
+                    accessibilityLabel: { Text("Small Icon") },
                     action: { _ in print("show all conversations") }
                 )
                 SidebarMenuItemView(
@@ -75,6 +79,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Little larger Icon") },
+                    accessibilityLabel: { Text("Little larger Icon") },
                     action: { _ in print("show all conversations") }
                 )
             }

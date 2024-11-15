@@ -49,6 +49,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
     private(set) var isHighlighted = false
 
     private(set) var title: () -> TitleView
+    private(set) var accessibilityLabel: () -> Text
     private(set) var action: (CGRect) -> Void
     @State private var frame: CGRect = .zero
 
@@ -88,6 +89,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .padding(.vertical, 12)
             .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
+            .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onGeometryChange(for: CGRect.self) { proxy in
