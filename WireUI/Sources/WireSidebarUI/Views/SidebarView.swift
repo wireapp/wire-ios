@@ -203,6 +203,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .folders:
             text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
             icon = "folder"
+            accessibilityLabel = Text("sidebar.conversation_filter.folders.title", bundle: .module)
 
         case .archive:
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
