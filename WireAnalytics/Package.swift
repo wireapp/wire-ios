@@ -23,7 +23,7 @@ let package = Package(
         .target(
             name: "WireAnalytics",
             dependencies: [
-                .product(name: "Countly", package: "countly-sdk-ios"),
+                .product(name: "Countly", package: "countly-sdk-ios")
             ],
             swiftSettings: swiftSettings
         ),
@@ -52,17 +52,14 @@ let package = Package(
 )
 
 func datadogDependencies() -> [Target.Dependency] {
-    if datadogEnabled {
-        [
-            .product(name: "DatadogCore", package: "dd-sdk-ios"),
-            .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-            .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-            .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-            .product(name: "DatadogTrace", package: "dd-sdk-ios")
-        ]
-    } else {
-        []
-    }
+    guard datadogEnabled else { return [] }
+    return [
+        .product(name: "DatadogCore", package: "dd-sdk-ios"),
+        .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
+        .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+        .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+        .product(name: "DatadogTrace", package: "dd-sdk-ios")
+    ]
 }
 
 func datadogFiles() -> [String] {

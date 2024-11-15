@@ -124,11 +124,11 @@ public final class WireDatadog {
     public func addAttribute(forKey key: String, value: String) {
         logger?.addTag(withKey: key, value: value)
     }
-    
+
     public func removeAttribute(forKey key: String) {
         logger?.removeAttribute(forKey: key)
     }
-    
+
     // MARK: Static Helpers
 
     private static func hashedDatadogUserIdentifier(_ uuid: UUID) -> String {

@@ -21,7 +21,7 @@ import UIKit
 public final class WireDatadog {
 
     public var userIdentifier: String {
-        return ""
+        ""
     }
 
     public init(
@@ -47,11 +47,11 @@ public final class WireDatadog {
     ) {
         // do nothing
     }
-    
+
     public func addAttribute(forKey key: String, value: String) {
         // do nothing
     }
-    
+
     public func removeAttribute(forKey key: String) {
         // do nothing
     }
