@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.settings.description" = "Open your settings";
-"sidebar.support.description" = "Open support";
-"sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
-"sidebar.name.description" = "Profile name";
-"sidebar.handle.description" = "Username";
+"sidebar.settings.description" = "Открыть настройки";
+"sidebar.support.description" = "Открыть поддержку";
+"sidebar.conversation_filter.oneOnOneConversations.description" = "Беседы один на один";
+"sidebar.name.description" = "Название профиля";
+"sidebar.handle.description" = "Псевдоним";

@@ -23,6 +23,7 @@
 "sidebar.conversation_filter.favorites.title" = "Вподобання";
 "sidebar.conversation_filter.groups.title" = "Групи";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "Архівувати";
 
 "sidebar.contacts.title" = "Контакти";
