@@ -233,11 +233,13 @@
 "conversationsList.filter_menu_options.favorites.description" = "Alle Lieblingsunterhaltungen anzeigen";
 "conversationsList.filter_menu_options.groups.description" = "Alle Gruppenunterhaltungen anzeigen";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Alle eins zu eins Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.folders.description" = "Ordner";
 
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Alle Unterhaltungen anzeigen";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Alle Lieblingsunterhaltungen anzeigen";
-"conversationsList.filter_menu_options.groups.selected.description" = "Alle Gruppenunterhaltungen anzeigen";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Alle eins zu eins Unterhaltungen anzeigen";
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Alle Unterhaltungen, ausgewählt";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Favoriten, ausgewählt";
+"conversationsList.filter_menu_options.groups.selected.description" = "Gruppen, ausgewählt";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Ein-zu-eins-Unterhaltungen, ausgewählt";
+"conversationsList.filter_menu_options.folders.selected.description" = "Ordner, ausgewählt";
 
 "conversationsList.filter_view.removeButton.descritpion" = "Unterhaltungsfilter entfernen";
 
