@@ -50,14 +50,13 @@ struct SidebarMenuItemView<TitleView: View>: View {
 
     private(set) var title: () -> TitleView
     private(set) var accessibilityLabel: () -> Text
-    private(set) var action: (CGRect) -> Void
-    @State private var frame: CGRect = .zero
+    private(set) var action: () -> Void
 
     // MARK: -
 
     var body: some View {
         Button {
-            action(frame)
+            action()
         } label: {
             HStack {
                 Label {
@@ -92,11 +91,6 @@ struct SidebarMenuItemView<TitleView: View>: View {
             .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-        .onGeometryChange(for: CGRect.self) { proxy in
-            proxy.frame(in: .global)
-        } action: { newValue in
-            frame = newValue
-        }
     }
 }
 

@@ -34,15 +34,15 @@ struct SidebarMenuItemPreview: View {
                     isHighlighted: false,
                     title: { Text("Regular") },
                     accessibilityLabel: { Text("Regular") },
-                    action: { _ in print("show all conversations") }
+                    action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "gamecontroller",
                     iconSize: iconSize,
                     isHighlighted: true,
-                    title: { Text("Initially highlighted") }, 
+                    title: { Text("Initially highlighted") },
                     accessibilityLabel: { Text("Initially highlighted") },
-                    action: { _ in print("show all conversations") }
+                    action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "person.3",
@@ -50,7 +50,7 @@ struct SidebarMenuItemPreview: View {
                     isLink: true,
                     title: { Text("Initially highlighted") },
                     accessibilityLabel: { Text("Initially highlighted") },
-                    action: { _ in print("show all conversations") }
+                    action: { print("show all conversations") }
                 )
             }
             .overlay {
@@ -70,17 +70,18 @@ struct SidebarMenuItemPreview: View {
                     icon: "text.bubble",
                     iconSize: iconSize,
                     isHighlighted: false,
-                    title: { Text("Small Icon") }, 
+                    title: { Text("Small Icon") },
                     accessibilityLabel: { Text("Small Icon") },
-                    action: { _ in print("show all conversations") }
+                    action: { print("show all conversations") }
                 )
+
                 SidebarMenuItemView(
                     icon: "brain",
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Little larger Icon") },
                     accessibilityLabel: { Text("Little larger Icon") },
-                    action: { _ in print("show all conversations") }
+                    action: { print("show all conversations") }
                 )
             }
             .overlay {

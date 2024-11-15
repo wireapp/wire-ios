@@ -179,13 +179,27 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon: icon,
             iconSize: iconSize,
             isLink: isLink,
-            title: { text.wireTextStyle(.body1) }, 
+            title: { text.wireTextStyle(.body1) },
             accessibilityLabel: { accessibilityLabel },
-            action: { _ in action() }
+            action: action
         )
     }
 
+    @ViewBuilder
     private func selectableMenuItem(_ menuItem: SidebarSelectableMenuItem) -> some View {
+        if menuItem == .folders {
+            Framed { frame in
+                makeSelectableMenuItem(menuItem, action: { foldersAction(frame) })
+            }
+        } else {
+            makeSelectableMenuItem(menuItem, action: { selectedMenuItem = menuItem })
+        }
+    }
+
+    private func makeSelectableMenuItem(
+        _ menuItem: SidebarSelectableMenuItem,
+        action: @escaping () -> Void
+    ) -> some View {
         let text: Text
         let icon: String
         let accessibilityLabel: Text
@@ -224,13 +238,6 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             text = Text("sidebar.settings.title", bundle: .module)
             icon = "gearshape"
             accessibilityLabel = Text("sidebar.settings.description", tableName: "Accessibility", bundle: .module)
-        }
-
-        let action: (CGRect) -> Void = switch menuItem {
-        case .folders:
-            foldersAction
-        default:
-            { _ in selectedMenuItem = menuItem }
         }
 
         return SidebarMenuItemView(
