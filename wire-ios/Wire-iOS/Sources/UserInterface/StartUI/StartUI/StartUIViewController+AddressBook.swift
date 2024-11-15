@@ -38,10 +38,7 @@ extension StartUIViewController {
 extension StartUIViewController: ShareContactsViewControllerDelegate {
 
     func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController) {
-        guard !needsAddressBookPermission else {
-            // do nothing just dismiss
-            return
-        }
+        // called once user has given its contact permission
 
         if let navigationController = viewController.navigationController {
             var viewControllers = navigationController.viewControllers
