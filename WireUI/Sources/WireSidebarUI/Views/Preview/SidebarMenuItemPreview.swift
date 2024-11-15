@@ -74,7 +74,6 @@ struct SidebarMenuItemPreview: View {
                     accessibilityLabel: { Text("Small Icon") },
                     action: { print("show all conversations") }
                 )
-
                 SidebarMenuItemView(
                     icon: "brain",
                     iconSize: iconSize,

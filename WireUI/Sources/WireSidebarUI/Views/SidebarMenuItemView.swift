@@ -55,9 +55,7 @@ struct SidebarMenuItemView<TitleView: View>: View {
     // MARK: -
 
     var body: some View {
-        Button {
-            action()
-        } label: {
+        Button(action: action) {
             HStack {
                 Label {
                     title()
