@@ -19,5 +19,5 @@
 "sidebar.settings.description" = "Open your settings";
 "sidebar.support.description" = "Open support";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
-"sidebar.name.description" = "Profile name";
-"sidebar.handle.description" = "Username";
+"sidebar.name.description" = "Nom du profil";
+"sidebar.handle.description" = "Nom d'utilisateur";

@@ -234,11 +234,13 @@
 "conversationsList.filter_menu_options.favorites.description" = "Показать все избранные беседы";
 "conversationsList.filter_menu_options.groups.description" = "Показать все групповые беседы";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Показать все беседы 1:1";
+"conversationsList.filter_menu_options.folders.description" = "Папки";
 
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Показать все беседы";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Показать все избранные беседы";
-"conversationsList.filter_menu_options.groups.selected.description" = "Показать все групповые беседы";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Показать все беседы 1:1";
+"conversationsList.filter_menu_options.allConversations.selected.description" = "Все беседы, выбраны";
+"conversationsList.filter_menu_options.favorites.selected.description" = "Избранные, выбраны";
+"conversationsList.filter_menu_options.groups.selected.description" = "Группы, выбраны";
+"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Беседы один на один, выбраны";
+"conversationsList.filter_menu_options.folders.selected.description" = "Папка, выбрана";
 
 "conversationsList.filter_view.removeButton.descritpion" = "Удалить фильтр бесед";
 

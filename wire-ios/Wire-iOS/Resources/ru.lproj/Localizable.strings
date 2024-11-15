@@ -129,6 +129,7 @@
 "conversation_list.search_bar.favoritesPlaceholder" = "Поиск в избранном";
 "conversation_list.search_bar.groupsPlaceholder" = "Поиск групп";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Поиск по беседам 1:1";
+"conversation_list.search_bar.foldersPlaceholder" = "Поиск %@";
 
 
 // Conversation List - Filter Conversations
@@ -136,6 +137,7 @@
 "conversation_list.filter.favorites.title" = "Избранное";
 "conversation_list.filter.groups.title" = "Группы";
 "conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
+"conversation_list.filter.folders.title" = "Папки";
 "conversation_list.filter_label.text" = "Отфильтровано по %@";
 "conversation_list.filter.remove_button.title" = "Удалить";
 
