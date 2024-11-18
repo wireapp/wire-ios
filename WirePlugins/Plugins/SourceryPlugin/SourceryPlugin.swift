@@ -60,7 +60,8 @@ extension SourceryPlugin: BuildToolPlugin {
         .first
 
         guard let configuration else {
-            Diagnostics.error("""
+            Diagnostics.error(
+                """
                 No configurations found for target \(target.name). If you would like to generate sources for this \
                 target include a `\(Constant.configFileName)` either in:
                 1. root of package

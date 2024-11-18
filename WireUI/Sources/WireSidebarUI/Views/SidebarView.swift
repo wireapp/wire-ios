@@ -47,7 +47,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView,
+        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?)
+            -> AccountImageView,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo
@@ -101,8 +102,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         }
     }
 
-    @ViewBuilder
-    private var accountInfoView: some View {
+    @ViewBuilder private var accountInfoView: some View {
         if let accountInfo {
             SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
@@ -116,8 +116,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         }
     }
 
-    @ViewBuilder
-    private var scrollableMenuItems: some View {
+    @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader(L10n.Sidebar.ConversationFilter.title, addTopPadding: false)
             let conversationFilters: [SidebarSelectableMenuItem] = [
@@ -222,7 +221,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .oneOnOne:
             text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
-            accessibilityLabel = Text("sidebar.conversation_filter.oneOnOneConversations.description", tableName: "Accessibility", bundle: .module)
+            accessibilityLabel = Text(
+                "sidebar.conversation_filter.oneOnOneConversations.description",
+                tableName: "Accessibility",
+                bundle: .module
+            )
 
         case .folders:
             text = Text(L10n.Sidebar.ConversationFilter.Folders.title)

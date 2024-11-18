@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {
 
@@ -108,15 +108,13 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     private func makeConversation(creator: ZMUser) async -> ZMConversation {
-        let conversation = await context.perform { [self] in
+        await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
 
             return conversation
         }
-
-        return conversation
     }
 
     private func expectedResults(
@@ -166,7 +164,11 @@ final class MessageLocalStoreTests: XCTestCase {
             .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
             .receiptModeIsOn(date: date),
             .newConversationCreated(date: date),
-            .participantRemoved(participant: (id: userID, domain: domain1), sender: (id: otherUserID, domain: domain1), date: date),
+            .participantRemoved(
+                participant: (id: userID, domain: domain1),
+                sender: (id: otherUserID, domain: domain1),
+                date: date
+            ),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date)
         ]
     }

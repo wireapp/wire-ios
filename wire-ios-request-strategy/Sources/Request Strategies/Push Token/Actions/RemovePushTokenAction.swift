@@ -33,15 +33,15 @@ public class RemovePushTokenAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .tokenDoesNotExist:
-                return "Push token does not exist."
+                "Push token does not exist."
 
-            case .unknown(let status):
-                return "Unknown error (response status: \(status))"
+            case let .unknown(status):
+                "Unknown error (response status: \(status))"
             }
         }
 
         public var safeForLoggingDescription: String {
-            return errorDescription ?? ""
+            errorDescription ?? ""
         }
     }
 

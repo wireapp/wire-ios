@@ -37,8 +37,8 @@ extension TypingUsersTimeout {
                 }
             }
 
-            userObjectId = user.objectID
-            conversationObjectId = conversation.objectID
+            self.userObjectId = user.objectID
+            self.conversationObjectId = conversation.objectID
             require(!userObjectId.isTemporaryID && !conversationObjectId.isTemporaryID)
         }
     }

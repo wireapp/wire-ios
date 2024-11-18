@@ -18,10 +18,11 @@
 
 import Foundation
 
-extension ZMManagedObject {
+public extension ZMManagedObject {
 
-    @objc public static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
-        return internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
+    @objc
+    static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
+        internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
     }
 
     /// Fetch a managed object by its remote identifier
@@ -30,8 +31,10 @@ extension ZMManagedObject {
     /// - parameter domain: originating domain of the object.
     /// - parameter context: The `NSManagedObjectContext` on which the object will be fetched.
     ///
-    /// If the domain is nil only objects belonging to your own domain will be returned. Similarily if the self user aren't associated with a domain the domain parameter will be ignored.
-    @objc public static func fetch(with remoteIdentifier: UUID, domain: String?, in context: NSManagedObjectContext) -> Self? {
+    /// If the domain is nil only objects belonging to your own domain will be returned. Similarily if the self user
+    /// aren't associated with a domain the domain parameter will be ignored.
+    @objc
+    static func fetch(with remoteIdentifier: UUID, domain: String?, in context: NSManagedObjectContext) -> Self? {
         let domain: String? = if BackendInfo.isFederationEnabled, let domain, !domain.isEmpty { domain } else { .none }
 
         let localDomain = ZMUser.selfUser(in: context).domain
@@ -45,15 +48,15 @@ extension ZMManagedObject {
         )
     }
 
-    public static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {
-        return fetch(with: qualifiedId.uuid, domain: qualifiedId.domain, in: context)
+    static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {
+        fetch(with: qualifiedId.uuid, domain: qualifiedId.domain, in: context)
     }
 }
 
 public extension ZMManagedObject {
 
     static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
-        return try? context.existingObject(with: id) as? Self
+        try? context.existingObject(with: id) as? Self
     }
 
     static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
@@ -70,17 +73,17 @@ public extension ZMManagedObject {
 
 }
 
-public extension Collection where Element == NSManagedObjectID {
+public extension Collection<NSManagedObjectID> {
 
     func existingObjects<T: ZMManagedObject>(in context: NSManagedObjectContext) -> [T]? {
-        let objects = compactMap({ T.existingObject(for: $0, in: context) })
-        return objects.count == self.count ? objects : nil
+        let objects = compactMap { T.existingObject(for: $0, in: context) }
+        return objects.count == count ? objects : nil
     }
 }
 
 public extension ZMManagedObject {
     // common implementation of primaryKey for ZMConversation and ZMUser
     static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
-        return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
+        "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
     }
 }

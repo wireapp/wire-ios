@@ -18,6 +18,6 @@
 
 public extension UserType {
     var profileDeepLink: String? {
-        return "wire://\(URL.DeepLink.user)/\(remoteIdentifier.uuidString)"
+        "wire://\(URL.DeepLink.user)/\(remoteIdentifier.uuidString)"
     }
 }

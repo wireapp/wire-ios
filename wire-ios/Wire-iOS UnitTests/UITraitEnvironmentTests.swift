@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class UITraitEnvironmentTests: XCTestCase {
 
@@ -67,7 +67,7 @@ final class UITraitEnvironmentTests: XCTestCase {
 }
 
 final class MockRegularView: NSObject, UITraitEnvironment {
-    var traitCollection: UITraitCollection = UITraitCollection(horizontalSizeClass: .regular)
+    var traitCollection: UITraitCollection = .init(horizontalSizeClass: .regular)
 
     func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         // no-op

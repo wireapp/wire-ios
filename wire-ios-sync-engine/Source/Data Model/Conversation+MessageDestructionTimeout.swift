@@ -31,7 +31,7 @@ public enum MessageDestructionTimerError: Error {
         case (403, "invalid-op"?): self = .invalidOperation
         case (403, "access-denied"): self = .accessDenied
         case (404, "no-conversation"): self = .noConversation
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
@@ -48,10 +48,10 @@ extension ZMTransportResponse {
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Changes the conversation message destruction timeout
-    public func setMessageDestructionTimeout(
+    func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
         in userSession: ZMUserSession,
         _ completion: @escaping (Result<Void, Error>) -> Void
@@ -59,11 +59,15 @@ extension ZMConversation {
         // TODO: [WPB-5730] move this method to a useCase
 
         guard let apiVersion = BackendInfo.apiVersion,
-                let managedObjectContext else {
+              let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
+        let request = MessageDestructionTimeoutRequestFactory.set(
+            timeout: Int(timeout.rawValue),
+            for: self,
+            apiVersion: apiVersion
+        )
         request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 userSession.processConversationEvents([event]) {
@@ -83,20 +87,26 @@ extension ZMConversation {
 
 }
 
-private struct MessageDestructionTimeoutRequestFactory {
+private enum MessageDestructionTimeoutRequestFactory {
 
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
-        guard let identifier = conversation.remoteIdentifier?.transportString() else { fatal("conversation inserted on backend") }
+        guard let identifier = conversation.remoteIdentifier?.transportString()
+        else { fatal("conversation inserted on backend") }
 
         let payload: [AnyHashable: Any?]
         if timeout == 0 {
             payload = ["message_timer": nil]
         } else {
             // Backend expects the timer to be in miliseconds, we store it in seconds.
-            let timeoutInMS: Int64 = Int64(timeout) * 1000
+            let timeoutInMS = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
-        return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(
+            path: "/conversations/\(identifier)/message-timer",
+            method: .put,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
 }

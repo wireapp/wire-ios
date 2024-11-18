@@ -31,7 +31,7 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
 
         super.init()
 
-        token = Action.registerHandler(self, context: context.notificationContext)
+        self.token = Action.registerHandler(self, context: context.notificationContext)
     }
 
     func performAction(_ action: Action) {
@@ -55,7 +55,7 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
         }
 
         let action = pendingActions.removeFirst()
-        let request = self.request(for: action, apiVersion: apiVersion)
+        let request = request(for: action, apiVersion: apiVersion)
 
         request?.add(ZMCompletionHandler(on: context, block: { [weak self] response in
             if response.httpStatus.isOne(of: TooManyRequestsStatusCode, EnhanceYourCalmStatusCode) {

@@ -17,20 +17,20 @@
 //
 
 import Foundation
-@testable import WireUtilities
 import XCTest
+@testable import WireUtilities
 
 class FileManagerMoveTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.wipeDirectories()
-        try! FileManager.default.createDirectory(at: self.tempFolder1, withIntermediateDirectories: true)
+        wipeDirectories()
+        try! FileManager.default.createDirectory(at: tempFolder1, withIntermediateDirectories: true)
     }
 
     override func tearDown() {
         super.tearDown()
-        self.wipeDirectories()
+        wipeDirectories()
     }
 
     func testThatItMovesOneFolder() throws {
@@ -42,16 +42,16 @@ class FileManagerMoveTests: XCTestCase {
             "baz.md",
             "foo/eh.ah"
         ]
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
+        createFiles(in: tempFolder1, relativeFilePaths: files)
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
         files.forEach {
             checkIfFileExists(in: self.tempFolder2, relativePath: $0)
         }
-        XCTAssertFalse(FileManager.default.fileExists(atPath: self.tempFolder1.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: tempFolder1.path))
     }
 
     func testThatItMovesOneFolderOverAnExistingOne() throws {
@@ -67,17 +67,17 @@ class FileManagerMoveTests: XCTestCase {
             "foo/bar/extra.file",
             "meh.bah"
         ]
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove)
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove)
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles)
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
         (filesToMove + preExistingFiles).forEach {
             checkIfFileExists(in: self.tempFolder2, relativePath: $0)
         }
-        XCTAssertFalse(FileManager.default.fileExists(atPath: self.tempFolder1.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: tempFolder1.path))
     }
 
     func testThatItDoesNotOverwriteFilesInTheDestinationDirectory() throws {
@@ -90,15 +90,15 @@ class FileManagerMoveTests: XCTestCase {
             overwrittenExistingFile
         ]
 
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: false)
+        try FileManager.default.moveFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: false)
 
         // THEN
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
     }
 
     func testThatItOverwritesFilesInTheDestinationDirectory() throws {
@@ -111,19 +111,20 @@ class FileManagerMoveTests: XCTestCase {
             overwrittenExistingFile
         ]
 
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")
+        checkIfFileExists(in: tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
     }
 }
 
 // MARK: Copy
+
 extension FileManagerMoveTests {
 
     func testThatItCopiesOneFolder() throws {
@@ -135,10 +136,10 @@ extension FileManagerMoveTests {
             "baz.md",
             "foo/eh.ah"
         ]
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
+        createFiles(in: tempFolder1, relativeFilePaths: files)
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
         files.forEach {
@@ -160,11 +161,11 @@ extension FileManagerMoveTests {
             "foo/bar/extra.file",
             "meh.bah"
         ]
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove)
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove)
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles)
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
         (filesToMove + preExistingFiles).forEach {
@@ -182,15 +183,15 @@ extension FileManagerMoveTests {
             overwrittenExistingFile
         ]
 
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: false)
+        try FileManager.default.copyFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: false)
 
         // THEN
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
     }
 
     func testThatItCopyOverwritesFilesInTheDestinationDirectory() throws {
@@ -203,31 +204,31 @@ extension FileManagerMoveTests {
             overwrittenExistingFile
         ]
 
-        self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
-        self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
+        createFiles(in: tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
+        createFiles(in: tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(from: tempFolder1, to: tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")
-        self.checkIfFileExists(in: self.tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
+        checkIfFileExists(in: tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")
+        checkIfFileExists(in: tempFolder2, relativePath: nonOverwrittenExistingFile, content: "DESTINATION")
     }
 }
 
 extension FileManagerMoveTests {
 
     var tempFolder1: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/1")
+        URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/1")
     }
 
     var tempFolder2: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/2")
+        URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/2")
     }
 
     func wipeDirectories() {
-        try? FileManager.default.removeItem(at: self.tempFolder1)
-        try? FileManager.default.removeItem(at: self.tempFolder2)
+        try? FileManager.default.removeItem(at: tempFolder1)
+        try? FileManager.default.removeItem(at: tempFolder2)
     }
 
     /// Create dummy files

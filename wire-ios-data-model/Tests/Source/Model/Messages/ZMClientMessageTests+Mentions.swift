@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
 
-    func createMessage(text: String, mentions: [ Mention]) -> ZMClientMessage {
+    func createMessage(text: String, mentions: [Mention]) -> ZMClientMessage {
         let text = Text(content: text, mentions: mentions, linkPreviews: [])
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 
@@ -94,9 +94,9 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
     func testMentionsIsCapppedAt500() {
         // given
         let text = String(repeating: "@", count: 501)
-        let tooManyMentions = (0...500).map({ index in
-            return Mention(range: NSRange(location: index, length: 1), user: user1)
-        })
+        let tooManyMentions = (0 ... 500).map { index in
+            Mention(range: NSRange(location: index, length: 1), user: user1)
+        }
         let message = createMessage(text: text, mentions: tooManyMentions)
 
         // when

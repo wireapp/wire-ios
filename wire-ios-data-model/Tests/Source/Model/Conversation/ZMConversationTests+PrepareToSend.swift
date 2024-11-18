@@ -24,15 +24,15 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
     func testThatMessagesAddedToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.securityLevel = .secureWithIgnored
 
         // WHEN
         let message = try! conversation.appendText(content: "Foo") as! ZMMessage
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)
@@ -41,7 +41,7 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
     func testThatMessagesAddedToDegradedMlsConversationAreExpiredAndFlaggedAsCauseDegradation() throws {
         // GIVEN
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.messageProtocol = .mls
         conversation.mlsVerificationStatus = .degraded
 
@@ -49,10 +49,10 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         let message = try XCTUnwrap(
             try conversation.appendText(content: "Foo") as? ZMMessage
         )
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // THEN
-        try self.syncMOC.performAndWait {
+        try syncMOC.performAndWait {
             let message = try XCTUnwrap(self.syncMOC.object(with: message.objectID) as? ZMMessage)
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)
@@ -61,19 +61,19 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
     func testThatMessagesResentToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.securityLevel = .secure
         let message = try! conversation.appendText(content: "Foo") as! ZMMessage
         message.expire(withReason: .other)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // WHEN
         conversation.securityLevel = .secureWithIgnored
         message.resend()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)

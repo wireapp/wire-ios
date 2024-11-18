@@ -32,8 +32,8 @@ public struct AppendKnockMessageUseCase: AppendKnockMessageUseCaseProtocol {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
-        in conversation: Conversation
+    public func invoke(
+        in conversation: some MessageAppendableConversation
     ) throws {
 
         try conversation.appendKnock(nonce: UUID())

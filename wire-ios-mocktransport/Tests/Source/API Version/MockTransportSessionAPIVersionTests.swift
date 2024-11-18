@@ -29,10 +29,12 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.federation = true
 
         // Then
-        let response = self.response(forPayload: [:] as ZMTransportData,
-                                     path: path,
-                                     method: .get,
-                                     apiVersion: .v0)
+        let response = response(
+            forPayload: [:] as ZMTransportData,
+            path: path,
+            method: .get,
+            apiVersion: .v0
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -53,10 +55,12 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.federation = true
 
         // Then
-        let response = self.response(forPayload: [:] as ZMTransportData,
-                                     path: path,
-                                     method: .get,
-                                     apiVersion: .v0)
+        let response = response(
+            forPayload: [:] as ZMTransportData,
+            path: path,
+            method: .get,
+            apiVersion: .v0
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -74,10 +78,12 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.isAPIVersionEndpointAvailable = false
 
         // Then
-        let response = self.response(forPayload: [:] as ZMTransportData,
-                                     path: path,
-                                     method: .get,
-                                     apiVersion: .v0)
+        let response = response(
+            forPayload: [:] as ZMTransportData,
+            path: path,
+            method: .get,
+            apiVersion: .v0
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -88,10 +94,12 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         let path = "/api-version"
 
         // Then
-        let response = self.response(forPayload: [:] as ZMTransportData,
-                                     path: path,
-                                     method: .get,
-                                     apiVersion: .v1)
+        let response = response(
+            forPayload: [:] as ZMTransportData,
+            path: path,
+            method: .get,
+            apiVersion: .v1
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 404)

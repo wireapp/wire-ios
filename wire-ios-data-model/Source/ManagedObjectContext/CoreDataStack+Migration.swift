@@ -45,8 +45,8 @@ extension CoreDataStack {
 
     static func removeDirectory(at url: URL) {
         do {
-            guard Self.fileManager.fileExists(atPath: url.path) else { return }
-            try Self.fileManager.removeItem(at: url)
+            guard fileManager.fileExists(atPath: url.path) else { return }
+            try fileManager.removeItem(at: url)
         } catch {
             Logging.localStorage.debug("error removing directory: \(error)")
         }
@@ -69,7 +69,7 @@ extension CoreDataStack {
         dispatchGroup: ZMSDispatchGroup,
         migration: @escaping (NSManagedObjectContext) throws -> Void,
         completion: @escaping (Result<Void, Error>) -> Void
-        ) {
+    ) {
 
         func fail(_ error: MigrationError) {
             Logging.localStorage.error("Migrating local store failed: \(error)")
@@ -82,12 +82,15 @@ extension CoreDataStack {
             }
         }
 
-        let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = Self.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
         guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.missingLocalStore) }
 
-        let migrationDirectory = self.migrationDirectory.appendingPathComponent(UUID().uuidString)
+        let migrationDirectory = migrationDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = migrationDirectory.appendingPathComponent(databaseDirectoryName)
 
         workQueue.async(group: dispatchGroup) {
@@ -96,7 +99,11 @@ extension CoreDataStack {
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
                 // Create target directory
-                try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: databaseDirectory,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 let migrationStoreLocation = databaseDirectory.appendingStoreFile()
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
@@ -109,10 +116,12 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                try performMigration(coordinator: coordinator,
-                                     location: migrationStoreLocation,
-                                     options: options,
-                                     migration: migration)
+                try performMigration(
+                    coordinator: coordinator,
+                    location: migrationStoreLocation,
+                    options: options,
+                    migration: migration
+                )
 
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
@@ -135,7 +144,12 @@ extension CoreDataStack {
         }
     }
 
-    private static func performMigration(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any], migration: @escaping (NSManagedObjectContext) throws -> Void) throws {
+    private static func performMigration(
+        coordinator: NSPersistentStoreCoordinator,
+        location: URL,
+        options: [String: Any],
+        migration: @escaping (NSManagedObjectContext) throws -> Void
+    ) throws {
 
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)

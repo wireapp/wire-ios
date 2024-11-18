@@ -21,8 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 struct E2EIdentityCertificateDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
     var certificateDetails: String
     var isDownloadAndCopyEnabled: Bool
 
@@ -134,10 +133,10 @@ struct E2EIdentityCertificateDetailsView: View {
                     Spacer()
                     moreButton
                         .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    .confirmationDialog("...", isPresented: $isMenuPresented) {
-                        copyToClipboardButton
-                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
-                    }
+                        .confirmationDialog("...", isPresented: $isMenuPresented) {
+                            copyToClipboardButton
+                                .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
+                        }
                 }
             }
         }
@@ -160,13 +159,14 @@ struct E2EIdentityCertificateDetailsView: View {
 
         certificateView
             .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
-
-        .safeAreaInset(edge: .bottom,
-                       spacing: .zero) {
-            bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
-        }
-        .ignoresSafeArea()
-        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
+            .safeAreaInset(
+                edge: .bottom,
+                spacing: .zero
+            ) {
+                bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
+            }
+            .ignoresSafeArea()
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 }
 

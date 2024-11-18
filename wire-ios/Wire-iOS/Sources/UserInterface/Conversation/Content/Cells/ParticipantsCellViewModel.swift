@@ -23,13 +23,18 @@ import WireDesign
 
 enum ConversationActionType {
 
-    case none, started(name: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
+    case none
+    case started(name: String?)
+    case added(herself: Bool)
+    case removed(reason: ZMParticipantsRemovedReason)
+    case left
+    case teamMemberLeave
 
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
         switch self {
-        case .left, .teamMemberLeave, .added(herself: true): return false
-        default:                                             return true
+        case .left, .teamMemberLeave, .added(herself: true): false
+        default:                                             true
         }
     }
 
@@ -37,17 +42,16 @@ enum ConversationActionType {
         // Don't collapse when removing participants, since the collapsed
         // link is only used for participants in the conversation.
         switch self {
-        case .removed:  return false
-        default:        return true
+        case .removed:  false
+        default:        true
         }
     }
 
     func image(with color: UIColor) -> UIImage {
-        let icon: StyleKitIcon
-        switch self {
-        case .started, .none:                   icon = .conversation
-        case .added:                            icon = .plus
-        case .removed, .left, .teamMemberLeave: icon = .minus
+        let icon: StyleKitIcon = switch self {
+        case .started, .none:                   .conversation
+        case .added:                            .plus
+        case .removed, .left, .teamMemberLeave: .minus
         }
 
         return icon.makeImage(size: .tiny, color: color)
@@ -79,15 +83,15 @@ final class ParticipantsCellViewModel {
     let message: ZMConversationMessage
 
     private var action: ConversationActionType {
-        return message.actionType
+        message.actionType
     }
 
     private var maxShownUsers: Int {
-        return isSelfIncludedInUsers ? 16 : 17
+        isSelfIncludedInUsers ? 16 : 17
     }
 
     private var maxShownUsersWhenCollapsed: Int {
-        return isSelfIncludedInUsers ? 14 : 15
+        isSelfIncludedInUsers ? 14 : 15
     }
 
     private var showServiceUserWarning: Bool {
@@ -125,14 +129,12 @@ final class ParticipantsCellViewModel {
     /// The users to display when opening the participants details screen.
     var selectedUsers: [UserType] {
         switch action {
-        case .added: return sortedUsers
-        default: return []
+        case .added: sortedUsers
+        default: []
         }
     }
 
-    lazy var isSelfIncludedInUsers: Bool = {
-        return sortedUsers.any(\.isSelfUser)
-    }()
+    lazy var isSelfIncludedInUsers: Bool = sortedUsers.any(\.isSelfUser)
 
     /// The users involved in the conversation action sorted alphabetically by
     /// name.
@@ -141,13 +143,13 @@ final class ParticipantsCellViewModel {
         guard action.involvesUsersOtherThanSender else { return [sender] }
         guard let systemMessage = message.systemMessageData else { return [] }
 
-        let usersWithoutSender: Set<AnyHashable>
-        if case .removed(let reason) = action, reason == .federationTermination {
-            usersWithoutSender = systemMessage.userTypes
+        let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action,
+                                                      reason == .federationTermination {
+            systemMessage.userTypes
         } else if let hashableSender = sender as? AnyHashable {
-            usersWithoutSender = systemMessage.userTypes.subtracting([hashableSender])
+            systemMessage.userTypes.subtracting([hashableSender])
         } else {
-            usersWithoutSender = systemMessage.userTypes
+            systemMessage.userTypes
         }
         guard let users = Array(usersWithoutSender) as? [UserType] else { return [] }
 
@@ -160,7 +162,7 @@ final class ParticipantsCellViewModel {
         textColor: UIColor,
         iconColor: UIColor,
         message: ZMConversationMessage
-        ) {
+    ) {
         self.font = font
         self.largeFont = largeFont
         self.textColor = textColor
@@ -168,21 +170,20 @@ final class ParticipantsCellViewModel {
         self.message = message
     }
 
-    lazy var sortedUsersWithoutSelf: [UserType] = {
-        return sortedUsers.filter { !$0.isSelfUser }
-    }()
+    lazy var sortedUsersWithoutSelf: [UserType] = sortedUsers.filter { !$0.isSelfUser }
 
     private func name(for user: UserType) -> String {
         if user.isSelfUser {
-            return "content.system.you_\(grammaticalCase(for: user))".localized
+            "content.system.you_\(grammaticalCase(for: user))".localized
         } else {
-            return user.name ?? L10n.Localizable.Conversation.Status.someone
+            user.name ?? L10n.Localizable.Conversation.Status.someone
         }
     }
 
     private var nameList: NameList {
         var userNames = shownUsers.map { name(for: $0) }
-        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only display selfUser
+        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only
+        /// display selfUser
         if case .removed(reason: .legalHoldPolicyConflict) = action,
            let selfUser = sortedUsers.first(where: \.isSelfUser),
            !sortedUsersWithoutSelf.isEmpty {
@@ -202,7 +203,7 @@ final class ParticipantsCellViewModel {
 
         // If there is selfUser in the list, we should only display selfUser as "You"
         if case .removed(reason: .legalHoldPolicyConflict) = action,
-           !sortedUsers.filter({ $0.isSelfUser }).isEmpty { return "started" }
+           !sortedUsers.filter(\.isSelfUser).isEmpty { return "started" }
 
         return "accusative"
     }
@@ -210,7 +211,7 @@ final class ParticipantsCellViewModel {
     // ------------------------------------------------------------
 
     func image() -> UIImage? {
-        return action.image(with: iconColor)
+        action.image(with: iconColor)
     }
 
     func attributedHeading() -> NSAttributedString? {
@@ -218,7 +219,7 @@ final class ParticipantsCellViewModel {
             case let .started(name: conversationName?) = action,
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-            else { return nil }
+        else { return nil }
 
         let senderName = name(for: sender).capitalized
         return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
@@ -228,12 +229,17 @@ final class ParticipantsCellViewModel {
         guard
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-            else { return nil }
+        else { return nil }
 
         let senderName = name(for: sender).capitalized
 
         if action.involvesUsersOtherThanSender {
-            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, names: nameList, isSelfIncludedInUsers: isSelfIncludedInUsers)
+            return formatter.title(
+                senderName: senderName,
+                senderIsSelf: sender.isSelfUser,
+                names: nameList,
+                isSelfIncludedInUsers: isSelfIncludedInUsers
+            )
         } else {
             return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser)
         }

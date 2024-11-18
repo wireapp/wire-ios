@@ -31,7 +31,7 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
     private var sut: UpdateConversationFolderUseCase!
 
     private var managedObjectContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp
@@ -48,6 +48,7 @@ final class UpdateConversationFolderUseCaseTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
     }
+
     // MARK: - Tests
 
     func testInvokeShouldMoveConversationToSpecifiedFolder() async throws {

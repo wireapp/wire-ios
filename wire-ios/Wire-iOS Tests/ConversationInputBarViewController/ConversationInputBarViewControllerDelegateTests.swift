@@ -80,21 +80,26 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
 
     var composedDrafts = [DraftMessage]()
 
-    func conversationInputBarViewControllerDidComposeText(text: String,
-                                                          mentions: [Mention],
-                                                          replyingTo message: ZMConversationMessage?) {}
+    func conversationInputBarViewControllerDidComposeText(
+        text: String,
+        mentions: [Mention],
+        replyingTo message: ZMConversationMessage?
+    ) {}
 
-    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController)
+        -> Bool {
+        true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+        true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,
-                                                            withText newText: String?,
-                                                            mentions: [Mention]) {}
+    func conversationInputBarViewControllerDidFinishEditing(
+        _ message: ZMConversationMessage,
+        withText newText: String?,
+        mentions: [Mention]
+    ) {}
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {}
 

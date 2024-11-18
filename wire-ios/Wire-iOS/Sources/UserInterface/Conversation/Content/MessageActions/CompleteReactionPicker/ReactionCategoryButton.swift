@@ -25,17 +25,18 @@ final class ReactionCategoryButton: UIButton {
     private let defaultTintColor = SemanticColors.Icon.emojiCategoryDefault
 
     override var isSelected: Bool {
-            didSet {
-                selectionIndicator.isHidden = !isSelected
-                imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
-            }
+        didSet {
+            selectionIndicator.isHidden = !isSelected
+            imageView?.tintColor = isSelected ? selectedTintColor : defaultTintColor
         }
+    }
 
     init() {
         super.init(frame: .zero)
         setupViews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

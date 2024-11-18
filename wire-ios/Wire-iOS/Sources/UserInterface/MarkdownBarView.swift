@@ -51,11 +51,11 @@ final class MarkdownBarView: UIView {
     let buttons: [IconButton]
 
     private var buttonMargin: CGFloat {
-        return conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     required init() {
-        buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
+        self.buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
         super.init(frame: CGRect.zero)
         setupViews()
     }
@@ -66,13 +66,13 @@ final class MarkdownBarView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
-     func setupViews() {
+    func setupViews() {
 
         stackView.axis = .horizontal
-         stackView.distribution = .fillEqually
+        stackView.distribution = .fillEqually
         stackView.alignment = .center
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: buttonMargin, bottom: 0, right: buttonMargin)
         stackView.isLayoutMarginsRelativeArrangement = true
@@ -114,22 +114,22 @@ final class MarkdownBarView: UIView {
 
         addSubview(stackView)
 
-         let buttonMaxWidth = 100
-         let stackViewMaxWidth = CGFloat(buttonMaxWidth * buttons.count)
+        let buttonMaxWidth = 100
+        let stackViewMaxWidth = CGFloat(buttonMaxWidth * buttons.count)
 
-         let stackViewWidth = stackView.widthAnchor.constraint(lessThanOrEqualToConstant: stackViewMaxWidth)
-         stackViewWidth.priority = .defaultHigh
+        let stackViewWidth = stackView.widthAnchor.constraint(lessThanOrEqualToConstant: stackViewMaxWidth)
+        stackViewWidth.priority = .defaultHigh
 
-         let stackViewTrailingConstraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
-         stackViewTrailingConstraint.priority = .defaultLow
+        let stackViewTrailingConstraint = stackView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        stackViewTrailingConstraint.priority = .defaultLow
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          stackView.topAnchor.constraint(equalTo: topAnchor),
-          stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-          stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-          stackViewWidth,
-          stackViewTrailingConstraint
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackViewWidth,
+            stackViewTrailingConstraint
         ])
 
         headerButton.itemIcons = [.markdownH1, .markdownH2, .markdownH3]
@@ -150,14 +150,16 @@ final class MarkdownBarView: UIView {
         codeButton.accessibilityLabel = Conversation.CodeButton.description
     }
 
-    @objc func textViewDidChangeActiveMarkdown(note: Notification) {
+    @objc
+    func textViewDidChangeActiveMarkdown(note: Notification) {
         guard let textView = note.object as? MarkdownTextView else { return }
         updateIcons(for: textView.activeMarkdown)
     }
 
     // MARK: Actions
 
-    @objc private func buttonTapped(sender: IconButton) {
+    @objc
+    private func buttonTapped(sender: IconButton) {
 
         guard let markdown = markdown(for: sender) else { return }
 
@@ -172,13 +174,13 @@ final class MarkdownBarView: UIView {
 
     fileprivate func markdown(for button: IconButton) -> Markdown? {
         switch button {
-        case headerButton:      return headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
-        case boldButton:        return .bold
-        case italicButton:      return .italic
-        case codeButton:        return .code
-        case numberListButton:  return .oList
-        case bulletListButton:  return .uList
-        default:                return nil
+        case headerButton:      headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
+        case boldButton:        .bold
+        case italicButton:      .italic
+        case codeButton:        .code
+        case numberListButton:  .oList
+        case bulletListButton:  .uList
+        default:                nil
         }
     }
 
@@ -191,7 +193,8 @@ final class MarkdownBarView: UIView {
         for button in buttons {
             guard let buttonMarkdown = self.markdown(for: button) else { continue }
             let iconColor = markdown.contains(buttonMarkdown) ? highlightedStateIconColor : enabledStateIconColor
-            let backgroundColor = markdown.contains(buttonMarkdown) ? highlightedStateBackgroundColor : enabledStateBackgroundColor
+            let backgroundColor = markdown
+                .contains(buttonMarkdown) ? highlightedStateBackgroundColor : enabledStateBackgroundColor
             let borderColor = markdown.contains(buttonMarkdown) ? highlightedStateBorderColor : enabledStateBorderColor
             button.setIconColor(iconColor, for: .normal)
             button.setBorderColor(borderColor, for: .normal)
@@ -199,7 +202,8 @@ final class MarkdownBarView: UIView {
         }
     }
 
-    @objc func resetIcons() {
+    @objc
+    func resetIcons() {
         buttons.forEach {
             $0.setIconColor(enabledStateIconColor, for: .normal)
             $0.setBorderColor(enabledStateBorderColor, for: .normal)
@@ -227,10 +231,10 @@ extension MarkdownBarView: PopUpIconButtonDelegate {
 private extension StyleKitIcon {
     var headerMarkdown: Markdown? {
         switch self {
-        case .markdownH1: return .h1
-        case .markdownH2: return .h2
-        case .markdownH3: return .h3
-        default:          return nil
+        case .markdownH1: .h1
+        case .markdownH2: .h2
+        case .markdownH3: .h3
+        default:          nil
         }
     }
 }
@@ -238,10 +242,10 @@ private extension StyleKitIcon {
 private extension Markdown {
     var headerIcon: StyleKitIcon? {
         switch self {
-        case .h1: return .markdownH1
-        case .h2: return .markdownH2
-        case .h3: return .markdownH3
-        default:  return nil
+        case .h1: .markdownH1
+        case .h2: .markdownH2
+        case .h3: .markdownH3
+        default:  nil
         }
     }
 }

@@ -27,7 +27,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
-        return ZMTransportRequest(
+        ZMTransportRequest(
             path: "/push/tokens/\(action.deviceToken)",
             method: .delete,
             payload: nil,
@@ -46,7 +46,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
         case 201:
             action.notifyResult(.success(()))
 
-            // Push token unregistered
+        // Push token unregistered
         case 204:
             action.notifyResult(.success(()))
 

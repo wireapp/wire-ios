@@ -35,14 +35,14 @@ final class ConversationPreviewViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.conversation = conversation
-        actionController = ConversationActionController(
+        self.actionController = ConversationActionController(
             conversation: conversation,
             target: presentingViewController,
             sourceView: sourceView,
             userSession: userSession
         )
 
-        contentViewController = ConversationContentViewController(
+        self.contentViewController = ConversationContentViewController(
             conversation: conversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
@@ -78,25 +78,35 @@ final class ConversationPreviewViewController: UIViewController {
         conversationView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          conversationView.topAnchor.constraint(equalTo: view.topAnchor),
-          conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            conversationView.topAnchor.constraint(equalTo: view.topAnchor),
+            conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
 
     // MARK: Preview Actions
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     override var previewActionItems: [UIPreviewActionItem] {
-        return conversation.listActions.map(makePreviewAction)
+        conversation.listActions.map(makePreviewAction)
     }
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
-        return action.previewAction { [weak self] in
+        action.previewAction { [weak self] in
             guard let self else { return }
-            self.actionController.handleAction(action)
+            actionController.handleAction(action)
         }
     }
 

@@ -36,9 +36,12 @@ final class MockPaginatedRequester: ZiphyURLRequester {
 
     var response: MockPaginatedResponse?
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping MockZiphyRequesterCompletionHandler) -> ZiphyRequestIdentifier {
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping MockZiphyRequesterCompletionHandler
+    ) -> ZiphyRequestIdentifier {
         self.completionHandler = completionHandler
-        self.url = request.url
+        url = request.url
 
         if let urlComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false) {
             if let offsetItem = urlComponents.queryItems?.first(where: { $0.name == "offset" }) {
@@ -61,7 +64,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
 
     /// Sends the response for the given request.
     func respond() {
-        guard let response = self.response else {
+        guard let response else {
             self.response = .error(MockZiphyRequesterError.noResponseFound)
             respond()
             return
@@ -71,12 +74,12 @@ final class MockPaginatedRequester: ZiphyURLRequester {
             return
         }
 
-        guard let completionHandler = self.completionHandler else {
+        guard let completionHandler else {
             return
         }
 
         switch response {
-        case .success(let ziphs):
+        case let .success(ziphs):
 
             let paginatedResponse: ZiphyPaginatedResponse<[Ziph]>
 
@@ -90,10 +93,15 @@ final class MockPaginatedRequester: ZiphyURLRequester {
             }
 
             let paginatedData = try! JSONEncoder().encode(paginatedResponse)
-            let successResponse = HTTPURLResponse(url: url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+            let successResponse = HTTPURLResponse(
+                url: url!,
+                statusCode: 200,
+                httpVersion: "HTTP/1.1",
+                headerFields: nil
+            )
             completionHandler(paginatedData, successResponse, nil)
 
-        case .error(let error):
+        case let .error(error):
             completionHandler(nil, nil, error)
         }
 
