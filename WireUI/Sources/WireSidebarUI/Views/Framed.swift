@@ -16,10 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainSidebarSelectableMenuItemRepresentable: Sendable {
-    init(_ mainSidebarMenuItem: MainSidebarMenuItem)
-}
+import SwiftUI
 
-extension MainSidebarMenuItem: MainSidebarSelectableMenuItemRepresentable {
-    public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
+/// Wraps a view and providing it's `CGRect` frame.
+
+struct Framed<Enclosed: View>: View {
+    private let enclosed: (CGRect) -> Enclosed
+    @State private var frame: CGRect = .zero
+
+    var body: some View {
+        enclosed(frame)
+            .onGeometryChange(for: CGRect.self) { proxy in
+                proxy.frame(in: .global)
+            } action: { newValue in
+                frame = newValue
+            }
+    }
+
+    init(@ViewBuilder enclosed: @escaping (CGRect) -> Enclosed) {
+        self.enclosed = enclosed
+    }
 }
