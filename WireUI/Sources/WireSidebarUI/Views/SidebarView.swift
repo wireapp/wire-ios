@@ -207,17 +207,17 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .all:
             text = Text(L10n.Sidebar.ConversationFilter.All.title)
             icon = "text.bubble"
-            accessibilityLabel = Text("sidebar.conversation_filter.all.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.All.title)
 
         case .favorites:
             text = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
             icon = "star"
-            accessibilityLabel = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
 
         case .groups:
             text = Text(L10n.Sidebar.ConversationFilter.Groups.title)
             icon = "person.3"
-            accessibilityLabel = Text("sidebar.conversation_filter.groups.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Groups.title)
 
         case .oneOnOne:
             text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
@@ -232,7 +232,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .archive:
             text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
             icon = "archivebox"
-            accessibilityLabel = Text("sidebar.conversation_filter.archived.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Archived.title)
 
         case .settings:
             text = Text(L10n.Sidebar.Settings.title)
