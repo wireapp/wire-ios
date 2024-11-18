@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireCommonComponents
 import XCTest
+@testable import Wire
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
 
@@ -34,15 +34,17 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         super.setUp()
         mockSelfUser = MockUserType.createDefaultSelfUser()
         userSession = UserSessionMock(mockUser: mockSelfUser)
-        context = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                             isTimeIntervalSinceLastMessageSignificant: false,
-                                             isTimestampInSameMinuteAsPreviousMessage: false,
-                                             isFirstMessageOfTheDay: false,
-                                             isFirstUnreadMessage: false,
-                                             isLastMessage: false,
-                                             searchQueries: [],
-                                             previousMessageIsKnock: false,
-                                             spacing: 0)
+        context = ConversationMessageContext(
+            isSameSenderAsPrevious: false,
+            isTimeIntervalSinceLastMessageSignificant: false,
+            isTimestampInSameMinuteAsPreviousMessage: false,
+            isFirstMessageOfTheDay: false,
+            isFirstUnreadMessage: false,
+            isLastMessage: false,
+            searchQueries: [],
+            previousMessageIsKnock: false,
+            spacing: 0
+        )
     }
 
     // MARK: - tearDown
@@ -81,7 +83,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     func testThatItReturnsCellsInCorrectOrder_UpsideDown() {
         // GIVEN
-        let section = ConversationMessageSectionController(message: MockMessage(), context: context, userSession: userSession)
+        let section = ConversationMessageSectionController(
+            message: MockMessage(),
+            context: context,
+            userSession: userSession
+        )
         section.cellDescriptions.removeAll()
         section.useInvertedIndices = true
 
@@ -123,8 +129,10 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testCellGrouping_SenderIsSameAsPreviousAndTimestampInSameMinuteAsPreviousMessage() throws {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Welcome to Dub Dub")
-        let context = ConversationMessageContext(isSameSenderAsPrevious: true,
-                                                 isTimestampInSameMinuteAsPreviousMessage: true)
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: true,
+            isTimestampInSameMinuteAsPreviousMessage: true
+        )
 
         // WHEN
         let section = ConversationMessageSectionController(
@@ -168,8 +176,10 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testCellGrouping_SenderIsSameAsPreviousAndTimeStampIsNotInTheSameMinuteAsPreviousMessage() throws {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Hello")
-        let context = ConversationMessageContext(isSameSenderAsPrevious: true,
-                                                 isTimestampInSameMinuteAsPreviousMessage: false)
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: true,
+            isTimestampInSameMinuteAsPreviousMessage: false
+        )
         // WHEN
         let section = ConversationMessageSectionController(
             message: message,

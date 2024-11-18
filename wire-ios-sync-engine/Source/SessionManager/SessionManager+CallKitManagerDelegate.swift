@@ -38,7 +38,10 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         withSession(for: account) { userSession in
-            guard let conversation = ZMConversation.fetch(with: handle.conversationID, in: userSession.managedObjectContext) else {
+            guard let conversation = ZMConversation.fetch(
+                with: handle.conversationID,
+                in: userSession.managedObjectContext
+            ) else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 

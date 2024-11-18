@@ -25,7 +25,8 @@ import Foundation
 @objc(ExtendedSecureUnarchiveFromData) @objcMembers
 public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransformer {
 
-    /// The name of the transformer. This is the name used to register the transformer using ValueTransformer.setValueTrandformer(_"forName:)`.
+    /// The name of the transformer. This is the name used to register the transformer using
+    /// ValueTransformer.setValueTrandformer(_"forName:)`.
     static let name = NSValueTransformerName(rawValue: String(describing: ExtendedSecureUnarchiveFromData.self))
 
     /// Registers the transformer.

@@ -27,19 +27,19 @@ enum ConversationType: Int {
 extension ConversationType {
     var analyticsTypeString: String {
         switch  self {
-        case .oneToOne:     return "one_to_one"
-        case .group:        return "group"
+        case .oneToOne:     "one_to_one"
+        case .group:        "group"
         }
     }
 
     static func type(_ conversation: ZMConversation) -> ConversationType? {
         switch conversation.conversationType {
         case .oneOnOne:
-            return .oneToOne
+            .oneToOne
         case .group:
-            return .group
+            .group
         default:
-            return nil
+            nil
         }
     }
 }
@@ -47,7 +47,7 @@ extension ConversationType {
 extension ZMConversation {
 
     var analyticsTypeString: String? {
-        return ConversationType.type(self)?.analyticsTypeString
+        ConversationType.type(self)?.analyticsTypeString
     }
 
     // swiftlint:disable:next todo_requires_jira_link
@@ -68,12 +68,12 @@ extension ZMConversation {
             "conversation_size": participants.count.logRound(),
             "is_global_ephemeral": hasSyncedMessageDestructionTimeout,
             "conversation_services": sortedServiceUsers.count.logRound(),
-            "conversation_guests_wireless": participants.filter({
+            "conversation_guests_wireless": participants.filter {
                 $0.isWirelessUser && $0.isGuest(in: self)
-            }).count.logRound(),
-            "conversation_guests_pro": participants.filter({
+            }.count.logRound(),
+            "conversation_guests_pro": participants.filter {
                 $0.isGuest(in: self) && $0.hasTeam
-            }).count.logRound()
+            }.count.logRound()
         ]
 
         return attributes.merging(guestAttributes) { _, new in new }
@@ -81,9 +81,9 @@ extension ZMConversation {
 
     var guestAttributes: [String: Any] {
 
-        let numGuests = sortedActiveParticipants.filter({
+        let numGuests = sortedActiveParticipants.filter {
             $0.isGuest(in: self)
-        }).count
+        }.count
 
         var attributes: [String: Any] = [
             "conversation_guests": numGuests.logRound()

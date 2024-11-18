@@ -33,10 +33,9 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         setupAccessibility()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-
-        setupAccessibility()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupAccessibility() {
@@ -44,7 +43,7 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         accessibilityTraits = .button
     }
 
-     // MARK: - Overridden methods
+    // MARK: - Overridden methods
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         if isHidden || alpha == 0 || !isUserInteractionEnabled || !isEnabled {

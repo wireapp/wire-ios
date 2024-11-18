@@ -18,11 +18,11 @@
 
 import Foundation
 
-extension Notification.Name {
+public extension Notification.Name {
 
     // This notification is used to check the E2EIdentity Certificate expiry status
-    public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
+    static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 
     // Used to notify of end-to-end identity certificate changes
-    public static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
+    static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
 }

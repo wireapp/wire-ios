@@ -24,7 +24,8 @@ public enum Recipients {
     case clients([ZMUser: Set<UserClient>])
 }
 
-@objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
+@objcMembers
+public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public var context: NSManagedObjectContext
     public var message: GenericMessage
@@ -36,11 +37,13 @@ public enum Recipients {
 
     public let targetRecipients: Recipients
 
-    public init(message: GenericMessage,
-                context: NSManagedObjectContext,
-                conversation: ZMConversation? = nil,
-                targetRecipients: Recipients = .conversationParticipants,
-                completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(
+        message: GenericMessage,
+        context: NSManagedObjectContext,
+        conversation: ZMConversation? = nil,
+        targetRecipients: Recipients = .conversationParticipants,
+        completionHandler: ((_ response: ZMTransportResponse) -> Void)?
+    ) {
         self.context = context
         self.conversation = conversation
         self.message = message
@@ -51,7 +54,7 @@ public enum Recipients {
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
 
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
     public var shouldIgnoreTheSecurityLevelCheck: Bool = false
@@ -90,10 +93,10 @@ public enum Recipients {
     }
 
     public override var hash: Int {
-        return self.message.hashValue
+        message.hashValue
     }
 }
 
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
-    return lhs === rhs
+    lhs === rhs
 }

@@ -22,11 +22,9 @@ final class CustomSpacingStackView: UIView {
 
     private var stackView: UIStackView
 
-    /**
-     This initializer must be used if you intend to call wr_addCustomSpacing.
-     */
+    /// This initializer must be used if you intend to call wr_addCustomSpacing.
     init(customSpacedArrangedSubviews subviews: [UIView]) {
-        stackView = UIStackView(arrangedSubviews: subviews)
+        self.stackView = UIStackView(arrangedSubviews: subviews)
 
         super.init(frame: .zero)
 
@@ -39,20 +37,18 @@ final class CustomSpacingStackView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    /**
-     Add a custom spacing after a view.
-
-     This is a approximation of the addCustomSpacing method only available since iOS 11. This method
-     has several constraints:
-     
-     - The stackview must be initialized with customSpacedArrangedSubviews
-     - spacing dosesn't update if views are hidden after this method is called
-     - custom spacing can't be smaller than 2x the minimum spacing
-
-     On iOS 11, it uses the default system implementation.
-     */
+    /// Add a custom spacing after a view.
+    ///
+    /// This is a approximation of the addCustomSpacing method only available since iOS 11. This method
+    /// has several constraints:
+    ///
+    /// - The stackview must be initialized with customSpacedArrangedSubviews
+    /// - spacing dosesn't update if views are hidden after this method is called
+    /// - custom spacing can't be smaller than 2x the minimum spacing
+    ///
+    /// On iOS 11, it uses the default system implementation.
     func wr_addCustomSpacing(_ customSpacing: CGFloat, after view: UIView) {
-        return stackView.setCustomSpacing(customSpacing, after: view)
+        stackView.setCustomSpacing(customSpacing, after: view)
     }
 
     private func createConstraints() {
@@ -61,22 +57,22 @@ final class CustomSpacingStackView: UIView {
     }
 
     var alignment: UIStackView.Alignment {
-        get { return stackView.alignment }
+        get { stackView.alignment }
         set { stackView.alignment = newValue }
     }
 
     var distribution: UIStackView.Distribution {
-        get { return stackView.distribution }
+        get { stackView.distribution }
         set { stackView.distribution = newValue }
     }
 
     var axis: NSLayoutConstraint.Axis {
-        get { return stackView.axis }
+        get { stackView.axis }
         set { stackView.axis = newValue }
     }
 
     var spacing: CGFloat {
-        get { return stackView.spacing }
+        get { stackView.spacing }
         set { stackView.spacing = newValue }
     }
 
@@ -103,14 +99,12 @@ final class SpacingView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: size, height: size)
+        CGSize(width: size, height: size)
     }
 
 }
 
-/**
- * A view that can contain a label with additional content insets.
- */
+/// A view that can contain a label with additional content insets.
 
 final class ContentInsetView: UIView {
     let view: UIView
@@ -139,7 +133,7 @@ final class ContentInsetView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return view.intrinsicContentSize
+        view.intrinsicContentSize
     }
 
 }

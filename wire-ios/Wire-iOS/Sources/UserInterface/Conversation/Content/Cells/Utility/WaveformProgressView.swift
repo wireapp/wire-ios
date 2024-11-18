@@ -26,7 +26,7 @@ private final class WaveformBarsView: UIView {
         }
     }
 
-    var barColor: UIColor = UIColor.gray {
+    var barColor: UIColor = .gray {
         didSet {
             setNeedsDisplay()
         }
@@ -43,14 +43,14 @@ private final class WaveformBarsView: UIView {
     }
 
     fileprivate func setup() {
-        self.contentMode = .redraw
+        contentMode = .redraw
     }
 
-    override fileprivate func draw(_ rect: CGRect) {
+    fileprivate override func draw(_ rect: CGRect) {
         guard let c = UIGraphicsGetCurrentContext()  else { return }
 
-        c.clear(self.bounds)
-        self.backgroundColor?.setFill()
+        c.clear(bounds)
+        backgroundColor?.setFill()
         c.fill(rect)
 
         if samples.isEmpty {
@@ -63,9 +63,14 @@ private final class WaveformBarsView: UIView {
         let stepSpacing = barWidth + barspacing
         let numbersOfBars = Int((rect.width + barspacing) / stepSpacing)
 
-        for i in 0..<numbersOfBars {
+        for i in 0 ..< numbersOfBars {
             let loudness = samples[Int((Float(i) / Float(numbersOfBars)) * Float(samples.count))]
-            let rect = CGRect(x: CGFloat(i) * stepSpacing, y: rect.height / 2, width: barWidth, height: max(minHeight, rect.height * CGFloat(loudness) * 0.5))
+            let rect = CGRect(
+                x: CGFloat(i) * stepSpacing,
+                y: rect.height / 2,
+                width: barWidth,
+                height: max(minHeight, rect.height * CGFloat(loudness) * 0.5)
+            )
             c.addRect(rect)
         }
 
@@ -93,13 +98,13 @@ final class WaveformProgressView: UIView {
         }
     }
 
-    var barColor: UIColor = UIColor.gray {
+    var barColor: UIColor = .gray {
         didSet {
             backgroundWaveform.barColor = barColor
         }
     }
 
-    var highlightedBarColor: UIColor = UIColor.accent() {
+    var highlightedBarColor: UIColor = .accent() {
         didSet {
             foregroundWaveform.barColor = highlightedBarColor
         }
@@ -119,7 +124,9 @@ final class WaveformProgressView: UIView {
     }
 
     func setProgress(_ progress: Float, animated: Bool) {
-        let path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: self.bounds.width * CGFloat(progress), height: self.bounds.height)).cgPath
+        let path =
+            UIBezierPath(rect: CGRect(x: 0, y: 0, width: bounds.width * CGFloat(progress), height: bounds.height))
+                .cgPath
 
         if animated {
             let animation = CABasicAnimation(keyPath: "path")
@@ -136,7 +143,12 @@ final class WaveformProgressView: UIView {
 
     override var bounds: CGRect {
         didSet {
-            maskShape.path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: self.bounds.width * CGFloat(progress), height: self.bounds.height)).cgPath
+            maskShape.path = UIBezierPath(rect: CGRect(
+                x: 0,
+                y: 0,
+                width: bounds.width * CGFloat(progress),
+                height: bounds.height
+            )).cgPath
         }
     }
 
@@ -165,14 +177,14 @@ final class WaveformProgressView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          backgroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
-          backgroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
-          backgroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
-          backgroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
-          foregroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
-          foregroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
-          foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
-          foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor)
+            backgroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
+            backgroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            backgroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
+            backgroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
+            foregroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
+            foregroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
+            foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor)
         ])
 
     }

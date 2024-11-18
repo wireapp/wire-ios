@@ -23,6 +23,7 @@ import WireDesign
 final class CheckmarkCell: RightIconDetailsCell {
 
     // MARK: - Properties
+
     typealias BackgroundColors = SemanticColors.View
 
     var showCheckmark: Bool = false {
@@ -34,6 +35,7 @@ final class CheckmarkCell: RightIconDetailsCell {
     }
 
     // MARK: - Override methods
+
     override var disabled: Bool {
         didSet {
             updateCheckmark()
@@ -59,12 +61,13 @@ final class CheckmarkCell: RightIconDetailsCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? BackgroundColors.backgroundUserCellHightLighted
-            : BackgroundColors.backgroundUserCell
+                ? BackgroundColors.backgroundUserCellHightLighted
+                : BackgroundColors.backgroundUserCell
         }
     }
 
     // MARK: - Setup Checkmark
+
     /// Updates the color of the checkmark based on the state of the cell
     private func updateCheckmark() {
 
@@ -73,23 +76,24 @@ final class CheckmarkCell: RightIconDetailsCell {
             return
         }
 
-        let color: UIColor
-
-        if disabled {
-            color = SemanticColors.Icon.foregroundPlaceholder
+        let color: UIColor = if disabled {
+            SemanticColors.Icon.foregroundPlaceholder
         } else {
-            color = SemanticColors.Icon.foregroundPlainCheckMark
+            SemanticColors.Icon.foregroundPlainCheckMark
         }
 
-        accessory = StyleKitIcon.checkmark.makeImage(size: .tiny,
-                                                     color: color).withRenderingMode(.alwaysTemplate)
+        accessory = StyleKitIcon.checkmark.makeImage(
+            size: .tiny,
+            color: color
+        ).withRenderingMode(.alwaysTemplate)
         accessoryColor = color
     }
 
     // MARK: - accessibility
+
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -99,7 +103,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     override var accessibilityValue: String? {
         get {
-            return showCheckmark ? L10n.Accessibility.ConversationDetails.MessageTimeoutState.description : nil
+            showCheckmark ? L10n.Accessibility.ConversationDetails.MessageTimeoutState.description : nil
         }
 
         set {

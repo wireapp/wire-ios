@@ -49,13 +49,13 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
             if keepOpen {
                 scheduleOpen()
             } else {
-                self.close()
+                close()
             }
         }
     }
 
     var canOpenConnection: Bool {
-        return keepOpen && websocketURL != nil && consumer != nil
+        keepOpen && websocketURL != nil && consumer != nil
     }
 
     var websocketURL: URL? {
@@ -86,7 +86,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
-        WireLogger.backend.debug("reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)")
+        WireLogger.backend
+            .debug(
+                "reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)"
+            )
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
 
@@ -97,7 +100,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: GroupQueue) {
-        self.consumerQueue = queue
+        consumerQueue = queue
         self.consumer = consumer
 
         if consumer == nil {
@@ -141,7 +144,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         webSocket?.delegate = self
 
         if let proxySettings = environment.proxy {
-            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+            let proxyDictionary = proxySettings.socks5Settings(
+                proxyUsername: proxyUsername,
+                proxyPassword: proxyPassword
+            )
 
             let configuration = URLSessionConfiguration.default
             configuration.connectionProxyDictionary = proxyDictionary
@@ -158,8 +164,11 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
         ]
-        WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
-                                    attributes: attributes, .safePublic)
+        WireLogger.pushChannel.info(
+            "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
+            attributes: attributes,
+            .safePublic
+        )
     }
 
     func scheduleOpen() {
@@ -198,9 +207,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     fileprivate func onOpen() {
         startPingTimer()
 
-        consumerQueue?.performGroupedBlock({
+        consumerQueue?.performGroupedBlock {
             self.consumer?.pushChannelDidOpen()
-        })
+        }
     }
 
     private func stopPingTimer() {
@@ -243,7 +252,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
             onClose()
         case .text:
             break
-        case .binary(let data):
+        case let .binary(data):
             WireLogger.pushChannel.debug("Received data")
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
@@ -275,7 +284,7 @@ final class StarscreamCertificatePinning: CertificatePinning {
         self.environment = environment
     }
 
-    func evaluateTrust(trust: SecTrust, domain: String?, completion: ((PinningState) -> Void)) {
+    func evaluateTrust(trust: SecTrust, domain: String?, completion: (PinningState) -> Void) {
         if environment.verifyServerTrust(trust: trust, host: domain) {
             completion(.success)
         } else {
@@ -290,10 +299,10 @@ private extension TLSVersion {
     var starscreamValue: Starscream.TLSVersion {
         switch self {
         case .v1_2:
-            return .v1_2
+            .v1_2
 
         case .v1_3:
-            return .v1_3
+            .v1_3
         }
     }
 

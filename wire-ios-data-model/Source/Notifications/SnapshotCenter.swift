@@ -35,7 +35,7 @@ extension NSSet: Countable {}
 public class SnapshotCenter {
 
     private unowned var managedObjectContext: NSManagedObjectContext
-    internal var snapshots: [NSManagedObjectID: Snapshot] = [:]
+    var snapshots: [NSManagedObjectID: Snapshot] = [:]
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -59,7 +59,8 @@ public class SnapshotCenter {
         let attributes = Array(object.entity.attributesByName.keys)
         let relationships = object.entity.relationshipsByName
 
-        let attributesDict = attributes.mapToDictionaryWithOptionalValue { object.primitiveValue(forKey: $0) as? NSObject }
+        let attributesDict = attributes
+            .mapToDictionaryWithOptionalValue { object.primitiveValue(forKey: $0) as? NSObject }
 
         let toManyRelationshipsDict: [String: Int] = relationships.reduce(into: .init()) { partialResult, item in
             guard
@@ -71,15 +72,16 @@ public class SnapshotCenter {
             partialResult[item.key] = newValue
         }
 
-        let toOneRelationshipsDict: [String: NSManagedObjectID] = relationships.reduce(into: .init()) { partialResult, item in
-            guard
-                !item.value.isToMany,
-                let newValue = (object.primitiveValue(forKey: item.key) as? NSManagedObject)?.objectID
-            else {
-                return
+        let toOneRelationshipsDict: [String: NSManagedObjectID] = relationships
+            .reduce(into: .init()) { partialResult, item in
+                guard
+                    !item.value.isToMany,
+                    let newValue = (object.primitiveValue(forKey: item.key) as? NSManagedObject)?.objectID
+                else {
+                    return
+                }
+                partialResult[item.key] = newValue
             }
-            partialResult[item.key] = newValue
-        }
 
         return Snapshot(
             attributes: attributesDict,
@@ -89,7 +91,8 @@ public class SnapshotCenter {
     }
 
     /// Before merging the sync into the ui context, we create a snapshot of all changed objects
-    /// This function compares the snapshot values to the current ones and returns all keys and new values where the value changed due to the merge
+    /// This function compares the snapshot values to the current ones and returns all keys and new values where the
+    /// value changed due to the merge
     func extractChangedKeysFromSnapshot(for object: ZMManagedObject) -> Set<String> {
         guard let snapshot = snapshots[object.objectID] else {
             if object.objectID.isTemporaryID {
@@ -120,7 +123,7 @@ public class SnapshotCenter {
             changedKeys.insert($0)
         }
         // Update snapshot
-        if changedKeys.count > 0 {
+        if !changedKeys.isEmpty {
             snapshots[object.objectID] = createSnapshot(for: object)
         }
         return changedKeys

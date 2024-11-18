@@ -26,9 +26,9 @@ class ImportEventsURLActionProcessor: URLActionProcessor {
 
     private static var isRunningOnSimulator: Bool {
         #if targetEnvironment(simulator)
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 
@@ -61,7 +61,10 @@ class ImportEventsURLActionProcessor: URLActionProcessor {
         urlAction: URLAction,
         delegate: PresentationDelegate?
     ) async throws {
-        let eventsFile = FileManager.default.temporaryDirectory.appendingPathComponent("events", conformingTo: .plainText)
+        let eventsFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "events",
+            conformingTo: .plainText
+        )
 
         guard let eventsData = FileManager.default.contents(atPath: eventsFile.path) else {
             delegate?.failedToPerformAction(urlAction, error: ImportEventsError.fileNotFound(eventsFile.path))
@@ -79,8 +82,10 @@ class ImportEventsURLActionProcessor: URLActionProcessor {
 
     private func updateEventsFromJSON(_ eventsData: Data) -> [ZMUpdateEvent] {
         let eventsRaw = String(decoding: eventsData, as: UTF8.self)
-        let eventsDicts = ((eventsRaw as ZMTransportData)
-            .asDictionary() as? NSDictionary)?
+        let eventsDicts = (
+            (eventsRaw as ZMTransportData)
+                .asDictionary() as? NSDictionary
+        )?
             .optionalArray(forKey: "notifications")?
             .compactMap { $0 as? ZMTransportData }
 

@@ -22,7 +22,10 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let error = context.0
 
         // Only handle errors on start
@@ -35,7 +38,7 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
             return nil
         }
 
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

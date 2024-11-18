@@ -22,6 +22,7 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
+
 extension ConversationViewController {
 
     typealias IconColors = SemanticColors.Icon
@@ -29,7 +30,7 @@ extension ConversationViewController {
     typealias CallActions = L10n.Localizable.Call.Actions
 
     func addCallStateObserver() -> Any? {
-        return conversation.voiceChannel?.addCallStateObserver(self)
+        conversation.voiceChannel?.addCallStateObserver(self)
     }
 
     private var audioCallButton: UIButton {
@@ -162,15 +163,15 @@ extension ConversationViewController {
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> UIImage {
         if view.isRightToLeft {
             if hasUnreadInOtherConversations {
-                return UIImage(resource: .unreadForwardArrow)
+                UIImage(resource: .unreadForwardArrow)
             } else {
-                return UIImage(resource: .forwardArrow)
+                UIImage(resource: .forwardArrow)
             }
         } else {
             if hasUnreadInOtherConversations {
-                return UIImage(resource: .unreadBackArrow)
+                UIImage(resource: .unreadBackArrow)
             } else {
-                return UIImage(resource: .backArrow)
+                UIImage(resource: .backArrow)
             }
         }
     }
@@ -183,21 +184,21 @@ extension ConversationViewController {
             return false
         }
 
-        switch self.conversation.conversationType {
+        switch conversation.conversationType {
         case .group: return true
         case .oneOnOne:
             if let connection = conversation.oneOnOneUser?.connection,
-               connection.status != .pending && connection.status != .sent {
+               connection.status != .pending, connection.status != .sent {
                 return true
             } else {
-                return nil != conversation.teamRemoteIdentifier
+                return conversation.teamRemoteIdentifier != nil
             }
         default: return false
         }
     }
 
     func rightNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
-        guard !conversation.isReadOnly, conversation.localParticipants.count != 0 else { return [] }
+        guard !conversation.isReadOnly, !conversation.localParticipants.isEmpty else { return [] }
 
         if conversation.canJoinCall {
             return [joinCallButton]
@@ -267,8 +268,9 @@ extension ConversationViewController {
         startCallController.joinCall()
     }
 
-    @objc func dismissCollectionIfNecessary() {
-        if let collectionController = self.collectionController {
+    @objc
+    func dismissCollectionIfNecessary() {
+        if let collectionController {
             collectionController.dismiss(animated: false)
         }
     }
@@ -276,13 +278,17 @@ extension ConversationViewController {
 
 extension ConversationViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return navigationController?.viewControllers.count ?? 0 > 1
+        navigationController?.viewControllers.count ?? 0 > 1
     }
 }
 
 extension ConversationViewController: CollectionsViewControllerDelegate {
 
-    func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
+    func collectionsViewController(
+        _ viewController: CollectionsViewController,
+        performAction action: MessageAction,
+        onMessage message: ZMConversationMessage
+    ) {
 
         switch action {
 
@@ -308,7 +314,13 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateRightNavigationItemsButtons()
     }
 
@@ -318,15 +330,15 @@ extension ZMConversation {
 
     /// Whether there is an incoming or inactive incoming call that can be joined.
     var canJoinCall: Bool {
-        return voiceChannel?.state.canJoinCall ?? false
+        voiceChannel?.state.canJoinCall ?? false
     }
 
     var canStartVideoCall: Bool {
-        return !isCallOngoing
+        !isCallOngoing
     }
 
     var isCallOngoing: Bool {
-        return voiceChannel?.state.isCallOngoing ?? true
+        voiceChannel?.state.isCallOngoing ?? true
     }
 }
 
@@ -334,15 +346,15 @@ extension CallState {
 
     var canJoinCall: Bool {
         switch self {
-        case .incoming: return true
-        default: return false
+        case .incoming: true
+        default: false
         }
     }
 
     var isCallOngoing: Bool {
         switch self {
-        case .none, .incoming: return false
-        default: return true
+        case .none, .incoming: false
+        default: true
         }
     }
 }

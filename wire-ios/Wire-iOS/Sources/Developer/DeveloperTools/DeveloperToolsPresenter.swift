@@ -22,7 +22,10 @@ final class DeveloperToolsPresenter: NSObject {
 
     private var displayedDeveloperTools = false
 
-    func presentIfNotDisplayed(with router: AppRootRouter?, from topMostViewController: @escaping @autoclosure () -> UIViewController?) {
+    func presentIfNotDisplayed(
+        with router: AppRootRouter?,
+        from topMostViewController: @escaping @autoclosure () -> UIViewController?
+    ) {
 
         guard !displayedDeveloperTools else { return }
 
@@ -49,6 +52,6 @@ extension DeveloperToolsPresenter: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         // called when dismissed by swipe for example
-        self.displayedDeveloperTools = false
+        displayedDeveloperTools = false
     }
 }

@@ -96,6 +96,6 @@ final class MockProxy: NSObject, ProxySettingsProvider {
     }
 
     func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
-        return nil
+        nil
     }
 }

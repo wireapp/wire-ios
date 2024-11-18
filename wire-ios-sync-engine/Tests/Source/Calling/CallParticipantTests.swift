@@ -21,7 +21,7 @@ import Foundation
 
 final class CallParticipantTests: MessagingTest {
     var otherUser: ZMUser!
-    let otherUserID: UUID = UUID()
+    let otherUserID: UUID = .init()
     let otherUserClientID = UUID().transportString()
 
     override func setUp() {
@@ -40,8 +40,18 @@ final class CallParticipantTests: MessagingTest {
     func testThatHashIsSameWithDifferentState() {
 
         // GIVEN & WHEN
-        let callParticipant1 = CallParticipant(user: otherUser, clientId: otherUserClientID, state: .connecting, activeSpeakerState: .inactive)
-        let callParticipant2 = CallParticipant(user: otherUser, clientId: otherUserClientID, state: .unconnected, activeSpeakerState: .inactive)
+        let callParticipant1 = CallParticipant(
+            user: otherUser,
+            clientId: otherUserClientID,
+            state: .connecting,
+            activeSpeakerState: .inactive
+        )
+        let callParticipant2 = CallParticipant(
+            user: otherUser,
+            clientId: otherUserClientID,
+            state: .unconnected,
+            activeSpeakerState: .inactive
+        )
 
         // THEN
         XCTAssertEqual(callParticipant1.hashValue, callParticipant2.hashValue)

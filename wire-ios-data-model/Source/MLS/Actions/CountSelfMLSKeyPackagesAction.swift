@@ -35,15 +35,15 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .clientNotFound:
-                return "Client not found"
+                "Client not found"
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
             case .endpointUnavailable:
-                return "End point not available"
+                "End point not available"
             case .invalidClientID:
-                return "Invalid clientID"
-            case .unknown(let status):
-                return "Unknown error (response status: \(status))"
+                "Invalid clientID"
+            case let .unknown(status):
+                "Unknown error (response status: \(status))"
             }
         }
     }
@@ -55,8 +55,10 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
 
     // MARK: - Life cycle
 
-    public init(clientID: String,
-                resultHandler: ResultHandler? = nil) {
+    public init(
+        clientID: String,
+        resultHandler: ResultHandler? = nil
+    ) {
         self.clientID = clientID
         self.resultHandler = resultHandler
     }

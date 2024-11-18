@@ -31,8 +31,8 @@ enum CallActionIconType: IconLabelButtonInput {
 
     func icon(forState state: UIControl.State) -> StyleKitIcon {
         switch state {
-        case .selected: return selectedIcon
-        default: return normalIcon
+        case .selected: selectedIcon
+        default: normalIcon
         }
     }
 
@@ -51,34 +51,34 @@ enum CallActionIconType: IconLabelButtonInput {
 
     var accessibilityIdentifier: String {
         switch self {
-        case .microphone: return "CallMuteButton"
-        case .camera: return "CallVideoButton"
-        case .speaker: return "CallSpeakerButton"
-        case .flipCamera: return "CallFlipCameraButton"
-        case .endCall: return "EndCallButton"
-        case .pickUp: return "PickUpButton"
+        case .microphone: "CallMuteButton"
+        case .camera: "CallVideoButton"
+        case .speaker: "CallSpeakerButton"
+        case .flipCamera: "CallFlipCameraButton"
+        case .endCall: "EndCallButton"
+        case .pickUp: "PickUpButton"
         }
     }
 
     private var normalIcon: StyleKitIcon {
         switch self {
-        case .microphone: return .microphoneOff
-        case .camera: return .cameraOff
-        case .speaker: return .speakerOff
-        case .flipCamera: return .flipCamera
-        case .endCall: return .endCall
-        case .pickUp: return .endCall
+        case .microphone: .microphoneOff
+        case .camera: .cameraOff
+        case .speaker: .speakerOff
+        case .flipCamera: .flipCamera
+        case .endCall: .endCall
+        case .pickUp: .endCall
         }
     }
 
     private var selectedIcon: StyleKitIcon {
         switch self {
-        case .microphone: return .microphone
-        case .camera: return .camera
-        case .speaker: return .speaker
-        case .flipCamera: return .flipCamera
-        case .endCall: return .endCall
-        case .pickUp: return .endCall
+        case .microphone: .microphone
+        case .camera: .camera
+        case .speaker: .speaker
+        case .flipCamera: .flipCamera
+        case .endCall: .endCall
+        case .pickUp: .endCall
         }
     }
 }

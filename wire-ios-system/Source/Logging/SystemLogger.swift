@@ -28,12 +28,13 @@ struct SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")
 
     var logFiles: [URL] {
-        return []
+        []
     }
 
     var lastReportTime: Date? {
         get {
-            guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }
+            guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval
+            else { return nil }
             return Date(timeIntervalSince1970: interval)
         }
         set {
@@ -66,7 +67,7 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-       // do nothing, as it's only available on datadog
+        // do nothing, as it's only available on datadog
     }
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
@@ -75,7 +76,7 @@ struct SystemLogger: LoggerProtocol {
             mergedAttributes.merge($0) { _, new in new }
         }
 
-        var logger: OSLog = OSLog.default
+        var logger = OSLog.default
         if let tag = mergedAttributes[.tag] as? String {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }

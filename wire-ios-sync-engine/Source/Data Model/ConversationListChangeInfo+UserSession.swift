@@ -18,9 +18,9 @@
 
 import WireDataModel
 
-extension ConversationListChangeInfo {
+public extension ConversationListChangeInfo {
 
-    public static func add(
+    static func add(
         observer: ZMConversationListObserver,
         for list: ConversationList,
         userSession: ZMUserSession
@@ -28,7 +28,7 @@ extension ConversationListChangeInfo {
         addListObserver(observer, for: list, managedObjectContext: userSession.managedObjectContext)
     }
 
-    public static func add(observer: ZMConversationListReloadObserver, userSession: ZMUserSession) -> NSObjectProtocol {
+    static func add(observer: ZMConversationListReloadObserver, userSession: ZMUserSession) -> NSObjectProtocol {
         addReloadObserver(observer, managedObjectContext: userSession.managedObjectContext)
     }
 }

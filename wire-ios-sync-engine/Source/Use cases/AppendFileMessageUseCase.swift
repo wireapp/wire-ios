@@ -34,9 +34,9 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         with fileMetadata: ZMFileMetadata,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws {
         let message = try conversation.appendFile(with: fileMetadata, nonce: UUID())
 

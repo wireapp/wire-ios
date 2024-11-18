@@ -28,9 +28,9 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         switch self {
         case .disableAnalyticsSharing:
             // No default value because the user needs to decide.
-            return nil
+            nil
         case .disableLinkPreviews:
-            return false
+            false
         }
     }
 

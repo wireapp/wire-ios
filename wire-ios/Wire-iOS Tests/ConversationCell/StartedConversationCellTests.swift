@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
@@ -67,7 +67,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         verify(message: message)
     }
 
-    /// TODO
+    // TODO:
     func testThatItRendersNewConversationCellWithOneParticipantAndName() {
         let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .justYou)
         verify(message: message)
@@ -99,7 +99,13 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     }
 
     func testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests() {
-        let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .many, allTeamUsers: true, numberOfGuests: 5)
+        let message = cell(
+            for: .newConversation,
+            text: "Italy Trip",
+            fillUsers: .many,
+            allTeamUsers: true,
+            numberOfGuests: 5
+        )
         verify(message: message)
     }
 
@@ -109,7 +115,13 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     }
 
     func testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests() {
-        let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .some, allTeamUsers: true, numberOfGuests: 10)
+        let message = cell(
+            for: .newConversation,
+            text: "Italy Trip",
+            fillUsers: .some,
+            allTeamUsers: true,
+            numberOfGuests: 10
+        )
         verify(message: message)
     }
 
@@ -172,13 +184,15 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Helper
 
-    private func cell(for type: ZMSystemMessageType,
-                      text: String? = nil,
-                      fromSelf: Bool = false,
-                      fillUsers: Users = .one,
-                      allowGuests: Bool = false,
-                      allTeamUsers: Bool = false,
-                      numberOfGuests: Int16 = 0) -> ConversationMessage {
+    private func cell(
+        for type: ZMSystemMessageType,
+        text: String? = nil,
+        fromSelf: Bool = false,
+        fillUsers: Users = .one,
+        allowGuests: Bool = false,
+        allTeamUsers: Bool = false,
+        numberOfGuests: Int16 = 0
+    ) -> ConversationMessage {
         let message = MockMessageFactory.systemMessage(with: type)!
         message.senderUser = fromSelf ? mockSelfUser : mockOtherUser
 
@@ -193,10 +207,10 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
             case .none: return []
             case .sender: return [message.sender!]
             case .justYou: return Set([mockSelfUser])
-            case .youAndAnother: return Set(users[0..<1] + [mockSelfUser])
-            case .one: return Set(users[0...1] + additionalUsers)
-            case .some: return Set(users[0...4] + additionalUsers)
-            case .many: return Set(users[0..<11] + additionalUsers)
+            case .youAndAnother: return Set(users[0 ..< 1] + [mockSelfUser])
+            case .one: return Set(users[0 ... 1] + additionalUsers)
+            case .some: return Set(users[0 ... 4] + additionalUsers)
+            case .many: return Set(users[0 ..< 11] + additionalUsers)
             case .overflow: return Set(users + additionalUsers)
             }
         }()
@@ -210,5 +224,12 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 }
 
 private enum Users {
-    case none, sender, one, some, many, justYou, youAndAnother, overflow
+    case none
+    case sender
+    case one
+    case some
+    case many
+    case justYou
+    case youAndAnother
+    case overflow
 }

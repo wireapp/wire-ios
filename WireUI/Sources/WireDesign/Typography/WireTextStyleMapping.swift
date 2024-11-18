@@ -87,7 +87,10 @@ func WireTextStyleUIFontMappingPreview() -> UIViewController {
     viewController.view.addSubview(stackView)
     NSLayoutConstraint.activate([
         stackView.leadingAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.leadingAnchor),
-        stackView.topAnchor.constraint(equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor, multiplier: 2),
+        stackView.topAnchor.constraint(
+            equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor,
+            multiplier: 2
+        ),
         viewController.view.trailingAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.trailingAnchor)
     ])
 
