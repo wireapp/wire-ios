@@ -30,6 +30,7 @@ extension ZMClientMessage: ConversationCompositeMessage {
 }
 
 // MARK: - CompositeMessageData
+
 extension ZMClientMessage: CompositeMessageData {
     public var items: [CompositeMessageItem] {
         guard let message = underlyingMessage, case .some(.composite) = message.content else {
@@ -45,18 +46,23 @@ extension ZMClientMessage: CompositeMessageData {
 }
 
 // MARK: - ButtonStates Interface
+
 extension ZMClientMessage {
-    static func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation,
-                                   forConversation conversation: ZMConversation,
-                                   inContext moc: NSManagedObjectContext) {
+    static func updateButtonStates(
+        withConfirmation confirmation: ButtonActionConfirmation,
+        forConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
+    ) {
         let nonce = UUID(uuidString: confirmation.referenceMessageID)
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.updateButtonStates(withConfirmation: confirmation)
     }
 
-    static func expireButtonState(forButtonAction buttonAction: ButtonAction,
-                                  forConversation conversation: ZMConversation,
-                                  inContext moc: NSManagedObjectContext) {
+    static func expireButtonState(
+        forButtonAction buttonAction: ButtonAction,
+        forConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
+    ) {
         let nonce = UUID(uuidString: buttonAction.referenceMessageID)
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.expireButtonState(withButtonAction: buttonAction)
@@ -64,6 +70,7 @@ extension ZMClientMessage {
 }
 
 // MARK: - ButtonStates Helpers
+
 extension ZMClientMessage {
     private func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation) {
         guard let moc = managedObjectContext else { return }
@@ -75,7 +82,7 @@ extension ZMClientMessage {
     }
 
     private func containsButtonState(withId buttonId: String) -> Bool {
-        return buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
+        buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
     }
 
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {

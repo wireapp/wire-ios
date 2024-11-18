@@ -17,11 +17,14 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
-final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
+final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
+    CreateGroupConversationAction,
+    CreateGroupConversationActionHandler
+> {
 
     typealias RequestPayload = Payload.NewConversation
     typealias ResponsePayload = Payload.Conversation
@@ -41,7 +44,10 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        sut = CreateGroupConversationActionHandler(context: syncMOC, removeLocalConversationUseCase: MockLocalConversationRemovalUseCase())
+        sut = CreateGroupConversationActionHandler(
+            context: syncMOC,
+            removeLocalConversationUseCase: MockLocalConversationRemovalUseCase()
+        )
 
         conversationID = .randomID()
         mlsGroupID = MLSGroupID(.init([1, 2, 3]))
@@ -118,7 +124,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
-        return CreateGroupConversationAction(
+        CreateGroupConversationAction(
             messageProtocol: messageProtocol,
             creatorClientID: "creatorClientID",
             qualifiedUserIDs: [user1ID, user2ID],
@@ -377,7 +383,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -401,7 +407,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -432,7 +438,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
             handler = sut
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -456,7 +462,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

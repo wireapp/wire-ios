@@ -19,16 +19,15 @@
 import Foundation
 
 @objc
-public protocol NotificationContext: NSObjectProtocol { }
+public protocol NotificationContext: NSObjectProtocol {}
 
 extension NSPersistentStoreCoordinator: NotificationContext {}
 
 public extension NSManagedObjectContext {
 
     /// Prefer `UserSession.notificationContext` over this property.
-    @objc
-    var notificationContext: NotificationContext {
-        return persistentStoreCoordinator!
+    @objc var notificationContext: NotificationContext {
+        persistentStoreCoordinator!
     }
 
 }

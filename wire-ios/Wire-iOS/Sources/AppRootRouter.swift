@@ -18,26 +18,26 @@
 
 import avs
 import UIKit
+import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
+
 final class AppRootRouter {
 
-    // MARK: - Private Property
+    // MARK: - Private Properties
 
-    private let appStateCalculator: AppStateCalculator
-    private let urlActionRouter: URLActionRouter
-
+    private var appStateCalculator: AppStateCalculator
+    private var urlActionRouter: URLActionRouter
+    private let trackingManager: TrackingManager
     private var authenticationCoordinator: AuthenticationCoordinator?
     private let switchingAccountRouter: SwitchingAccountRouter
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
-    private let quickActionsManager: QuickActionsManager
-    private var authenticatedRouter: AuthenticatedRouter? {
-        didSet { setupAnalyticsSharing() }
-    }
+    private var quickActionsManager: QuickActionsManager
+    private var authenticatedRouter: AuthenticatedRouter?
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -66,7 +66,8 @@ final class AppRootRouter {
     init(
         mainWindow: UIWindow,
         sessionManager: SessionManager,
-        appStateCalculator: AppStateCalculator
+        appStateCalculator: AppStateCalculator,
+        trackingManager: TrackingManager
     ) {
         self.mainWindow = mainWindow
         self.sessionManager = sessionManager
@@ -79,6 +80,7 @@ final class AppRootRouter {
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
+        self.trackingManager = trackingManager
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
@@ -101,13 +103,13 @@ final class AppRootRouter {
     // MARK: - Public implementation
 
     func start(launchOptions: LaunchOptions) {
-        self.lastLaunchOptions = launchOptions
+        lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
-        return urlActionRouter.open(url: deepLinkURL)
+        urlActionRouter.open(url: deepLinkURL)
     }
 
     func performQuickAction(
@@ -124,7 +126,13 @@ final class AppRootRouter {
         completion: @escaping () -> Void
     ) {
         mainWindow.rootViewController = viewController
-        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}, completion: { _ in completion() })
+        UIView.transition(
+            with: mainWindow,
+            duration: 0.2,
+            options: .transitionCrossDissolve,
+            animations: {},
+            completion: { _ in completion() }
+        )
     }
 
     private func setupAppStateCalculator() {
@@ -149,7 +157,8 @@ final class AppRootRouter {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
         sessionManager.usePackagingFeatureConfig = true
-        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings.shared[.callingConstantBitRate] ?? false
+        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings
+            .shared[.callingConstantBitRate] ?? false
         sessionManager.useConstantBitRateAudio = useCBR
     }
 
@@ -177,7 +186,7 @@ final class AppRootRouter {
         appStateTransitionQueue.async { [weak self] in
             guard let self else { return }
 
-            self.appStateTransitionGroup.wait()
+            appStateTransitionGroup.wait()
 
             DispatchQueue.main.async {
                 self.transition(to: appState, completion: completion)
@@ -188,10 +197,13 @@ final class AppRootRouter {
 }
 
 // MARK: - AppStateCalculatorDelegate
+
 extension AppRootRouter: AppStateCalculatorDelegate {
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void) {
+    func appStateCalculator(
+        _: AppStateCalculator,
+        didCalculate appState: AppState,
+        completion: @escaping () -> Void
+    ) {
         enqueueTransition(to: appState, completion: completion)
     }
 
@@ -209,17 +221,17 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         switch appState {
         case .retryStart:
             retryStart(completion: completion)
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
             showJailbroken(completion: completion)
         case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completion)
-        case .databaseFailure(let error):
+        case let .databaseFailure(error):
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completion)
@@ -274,7 +286,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            Analytics.shared.tagEvent("app.open")
             self?.sessionManager.start(launchOptions: launchOptions)
         }
     }
@@ -319,10 +330,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         // Only execute handle events if there is no current flow
         guard
             self.authenticationCoordinator == nil ||
-                error?.userSessionErrorCode == .addAccountRequested ||
-                error?.userSessionErrorCode == .accountDeleted ||
-                error?.userSessionErrorCode == .canNotRegisterMoreClients ||
-                error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
+            error?.userSessionErrorCode == .addAccountRequested ||
+            error?.userSessionErrorCode == .accountDeleted ||
+            error?.userSessionErrorCode == .canNotRegisterMoreClients ||
+            error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
             let sessionManager = SessionManager.shared
         else {
             completion()
@@ -366,7 +377,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession
+                userSession: userSession,
+                trackingManager: trackingManager
             )
         else {
             completion()
@@ -375,7 +387,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.viewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
@@ -394,7 +406,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func configureUnauthenticatedAppearance() {
         mainWindow.tintColor = UIColor.Wire.primaryLabel
-        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
+        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self])
+            .tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
@@ -402,22 +415,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         UIColor.setAccentOverride(nil)
     }
 
-    private func setupAnalyticsSharing() {
-        guard
-            let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.isTeamMember
-        else {
-            return
-        }
-
-        TrackingManager.shared.disableAnalyticsSharing = false
-        Analytics.shared.provider?.selfUser = selfUser
-    }
-
     @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return nil }
 
@@ -425,6 +427,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             mainWindow: mainWindow,
             account: account,
             userSession: userSession,
+            trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
@@ -451,7 +454,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
@@ -565,9 +568,9 @@ extension AppRootRouter: URLActionRouterDelegate {
     func urlActionRouterCanDisplayAlerts() -> Bool {
         switch appStateCalculator.appState {
         case .authenticated, .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -620,8 +623,12 @@ extension AppRootRouter: ContentSizeCategoryObserving {
     static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]
-        let barButtonItemAppearance = UIBarButtonItem.appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
+            .baselineOffset: navigationBarTitleBaselineOffset
+        ]
+        let barButtonItemAppearance = UIBarButtonItem
+            .appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .normal)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .highlighted)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .disabled)

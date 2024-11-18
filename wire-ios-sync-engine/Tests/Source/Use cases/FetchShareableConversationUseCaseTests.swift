@@ -76,7 +76,6 @@ class FetchShareableConversationUseCaseTests: XCTestCase {
         conversation.isArchived = false
         conversation.messageProtocol = .proteus
         conversation.conversationType = .group
-
         return conversation
     }
 }

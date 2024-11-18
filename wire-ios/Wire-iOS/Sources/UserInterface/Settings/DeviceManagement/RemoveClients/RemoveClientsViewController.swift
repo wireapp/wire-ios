@@ -28,9 +28,9 @@ protocol RemoveClientsViewControllerDelegate: AnyObject {
 }
 
 final class RemoveClientsViewController: UIViewController,
-                                UITableViewDelegate,
-                                UITableViewDataSource,
-                                ClientColorVariantProtocol {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ClientColorVariantProtocol {
 
     // MARK: - Properties
 
@@ -46,14 +46,15 @@ final class RemoveClientsViewController: UIViewController,
     // MARK: - Life cycle
 
     required init(clientsList: [UserClient]) {
-        viewModel = RemoveClientsViewController.ViewModel(
-            clientsList: clientsList)
+        self.viewModel = RemoveClientsViewController.ViewModel(
+            clientsList: clientsList
+        )
 
         super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
-    required override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError("init(nibNameOrNil:nibBundleOrNil:) has not been implemented")
     }
 
@@ -63,14 +64,14 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.createTableView()
-        self.createConstraints()
+        createTableView()
+        createConstraints()
 
     }
 
@@ -82,11 +83,14 @@ final class RemoveClientsViewController: UIViewController,
         clientsTableView.dataSource = self
         clientsTableView.rowHeight = UITableView.automaticDimension
         clientsTableView.estimatedRowHeight = 80
-        clientsTableView.register(RemoveClientTableViewCell.self, forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier)
+        clientsTableView.register(
+            RemoveClientTableViewCell.self,
+            forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier
+        )
         clientsTableView.isEditing = true
         clientsTableView.backgroundColor = SemanticColors.View.backgroundDefault
         clientsTableView.separatorStyle = .none
-        self.view.addSubview(clientsTableView)
+        view.addSubview(clientsTableView)
     }
 
     private func createConstraints() {
@@ -102,8 +106,9 @@ final class RemoveClientsViewController: UIViewController,
 
     // MARK: - Actions
 
-    @objc func backPressed(_ sender: AnyObject!) {
-        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
+    @objc
+    func backPressed(_ sender: AnyObject!) {
+        navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
     func removeUserClient(_ userClient: UserClient) async {
@@ -120,7 +125,8 @@ final class RemoveClientsViewController: UIViewController,
                 context: .removeDevice,
                 callback: { password in
                     continuation.resume(returning: password)
-                })
+                }
+            )
             guard let alertController = requestPasswordController?.alertController else {
                 continuation.resume(returning: nil)
                 return
@@ -144,19 +150,19 @@ final class RemoveClientsViewController: UIViewController,
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.clients.count
+        viewModel.clients.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return L10n.Localizable.Registration.Devices.activeListHeader
+        L10n.Localizable.Registration.Devices.activeListHeader
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return L10n.Localizable.Registration.Devices.activeListSubtitle
+        L10n.Localizable.Registration.Devices.activeListSubtitle
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -172,7 +178,10 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? RemoveClientTableViewCell {
+        if let cell = tableView.dequeueReusableCell(
+            withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as? RemoveClientTableViewCell {
             cell.selectionStyle = .none
             cell.viewModel = .init(userClient: viewModel.clients[indexPath.row], shouldSetType: false)
 
@@ -182,15 +191,20 @@ final class RemoveClientsViewController: UIViewController,
         }
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         let userClient = viewModel.clients[indexPath.row]
         Task {
             await removeUserClient(userClient)
         }
     }
 
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
+        .EditingStyle {
+        viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -202,6 +216,6 @@ final class RemoveClientsViewController: UIViewController,
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {
-        return L10n.Localizable.General.failure
+        L10n.Localizable.General.failure
     }
 }

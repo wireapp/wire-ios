@@ -56,7 +56,9 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
         let customBackend = MockEnvironment()
         customBackend.backendURL = URL(string: "https://api.example.org")!
         customBackend.proxy = nil
-        customBackend.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        customBackend
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         sut = LandingViewController(backendEnvironmentProvider: {
             customBackend
         })
@@ -67,7 +69,10 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
     // MARK: - Helper Method
 
     func sutInUiNavigationController() -> UINavigationController {
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
         navigationController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .compact), forChild: sut)
         navigationController.viewControllers = [sut]
 
@@ -84,13 +89,13 @@ final class FakeProxySettings: NSObject, ProxySettingsProvider {
     var port: Int
     var needsAuthentication: Bool
 
-    internal init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
+    init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication
     }
 
     func socks5Settings(proxyUsername: String?, proxyPassword: String?) -> [AnyHashable: Any]? {
-        return nil
+        nil
     }
 }

@@ -21,7 +21,7 @@ import Foundation
 extension LocalNotificationType {
 
     func category(hasTeam: Bool, encryptionAtRestEnabled: Bool) -> PushNotificationCategory {
-        return PushNotificationCategory(notificationType: self)
+        PushNotificationCategory(notificationType: self)
             .addEncryptionAtRestIfNeeded(encryptionAtRestEnabled: encryptionAtRestEnabled)
             .addMuteIfNeeded(hasTeam: hasTeam)
     }
@@ -29,22 +29,22 @@ extension LocalNotificationType {
     var sound: NotificationSound {
         switch self {
         case .calling(.incomingCall):
-            return .call
+            .call
         case .calling(.missedCall):
-            return .newMessage
+            .newMessage
         case .event:
-            return .newMessage
-        case .message(let contentType):
+            .newMessage
+        case let .message(contentType):
             switch contentType {
             case .knock:
-                return .ping
+                .ping
             default:
-                return .newMessage
+                .newMessage
             }
         case .failedMessage, .availabilityBehaviourChangeAlert:
-            return .newMessage
+            .newMessage
         case .bundledMessages:
-            return .newMessage
+            .newMessage
         }
     }
 
@@ -54,11 +54,11 @@ private extension PushNotificationCategory {
 
     init(notificationType: LocalNotificationType) {
         switch notificationType {
-        case .calling(let callState):
+        case let .calling(callState):
             self.init(callState: callState)
-        case .event(let eventType):
+        case let .event(eventType):
             self.init(eventType: eventType)
-        case .message(let contentType):
+        case let .message(contentType):
             self.init(contentType: contentType)
         case .failedMessage:
             self = .conversation

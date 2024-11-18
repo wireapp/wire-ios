@@ -28,8 +28,11 @@ struct SidebarPreview: View {
     @State private var accountInfo = SidebarAccountInfo(
         displayName: "Firstname Lastname",
         username: "@username",
-        accountImage: .from(solidColor: .brown),
-        availability: .away
+        accountImageSource: .image(.from(solidColor: .brown)),
+        availability: .away,
+        isE2EICertified: true,
+        isVerified: true,
+        isLegalHoldEnabled: true
     )
     @State private var selectedMenuItem: SidebarSelectableMenuItem = .all
 
@@ -45,11 +48,11 @@ struct SidebarPreview: View {
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
                     accountImageAction: {},
+                    foldersAction: { _ in },
                     connectAction: {},
                     supportAction: {},
-                    accountImageView: { uiImage, availability in
-                        MockAccountImageView(uiImage: uiImage, availability: availability)
-                    }
+                    accountImageView: { _, _ in MockAccountImageView() },
+                    legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
                 )
                 .navigationSplitViewColumnWidth(primarySplitColumnWidth)
             }, content: {
@@ -62,9 +65,7 @@ struct SidebarPreview: View {
     }
 }
 
-struct MockAccountImageView: View {
-    @State private(set) var uiImage: UIImage
-    @State private(set) var availability: SidebarAccountInfo.Availability?
+private struct MockAccountImageView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Circle()
@@ -74,5 +75,12 @@ struct MockAccountImageView: View {
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.green)
         }
+    }
+}
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
     }
 }

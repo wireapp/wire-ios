@@ -40,7 +40,8 @@ public struct SnapshotHelper {
     ///
     /// Perceptual precision is the threshold at which two pixels are considered to be the same.
     ///
-    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value of 0 indicates no precision.
+    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value
+    /// of 0 indicates no precision.
     /// - Returns: A copy of the current helper with the new perceptual precision.
 
     public func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
@@ -90,7 +91,8 @@ public struct SnapshotHelper {
 
     /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
-    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment
+    /// variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
@@ -183,7 +185,10 @@ public struct SnapshotHelper {
 
         let failure = verifySnapshot(
             of: value,
-            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
+                perceptualPrecision: perceptualPrecision,
+                traits: traits
+            ),
             named: name,
             record: recording,
             snapshotDirectory: snapshotDirectory,

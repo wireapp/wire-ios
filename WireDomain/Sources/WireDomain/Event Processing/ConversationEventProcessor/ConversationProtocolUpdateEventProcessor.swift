@@ -32,9 +32,16 @@ protocol ConversationProtocolUpdateEventProcessorProtocol {
 
 struct ConversationProtocolUpdateEventProcessor: ConversationProtocolUpdateEventProcessorProtocol {
 
-    func processEvent(_: ConversationProtocolUpdateEvent) async throws {
-        // TODO: [WPB-10175]
-        assertionFailure("not implemented yet")
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationProtocolUpdateEvent) async throws {
+        let id = event.conversationID.uuid
+        let domain = event.conversationID.domain
+
+        try await repository.pullConversation(
+            id: id,
+            domain: domain
+        )
     }
 
 }

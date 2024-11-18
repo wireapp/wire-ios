@@ -149,7 +149,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // When
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // Then
@@ -174,7 +174,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -198,7 +198,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -220,7 +220,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -247,12 +247,17 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform {
-            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
+            let conversation = ZMConversation.fetch(
+                with: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                in: self.syncMOC
+            )
             XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .newConversation)
         }
     }
 
-    func testUpdateOrCreateConversation_Group_DoesntAddMlsMigrationPotentialGapSystemMessageWhenCreatingGroup() async throws {
+    func testUpdateOrCreateConversation_Group_DoesntAddMlsMigrationPotentialGapSystemMessageWhenCreatingGroup(
+    ) async throws {
         // given
         let qualifiedID = await syncMOC.perform {
             QualifiedID(uuid: UUID(), domain: self.owningDomain)
@@ -271,7 +276,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         try await syncMOC.perform {
-            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                in: self.syncMOC
+            ))
             XCTAssertFalse(conversation.allMessages.contains(where: { message in
                 message.systemMessageData?.systemMessageType == .mlsMigrationPotentialGap
             }))
@@ -293,7 +302,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await sut.updateOrCreateConversation(
             from: payload,
             serverTimestamp: serverTimestamp,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -316,7 +325,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -591,9 +600,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let payload = await syncMOC.perform {
             let qualifiedID = self.groupConversation.qualifiedID!
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!,
-                                                        archived: true,
-                                                        archivedReference: Date())
+            let selfMember = Payload.ConversationMember(
+                qualifiedID: selfUser.qualifiedID!,
+                archived: true,
+                archivedReference: Date()
+            )
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [])
             return Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
@@ -709,6 +720,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_OneOnOneUser() async throws {
         let (teamID, qualifiedID, members) = await syncMOC.perform {
             // given
+            self.otherUser.oneOnOneConversation = nil
             let teamID = UUID.create()
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = teamID
@@ -821,7 +833,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             conversation.remoteIdentifier = UUID()
             conversation.domain = self.owningDomain
             let qualifiedID = conversation.qualifiedID!
-            let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.connection.rawValue)
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.connection.rawValue
+            )
             return (conversation, payload)
         }
 
@@ -846,9 +861,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            return Payload.Conversation(qualifiedID: qualifiedID,
-                                        type: BackendConversationType.oneOnOne.rawValue,
-                                        members: members)
+            return Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
         }
 
         // when
@@ -873,9 +890,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             self.otherUser.isPendingMetadataRefresh = true
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            return Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.oneOnOne.rawValue,
-                                               members: members)
+            return Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
         }
 
         // when
@@ -896,15 +915,19 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let payload = await syncMOC.perform {
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!,
-                                                        mutedStatus: Int(mutedMessageTypes.rawValue),
-                                                        mutedReference: Date())
+            let selfMember = Payload.ConversationMember(
+                qualifiedID: selfUser.qualifiedID!,
+                mutedStatus: Int(mutedMessageTypes.rawValue),
+                mutedReference: Date()
+            )
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            return Payload.Conversation(qualifiedID: qualifiedID,
-                                        type: BackendConversationType.oneOnOne.rawValue,
-                                        members: members)
+            return Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
         }
 
         // when
@@ -923,16 +946,19 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // given
         let payload = await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!,
-                                                        archived: true,
-                                                        archivedReference: Date())
+            let selfMember = Payload.ConversationMember(
+                qualifiedID: selfUser.qualifiedID!,
+                archived: true,
+                archivedReference: Date()
+            )
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                               type: BackendConversationType.oneOnOne.rawValue,
-                                               members: members)
-            return payload
+            return Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
         }
 
         // when
@@ -952,7 +978,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_CreatesConversation() async throws {
         // given
         BackendInfo.isFederationEnabled = true
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: owningDomain)
         let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
         // when
@@ -963,7 +989,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         try await syncMOC.perform {
-            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                in: self.syncMOC
+            ))
             XCTAssertEqual(conversation.conversationType, .`self`)
         }
     }
@@ -971,7 +1001,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_DoesntAssignDomain_WhenFederationIsDisabled() async throws {
         // given
         BackendInfo.isFederationEnabled = false
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: owningDomain)
         let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
         // when
@@ -982,7 +1012,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         try await syncMOC.perform {
-            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: nil, in: self.syncMOC))
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: qualifiedID.uuid,
+                domain: nil,
+                in: self.syncMOC
+            ))
             XCTAssertEqual(conversation.conversationType, .`self`)
             XCTAssertNil(conversation.domain)
         }
@@ -1019,8 +1053,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self.syncMOC)
             selfConversation.domain = self.owningDomain
-            let payload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
-                                               type: BackendConversationType.`self`.rawValue)
+            let payload = Payload.Conversation(
+                qualifiedID: selfConversation.qualifiedID!,
+                type: BackendConversationType.`self`.rawValue
+            )
             return (selfConversation, payload)
         }
 
@@ -1088,7 +1124,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
         // then
         await syncMOC.perform { [self] in
-            let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
+            let updateConversationCalls = mockMLSEventProcessor
+                .updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
             XCTAssertEqual(updateConversationCalls.count, 1)
             XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
         }
@@ -1267,7 +1304,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
@@ -1310,7 +1347,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: user.qualifiedID,
@@ -1350,7 +1387,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
@@ -1379,7 +1416,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let (conversation, users, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: true
         )
-        let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
+        let expectation = XCTNSNotificationExpectation(
+            name: AccountDeletedNotification.notificationName,
+            object: nil,
+            notificationCenter: .default
+        )
         expectation.handler = { notification in
             notification.userInfo?[AccountDeletedNotification.userInfoKey] is AccountDeletedNotification
         }

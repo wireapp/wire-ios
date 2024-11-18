@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SidebarMenuItemView: View {
+struct SidebarMenuItemView<TitleView: View>: View {
 
     // MARK: - Constants
 
@@ -48,7 +48,8 @@ struct SidebarMenuItemView: View {
     /// If `true`, ".fill" will be appended to the value of the `icon` property.
     private(set) var isHighlighted = false
 
-    private(set) var title: () -> Text
+    private(set) var title: () -> TitleView
+    private(set) var accessibilityLabel: () -> Text
     private(set) var action: () -> Void
 
     // MARK: -
@@ -85,6 +86,7 @@ struct SidebarMenuItemView: View {
             .padding(.vertical, 12)
             .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
+            .accessibilityLabel(accessibilityLabel())
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
@@ -112,7 +114,11 @@ extension View {
     }
 
     func sidebarMenuItemIsSelectedTitleForegroundColor(_ isSelectedTitleForegroundColor: Color) -> some View {
-        modifier(SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(isSelectedTitleForegroundColor: isSelectedTitleForegroundColor))
+        modifier(
+            SidebarMenuItemIsSelectedTitleForegroundColorViewModifier(
+                isSelectedTitleForegroundColor: isSelectedTitleForegroundColor
+            )
+        )
     }
 }
 

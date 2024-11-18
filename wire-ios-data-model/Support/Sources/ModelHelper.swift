@@ -25,6 +25,38 @@ public struct ModelHelper {
 
     public init() {}
 
+    @discardableResult
+    public func createFolder(
+        id: UUID = .init(),
+        name: String = "Test Folder",
+        in context: NSManagedObjectContext
+    ) -> Label {
+        let folder = Label.insertNewObject(in: context)
+        folder.remoteIdentifier = id
+        folder.name = name
+        folder.kind = .folder
+        return folder
+    }
+
+    // MARK: - Messages
+
+    @discardableResult
+    public func addTextMessages(
+        to conversation: ZMConversation,
+        messagePrefix: String = "message",
+        sender: ZMUser?,
+        count: Int,
+        in context: NSManagedObjectContext
+    ) throws -> [ZMMessage] {
+        let messageSender = sender ?? ZMUser.selfUser(in: context)
+        return try (0 ..< count).map { index in
+            let message = try conversation.appendText(content: "\(messagePrefix) \(index)") as! ZMMessage
+            message.sender = messageSender
+            return message
+        }
+
+    }
+
     // MARK: - Users
 
     @discardableResult
@@ -133,9 +165,9 @@ public struct ModelHelper {
     ) -> (Team, Set<ZMUser>) {
         let team = createTeam(id: id, in: context)
 
-        let users = (0..<numberOfUsers)
+        let users = (0 ..< numberOfUsers)
             .map { _ in
-                let user = self.createUser(in: context)
+                let user = createUser(in: context)
                 addUser(user, to: team, in: context)
                 return user
             }
@@ -154,7 +186,7 @@ public struct ModelHelper {
 
         let users = membersIDs
             .map { userId in
-                let user = self.createUser(id: userId, domain: nil, in: context)
+                let user = createUser(id: userId, domain: nil, in: context)
                 let member = addUser(user, to: team, in: context)
                 return user
             }
@@ -229,6 +261,7 @@ public struct ModelHelper {
         let member = Member.insertNewObject(in: context)
         member.user = user
         member.team = team
+        member.user?.teamIdentifier = team.remoteIdentifier
         member.remoteIdentifier = user.remoteIdentifier
 
         return member
@@ -276,19 +309,25 @@ public struct ModelHelper {
             role: nil
         )
         conversation.team = team
+        conversation.teamRemoteIdentifier = team?.remoteIdentifier
 
         return conversation
     }
 
     @discardableResult
     public func createOneOnOne(
+        id: UUID = UUID(),
+        domain: String? = nil,
         with user: ZMUser,
+        team: Team? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let selfUser = ZMUser.selfUser(in: context)
         let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
+        conversation.remoteIdentifier = id
+        conversation.domain = domain
         conversation.conversationType = .oneOnOne
+        conversation.team = team
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
         conversation.oneOnOneUser = user
@@ -314,22 +353,39 @@ public struct ModelHelper {
 
     @discardableResult
     public func createMLSConversation(
+        id: UUID = UUID(),
+        domain: String? = "domain.com",
         mlsGroupID: MLSGroupID? = nil,
         mlsStatus: MLSGroupStatus = .ready,
         conversationType: ZMConversationType = .group,
         epoch: UInt64 = 0,
+        with participants: Set<ZMUser> = [],
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
-        conversation.domain = "domain.com"
+        conversation.remoteIdentifier = id
+        conversation.domain = domain
         conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .mls
         conversation.mlsStatus = mlsStatus
         conversation.conversationType = conversationType
         conversation.epoch = epoch
+        conversation.addParticipantsAndUpdateConversationState(users: participants)
 
         return conversation
+    }
+
+    // MARK: Role
+
+    @discardableResult
+    public func createRole(
+        _ name: String = "member",
+        in context: NSManagedObjectContext
+    ) -> Role {
+        let role = Role.insertNewObject(in: context)
+        role.name = name
+
+        return role
     }
 
 }

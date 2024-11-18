@@ -29,7 +29,8 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
     private let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
             style: .body2,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
 
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)

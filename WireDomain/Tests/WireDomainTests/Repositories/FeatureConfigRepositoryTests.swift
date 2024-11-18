@@ -17,12 +17,12 @@
 //
 
 import Combine
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
@@ -44,8 +44,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
-        sut = FeatureConfigRepository(featureConfigsAPI: featureConfigsAPI,
-                                      context: context)
+        sut = FeatureConfigRepository(
+            featureConfigsAPI: featureConfigsAPI,
+            context: context
+        )
     }
 
     override func tearDown() async throws {
@@ -71,8 +73,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let features = Feature.Name.allCases.compactMap {
-            Feature.fetch(name: $0, context: context)
+        let features = await context.perform { [self] in
+            return Feature.Name.allCases.compactMap {
+                Feature.fetch(name: $0, context: context)
+            }
         }
 
         XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
@@ -127,12 +131,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         subscription = sut.observeFeatureStates()
             .sink { featureState in
                 featureStates.append(featureState)
-                let feature = Feature.fetch(name: featureState.name, context: self.context)
-                XCTAssertNotNil(feature)
-                XCTAssertEqual(featureState.status, .enabled)
-                XCTAssertEqual(featureState.shouldNotifyUser, false)
 
-                expectation.fulfill()
+                if featureStates.count == Scaffolding.featureConfigs.count {
+                    expectation.fulfill()
+                }
             }
 
         // When
@@ -142,39 +144,58 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
+
+        for featureState in featureStates {
+            await context.perform {
+                let feature = Feature.fetch(name: featureState.name, context: self.context)
+                XCTAssertNotNil(feature)
+                XCTAssertEqual(featureState.status, .enabled)
+                XCTAssertEqual(featureState.shouldNotifyUser, false)
+            }
+        }
     }
 
     private enum Scaffolding {
         static let featureConfigs: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
             .mls(.init(
                 status: .enabled,
@@ -188,14 +209,18 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
             )),
-            .mlsMigration(.init(status: .enabled,
-                                startTime: nil,
-                                finaliseRegardlessAfter: nil)),
-            .endToEndIdentity(.init(status: .enabled,
-                                    acmeDiscoveryURL: "https://example.com",
-                                    verificationExpiration: 9_223_372_036_854_776_000,
-                                    crlProxy: "https://example.com",
-                                    useProxyOnMobile: true))
+            .mlsMigration(.init(
+                status: .enabled,
+                startTime: nil,
+                finaliseRegardlessAfter: nil
+            )),
+            .endToEndIdentity(.init(
+                status: .enabled,
+                acmeDiscoveryURL: "https://example.com",
+                verificationExpiration: 9_223_372_036_854_776_000,
+                crlProxy: "https://example.com",
+                useProxyOnMobile: true
+            ))
         ]
 
     }

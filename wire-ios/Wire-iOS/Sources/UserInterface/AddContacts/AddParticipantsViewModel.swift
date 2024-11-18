@@ -29,48 +29,48 @@ struct AddParticipantsViewModel {
 
     var botCanBeAdded: Bool {
         switch context {
-        case .create: return false
-        case .add(let conversation): return conversation.botCanBeAdded
+        case .create: false
+        case let .add(conversation): conversation.botCanBeAdded
         }
     }
 
     var selectedUsers: UserSet {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .oneOnOne:
-            return conversation.connectedUserType.map { [$0] } ?? []
-        case .create(let values): return values.participants
-        default: return []
+        case let .add(conversation) where conversation.conversationType == .oneOnOne:
+            conversation.connectedUserType.map { [$0] } ?? []
+        case let .create(values): values.participants
+        default: []
         }
     }
 
     func title(with users: UserSet) -> String {
-        return users.isEmpty
+        users.isEmpty
             ? L10n.Localizable.Peoplepicker.Group.Title.singular.capitalized
             : L10n.Localizable.Peoplepicker.Group.Title.plural(users.count).capitalized
     }
 
     var filterConversation: ZMConversation? {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .group: return conversation as? ZMConversation
-        default: return nil
+        case let .add(conversation) where conversation.conversationType == .group: conversation as? ZMConversation
+        default: nil
         }
     }
 
     var showsConfirmButton: Bool {
         switch context {
-        case .add: return true
-        case .create: return false
+        case .add: true
+        case .create: false
         }
     }
 
     var confirmButtonTitle: String? {
         switch context {
-        case .create: return nil
-        case .add(let conversation):
+        case .create: nil
+        case let .add(conversation):
             if conversation.conversationType == .oneOnOne {
-                return L10n.Localizable.Peoplepicker.Button.createConversation.capitalized
+                L10n.Localizable.Peoplepicker.Button.createConversation.capitalized
             } else {
-                return L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
+                L10n.Localizable.Peoplepicker.Button.addToConversation.capitalized
             }
         }
     }
@@ -82,12 +82,16 @@ struct AddParticipantsViewModel {
             item.tintColor = SemanticColors.Icon.foregroundDefault
             item.accessibilityIdentifier = "close"
             return item
-        case .create(let values):
-            let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable.Peoplepicker.Group.done
-            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key,
-                                                                               action: action)
+        case let .create(values):
+            let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable
+                .Peoplepicker.Group.done
+            let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
+                title: key,
+                action: action
+            )
             newItem.tintColor = UIColor.accent()
-            newItem.accessibilityIdentifier = values.participants.isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
+            newItem.accessibilityIdentifier = values.participants
+                .isEmpty ? "button.addpeople.skip" : "button.addpeople.create"
             return newItem
         }
     }

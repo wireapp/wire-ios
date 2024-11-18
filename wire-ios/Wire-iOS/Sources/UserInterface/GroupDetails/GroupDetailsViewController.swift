@@ -18,11 +18,13 @@
 
 import UIKit
 import WireDesign
+import WireMainNavigationUI
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: AnyMainCoordinator
+    private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
     private let footerView = GroupDetailsFooterView()
@@ -39,20 +41,22 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
         conversation: GroupDetailsConversationType,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
-        collectionViewController = SectionCollectionViewController()
+        self.collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -62,13 +66,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation.refetchParticipantsIfNeeded()
             }
 
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             if let session = ZMUserSession.shared() {
                 if session.hasCompletedInitialSync {
-                    didCompleteInitialSync = true
+                    self.didCompleteInitialSync = true
                 } else {
-                    initialSyncToken = NotificationInContext.addObserver(
+                    self.initialSyncToken = NotificationInContext.addObserver(
                         name: .initialSync,
                         context: userSession.notificationContext
                     ) { [weak self] _ in
@@ -119,9 +123,14 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     private func setupNavigatiomItem() {
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.titleView = TwoLineTitleView(
+
+        let titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus)
+            second: verificationStatus
+        )
+
+        titleView.addInteraction(UILargeContentViewerInteraction())
+        navigationItem.titleView = titleView
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
@@ -163,7 +172,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         var sections = [CollectionViewSectionController]()
 
-        let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
+        let renameGroupSectionController = RenameGroupSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
@@ -184,7 +196,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
                 // Dispay the ShowAll button after the first section.
-                if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
+                if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
                         userStatuses: userStatuses,
@@ -210,7 +222,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         userSession: userSession
                     )
                     sections.append(adminSection)
-                    if members.count <= (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) { // Don't display the ShowAll button
+                    if members
+                        .count <=
+                        (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) {
+                        // Don't display the ShowAll button
                         if !members.isEmpty {
                             let memberSection = ParticipantsSectionController(
                                 participants: members,
@@ -258,6 +273,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if let user = SelfUser.provider?.providedSelfUser {
             // MARK: options sections
+
             let optionsSectionController = GroupOptionsSectionController(
                 conversation: conversation,
                 user: user,
@@ -268,12 +284,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
-            if conversation.teamRemoteIdentifier != nil &&
-                user.canModifyReadReceiptSettings(in: conversation) {
+            if conversation.teamRemoteIdentifier != nil,
+               user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
-                    collectionView: self.collectionViewController.collectionView!,
+                    collectionView: collectionViewController.collectionView!,
                     presentingViewController: self
                 )
                 sections.append(receiptOptionsSectionController)
@@ -283,7 +299,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // MARK: services sections
 
         if !serviceUsers.isEmpty {
-            let servicesSection = ServicesSectionController(serviceUsers: serviceUsers, conversation: conversation, delegate: self)
+            let servicesSection = ServicesSectionController(
+                serviceUsers: serviceUsers,
+                conversation: conversation,
+                delegate: self
+            )
             sections.append(servicesSection)
         }
 
@@ -300,12 +320,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard let conversation = conversation as? ZMConversation,
               changeInfo.participantsChanged ||
-                changeInfo.nameChanged ||
-                changeInfo.allowGuestsChanged ||
-                changeInfo.allowServicesChanged ||
-                changeInfo.destructionTimeoutChanged ||
-                changeInfo.mutedMessageTypesChanged ||
-                changeInfo.legalHoldStatusChanged
+              changeInfo.nameChanged ||
+              changeInfo.allowGuestsChanged ||
+              changeInfo.allowServicesChanged ||
+              changeInfo.destructionTimeoutChanged ||
+              changeInfo.mutedMessageTypesChanged ||
+              changeInfo.legalHoldStatusChanged
         else { return }
 
         updateLegalHoldIndicator()
@@ -323,8 +343,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
 
-    func footerView(_ view: GroupDetailsFooterView,
-                    shouldPerformAction action: GroupDetailsFooterView.Action) {
+    func footerView(
+        _ view: GroupDetailsFooterView,
+        shouldPerformAction action: GroupDetailsFooterView.Action
+    ) {
         switch action {
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
@@ -353,7 +375,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             selectedParticipants: selectedUsers,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         detailsViewController.delegate = self
@@ -378,7 +401,8 @@ extension GroupDetailsViewController {
             in: self,
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -409,18 +433,18 @@ private extension GroupDetailsViewController {
     var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return .init(resource: .verifiedShield)
+            .init(resource: .verifiedShield)
         case .mls:
-            return .init(resource: .certificateValid)
+            .init(resource: .certificateValid)
         }
     }
 
     var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return SemanticColors.Label.textCertificateVerified
+            SemanticColors.Label.textCertificateVerified
         case .mls:
-            return SemanticColors.Label.textCertificateValid
+            SemanticColors.Label.textCertificateValid
         }
     }
 
@@ -448,7 +472,10 @@ private extension GroupDetailsViewController {
                 guard let user = user as? ZMUser else { continue }
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
-                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                     userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
@@ -461,14 +488,17 @@ private extension GroupDetailsViewController {
 
 extension GroupDetailsViewController: ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true, completion: completion)
+        navigationController?.popViewController(animated: true) {
+            completion?()
+        }
     }
 }
 
 extension GroupDetailsViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }
@@ -484,7 +514,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             profileViewControllerDelegate: self,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
 
         navigationController?.pushViewController(viewController, animated: true)

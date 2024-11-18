@@ -57,6 +57,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
 
     init() {
         let backgroundColor = AccentColor.red.uiColor
-        configuration = View.Configuration(backgroundColor: backgroundColor)
+        self.configuration = View.Configuration(backgroundColor: backgroundColor)
     }
 }

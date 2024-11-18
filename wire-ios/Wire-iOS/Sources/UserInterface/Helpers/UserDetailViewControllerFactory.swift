@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireMainNavigationUI
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
@@ -29,14 +30,16 @@ enum UserDetailViewControllerFactory {
     ///   - conversation: conversation currently displaying
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
     ///   - viewControllerDismisser: a ViewControllerDismisser for returing UIViewController's dismiss action
-    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
+    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
+    /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
         user: UserType,
         conversation: ZMConversation,
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         viewControllerDismisser: ViewControllerDismisser,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 
         if user.isServiceUser, let serviceUser = user as? ServiceUser {
@@ -54,7 +57,8 @@ enum UserDetailViewControllerFactory {
                 viewer: userSession.selfUser,
                 conversation: conversation,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = profileViewControllerDelegate
             profileViewController.viewControllerDismisser = viewControllerDismisser

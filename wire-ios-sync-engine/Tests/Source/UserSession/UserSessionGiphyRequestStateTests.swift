@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
 
@@ -27,29 +27,33 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         let path = "foo/bar"
         let url = URL(string: path, relativeTo: nil)!
 
-        let exp = self.customExpectation(description: "expected callback")
+        let exp = customExpectation(description: "expected callback")
         let callback: (Data?, HTTPURLResponse?, Error?) -> Void = { _, _, _ in
             exp.fulfill()
         }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
+        sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let request = self.sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let request = sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
         XCTAssert(request != nil)
         XCTAssertEqual(request!.path, path)
         XCTAssert(request!.callback != nil)
         request!.callback!(nil, HTTPURLResponse(), nil)
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatAddingRequestStartsOperationLoop() {
 
         // given
-        let exp = self.customExpectation(description: "new operation loop started")
-        let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil, queue: nil) { _ in
+        let exp = customExpectation(description: "new operation loop started")
+        let token = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name(rawValue: "RequestAvailableNotification"),
+            object: nil,
+            queue: nil
+        ) { _ in
             exp.fulfill()
         }
 
@@ -57,10 +61,10 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         let callback: (Data?, URLResponse?, Error?) -> Void = { _, _, _ in }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
+        sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         NotificationCenter.default.removeObserver(token)
     }
@@ -74,24 +78,24 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         // here we block sync thread and check that right after giphyRequestWithURL call no request is created
         // after we signal semaphore sync thread should be unblocked and pending request should be created
         let sem = DispatchSemaphore(value: 0)
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             _ = sem.wait(timeout: DispatchTime.distantFuture)
         }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
+        sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
-        var request = self.sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
+        var request = sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
         XCTAssertTrue(request == nil)
 
         // when
         sem.signal()
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        request = self.sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
+        request = sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
         XCTAssert(request != nil)
     }
 

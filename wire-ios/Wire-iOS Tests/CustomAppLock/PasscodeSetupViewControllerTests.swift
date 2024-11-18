@@ -73,18 +73,22 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     }
 
     func testForInitStateInDarkTheme() {
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .createPasscode,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            callback: nil
+        )
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme_ifForcedApplock() {
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .forcedForTeam,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .forcedForTeam,
+            callback: nil
+        )
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
@@ -92,9 +96,11 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
 
     func testForPasscodePassed() {
         // GIVEN
-        sut = PasscodeSetupViewController(useCompactLayout: false,
-                                          context: .createPasscode,
-                                          callback: nil)
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            callback: nil
+        )
         fillPasscode()
 
         // WHEN

@@ -30,27 +30,34 @@ final class FileBackupExcluder: BackupExcluder {
     ]
 
     init() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(FileBackupExcluder.applicationWillEnterForeground(_:)),
-                                               name: UIApplication.willEnterForegroundNotification,
-                                               object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                FileBackupExcluder
+                    .applicationWillEnterForeground(_:)
+            ),
+            name: UIApplication.willEnterForegroundNotification,
+            object: .none
+        )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(FileBackupExcluder.applicationWillResignActive(_:)),
-                                               name: UIApplication.willResignActiveNotification,
-                                               object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(FileBackupExcluder.applicationWillResignActive(_:)),
+            name: UIApplication.willResignActiveNotification,
+            object: .none
+        )
 
-        self.excludeFilesFromBackup()
+        excludeFilesFromBackup()
     }
 
     @objc
     private func applicationWillEnterForeground(_ sender: AnyObject!) {
-        self.excludeFilesFromBackup()
+        excludeFilesFromBackup()
     }
 
     @objc
     private func applicationWillResignActive(_ sender: AnyObject!) {
-        self.excludeFilesFromBackup()
+        excludeFilesFromBackup()
     }
 
     private func excludeFilesFromBackup() {
@@ -61,7 +68,7 @@ final class FileBackupExcluder: BackupExcluder {
         }
     }
 
-    func excludeLibraryFolderInSharedContainer(sharedContainerURL: URL ) {
+    func excludeLibraryFolderInSharedContainer(sharedContainerURL: URL) {
         do {
             let libraryURL = sharedContainerURL.appendingPathComponent("Library")
             try libraryURL.excludeFromBackupIfExists()

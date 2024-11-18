@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 enum Database {
     case messaging
@@ -28,8 +28,7 @@ enum Database {
         case .messaging:
             // The naming scheme is slightly different for fixture files
             let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
-            let name = "store" + fixedVersion
-            return name
+            return "store" + fixedVersion
         case .event:
             return "event_\(version)"
         }
@@ -180,7 +179,10 @@ struct DatabaseMigrationHelper {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: storeFile.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
 
         // copy old version database into the expected location
         guard let source = databaseFixtureURL(version: versionName, database: database, file: file, line: line) else {
@@ -189,11 +191,17 @@ struct DatabaseMigrationHelper {
         try FileManager.default.copyItem(at: source, to: storeFile)
     }
 
-    func databaseFixtureURL(version: String, database: Database = .messaging, file: StaticString = #file, line: UInt = #line) -> URL? {
+    func databaseFixtureURL(
+        version: String,
+        database: Database = .messaging,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> URL? {
 
         let name = database.databaseFixtureFileName(for: version)
 
-        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension) else {
+        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension)
+        else {
             XCTFail("Could not find \(name).\(database.extension) in test bundle", file: file, line: line)
             return nil
         }
@@ -279,7 +287,7 @@ extension XCTestCase {
             inMemoryStore: false
         )
 
-        let exp = self.expectation(description: "should wait for loadStores to finish")
+        let exp = expectation(description: "should wait for loadStores to finish")
         var setupError: Error?
         stack.setup(onStartMigration: {
             // do nothing

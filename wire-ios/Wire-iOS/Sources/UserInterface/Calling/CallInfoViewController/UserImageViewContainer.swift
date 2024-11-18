@@ -31,11 +31,13 @@ final class UserImageViewContainer: UIView {
         }
     }
 
-    init(size: UserImageView.Size,
-         maxSize: CGFloat,
-         yOffset: CGFloat,
-         userSession: UserSession?) {
-        userImageView = UserImageView(size: size)
+    init(
+        size: UserImageView.Size,
+        maxSize: CGFloat,
+        yOffset: CGFloat,
+        userSession: UserSession?
+    ) {
+        self.userImageView = UserImageView(size: size)
         self.maxSize = maxSize
         self.yOffset = yOffset
         super.init(frame: .zero)

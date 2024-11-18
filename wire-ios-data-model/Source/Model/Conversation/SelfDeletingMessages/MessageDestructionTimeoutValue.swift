@@ -63,28 +63,28 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
     public var rawValue: TimeInterval {
         switch self {
         case .none:
-            return .zero
+            .zero
 
         case .tenSeconds:
-            return .tenSeconds
+            .tenSeconds
 
         case .fiveMinutes:
-            return .fiveMinutes
+            .fiveMinutes
 
         case .oneHour:
-            return .oneHour
+            .oneHour
 
         case .oneDay:
-            return .oneDay
+            .oneDay
 
         case .oneWeek:
-            return .oneWeek
+            .oneWeek
 
         case .fourWeeks:
-            return .fourWeeks
+            .fourWeeks
 
         case let .custom(duration):
-            return duration
+            duration
         }
     }
 
@@ -93,7 +93,7 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
 public extension MessageDestructionTimeoutValue {
 
     static var all: [Self] {
-        return [
+        [
             .none,
             .tenSeconds,
             .fiveMinutes,
@@ -105,7 +105,7 @@ public extension MessageDestructionTimeoutValue {
     }
 
     var displayString: String? {
-        guard .none != self else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
+        guard self != .none else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
         return longStyleFormatter.string(from: TimeInterval(rawValue))
     }
 
@@ -138,27 +138,27 @@ public extension MessageDestructionTimeoutValue {
     }
 
     var isSeconds: Bool {
-        return (.zero)..<(.oneMinute) ~= rawValue
+        .zero ..< .oneMinute ~= rawValue
     }
 
     var isMinutes: Bool {
-        return (.oneMinute)..<(.oneHour) ~= rawValue
+        .oneMinute ..< .oneHour ~= rawValue
     }
 
     var isHours: Bool {
-        return (.oneHour)..<(.oneDay) ~= rawValue
+        .oneHour ..< .oneDay ~= rawValue
     }
 
     var isDays: Bool {
-        return (.oneDay)..<(.oneWeek) ~= rawValue
+        .oneDay ..< .oneWeek ~= rawValue
     }
 
     var isWeeks: Bool {
-        return (.oneWeek)..<(.oneYearFromNow) ~= rawValue
+        .oneWeek ..< .oneYearFromNow ~= rawValue
     }
 
     var isYears: Bool {
-        return rawValue >= .oneYearFromNow
+        rawValue >= .oneYearFromNow
     }
 
 }

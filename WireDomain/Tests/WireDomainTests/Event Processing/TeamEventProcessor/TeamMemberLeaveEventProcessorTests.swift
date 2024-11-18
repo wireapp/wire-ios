@@ -17,9 +17,9 @@
 //
 
 import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
@@ -45,7 +45,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_Team_Membership_Repo_Method() async throws {
         // Mock
 
-        teamRepository.deleteMembershipForUserFromTeamAt_MockMethod = { _, _, _ in }
+        teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in }
 
         // When
 
@@ -53,7 +53,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamRepository.deleteMembershipForUserFromTeamAt_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
     }
 
     private enum Scaffolding {

@@ -42,6 +42,8 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
     // MARK: - Properties
 
     private let userPropertiesAPI: any UserPropertiesAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create ConversationLabelsLocalStore
     private let context: NSManagedObjectContext
     private let logger = WireLogger(tag: "conversation-labels")
 
@@ -88,9 +90,9 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                 switch result {
                 case .success:
                     continue
-                case .failure(let error):
+                case let .failure(error):
                     let repoError = error as? ConversationLabelsRepositoryError
-                    if case .failedToStoreLabelLocally(let label) = repoError {
+                    if case let .failedToStoreLabelLocally(label) = repoError {
                         logger.error("Failed to store conversation label with id \(label.id): \(error)")
                     } else {
                         logger.error("Failed to store conversation with error: \(error)")
@@ -111,7 +113,12 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
             let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
                 Label.fetchFavoriteLabel(in: context)
             } else {
-                Label.fetchOrCreate(remoteIdentifier: conversationLabel.id, create: true, in: context, created: &created)
+                Label.fetchOrCreate(
+                    remoteIdentifier: conversationLabel.id,
+                    create: true,
+                    in: context,
+                    created: &created
+                )
             }
 
             guard let label else {

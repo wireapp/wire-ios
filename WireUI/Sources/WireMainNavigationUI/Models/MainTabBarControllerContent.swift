@@ -19,8 +19,7 @@
 /// The type of tabs of the main tab bar controller shows.
 /// Since UIKit has a type `UITab` this type has been suffixed with "Content".
 public enum MainTabBarControllerContent: Int, CaseIterable {
-    case contacts // will be removed in navigation overhaul
     case conversations
-    case folders // will be removed in navigation overhaul
-    case archive, settings
+    case archive
+    case settings
 }

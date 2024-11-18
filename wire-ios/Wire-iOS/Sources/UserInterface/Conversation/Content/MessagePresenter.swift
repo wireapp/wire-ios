@@ -19,6 +19,7 @@
 import AVKit
 import Foundation
 import PassKit
+import WireMainNavigationUI
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
@@ -46,33 +47,39 @@ final class MessagePresenter: NSObject {
     /// init method for injecting MediaPlaybackManager for testing
     ///
     /// - Parameter mediaPlaybackManager: for testing only
-    convenience init(mediaPlaybackManager: MediaPlaybackManager? = (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager) {
+    convenience init(
+        mediaPlaybackManager: MediaPlaybackManager? = (UIApplication.shared.delegate as? AppDelegate)?
+            .mediaPlaybackManager
+    ) {
         self.init()
 
         self.mediaPlaybackManager = mediaPlaybackManager
     }
 
-    func openDocumentController(for message: ZMConversationMessage,
-                                targetView: UIView,
-                                withPreview preview: Bool) {
+    func openDocumentController(
+        for message: ZMConversationMessage,
+        targetView: UIView,
+        withPreview preview: Bool
+    ) {
         guard
             let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile(),
             fileURL.isFileURL,
             !fileURL.path.isEmpty
         else {
             let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
-            assert(false, errorMessage)
+            assertionFailure(errorMessage)
 
             zmLog.error(errorMessage)
-            ZMUserSession.shared()?.enqueue({
+            ZMUserSession.shared()?.enqueue {
                 message.fileMessageData?.requestFileDownload()
-            })
+            }
 
             return
         }
 
         // Need to create temporary hardlink to make sure the UIDocumentInteractionController shows the correct filename
-        var tmpPath = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(message.fileMessageData?.filename ?? "").absoluteString
+        var tmpPath = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(message.fileMessageData?.filename ?? "").absoluteString
 
         let path = fileURL.path
 
@@ -105,7 +112,11 @@ final class MessagePresenter: NSObject {
     // MARK: - AVPlayerViewController dismissial
 
     fileprivate func observePlayerDismissial() {
-        videoPlayerObserver = NotificationCenter.default.addObserver(forName: .dismissingAVPlayer, object: nil, queue: OperationQueue.main) { _ in
+        videoPlayerObserver = NotificationCenter.default.addObserver(
+            forName: .dismissingAVPlayer,
+            object: nil,
+            queue: OperationQueue.main
+        ) { _ in
             self.mediaPlayerController?.tearDown()
 
             UIViewController.attemptRotationToDeviceOrientation()
@@ -124,7 +135,10 @@ final class MessagePresenter: NSObject {
         if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
 
-            fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] message in
+            fileAvailabilityObserver = MessageKeyPathObserver(
+                message: message,
+                keypath: \.fileAvailabilityChanged
+            ) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
 
                 self?.openFileMessage(message, targetView: targetView)
@@ -151,7 +165,11 @@ final class MessagePresenter: NSObject {
             let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
             let mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
-            mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
+            mediaPlayerController = MediaPlayerController(
+                player: player,
+                message: message,
+                delegate: mediaPlaybackManager
+            )
             let playerViewController = AVPlayerViewController()
             playerViewController.player = player
 
@@ -170,13 +188,15 @@ final class MessagePresenter: NSObject {
     /// - Parameters:
     ///   - message: message to open
     ///   - targetView: target view when opens the message
-    ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in conversation actions are supported.
+    ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in
+    /// conversation actions are supported.
     func open(
         _ message: ZMConversationMessage,
         targetView: UIView,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
@@ -188,7 +208,13 @@ final class MessagePresenter: NSObject {
         } else if Message.isFileTransfer(message), message.canBeDownloaded {
             openFileMessage(message, targetView: targetView)
         } else if Message.isImage(message), message.canBeShared {
-            openImageMessage(message, actionResponder: delegate, userSession: userSession, mainCoordinator: mainCoordinator)
+            openImageMessage(
+                message,
+                actionResponder: delegate,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
+            )
         } else if let openableURL = message.textMessageData?.linkPreview?.openableURL {
             openableURL.open()
         }
@@ -204,13 +230,15 @@ final class MessagePresenter: NSObject {
         _ message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         let imageViewController = viewController(
             forImageMessage: message,
             actionResponder: delegate,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         if let imageViewController {
             // to allow image rotation, present the image viewer in full screen style
@@ -223,7 +251,8 @@ final class MessagePresenter: NSObject {
         forImageMessage message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -235,7 +264,8 @@ final class MessagePresenter: NSObject {
             actionResponder: delegate,
             isPreviewing: false,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -243,7 +273,8 @@ final class MessagePresenter: NSObject {
         forImageMessagePreview message: ZMConversationMessage,
         actionResponder delegate: MessageActionResponder,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController? {
         guard Message.isImage(message),
               message.imageMessageData != nil else {
@@ -255,7 +286,8 @@ final class MessagePresenter: NSObject {
             actionResponder: delegate,
             isPreviewing: true,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -263,7 +295,8 @@ final class MessagePresenter: NSObject {
 
     @MainActor
     func openPassesViewController(fileMessageData: ZMFileMessageData) async {
-        guard PKAddPassesViewController.canAddPasses() else { return } // suggestion: implement error visible for the user
+        guard PKAddPassesViewController.canAddPasses()
+        else { return } // suggestion: implement error visible for the user
 
         do {
             guard let fileURL = fileMessageData.temporaryURLToDecryptedFile() else {
@@ -291,8 +324,9 @@ final class MessagePresenter: NSObject {
 
 extension MessagePresenter: UIDocumentInteractionControllerDelegate {
 
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
-        return modalTargetController!
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController)
+        -> UIViewController {
+        modalTargetController!
     }
 
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {

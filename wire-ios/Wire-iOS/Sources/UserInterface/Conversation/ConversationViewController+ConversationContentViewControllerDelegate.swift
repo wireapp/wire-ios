@@ -36,7 +36,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             conversation: conversation,
             viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
@@ -44,7 +45,11 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         self.view.window?.endEditing(true)
 
-        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController())
+        createAndPresentParticipantsPopoverController(
+            with: frame,
+            from: view,
+            contentViewController: profileViewController.wrapInNavigationController()
+        )
     }
 
     func conversationContentViewController(
@@ -114,6 +119,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             conversation: conversation,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
@@ -126,12 +132,13 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType],
         from sourceView: UIView
     ) {
-        if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
-                groupDetailsViewController.presentParticipantsDetails(
-                    with: conversation.sortedOtherParticipants,
-                    selectedUsers: selectedUsers,
-                    animated: false
-                )
+        if let groupDetailsViewController = (participantsController as? UINavigationController)?
+            .topViewController as? GroupDetailsViewController {
+            groupDetailsViewController.presentParticipantsDetails(
+                with: conversation.sortedOtherParticipants,
+                selectedUsers: selectedUsers,
+                animated: false
+            )
         }
 
         if let participantsController {
@@ -149,8 +156,10 @@ extension ConversationViewController {
         ConversationInputBarViewController.endEditingMessage()
         inputBarController.inputBar.textView.resignFirstResponder()
 
-        createAndPresentParticipantsPopoverController(with: sourceView.bounds,
-                                                      from: sourceView,
-                                                      contentViewController: viewController)
+        createAndPresentParticipantsPopoverController(
+            with: sourceView.bounds,
+            from: sourceView,
+            contentViewController: viewController
+        )
     }
 }

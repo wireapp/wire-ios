@@ -62,7 +62,7 @@ public class Feature: ZMManagedObject {
 
     public var config: Data? {
         get {
-            return configData
+            configData
         }
 
         set {
@@ -106,17 +106,17 @@ public class Feature: ZMManagedObject {
 
     /// Whether the feature has been updated from backend
     private var hasBeenUpdatedFromBackend: Bool {
-        return !statusValue.isEmpty && !hasInitialDefault
+        !statusValue.isEmpty && !hasInitialDefault
     }
 
     // MARK: - Methods
 
     public override static func entityName() -> String {
-        return "Feature"
+        "Feature"
     }
 
     public override static func sortKey() -> String {
-        return #keyPath(Feature.nameValue)
+        #keyPath(Feature.nameValue)
     }
 
     /// Fetch the instance for the given name.
@@ -129,8 +129,10 @@ public class Feature: ZMManagedObject {
     ///
     /// - Returns: An instance, if it exists, otherwise `nil`.
 
-    public static func fetch(name: Name,
-                             context: NSManagedObjectContext) -> Feature? {
+    public static func fetch(
+        name: Name,
+        context: NSManagedObjectContext
+    ) -> Feature? {
 
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         fetchRequest.predicate = NSPredicate(format: "nameValue == %@", name.rawValue)
@@ -221,13 +223,13 @@ public class Feature: ZMManagedObject {
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
         case .conferenceCalling,
-                .fileSharing,
-                .conversationGuestLinks,
-                .classifiedDomains,
-                .digitalSignature,
-                .mls,
-                .mlsMigration,
-                .e2ei:
+             .fileSharing,
+             .conversationGuestLinks,
+             .classifiedDomains,
+             .digitalSignature,
+             .mls,
+             .mlsMigration,
+             .e2ei:
             break
         }
     }

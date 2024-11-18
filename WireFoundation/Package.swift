@@ -15,10 +15,11 @@ let package = Package(
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
-        .package(path: "../SourceryPlugin")
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(name: "WireFoundation"),
@@ -29,7 +30,7 @@ let package = Package(
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "SourceryPlugin")]
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
 
         .target(

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireTestingPackage
 import WireUtilities
 import XCTest
+@testable import Wire
 
 final class UserCellTests: XCTestCase {
 
@@ -167,7 +167,7 @@ final class UserCellTests: XCTestCase {
     func testGuestUser_Wireless() {
         // GIVEN && WHEN
         mockUser.isGuestInConversation = true
-        mockUser.expiresAfter = 5_200
+        mockUser.expiresAfter = 5200
         mockUser.handle = nil
 
         // THEN
@@ -231,7 +231,11 @@ final class UserCellTests: XCTestCase {
         }
 
         let callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
+        let config = CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: mockUser),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
 
@@ -263,8 +267,15 @@ final class UserCellTests: XCTestCase {
             return
         }
 
-        let callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
+        let callParticipantState: CallParticipantState = .connected(
+            videoState: .screenSharing,
+            microphoneState: .unmuted
+        )
+        let config = CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: mockUser),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
 

@@ -33,9 +33,11 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockFeatureRepository.fetchE2EI_MockValue = Feature.E2EI(status: .enabled)
         e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
-        sut = UpdateMLSGroupVerificationStatusUseCase(e2eIVerificationStatusService: e2eIVerificationStatusService,
-                                                      syncContext: syncMOC,
-                                                      featureRepository: mockFeatureRepository)
+        sut = UpdateMLSGroupVerificationStatusUseCase(
+            e2eIVerificationStatusService: e2eIVerificationStatusService,
+            syncContext: syncMOC,
+            featureRepository: mockFeatureRepository
+        )
 
     }
 
@@ -49,8 +51,8 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
     func test_itUpdatesConversation_toVerifiedStatus() async throws {
         // Mock
-        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .verified
+        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = { _ in
+            .verified
         }
 
         // Given
@@ -77,8 +79,8 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
     func test_itUpdatesConversation_fromVerifiedToDegraded() async throws {
         // Mock
-        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .notVerified
+        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = { _ in
+            .notVerified
         }
 
         // Given
@@ -105,8 +107,8 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
     func test_itDoesNotUpdateConversation_newStatusIsSame() async throws {
         // Mock
-        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .notVerified
+        e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = { _ in
+            .notVerified
         }
 
         // Given

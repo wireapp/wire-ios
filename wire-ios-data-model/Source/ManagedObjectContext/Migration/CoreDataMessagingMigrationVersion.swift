@@ -29,6 +29,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     // MARK: -
 
     // Note: add new versions here in first position!
+    case v119 = "zmessaging2.119.0"
     case v118 = "zmessaging2.118.0"
     case v117 = "zmessaging2.117.0"
     case v116 = "zmessaging2.116.0"
@@ -71,52 +72,52 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     var nextVersion: Self? {
         switch self {
-        case .v118:
-            return nil
-        case .v116, .v117:
-            return .v118
+        case .v119:
+            nil
+        case .v116, .v117, .v118:
+            .v119
         case .v115,
-                .v114:
-            return .v116 // destination version runs custom migration actions
+             .v114:
+            .v116 // destination version runs custom migration actions
         case .v111,
-                .v112,
-                .v113:
-            return .v114 // destination version runs custom migration actions
+             .v112,
+             .v113:
+            .v114 // destination version runs custom migration actions
         case .v110:
-            return .v111 // destination version runs custom migration actions
+            .v111 // destination version runs custom migration actions
         case .v107,
-                .v108,
-                .v109:
-            return .v110
+             .v108,
+             .v109:
+            .v110
         case .v106:
-            return .v107 // destination version runs custom migration actions
+            .v107 // destination version runs custom migration actions
         case .v80,
-                .v81,
-                .v82,
-                .v83,
-                .v84,
-                .v85,
-                .v86,
-                .v87,
-                .v88,
-                .v89,
-                .v90,
-                .v91,
-                .v92,
-                .v93,
-                .v94,
-                .v95,
-                .v96,
-                .v97,
-                .v98,
-                .v99,
-                .v100,
-                .v101,
-                .v102,
-                .v103,
-                .v104,
-                .v105:
-            return .v106
+             .v81,
+             .v82,
+             .v83,
+             .v84,
+             .v85,
+             .v86,
+             .v87,
+             .v88,
+             .v89,
+             .v90,
+             .v91,
+             .v92,
+             .v93,
+             .v94,
+             .v95,
+             .v96,
+             .v97,
+             .v98,
+             .v99,
+             .v100,
+             .v101,
+             .v102,
+             .v103,
+             .v104,
+             .v105:
+            .v106
         }
     }
 
