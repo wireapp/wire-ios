@@ -27,16 +27,16 @@ public struct CreateFolder: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: CreateFolderViewModel
     private let conversationName: String
-    private let onComplete: () -> Void
+    private let onFolderCreated: (Folder) -> Void
 
     public init(
         viewModel: CreateFolderViewModel,
         conversationName: String,
-        onComplete: @escaping () -> Void
+        onFolderCreated: @escaping (Folder) -> Void
     ) {
         self.viewModel = viewModel
         self.conversationName = conversationName
-        self.onComplete = onComplete
+        self.onFolderCreated = onFolderCreated
     }
 
     public var body: some View {
@@ -119,9 +119,11 @@ public struct CreateFolder: View {
     private func createFolder() {
         Task {
             do {
-                _ = try await viewModel.createFolder()
-                dismiss()
-                onComplete()
+                let createdFolder = try await viewModel.createFolder()
+                await MainActor.run {
+                    dismiss()
+                    onFolderCreated(createdFolder)
+                }
             } catch {
                 // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
                 assertionFailure("Failed to create and move folder: \(error.localizedDescription)")
@@ -138,7 +140,7 @@ public struct CreateFolder: View {
             useCase: PreviewCreateFolderUseCase()
         ),
         conversationName: "iOS Team",
-        onComplete: {}
+        onFolderCreated: { _ in }
     )
 }
 

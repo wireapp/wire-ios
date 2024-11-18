@@ -64,7 +64,20 @@ public struct FolderPicker: View {
                         CreateFolder(
                             viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
                             conversationName: conversationName,
-                            onComplete: { dismiss() }
+                            onFolderCreated: { [weak viewModel] createdFolder in
+                                guard let viewModel else { return }
+                                Task {
+                                    do {
+                                        try await viewModel.select(createdFolder)
+                                        await MainActor.run {
+                                            dismiss()
+                                        }
+                                    } catch {
+                                        // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
+                                        assertionFailure("Failed to move conversation to folder: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
                         )
                     } label: {
                         Image(systemName: "plus")
