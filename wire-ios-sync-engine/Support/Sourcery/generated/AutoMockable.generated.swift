@@ -1037,30 +1037,6 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
 
 }
 
-public class MockToFolderMovableConversation: ToFolderMovableConversation {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        guard let mock = moveToFolder_MockMethod else {
-            fatalError("no mock for `moveToFolder`")
-        }
-
-        mock(folder)
-    }
-
-}
-
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle
