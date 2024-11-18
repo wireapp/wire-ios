@@ -29,7 +29,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
     private var stack: CoreDataStack!
     private var sut: CreateConversationFolderUseCase!
 
-    private var managedObjectContext: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         return stack.syncContext
     }
 
@@ -37,7 +37,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
 
     override func setUp() async throws {
         stack = try await coreDataStackHelper.createStack()
-        sut = CreateConversationFolderUseCase(managedObjectContext: managedObjectContext)
+        sut = CreateConversationFolderUseCase(context: context)
     }
 
     // MARK: - tearDown
@@ -58,7 +58,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
         let label = try await sut.invoke(with: folderName)
 
         // THEN
-        await managedObjectContext.perform {
+        await context.perform {
             XCTAssertNotNil(label, "Expected a non-nil LabelType for the first folder")
             XCTAssertEqual(label?.name, folderName, "Label name should match the given folder name")
             XCTAssertEqual(label?.kind, .folder, "Label kind should be set to folder")
@@ -75,7 +75,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
         let secondLabel = try await sut.invoke(with: secondFolderName)
 
         // THEN
-        await managedObjectContext.perform {
+        await context.perform {
             XCTAssertNotNil(firstLabel, "Expected a non-nil LabelType for the first folder")
             XCTAssertNotNil(secondLabel, "Expected a non-nil LabelType for the second folder")
             XCTAssertNotEqual(firstLabel?.remoteIdentifier, secondLabel?.remoteIdentifier, "Each folder should have a unique identifier")

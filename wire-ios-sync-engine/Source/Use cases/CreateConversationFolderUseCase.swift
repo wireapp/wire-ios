@@ -22,30 +22,30 @@ public struct CreateConversationFolderUseCase {
 
     // MARK: - Properties
 
-    private let managedObjectContext: NSManagedObjectContext
+    private let context: NSManagedObjectContext
 
     // MARK: - Initialization
 
-    public init(managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
 
     // MARK: - Public Interface
 
     public func invoke(with name: String) async throws -> LabelType? {
-       try await managedObjectContext.perform {
+       try await context.perform {
             var created = false
             let label = Label.fetchOrCreate(
                 remoteIdentifier: UUID(),
                 create: true,
-                in: managedObjectContext,
+                in: context,
                 created: &created
             )
             label?.name = name
             label?.kind = .folder
 
             do {
-                try managedObjectContext.save()
+                try context.save()
             } catch {
                throw error
             }
