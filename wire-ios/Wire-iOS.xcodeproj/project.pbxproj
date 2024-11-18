@@ -1354,7 +1354,7 @@
 		E90BE8EE2BF3A33C00002506 /* ListBackgroundStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */; };
 		E91450F02C92EFC300141B8E /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91450EF2C92EFC300141B8E /* Domain.swift */; };
 		E916CE8C2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */; };
-		E918C0422CE4ADA40046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift */; };
+		E918C0422CE4ADA40046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift */; };
 		E918C0442CE4AFFC0046017E /* Folder+LabelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E918C0432CE4AFFC0046017E /* Folder+LabelType.swift */; };
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
@@ -1385,7 +1385,7 @@
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
 		E966C5082CDCD04E00BF1195 /* WireFolderDirectoryMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */; };
-		E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */; };
+		E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift */; };
 		E966C50D2CDCD43200BF1195 /* FolderPickerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */; };
 		E96AB4F92C071BC300792DA9 /* FilterImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4F82C071BC300792DA9 /* FilterImageName.swift */; };
 		E96AB4FC2C07262400792DA9 /* FilterButtonStyleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */; };
@@ -1394,6 +1394,7 @@
 		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
 		E9816C962CC9281000D77F22 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9816C952CC9280400D77F22 /* LaunchScreenViewController.swift */; };
 		E9816C9A2CC929FC00D77F22 /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = E9816C992CC929FC00D77F22 /* WireFoundationSupport */; };
+		E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */ = {isa = PBXBuildFile; productRef = 016A141C2CE6BFC4006A7EF5 /* WireDatadog */; };
 		E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */; };
 		E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
@@ -3374,7 +3375,7 @@
 		E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListBackgroundStyleModifier.swift; sourceTree = "<group>"; };
 		E91450EF2C92EFC300141B8E /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordKeyboardViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
-		E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift"; sourceTree = "<group>"; };
+		E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift"; sourceTree = "<group>"; };
 		E918C0432CE4AFFC0046017E /* Folder+LabelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+LabelType.swift"; sourceTree = "<group>"; };
 		E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsServicesCell.swift; sourceTree = "<group>"; };
 		E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesCell.swift; sourceTree = "<group>"; };
@@ -3405,7 +3406,7 @@
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireFolderDirectoryMapper.swift; sourceTree = "<group>"; };
-		E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift"; sourceTree = "<group>"; };
+		E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift"; sourceTree = "<group>"; };
 		E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerBuilder.swift; sourceTree = "<group>"; };
 		E96AB4F82C071BC300792DA9 /* FilterImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageName.swift; sourceTree = "<group>"; };
 		E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonStyleHelper.swift; sourceTree = "<group>"; };
@@ -4026,7 +4027,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				016A141D2CE6BFC4006A7EF5 /* WireDatadog in Frameworks */,
+				E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5492,8 +5493,8 @@
 		7C440E7123472BF500D91B5F /* Folders */ = {
 			isa = PBXGroup;
 			children = (
-				E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift */,
-				E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */,
+				E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift */,
+				E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift */,
 				E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */,
 				E966C50B2CDCD3F300BF1195 /* Mappers */,
 				7C440E7423472C5200D91B5F /* FolderCreationController.swift */,
@@ -9149,7 +9150,7 @@
 				E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */,
 				EECA90AC28744A060024B301 /* DeveloperFlagsViewModel.swift in Sources */,
 				E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */,
-				E918C0422CE4ADA40046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift in Sources */,
+				E918C0422CE4ADA40046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseProtocol.swift in Sources */,
 				EF3CB75321DD0F0C0030C3E8 /* ConversationViewController+ParticipantsPopover.swift in Sources */,
 				BF0BDF881DABEF3B003C61DE /* DestructionCountdownView.swift in Sources */,
 				87B8C33F1DF9788B0015EC89 /* BrowserOpening.swift in Sources */,
@@ -9954,7 +9955,7 @@
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
-				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift in Sources */,
+				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseProtocol .swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,
