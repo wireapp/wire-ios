@@ -104,7 +104,7 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 fileprivate extension UIViewController {
 
     func prepareForSettingsSnapshots() -> UIView {
-        let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        let navigationController = wrapInNavigationController()
 
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()

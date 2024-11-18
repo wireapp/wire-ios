@@ -36,7 +36,6 @@ extension ZMConversation {
         case markUnread
         case remove
         case favorite(isFavorite: Bool)
-        case duplicateConversation
     }
 
     var listActions: [Action] {
@@ -116,18 +115,13 @@ extension ZMConversation {
         if !isArchived {
             actions.append(.favorite(isFavorite: isFavorite))
             // WPB-8667: Moving conversations into folders is a feature which will be enabled again in the future.
-            #if FOLDERS_ENABLED
             actions.append(.moveToFolder)
-            #endif
 
             if let folderName = folder?.name {
                 actions.append(.removeFromFolder(folder: folderName))
             }
         }
 
-        if DeveloperFlag.debugDuplicateObjects.isOn {
-            actions.append(.duplicateConversation)
-        }
         return actions
     }
 
@@ -186,9 +180,6 @@ extension ZMConversation.Action {
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case .favorite(isFavorite: let favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
-        case .duplicateConversation:
-            // no localization needed, this is debug
-            return "⚠️ DEBUG - Duplicate Conversation"
         }
     }
 

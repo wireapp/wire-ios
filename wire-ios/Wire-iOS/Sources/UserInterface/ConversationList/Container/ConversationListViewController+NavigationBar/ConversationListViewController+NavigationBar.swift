@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFolderPickerUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -141,6 +143,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Groups.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+        case (.expanded, .folder):
+            L10n.Localizable.ConversationList.Filter.Folders.title
         case (.collapsed, _):
             L10n.Localizable.List.title
         }
@@ -168,7 +172,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         var selectedFilterImage: UIImage
 
         switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneOnOne:
+        case .favorites, .groups, .oneOnOne, .folder:
             selectedFilterImage = filledFilterImage
         case .none:
             selectedFilterImage = defaultFilterImage
@@ -197,13 +201,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter == .oneOnOne
         )
 
+        let foldersAction = createFolderFilterAction(
+            isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
+        )
+
         // Create the menu
         let filterMenu = UIMenu(
             children: [
                 allConversationsAction,
                 favoritesAction,
                 groupsAction,
-                oneToOneConversationsAction
+                oneToOneConversationsAction,
+                foldersAction
             ]
         )
 
@@ -286,6 +295,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
+
+        case .folder:
+            return isSelected ? accessibilityLocale.Folders.Selected.description : accessibilityLocale.Folders.description
 
         case .none:
             return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale.AllConversations.description
@@ -394,5 +406,37 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
+    }
+
+    // MARK: Folder Picker
+
+    private func createFolderFilterAction(isSelected: Bool) -> UIAction {
+        let action = UIAction(
+            title: L10n.Localizable.ConversationList.Filter.Folders.title,
+            image: FilterButtonStyleHelper.makeActionImage(
+                named: FilterImageName.folder.rawValue,
+                isSelected: isSelected
+            )
+        ) { [weak mainCoordinator, weak self] _ in
+            guard let self, let mainCoordinator else { return }
+
+            Task { @MainActor [folderPickerViewControllerBuilder] in
+                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                if let sheet = viewController.sheetPresentationController {
+                    sheet.detents = [.medium(), .large()]
+                    sheet.prefersGrabberVisible = true
+                }
+
+                await mainCoordinator.presentViewController(viewController)
+            }
+        }
+
+        action.accessibilityLabel = if isSelected {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.Selected.description
+        } else {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.description
+        }
+
+        return action
     }
 }

@@ -46,7 +46,7 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async {
         // Mock
 
-        repository.fetchConversationWithDomain_MockMethod = { _, _ in nil }
+        repository.fetchConversationIdDomain_MockMethod = { _, _ in nil }
         repository.storeConversationTimestamp_MockMethod = { _, _ in }
 
         // When
@@ -55,7 +55,7 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.fetchConversationWithDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(repository.storeConversationTimestamp_Invocations.count, 1)
     }
 

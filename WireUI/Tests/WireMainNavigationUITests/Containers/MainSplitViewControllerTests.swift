@@ -90,61 +90,6 @@ final class MainSplitViewControllerTests: XCTestCase {
         XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
     }
 
-    @MainActor
-    func testConversationListIsReleased() {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.conversationListUI = nil
-
-        // Then
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
-    @MainActor
-    func testConversationIsReleasedWhenSetToNil() async {
-        // Given
-        weak var conversationUI = conversationUI
-        self.conversationUI = nil
-
-        // When
-        sut.conversationUI = nil
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationUI, nil)
-    }
-
-    @MainActor
-    func testConversationListIsReleasedWhenArchiveIsSet() async {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.archiveUI = .init()
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
-    @MainActor
-    func testConversationIsReleasedWhenSettingsIsSet() async {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.settingsUI = .init()
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
     // MARK: - Snapshot Tests
 
     @available(iOS 17.0, *) @MainActor

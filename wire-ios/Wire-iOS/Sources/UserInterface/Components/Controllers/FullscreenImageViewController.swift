@@ -749,7 +749,10 @@ extension FullscreenImageViewController: MessageActionResponder {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            present(detailsViewController, animated: true)
+            let navigationController = UINavigationController(rootViewController: detailsViewController)
+            navigationController.modalPresentationStyle = .formSheet
+
+            present(navigationController, animated: true)
         default:
             perform(action: action)
         }

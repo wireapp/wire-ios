@@ -36,7 +36,7 @@ final class ConversationViewController: UIViewController {
                          input: UIKeyCommand.inputDownArrow,
                          modifierFlags: [.command, .alternate],
                          discoverabilityTitle: keyboardShortcut.scrollToBottom),
-            UIKeyCommand(action: #selector(onCollectionButtonPressed(_:)),
+            UIKeyCommand(action: #selector(onSearchButtonPressed(_:)),
                          input: "f",
                          modifierFlags: [.command],
                          discoverabilityTitle: keyboardShortcut.searchInConversation),
@@ -134,6 +134,7 @@ final class ConversationViewController: UIViewController {
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
+        DeveloperToolsViewModel.context.currentConversation = conversation
 
         inputBarController = ConversationInputBarViewController(
             conversation: conversation,
@@ -620,29 +621,35 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     var searchBarButtonItem: UIBarButtonItem {
-        let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
-        let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(resource: .search), for: .normal)
+        button.tintColor = IconColors.foregroundDefault
 
-        let button = IconButton()
-        button.setIcon(showingSearchResults ? .activeSearch : .search, size: .tiny, for: .normal)
         button.accessibilityIdentifier = "collection"
         button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
 
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.addTarget(self,
+                         action: #selector(onSearchButtonPressed(_:)),
+                         for: .touchUpInside)
 
-        button.backgroundColor = SemanticColors.Button.backgroundBarItem
-        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        // Enable large content viewer
+        button.showsLargeContentViewer = true
+        button.largeContentTitle = L10n.Accessibility.Conversation.SearchButton.description
+        button.largeContentImage = UIImage(resource: .search)
+
+        button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
-        button.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        button.layer.borderColor = ButtonColors.borderBarItem.cgColor
         button.layer.cornerRadius = 12
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+
         button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
         return UIBarButtonItem(customView: button)
     }
 
     @objc
-    private func onCollectionButtonPressed(_ sender: AnyObject?) {
+    private func onSearchButtonPressed(_ sender: AnyObject?) {
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,

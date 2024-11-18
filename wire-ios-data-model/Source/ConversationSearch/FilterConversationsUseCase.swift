@@ -58,7 +58,7 @@ where ConversationContainer: MutableConversationContainer {
                 }
 
                 // don't remove the conversation from the results if any participant's name matches
-                for participant in conversation.participants {
+                for participant in conversation.otherParticipants {
                     let participantName = participant.name.normalizedForSearch() as String
                     if participantName.lowercased().contains(query) {
                         continue conversationLoop
