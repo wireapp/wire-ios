@@ -174,7 +174,7 @@ public protocol ConversationRepositoryProtocol {
     /// - parameters:
     ///     - message: The system message to add.
     ///     - conversation: The conversation to add the system message to.
-    // TODO: [WPB-11839] move to MessageRepository
+
     func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
@@ -536,6 +536,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: time)
     }
 
+    // TODO: [WPB-11839] move to MessageRepository
     public func addSystemMessage(
         _ message: SystemMessage,
         to conversation: ZMConversation
