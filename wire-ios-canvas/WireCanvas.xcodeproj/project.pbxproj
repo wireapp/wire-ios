@@ -206,6 +206,7 @@
 			baseConfigurationReference = 16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */;
 			buildSettings = {
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -213,6 +214,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A411DBA73B900B5BC47 /* project.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
@@ -220,10 +222,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
@@ -234,10 +232,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16CB8A371DBA73B900B5BC47 /* WireCanvas.xcconfig */;
 			buildSettings = {
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
