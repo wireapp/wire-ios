@@ -75,7 +75,6 @@ extension ContactsViewController {
             noContactsLabel.trailingAnchor.constraint(equalTo: noContactsLabel.superview!.trailingAnchor)
         ]
 
-
         constraints += [
             bottomContainerView.leadingAnchor.constraint(equalTo: bottomContainerView.superview!.leadingAnchor),
             bottomContainerView.trailingAnchor.constraint(equalTo: bottomContainerView.superview!.trailingAnchor),
@@ -92,11 +91,11 @@ extension ContactsViewController {
             assertionFailure("inviteOthersButton must have a superview before layout is set")
             return
         }
-        
+
         view.keyboardLayoutGuide.topAnchor.constraint(equalTo: bottomContainerView.bottomAnchor).isActive = true
         // This is necessary to allow the various edge constraints to engage.
         view.keyboardLayoutGuide.followsUndockedKeyboard = true
-        
+
         let bottomInset = superview.safeAreaInsets.bottom
         let bottomEdgeConstraint = inviteOthersButton.bottomAnchor.constraint(
             equalTo: superview.bottomAnchor,
@@ -115,7 +114,6 @@ extension ContactsViewController {
 
         constraints += [inviteOthersButton.heightAnchor.constraint(equalToConstant: 56)]
 
-       
         NSLayoutConstraint.activate(constraints)
     }
 }
