@@ -181,17 +181,17 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Date, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireAPI.Conversation, Date, Bool, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool) async {
-        storeConversationTimestampIsFederationEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled))
+    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
+        storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled))
 
-        guard let mock = storeConversationTimestampIsFederationEnabled_MockMethod else {
-            fatalError("no mock for `storeConversationTimestampIsFederationEnabled`")
+        guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationTimestampIsFederationEnabledIsMLSEnabled`")
         }
 
-        await mock(conversation, timestamp, isFederationEnabled)
+        await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled)
     }
 
     // MARK: - storeConversation
