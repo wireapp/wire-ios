@@ -55,7 +55,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
         let folderName = "Test Folder"
 
         // WHEN
-        let label = await sut.invoke(with: folderName)
+        let label = try await sut.invoke(with: folderName)
 
         // THEN
         await managedObjectContext.perform {
@@ -71,8 +71,8 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
         let secondFolderName = "Folder 2"
 
         // WHEN
-        let firstLabel = await sut.invoke(with: firstFolderName)
-        let secondLabel = await sut.invoke(with: secondFolderName)
+        let firstLabel = try await sut.invoke(with: firstFolderName)
+        let secondLabel = try await sut.invoke(with: secondFolderName)
 
         // THEN
         await managedObjectContext.perform {

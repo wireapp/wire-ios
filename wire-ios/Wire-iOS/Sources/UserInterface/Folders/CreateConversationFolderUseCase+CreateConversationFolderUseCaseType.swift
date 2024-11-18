@@ -30,7 +30,7 @@ extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.Creat
     }
 
     private func fetchLabelType(for name: String) async throws -> LabelType? {
-        return await self.invoke(with: name)
+        return try await self.invoke(with: name)
     }
 
     private enum FolderCreationError: Error {

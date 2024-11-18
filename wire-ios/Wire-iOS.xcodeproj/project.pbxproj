@@ -1386,7 +1386,7 @@
 		E96301BB2B4EEDD600726CDB /* Strings+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
 		E966C5082CDCD04E00BF1195 /* WireFolderDirectoryMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */; };
-		E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */; };
+		E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */; };
 		E966C50D2CDCD43200BF1195 /* FolderPickerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */; };
 		E96AB4F92C071BC300792DA9 /* FilterImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4F82C071BC300792DA9 /* FilterImageName.swift */; };
 		E96AB4FC2C07262400792DA9 /* FilterButtonStyleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */; };
@@ -3406,7 +3406,7 @@
 		E96301BA2B4EEDD600726CDB /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
 		E966C5072CDCD04700BF1195 /* WireFolderDirectoryMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireFolderDirectoryMapper.swift; sourceTree = "<group>"; };
-		E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift"; sourceTree = "<group>"; };
+		E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift"; sourceTree = "<group>"; };
 		E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerBuilder.swift; sourceTree = "<group>"; };
 		E96AB4F82C071BC300792DA9 /* FilterImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageName.swift; sourceTree = "<group>"; };
 		E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonStyleHelper.swift; sourceTree = "<group>"; };
@@ -5493,7 +5493,7 @@
 			isa = PBXGroup;
 			children = (
 				E918C0412CE4AD9D0046017E /* CreateConversationFolderUseCase+CreateConversationFolderUseCaseType.swift */,
-				E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift */,
+				E966C5092CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift */,
 				E966C50C2CDCD43200BF1195 /* FolderPickerBuilder.swift */,
 				E966C50B2CDCD3F300BF1195 /* Mappers */,
 				7C440E7423472C5200D91B5F /* FolderCreationController.swift */,
@@ -9953,7 +9953,7 @@
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
-				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase + UpdateConversationFolderUseCaseType .swift in Sources */,
+				E966C50A2CDCD0E200BF1195 /* UpdateConversationFolderUseCase+UpdateConversationFolderUseCaseType .swift in Sources */,
 				55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */,
 				87E56EDA1E4E10CA0097D489 /* TextSearchViewController.swift in Sources */,
 				1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */,

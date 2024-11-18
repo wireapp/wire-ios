@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-public struct CreateConversationFolderUseCase: CreateConversationFolderUseCaseProtocol {
+public struct CreateConversationFolderUseCase {
 
     // MARK: - Properties
 

@@ -364,7 +364,7 @@ extension ZMUserSession: UserSession {
         return UpdateConversationFolderUseCase(context: self.syncContext)
     }
 
-    public func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol {
+    public func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase {
         return CreateConversationFolderUseCase(managedObjectContext: syncContext)
     }
 
