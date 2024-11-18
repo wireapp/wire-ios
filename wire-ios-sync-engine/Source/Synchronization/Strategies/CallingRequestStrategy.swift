@@ -22,7 +22,8 @@ import WireDataModel
 import WireRequestStrategy
 
 @objcMembers
-public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
+public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
+    ZMContextChangeTrackerSource, ZMEventConsumer {
 
     // MARK: - Private Properties
 
@@ -69,22 +70,29 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        configuration = [.allowsRequestsWhileInBackground,
-                         .allowsRequestsWhileOnline,
-                         .allowsRequestsWhileWaitingForWebsocket]
+        configuration = [
+            .allowsRequestsWhileInBackground,
+            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileWaitingForWebsocket
+        ]
 
-        callConfigRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-        clientDiscoverySync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.callConfigRequestSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: managedObjectContext
+        )
+        self.clientDiscoverySync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         if let clientId = selfUser.selfClient()?.remoteIdentifier {
             zmLog.debug("Creating callCenter from init")
-            callCenter = WireCallCenterV3Factory.callCenter(withUserId: selfUser.avsIdentifier,
-                                                            clientId: clientId,
-                                                            uiMOC: managedObjectContext.zm_userInterface,
-                                                            flowManager: flowManager,
-                                                            transport: self)
+            self.callCenter = WireCallCenterV3Factory.callCenter(
+                withUserId: selfUser.avsIdentifier,
+                clientId: clientId,
+                uiMOC: managedObjectContext.zm_userInterface,
+                flowManager: flowManager,
+                transport: self
+            )
         }
 
         setupEventProcessingNotifications()
@@ -108,10 +116,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Methods
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
-        clientDiscoverySync.nextRequest(for: apiVersion)
-
-        return request
+        callConfigRequestSync.nextRequest(for: apiVersion) ??
+            clientDiscoverySync.nextRequest(for: apiVersion)
     }
 
     // MARK: - Single Request Transcoder
@@ -121,13 +127,15 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         case callConfigRequestSync:
             zmLog.debug("Scheduling request to '/calls/config/v2'")
 
-            return ZMTransportRequest(path: "/calls/config/v2",
-                                      method: .get,
-                                      binaryData: nil,
-                                      type: "application/json",
-                                      contentDisposition: nil,
-                                      shouldCompress: true,
-                                      apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/calls/config/v2",
+                method: .get,
+                binaryData: nil,
+                type: "application/json",
+                contentDisposition: nil,
+                shouldCompress: true,
+                apiVersion: apiVersion.rawValue
+            )
 
         case clientDiscoverySync:
             guard
@@ -160,12 +168,15 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             zmLog.debug("Received call config response for \(self): \(response)")
             if response.httpStatus == 200 {
                 var payloadAsString: String?
-                if let payload = response.payload, let data = try? JSONSerialization.data(withJSONObject: payload, options: []) {
+                if let payload = response.payload, let data = try? JSONSerialization.data(
+                    withJSONObject: payload,
+                    options: []
+                ) {
                     payloadAsString = String(decoding: data, as: UTF8.self)
                 }
-                zmLog.debug("Callback: \(String(describing: self.callConfigCompletion))")
-                self.callConfigCompletion?(payloadAsString, response.httpStatus)
-                self.callConfigCompletion = nil
+                zmLog.debug("Callback: \(String(describing: callConfigCompletion))")
+                callConfigCompletion?(payloadAsString, response.httpStatus)
+                callConfigCompletion = nil
             }
 
         case clientDiscoverySync:
@@ -200,11 +211,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Context Change Tracker
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return nil
+        nil
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -215,15 +226,18 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         guard callCenter == nil else { return }
 
         for object in objects {
-            if let userClient = object as? UserClient, userClient.isSelfClient(), let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
+            if let userClient = object as? UserClient, userClient.isSelfClient(),
+               let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
                 zmLog.debug("Creating callCenter")
                 let uiContext = managedObjectContext.zm_userInterface!
                 uiContext.performGroupedBlock {
-                    self.callCenter = WireCallCenterV3Factory.callCenter(withUserId: userId,
-                                                                         clientId: clientId,
-                                                                         uiMOC: uiContext.zm_userInterface,
-                                                                         flowManager: self.flowManager,
-                                                                         transport: self)
+                    self.callCenter = WireCallCenterV3Factory.callCenter(
+                        withUserId: userId,
+                        clientId: clientId,
+                        uiMOC: uiContext.zm_userInterface,
+                        flowManager: self.flowManager,
+                        transport: self
+                    )
                 }
                 break
             }
@@ -246,7 +260,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
 
-                    let callEventContent = CallEventContent(from: payload, with: decoder),
+                let callEventContent = CallEventContent(from: payload, with: decoder),
                 let senderUUID = event.senderUUID,
                 let conversationUUID = event.conversationUUID,
                 let eventTimestamp = event.timestamp
@@ -255,7 +269,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
+            zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
                 callCenter?.isMuted = true
@@ -286,36 +300,38 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         senderDomain: String?,
         payload: Data,
         currentTimestamp: TimeInterval,
-        eventTimestamp: Date) {
+        eventTimestamp: Date
+    ) {
 
-            let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
-            let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
+        let identifier = !callingConversationId.id
+            .isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
+        let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
-            let conversationId = AVSIdentifier(
-                identifier: identifier,
-                domain: domain
-            )
+        let conversationId = AVSIdentifier(
+            identifier: identifier,
+            domain: domain
+        )
 
-            let userId = AVSIdentifier(
-                identifier: senderUUID,
-                domain: senderDomain
-            )
+        let userId = AVSIdentifier(
+            identifier: senderUUID,
+            domain: senderDomain
+        )
 
-            let callEvent = CallEvent(
-                data: payload,
-                currentTimestamp: Date().addingTimeInterval(currentTimestamp),
-                serverTimestamp: eventTimestamp,
-                conversationId: conversationId,
-                userId: userId,
-                clientId: clientId
-            )
+        let callEvent = CallEvent(
+            data: payload,
+            currentTimestamp: Date().addingTimeInterval(currentTimestamp),
+            serverTimestamp: eventTimestamp,
+            conversationId: conversationId,
+            userId: userId,
+            clientId: clientId
+        )
 
-            callEventStatus.scheduledCallEventForProcessing()
-            callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-                self?.zmLog.debug("processed calling message")
-                self?.callEventStatus.finishedProcessingCallEvent()
-            })
-        }
+        callEventStatus.scheduledCallEventForProcessing()
+        callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
+            self?.zmLog.debug("processed calling message")
+            self?.callEventStatus.finishedProcessingCallEvent()
+        })
+    }
 
 }
 
@@ -348,12 +364,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
             self.zmLog.debug("schedule calling message")
 
-            let recipients = targets.map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
+            let recipients = targets
+                .map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
 
             let message: GenericMessageEntity
 
             if overMLSSelfConversation, conversation.messageProtocol == .mls {
-                guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
+                guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext)
+                else {
                     WireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
                     return
@@ -408,7 +426,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 return
             }
 
-            guard (200...299).contains(response.statusCode) else {
+            guard (200 ... 299).contains(response.statusCode) else {
                 completionHandler(.failure(SFTResponseError.server(status: response.statusCode)))
                 return
             }
@@ -418,26 +436,26 @@ extension CallingRequestStrategy: WireCallCenterTransport {
     }
 
     public func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
-        self.zmLog.debug("requestCallConfig() called, moc = \(managedObjectContext)")
+        zmLog.debug("requestCallConfig() called, moc = \(managedObjectContext)")
         managedObjectContext.performGroupedBlock { [unowned self] in
-            self.zmLog.debug("requestCallConfig() on the moc queue")
-            self.callConfigCompletion = completionHandler
+            zmLog.debug("requestCallConfig() on the moc queue")
+            callConfigCompletion = completionHandler
 
-            self.callConfigRequestSync.readyForNextRequestIfNotBusy()
+            callConfigRequestSync.readyForNextRequestIfNotBusy()
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         }
     }
 
     public func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void) {
-        self.zmLog.debug("requestClientList() called, moc = \(managedObjectContext)")
+        zmLog.debug("requestClientList() called, moc = \(managedObjectContext)")
 
         managedObjectContext.performGroupedBlock { [unowned self] in
             guard let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
                 domain: conversationId.domain,
-                in: self.managedObjectContext
+                in: managedObjectContext
             ) else {
-                self.zmLog.error("Can't request client list since conversation doesn't exist")
+                zmLog.error("Can't request client list since conversation doesn't exist")
                 completionHandler([])
                 return
             }
@@ -446,12 +464,12 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
-                self.clientDiscoveryRequest = ClientDiscoveryRequest(
+                clientDiscoveryRequest = ClientDiscoveryRequest(
                     conversationId: conversationId.identifier,
                     domain: conversationId.domain,
                     completion: completionHandler
                 )
-                self.clientDiscoverySync.readyForNextRequestIfNotBusy()
+                clientDiscoverySync.readyForNextRequestIfNotBusy()
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 
             case .mls:
@@ -478,7 +496,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        WireLogger.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
+                        WireLogger.mls
+                            .error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
             }
@@ -494,11 +513,11 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         var errorDescription: String? {
             switch self {
             case let .server(status: status):
-                return "Server http status code: \(status)"
+                "Server http status code: \(status)"
             case let .transport(error: error):
-                return "Transport error: \(error.localizedDescription)"
+                "Transport error: \(error.localizedDescription)"
             case .missingData:
-                return "Response body missing data"
+                "Response body missing data"
             }
         }
 
@@ -532,7 +551,8 @@ extension CallingRequestStrategy {
 
         let clients: [AVSClient]
 
-        /// This can decode the two types of responses listed below given that v0 uses legacy endpoints and v1 uses federation endpoints
+        /// This can decode the two types of responses listed below given that v0 uses legacy endpoints and v1 uses
+        /// federation endpoints
         ///
         /// When querying the legacy endpoint, this will be the response
         /// {
@@ -566,40 +586,45 @@ extension CallingRequestStrategy {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             // get the nested container keyed by "missing"
-            // it will contain a list of users and their client ids, but depending on the response, it may be segmented by domains
+            // it will contain a list of users and their client ids, but depending on the response, it may be segmented
+            // by domains
             let nestedContainer = try container.nestedContainer(keyedBy: DynamicKey.self, forKey: .missing)
 
             // define the block used below to extract the clients from a container
-            let extractClientsFromContainer = { (container: KeyedDecodingContainer<DynamicKey>, domain: String?) -> [AVSClient] in
-                var clients = [AVSClient]()
+            let extractClientsFromContainer =
+                { (container: KeyedDecodingContainer<DynamicKey>, domain: String?) -> [AVSClient] in
+                    var clients = [AVSClient]()
 
-                try container.allKeys.forEach { userIdKey in
-                    let clientIds = try container.decode([String].self, forKey: userIdKey)
+                    try container.allKeys.forEach { userIdKey in
+                        let clientIds = try container.decode([String].self, forKey: userIdKey)
 
-                    let identifier = AVSIdentifier(
-                        identifier: UUID(uuidString: userIdKey.stringValue)!,
-                        domain: domain
-                    )
+                        let identifier = AVSIdentifier(
+                            identifier: UUID(uuidString: userIdKey.stringValue)!,
+                            domain: domain
+                        )
 
-                    clients += clientIds.compactMap {
-                        AVSClient(userId: identifier, clientId: $0)
+                        clients += clientIds.compactMap {
+                            AVSClient(userId: identifier, clientId: $0)
+                        }
                     }
-                }
 
-                return clients
-            }
+                    return clients
+                }
 
             var allClients = [AVSClient]()
 
             switch apiVersion {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
-               allClients = try extractClientsFromContainer(nestedContainer, nil)
+                allClients = try extractClientsFromContainer(nestedContainer, nil)
             case .v1, .v2, .v3, .v4, .v5, .v6:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in
-                    let usersContainer = try nestedContainer.nestedContainer(keyedBy: DynamicKey.self, forKey: domainKey)
+                    let usersContainer = try nestedContainer.nestedContainer(
+                        keyedBy: DynamicKey.self,
+                        forKey: domainKey
+                    )
                     allClients += try extractClientsFromContainer(usersContainer, domainKey.stringValue)
                 }
             }
@@ -622,7 +647,7 @@ extension CallingRequestStrategy {
         var intValue: Int?
 
         init?(intValue: Int) {
-            return nil
+            nil
         }
     }
 }

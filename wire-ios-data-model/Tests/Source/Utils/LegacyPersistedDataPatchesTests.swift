@@ -17,10 +17,11 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 // MARK: - Framework comparison
+
 class FrameworkVersionTests: XCTestCase {
 
     func testThatCorrectVersionsAreParsed() {
@@ -116,6 +117,7 @@ class FrameworkVersionTests: XCTestCase {
 }
 
 // MARK: - Test patches
+
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     override class func setUp() {
@@ -147,7 +149,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -164,12 +166,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which hopefully is less than 10000000.32.32
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -186,22 +188,26 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which is greater than 0.0.1
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
         // THEN
-        XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
+        XCTAssertFalse(
+            patchApplied,
+            "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)"
+        )
     }
 
     func testThatItMigratesClientsSessionIdentifiers() async throws {
         // GIVEN
-        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        let hardcodedPrekey =
+            "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
         var selfClient: UserClient!
         var newClient: UserClient!
 
@@ -363,7 +369,8 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) async {
         // Given
-        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        let hardcodedPrekey =
+            "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
         var otherUser: ZMUser!
         var selfClient: UserClient!
         var otherUserClient: UserClient!

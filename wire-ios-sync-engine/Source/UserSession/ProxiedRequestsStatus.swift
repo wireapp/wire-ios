@@ -27,7 +27,13 @@ public class ProxyRequest: NSObject {
     @objc public let method: ZMTransportRequestMethod
     @objc public private(set) var callback: ProxyRequestCallback?
 
-    @objc public init(type: ProxiedRequestType, path: String, method: ZMTransportRequestMethod, callback: ProxyRequestCallback?) {
+    @objc
+    public init(
+        type: ProxiedRequestType,
+        path: String,
+        method: ZMTransportRequestMethod,
+        callback: ProxyRequestCallback?
+    ) {
         self.type = type
         self.path = path
         self.method = method
@@ -36,9 +42,15 @@ public class ProxyRequest: NSObject {
 }
 
 /// Keeps track of which requests to send to the backend
-@objcMembers public final class ProxiedRequestsStatus: NSObject {
+@objcMembers
+public final class ProxiedRequestsStatus: NSObject {
 
-    public typealias Request = (type: ProxiedRequestType, path: String, method: ZMTransportRequestMethod, callback: ((Data?, HTTPURLResponse?, NSError?) -> Void)?)
+    public typealias Request = (
+        type: ProxiedRequestType,
+        path: String,
+        method: ZMTransportRequestMethod,
+        callback: ((Data?, HTTPURLResponse?, NSError?) -> Void)?
+    )
 
     private let requestCancellation: ZMRequestCancellation
 

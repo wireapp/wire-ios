@@ -17,10 +17,10 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
+@testable import WireDataModel
+@testable import WireRequestStrategy
 
 final class ProteusMessageTests: XCTestCase {
 
@@ -47,9 +47,11 @@ final class ProteusMessageTests: XCTestCase {
         try await internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: false)
     }
 
-    private func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: Bool,
-                                                                            file: StaticString = #filePath,
-                                                                            line: UInt = #line) async throws {
+    private func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(
+        enabled: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
         // Given
         let message = try await coreDataStack.syncContext.perform {
             let conversation = ModelHelper().createGroupConversation(in: self.coreDataStack.syncContext)
@@ -68,14 +70,25 @@ final class ProteusMessageTests: XCTestCase {
 
         // Then
         await coreDataStack.syncContext.perform {
-            XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, enabled ? .enabled : .disabled, file: file, line: line)
+            XCTAssertEqual(
+                message.underlyingMessage?.text.legalHoldStatus,
+                enabled ? .enabled : .disabled,
+                file: file,
+                line: line
+            )
         }
     }
 
-    private func createClientTextMessage(withText text: String, in context: NSManagedObjectContext) throws -> ZMClientMessage {
+    private func createClientTextMessage(
+        withText text: String,
+        in context: NSManagedObjectContext
+    ) throws -> ZMClientMessage {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: context )
-        let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: context)
+        let textMessage = GenericMessage(
+            content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         try message.setUnderlyingMessage(textMessage)
         return message

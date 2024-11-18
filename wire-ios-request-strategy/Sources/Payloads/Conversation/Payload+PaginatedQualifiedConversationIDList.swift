@@ -28,7 +28,7 @@ extension Payload {
         }
 
         var nextStartReference: String? {
-            return pagingState
+            pagingState
         }
 
         let conversations: [QualifiedID]

@@ -18,15 +18,18 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Appends a "message was delete" system message
-    @objc public func appendDeletedForEveryoneSystemMessage(at date: Date, sender: ZMUser) {
-        self.appendSystemMessage(type: .messageDeletedForEveryone,
-                                 sender: sender,
-                                 users: nil,
-                                 clients: nil,
-                                 timestamp: date)
+    @objc
+    func appendDeletedForEveryoneSystemMessage(at date: Date, sender: ZMUser) {
+        appendSystemMessage(
+            type: .messageDeletedForEveryone,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: date
+        )
 
     }
 }

@@ -65,8 +65,7 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
         }
     }
 
-    @ViewBuilder
-    private var displayNameAndUsername: some View {
+    @ViewBuilder private var displayNameAndUsername: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .bottom, spacing: 4) {
                 Text(displayName)
@@ -91,8 +90,7 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
         }
     }
 
-    @ViewBuilder
-    private var determineLineHeights: some View {
+    @ViewBuilder private var determineLineHeights: some View {
         VStack {
             Text("W")
                 .wireTextStyle(.h3)
@@ -165,7 +163,9 @@ private struct UsernameHeightKey: PreferenceKey {
 
 extension View {
     func sidebarAccountInfoViewDisplayNameColor(_ displayNameColor: Color) -> some View {
-        modifier(SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor))
+        modifier(
+            SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor)
+        )
     }
 
     func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {

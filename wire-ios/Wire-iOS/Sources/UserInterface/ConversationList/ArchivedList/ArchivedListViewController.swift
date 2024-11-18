@@ -38,7 +38,7 @@ final class ArchivedListViewController: UIViewController {
 
     init(userSession: UserSession) {
         self.userSession = userSession
-        viewModel = ArchivedListViewModel(userSession: userSession)
+        self.viewModel = ArchivedListViewModel(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
         viewModel.delegate = self
     }
@@ -127,10 +127,22 @@ final class ArchivedListViewController: UIViewController {
             emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
+            emptyPlaceholderView.leadingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor,
+                multiplier: 1
+            ),
+            emptyPlaceholderView.topAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor,
+                multiplier: 1
+            ),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor,
+                multiplier: 1
+            ),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor,
+                multiplier: 1
+            ),
 
             emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
@@ -156,7 +168,10 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as! ConversationListCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: cellReuseIdentifier,
+            for: indexPath
+        ) as! ConversationListCell
         cell.conversation = viewModel[indexPath.row]
         cell.delegate = self
         cell.mutuallyExclusiveSwipeIdentifier = swipeIdentifier
@@ -165,11 +180,11 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.count
+        viewModel.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(
@@ -177,7 +192,7 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
+        layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
     }
 }
 

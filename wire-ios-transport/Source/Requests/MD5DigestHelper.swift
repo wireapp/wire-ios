@@ -22,7 +22,7 @@ import Foundation
 public final class MD5DigestHelper: NSObject {
 
     static func md5Digest(for data: Data) -> Data {
-        return data.zmMD5Digest()
+        data.zmMD5Digest()
     }
 
 }

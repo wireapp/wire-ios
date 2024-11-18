@@ -23,13 +23,13 @@ import UIKit
 final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
-    var dispatchGroup: DispatchGroup = DispatchGroup()
+    var dispatchGroup: DispatchGroup = .init()
 }
 
 extension UIImage {
     static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
 
-final class MediaAssetCache {
+enum MediaAssetCache {
     static var defaultImageCache = ImageCache<AnyObject>()
 }

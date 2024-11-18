@@ -106,8 +106,8 @@ open class AuthenticatedSessionFactory {
     }
 
     public func updateProxy(username: String?, password: String?) {
-        self.proxyUsername = username
-        self.proxyPassword = password
+        proxyUsername = username
+        proxyPassword = password
     }
 
     // MARK: - Private
@@ -163,8 +163,8 @@ open class UnauthenticatedSessionFactory {
     }
 
     public func updateProxy(username: String?, password: String?) {
-        self.proxyUsername = username
-        self.proxyPassword = password
+        proxyUsername = username
+        proxyPassword = password
     }
 
     // MARK: - Private

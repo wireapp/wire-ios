@@ -21,7 +21,8 @@ import WireDesign
 import WireMainNavigationUI
 
 extension Notification.Name {
-    static let SplitLayoutObservableDidChangeToLayoutSize = Notification.Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
+    static let SplitLayoutObservableDidChangeToLayoutSize = Notification
+        .Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
 }
 
 enum SplitViewControllerLayoutSize {
@@ -31,10 +32,8 @@ enum SplitViewControllerLayoutSize {
 }
 
 protocol SplitLayoutObservable: AnyObject {
-    @MainActor
-    var layoutSize: SplitViewControllerLayoutSize { get }
-    @MainActor
-    var leftViewControllerWidth: CGFloat { get }
+    @MainActor var layoutSize: SplitViewControllerLayoutSize { get }
+    @MainActor var leftViewControllerWidth: CGFloat { get }
 }
 
 @MainActor

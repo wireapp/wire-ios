@@ -123,7 +123,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
     public func fetchOrCreateClient(
         with id: String
     ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
-        let localUserClient = await context.perform { [context] in
+        await context.perform { [context] in
             if let existingClient = UserClient.fetchExistingUserClient(
                 with: id,
                 in: context
@@ -135,8 +135,6 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
                 return (newClient, true)
             }
         }
-
-        return localUserClient
     }
 
     public func updateClient(
@@ -206,11 +204,10 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func deleteClient(with id: String) async {
         let localClient = await context.perform {
-            let localClient = UserClient.fetchExistingUserClient(
+            UserClient.fetchExistingUserClient(
                 with: id,
                 in: context
             )
-            return localClient
         }
 
         guard let localClient else {

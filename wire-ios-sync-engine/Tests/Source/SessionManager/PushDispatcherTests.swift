@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+@testable import WireSyncEngine
 
 final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
     var pushTokens: [PushToken?] = []
@@ -36,7 +36,11 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
         return canHandleNext
     }
 
-    func receivedPushNotification(with payload: [AnyHashable: Any], from source: ZMPushNotficationType, completion: ZMPushNotificationCompletionHandler?) {
+    func receivedPushNotification(
+        with payload: [AnyHashable: Any],
+        from source: ZMPushNotficationType,
+        completion: ZMPushNotificationCompletionHandler?
+    ) {
         receivedPayloads.append(payload)
     }
 }
@@ -44,7 +48,7 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
 public final class PushDispatcherTests: ZMTBaseTest {
     var sut: PushDispatcher!
 
-    static let token = Data(bytes: [0xba, 0xdf, 0x00, 0xd0])
+    static let token = Data(bytes: [0xBA, 0xDF, 0x00, 0xD0])
     static let userID = UUID().transportString()
     static let payload: [AnyHashable: Any] = ["data": [
         "user": userID,
@@ -72,7 +76,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
             // GIVEN
             observer = TestPushDispatcherClient()
             observerWeakReference = observer
-            // WHEN 
+            // WHEN
             sut.add(client: observer!)
             observer = nil
         }
@@ -104,7 +108,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.updatePushToken(to: PushToken(data: type(of: self).token))
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // THEN
         XCTAssertEqual(client.pushTokens.count, 1)
         XCTAssertEqual(client.pushTokens[0]?.data, type(of: self).token)
@@ -131,7 +135,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(client.canHandlePayloads.count, 1)
@@ -149,7 +153,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(client.canHandlePayloads.count, 1)
@@ -166,7 +170,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(fallbackClient.receivedPayloads.count, 1)

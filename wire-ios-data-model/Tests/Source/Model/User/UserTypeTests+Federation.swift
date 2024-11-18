@@ -23,7 +23,7 @@ class UserTypeTests_Federation: ModelObjectsTests {
 
     func testThatUsersAreFederating_WhenBelongingToADifferentDomain() {
         // GIVEN
-        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let user: ZMUser = userWithClients(count: 2, trusted: true)
         user.domain = "foo.com"
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.domain = "bar.com"
@@ -35,7 +35,7 @@ class UserTypeTests_Federation: ModelObjectsTests {
 
     func testThatUsersUsersAreNotFederating_WhenBelongingToSameDomain() {
         // GIVEN
-        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let user: ZMUser = userWithClients(count: 2, trusted: true)
         user.domain = "foo.com"
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.domain = "foo.com"
@@ -46,7 +46,7 @@ class UserTypeTests_Federation: ModelObjectsTests {
 
     func testThatUsersAreNotFederating_WhenDomainIsUnknown() {
         // GIVEN
-        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let user: ZMUser = userWithClients(count: 2, trusted: true)
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.domain = "foo.com"
 

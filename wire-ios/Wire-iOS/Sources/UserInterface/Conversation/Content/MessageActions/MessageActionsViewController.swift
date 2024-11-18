@@ -22,23 +22,30 @@ import WireDesign
 
 final class MessageActionsViewController: UIAlertController {
 
-    // We're using custom marker to add space for custom view in UIAlertController. Solution explained in https://stackoverflow.com/a/47925120
+    // We're using custom marker to add space for custom view in UIAlertController. Solution explained in
+    // https://stackoverflow.com/a/47925120
     private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
 
-    static func controller(withActions actions: [MessageAction],
-                           actionController: ConversationMessageActionController) -> MessageActionsViewController {
+    static func controller(
+        withActions actions: [MessageAction],
+        actionController: ConversationMessageActionController
+    ) -> MessageActionsViewController {
         let title = actionController.canPerformAction(action: .react("❤️")) ? MessageLabelMarker : nil
-        let controller = MessageActionsViewController(title: title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+        let controller = MessageActionsViewController(
+            title: title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
         controller.addMessageActions(actions, withActionController: actionController)
         return controller
     }
 
     private var actionController: ConversationMessageActionController?
 
-    private func addMessageActions(_ actions: [MessageAction],
-                                   withActionController actionController: ConversationMessageActionController) {
+    private func addMessageActions(
+        _ actions: [MessageAction],
+        withActionController actionController: ConversationMessageActionController
+    ) {
         self.actionController = actionController
         addReactionsView(withDelegate: self)
         actions.forEach { addAction($0) }
@@ -51,7 +58,7 @@ final class MessageActionsViewController: UIAlertController {
     }
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
-        guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
+        guard let customContentPlaceholder = view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
               let customContainer = customContentPlaceholder.superview else { return }
 
         let reactionPicker = BasicReactionPicker(selectedReactions: actionController?.message.selfUserReactions() ?? [])
@@ -97,7 +104,10 @@ extension MessageActionsViewController: ReactionPickerDelegate {
     }
 
     func didTapMoreEmojis() {
-        let pickerController = CompleteReactionPickerViewController(selectedReactions: actionController?.message.selfUserReactions() ?? [])
+        let pickerController = CompleteReactionPickerViewController(
+            selectedReactions: actionController?.message
+                .selfUserReactions() ?? []
+        )
         pickerController.delegate = self
 
         // Embed the pickerController in a UINavigationController
@@ -112,7 +122,6 @@ extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
         actionController?.perform(action: .react(emoji.value))
         dismiss(animated: true)
-        return
     }
 
     func emojiPickerDeleteTapped() {}
@@ -123,7 +132,7 @@ private extension UIView {
         if let label = self as? UILabel, label.text == text {
             return label
         }
-        for subview in self.subviews {
+        for subview in subviews {
             if let found = subview.findLabel(withText: text) {
                 return found
             }

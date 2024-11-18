@@ -40,7 +40,8 @@ extension BackButtonDescription: ViewDescriptor {
         return button
     }
 
-    @objc dynamic func backButtonTapped(_ sender: UIButton) {
+    @objc
+    dynamic func backButtonTapped(_ sender: UIButton) {
         buttonTapped?()
     }
 }

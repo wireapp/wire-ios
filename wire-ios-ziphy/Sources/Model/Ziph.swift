@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * An item representing a post from Giphy.
- */
+/// An item representing a post from Giphy.
 
 public struct Ziph: Codable {
 
@@ -44,9 +42,9 @@ public struct Ziph: Codable {
     }
 
     public var description: String {
-        return "identifier: \(self.identifier)\n" +
-        "title: \(self.title ?? "nil")\n" +
-        "images:\n\(self.images)\n"
+        "identifier: \(identifier)\n" +
+            "title: \(title ?? "nil")\n" +
+            "images:\n\(images)\n"
     }
 
     // MARK: - Initialization
@@ -58,7 +56,9 @@ public struct Ziph: Codable {
     }
 
     public enum CodingKeys: String, CodingKey {
-        case title, images, identifier = "id"
+        case title
+        case images
+        case identifier = "id"
     }
 
 }

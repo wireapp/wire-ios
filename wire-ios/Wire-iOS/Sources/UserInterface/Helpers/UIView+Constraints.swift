@@ -37,7 +37,8 @@ extension UIView {
     }
 
     /// fit self in a container view
-    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with 2 pt:
+    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with
+    /// 2 pt:
     ///
     /// self.fitIn(view: container, insets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
     ///
@@ -50,12 +51,14 @@ extension UIView {
     }
 
     func fitInConstraints(view: UIView, inset: CGFloat) -> [NSLayoutConstraint] {
-        return fitInConstraints(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+        fitInConstraints(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
     }
 
-    func fitInConstraints(view: UIView,
-                          insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
-        return [
+    func fitInConstraints(
+        view: UIView,
+        insets: UIEdgeInsets = .zero
+    ) -> [NSLayoutConstraint] {
+        [
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.leading),
             trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.trailing),
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),

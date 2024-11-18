@@ -18,14 +18,17 @@
 
 import Foundation
 
-extension ZMConversation {
-    @objc public static let lastReadDidChangeNotificationName = Notification.Name(rawValue: "ZMConversationLastReadDidChangeNotificationName")
-    @objc public static let clearTypingNotificationName = Notification.Name(rawValue: "ZMConversationClearTypingNotificationName")
-    @objc public static let isVerifiedNotificationName = Notification.Name(rawValue: "ZMConversationIsVerifiedNotificationName")
+public extension ZMConversation {
+    @objc static let lastReadDidChangeNotificationName = Notification
+        .Name(rawValue: "ZMConversationLastReadDidChangeNotificationName")
+    @objc static let clearTypingNotificationName = Notification
+        .Name(rawValue: "ZMConversationClearTypingNotificationName")
+    @objc static let isVerifiedNotificationName = Notification
+        .Name(rawValue: "ZMConversationIsVerifiedNotificationName")
 
     /// Sends a notification with the given name on the UI context
-    func notifyOnUI(name: Notification.Name) {
-        guard let userInterfaceContext = self.managedObjectContext?.zm_userInterface else {
+    internal func notifyOnUI(name: Notification.Name) {
+        guard let userInterfaceContext = managedObjectContext?.zm_userInterface else {
             return
         }
 

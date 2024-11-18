@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -34,8 +34,10 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         userSession = UserSessionMock()
         coreDataFixture = CoreDataFixture()
         router = ActiveCallRouterProtocolMock()
-        conversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
-                                                                  otherUser: otherUser)
+        conversation = ZMConversation.createOtherUserConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser
+        )
         callConversationProvider = MockCallConversationProvider()
         sut = CallController(userSession: userSession)
         sut.callConversationProvider = callConversationProvider
@@ -52,6 +54,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - ActiveCall Presentation Tests
+
     func testThatActiveCallIsPresented_WhenMinimizedCallIsNil() {
         // GIVEN
         let callState: CallState = .established
@@ -91,6 +94,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - CallTopOverlay Presentation Tests
+
     func testThatCallTopOverlayIsShown_WhenPriorityCallConversationIsNotNil() {
         // GIVEN
         let callState: CallState = .established
@@ -116,6 +120,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - Version Alert Presentation Tests
+
     func testThatVersionAlertIsPresented_WhenCallStateIsTerminatedAndReasonIsOutdatedClient() {
         // GIVEN
         let callState: CallState = .terminating(reason: .outdatedClient)
@@ -153,6 +158,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - Degradation Alert Presentation Tests
+
     func testThatVersionDegradationAlertIsNotPresented_WhenVoiceChannelHasNotDegradationState() {
         // GIVEN
         let callState: CallState = .established
@@ -168,17 +174,21 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 }
 
 // MARK: - Helpers
+
 extension CallControllerTests {
     private func callController_callCenterDidChange(callState: CallState, conversation: ZMConversation) {
-        sut.callCenterDidChange(callState: callState,
-                                conversation: conversation,
-                                caller: otherUser,
-                                timestamp: nil,
-                                previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
     }
 }
 
 // MARK: - ActiveCallRouterMock
+
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
@@ -214,7 +224,10 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var expectedEndedAlertChoice: AlertChoice?
     var presentEndingSecurityDegradedAlertIsCalled = false
-    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+    func presentEndingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
         presentEndingSecurityDegradedAlertIsCalled = true
         if let expectedEndedAlertChoice {
             completion(expectedEndedAlertChoice)
@@ -223,7 +236,10 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var expectedIncomingAlertChoice: AlertChoice?
     var presentIncomingSecurityDegradedAlertIsCalled = false
-    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+    func presentIncomingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
         presentIncomingSecurityDegradedAlertIsCalled = true
         if let expectedIncomingAlertChoice {
             completion(expectedIncomingAlertChoice)
@@ -237,6 +253,7 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 }
 
 // MARK: - MockCallConversationProvider
+
 final class MockCallConversationProvider: CallConversationProvider {
     var priorityCallConversation: ZMConversation?
     var ongoingCallConversation: ZMConversation?

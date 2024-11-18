@@ -42,7 +42,10 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
         userDefaults = .temporary()
         userID = UUID.create()
-        lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userID, sharedUserDefaults: userDefaults)
+        lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(
+            userID: userID,
+            sharedUserDefaults: userDefaults
+        )
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
@@ -212,9 +215,11 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         XCTAssertEqual(result, .block)
     }
 
-    private func certificate(with expiry: TimeInterval,
-                             serverStoragePeriod: TimeInterval = 0) -> E2eIdentityCertificate {
-        let certificate = E2eIdentityCertificate(
+    private func certificate(
+        with expiry: TimeInterval,
+        serverStoragePeriod: TimeInterval = 0
+    ) -> E2eIdentityCertificate {
+        E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
             certificateDetails: .mockCertificate,
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
@@ -225,6 +230,5 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             serverStoragePeriod: serverStoragePeriod,
             randomPeriod: 0
         )
-        return certificate
     }
- }
+}

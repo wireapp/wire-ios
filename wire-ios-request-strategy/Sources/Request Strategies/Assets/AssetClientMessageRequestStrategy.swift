@@ -32,7 +32,11 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
 
         self.managedObjectContext = managedObjectContext
-        self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
+        self
+            .insertedObjectSync = InsertedObjectSync(
+                insertPredicate: Self
+                    .shouldBeSentPredicate(context: managedObjectContext)
+            )
         self.messageSender = messageSender
 
         super.init()
@@ -41,7 +45,7 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [insertedObjectSync]
+        [insertedObjectSync]
     }
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
@@ -50,7 +54,13 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            notDelivered,
+            notExpired,
+            isAssetV3,
+            isUploaded,
+            fromSelf
+        ])
     }
 
 }
@@ -88,7 +98,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     object.expire(withReason: .other)
                     self.managedObjectContext.enqueueDelayedSave()
 
-                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                    if case let NetworkError.invalidRequestError(responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
                         self.managedObjectContext.zm_userInterface.performGroupedBlock {
                             NotificationInContext(

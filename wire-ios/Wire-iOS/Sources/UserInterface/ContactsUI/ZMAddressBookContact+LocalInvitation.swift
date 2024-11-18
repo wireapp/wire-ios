@@ -20,14 +20,22 @@ import Foundation
 import MessageUI
 import WireSyncEngine
 
-final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
-    static let sharedInstance: EmailInvitePresenter = EmailInvitePresenter()
+final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate,
+    MFMessageComposeViewControllerDelegate {
+    static let sharedInstance: EmailInvitePresenter = .init()
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         controller.dismiss(animated: true, completion: .none)
     }
 
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+    func messageComposeViewController(
+        _ controller: MFMessageComposeViewController,
+        didFinishWith result: MessageComposeResult
+    ) {
         controller.dismiss(animated: true, completion: .none)
     }
 }
@@ -35,7 +43,7 @@ final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate,
 extension ZMAddressBookContact {
 
     static func canInviteLocallyWithEmail() -> Bool {
-        return MFMailComposeViewController.canSendMail()
+        MFMailComposeViewController.canSendMail()
     }
 
     func inviteLocallyWithEmail(_ email: String) {
@@ -49,7 +57,7 @@ extension ZMAddressBookContact {
     }
 
     static func canInviteLocallyWithPhoneNumber() -> Bool {
-        return MFMessageComposeViewController.canSendText()
+        MFMessageComposeViewController.canSendText()
     }
 
     func inviteLocallyWithPhoneNumber(_ phoneNumber: String) {

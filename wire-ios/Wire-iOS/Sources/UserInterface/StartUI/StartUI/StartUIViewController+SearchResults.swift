@@ -22,42 +22,56 @@ import WireSyncEngine
 import WireSystem
 
 extension StartUIViewController {
-    private func presentProfileViewController(for bareUser: UserType,
-                                              at indexPath: IndexPath?) {
+    private func presentProfileViewController(
+        for bareUser: UserType,
+        at indexPath: IndexPath?
+    ) {
         _ = searchController.searchBar.resignFirstResponder()
 
         guard let indexPath,
-            let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
+              let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath)
+        else { return }
 
-        profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), userSession: userSession, onDismiss: {
-            if self.isIPadRegular() {
-                let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
-                self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
-            } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
-                _ = self.searchController.searchBar.becomeFirstResponder()
+        profilePresenter.presentProfileViewController(
+            for: bareUser,
+            in: self,
+            from: view.convert(cell.bounds, from: cell),
+            userSession: userSession,
+            onDismiss: {
+                if self.isIPadRegular() {
+                    let indexPaths = self.searchResultsViewController.searchResultsView.collectionView
+                        .indexPathsForVisibleItems
+                    self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
+                } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
+                    _ = self.searchController.searchBar.becomeFirstResponder()
                     self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
+                }
             }
-        })
+        )
     }
 }
 
 extension StartUIViewController: SearchResultsViewControllerDelegate {
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     didTapOnUser user: UserType,
-                                     indexPath: IndexPath,
-                                     section: SearchResultsViewControllerSection) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnUser user: UserType,
+        indexPath: IndexPath,
+        section: SearchResultsViewControllerSection
+    ) {
 
-        if !user.isConnected && !user.isTeamMember {
+        if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
             delegate?.startUIViewController(self, didSelect: user)
         }
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     didDoubleTapOnUser user: UserType,
-                                     indexPath: IndexPath) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didDoubleTapOnUser user: UserType,
+        indexPath: IndexPath
+    ) {
 
         guard user.isConnected, !user.isBlocked else {
             return
@@ -66,15 +80,19 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         delegate?.startUIViewController(self, didSelect: user)
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     didTapOnConversation conversation: ZMConversation) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnConversation conversation: ZMConversation
+    ) {
         guard conversation.conversationType == .group || conversation.conversationType == .oneOnOne else { return }
 
         delegate?.startUIViewController(self, didSelect: conversation)
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
-                                     didTapOnSeviceUser user: ServiceUser) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnSeviceUser user: ServiceUser
+    ) {
 
         let detail = ServiceDetailViewController(
             serviceUser: user,
@@ -85,9 +103,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
             if let result {
                 switch result {
-                case .success(let conversation):
+                case let .success(conversation):
                     delegate?.startUIViewController(self, didSelect: conversation)
-                case .failure(let error):
+                case let .failure(error):
                     error.displayAddBotError(in: self)
                 }
             } else {

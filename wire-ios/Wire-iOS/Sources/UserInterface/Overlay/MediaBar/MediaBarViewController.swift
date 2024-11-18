@@ -24,7 +24,7 @@ final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
 
     private var mediaBarView: MediaBar? {
-        return view as? MediaBar
+        view as? MediaBar
     }
 
     required init(mediaPlaybackManager: MediaPlaybackManager?) {
@@ -69,6 +69,7 @@ final class MediaBarViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     @objc
     private func playPause(_ sender: Any?) {
         if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {

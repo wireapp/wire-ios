@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public extension ZMConversation {
+@objc
+public extension ZMConversation {
 
     @objc(setIsTyping:)
     func setIsTyping(_ isTyping: Bool) {

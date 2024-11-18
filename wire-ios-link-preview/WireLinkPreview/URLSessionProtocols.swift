@@ -39,10 +39,10 @@ extension URLSessionTask: URLSessionDataTaskType {}
 
 extension URLSession: URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType {
-        return (dataTask(with: request) as URLSessionDataTask) as URLSessionDataTaskType
+        (dataTask(with: request) as URLSessionDataTask) as URLSessionDataTaskType
     }
 
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType {
-        return (dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTask) as URLSessionDataTaskType
+        (dataTask(with: url, completionHandler: completionHandler) as URLSessionDataTask) as URLSessionDataTaskType
     }
 }

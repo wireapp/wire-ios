@@ -19,8 +19,8 @@
 import Foundation
 
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 final class AccessTokenTests: ZMTBaseTest {
 
@@ -40,7 +40,7 @@ final class AccessTokenTests: ZMTBaseTest {
     func testThatItCalculatesExpirationDate() {
 
         // given
-        let expiresIn: UInt = 15162342
+        let expiresIn: UInt = 15_162_342
 
         // when
         let accessToken = AccessToken(token: "foo", type: "bar", expiresInSeconds: expiresIn)
@@ -50,7 +50,8 @@ final class AccessTokenTests: ZMTBaseTest {
         XCTAssertEqual(
             accessToken.expirationDate.timeIntervalSinceReferenceDate,
             expiration.timeIntervalSinceReferenceDate,
-            accuracy: 0.1)
+            accuracy: 0.1
+        )
 
     }
 

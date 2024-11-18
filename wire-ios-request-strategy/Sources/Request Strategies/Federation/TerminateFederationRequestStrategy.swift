@@ -33,7 +33,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
+        self.federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,
@@ -51,7 +51,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return nil
+        nil
     }
 
 }
@@ -82,13 +82,14 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
                payload.domains.count == 2,
                let firstDomain = payload.domains.first,
                let secondDomain = payload.domains.last {
-                federationTerminationManager.handleFederationTerminationBetween(firstDomain,
-                                                                                otherDomain: secondDomain)
+                federationTerminationManager.handleFederationTerminationBetween(
+                    firstDomain,
+                    otherDomain: secondDomain
+                )
             }
 
         default:
             break
-
         }
     }
 
