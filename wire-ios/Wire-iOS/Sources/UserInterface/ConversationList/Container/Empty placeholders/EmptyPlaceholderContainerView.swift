@@ -33,7 +33,7 @@ final class EmptyPlaceholderContainerView: UIView {
          newConversationAction: @escaping () -> Void) {
         self.connectWithPeopleAction = connectWithPeopleAction
         self.newConversationAction = newConversationAction
-        
+
         super.init(frame: .zero)
 
         self.searchResultsView = EmptyConversationSearchResultsView(iPadTargeted: isIPadRegular(), newConversationAction: { [weak self] in

@@ -20,7 +20,6 @@ import SwiftUI
 import UIKit
 import WireDesign
 
-
 final class EmptyConversationSearchResultsView: UIView {
 
     var newConversationAction: () -> Void
@@ -36,7 +35,7 @@ final class EmptyConversationSearchResultsView: UIView {
          connectWithPeopleAction: (() -> Void)?) {
         self.newConversationAction = newConversationAction
         self.connectWithPeopleAction = connectWithPeopleAction
-       
+
         super.init(frame: .zero)
 
         self.hostingViewController = UIHostingController(rootView: EmptyView(iPadTargeted: iPadTargeted, newConversationAction: { [weak self] in
@@ -70,7 +69,7 @@ private struct EmptyView: View {
     var iPadTargeted: Bool
     var newConversationAction: () -> Void
     var connectWithPeopleAction: () -> Void
-    
+
     var body: some View {
         if iPadTargeted {
             TabletEmptyView(newConversationAction: newConversationAction,
@@ -128,19 +127,19 @@ private struct TabletEmptyView: View {
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
-            
+
             CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.ipad,
                           accessibilityIdentifier: "new-conversation.button", action: newConversationAction)
-            
+
             Text(L10n.Localizable.General.or)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
-            
+
             CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.connectButton,
                           accessibilityIdentifier: "connect.button",
                           action: connectWithPeopleAction)
-            
+
         }
     }
 }

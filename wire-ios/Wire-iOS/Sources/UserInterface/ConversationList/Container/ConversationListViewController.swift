@@ -354,7 +354,7 @@ final class ConversationListViewController: UIViewController {
             content: emptyPlaceholderForSelectedFilter,
             connectWithPeopleAction: connectWithPeopleAction,
             newConversationAction: createConversation
-            
+
         )
         contentContainer.addSubview(emptyPlaceholderView)
     }
