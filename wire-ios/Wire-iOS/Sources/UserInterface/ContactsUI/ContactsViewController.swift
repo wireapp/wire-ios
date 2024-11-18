@@ -49,9 +49,6 @@ final class ContactsViewController: UIViewController {
         color: LabelColors.textSettingsPasswordPlaceholder
     )
 
-    var bottomEdgeConstraint: NSLayoutConstraint?
-    var bottomContainerBottomConstraint: NSLayoutConstraint?
-
     // MARK: - Life Cycle
 
     init() {
@@ -71,7 +68,6 @@ final class ContactsViewController: UIViewController {
         setupViews()
         setupLayout()
         setupStyle()
-        observeKeyboardFrame()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -180,51 +176,5 @@ final class ContactsViewController: UIViewController {
             animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
             completion: completion
         )
-    }
-
-    // MARK: - Keyboard Observation
-
-    private func observeKeyboardFrame() {
-        // Subscribing to the notification may cause "zero frame" animations to occur before the initial layout
-        // of the view. We can avoid this by laying out the view first.
-        view.layoutIfNeeded()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardFrameWillChange),
-            name: UIResponder.keyboardWillChangeFrameNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    func keyboardFrameWillChange(_ notification: Notification) {
-        guard
-            let userInfo = notification.userInfo,
-            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
-            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else { return }
-
-        let willAppear = (beginFrame.minY - endFrame.minY) > 0
-        let padding: CGFloat = 12
-
-        // Calculate the effective keyboard height
-        var keyboardHeight = view.frame.intersection(endFrame).height
-
-        // On iPad, add an estimated accessory height if applicable
-        if traitCollection.userInterfaceIdiom == .pad {
-            keyboardHeight += 44  // Approximate height of an input accessory view
-        }
-
-        UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] _ in
-            guard let self else { return }
-
-            let safeAreaBottomInset = view.safeAreaInsets.bottom
-
-            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardHeight : 0)
-            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : safeAreaBottomInset)
-
-            view.layoutIfNeeded()
-        })
     }
 }
