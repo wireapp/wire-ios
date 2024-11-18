@@ -119,7 +119,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @ViewBuilder
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
-            menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
+            menuItemHeader(L10n.Sidebar.ConversationFilter.title, addTopPadding: false)
             let conversationFilters: [SidebarSelectableMenuItem] = [
                 .all,
                 .favorites,
@@ -132,15 +132,15 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 selectableMenuItem(conversationFilter)
             }
 
-            menuItemHeader("sidebar.contacts.title")
+            menuItemHeader(L10n.Sidebar.Contacts.title)
             nonselectableMenuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
 
     @ViewBuilder
-    private func menuItemHeader(_ key: LocalizedStringKey, addTopPadding: Bool = true) -> some View {
-        let text = Text(key, bundle: .module)
+    private func menuItemHeader(_ title: String, addTopPadding: Bool = true) -> some View {
+        let text = Text(title)
             .foregroundStyle(menuHeaderForegroundColor)
             .wireTextStyle(.h2)
             .padding(.horizontal, 8)
@@ -161,14 +161,14 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let action: () -> Void
         switch menuItem {
         case .connect:
-            text = Text("sidebar.contacts.connect.title", bundle: .module)
+            text = Text(L10n.Sidebar.Contacts.Connect.title)
             accessibilityLabel = Text("sidebar.contacts.connect.title", bundle: .module)
             icon = "person.badge.plus"
             isLink = false
             action = connectAction
 
         case .support:
-            text = Text("sidebar.support.title", bundle: .module)
+            text = Text(L10n.Sidebar.Support.title)
             accessibilityLabel = Text("sidebar.support.description", tableName: "Accessibility", bundle: .module)
             icon = "questionmark.circle"
             isLink = true
@@ -205,22 +205,22 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         let accessibilityLabel: Text
         switch menuItem {
         case .all:
-            text = Text("sidebar.conversation_filter.all.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.All.title)
             icon = "text.bubble"
             accessibilityLabel = Text("sidebar.conversation_filter.all.title", bundle: .module)
 
         case .favorites:
-            text = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
             icon = "star"
             accessibilityLabel = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
 
         case .groups:
-            text = Text("sidebar.conversation_filter.groups.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Groups.title)
             icon = "person.3"
             accessibilityLabel = Text("sidebar.conversation_filter.groups.title", bundle: .module)
 
         case .oneOnOne:
-            text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
             accessibilityLabel = Text("sidebar.conversation_filter.oneOnOneConversations.description", tableName: "Accessibility", bundle: .module)
 
@@ -230,12 +230,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             accessibilityLabel = Text("sidebar.conversation_filter.folders.title", bundle: .module)
 
         case .archive:
-            text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
             icon = "archivebox"
             accessibilityLabel = Text("sidebar.conversation_filter.archived.title", bundle: .module)
 
         case .settings:
-            text = Text("sidebar.settings.title", bundle: .module)
+            text = Text(L10n.Sidebar.Settings.title)
             icon = "gearshape"
             accessibilityLabel = Text("sidebar.settings.description", tableName: "Accessibility", bundle: .module)
         }
