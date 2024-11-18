@@ -2788,6 +2788,8 @@ internal enum L10n {
           }
         }
         internal enum Search {
+          /// Connect with People
+          internal static let connectButton = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.connect_button", fallback: "Connect with People")
           internal enum Button {
             /// Start a new Conversation
             internal static let ipad = L10n.tr("Localizable", "conversation_list.empty_placeholder.search.button.ipad", fallback: "Start a new Conversation")
@@ -3509,6 +3511,8 @@ internal enum L10n {
       internal static let on = L10n.tr("Localizable", "general.on", fallback: "On")
       /// Open Wire Settings
       internal static let openSettings = L10n.tr("Localizable", "general.open_settings", fallback: "Open Wire Settings")
+      /// or
+      internal static let or = L10n.tr("Localizable", "general.or", fallback: "or")
       /// Paste
       internal static let paste = L10n.tr("Localizable", "general.paste", fallback: "Paste")
       /// Service

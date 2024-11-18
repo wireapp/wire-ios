@@ -20,23 +20,29 @@ import SwiftUI
 import UIKit
 import WireDesign
 
+
 final class EmptyConversationSearchResultsView: UIView {
 
     var newConversationAction: () -> Void
-
+    var connectWithPeopleAction: (() -> Void)?
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private var hostingViewController: UIHostingController<EmptyView>!
 
-    init(newConversationAction: @escaping () -> Void) {
+    init(iPadTargeted: Bool,
+         newConversationAction: @escaping () -> Void,
+         connectWithPeopleAction: (() -> Void)?) {
         self.newConversationAction = newConversationAction
-
+        self.connectWithPeopleAction = connectWithPeopleAction
+       
         super.init(frame: .zero)
 
-        self.hostingViewController = UIHostingController(rootView: EmptyView(newConversationAction: { [weak self] in
+        self.hostingViewController = UIHostingController(rootView: EmptyView(iPadTargeted: iPadTargeted, newConversationAction: { [weak self] in
             self?.newConversationAction()
+        }, connectWithPeopleAction: { [weak self] in
+            self?.connectWithPeopleAction?()
         }))
 
         self.addSubview(hostingViewController.view)
@@ -61,6 +67,21 @@ final class EmptyConversationSearchResultsView: UIView {
 }
 
 private struct EmptyView: View {
+    var iPadTargeted: Bool
+    var newConversationAction: () -> Void
+    var connectWithPeopleAction: () -> Void
+    
+    var body: some View {
+        if iPadTargeted {
+            TabletEmptyView(newConversationAction: newConversationAction,
+                            connectWithPeopleAction: connectWithPeopleAction)
+        } else {
+            PhoneEmptyView(newConversationAction: newConversationAction)
+        }
+    }
+}
+
+private struct PhoneEmptyView: View {
     var newConversationAction: () -> Void
 
     var body: some View {
@@ -93,5 +114,61 @@ private struct EmptyView: View {
             .accessibilityIdentifier("new-conversation.button")
             .background(Capsule().fill(Color.viewBackground))
         }
+    }
+}
+
+private struct TabletEmptyView: View {
+    var newConversationAction: () -> Void
+    var connectWithPeopleAction: () -> Void
+
+    var body: some View {
+        VStack {
+            Text(L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Subheadline.ipad)
+                .font(.textStyle(.body1))
+                .foregroundStyle(Color.secondaryText)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+            
+            CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.ipad,
+                          accessibilityIdentifier: "new-conversation.button", action: newConversationAction)
+            
+            Text(L10n.Localizable.General.or)
+                .font(.textStyle(.body1))
+                .foregroundStyle(Color.secondaryText)
+                .multilineTextAlignment(.center)
+            
+            CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.connectButton,
+                          accessibilityIdentifier: "connect.button",
+                          action: connectWithPeopleAction)
+            
+        }
+    }
+}
+
+private struct CapsuleButton: View {
+    var title: String
+    var accessibilityIdentifier: String
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action, label: {
+            HStack {
+                Image(systemName: "plus")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(width: 20, height: 20)
+                    .background(Circle().fill(Color(ColorTheme.Base.primary)))
+
+                Text(title)
+                    .font(.textStyle(.body1))
+                    .foregroundStyle(Color(ColorTheme.Base.primary))
+                    .padding(.leading, 4)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+
+        })
+        .accessibilityIdentifier(accessibilityIdentifier)
+        .background(Capsule().fill(Color.viewBackground))
     }
 }

@@ -24,14 +24,21 @@ final class EmptyPlaceholderContainerView: UIView {
     private(set) var placeholderView: EmptyPlaceholderView!
     private(set) var searchResultsView: EmptyConversationSearchResultsView!
     var connectWithPeopleAction: () -> Void
+    var newConversationAction: () -> Void
 
     // MARK: - Init
 
-    init(content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: @escaping () -> Void) {
+    init(content: ConversationListViewController.EmptyPlaceholder,
+         connectWithPeopleAction: @escaping () -> Void,
+         newConversationAction: @escaping () -> Void) {
         self.connectWithPeopleAction = connectWithPeopleAction
+        self.newConversationAction = newConversationAction
+        
         super.init(frame: .zero)
 
-        self.searchResultsView = EmptyConversationSearchResultsView(newConversationAction: { [weak self] in
+        self.searchResultsView = EmptyConversationSearchResultsView(iPadTargeted: isIPadRegular(), newConversationAction: { [weak self] in
+            self?.newConversationAction()
+        }, connectWithPeopleAction: { [weak self] in
             self?.connectWithPeopleAction()
         })
 

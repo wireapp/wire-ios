@@ -347,9 +347,14 @@ final class ConversationListViewController: UIViewController {
         let connectWithPeopleAction: () -> Void = { [weak self] in
             self?.presentConnectUI()
         }
+        let createConversation: () -> Void = { [weak self] in
+            self?.presentCreateConversationUI()
+        }
         emptyPlaceholderView = EmptyPlaceholderContainerView(
             content: emptyPlaceholderForSelectedFilter,
-            connectWithPeopleAction: connectWithPeopleAction
+            connectWithPeopleAction: connectWithPeopleAction,
+            newConversationAction: createConversation
+            
         )
         contentContainer.addSubview(emptyPlaceholderView)
     }
