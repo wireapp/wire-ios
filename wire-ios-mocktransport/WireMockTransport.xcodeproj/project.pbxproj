@@ -66,6 +66,7 @@
 		591B6E562C8B09D6009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */; };
 		591B6E592C8B09DA009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		5939CAAB2CEBAC3D000F6FAD /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAAA2CEBAC3D000F6FAD /* WireSystemPackage */; };
+		5939CAD32CEBAF07000F6FAD /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAD22CEBAF07000F6FAD /* WireSystemPackage */; };
 		59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59EC73FA2C20B82F00E5C036 /* WireSystem.framework */; };
 		59EC74002C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73FF2C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
 		63128BB3247C014300673D18 /* MockTransportSession+OTR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */; };
@@ -278,6 +279,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5939CAD32CEBAF07000F6FAD /* WireSystemPackage in Frameworks */,
 				EE974125295498DA000C9340 /* WireCryptobox.framework in Frameworks */,
 				5939CAAB2CEBAC3D000F6FAD /* WireSystemPackage in Frameworks */,
 				EE974121295498D2000C9340 /* WireProtos.framework in Frameworks */,
@@ -1110,6 +1112,10 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		5939CAAA2CEBAC3D000F6FAD /* WireSystemPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackage;
+		};
+		5939CAD22CEBAF07000F6FAD /* WireSystemPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystemPackage;
 		};

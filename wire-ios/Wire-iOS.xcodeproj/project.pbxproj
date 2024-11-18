@@ -350,6 +350,7 @@
 		5939CAAF2CEBAD2D000F6FAD /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAAE2CEBAD2D000F6FAD /* WireSystemPackage */; };
 		5939CAB12CEBAD35000F6FAD /* WireSystemSupportPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAB02CEBAD35000F6FAD /* WireSystemSupportPackage */; };
 		5939CAB32CEBAD43000F6FAD /* WireSystemSupportPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAB22CEBAD43000F6FAD /* WireSystemSupportPackage */; };
+		5939CAC92CEBAEA7000F6FAD /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5939CAC82CEBAEA7000F6FAD /* WireSystemPackage */; };
 		593D510A2C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593D51092C99BE3B005CB057 /* SidebarViewController+MainSidebarProtocol.swift */; };
 		594211BF2C90542C00576053 /* FilePreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211BE2C90542C00576053 /* FilePreviewGenerator.swift */; };
 		594211C12C90547200576053 /* URL+uniformType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211C02C90547200576053 /* URL+uniformType.swift */; };
@@ -4029,6 +4030,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5939CAC92CEBAEA7000F6FAD /* WireSystemPackage in Frameworks */,
 				5939CA912CEBABF7000F6FAD /* WireDatadog in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
 			);
@@ -8743,6 +8745,7 @@
 			name = WireCommonComponents;
 			packageProductDependencies = (
 				016A141C2CE6BFC4006A7EF5 /* WireDatadog */,
+				5939CAC82CEBAEA7000F6FAD /* WireSystemPackage */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -11790,6 +11793,10 @@
 		5939CAB22CEBAD43000F6FAD /* WireSystemSupportPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystemSupportPackage;
+		};
+		5939CAC82CEBAEA7000F6FAD /* WireSystemPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystemPackage;
 		};
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
