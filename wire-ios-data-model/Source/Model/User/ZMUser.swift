@@ -154,14 +154,13 @@ extension ZMUser: UserType {
     public var canCreateMLSGroups: Bool {
         guard
             let id = remoteIdentifier,
-            let context = managedObjectContext,
-            (BackendInfo.apiVersion ?? .v0) >= .v5
+            let context = managedObjectContext
         else {
             return false
         }
 
         let mlsFeature = FeatureRepository(context: context).fetchMLS()
-        return mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
+        return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 
 }
