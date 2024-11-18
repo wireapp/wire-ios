@@ -492,6 +492,7 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -500,6 +501,7 @@
 			baseConfigurationReference = 54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
