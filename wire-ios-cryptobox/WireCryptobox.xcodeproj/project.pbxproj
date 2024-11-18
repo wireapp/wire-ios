@@ -774,7 +774,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -830,6 +829,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -837,6 +838,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E21F0A482B001F43A6 /* project.xcconfig */;
 			buildSettings = {
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};

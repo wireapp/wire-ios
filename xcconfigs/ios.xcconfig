@@ -22,8 +22,3 @@
 //
 
 #include "ios-common.xcconfig"
-
-// Architectures
-//
-
-ARCHS[sdk=iphonesimulator*] = x86_64

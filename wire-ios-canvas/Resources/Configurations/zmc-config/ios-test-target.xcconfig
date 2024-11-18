@@ -18,5 +18,3 @@
 
 #include "ios.xcconfig"
 #include "tests.xcconfig"
-
-ARCHS[sdk=iphonesimulator*] = x86_64

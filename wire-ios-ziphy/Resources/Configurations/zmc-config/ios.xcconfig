@@ -21,12 +21,6 @@
 // It gets included by {target}-ios.xcconfig
 //
 
-// Architectures
-//
-SDKROOT = iphoneos
-ARCHS[sdk=iphoneos*] = arm64
-VALID_ARCHS[sdk=iphoneos*] = arm64
-
 // Code Signing
 //
 CODE_SIGN_IDENTITY = iPhone Developer
