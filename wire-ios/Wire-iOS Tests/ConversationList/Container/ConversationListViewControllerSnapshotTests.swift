@@ -275,6 +275,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: renderedImage())
     }
+    
     // MARK: - Helper Methods
 
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
