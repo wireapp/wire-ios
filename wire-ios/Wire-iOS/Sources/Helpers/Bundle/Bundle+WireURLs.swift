@@ -92,7 +92,7 @@ struct WireURLs: Codable {
     let howToAddConversationToYourFavourites: URL
 
     /// Link to an article explaining how to add a conversation to a custom folder.
-    let howToAddAConversationToACustomFolder: URL
+    let howToAddConversationToCustomFolder: URL
 
     static var shared: WireURLs = {
         do {
@@ -131,7 +131,7 @@ struct WireURLs: Codable {
         case mlsInfo
         case endToEndIdentityInfo
         case howToAddConversationToYourFavourites
-        case howToAddAConversationToACustomFolder
+        case howToAddConversationToCustomFolder
     }
 
     enum WireURLsError: Error {

@@ -56,7 +56,8 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -118,6 +119,13 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
+    private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
+        conversationDirectory: userSession.conversationDirectory,
+        conversationFilter: { [weak self] in
+            self?.conversationFilter()
+        }
+    )
+
     private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
@@ -128,12 +136,7 @@ final class ZClientViewController: UIViewController {
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
         createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
-        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
-            conversationDirectory: userSession.conversationDirectory,
-            conversationFilter: { [weak self] in
-                self?.conversationFilter()
-            }
-        ),
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
         getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 

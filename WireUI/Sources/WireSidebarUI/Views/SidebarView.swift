@@ -28,6 +28,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
 
     private(set) var accountImageAction: () -> Void
+    private(set) var foldersAction: (CGRect) -> Void
     private(set) var connectAction: () -> Void
     private(set) var supportAction: () -> Void
 
@@ -43,6 +44,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         accountImageAction: @escaping () -> Void,
+        foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?)
@@ -52,6 +54,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
+        self.foldersAction = foldersAction
         self.connectAction = connectAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
@@ -116,7 +119,14 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader(L10n.Sidebar.ConversationFilter.title, addTopPadding: false)
-            let conversationFilters = [SidebarSelectableMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
+            let conversationFilters: [SidebarSelectableMenuItem] = [
+                .all,
+                .favorites,
+                .groups,
+                .oneOnOne,
+                .folders,
+                .archive
+            ]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
                 selectableMenuItem(conversationFilter)
             }
@@ -174,7 +184,21 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         )
     }
 
+    @ViewBuilder
     private func selectableMenuItem(_ menuItem: SidebarSelectableMenuItem) -> some View {
+        if menuItem == .folders {
+            Framed { frame in
+                makeSelectableMenuItem(menuItem, action: { foldersAction(frame) })
+            }
+        } else {
+            makeSelectableMenuItem(menuItem, action: { selectedMenuItem = menuItem })
+        }
+    }
+
+    private func makeSelectableMenuItem(
+        _ menuItem: SidebarSelectableMenuItem,
+        action: @escaping () -> Void
+    ) -> some View {
         let text: Text
         let icon: String
         let accessibilityLabel: Text
@@ -182,17 +206,17 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .all:
             text = Text(L10n.Sidebar.ConversationFilter.All.title)
             icon = "text.bubble"
-            accessibilityLabel = Text("sidebar.conversation_filter.all.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.All.title)
 
         case .favorites:
             text = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
             icon = "star"
-            accessibilityLabel = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Favorites.title)
 
         case .groups:
             text = Text(L10n.Sidebar.ConversationFilter.Groups.title)
             icon = "person.3"
-            accessibilityLabel = Text("sidebar.conversation_filter.groups.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Groups.title)
 
         case .oneOnOne:
             text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
@@ -204,14 +228,14 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             )
 
         case .folders:
-            text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Folders.title)
             icon = "folder"
-            accessibilityLabel = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Folders.title)
 
         case .archive:
             text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
             icon = "archivebox"
-            accessibilityLabel = Text("sidebar.conversation_filter.archived.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Archived.title)
 
         case .settings:
             text = Text(L10n.Sidebar.Settings.title)
@@ -226,7 +250,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             isHighlighted: selectedMenuItem == menuItem,
             title: { text.wireTextStyle(.body1) },
             accessibilityLabel: { accessibilityLabel },
-            action: { selectedMenuItem = menuItem }
+            action: action
         )
     }
 

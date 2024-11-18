@@ -25,15 +25,18 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let mainCoordinator: AnyMainCoordinator
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
     }
 
     @MainActor
@@ -42,6 +45,23 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
             let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
+        }
+    }
+
+    @MainActor
+    func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect) {
+        Task {
+            let folderPicker = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            folderPicker.modalPresentationStyle = .popover
+
+            if let popover = folderPicker.popoverPresentationController,
+               let view = viewController.view,
+               let window = view.window {
+                popover.sourceView = view
+                popover.sourceRect = view.convert(frame, from: window)
+            }
+
+            viewController.present(folderPicker, animated: true)
         }
     }
 
@@ -61,7 +81,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
             case .folders:
-                break // Tapping on folder is handled elsewhere
+                break // handled by `sidebarViewController(_:didTapFoldersAt:)`
             case .archive:
                 await mainCoordinator.showArchive()
             case .settings:
