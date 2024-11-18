@@ -225,9 +225,9 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             accessibilityLabel = Text("sidebar.conversation_filter.oneOnOneConversations.description", tableName: "Accessibility", bundle: .module)
 
         case .folders:
-            text = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            text = Text(L10n.Sidebar.ConversationFilter.Folders.title)
             icon = "folder"
-            accessibilityLabel = Text("sidebar.conversation_filter.folders.title", bundle: .module)
+            accessibilityLabel = Text(L10n.Sidebar.ConversationFilter.Folders.title)
 
         case .archive:
             text = Text(L10n.Sidebar.ConversationFilter.Archived.title)
