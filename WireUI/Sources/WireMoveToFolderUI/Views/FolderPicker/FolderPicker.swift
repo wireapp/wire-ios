@@ -73,7 +73,7 @@ public struct FolderPicker: View {
                                     } catch {
                                         // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
                                         assertionFailure(
-                                            "gFailed to move conversation to folder: \(error.localizedDescription)"
+                                            "Failed to move conversation to folder: \(error.localizedDescription)"
                                         )
                                     }
                                 }
