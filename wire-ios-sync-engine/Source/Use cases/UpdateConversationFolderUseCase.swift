@@ -20,19 +20,42 @@ import WireDataModel
 
 public struct UpdateConversationFolderUseCase {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
+
+    // MARK: - Init
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
 
+    // MARK: - Public Interface
+
     public func invoke(conversationID: UUID, folderID: UUID) async throws {
-        await context.perform {
-            guard let folder = Label.fetch(with: folderID, in: context) else { return }
-            guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else { return }
+        try await context.perform {
+            guard let folder = Label.fetch(with: folderID, in: context) else {
+                throw Failure.folderNotFound
+            }
+            guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else {
+                throw Failure.conversationNotFound
+            }
 
             conversation.moveToFolder(folder)
+
+            do {
+                try context.save()
+            } catch {
+                context.rollback()
+                throw error
+            }
         }
     }
 
+    // MARK: - Error
+
+    public enum Failure: Error {
+        case folderNotFound
+        case conversationNotFound
+    }
 }

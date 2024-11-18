@@ -30,7 +30,7 @@ public class MockFolderDirectoryTypeProtocol: FolderDirectoryTypeProtocol {
     public var allFolders: [Folder] = []
 }
 
-public class MockUpdateConversationFolderUseCase: @unchecked Sendable, UpdateConversationFolderUseCaseType {
+public class MockUpdateConversationFolderUseCase: @unchecked Sendable, UpdateConversationFolderUseCaseProtocol {
 
     // MARK: - Life cycle
 
