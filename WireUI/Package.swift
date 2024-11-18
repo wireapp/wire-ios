@@ -13,18 +13,18 @@ let package = Package(
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
-        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
-        .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"])
+        .library(name: "WireSidebarUI", targets: ["WireSidebarUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireFoundation"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(name: "WireAccountImageUI", dependencies: ["WireFoundation"]),
@@ -41,12 +41,12 @@ let package = Package(
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),
 
-        .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation"]),
+        .target(name: "WireMoveToFolderUI", dependencies: ["WireFoundation", "WireReusableUIComponents"]),
         .target(
             name: "WireMoveToFolderUISupport",
             dependencies: ["WireMoveToFolderUI"],
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
@@ -57,7 +57,11 @@ let package = Package(
         .target(name: "WireSettingsUI"),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
-        .target(name: "WireSidebarUI", dependencies: ["WireFoundation"]),
+        .target(
+            name: "WireSidebarUI",
+            dependencies: ["WireFoundation"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )

@@ -152,6 +152,10 @@ extension ConversationViewController {
         button.tintColor = hasUnread ? UIColor.accent() : nil
         button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
 
+        // Enable swipe-to-go-back gesture
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+
         return button
     }
 
@@ -267,6 +271,12 @@ extension ConversationViewController {
         if let collectionController = self.collectionController {
             collectionController.dismiss(animated: false)
         }
+    }
+}
+
+extension ConversationViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return navigationController?.viewControllers.count ?? 0 > 1
     }
 }
 

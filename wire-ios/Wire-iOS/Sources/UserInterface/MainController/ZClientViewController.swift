@@ -39,6 +39,9 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
+    private(set) var cachedAccountInfo = SidebarAccountInfo() {
+        didSet { sidebarViewController.accountInfo = cachedAccountInfo }
+    }
 
     private(set) var conversationRootViewController: UIViewController?
 
@@ -52,7 +55,8 @@ final class ZClientViewController: UIViewController {
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
         mainCoordinator: .init(mainCoordinator: mainCoordinator),
         connectUIBuilder: connectBuilder,
-        selfProfileUIBuilder: selfProfileViewControllerBuilder
+        selfProfileUIBuilder: selfProfileViewControllerBuilder,
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder
     )
 
     private(set) lazy var mainSplitViewController = MainCoordinator.SplitViewController(
@@ -114,7 +118,14 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
-    private lazy var conversationListViewController = ConversationListViewController(
+    private lazy var folderPickerViewControllerBuilder = FolderPickerViewControllerBuilder(
+        conversationDirectory: userSession.conversationDirectory,
+        conversationFilter: { [weak self] in
+            self?.conversationFilter()
+        }
+    )
+
+    private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
@@ -123,7 +134,9 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        folderPickerViewControllerBuilder: folderPickerViewControllerBuilder,
+        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -296,7 +309,7 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
+        sidebarViewController.accountInfo = cachedAccountInfo
         sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
         sidebarViewController.delegate = sidebarViewControllerDelegate
 
@@ -311,6 +324,7 @@ final class ZClientViewController: UIViewController {
 
         Task {
             await updateCachedAccountImage()
+            await updateCachedAccountInfo()
         }
     }
 
@@ -417,37 +431,15 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Animated conversation switch
-    func dismissAllModalControllers(callback: Completion?) {
-        let dismissAction = {
-            if let rightViewController = self.mainSplitViewController.viewController(for: .secondary),
-               rightViewController.presentedViewController != nil {
-                rightViewController.dismiss(animated: false, completion: callback)
-            } else if let presentedViewController = self.conversationListViewController.presentedViewController {
-                // This is a workaround around the fact that the transitioningDelegate of the settings
-                // view controller is not called when the transition is not being performed animated.
-                // This sounds like a bug in UIKit (Radar incoming) as I would expect the custom animator
-                // being called with `transitionContext.isAnimated == false`. As this is not the case
-                // we have to restore the proper pre-presentation state here.
-                let conversationView = self.conversationListViewController.view
-                if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
-                        conversationView?.layer.transform = CATransform3DIdentity
-                        conversationView?.alpha = 1
-                    }
-                }
 
-                presentedViewController.dismiss(animated: true, completion: callback)
-            } else if self.presentedViewController != nil {
-                self.dismiss(animated: false, completion: callback)
-            } else {
-                callback?()
-            }
-        }
-
+    func dismissAllModalControllers() async {
         if userSession.ringingCallConversation != nil {
-            dismissAction()
+            await mainCoordinator.dismissPresentedViewController()
         } else {
-            minimizeCallOverlay(animated: true, completion: dismissAction)
+            await withCheckedContinuation { continuation in
+                minimizeCallOverlay(animated: true, completion: continuation.resume)
+            }
+            await mainCoordinator.dismissPresentedViewController()
         }
     }
 
@@ -635,7 +627,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: [WPB-11614] use mainCoordinator if possible
+    func openClientListScreen(for user: UserType) {
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -665,10 +657,12 @@ final class ZClientViewController: UIViewController {
             viewController = profileViewController
         }
 
-        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
-        navWrapperController?.modalPresentationStyle = .formSheet
-        if let aController = navWrapperController {
-            present(aController, animated: true)
+        if let viewController {
+            let navigationController = UINavigationController(rootViewController: viewController)
+            navigationController.modalPresentationStyle = .formSheet
+            Task {
+                await mainCoordinator.presentViewController(navigationController)
+            }
         }
     }
 
@@ -691,18 +685,20 @@ final class ZClientViewController: UIViewController {
         focusOnView focus: Bool,
         animated: Bool
     ) {
-        // TODO: [WPB-11620] dismiss animation is missing
-        dismissAllModalControllers { [weak self] in
-            guard
-                let self,
-                !conversation.isDeleted,
-                conversation.managedObjectContext != nil
-            else { return }
-
-            Task {
-                await self.mainCoordinator.dismissPresentedViewController()
-                self.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated)
+        Task {
+            await dismissAllModalControllers()
+            if mainTabBarController.selectedContent != .conversations {
+                await mainCoordinator.showConversationList(conversationFilter: .none)
             }
+
+            guard !conversation.isDeleted, conversation.managedObjectContext != nil else { return }
+
+            conversationListViewController.viewModel.select(
+                conversation: conversation,
+                scrollTo: message,
+                focusOnView: focus,
+                animated: animated
+            )
         }
     }
 
@@ -737,6 +733,20 @@ final class ZClientViewController: UIViewController {
             WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }
     }
+
+    private func updateCachedAccountInfo() async {
+        do {
+            cachedAccountInfo = SidebarAccountInfo(userSession.selfUser, cachedAccountImage, cachedAccountInfo.isE2EICertified)
+            let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
+            cachedAccountInfo.isE2EICertified = isE2EICertified
+        } catch {
+            WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
+        }
+    }
+
+    private func conversationFilter() -> ConversationFilter? {
+        conversationListViewController.conversationFilter
+    }
 }
 
 // MARK: - ZClientViewController + UserObserving
@@ -748,7 +758,7 @@ extension ZClientViewController: UserObserving {
 
             var sidebarUpdateNeeded = false
 
-            if changeInfo.nameChanged || changeInfo.availabilityChanged {
+            if changeInfo.nameChanged || changeInfo.availabilityChanged || changeInfo.trustLevelChanged {
                 sidebarUpdateNeeded = true
             }
 
@@ -764,9 +774,8 @@ extension ZClientViewController: UserObserving {
             }
 
             if sidebarUpdateNeeded {
-                let selfUser = userSession.selfUser
-                sidebarViewController.accountInfo = .init(selfUser, cachedAccountImage)
-                sidebarViewController.wireAccentColor = .init(rawValue: selfUser.accentColorValue) ?? .default
+                await updateCachedAccountInfo()
+                sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
             }
         }
     }

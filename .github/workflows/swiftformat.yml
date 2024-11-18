@@ -30,7 +30,7 @@ jobs:
       - name: GitHub Action for SwiftFormat
         run: >
           swiftformat --lint
-          ./SourceryPlugin
+          ./WirePlugins
           ./WireAPI
           ./WireAnalytics
           ./WireDomain
