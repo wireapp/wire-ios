@@ -167,15 +167,14 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
         let migrator = OneOnOneMigrator(mlsService: mlsService)
-        let featureRepository = FeatureRepository(context: context)
-        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(migrator: migrator, isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+            oneOnOneResolver: OneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
         )
     }
 

@@ -54,8 +54,7 @@ extension ZMUser: UserType {
 
     var isMLSEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let featureRepository = FeatureRepository(context: context)
-        let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        let mlsFeature = FeatureRepository(context: context).fetchMLS()
         return mlsFeature.isEnabled
     }
 

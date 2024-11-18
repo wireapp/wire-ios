@@ -326,8 +326,7 @@ public final class SharingSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
-            let mlsFeature = GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
             if mlsFeature.isEnabled, coreDataStack.syncContext.mlsDecryptionService == nil {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }

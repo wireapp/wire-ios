@@ -135,11 +135,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             quickSyncObserver: quickSyncObserver,
             context: syncMOC
         )
-        let featureRepository = FeatureRepository(context: syncMOC)
-        let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
+        let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
         let oneOnOneResolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
-            isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+            isMLSEnabled: mlsFeature.isEnabled)
 
         let strategies: [Any] = [
 

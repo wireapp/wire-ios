@@ -63,11 +63,10 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             do {
                 let mlsService = await syncContext.perform { syncContext.mlsService }
                 let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
-                let featureRepository = FeatureRepository(context: syncContext)
-                let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
-                let resolver = await OneOnOneResolver(
+                let mlsFeature = await FeatureRepository(context: syncContext).fetchMLS()
+                let resolver = OneOnOneResolver(
                     migrator: migrator,
-                    isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+                    isMLSEnabled: mlsFeature.isEnabled)
                 try await resolver.resolveAllOneOnOneConversations(in: syncContext)
 
                 await syncContext.perform {

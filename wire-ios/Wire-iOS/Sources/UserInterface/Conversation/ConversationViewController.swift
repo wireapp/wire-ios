@@ -411,11 +411,10 @@ final class ConversationViewController: UIViewController {
                     assertionFailure("mlsService is missing")
                     return
                 }
-                let featureRepository = FeatureRepository(context: syncContext)
-                let getMLSFeatureUseCase = GetMLSFeatureUseCase(featureRepository: featureRepository)
-                let resolver = await OneOnOneResolver(
+                let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
+                let resolver = OneOnOneResolver(
                     migrator: OneOnOneMigrator(mlsService: mlsService),
-                    isMLSEnabled: getMLSFeatureUseCase.invoke().isEnabled)
+                    isMLSEnabled: mlsFeature.isEnabled)
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {

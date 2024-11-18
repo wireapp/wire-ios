@@ -173,8 +173,7 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        let featureRepository = FeatureRepository(context: context)
-        let mlsFeature = await GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
         if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
@@ -898,8 +897,7 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        let featureRepository = FeatureRepository(context: context)
-        let mlsFeature = await GetMLSFeatureUseCase(featureRepository: featureRepository).invoke()
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
         guard mlsFeature.isEnabled else { return }
 
         await mlsEventProcessor.updateConversationIfNeeded(
