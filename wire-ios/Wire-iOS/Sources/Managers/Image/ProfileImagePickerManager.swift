@@ -21,8 +21,8 @@ import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {
 
-    func selectProfileImage(popoverSourceView: UIView) -> UIAlertController {
-        showActionSheet(popoverSourceView: popoverSourceView) { image in
+    func selectProfileImage(popoverConfiguration: PopoverPresentationControllerConfiguration) -> UIAlertController {
+        showActionSheet(popoverConfiguration: popoverConfiguration) { image in
             guard let jpegData = image.jpegData, let session = ZMUserSession.shared() else { return }
 
             session.enqueue {

@@ -305,7 +305,9 @@ extension SettingsCellDescriptorFactory {
         }
 
         let presentationAction: (_ sender: UIView) -> UIViewController? = { sender in
-            profileImagePicker.selectProfileImage(popoverSourceView: sender)
+            profileImagePicker.selectProfileImage(
+                popoverConfiguration: .sourceView(sourceView: sender, sourceRect: .null)
+            )
         }
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,

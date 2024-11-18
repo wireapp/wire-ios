@@ -209,7 +209,9 @@ final class SelfProfileViewController: UIViewController {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let imageView = profileHeaderViewController.imageView
-        let alertController = profileImagePicker.selectProfileImage(popoverSourceView: imageView)
+        let alertController = profileImagePicker.selectProfileImage(
+            popoverConfiguration: .sourceView(sourceView: imageView, sourceRect: .null)
+        )
         if let popoverPresentationController = alertController.popoverPresentationController {
             popoverPresentationController.sourceView = imageView
         }

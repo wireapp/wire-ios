@@ -41,15 +41,18 @@ class ImagePickerManager: NSObject {
 
     func showActionSheet(
         on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-        popoverSourceView: UIView,
+        popoverConfiguration: PopoverPresentationControllerConfiguration,
         completion: @escaping (UIImage) -> Void
     ) -> UIAlertController {
         self.completion = completion
 
-        return imagePickerAlert(popoverSourceView: popoverSourceView, viewController: viewController)
+        return imagePickerAlert(viewController: viewController, popoverConfiguration: popoverConfiguration)
     }
 
-    private func imagePickerAlert(popoverSourceView: UIView, viewController: UIViewController?) -> UIAlertController {
+    private func imagePickerAlert(
+        viewController: UIViewController?,
+        popoverConfiguration: PopoverPresentationControllerConfiguration
+    ) -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
         let actionSheet = UIAlertController(
             title: Alert.title,
@@ -65,7 +68,7 @@ class ImagePickerManager: NSObject {
                 getImage(
                     fromSourceType: .photoLibrary,
                     viewController: viewController,
-                    popoverSourceView: popoverSourceView
+                    popoverConfiguration: popoverConfiguration
                 )
             }
             actionSheet.addAction(galleryAction)
@@ -78,7 +81,7 @@ class ImagePickerManager: NSObject {
             getImage(
                 fromSourceType: .camera,
                 viewController: viewController,
-                popoverSourceView: popoverSourceView
+                popoverConfiguration: popoverConfiguration
             )
         }
         actionSheet.addAction(cameraAction)
@@ -92,7 +95,7 @@ class ImagePickerManager: NSObject {
     private func getImage(
         fromSourceType sourceType: UIImagePickerController.SourceType,
         viewController: UIViewController,
-        popoverSourceView: UIView
+        popoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType) else { return }
 
@@ -114,10 +117,8 @@ class ImagePickerManager: NSObject {
                 // UIKit will crash if the photo library is not presented using a popoverPresentationController on iPad
                 // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
                 imagePickerController.modalPresentationStyle = .popover
-                if let popoverPresentationController = imagePickerController.popoverPresentationController {
-                    popoverPresentationController.backgroundColor = UIColor.white
-                    popoverPresentationController.sourceView = popoverSourceView
-                }
+                imagePickerController.popoverPresentationController?.backgroundColor = .white
+                imagePickerController.configurePopoverPresentationController(using: popoverConfiguration)
             }
         default:
             break
