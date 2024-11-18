@@ -31,12 +31,10 @@ final class OneOnOneResolverTests: XCTestCase {
     private var mockRepository: MockFeatureRepositoryInterface!
 
     private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
-    private var oldDeveloperFlagStorage: UserDefaults!
 
     override func setUp() async throws {
         try await super.setUp()
 
-        oldDeveloperFlagStorage = DeveloperFlag.storage
         mockRepository = MockFeatureRepositoryInterface()
         mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
 
@@ -56,7 +54,6 @@ final class OneOnOneResolverTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
-        DeveloperFlag.storage = oldDeveloperFlagStorage
 
         try await super.tearDown()
     }
@@ -314,7 +311,7 @@ final class OneOnOneResolverTests: XCTestCase {
         OneOnOneResolver(
             protocolSelector: mockProtocolSelector,
             migrator: mockMigrator,
-            mlsEnabled: mockRepository.fetchMLS_MockValue?.isEnabled ?? false
+            isMLSEnabled: mockRepository.fetchMLS_MockValue?.isEnabled ?? false
         )
     }
 
