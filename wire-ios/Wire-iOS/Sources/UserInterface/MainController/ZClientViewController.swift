@@ -117,7 +117,7 @@ final class ZClientViewController: UIViewController {
         userSession: userSession
     )
 
-    private lazy var conversationListViewController = ConversationListViewController(
+    private(set) lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
@@ -126,7 +126,14 @@ final class ZClientViewController: UIViewController {
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         connectViewControllerBuilder: connectBuilder,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        createGroupConversationViewControllerBuilder: createGroupConversationBuilder
+        createGroupConversationViewControllerBuilder: createGroupConversationBuilder,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder(
+            conversationDirectory: userSession.conversationDirectory,
+            conversationFilter: { [weak self] in
+                self?.conversationFilter()
+            }
+        ),
+        getUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase()
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -617,7 +624,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter user: the UserType with client list to show
 
-    func openClientListScreen(for user: UserType) { // TODO: [WPB-11614] use mainCoordinator if possible
+    func openClientListScreen(for user: UserType) {
         var viewController: UIViewController?
 
         if user.isSelfUser, let clients = user.allClients as? [UserClient] {
@@ -647,10 +654,12 @@ final class ZClientViewController: UIViewController {
             viewController = profileViewController
         }
 
-        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
-        navWrapperController?.modalPresentationStyle = .formSheet
-        if let aController = navWrapperController {
-            present(aController, animated: true)
+        if let viewController {
+            let navigationController = UINavigationController(rootViewController: viewController)
+            navigationController.modalPresentationStyle = .formSheet
+            Task {
+                await mainCoordinator.presentViewController(navigationController)
+            }
         }
     }
 
@@ -730,6 +739,10 @@ final class ZClientViewController: UIViewController {
         } catch {
             WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
+    }
+
+    private func conversationFilter() -> ConversationFilter? {
+        conversationListViewController.conversationFilter
     }
 }
 

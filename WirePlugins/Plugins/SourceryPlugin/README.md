@@ -10,7 +10,7 @@ You can reference this plugin in your target:
 
 ```swift
 dependencies: [
-    .package(path: "../SourceryPlugin")
+    .package(path: "../WirePlugins")
 ],
 targets: [
 
@@ -24,7 +24,7 @@ targets: [
         name: "YourTargetSupport",
         dependencies: ["YourTarget"],
         plugins: [
-            .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+            .plugin(name: "SourceryPlugin", package: "WirePlugins")
         ]
     )
 ]

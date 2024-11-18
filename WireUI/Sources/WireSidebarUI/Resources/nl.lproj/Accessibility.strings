@@ -16,27 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-
-// MARK: - ConversationFolderSelectionUseCaseProtocol
-
-public protocol ConversationFolderSelectionUseCaseProtocol {
-
-    func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    )
-
-}
-
-// MARK: - ConversationFolderSelectionUseCase
-
-final class ConversationFolderSelectionUseCase: ConversationFolderSelectionUseCaseProtocol {
-
-    public func invoke<Conversation: ToFolderMovableConversation>(
-        folder: LabelType,
-        conversation: Conversation
-    ) {
-        conversation.moveToFolder(folder)
-    }
-}
+"sidebar.settings.description" = "Open your settings";
+"sidebar.support.description" = "Open support";
+"sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
+"sidebar.name.description" = "Profile name";
+"sidebar.handle.description" = "Gebruikersnaam";
