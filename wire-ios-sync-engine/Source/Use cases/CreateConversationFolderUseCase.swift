@@ -32,8 +32,8 @@ public struct CreateConversationFolderUseCase {
 
     // MARK: - Public Interface
 
-    public func invoke(with name: String) async -> LabelType? {
-        await managedObjectContext.perform {
+    public func invoke(with name: String) async throws -> LabelType? {
+       try await managedObjectContext.perform {
             var created = false
             let label = Label.fetchOrCreate(
                 remoteIdentifier: UUID(),
@@ -43,7 +43,15 @@ public struct CreateConversationFolderUseCase {
             )
             label?.name = name
             label?.kind = .folder
+
+            do {
+                try managedObjectContext.save()
+            } catch {
+               throw error
+            }
+
             return label
         }
     }
+
 }
