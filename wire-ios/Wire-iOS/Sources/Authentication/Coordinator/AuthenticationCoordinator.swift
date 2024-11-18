@@ -32,7 +32,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 
 /// Manages the flow of authentication for the user. Decides which steps to take for login, registration
 /// and team creation.
-/// 
+///
 /// Interaction with the different components is abstracted away in the *actions*. You can execute actions
 /// yourself, in response to user interaction. However, most of the time, actions are passed by the responder
 /// chain, which is composed of objects that compute the actions to execute in response to a notification
@@ -56,10 +56,10 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     // MARK: - Event Handling Properties
 
     /// The object responsible for handling events.
-    /// 
+    ///
     /// You use this object to tag events as they happen. It then iterates over the internal
     /// event handlers in the chain, to decide what actions to take.
-    /// 
+    ///
     /// The authentication coordinator is the delegate of the event responder chain, as it is
     /// responsible for executing the actions provided by the selected event handler.
 
@@ -415,7 +415,7 @@ extension AuthenticationCoordinator {
 
     /// Call this method when the application becomes unauthenticated and that the user
     /// needs to authenticate.
-    /// 
+    ///
     /// - parameter error: The error that caused the unauthenticated state, if any.
     /// - parameter numberOfAccounts: The number of accounts that are signed in with the app.
 
@@ -432,10 +432,10 @@ extension AuthenticationCoordinator {
     }
 
     /// Notifies the event responder chain that user input was provided.
-    /// 
+    ///
     /// The responder chain will then go through all the input event handlers and
     /// pick the first that accepts the input.
-    /// 
+    ///
     /// - parameter input: The input provided by the user.
 
     func handleUserInput(_ input: Any) {
@@ -545,10 +545,10 @@ extension AuthenticationCoordinator {
     // MARK: - Registration Code
 
     /// Starts the registration flow with the specified credentials.
-    /// 
+    ///
     /// This step will ask the registration status to send the activation code
     /// by text message or email. It will advance the state to `.sendActivationCode`.
-    /// 
+    ///
     /// - parameter credentials: The unverified credentials to register with.
 
     private func startRegistration(_ unverifiedEmail: String) {

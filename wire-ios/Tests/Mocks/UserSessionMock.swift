@@ -334,14 +334,14 @@ final class UserSessionMock: UserSession {
     }
 
     func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
-        UpdateConversationFolderUseCase(context: self.syncContext)
+        UpdateConversationFolderUseCase(context: syncContext)
     }
 
     func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol {
-        CreateConversationFolderUseCase(managedObjectContext: self.syncContext)
+        CreateConversationFolderUseCase(managedObjectContext: syncContext)
     }
 
-    var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
+    var e2eiFeature: Feature.E2EI = .init(status: .enabled)
 
     var mlsFeature: Feature.MLS = .init(
         status: .enabled,

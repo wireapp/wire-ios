@@ -20,7 +20,7 @@ import UIKit
 
 /// A view with rounded corners. Adopt this protocol if your view's layer is a `ContinuousMaskLayer`.
 /// This protocol provides utilities to easily change the rounded corners.
-/// 
+///
 /// You need to override `+ (Class *)layerClass` on `UIView` before conforming to this protocol.
 
 protocol RoundedViewProtocol: AnyObject {

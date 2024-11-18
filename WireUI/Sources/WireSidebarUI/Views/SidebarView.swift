@@ -45,7 +45,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountImageAction: @escaping () -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
-        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?) -> AccountImageView,
+        accountImageView: @escaping (_ accountImage: AccountImageSource, _ availability: Availability?)
+            -> AccountImageView,
         legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.accountInfo = accountInfo
@@ -196,7 +197,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         case .oneOnOne:
             text = Text(L10n.Sidebar.ConversationFilter.OneOnOneConversations.title)
             icon = "person"
-            accessibilityLabel = Text("sidebar.conversation_filter.oneOnOneConversations.description", tableName: "Accessibility", bundle: .module)
+            accessibilityLabel = Text(
+                "sidebar.conversation_filter.oneOnOneConversations.description",
+                tableName: "Accessibility",
+                bundle: .module
+            )
 
         case .folders:
             text = Text("sidebar.conversation_filter.folders.title", bundle: .module)

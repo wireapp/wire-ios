@@ -38,7 +38,7 @@ public final class ZiphyClient {
     let callbackQueue: DispatchQueue
 
     /// Creates a Giphy API client.
-    /// 
+    ///
     /// - parameter host: The host that provides the REST API for Giphy.
     /// - parameter requester: The object that will send and process the requests to the API.
     /// - parameter downloadSession: The requester to use to download images.
@@ -64,11 +64,11 @@ public final class ZiphyClient {
 public extension ZiphyClient {
 
     /// Attempts to fetch the list of trending GIF images.
-    /// 
+    ///
     /// - paraneter resultsLimit: The maximum number of images to fetch per page.
     /// - parameter offset: The offset of the first image to fetch.
     /// - parameter onCompletion: The block of code to execute with the result of the fetch.
-    /// 
+    ///
     /// - returns: The cancellable fetch task.
 
     @discardableResult
@@ -83,12 +83,12 @@ public extension ZiphyClient {
     }
 
     /// Attempts to search for GIF images that match the given query.
-    /// 
+    ///
     /// - parameter term: The search query to execute.
     /// - paraneter resultsLimit: The maximum number of images to fetch per page.
     /// - parameter offset: The offset of the first image to fetch.
     /// - parameter onCompletion: The block of code to execute with the result of the fetch.
-    /// 
+    ///
     /// - returns: The cancellable fetch task.
 
     @discardableResult
@@ -136,11 +136,11 @@ public extension ZiphyClient {
 public extension ZiphyClient {
 
     /// Attempts to fetch a random GIF image post.
-    /// 
+    ///
     /// - parameter callbackQueue: The queue where the callback should be executed. Defaults
     /// to the main queue.
     /// - parameter onCompletion: The block of code to execute with the result of the fetch.
-    /// 
+    ///
     /// - returns: The cancellable fetch task.
 
     @discardableResult
@@ -163,12 +163,12 @@ public extension ZiphyClient {
     }
 
     /// Attempts to fetch the animated image representation for the given GIF.
-    /// 
+    ///
     /// - parameter url: The remote URL of image to fetch.
     /// - parameter callbackQueue: The queue where the callback should be executed. Defaults
     /// to the main queue.
     /// - parameter onCompletion: The block of code to execute with the result of the fetch.
-    /// 
+    ///
     /// - returns: The cancellable fetch task.
 
     @discardableResult

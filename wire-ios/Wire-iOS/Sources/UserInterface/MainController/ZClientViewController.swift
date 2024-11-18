@@ -39,6 +39,7 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet { sidebarViewController.accountInfo.accountImageSource = cachedAccountImage }
     }
+
     private(set) var cachedAccountInfo = SidebarAccountInfo() {
         didSet { sidebarViewController.accountInfo = cachedAccountInfo }
     }
@@ -763,7 +764,11 @@ final class ZClientViewController: UIViewController {
 
     private func updateCachedAccountInfo() async {
         do {
-            cachedAccountInfo = SidebarAccountInfo(userSession.selfUser, cachedAccountImage, cachedAccountInfo.isE2EICertified)
+            cachedAccountInfo = SidebarAccountInfo(
+                userSession.selfUser,
+                cachedAccountImage,
+                cachedAccountInfo.isE2EICertified
+            )
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
@@ -802,7 +807,8 @@ extension ZClientViewController: UserObserving {
 
             if sidebarUpdateNeeded {
                 await updateCachedAccountInfo()
-                sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
+                sidebarViewController
+                    .wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
             }
         }
     }

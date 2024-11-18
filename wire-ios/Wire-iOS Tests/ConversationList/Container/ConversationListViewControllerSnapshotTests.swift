@@ -60,7 +60,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
         mockGetUserAccountImageSourceUseCase = .init()
-        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
+        mockGetUserAccountImageSourceUseCase
+            .invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
 
         snapshotHelper = .init()
 

@@ -154,7 +154,7 @@ extension Settings {
         // if let savedTags = UserDefaults.shared().object(forKey: enabledLogsKey) as? [String] {
         //    tagsToEnable = Set(savedTags)
         // }
-        // 
+        //
 
         enableLogs(tagsToEnable)
     }

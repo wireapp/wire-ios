@@ -46,7 +46,7 @@ enum FilterImageName: String {
     case person3Fill = "person.3.fill"
 
     /// Represents an unselected folder icon for a folder's conversations.
-    case folder = "folder"
+    case folder
 
     /// Represents a selected (filled) folder icon for a folder's conversations.
     case folderFill = "folder.fill"

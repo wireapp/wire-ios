@@ -29,7 +29,7 @@ enum MockURLSessionError: Error {
 }
 
 /// An object that provides the behavior of a URL session for testing purposes.
-/// 
+///
 /// You provide responses for given URLs by calling `scheduleResponseForURL`.
 
 class MockURLSession: DataTaskSession {
