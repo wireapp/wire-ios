@@ -54,6 +54,7 @@ final class EmptyPlaceholderView: UIView {
         setup(content, connectWithPeopleAction: connectWithPeopleAction)
     }
 
+    @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -61,16 +62,19 @@ final class EmptyPlaceholderView: UIView {
     // MARK: - Setup
 
     private func setup(_ content: ConversationListViewController.EmptyPlaceholder, connectWithPeopleAction: UIAction) {
-        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds
+            .surfaceVariant
         titleLabel = DynamicFontLabel(
             text: content.headline,
             style: .h2,
-            color: ColorTheme.Backgrounds.onSurfaceVariant)
+            color: ColorTheme.Backgrounds.onSurfaceVariant
+        )
 
         descriptionLabel = SubheadlineTextView(
             attributedText: content.subheadline,
             style: .body1,
-            color: ColorTheme.Backgrounds.onSurfaceVariant)
+            color: ColorTheme.Backgrounds.onSurfaceVariant
+        )
 
         titleLabel.textAlignment = .center
         descriptionLabel.textAlignment = .center
@@ -98,7 +102,7 @@ final class EmptyPlaceholderView: UIView {
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
 
-            arrowView.topAnchor.constraint(equalTo: topAnchor),
+            arrowView.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1),
             arrowView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -40),
             arrowView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -arrowOffset),
 

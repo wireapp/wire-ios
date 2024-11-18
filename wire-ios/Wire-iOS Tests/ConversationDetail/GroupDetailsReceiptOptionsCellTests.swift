@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class GroupDetailsReceiptOptionsCellTests: CoreDataSnapshotTestCase {
 
@@ -27,7 +27,7 @@ final class GroupDetailsReceiptOptionsCellTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         sut = GroupDetailsReceiptOptionsCell()
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
     }
 
     override func tearDown() {

@@ -38,11 +38,11 @@ public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         text: String,
         mentions: [Mention],
         replyingTo: ZMConversationMessage?,
-        in conversation: Conversation,
+        in conversation: some MessageAppendableConversation,
         fetchLinkPreview: Bool
     ) throws {
         try conversation.appendText(

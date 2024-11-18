@@ -25,9 +25,9 @@ import XCTest
 
 // MARK: - UIView extension
 
-extension UIView {
+private extension UIView {
 
-    fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
+    func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
         container.translatesAutoresizingMaskIntoConstraints = false
         container.widthAnchor.constraint(equalToConstant: size.width).isActive = true
@@ -140,7 +140,10 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     func testThatItRendersTextMessagePreview_LongText() {
-        let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed.")
+        let message = MockMessageFactory
+            .textMessage(
+                withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed."
+            )
         let sut = message.replyPreview()!.prepareForSnapshot()
 
         snapshotHelper
@@ -216,13 +219,19 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersLinkPreviewMessagePreview() {
         let url = "https://www.example.com/article/1"
-        let article = ArticleMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: url,
+            permanentURLString: url,
+            resolvedURLString: url,
+            offset: 0
+        )
         article.title = "You won't believe what happened next!"
 
         let message = MockMessageFactory.textMessage(withText: "https://www.example.com/article/1")
         message.backingTextMessageData.backingLinkPreview = article
         message.backingTextMessageData.linkPreviewImageCacheKey = "image-id-unsplash_matterhorn.jpg"
-        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)
+        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+            .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
         let previewView = message.replyPreview()!
@@ -250,7 +259,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     func testThatItRendersImageMessagePreview() throws {
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
         let previewView = try XCTUnwrap(message.replyPreview())
@@ -311,7 +320,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         verifyDeallocation {
-            return message.replyPreview()!
+            message.replyPreview()!
         }
     }
 

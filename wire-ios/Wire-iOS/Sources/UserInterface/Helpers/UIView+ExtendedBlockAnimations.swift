@@ -47,11 +47,13 @@ enum EasingFunction {
 }
 
 extension UIView {
-    class func animate(easing: EasingFunction,
-                       duration: TimeInterval,
-                       delayTime: TimeInterval = 0,
-                       animations: @escaping () -> Void,
-                       completion: ResultHandler? = nil) {
+    class func animate(
+        easing: EasingFunction,
+        duration: TimeInterval,
+        delayTime: TimeInterval = 0,
+        animations: @escaping () -> Void,
+        completion: ResultHandler? = nil
+    ) {
         let closure: () -> Void = {
             CATransaction.begin()
             CATransaction.setAnimationDuration(duration)

@@ -30,13 +30,14 @@ final class RandomGeneratorFromData: RandomGenerator {
     private var step: Int = 0
 
     init(data: Data) {
-        source = data
+        self.source = data
     }
 
     func rand<ContentType>() -> ContentType {
-        let currentStep = self.step
+        let currentStep = step
         let result = source.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> ContentType in
-            return pointer.baseAddress!.assumingMemoryBound(to: ContentType.self).advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
+            return pointer.baseAddress!.assumingMemoryBound(to: ContentType.self)
+                .advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
         }
         step += MemoryLayout<ContentType>.size
 
@@ -58,7 +59,7 @@ extension Array {
         var workingCopyIndices = [Int](indices)
         var resultIndices = [Int]()
         forEach { _ in
-            let rand: UInt = generator.rand() % (UInt)(workingCopyIndices.count)
+            let rand: UInt = generator.rand() % UInt(workingCopyIndices.count)
 
             resultIndices.append(workingCopyIndices[Int(rand)])
             workingCopyIndices.remove(at: Int(rand))
@@ -73,7 +74,7 @@ extension ZMConversation: StableRandomParticipantsProvider {
     /// because the conversation UUID is used as the random indexes source.
     var stableRandomParticipants: [UserType] {
         let allUsers = sortedActiveParticipants
-        guard let remoteIdentifier = self.remoteIdentifier else {
+        guard let remoteIdentifier else {
             return allUsers
         }
 
@@ -121,16 +122,16 @@ extension Mode {
 
     var showInitials: Bool {
         if case .one = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var shape: AvatarImageView.Shape {
         switch self {
-        case .one(serviceUser: true): return .relative
-        default: return .rectangle
+        case .one(serviceUser: true): .relative
+        default: .rectangle
         }
     }
 }
@@ -147,10 +148,10 @@ final class ConversationAvatarView: UIView {
 
     func configure(context: Context) {
         switch context {
-        case .connect(let users):
+        case let .connect(users):
             self.users = users
             mode = Mode(users: users)
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             self.conversation = conversation
             mode = Mode(conversationType: conversation.conversationType, users: users)
         }
@@ -162,7 +163,7 @@ final class ConversationAvatarView: UIView {
         didSet {
 
             guard let conversation else {
-                self.clippingView.subviews.forEach { $0.isHidden = true }
+                clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }
 
@@ -172,7 +173,7 @@ final class ConversationAvatarView: UIView {
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
 
             if stableRandomParticipants.isEmpty,
-                let connectedUser = conversation.connectedUserType {
+               let connectedUser = conversation.connectedUserType {
                 usersOnAvatar = [connectedUser]
             } else {
                 usersOnAvatar = stableRandomParticipants
@@ -184,8 +185,8 @@ final class ConversationAvatarView: UIView {
 
     private(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
-            self.clippingView.subviews.forEach { $0.isHidden = true }
-            self.userImages().forEach { $0.isHidden = false }
+            clippingView.subviews.forEach { $0.isHidden = true }
+            userImages().forEach { $0.isHidden = false }
 
             if case .one = mode {
                 layer.borderWidth = 0
@@ -196,8 +197,8 @@ final class ConversationAvatarView: UIView {
                 backgroundColor = UIColor(white: 0, alpha: 0.16)
             }
 
-            var index: Int = 0
-            self.userImages().forEach { userImage in
+            var index = 0
+            userImages().forEach { userImage in
                 userImage.userSession = ZMUserSession.shared()
                 userImage.shouldDesaturate = false
                 userImage.size = mode == .four ? .tiny : .small
@@ -220,24 +221,24 @@ final class ConversationAvatarView: UIView {
     }
 
     private var userImageViews: [UserImageView] {
-        return [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+        [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
     }
 
     func userImages() -> [UserImageView] {
         switch mode {
         case .none:
-            return []
+            []
 
         case .one:
-            return [imageViewLeftTop]
+            [imageViewLeftTop]
 
         case .four:
-            return userImageViews
+            userImageViews
         }
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
+        CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
     }
 
     let clippingView = UIView()
@@ -247,26 +248,21 @@ final class ConversationAvatarView: UIView {
 
         return userImageView
     }()
-    lazy var imageViewRightTop: UserImageView = {
-        return UserImageView()
-    }()
 
-    lazy var imageViewLeftBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewRightTop: UserImageView = .init()
 
-    lazy var imageViewRightBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewLeftBottom: UserImageView = .init()
+
+    lazy var imageViewRightBottom: UserImageView = .init()
 
     init() {
         super.init(frame: .zero)
-        userImageViews.forEach(self.clippingView.addSubview)
+        userImageViews.forEach(clippingView.addSubview)
         updateCornerRadius()
         autoresizesSubviews = false
         layer.masksToBounds = true
         clippingView.clipsToBounds = true
-        self.addSubview(clippingView)
+        addSubview(clippingView)
     }
 
     @available(*, unavailable)
@@ -276,16 +272,16 @@ final class ConversationAvatarView: UIView {
 
     let interAvatarInset: CGFloat = 2
     var containerSize: CGSize {
-        return self.clippingView.bounds.size
+        clippingView.bounds.size
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard self.bounds != .zero else {
+        guard bounds != .zero else {
             return
         }
 
-        clippingView.frame = self.bounds.insetBy(dx: 2, dy: 2)
+        clippingView.frame = bounds.insetBy(dx: 2, dy: 2)
 
         switch mode {
         case .none:
@@ -295,7 +291,10 @@ final class ConversationAvatarView: UIView {
                 userImage.frame = clippingView.bounds
             }
         case .four:
-            layoutMultipleAvatars(with: CGSize(width: (containerSize.width - interAvatarInset) / 2.0, height: (containerSize.height - interAvatarInset) / 2.0))
+            layoutMultipleAvatars(with: CGSize(
+                width: (containerSize.width - interAvatarInset) / 2.0,
+                height: (containerSize.height - interAvatarInset) / 2.0
+            ))
         }
 
         updateCornerRadius()
@@ -318,7 +317,7 @@ final class ConversationAvatarView: UIView {
 
     private func updateCornerRadius() {
         switch mode {
-        case .one(serviceUser: let serviceUser):
+        case let .one(serviceUser: serviceUser):
             layer.cornerRadius = serviceUser ? 0 : layer.bounds.width / 2.0
             clippingView.layer.cornerRadius = serviceUser ? 0 : clippingView.layer.bounds.width / 2.0
         default:

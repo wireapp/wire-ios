@@ -64,9 +64,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             useTypeIntrinsicSizeTableView: true,
             settingsCoordinator: settingsCoordinator
         )
-        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-        return viewController
+        return sut.wrapInNavigationController()
     }
 
     // MARK: Snapshot Tests

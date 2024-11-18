@@ -68,6 +68,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             }
         }
     }
+
     var sourceMessage: ZMConversationMessage?
     private var nowPlayingInfo: [String: Any]?
     private var playHandler: Any?
@@ -95,7 +96,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var elapsedTime: TimeInterval {
-        guard let time = avPlayer?.currentTime() else { return 0}
+        guard let time = avPlayer?.currentTime() else { return 0 }
 
         if CMTIME_IS_VALID(time) {
             return TimeInterval(time.value) / TimeInterval(time.timescale)
@@ -127,9 +128,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         setIsRemoteCommandCenterEnabled(false)
     }
 
-    func load(_ track: AudioTrack,
-              sourceMessage: ZMConversationMessage,
-              completionHandler: AudioTrackCompletionHandler? = nil) {
+    func load(
+        _ track: AudioTrack,
+        sourceMessage: ZMConversationMessage,
+        completionHandler: AudioTrackCompletionHandler? = nil
+    ) {
         progress = 0
         audioTrack = track
         self.sourceMessage = sourceMessage
@@ -153,7 +156,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
                     self?.playRateChanged()
                 }
 
-                playerCurrentItemObserver = avPlayer?.observe(\AVPlayer.currentItem, options: [.new, .initial, .old]) { [weak self] _, _ in
+                playerCurrentItemObserver = avPlayer?.observe(\AVPlayer.currentItem, options: [
+                    .new,
+                    .initial,
+                    .old
+                ]) { [weak self] _, _ in
                     self?.playCurrentItemChanged()
                 }
             }
@@ -163,23 +170,35 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
 
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlay(toEndTime:)), name: .AVPlayerItemDidPlayToEndTime, object: avPlayer?.currentItem)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(itemDidPlay(toEndTime:)),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: avPlayer?.currentItem
+        )
 
         if let timeObserverToken {
             avPlayer?.removeTimeObserver(timeObserverToken)
         }
 
-        timeObserverToken = avPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main, using: { [weak self] time in
-            guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
+        timeObserverToken = avPlayer?.addPeriodicTimeObserver(
+            forInterval: CMTimeMake(value: 1, timescale: 60),
+            queue: DispatchQueue.main,
+            using: { [weak self] time in
+                guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
 
-            let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
+                let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
 
-            let normalizedRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: CMTimeMake(value: 1, timescale: 1))
+                let normalizedRange = CMTimeRangeMake(
+                    start: CMTimeMake(value: 0, timescale: 1),
+                    duration: CMTimeMake(value: 1, timescale: 1)
+                )
 
-            let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
+                let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
 
-            progress = CMTimeGetSeconds(normalizedTime)
-        })
+                progress = CMTimeGetSeconds(normalizedTime)
+            }
+        )
 
         messageObserverToken = userSession.addMessageObserver(
             self,
@@ -278,10 +297,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var title: String? {
-        return audioTrack?.title
+        audioTrack?.title
     }
 
     // MARK: - MPNowPlayingInfoCenter
+
     private func clearNowPlayingState() {
         let info = MPNowPlayingInfoCenter.default()
         info.nowPlayingInfo = nil
@@ -301,6 +321,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     // MARK: AVPlayer notifications
+
     @objc
     private func itemDidPlay(toEndTime notification: Notification?) {
         // AUDIO-557 workaround for AVSMediaManager trying to pause already paused tracks.
@@ -315,18 +336,18 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     // MARK: - MPNowPlayingInfoCenter
 
     func populateNowPlayingState() {
-        let playbackDuration: NSNumber
-        if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
-            playbackDuration = NSNumber(value: CMTimeGetSeconds(duration))
+        let playbackDuration: NSNumber = if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
+            NSNumber(value: CMTimeGetSeconds(duration))
         } else {
-            playbackDuration = 0
+            0
         }
 
         let nowPlayingInfo: [String: Any] = [
             MPMediaItemPropertyTitle: audioTrack?.title ?? "",
             MPMediaItemPropertyArtist: audioTrack?.author ?? "",
             MPNowPlayingInfoPropertyPlaybackRate: NSNumber(value: avPlayer?.rate ?? 0),
-            MPMediaItemPropertyPlaybackDuration: playbackDuration]
+            MPMediaItemPropertyPlaybackDuration: playbackDuration
+        ]
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         self.nowPlayingInfo = nowPlayingInfo
@@ -334,6 +355,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
 }
 
 // MARK: - ZMMessageObserver
+
 extension AudioTrackPlayer: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if changeInfo.message.hasBeenDeleted {

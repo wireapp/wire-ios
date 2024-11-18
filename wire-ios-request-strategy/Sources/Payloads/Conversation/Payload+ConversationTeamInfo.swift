@@ -25,7 +25,7 @@ extension Payload {
             case managed
         }
 
-        init (teamID: UUID, managed: Bool = false) {
+        init(teamID: UUID, managed: Bool = false) {
             self.teamID = teamID
             self.managed = managed
         }

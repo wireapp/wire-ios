@@ -39,17 +39,19 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         featureRepository: FeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
-        accountId: UUID) {
-            self.featureRepository = featureRepository
-            self.featureRepositoryContext = featureRepositoryContext
-            self.recurringActionService = recurringActionService
-            self.actionId = "\(accountId).enrollCertificate"
-        }
+        accountId: UUID
+    ) {
+        self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
+        self.recurringActionService = recurringActionService
+        self.actionId = "\(accountId).enrollCertificate"
+    }
 
     // MARK: - Methods
 
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
-    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
+    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating
+    /// certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
     func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
         let timeProvider = SnoozeTimeProvider()
@@ -58,6 +60,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     }
 
     // MARK: - Helpers
+
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
         let isE2EIEnabled = await featureRepositoryContext.perform {
             self.featureRepository.fetchE2EI().isEnabled
@@ -72,8 +75,10 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
                 let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
-                NotificationCenter.default.post(name: .featureDidChangeNotification,
-                                                object: notificationObject)
+                NotificationCenter.default.post(
+                    name: .featureDidChangeNotification,
+                    object: notificationObject
+                )
             }
         }
 

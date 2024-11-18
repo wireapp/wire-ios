@@ -34,7 +34,7 @@ public final class LAContextStorage: LAContextStorable {
 
     public var context: LAContext? {
         get {
-            return internalQueue.sync { internalContext }
+            internalQueue.sync { internalContext }
         }
         set {
             internalQueue.sync { internalContext = newValue }

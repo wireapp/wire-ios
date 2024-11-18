@@ -149,7 +149,10 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
 
-        iconButton.setBackgroundImageColor(configuration.backgroundColorSelectedAndHighlighted, for: .selectedAndHighlighted)
+        iconButton.setBackgroundImageColor(
+            configuration.backgroundColorSelectedAndHighlighted,
+            for: .selectedAndHighlighted
+        )
 
         blurView.isHidden = !configuration.showBlur
     }
@@ -157,7 +160,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
 }
 
 // MARK: - Helper
- extension UIControl.State {
+
+extension UIControl.State {
     static let disabledAndSelected: UIControl.State = [.disabled, .selected]
     static let selectedAndHighlighted: UIControl.State = [.highlighted, .selected]
 }

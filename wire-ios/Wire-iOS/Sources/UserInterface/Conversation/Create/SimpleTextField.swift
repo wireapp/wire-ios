@@ -30,8 +30,11 @@ protocol SimpleTextFieldDelegate: AnyObject {
 final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - Properties
-    var attribute: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-                                                    .font: FontSpec.smallRegularFont.font!]
+
+    var attribute: [NSAttributedString.Key: Any] = [
+        .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+        .font: FontSpec.smallRegularFont.font!
+    ]
     enum Value {
         case valid(String)
         case error(SimpleTextFieldValidator.ValidationError)
@@ -53,10 +56,11 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - UI constants
 
-    var textInsets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
+    var textInsets: UIEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 8)
     var placeholderInsets: UIEdgeInsets
 
     // MARK: Initialization
+
     /// Init with kind for keyboard style and validator type. Default is .unknown
     ///
     /// - Parameter kind: the type of text field
@@ -64,7 +68,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
-        placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
+        self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
         super.init(frame: .zero)
 
@@ -79,6 +83,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 
     // MARK: - Private methods
+
     private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
@@ -102,10 +107,11 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 
     // MARK: - Override methods
+
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         let textRect = super.textRect(forBounds: bounds)
 
-        return textRect.inset(by: self.textInsets)
+        return textRect.inset(by: textInsets)
     }
 
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
@@ -117,16 +123,16 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
 
-        return placeholder && attribute
+        placeholder && attribute
     }
 
     func updatePlaceholderAttributedText(attributes: [NSAttributedString.Key: Any]) {
-        attributedPlaceholder = NSAttributedString(string: self.placeholder ?? "", attributes: attributes)
+        attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: attributes)
     }
 
     override var placeholder: String? {
         get {
-            return super.placeholder
+            super.placeholder
         }
 
         set {
@@ -140,8 +146,8 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         get {
             guard let text,
                   !text.isEmpty else {
-                      return super.accessibilityValue ?? placeholder
-                  }
+                return super.accessibilityValue ?? placeholder
+            }
             return text
         }
 
@@ -156,6 +162,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 }
 
 // MARK: SimpleTextField Extension
+
 extension SimpleTextField: SimpleTextFieldValidatorDelegate {
 
     func textFieldValueChanged(_ text: String?) {

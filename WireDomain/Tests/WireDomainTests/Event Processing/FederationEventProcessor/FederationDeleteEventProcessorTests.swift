@@ -19,8 +19,8 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import XCTest
+@testable import WireDomain
 
 final class FederationDeleteEventProcessorTests: XCTestCase {
 

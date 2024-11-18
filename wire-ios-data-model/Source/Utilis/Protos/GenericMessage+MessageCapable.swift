@@ -27,10 +27,10 @@ public protocol EphemeralMessageCapable: MessageCapable {
     func setEphemeralContent(on ephemeral: inout Ephemeral)
 }
 
-extension MessageCapable {
-    public var expectsReadConfirmation: Bool {
+public extension MessageCapable {
+    var expectsReadConfirmation: Bool {
         get {
-            return false
+            false
         }
         set {}
     }

@@ -17,9 +17,9 @@
 //
 
 import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class UserDeleteEventProcessorTests: XCTestCase {
 
@@ -43,7 +43,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_User_Account_Repo_Method() async throws {
         // Mock
 
-        userRepository.deleteUserAccountWithDomainAt_MockMethod = { _, _, _ in }
+        userRepository.deleteUserAccountIdDomainAt_MockMethod = { _, _, _ in }
 
         // When
 
@@ -51,7 +51,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.deleteUserAccountWithDomainAt_Invocations.count, 1)
+        XCTAssertEqual(userRepository.deleteUserAccountIdDomainAt_Invocations.count, 1)
     }
 
     private enum Scaffolding {

@@ -45,9 +45,9 @@ final class CameraController {
 
     init?(camera: SettingsCamera) {
         guard !UIDevice.isSimulator else { return nil }
-        currentCamera = camera
+        self.currentCamera = camera
         setupSession()
-        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
     }
 
     // MARK: - Session Management
@@ -131,31 +131,25 @@ final class CameraController {
 
     // MARK: - Device Management
 
-    /**
-     * The capture device for the given camera position, if available.
-     */
+    /// The capture device for the given camera position, if available.
     private func cameraDevice(for position: AVCaptureDevice.Position) -> AVCaptureDevice? {
-        return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+        AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
     }
 
-    /**
-     * The device input for the given camera, if available.
-     */
+    /// The device input for the given camera, if available.
     private func input(for camera: SettingsCamera) -> AVCaptureDeviceInput? {
         switch camera {
-        case .front:    return frontCameraDeviceInput
-        case .back:     return backCameraDeviceInput
+        case .front:    frontCameraDeviceInput
+        case .back:     backCameraDeviceInput
         }
     }
 
-    /**
-     * Connects the input for the given camera, if it is available.
-     */
+    /// Connects the input for the given camera, if it is available.
     private func connectInput(for camera: SettingsCamera) {
         guard
             let input = input(for: camera),
             session.canAddInput(input)
-            else { return }
+        else { return }
 
         sessionQueue.async {
             self.session.beginConfiguration()
@@ -165,11 +159,9 @@ final class CameraController {
         }
     }
 
-    /**
-     * Disconnects the current camera and connects the given camera, but only
-     * if both camera inputs are available. The completion callback is passed
-     * a boolean value indicating whether the change was successful.
-     */
+    /// Disconnects the current camera and connects the given camera, but only
+    /// if both camera inputs are available. The completion callback is passed
+    /// a boolean value indicating whether the change was successful.
     func switchCamera(completion: @escaping (_ currentCamera: SettingsCamera) -> Void) {
         let newCamera = currentCamera == .front ? SettingsCamera.back : .front
 
@@ -177,7 +169,7 @@ final class CameraController {
             !isSwitching, canSwitchInputs,
             let toRemove = input(for: currentCamera),
             let toAdd = input(for: newCamera)
-            else { return completion(currentCamera) }
+        else { return completion(currentCamera) }
 
         isSwitching = true
 
@@ -194,15 +186,13 @@ final class CameraController {
         }
     }
 
-    /**
-     * Updates the orientation of the video preview layer to best fit the
-     * device/ui orientation.
-     */
+    /// Updates the orientation of the video preview layer to best fit the
+    /// device/ui orientation.
     func updatePreviewOrientation() {
         guard
             let connection = previewLayer.connection,
             connection.isVideoOrientationSupported
-            else { return }
+        else { return }
 
         connection.videoOrientation = AVCaptureVideoOrientation.current
     }
@@ -211,11 +201,9 @@ final class CameraController {
 
     typealias PhotoResult = (data: Data?, error: Error?)
 
-    /**
-     * Asynchronously attempts to capture a photo within the currently
-     * configured session. The result is passed into the given handler
-     * callback.
-     */
+    /// Asynchronously attempts to capture a photo within the currently
+    /// configured session. The result is passed into the given handler
+    /// callback.
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
 
         // For iPad split/slide over mode, the session is not running.
@@ -230,8 +218,10 @@ final class CameraController {
 
             let jpegType = AVVideoCodecType.jpeg
 
-            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: jpegType,
-                                                           AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9]])
+            let settings = AVCapturePhotoSettings(format: [
+                AVVideoCodecKey: jpegType,
+                AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9]
+            ])
 
             let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
                 self.sessionQueue.async { self.captureDelegates[settings.uniqueID] = nil }
@@ -242,30 +232,37 @@ final class CameraController {
         }
     }
 
-    /**
-     * A PhotoCaptureDelegate is responsible for processing the photo buffers
-     * returned from `AVCapturePhotoOutput`. For each photo captured, there is
-     * one unique delegate object responsible.
-     */
+    /// A PhotoCaptureDelegate is responsible for processing the photo buffers
+    /// returned from `AVCapturePhotoOutput`. For each photo captured, there is
+    /// one unique delegate object responsible.
     private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
 
         private let settings: AVCapturePhotoSettings
         private let handler: (PhotoResult) -> Void
         private let completion: () -> Void
 
-        init(settings: AVCapturePhotoSettings,
-             handler: @escaping (PhotoResult) -> Void,
-             completion: @escaping () -> Void) {
+        init(
+            settings: AVCapturePhotoSettings,
+            handler: @escaping (PhotoResult) -> Void,
+            completion: @escaping () -> Void
+        ) {
             self.settings = settings
             self.handler = handler
             self.completion = completion
         }
 
-        func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        func photoOutput(
+            _ output: AVCapturePhotoOutput,
+            didFinishProcessingPhoto photo: AVCapturePhoto,
+            error: Error?
+        ) {
             defer { completion() }
 
             if let error {
-                zmLog.error("PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)")
+                zmLog
+                    .error(
+                        "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
+                    )
                 handler(PhotoResult(nil, error))
                 return
             }

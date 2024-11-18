@@ -42,11 +42,13 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockFlowManager = FlowManagerMock()
-        mockWireCallCenterV3 = WireCallCenterV3Mock(userId: AVSIdentifier.stub,
-                                                    clientId: UUID().transportString(),
-                                                    uiMOC: uiMOC,
-                                                    flowManager: mockFlowManager,
-                                                    transport: WireCallCenterTransportMock())
+        mockWireCallCenterV3 = WireCallCenterV3Mock(
+            userId: AVSIdentifier.stub,
+            clientId: UUID().transportString(),
+            uiMOC: uiMOC,
+            flowManager: mockFlowManager,
+            transport: WireCallCenterTransportMock()
+        )
 
         let aliceId = AVSIdentifier.stub
         let bobId = AVSIdentifier.stub
@@ -69,7 +71,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     }
 
     private func createSut(members: [AVSCallMember]) -> Sut {
-        return Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
+        Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
     }
 
     // MARK: - Duplicates
@@ -185,7 +187,11 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 
     func setupCallSnapshot() {
         mockWireCallCenterV3.callSnapshots[conversationId] = CallSnapshot(
-            callParticipants: CallParticipantsSnapshot(conversationId: conversationId, members: [], callCenter: mockWireCallCenterV3),
+            callParticipants: CallParticipantsSnapshot(
+                conversationId: conversationId,
+                members: [],
+                callCenter: mockWireCallCenterV3
+            ),
             callState: .established,
             callStarter: aliceIphone.avsIdentifier,
             isVideo: false,
@@ -215,7 +221,11 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             self.client1.user = self.selfUser
             self.client1.remoteIdentifier = self.aliceDesktop.clientId
 
-            self.user2 = ZMUser.fetchOrCreate(with: self.bobIphone.avsIdentifier.identifier, domain: nil, in: self.uiMOC)
+            self.user2 = ZMUser.fetchOrCreate(
+                with: self.bobIphone.avsIdentifier.identifier,
+                domain: nil,
+                in: self.uiMOC
+            )
 
             self.client2 = UserClient.insertNewObject(in: self.uiMOC)
             self.client2.user = self.user2
@@ -255,24 +265,30 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 private extension AVSCallMember {
 
     func with(audioState: AudioState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(
+            client: client,
+            audioState: audioState,
+            videoState: videoState,
+            microphoneState: microphoneState
+        )
     }
 
     func with(videoState: VideoState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(
+            client: client,
+            audioState: audioState,
+            videoState: videoState,
+            microphoneState: microphoneState
+        )
     }
 
     func with(microphoneState: MicrophoneState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(
+            client: client,
+            audioState: audioState,
+            videoState: videoState,
+            microphoneState: microphoneState
+        )
     }
 
 }

@@ -23,6 +23,7 @@ import XCTest
 
 final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptionsViewModelConfiguration {
     // MARK: Properties
+
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
     var allowServices: Bool
     var allowServicesChangedHandler: ((Bool) -> Void)?
@@ -30,6 +31,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
     var setAllowServices: SetHandler?
 
     // MARK: Init
+
     init(allowServices: Bool, setAllowServices: SetHandler? = nil) {
         self.allowServices = allowServices
         self.setAllowServices = setAllowServices

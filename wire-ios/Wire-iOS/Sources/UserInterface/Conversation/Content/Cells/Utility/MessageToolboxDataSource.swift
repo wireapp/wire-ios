@@ -41,11 +41,11 @@ extension MessageToolboxContent: Comparable {
     static func < (lhs: MessageToolboxContent, rhs: MessageToolboxContent) -> Bool {
         switch (lhs, rhs) {
         case (.sendFailure, _):
-            return true
+            true
         case (.details, _):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -53,11 +53,9 @@ extension MessageToolboxContent: Comparable {
 
 // MARK: - Data Source
 
-/**
- * An object that determines what content to display for the given message.
- */
+/// An object that determines what content to display for the given message.
 
-typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
+typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
 
 final class MessageToolboxDataSource {
 
@@ -76,7 +74,7 @@ final class MessageToolboxDataSource {
     private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
 
     private var attributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: statusFont, .foregroundColor: statusTextColor]
+        [.font: statusFont, .foregroundColor: statusTextColor]
     }
 
     // MARK: - Initialization
@@ -89,16 +87,14 @@ final class MessageToolboxDataSource {
 
     // MARK: - Content
 
-    /**
-     * Updates the contents of the message toolbox.
-     * - parameter widthConstraint: The width available to rend the toolbox contents.
-     * - Returns: A boolean to either update the content of the message toolbox or not
-     */
+    /// Updates the contents of the message toolbox.
+    /// - parameter widthConstraint: The width available to rend the toolbox contents.
+    /// - Returns: A boolean to either update the content of the message toolbox or not
     func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
         // Compute the state
         let isSentBySelfUser = message.senderUser?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
-        let previousContent = self.content
+        let previousContent = content
 
         // Determine the content by priority
 
@@ -111,20 +107,19 @@ final class MessageToolboxDataSource {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
-        else if failedToSend && isSentBySelfUser {
+        else if failedToSend, isSentBySelfUser {
             typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
 
-            let detailsString: String
-            switch message.expirationReason {
+            let detailsString: String = switch message.expirationReason {
             case .none, .other, .timeout:
-                detailsString = Message.generalReason
+                Message.generalReason
             case .federationRemoteError:
-                detailsString = Message.federationRemoteErrorReason(
+                Message.federationRemoteErrorReason(
                     message.conversationLike?.domain ?? "",
                     WireURLs.shared.unreachableBackendInfo.absoluteString
                 )
             case .cancelled:
-                detailsString = Message.userCancelledUploadReason
+                Message.userCancelledUploadReason
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -148,7 +143,8 @@ final class MessageToolboxDataSource {
 
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> NSAttributedString {
-        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
+        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+           let timestamp = timestampString(message) {
 
             let childrenTimestamps = childMessages
                 .compactMap { $0 as? ZMConversationMessage }
@@ -156,7 +152,7 @@ final class MessageToolboxDataSource {
                 .compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { text, current in
-                return "\(text)\n\(current)"
+                "\(text)\n\(current)"
             }
 
             return finalText && attributes
@@ -171,7 +167,7 @@ final class MessageToolboxDataSource {
 
         let deliveryStateString = selfMessageStatus(for: message)
 
-        if let timestampString = self.timestampString(message), message.isSent {
+        if let timestampString = timestampString(message), message.isSent {
             if let deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
             } else {
@@ -184,12 +180,13 @@ final class MessageToolboxDataSource {
 
     private func makeEphemeralCountdown() -> NSAttributedString? {
         let showDestructionTimer = message.isEphemeral &&
-        !message.isObfuscated &&
-        message.destructionDate != nil &&
-        message.deliveryState != .pending
+            !message.isObfuscated &&
+            message.destructionDate != nil &&
+            message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
-            let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
+            let remaining = destructionDate
+                .timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
 
             if remaining > 0 {
                 if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
@@ -235,8 +232,8 @@ final class MessageToolboxDataSource {
     }
 
     /// Creates the status for the read receipts.
-    fileprivate func selfStatusForReadDeliveryState(for message: ZMConversationMessage) -> NSAttributedString? {
-        guard let conversationType = message.conversationLike?.conversationType else {return nil}
+    private func selfStatusForReadDeliveryState(for message: ZMConversationMessage) -> NSAttributedString? {
+        guard let conversationType = message.conversationLike?.conversationType else { return nil }
 
         switch conversationType {
         case .group:
@@ -246,8 +243,10 @@ final class MessageToolboxDataSource {
             ]
 
             let imageIcon = seenTextAttachment()
-            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" && attributes
-            attributedString.accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
+            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" &&
+                attributes
+            attributedString
+                .accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
             return attributedString
 
         case .oneOnOne:
@@ -274,8 +273,8 @@ final class MessageToolboxDataSource {
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
         } else if let dateTimeString = message.formattedReceivedDate(),
-            let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone {
+                  let systemMessage = message as? ZMSystemMessage,
+                  systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

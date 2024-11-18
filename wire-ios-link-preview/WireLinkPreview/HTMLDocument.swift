@@ -32,7 +32,8 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 
     /// Tries to create a new HTML document.
     init?(xmlString: String) {
-        let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) | Int32(HTML_PARSE_RECOVER.rawValue)
+        let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) |
+            Int32(HTML_PARSE_RECOVER.rawValue)
         let data = Data(xmlString.utf8)
 
         let decodedDocument = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> xmlDocPtr? in
@@ -46,7 +47,7 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 
     /// Returns the root element of the document.
     var rootElement: xmlNodePtr? {
-        return xmlDocGetRootElement(self)
+        xmlDocGetRootElement(self)
     }
 
     /// Releases the resources used by an HTML document after we are done processing it.
@@ -60,7 +61,7 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
 
     /// The name of the HTML tag.
     var tagName: HTMLStringBuffer {
-        return HTMLStringBuffer(unowned: pointee.name)
+        HTMLStringBuffer(unowned: pointee.name)
     }
 
     /// The textual content of the element.
@@ -98,12 +99,10 @@ final class HTMLChildrenIterator: IteratorProtocol {
     }
 
     func next() -> HTMLElement? {
-        let nextPtr: xmlNodePtr?
-
-        if let currentChild = self.currentChild {
-            nextPtr = xmlNextElementSibling(currentChild)
+        let nextPtr: xmlNodePtr? = if let currentChild {
+            xmlNextElementSibling(currentChild)
         } else {
-            nextPtr = xmlFirstElementChild(rootElement)
+            xmlFirstElementChild(rootElement)
         }
 
         currentChild = nextPtr
@@ -111,9 +110,7 @@ final class HTMLChildrenIterator: IteratorProtocol {
     }
 }
 
-/**
- * Wrapper around a `xmlCharPtr`, that represents an HTML string.
- */
+/// Wrapper around a `xmlCharPtr`, that represents an HTML string.
 
 final class HTMLStringBuffer {
     enum Storage {
@@ -141,13 +138,11 @@ final class HTMLStringBuffer {
 
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {
-        let stringValue: String
-
-        switch storage {
-        case .retained(let ptr):
-            stringValue = String(cString: ptr)
-        case .unowned(let ptr):
-            stringValue = String(cString: ptr)
+        let stringValue = switch storage {
+        case let .retained(ptr):
+            String(cString: ptr)
+        case let .unowned(ptr):
+            String(cString: ptr)
         }
 
         return removeEntities ? stringValue.removingHTMLEntities() : stringValue
@@ -158,9 +153,9 @@ final class HTMLStringBuffer {
 /// Compares an HTML string with an UTF-8 Swift string.
 func == (lhs: HTMLStringBuffer, rhs: String) -> Bool {
     switch lhs.storage {
-    case .retained(let ptr):
-        return xmlStrEqual(ptr, rhs) == 1
-    case .unowned(let ptr):
-        return xmlStrEqual(ptr, rhs) == 1
+    case let .retained(ptr):
+        xmlStrEqual(ptr, rhs) == 1
+    case let .unowned(ptr):
+        xmlStrEqual(ptr, rhs) == 1
     }
 }
