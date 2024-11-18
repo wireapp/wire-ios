@@ -118,7 +118,7 @@ public final class SidebarViewController: UIViewController {
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
         }, foldersAction: { [weak self] rect in
-            self?.delegate?.sidebarViewController(self!, didTapFoldersAt: rect)
+            self?.delegate?.sidebarViewController(self!, didTapFoldersMenuItem: rect)
         }, connectAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in

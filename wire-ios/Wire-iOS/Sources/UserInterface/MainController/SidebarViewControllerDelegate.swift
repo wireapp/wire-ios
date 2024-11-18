@@ -49,7 +49,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     }
 
     @MainActor
-    func sidebarViewController(_ viewController: WireSidebarUI.SidebarViewController, didTapFoldersAt rect: CGRect) {
+    func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect) {
         Task {
             let folderPicker = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
             folderPicker.modalPresentationStyle = .popover
@@ -58,7 +58,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                let view = viewController.view,
                let window = view.window {
                 popover.sourceView = view
-                popover.sourceRect = view.convert(rect, from: window)
+                popover.sourceRect = view.convert(frame, from: window)
             }
 
             viewController.present(folderPicker, animated: true)
