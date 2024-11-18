@@ -34,6 +34,15 @@ public class MockAnalyticsServiceProtocol: AnalyticsServiceProtocol {
 
     public var underlyingIsTrackingEnabled: Bool!
 
+    // MARK: - canEnableTracking
+
+    public var canEnableTracking: Bool {
+        get { underlyingCanEnableTracking }
+        set(value) { underlyingCanEnableTracking = value }
+    }
+
+    public var underlyingCanEnableTracking: Bool!
+
     // MARK: - enableTracking
 
     public var enableTracking_Invocations: [Void] = []
