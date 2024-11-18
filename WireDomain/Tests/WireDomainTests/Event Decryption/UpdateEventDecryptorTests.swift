@@ -46,7 +46,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
         mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
         messageRepository = MockMessageRepositoryProtocol()
-        
+
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,

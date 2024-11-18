@@ -27,14 +27,13 @@ public protocol MessageRepositoryProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-    
+
     /// Adds a message to a given conversation.
     /// - parameter messageType: The type of message to add (MLS or Proteus)
 
     func addMessage(
         _ messageType: MessageType
     ) async
-
 
 }
 
@@ -66,7 +65,7 @@ public class MessageRepository: MessageRepositoryProtocol {
             conversationDomain: conversationDomain
         )
     }
-    
+
     public func addMessage(
         _ messageType: MessageType
     ) async {
@@ -79,9 +78,9 @@ public class MessageRepository: MessageRepositoryProtocol {
                 sender: (senderID, senderDomain),
                 date: date
             )
-            
+
         case .proteus(let message, let messageExternalData, let conversationID, let conversationDomain, let senderID, let senderDomain, let senderClientID, let recipientClientID, let date):
-            
+
             await addProteusMessage(
                 message,
                 externalData: messageExternalData,
@@ -95,7 +94,7 @@ public class MessageRepository: MessageRepositoryProtocol {
     }
 
     // MARK: - Private
-    
+
     private func addProteusMessage(
         _ message: String,
         externalData: String?,
@@ -105,7 +104,6 @@ public class MessageRepository: MessageRepositoryProtocol {
         recipientClientID: String,
         date: Date
     ) async {
-        
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversation.id,
             domain: conversation.domain
@@ -114,7 +112,7 @@ public class MessageRepository: MessageRepositoryProtocol {
                 "failed to add proteus message: conversation not found in db"
             )
         }
-        
+
         await localStore.addProteusMessage(
             message,
             externalData: externalData,
@@ -125,9 +123,8 @@ public class MessageRepository: MessageRepositoryProtocol {
             recipientClientID: recipientClientID,
             date: date
         )
-
     }
-    
+
     private func addMLSClientMessage(
         decryptedMessages: [(message: String, senderClientID: String?)],
         conversation: (id: UUID, domain: String),
@@ -151,6 +148,5 @@ public class MessageRepository: MessageRepositoryProtocol {
             date: date
         )
     }
-
 
 }

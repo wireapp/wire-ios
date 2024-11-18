@@ -68,12 +68,12 @@ public enum SystemMessageType: Sendable {
     case receiptModeIsOn(
         date: Date
     )
-    
+
     case invalid(
         sender: (id: UUID, domain: String?),
         date: Date
     )
-    
+
     case decryptionFailed(
         sender: (id: UUID, domain: String?),
         senderClientID: String,

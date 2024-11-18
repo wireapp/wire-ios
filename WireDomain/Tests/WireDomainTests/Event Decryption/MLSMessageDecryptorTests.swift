@@ -19,9 +19,9 @@
 @testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
+import XCTest
 
 final class MLSMessageDecryptorTests: XCTestCase {
 
@@ -45,13 +45,12 @@ final class MLSMessageDecryptorTests: XCTestCase {
         mlsService = MockMLSServiceInterface()
         mlsDecryptionService = MockMLSDecryptionServiceInterface()
         conversationLocalStore = MockConversationLocalStoreProtocol()
-        
+
         sut = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
-
     }
 
     override func tearDown() async throws {
@@ -67,48 +66,46 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
     // MARK: - Tests
 
-    
     func testDecryptedEventData_It_Decrypts_An_Event_And_Invokes_Repo_Methods() async throws {
-        
         // Mock
-        
+
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createMLSConversation(
                 id: Scaffolding.conversationID.uuid,
                 mlsGroupID: Scaffolding.mlsGroupID,
                 in: context
             )
-            
+
             return conversation
         }
-        
+
         let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)
         let decryptedMessage = try XCTUnwrap("foo".base64EncodedString)
         let decryptedMessageData = try XCTUnwrap(decryptedMessage.base64DecodedData)
-        
+
         let mockDecryptionResult = MLSDecryptResult.message(
             decryptedMessageData,
             .randomAlphanumerical(length: 3)
         )
-        
+
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.mlsGroupIDFor_MockValue = Scaffolding.mlsGroupID
         conversationLocalStore.isConversationMLSReady_MockValue = true
         mlsDecryptionService.decryptMessageForSubconversationType_MockValue = [mockDecryptionResult]
-        
+
         // When
-        
+
         let event = try await sut.decryptedEventData(from: Scaffolding.makeEvent(content: encryptedMessage))
-        
+
         // Then
-        
+
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.mlsGroupIDFor_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.isConversationMLSReady_Invocations.count, 1)
         XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
         XCTAssertEqual(event.decryptedMessages.first?.message, decryptedMessage)
     }
-    
+
     private enum Scaffolding {
 
         static let localDomain = "local.com"
@@ -120,12 +117,12 @@ final class MLSMessageDecryptorTests: XCTestCase {
         static let aliceID = UserID(uuid: UUID(), domain: localDomain)
         static let aliceClientID1 = "aliceClientID1"
         static let aliceClientID2 = "aliceClientID2"
-        
+
         static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
         static let timestamp = Date()
-        
+
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
-        
+
         static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
 
         static func makeEvent(content: String) -> ConversationMLSMessageAddEvent {
@@ -140,5 +137,4 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
     }
 
-    
 }

@@ -41,21 +41,11 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
-    init(
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
-        mlsService: any MLSServiceInterface,
-        conversationLocalStore: any ConversationLocalStoreProtocol
-    ) {
-        self.mlsDecryptionService = mlsDecryptionService
-        self.mlsService = mlsService
-        self.conversationLocalStore = conversationLocalStore
-    }
-
     func decryptedEventData(
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent {
         let conversationID = eventData.conversationID
-        
+
         guard let mlsConversation = await conversationLocalStore.fetchConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -63,36 +53,36 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             WireLogger.mls.error(
                 "failed to add mls message: conversation not found in db"
             )
-            
+
             throw MLSMessageDecryptorError.conversationNotFound
         }
-        
+
         guard let mlsGroupID = await conversationLocalStore.mlsGroupID(
             for: mlsConversation
         ) else {
             WireLogger.mls.error(
                 "failed to add mls message: missing MLS group ID"
             )
-            
+
             throw MLSMessageDecryptorError.missingMLSGroupID
         }
-        
+
         guard await conversationLocalStore.isConversationMLSReady(
             mlsConversation
         ) else {
             WireLogger.mls.warn(
                 "failed to add mls message: conversation is not ready"
             )
-            
+
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
-        
+
         let decryptionResults = await decryptMLSMessage(
             message: eventData.message,
             mlsGroupID: mlsGroupID,
             subconversation: eventData.subconversation
         )
-        
+
         let decryptedMessages = await processMLSMessageDecryptionResults(
             decryptionResults,
             mlsConversation: mlsConversation,
@@ -100,13 +90,13 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             senderDomain: eventData.senderID.domain,
             date: eventData.timestamp
         )
-        
+
         var decryptedEvent = eventData
         decryptedEvent.decryptedMessages = decryptedMessages
-        
+
         return decryptedEvent
     }
-    
+
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,
@@ -139,7 +129,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             return []
         }
     }
-    
+
     private func processMLSMessageDecryptionResults(
         _ results: [MLSDecryptResult],
         mlsConversation: ZMConversation,
@@ -147,9 +137,8 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         senderDomain: String,
         date: Date?
     ) async -> [ConversationMLSMessageAddEvent.DecryptedMessage] {
-        
         var decryptedMessages: [ConversationMLSMessageAddEvent.DecryptedMessage] = []
-        
+
         for result in results {
             switch result {
             case .message(let decryptedData, let senderClientID):
@@ -160,20 +149,20 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                         senderClientID: senderClientID
                     )
                 )
+
             case .proposal(let commitDelay):
                 let scheduledDate = (date ?? Date.now) + TimeInterval(commitDelay)
-                
+
                 await conversationLocalStore.storeConversation(
                     commitPendingProposalDate: scheduledDate,
                     conversation: mlsConversation
                 )
-                
+
                 mlsService.commitPendingProposalsIfNeeded()
             }
         }
-        
-        return decryptedMessages
 
+        return decryptedMessages
     }
 
 }

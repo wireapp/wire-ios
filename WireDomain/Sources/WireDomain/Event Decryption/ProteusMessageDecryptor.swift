@@ -64,7 +64,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
-        
+
         let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
 
@@ -88,7 +88,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
         var decryptedEvent = eventData
         decryptedEvent.message.decryptedMessage = plaintextData.base64String()
-        
+
         return decryptedEvent
     }
 
@@ -119,16 +119,15 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     private func extractContext(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> Context {
-        
         guard let selfClient = await userClientsRepository.fetchSelfClient() else {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
-        
+
         let senderUser = await userRepository.fetchOrCreateUser(
             id: eventData.senderID.uuid,
             domain: eventData.senderID.domain
         )
-        
+
         guard let senderClient = await userClientsRepository.fetchClient(
             id: eventData.messageSenderClientID,
             forUser: senderUser,
@@ -136,23 +135,23 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         ) else {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
-        
+
         await userClientsRepository.storeClient(
             discoveryDate: eventData.timestamp,
             client: senderClient
         )
-        
+
         await userClientsRepository.addNewClientToIgnored(
             selfClient: selfClient,
             newClient: senderClient
         )
-        
+
         guard let proteusSessionID = await userClientsRepository.proteusSessionID(
             for: senderClient
         ) else {
             throw ProteusMessageDecryptorError.proteusSessionIDNotFound
         }
-        
+
         return (selfClient, senderUser, senderClient, proteusSessionID)
     }
 

@@ -21,13 +21,13 @@ import Foundation
 /// An event where an mls message was received in a conversation.
 
 public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
-    
+
     public struct DecryptedMessage: Equatable, Codable, Sendable {
-        
+
         public let message: String
-        
+
         public let senderClientID: String?
-        
+
         public init(
             message: String,
             senderClientID: String?
@@ -56,11 +56,11 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
     /// The base 64 encoded message.
 
     public let message: String
-    
+
     /// The date the message was received.
 
     public let timestamp: Date?
-    
+
     /// The decrypted current message + decrypted buffered messages
     /// along with the related sender client ID for each message.
 

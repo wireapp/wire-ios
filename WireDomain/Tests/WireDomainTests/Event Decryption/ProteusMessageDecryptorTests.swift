@@ -19,9 +19,9 @@
 @testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
+import XCTest
 
 final class ProteusMessageDecryptorTests: XCTestCase {
 
@@ -45,7 +45,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         proteusService = MockProteusServiceInterface()
         userClientsRepository = MockUserClientsRepositoryProtocol()
         userRepository = MockUserRepositoryProtocol()
-        
+
         sut = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsRepository: userClientsRepository,
@@ -69,10 +69,10 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                 id: Scaffolding.selfClientID,
                 in: context
             )
-            
+
             userRepository.fetchOrCreateUserIdDomain_MockValue = selfUser
             userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
-            userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in}
+            userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
             userClientsRepository.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
             userClientsRepository.proteusSessionIDFor_MockValue = .init(userID: Scaffolding.selfUserID.uuid.uuidString, clientID: Scaffolding.selfClientID)
 
@@ -172,14 +172,13 @@ final class ProteusMessageDecryptorTests: XCTestCase {
     }
 
     func testDecryptedEventData_It_Decrypts_An_Event_And_Invokes_Repo_Methods() async throws {
-        
         // Given
-        
+
         let (selfClient, user, senderClient) = try await context.perform { [context] in
             let selfClient = try XCTUnwrap(
                 ZMUser.selfUser(in: context).selfClient()
             )
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.aliceID.uuid,
@@ -187,12 +186,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                     in: context
                 )
             )
-            
+
             return (selfClient, user, try XCTUnwrap(user.clients.first))
         }
-        
+
         // Mock
-        
+
         userClientsRepository.fetchSelfClient_MockValue = selfClient
         userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = senderClient
         userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
@@ -232,7 +231,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(userClientsRepository.clientSessionCreatedSelfClientNewClient_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
     }
-    
+
     private enum Scaffolding {
 
         static let localDomain = "local.com"

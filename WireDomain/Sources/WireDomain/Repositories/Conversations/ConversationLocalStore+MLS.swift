@@ -22,7 +22,7 @@ import WireDataModel
 /// An extension that encapsulates storage operations related to MLS.
 
 extension ConversationLocalStore {
-    
+
     // MARK: - Update message protocols
 
     func assignMessageProtocol(
@@ -125,5 +125,5 @@ extension ConversationLocalStore {
             try await mlsService.joinGroup(with: groupID)
         }
     }
-  
+
 }

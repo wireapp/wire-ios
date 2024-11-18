@@ -217,19 +217,19 @@ public protocol ConversationLocalStoreProtocol {
         hasReadReceiptsEnabled: Bool,
         for conversation: ZMConversation
     ) async
-    
+
     /// Indicates whether a given conversation is read-only.
     /// - parameter conversation: The conversation to check the flag for.
     /// - returns: Whether the conversation is read-only.
-    
+
     func isConversationForcedReadOnly(
         _ conversation: ZMConversation
     ) async -> Bool
-    
+
     /// Indicates whether a given conversation is MLS ready.
     /// - parameter conversation: The conversation to check the flag for.
     /// - returns: Whether the conversation is MLS ready.
-    
+
     func isConversationMLSReady(
         _ conversation: ZMConversation
     ) async -> Bool
@@ -305,7 +305,7 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
-    
+
     /// Stores the commit pending proposal date locally.
     /// - Parameter commitPendingProposalDate: The date to update.
     /// - Parameter conversation: The conversation to update the `commitPendingProposalDate` flag for.
@@ -626,7 +626,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isArchived
         }
     }
-    
+
     public func isConversationForcedReadOnly(
         _ conversation: ZMConversation
     ) async -> Bool {
@@ -634,7 +634,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.isForcedReadOnly
         }
     }
-    
+
     public func isConversationMLSReady(
         _ conversation: ZMConversation
     ) async -> Bool {
@@ -642,7 +642,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mlsStatus == .ready
         }
     }
-    
+
     public func storeConversation(
         commitPendingProposalDate: Date,
         conversation: ZMConversation
@@ -650,7 +650,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.commitPendingProposalDate = commitPendingProposalDate
         }
-        
     }
 
     public func conversationMutedMessageTypes(
@@ -824,6 +823,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
+
     public func localParticipants(
         in conversation: ZMConversation
     ) async -> Set<ZMUser> {

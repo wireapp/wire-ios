@@ -48,20 +48,19 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userRepository: any UserRepositoryProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
-        self.proteusMessageDecryptor = ProteusMessageDecryptor(
+        proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             userClientsRepository: userClientsRepository,
             userRepository: userRepository
         )
-        
-        self.mlsMessageDecryptor = MLSMessageDecryptor(
+
+        mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
-        
+
         self.messageRepository = messageRepository
-        
     }
 
     init(
@@ -110,9 +109,9 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         attributes: logAttributes
                     )
                 }
-                
+
             case .conversation(.mlsMessageAdd(let eventData)):
-                
+
                 WireLogger.updateEvent.info(
                     "decrypting MLS event...",
                     attributes: logAttributes
@@ -146,20 +145,19 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         if error == .outdatedMessage || error == .duplicateMessage {
             return
         }
-        
+
         let systemMessageType: SystemMessageType = .decryptionFailed(
             sender: (eventData.senderID.uuid, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             errorCode: error.rawValue,
             date: eventData.timestamp
         )
-        
+
         await messageRepository.addSystemMessage(
             messageType: systemMessageType,
             conversationID: eventData.conversationID.uuid,
             conversationDomain: eventData.conversationID.domain
         )
-
     }
 
 }

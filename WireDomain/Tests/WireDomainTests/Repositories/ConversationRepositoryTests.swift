@@ -59,7 +59,7 @@ final class ConversationRepositoryTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         userLocalStore = MockUserLocalStoreProtocol()
         userClientsRepository = MockUserClientsRepositoryProtocol()
-        
+
         conversationsLocalStore = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
@@ -949,9 +949,9 @@ final class ConversationRepositoryTests: XCTestCase {
         static let selfUserId = UUID()
 
         static let domain = "domain.com"
-        
+
         static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
-        
+
         static let senderClientID = UUID()
     }
 

@@ -31,7 +31,7 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
 }
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
-    
+
     let messageRepository: any MessageRepositoryProtocol
 
     func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
@@ -42,13 +42,12 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         let messageSenderClientID = event.messageSenderClientID
         let messageRecipientClientID = event.messageRecipientClientID
         let timestamp = event.timestamp
-        
 
         // Message should be decrypted see `ProteusEventDecryptor`
         guard let decryptedMessage = messageContent.decryptedMessage else {
             return
         }
-        
+
         let messageType: MessageType = .proteus(
             message: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage,

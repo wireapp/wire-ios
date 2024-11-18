@@ -27,7 +27,7 @@ public enum MessageType: Sendable {
         senderDomain: String,
         date: Date?
     )
-    
+
     case proteus(
         message: String,
         externalData: String?,
@@ -38,6 +38,5 @@ public enum MessageType: Sendable {
         senderClientID: String,
         recipientClientID: String,
         date: Date
-        
     )
 }

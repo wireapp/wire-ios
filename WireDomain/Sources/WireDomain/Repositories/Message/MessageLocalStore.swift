@@ -17,8 +17,8 @@
 //
 
 import CoreData
-import WireDataModel
 import WireCryptobox
+import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
@@ -29,7 +29,7 @@ public protocol MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-    
+
     /// Adds a MLS message to a given conversation
     /// - Parameters:
     ///     - decryptedMessages: A list of decrypted messages (current and buffered ones)
@@ -45,7 +45,7 @@ public protocol MessageLocalStoreProtocol {
         senderDomain: String,
         date: Date?
     ) async
-    
+
     /// Adds a Proteus message to a given conversation
     /// - Parameters:
     ///     - message: The message content.
@@ -56,7 +56,7 @@ public protocol MessageLocalStoreProtocol {
     ///     - senderClientID: The client ID of the user who sent the message.
     ///     - recipientClientID: The client ID for the user who received message.
     ///     - date: The date the message was received.
-    
+
     func addProteusMessage(
         _ message: String,
         externalData: String?,
@@ -112,7 +112,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             to: conversation
         )
     }
-    
+
     public func addProteusMessage(
         _ message: String,
         externalData: String?,
@@ -123,7 +123,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         recipientClientID: String,
         date: Date
     ) async {
-        
         await createOrUpdateMessage(
             message,
             externalData: externalData,
@@ -134,9 +133,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             messageType: "conversation.otr-message-add",
             date: date
         )
-        
     }
-    
+
     public func addMLSMessages(
         decryptedMessages: [(message: String, senderClientID: String?)],
         mlsConversation: ZMConversation,
@@ -144,9 +142,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         senderDomain: String,
         date: Date?
     ) async {
-        
         for decryptedMessage in decryptedMessages {
-            
             await createOrUpdateMessage(
                 decryptedMessage.message,
                 conversation: mlsConversation,
@@ -399,7 +395,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
-            
+
         case .invalid(let sender, let date):
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -407,15 +403,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             ) else {
                 return []
             }
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: .invalid,
                 sender: sender,
                 timestamp: date
             )
-            
+
             return [systemMessage]
-            
+
         case .decryptionFailed(let sender, let senderClientID, let errorCode, let date):
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -423,24 +419,24 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             ) else {
                 return []
             }
-            
+
             let senderClient = await context.perform {
                 sender.clients.first(where: {
                     $0.remoteIdentifier == senderClientID
                 })
             }
-            
+
             let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
-            
+
             let clients = senderClient.flatMap { [$0] } ?? Set<UserClient>()
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: type,
                 sender: sender,
                 clients: clients,
                 timestamp: date
             )
-            
+
             return [systemMessage]
         }
     }
@@ -509,7 +505,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             ZMUser.selfUser(in: context)
         }
     }
-    
+
     /// Adds Proteus or MLS message to conversation
 
     private func createOrUpdateMessage(
@@ -527,11 +523,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         let isSelf = await context.perform {
             conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
         }
-        
+
         let conversationID = await context.perform {
             conversation.remoteIdentifier
         }
-        
+
         var logAttributes: LogAttributes = [
             .messageType: messageType,
             .conversationId: conversationID?.safeForLoggingDescription
@@ -554,7 +550,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 attributes: logAttributes
             )
         }
-        
+
         guard let (genericMessage, content) = await getGenericMessage(
             from: message,
             externalData: externalData,
@@ -566,7 +562,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         ) else {
             return
         }
-        
+
         WireLogger.eventProcessing.debug("Processing:\n\(genericMessage)")
         logAttributes[.nonce] = UUID(uuidString: genericMessage.messageID) ?? "<nil>"
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
@@ -599,7 +595,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             date: date
         )
     }
-    
+
     private func processMessageContent(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
@@ -630,11 +626,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     inContext: context
                 )
 
-            case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
+            case .dataTransfer(let dataTransfer) where conversation.isSelfConversation:
                 guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
                     break
                 }
-                
+
                 ZMUser.selfUser(in: context).analyticsIdentifier = trackingIdentifier
 
             case .deleted:
@@ -669,7 +665,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 ) else {
                     return
                 }
-                
+
                 guard let editedClientMessage = ZMClientMessage.fetch(
                     withNonce: editedMessageId,
                     for: conversation,
@@ -677,7 +673,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 ) else {
                     return
                 }
-                
+
                 guard processMessageEdit(
                     message.edited,
                     clientMessage: editedClientMessage,
@@ -692,15 +688,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 editedClientMessage.markAsSent()
 
             case .clientAction(.resetSession):
-                
+
                 let sender = ZMUser.fetchOrCreate(
                     with: senderID,
                     domain: senderDomain,
                     in: context
                 )
-                
+
                 guard
-                    let senderClientID = senderClientID,
+                    let senderClientID,
                     let senderClient = UserClient.fetchUserClient(
                         withRemoteId: senderClientID,
                         forUser: sender,
@@ -713,19 +709,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                         attributes: logAttributes
                     )
                 }
-                
+
                 conversation.appendSessionResetSystemMessage(
                     user: sender,
                     client: senderClient,
                     at: timestamp
                 )
-                
+
             case .calling, .availability:
-                
+
                 break // cases not handled
 
             default:
-                
+
                 insertTextMessage(
                     message,
                     conversation: conversation,
@@ -736,10 +732,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     logAttributes: logAttributes
                 )
             }
-
         }
     }
-    
+
     private func getGenericMessage(
         from base64Message: String,
         externalData: String?,
@@ -749,57 +744,55 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversation: ZMConversation,
         logAttributes: LogAttributes
     ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
-        
         var genericMessage = GenericMessage(withBase64String: base64Message)
-        
+
         /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular message.
         /// See `External` section from https://github.com/wireapp/generic-message-proto
         /// See `External messages` section from https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         if let externalData,
-            case .some(.external(let external)) = genericMessage?.content {
-            
+           case .some(.external(let external)) = genericMessage?.content {
             let externalData = Data(base64Encoded: externalData)
             let externalSha256 = externalData?.zmSHA256Digest()
-            
+
             guard externalSha256 == external.sha256 else {
                 WireLogger.eventProcessing.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
                 return nil
             }
-            
+
             let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
                 key: external.otrKey
             )
-            
+
             guard let message = GenericMessage(
                 withBase64String: decryptedData?.base64String()
             ) else {
                 return nil
             }
-            
+
             genericMessage = message
         }
-        
-        guard let genericMessage = genericMessage,
-              let content = genericMessage.content else {
 
+        guard let genericMessage,
+              let content = genericMessage.content
+        else {
             await addInvalidMessage(
                 conversation: conversation,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 date: date ?? .now
             )
-            
+
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
             )
-            
+
             return nil
         }
-        
+
         return (genericMessage, content)
     }
-    
+
     private func addInvalidMessage(
         conversation: ZMConversation,
         senderID: UUID,
@@ -807,18 +800,18 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         date: Date
     ) async {
         let systemMessageType: SystemMessageType = .invalid(sender: (senderID, senderDomain), date: date)
-        
+
         let systemMessage = await createSystemMessages(
             from: systemMessageType,
             conversation: conversation
         )
-    
+
         await addSystemMessages(
             systemMessage,
             to: conversation
         )
     }
-    
+
     private func addParticipantIfNeeded(
         senderID: UUID,
         senderDomain: String?,
@@ -833,7 +826,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         ) else {
             return
         }
-        
+
         await context.perform {
             conversation.addParticipantAndSystemMessageIfMissing(
                 sender,
@@ -841,7 +834,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
         }
     }
-    
+
     private func processMessageEdit(
         _ messageEdit: MessageEdit,
         clientMessage: ZMClientMessage,
@@ -879,7 +872,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         return true
     }
-    
+
     private func insertTextMessage(
         _ message: GenericMessage,
         conversation: ZMConversation,
@@ -889,7 +882,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         date: Date?,
         logAttributes: LogAttributes
     ) {
-        
         func shouldAdd() -> Bool {
             if let clearedTime = conversation.clearedTimeStamp, let time = date,
                clearedTime.compare(time) != .orderedAscending {
@@ -897,37 +889,37 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
             return conversation.conversationType != .self
         }
-        
+
         guard shouldAdd(), let nonce = UUID(uuidString: message.messageID) else {
             return WireLogger.eventProcessing.warn(
                 "Dropping message because no nonce or for self conv",
                 attributes: logAttributes
             )
         }
-        
+
         let messageClass: AnyClass = GenericMessage.entityClass(for: message)
-        
+
         var clientMessage = messageClass.fetch(
             withNonce: nonce,
             for: conversation,
             in: context,
             prefetchResult: .none
         ) as? ZMOTRMessage
-        
+
         func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
             guard let message else { return false }
             return message.isZombieObject
         }
-        
-        guard !isZombieObject(clientMessage)  else {
+
+        guard !isZombieObject(clientMessage) else {
             return WireLogger.eventProcessing.warn(
                 "Dropping message because zombieObject",
                 attributes: logAttributes
             )
         }
-        
+
         var isNewMessage = false
-        
+
         if clientMessage == nil {
             isNewMessage = true
             if messageClass is ZMClientMessage.Type {
@@ -935,7 +927,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     nonce: nonce,
                     managedObjectContext: context
                 )
-                
+
             } else if messageClass is ZMAssetClientMessage.Type {
                 clientMessage = ZMAssetClientMessage(nonce: nonce, managedObjectContext: context)
             } else {
@@ -944,24 +936,24 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     attributes: logAttributes
                 )
             }
-            
+
             clientMessage?.senderClientID = senderClientID
             clientMessage?.serverTimestamp = date
-            
+
             let isGroup = conversation.conversationType == .group && senderID != ZMUser.selfUser(in: context).remoteIdentifier
-            
+
             if isGroup {
                 let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
                 clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
             }
-            
+
         } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != senderClientID {
             return WireLogger.eventProcessing.warn(
                 "senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: senderID)))",
                 attributes: logAttributes
             )
         }
-        
+
         if let assetClientMessage = clientMessage as? ZMAssetClientMessage {
             updateAssetClientMessage(
                 assetClientMessage,
@@ -976,27 +968,27 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 isNewMessage: isNewMessage
             )
         }
-        
+
         // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.
         // In addition the object will still have a managedObjectContext until the context is finally saved. In this
         // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
         // relationship between the deleted object and the conversation and / or sender
-        guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
+        guard !isZombieObject(clientMessage), clientMessage?.nonce != nil else {
             return WireLogger.eventProcessing.warn(
                 "Dropping potential zombie message"
             )
         }
-        
+
         guard let clientMessage else {
             return
         }
-        
+
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
             domain: senderDomain,
             in: context
         )
-        
+
         clientMessage.visibleInConversation = conversation
         clientMessage.sender = sender
         updateQuoteRelationships(message: clientMessage)
@@ -1005,22 +997,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         clientMessage.updateCategoryCache()
         clientMessage.markAsSent()
     }
-    
+
     private func updateQuoteRelationships(message: ZMOTRMessage) {
         if let clientMessage = message as? ZMClientMessage {
-            
             guard let text = clientMessage.underlyingMessage?.textData,
-                  text.hasQuote else {
+                  text.hasQuote
+            else {
                 return
             }
-            
+
             clientMessage.establishRelationshipsForInsertedQuote(text.quote)
 
         } else if message is ZMAssetClientMessage {
             return // Asset messages don't support quotes at the moment
         }
     }
-    
+
     private func updateClientMessage(
         _ clientMessage: ZMClientMessage,
         genericMessage: GenericMessage,
@@ -1043,7 +1035,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             assertionFailure("Failed to set generic message: \(error.localizedDescription)")
         }
     }
-    
+
     private func applyLinkPreviewUpdate(
         clientMessage: ZMClientMessage,
         updatedMessage: GenericMessage,
@@ -1072,13 +1064,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             assertionFailure("Failed to set generic message: \(error.localizedDescription)")
         }
     }
-    
+
     private func updateAssetClientMessage(
         _ assetClientMessage: ZMAssetClientMessage,
         genericMessage: GenericMessage,
         isNewMessage: Bool
     ) {
-        
         do {
             try assetClientMessage.setUnderlyingMessage(genericMessage)
         } catch {
@@ -1086,10 +1077,10 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 "Failed to set generic message: \(error.localizedDescription)"
             )
         }
-        
+
         // We assume received assets are V3 since backend no longer supports sending V2 assets.
         assetClientMessage.version = 3
-        
+
         guard
             let assetData = genericMessage.assetData,
             let status = assetData.status
@@ -1103,6 +1094,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 .uploaded,
                 synchronize: false
             )
+
         case .notUploaded where assetClientMessage.transferState != .uploaded:
             switch assetData.notUploaded {
             case .cancelled:
@@ -1113,10 +1105,10 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     synchronize: false
                 )
             }
+
         default:
             break
         }
-        
     }
 
 }

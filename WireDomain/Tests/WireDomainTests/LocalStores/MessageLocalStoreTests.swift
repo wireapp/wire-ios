@@ -60,35 +60,33 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     // MARK: - Tests
-    
+
     func testAddMLSMessage_It_Adds_Message_To_Conversation() async throws {
-        
         // Mock
-        
+
         let (mlsConversation, selfUser, user) = await context.perform { [self] in
             let conversation = modelHelper.createMLSConversation(
                 in: context
             )
-            
-            
+
             let selfUser = modelHelper.createSelfUser(
                 id: .mockID1,
                 domain: nil,
                 in: context
             )
-            
+
             let user = modelHelper.createUser(in: context)
-            
+
             return (conversation, selfUser, user)
         }
-        
+
         let decryptedMessages = [(Scaffolding.base64EncodedString, Scaffolding.senderClientID.uuidString)]
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-        
+
         // When
-        
+
         await sut.addMLSMessages(
             decryptedMessages: decryptedMessages,
             mlsConversation: mlsConversation,
@@ -96,44 +94,42 @@ final class MessageLocalStoreTests: XCTestCase {
             senderDomain: Scaffolding.domain,
             date: .now
         )
-        
+
         // Then
-        
+
         let expectedMessageText = "Everything"
-        
+
         await internalTest_assertConversationLastMessage(
             expectedMessageText: expectedMessageText,
             conversation: mlsConversation
         )
     }
-    
+
     func testAddProteusMessage_It_Adds_Message_To_Conversation() async throws {
-        
         // Mock
-        
+
         let (groupConversation, selfUser, user) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )
-            
-            
+
             let selfUser = modelHelper.createSelfUser(
                 id: .mockID1,
                 domain: nil,
                 in: context
             )
-            
+
             let user = modelHelper.createUser(in: context)
-            
+
             return (conversation, selfUser, user)
         }
-        
+
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-        
+
         // When
-        
+
         await sut.addProteusMessage(
             Scaffolding.base64EncodedString,
             externalData: nil,
@@ -144,48 +140,46 @@ final class MessageLocalStoreTests: XCTestCase {
             recipientClientID: UUID.mockID2.uuidString,
             date: .now
         )
-        
+
         // Then
-        
+
         let expectedMessageText = "Everything"
-        
+
         await internalTest_assertConversationLastMessage(
             expectedMessageText: expectedMessageText,
             conversation: groupConversation
         )
     }
-    
+
     func testAddProteusMessage_It_Adds_Big_Payload_Message_To_Conversation() async throws {
-        
         // Mock
-        
+
         let (groupConversation, selfUser, user) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )
-            
-            
+
             let selfUser = modelHelper.createSelfUser(
                 id: .mockID1,
                 domain: nil,
                 in: context
             )
-            
+
             let user = modelHelper.createUser(in: context)
-            
+
             return (conversation, selfUser, user)
         }
-        
+
         // `External` message content is used if original message results in large payload, that would not be accepted by backend. Regular messages are encrypted multiple times (per recipient) and in case of multiple participants even quite small message can generate huge payload. In that case we want to encrypt original message with symmetric encryption and only send a key to all participants.
-        
+
         let externalMessage = "CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx"
         let externalData = Scaffolding.mockEncryptedExternalMessage
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-        
+
         // When
-        
+
         await sut.addProteusMessage(
             externalMessage,
             externalData: externalData,
@@ -196,17 +190,17 @@ final class MessageLocalStoreTests: XCTestCase {
             recipientClientID: UUID.mockID2.uuidString,
             date: .now
         )
-        
+
         // Then
-        
+
         let expectedMessageText = Scaffolding.externalMessageText
-        
+
         await internalTest_assertConversationLastMessage(
             expectedMessageText: expectedMessageText,
             conversation: groupConversation
         )
     }
-    
+
     private func internalTest_assertConversationLastMessage(
         expectedMessageText: String,
         conversation: ZMConversation
@@ -225,7 +219,7 @@ final class MessageLocalStoreTests: XCTestCase {
         let user = await context.perform { [self] in
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
-        
+
         userLocalStore.fetchUserIdDomain_MockValue = user
 
         await withTaskGroup(of: Void.self) { taskGroup in

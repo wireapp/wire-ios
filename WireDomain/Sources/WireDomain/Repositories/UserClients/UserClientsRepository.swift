@@ -28,7 +28,7 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol UserClientsRepositoryProtocol {
-    
+
     /// Fetches self client locally.
     /// - returns: The self client if any
 
@@ -72,27 +72,27 @@ public protocol UserClientsRepositoryProtocol {
     /// - returns: A flag indicating whether all self user clients are active MLS clients.
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
-    
+
     /// Stores user client discovery date locally.
     /// - Parameters:
     ///     - discoveryDate: The date the client was discovered.
     ///     - The client to update the discovery date for.
-    
+
     func storeClient(
         discoveryDate: Date,
         client: WireDataModel.UserClient
     ) async
-    
+
     /// Adds new client to the ignored ones.
     /// - Parameters:
     ///     - selfClient: The self user client to add the new client for.
     ///     - newClient: The new user client.
-    
+
     func addNewClientToIgnored(
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient
     ) async
-    
+
     /// Fetches the Proteus session ID of a given client.
     /// - parameter client: The client to get the Proteus session ID for.
     /// - returns: The Proteus session id.
@@ -100,17 +100,17 @@ public protocol UserClientsRepositoryProtocol {
     func proteusSessionID(
         for client: WireDataModel.UserClient
     ) async -> ProteusSessionID?
-    
+
     /// Indicates a client session was created.
     /// - Parameters:
     ///     - selfClient: The self user client.
     ///     - newClient: The new client that was created.
-    
+
     func clientSessionCreated(
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient
     ) async
-    
+
     /// Fetches a client locally.
     /// - Parameters:
     ///     - id: The client id.
@@ -194,15 +194,15 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
         return localUserClient
     }
-    
+
     public func fetchSelfClient() async -> WireDataModel.UserClient? {
         let selfUser = await userRepository.fetchSelfUser()
-        
+
         return await context.perform {
             selfUser.selfClient()
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Move to UserClientsLocalStore when related PR is merged
     public func storeClient(
@@ -213,7 +213,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             client.discoveryDate = discoveryDate
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Move to UserClientsLocalStore when related PR is merged
     public func addNewClientToIgnored(
@@ -224,7 +224,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             selfClient.addNewClientToIgnored(newClient)
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Move to UserClientsLocalStore when related PR is merged
     public func proteusSessionID(
@@ -234,7 +234,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             client.proteusSessionID
         }
     }
-    
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: Move to UserClientsLocalStore when related PR is merged
     public func clientSessionCreated(
@@ -246,7 +246,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             selfClient.updateSecurityLevelAfterDiscovering([newClient])
         }
     }
-    
+
     public func fetchClient(
         id: String,
         forUser user: ZMUser,
@@ -371,5 +371,5 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
             }
         }
     }
-    
+
 }

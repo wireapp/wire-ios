@@ -17,12 +17,11 @@
 //
 
 enum MLSMessageDecryptorError: Error {
-    
+
     case conversationNotFound
-    
+
     case missingMLSGroupID
-    
+
     case mlsConversationNotReady
 
 }
-
