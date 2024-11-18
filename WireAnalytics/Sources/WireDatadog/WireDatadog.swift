@@ -29,10 +29,10 @@ public final class WireDatadog {
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String
-    private let logLevel: LogLevel = .debug
+    private let logLevel: WireDatadog.LogLevel = .debug
 
     public private(set) var userIdentifier: String
-    public private(set) var logger: (any DatadogLogs.LoggerProtocol)?
+    private(set) var logger: (any DatadogLogs.LoggerProtocol)?
 
     public init(
         applicationID: String,
@@ -72,7 +72,7 @@ public final class WireDatadog {
         let loggerConfiguration = Logger.Configuration(
             name: "iOS Wire App",
             networkInfoEnabled: true,
-            remoteLogThreshold: logLevel
+            remoteLogThreshold: logLevel.datadogLevel
         )
         logger = Logger.create(with: loggerConfiguration)
     }
@@ -96,7 +96,7 @@ public final class WireDatadog {
         Datadog.setUserInfo(id: userIdentifier)
 
         logger?.log(
-            level: logLevel,
+            level: logLevel.datadogLevel,
             message: "Datadog startMonitoring for device: \(userIdentifier)",
             error: nil,
             attributes: nil
@@ -104,7 +104,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: LogLevel,
+        level: WireDatadog.LogLevel,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]
@@ -114,11 +114,19 @@ public final class WireDatadog {
         finalAttributes["version"] = buildVersion
 
         logger?.log(
-            level: level,
+            level: level.datadogLevel, // TODO: [WPB-11881] review this when WireLogger is available as package
             message: message,
             error: error,
             attributes: finalAttributes
         )
+    }
+
+    public func addAttribute(forKey key: String, value: String) {
+        logger?.addTag(withKey: key, value: value)
+    }
+
+    public func removeAttribute(forKey key: String) {
+        logger?.removeAttribute(forKey: key)
     }
 
     // MARK: Static Helpers
@@ -137,5 +145,24 @@ public final class WireDatadog {
             with: "",
             options: [.regularExpression]
         )
+    }
+}
+
+extension WireDatadog.LogLevel {
+    var datadogLevel: LogLevel {
+        switch self {
+        case .debug:
+            .debug
+        case .info:
+            .info
+        case .notice:
+            .notice
+        case .warn:
+            .warn
+        case .error:
+            .error
+        case .critical:
+            .critical
+        }
     }
 }
