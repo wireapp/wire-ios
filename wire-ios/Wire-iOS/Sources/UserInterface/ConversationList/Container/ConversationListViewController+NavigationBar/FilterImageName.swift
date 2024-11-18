@@ -45,6 +45,12 @@ enum FilterImageName: String {
     /// Represents a selected (filled) group icon, depicting three persons, for group conversations.
     case person3Fill = "person.3.fill"
 
+    /// Represents an unselected folder icon for a folder's conversations.
+    case folder = "folder"
+
+    /// Represents a selected (filled) folder icon for a folder's conversations.
+    case folderFill = "folder.fill"
+
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
@@ -71,6 +77,8 @@ enum FilterImageName: String {
             return isSelected ? .person3Fill : .person3
         case .oneOnOne:
             return isSelected ? .personFill : .person
+        case .folder:
+            return isSelected ? .folderFill : .folder
         }
     }
 }

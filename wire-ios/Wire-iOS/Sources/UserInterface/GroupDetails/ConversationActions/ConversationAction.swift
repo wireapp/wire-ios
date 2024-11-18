@@ -39,23 +39,23 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter { $0 != .deleteGroup }
+        return actions.filter({ $0 != .deleteGroup })
     }
 
     var detailActions: [Action] {
-        actions.filter { $0 != .configureNotifications }
+        return actions.filter({ $0 != .configureNotifications })
     }
 
     private var actions: [Action] {
         switch conversationType {
         case .connection:
-            availablePendingActions()
+            return availablePendingActions()
         case .oneOnOne:
-            availableOneToOneActions()
+            return availableOneToOneActions()
         case .self,
              .group,
              .invalid:
-            availableGroupActions()
+            return availableGroupActions()
         }
     }
 
@@ -115,9 +115,7 @@ extension ZMConversation {
         if !isArchived {
             actions.append(.favorite(isFavorite: isFavorite))
             // WPB-8667: Moving conversations into folders is a feature which will be enabled again in the future.
-            #if FOLDERS_ENABLED
-                actions.append(.moveToFolder)
-            #endif
+            actions.append(.moveToFolder)
 
             if let folderName = folder?.name {
                 actions.append(.removeFromFolder(folder: folderName))
@@ -129,9 +127,9 @@ extension ZMConversation {
 
     private func markAsReadAction() -> Action? {
         guard Bundle.developerModeEnabled else { return nil }
-        if !unreadMessages.isEmpty {
+        if unreadMessages.count > 0 {
             return .markRead
-        } else if unreadMessages.isEmpty, canMarkAsUnread() {
+        } else if unreadMessages.count == 0 && canMarkAsUnread() {
             return .markUnread
         }
         return nil
@@ -144,8 +142,8 @@ extension ZMConversation.Action {
         switch self {
         case .remove,
              .deleteGroup:
-            true
-        default: false
+            return true
+        default: return false
         }
     }
 
@@ -158,7 +156,7 @@ extension ZMConversation.Action {
             return MetaMenuLocale.delete
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
-        case let .removeFromFolder(folder):
+        case .removeFromFolder(let folder):
             return MetaMenuLocale.removeFromFolder(folder)
         case .remove:
             return ProfileLocale.removeDialogButtonRemove
@@ -172,30 +170,25 @@ extension ZMConversation.Action {
             return MetaMenuLocale.markUnread
         case .configureNotifications:
             return MetaMenuLocale.configureNotifications
-        case let .silence(isSilenced: muted):
+        case .silence(isSilenced: let muted):
             return muted ? MetaMenuLocale.Silence.unmute : MetaMenuLocale.Silence.mute
-        case let .archive(isArchived: archived):
+        case .archive(isArchived: let archived):
             return archived ? MetaMenuLocale.unarchive : MetaMenuLocale.archive
         case .cancelRequest:
             return MetaMenuLocale.cancelConnectionRequest
-        case let .block(isBlocked: blocked):
+        case .block(isBlocked: let blocked):
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
-        case let .favorite(isFavorite: favorited):
+        case .favorite(isFavorite: let favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
         }
     }
 
     func alertAction(handler: @escaping () -> Void) -> UIAlertAction {
-        .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
+        return .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
     }
 
-    @available(
-        iOS,
-        introduced: 9.0,
-        deprecated: 13.0,
-        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
-    )
+    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     func previewAction(handler: @escaping () -> Void) -> UIPreviewAction {
-        .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
+        return .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
     }
 }

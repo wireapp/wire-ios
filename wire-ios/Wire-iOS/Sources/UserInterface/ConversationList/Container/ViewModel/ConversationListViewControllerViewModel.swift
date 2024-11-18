@@ -210,8 +210,7 @@ extension ConversationListViewController.ViewModel {
     private func updateAccountImage() {
         Task { @MainActor in
             do {
-                let useCase = GetUserAccountImageSourceUseCase()
-                accountImageSource = try await useCase.invoke(
+                accountImageSource = try await getUserAccountImageSourceUseCase.invoke(
                     user: userSession.selfUser,
                     userContext: userSession.contextProvider.viewContext,
                     account: account

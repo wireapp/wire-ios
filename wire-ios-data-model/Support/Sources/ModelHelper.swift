@@ -25,6 +25,19 @@ public struct ModelHelper {
 
     public init() {}
 
+    @discardableResult
+    public func createFolder(
+        id: UUID = .init(),
+        name: String = "Test Folder",
+        in context: NSManagedObjectContext
+    ) -> Label {
+        let folder = Label.insertNewObject(in: context)
+        folder.remoteIdentifier = id
+        folder.name = name
+        folder.kind = .folder
+        return folder
+    }
+
     // MARK: - Messages
 
     @discardableResult

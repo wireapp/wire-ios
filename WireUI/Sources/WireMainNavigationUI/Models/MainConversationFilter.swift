@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MainConversationFilter: Sendable {
-    case favorites
-    case groups
-    case oneOnOne
+import Foundation
+
+public enum MainConversationFilter: Sendable, Equatable {
+    case favorites, groups, oneOnOne, folder(id: UUID, name: String)
 }
 
 extension MainConversationFilter: MainConversationFilterRepresentable {

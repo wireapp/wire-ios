@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MainSidebarMenuItem: Sendable {
+import Foundation
+
+public enum MainSidebarMenuItem: Sendable, Equatable {
     // conversation filters
-    case all
-    case favorites
-    case groups
-    case oneOnOne
-    case archive
+    case all, favorites, groups, oneOnOne, archive, folders
     // bottom
     case settings
 }

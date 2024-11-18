@@ -16,47 +16,43 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(WireDatadog)
+import UIKit
+import WireDatadog
+import class WireTransport.BackendEnvironment
 
-    import UIKit
-    import WireDatadog
-    import class WireTransport.BackendEnvironment
+struct WireDatadogBuilder {
 
-    struct WireDatadogBuilder {
-
-        private enum Constants {
-            static let keyAppId = "DatadogAppId"
-            static let keyBundleVersion = "CFBundleVersion"
-            static let keyBundleShortVersion = "CFBundleShortVersionString"
-            static let keyClientToken = "DatadogClientToken"
-        }
-
-        private let device: UIDevice = .current
-        private let environment: BackendEnvironment = .shared
-        private let bundle: Bundle = .wireCommonComponents
-        private let mainBundle: Bundle = .appMainBundle
-
-        // MARK: - Build
-
-        func build() -> WireDatadog {
-            guard
-                let applicationID = bundle.infoForKey(Constants.keyAppId),
-                let buildNumber = mainBundle.infoForKey(Constants.keyBundleVersion),
-                let buildVersion = mainBundle.infoForKey(Constants.keyBundleShortVersion),
-                let clientToken = bundle.infoForKey(Constants.keyClientToken)
-            else {
-                preconditionFailure("Datadog is enabled, but the bundle misses required input.")
-            }
-
-            return WireDatadog(
-                applicationID: applicationID,
-                buildVersion: buildVersion,
-                buildNumber: buildNumber,
-                clientToken: clientToken,
-                identifierForVendor: device.identifierForVendor,
-                environmentName: environment.title
-            )
-        }
+    private enum Constants {
+        static let keyAppId = "DatadogAppId"
+        static let keyBundleVersion = "CFBundleVersion"
+        static let keyBundleShortVersion = "CFBundleShortVersionString"
+        static let keyClientToken = "DatadogClientToken"
     }
 
-#endif
+    private let device: UIDevice = .current
+    private let environment: BackendEnvironment = .shared
+    private let bundle: Bundle = .wireCommonComponents
+    private let mainBundle: Bundle = .appMainBundle
+
+    // MARK: - Build
+
+    func build() -> WireDatadog {
+        guard
+            let applicationID = bundle.infoForKey(Constants.keyAppId),
+            let buildNumber = mainBundle.infoForKey(Constants.keyBundleVersion),
+            let buildVersion = mainBundle.infoForKey(Constants.keyBundleShortVersion),
+            let clientToken = bundle.infoForKey(Constants.keyClientToken)
+        else {
+            preconditionFailure("Datadog is enabled, but the bundle misses required input.")
+        }
+
+        return WireDatadog(
+            applicationID: applicationID,
+            buildVersion: buildVersion,
+            buildNumber: buildNumber,
+            clientToken: clientToken,
+            identifierForVendor: device.identifierForVendor,
+            environmentName: environment.title
+        )
+    }
+}
