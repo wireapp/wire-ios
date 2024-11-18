@@ -26,14 +26,17 @@ public struct CreateFolder: View {
 
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: CreateFolderViewModel
-    private let conversationName: String 
+    private let conversationName: String
+    private let onComplete: () -> Void
 
     public init(
         viewModel: CreateFolderViewModel,
-        conversationName: String
+        conversationName: String,
+        onComplete: @escaping () -> Void
     ) {
         self.viewModel = viewModel
         self.conversationName = conversationName
+        self.onComplete = onComplete
     }
 
     public var body: some View {
@@ -118,6 +121,7 @@ public struct CreateFolder: View {
             do {
                 _ = try await viewModel.createFolder()
                 dismiss()
+                onComplete()
             } catch {
                 // TODO: Handle error
             }
@@ -131,7 +135,9 @@ public struct CreateFolder: View {
     CreateFolder(
         viewModel: CreateFolderViewModel(
             useCase: PreviewCreateFolderUseCase()
-        ), conversationName: "iOS Team"
+        ),
+        conversationName: "iOS Team",
+        onComplete: {}
     )
 }
 

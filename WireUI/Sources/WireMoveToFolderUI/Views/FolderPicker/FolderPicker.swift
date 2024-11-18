@@ -63,7 +63,8 @@ public struct FolderPicker: View {
                     NavigationLink {
                         CreateFolder(
                             viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
-                            conversationName: conversationName
+                            conversationName: conversationName,
+                            onComplete: { dismiss() }
                         )
                     } label: {
                         Image(systemName: "plus")
