@@ -20,9 +20,14 @@ import Foundation
 import WireDataModel
 import WireTransport
 
-final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
+final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<
+    FetchMLSConversationGroupInfoAction
+> {
 
-    override func request(for action: FetchMLSConversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func request(
+        for action: FetchMLSConversationGroupInfoAction,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         var action = action
 
         guard
@@ -33,7 +38,7 @@ final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoAct
             return nil
         }
 
-        return self.request(
+        return request(
             for: action,
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
             apiVersion: apiVersion,

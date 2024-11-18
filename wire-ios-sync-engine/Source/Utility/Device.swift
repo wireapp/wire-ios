@@ -18,9 +18,10 @@
 
 import Foundation
 
-@objc extension UIDevice {
+@objc
+public extension UIDevice {
 
-    public func zm_model() -> String {
+    func zm_model() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
 

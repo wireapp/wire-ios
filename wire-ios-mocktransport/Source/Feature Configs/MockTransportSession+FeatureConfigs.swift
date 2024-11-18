@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension MockTransportSession {
+public extension MockTransportSession {
 
     @objc(processGetFeatureConfigsRequest:)
-    public func processGetFeatureConfigsRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
+    func processGetFeatureConfigsRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         let payload: [String: Any] = [
             "appLock": [
                 "status": "enabled",

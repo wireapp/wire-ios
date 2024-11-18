@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelegate {
     var didCancelCalledCount: Int = 0
@@ -34,8 +34,8 @@ private class ReplyComposingViewMockDelegate: NSObject, ReplyComposingViewDelega
 final class ReplyComposingViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
-        self.verifyDeallocation {
-            return ReplyComposingView(message: message)
+        verifyDeallocation {
+            ReplyComposingView(message: message)
         }
     }
 

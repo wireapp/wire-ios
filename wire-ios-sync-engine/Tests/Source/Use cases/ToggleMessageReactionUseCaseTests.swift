@@ -118,8 +118,15 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         sut.invoke("❤️", for: firstMessage, in: conversation)
 
         // THEN
-        XCTAssertFalse(firstMessage.usersReaction.keys.contains("❤️"), "Expected the ❤️ reaction to be removed from the first message.")
-        XCTAssertEqual(analyticsEventTracker.trackEvent_Invocations.count, 0, "Removing reactions should not trigger analytics events.")
+        XCTAssertFalse(
+            firstMessage.usersReaction.keys.contains("❤️"),
+            "Expected the ❤️ reaction to be removed from the first message."
+        )
+        XCTAssertEqual(
+            analyticsEventTracker.trackEvent_Invocations.count,
+            0,
+            "Removing reactions should not trigger analytics events."
+        )
     }
 
     func testToggleMessageReaction_MultipleReactions() throws {

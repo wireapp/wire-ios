@@ -25,20 +25,24 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
     let syncStatus: SyncStatus
     var sync: ZMSingleRequestSync!
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
 
         self.syncStatus = syncStatus
 
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
         configuration = [.allowsRequestsDuringSlowSync]
-        sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingTeamMembers else { return nil }
 
         sync.readyForNextRequestIfNotBusy()
@@ -55,8 +59,10 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         }
 
         let maxResults = 2000
-        let request = ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)", apiVersion: apiVersion.rawValue)
-        return request
+        return ZMTransportRequest(
+            getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

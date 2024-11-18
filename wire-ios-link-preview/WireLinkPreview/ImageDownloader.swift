@@ -31,9 +31,11 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
     let resultsQueue: OperationQueue
     let session: URLSessionType
 
-    init(resultsQueue: OperationQueue,
-         workerQueue: OperationQueue = OperationQueue(),
-         session: URLSessionType? = nil) {
+    init(
+        resultsQueue: OperationQueue,
+        workerQueue: OperationQueue = OperationQueue(),
+        session: URLSessionType? = nil
+    ) {
         self.resultsQueue = resultsQueue
         self.workerQueue = workerQueue
         self.workerQueue.name = String(describing: type(of: self)) + "Queue"
@@ -66,7 +68,7 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
             }
 
             _ = group.wait(timeout: DispatchTime.distantFuture)
-            self.resultsQueue.addOperation {
+            resultsQueue.addOperation {
                 completion(result)
             }
         }
@@ -78,7 +80,8 @@ extension HTTPURLResponse {
 
     var contentTypeImage: Bool {
         let contentTypeKey = HeaderKey.contentType.rawValue
-        guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
+        guard let contentType = allHeaderFields[contentTypeKey] as? String ??
+            allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
 
         // we don't consider svg a valid image type b/c UIImage doesn't directly
         // support it

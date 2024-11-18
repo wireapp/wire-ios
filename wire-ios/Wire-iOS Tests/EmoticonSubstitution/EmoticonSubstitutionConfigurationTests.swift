@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class EmoticonSubstitutionConfigurationTests: XCTestCase {
 
@@ -53,13 +53,13 @@ final class EmoticonSubstitutionConfigurationTests: XCTestCase {
 
         // Given
 
-        measure({
+        measure {
             // When
             let config = createEmoticonSubstitutionConfiguration(fileName: "emoticons.min.json")
 
             // Then
             XCTAssertNotNil(config)
-        })
+        }
     }
 
     func testThatShortcutsAreSortedCorrectly() {

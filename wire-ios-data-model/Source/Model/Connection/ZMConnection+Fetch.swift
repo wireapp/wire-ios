@@ -18,17 +18,16 @@
 
 import Foundation
 
-extension ZMConnection {
+public extension ZMConnection {
     @objc(connectionsInManagedObjectContext:)
-    class func connections(inManagedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
+    internal class func connections(inManagedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
 
         let request = sortedFetchRequest()
 
-        let result = moc.fetchOrAssert(request: request)
-        return result
+        return moc.fetchOrAssert(request: request)
     }
 
-    public static func fetchOrCreate(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
+    static func fetchOrCreate(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
         guard let connection = fetch(userID: userID, domain: domain, in: context) else {
             return create(userID: userID, domain: domain, in: context)
         }
@@ -36,7 +35,7 @@ extension ZMConnection {
         return connection
     }
 
-    public static func create(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
+    static func create(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
         require(context.zm_isSyncContext, "Connections are only allowed to be created on sync context")
 
         let connection = ZMConnection.insertNewObject(in: context)
@@ -46,32 +45,45 @@ extension ZMConnection {
         return connection
     }
 
-    public static func fetch(userID: UUID,
-                             domain: String?,
-                             in context: NSManagedObjectContext) -> ZMConnection? {
+    static func fetch(
+        userID: UUID,
+        domain: String?,
+        in context: NSManagedObjectContext
+    ) -> ZMConnection? {
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain
 
-        return internalFetch(userID: userID,
-                             domain: domain ?? localDomain,
-                             searchingLocalDomain: isSearchingLocalDomain,
-                             in: context)
+        return internalFetch(
+            userID: userID,
+            domain: domain ?? localDomain,
+            searchingLocalDomain: isSearchingLocalDomain,
+            in: context
+        )
     }
 
-    static func internalFetch(userID: UUID,
-                              domain: String?,
-                              searchingLocalDomain: Bool,
-                              in context: NSManagedObjectContext) -> ZMConnection? {
+    internal static func internalFetch(
+        userID: UUID,
+        domain: String?,
+        searchingLocalDomain: Bool,
+        in context: NSManagedObjectContext
+    ) -> ZMConnection? {
 
-        let predicate: NSPredicate
-        if searchingLocalDomain {
+        let predicate = if searchingLocalDomain {
             if let domain {
-                predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
+                NSPredicate(
+                    format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)",
+                    userID.uuidData as NSData,
+                    domain
+                )
             } else {
-                predicate = NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
+                NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
             }
         } else {
-            predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull.init())
+            NSPredicate(
+                format: "to.remoteIdentifier_data == %@ AND to.domain == %@",
+                userID.uuidData as NSData,
+                domain ?? NSNull()
+            )
         }
 
         let fetchRequest = ZMConnection.sortedFetchRequest(with: predicate)

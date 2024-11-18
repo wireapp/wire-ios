@@ -17,19 +17,19 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ConversationCreationOptionsTests: ZMConversationTestsBase {
 
     func testThatItCreatesTheConversationWithOptions() {
         // given
-        let user = self.createUser()
+        let user = createUser()
         let name = "Test Conversation In Swift"
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         let options = ConversationCreationOptions(participants: [user], name: name, team: team, allowGuests: true)
         // when
-        let conversation = self.coreDataStack.insertGroup(with: options)
+        let conversation = coreDataStack.insertGroup(with: options)
         // then
         XCTAssertEqual(conversation.displayName, name)
         XCTAssertEqual(conversation.localParticipants, Set([user, .selfUser(in: uiMOC)]))
@@ -41,7 +41,7 @@ class ConversationCreationOptionsTests: ZMConversationTestsBase {
 extension ContextProvider {
 
     func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
-        return ZMConversation.insertGroupConversation(
+        ZMConversation.insertGroupConversation(
             session: self,
             participants: options.participants,
             name: options.name,

@@ -31,7 +31,10 @@ final class WireApplication: UIApplication {
         guard motion == .motionShake else { return }
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            presenter.presentIfNotDisplayed(with: appDelegate.appRootRouter, from: self.topmostViewController(onlyFullScreen: false))
+            presenter.presentIfNotDisplayed(
+                with: appDelegate.appRootRouter,
+                from: self.topmostViewController(onlyFullScreen: false)
+            )
         }
     }
 }
@@ -39,6 +42,9 @@ final class WireApplication: UIApplication {
 extension WireApplication: NotificationSettingsRegistrable {
 
     var shouldRegisterUserNotificationSettings: Bool {
-        return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
+        !(
+            AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper
+                .disablePushNotificationAlert
+        )
     }
 }

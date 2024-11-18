@@ -28,8 +28,10 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let featureRepository: FeatureRepositoryInterface
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol,
-                featureRespository: FeatureRepositoryInterface) {
+    public init(
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        featureRespository: FeatureRepositoryInterface
+    ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRespository
     }

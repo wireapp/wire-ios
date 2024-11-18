@@ -29,7 +29,7 @@ extension ConversationInputBarViewController {
     }
 
     private func showLocationSelection(from sender: IconButton) {
-        guard let parentViewController = self.parent else { return }
+        guard let parentViewController = parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
         locationSelectionViewController.title = conversation.displayName
@@ -60,7 +60,8 @@ extension ConversationInputBarViewController: LocationSelectionViewControllerDel
                 let useCase = self.userSession.makeAppendLocationMessageUseCase()
                 try useCase.invoke(withLocationData: locationData, in: conversation)
             } catch {
-                Logging.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to append location message. Reason: \(error.localizedDescription)")
             }
         }
 

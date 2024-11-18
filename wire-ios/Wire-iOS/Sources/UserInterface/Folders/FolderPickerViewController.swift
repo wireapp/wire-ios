@@ -32,13 +32,16 @@ final class FolderPickerViewController: UIViewController {
     private var conversationDirectory: ConversationDirectoryType
     private var items: [LabelType] = []
     private let conversation: ZMConversation
-    private let hintLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
-                                             color: SemanticColors.Label.textDefault)
+    private let hintLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
-    }()
+    private lazy var collectionView: UICollectionView = .init(
+        frame: .zero,
+        collectionViewLayout: self.collectionViewLayout
+    )
 
     init(conversation: ZMConversation, directory: ConversationDirectoryType) {
         self.conversation = conversation
@@ -66,11 +69,14 @@ final class FolderPickerViewController: UIViewController {
         let navigationTitleLabel = DynamicFontLabel(
             text: L10n.Localizable.Folder.Picker.title.capitalized,
             fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
 
-        let newFolderItem = UIBarButtonItem(icon: .plus,
-                                            target: self,
-                                            action: #selector(createNewFolder))
+        let newFolderItem = UIBarButtonItem(
+            icon: .plus,
+            target: self,
+            action: #selector(createNewFolder)
+        )
         newFolderItem.accessibilityIdentifier = "button.newfolder.create"
 
         navigationItem.titleView = navigationTitleLabel
@@ -87,7 +93,7 @@ final class FolderPickerViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func configureSubviews() {
@@ -115,15 +121,19 @@ final class FolderPickerViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: view)
 
-        NSLayoutConstraint.activate([hintLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-                                     hintLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-                                     hintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)])
+        NSLayoutConstraint.activate([
+            hintLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            hintLabel.trailingAnchor
+                .constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            hintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
-    @objc private func createNewFolder() {
+    @objc
+    private func createNewFolder() {
         let folderCreation = FolderCreationController(conversation: conversation, directory: conversationDirectory)
         folderCreation.delegate = self
-        self.navigationController?.pushViewController(folderCreation, animated: true)
+        navigationController?.pushViewController(folderCreation, animated: true)
     }
 
 }
@@ -133,14 +143,17 @@ final class FolderPickerViewController: UIViewController {
 extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
         let item = items[indexPath.row]
@@ -156,8 +169,8 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
     }
 
     private func pickFolder(_ folder: LabelType) {
-        self.delegate?.didPickFolder(folder, for: conversation)
-        self.dismissIfNeeded()
+        delegate?.didPickFolder(folder, for: conversation)
+        dismissIfNeeded()
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -168,8 +181,12 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
 }

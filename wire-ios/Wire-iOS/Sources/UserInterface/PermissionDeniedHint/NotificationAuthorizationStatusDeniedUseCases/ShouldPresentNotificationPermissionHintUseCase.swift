@@ -20,8 +20,10 @@ import UserNotifications
 import WireSystem
 import WireUtilities
 
-struct ShouldPresentNotificationPermissionHintUseCase<DateProvider>: ShouldPresentNotificationPermissionHintUseCaseProtocol
-where DateProvider: CurrentDateProviding {
+struct ShouldPresentNotificationPermissionHintUseCase<
+    DateProvider
+>: ShouldPresentNotificationPermissionHintUseCaseProtocol
+    where DateProvider: CurrentDateProviding {
 
     var currentDateProvider: DateProvider
     var userDefaults: UserDefaults

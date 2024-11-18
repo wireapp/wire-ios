@@ -20,9 +20,9 @@
 /// A protocol defining behavior for moving conversations between folders
 public protocol ToFolderMovableConversation {
 
-   /// Moves the conversation to a specified folder
-   /// - Parameter folder: The destination folder to move the conversation to
-   func moveToFolder(_ folder: LabelType)
+    /// Moves the conversation to a specified folder
+    /// - Parameter folder: The destination folder to move the conversation to
+    func moveToFolder(_ folder: LabelType)
 }
 
-extension ZMConversation: ToFolderMovableConversation { }
+extension ZMConversation: ToFolderMovableConversation {}

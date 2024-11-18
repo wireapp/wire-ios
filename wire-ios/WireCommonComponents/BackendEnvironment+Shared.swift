@@ -21,9 +21,9 @@ import WireTransport
 
 private let zmsLog = ZMSLog(tag: "backend-environment")
 
-extension BackendEnvironment {
-    public static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
-    public static var shared: BackendEnvironment = {
+public extension BackendEnvironment {
+    static let backendSwitchNotification = Notification.Name("backendEnvironmentSwitchNotification")
+    static var shared: BackendEnvironment = {
         var environmentType: EnvironmentType?
         if let typeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() {
             environmentType = EnvironmentType(stringValue: typeOverride)
@@ -42,7 +42,7 @@ extension BackendEnvironment {
         }
     }
 
-    public convenience init?(type: EnvironmentType?) {
+    convenience init?(type: EnvironmentType?) {
         self.init(
             userDefaults: .applicationGroupCombinedWithStandard,
             configurationBundle: .backendBundle,

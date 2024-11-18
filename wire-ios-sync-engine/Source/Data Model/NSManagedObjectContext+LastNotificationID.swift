@@ -21,7 +21,8 @@ import WireDataModel
 
 private let lastUpdateEventIDKey = "LastUpdateEventID"
 
-@objc public protocol ZMLastNotificationIDStore {
+@objc
+public protocol ZMLastNotificationIDStore {
     var zm_lastNotificationID: UUID? { get set }
     var zm_hasLastNotificationID: Bool { get }
 }
@@ -29,23 +30,23 @@ private let lastUpdateEventIDKey = "LastUpdateEventID"
 extension NSManagedObjectContext: ZMLastNotificationIDStore {
     public var zm_lastNotificationID: UUID? {
         get {
-            guard let uuidString = self.persistentStoreMetadata(forKey: lastUpdateEventIDKey) as? String,
-                let uuid = UUID(uuidString: uuidString)
-                else { return nil }
+            guard let uuidString = persistentStoreMetadata(forKey: lastUpdateEventIDKey) as? String,
+                  let uuid = UUID(uuidString: uuidString)
+            else { return nil }
             return uuid
         }
-        set (newValue) {
+        set(newValue) {
             if let value = newValue, let previousValue = zm_lastNotificationID,
-                value.isType1UUID && previousValue.isType1UUID &&
-                    previousValue.compare(withType1: value) != .orderedAscending {
+               value.isType1UUID, previousValue.isType1UUID,
+               previousValue.compare(withType1: value) != .orderedAscending {
                 return
             }
-            Logging.eventProcessing.debug("Setting zm_lastNotificationID = \( newValue?.transportString() ?? "nil" )")
-            self.setPersistentStoreMetadata(newValue?.uuidString, key: lastUpdateEventIDKey)
+            Logging.eventProcessing.debug("Setting zm_lastNotificationID = \(newValue?.transportString() ?? "nil")")
+            setPersistentStoreMetadata(newValue?.uuidString, key: lastUpdateEventIDKey)
         }
     }
 
     public var zm_hasLastNotificationID: Bool {
-        return zm_lastNotificationID != nil
+        zm_lastNotificationID != nil
     }
 }

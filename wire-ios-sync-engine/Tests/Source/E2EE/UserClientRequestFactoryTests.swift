@@ -39,7 +39,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
         authenticationStatus = MockAuthenticationStatus(
             delegate: mockAuthenticationStatusDelegate,
-            userInfoParser: self.userInfoParser
+            userInfoParser: userInfoParser
         )
 
         sut = UserClientRequestFactory()
@@ -63,7 +63,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         return proteusService
     }
 
-    // MARK: - Registration request creation 
+    // MARK: - Registration request creation
 
     func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
@@ -342,7 +342,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     // MARK: - Helpers
 
     private func payload(from request: ZMTransportRequest) -> [String: Any]? {
-        return request.payload?.asDictionary() as? [String: Any]
+        request.payload?.asDictionary() as? [String: Any]
     }
 
     private func assertRequest(_ request: ZMTransportRequest, path: String, method: ZMTransportRequestMethod) {
@@ -357,7 +357,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     }
 }
 
-private extension Dictionary where Key == String, Value == Any {
+private extension [String: Any] {
     enum PayloadKey: String {
         case type
         case email
@@ -427,6 +427,6 @@ private extension Dictionary where Key == String, Value == Any {
     }
 
     func value<T>(forKey key: PayloadKey) -> T? {
-        return self[key.rawValue] as? T
+        self[key.rawValue] as? T
     }
 }

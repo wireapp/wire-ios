@@ -26,6 +26,7 @@ public struct Permissions: OptionSet {
     }
 
     // MARK: - Base Values
+
     public static let none                        = Permissions([])
     public static let createConversation          = Permissions(rawValue: 0x0001) /// create all kind of conversation
     public static let deleteConversation          = Permissions(rawValue: 0x0002)
@@ -49,8 +50,20 @@ public struct Permissions: OptionSet {
     // cases of the TeamRole enum.
 
     public static let partner: Permissions = [.createConversation, .getTeamConversations]
-    public static let member: Permissions = [.partner, .deleteConversation, .addRemoveConversationMember, .modifyConversationMetaData, .getMemberPermissions]
-    public static let admin: Permissions = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
+    public static let member: Permissions = [
+        .partner,
+        .deleteConversation,
+        .addRemoveConversationMember,
+        .modifyConversationMetaData,
+        .getMemberPermissions
+    ]
+    public static let admin: Permissions = [
+        .member,
+        .addTeamMember,
+        .removeTeamMember,
+        .setTeamData,
+        .setMemberPermissions
+    ]
     public static let owner: Permissions = [.admin, .getBilling, .setBilling, .deleteTeam]
 
 }
@@ -76,14 +89,14 @@ extension Permissions: CustomDebugStringConvertible {
     ]
 
     public var debugDescription: String {
-        return "[\(Permissions.descriptions.filter { contains($0.0) }.map { $0.1 }.joined(separator: ", "))]"
+        "[\(Permissions.descriptions.filter { contains($0.0) }.map(\.1).joined(separator: ", "))]"
     }
 
 }
 
 extension Permissions: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.rawValue)
+        hasher.combine(rawValue)
     }
 
 }
@@ -95,8 +108,13 @@ extension Permissions: Hashable {
 /// only interested in the role of a user in determining various logic for
 /// specific users.
 ///
-@objc public enum TeamRole: Int {
-    case none, partner, member, admin, owner
+@objc
+public enum TeamRole: Int {
+    case none
+    case partner
+    case member
+    case admin
+    case owner
 
     public init(rawPermissions: Int64) {
         switch rawPermissions {
@@ -116,29 +134,30 @@ extension Permissions: Hashable {
     /// The permissions granted to this role.
     public var permissions: Permissions {
         switch self {
-        case .none:    return .none
-        case .partner: return .partner
-        case .member:  return .member
-        case .admin:   return .admin
-        case .owner:   return .owner
+        case .none:    .none
+        case .partner: .partner
+        case .member:  .member
+        case .admin:   .admin
+        case .owner:   .owner
         }
     }
 
     /// Returns true if the role encompasses the given role.
     /// E.g An admin is a member, but a member is not an admin.
     public func isA(role: TeamRole) -> Bool {
-        return hasPermissions(role.permissions)
+        hasPermissions(role.permissions)
     }
 
     /// Returns true if the role contains (all) the permissions.
     public func hasPermissions(_ permissions: Permissions) -> Bool {
-        return self.permissions.isSuperset(of: permissions)
+        self.permissions.isSuperset(of: permissions)
     }
 }
 
-extension Member {
+public extension Member {
 
-    @objc public func setTeamRole(_ role: TeamRole) {
+    @objc
+    func setTeamRole(_ role: TeamRole) {
         permissions = role.permissions
     }
 }

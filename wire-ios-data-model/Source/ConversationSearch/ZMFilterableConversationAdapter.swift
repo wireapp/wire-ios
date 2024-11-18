@@ -30,7 +30,10 @@ public struct ZMFilterableConversationAdapter: FilterableConversation {
         conversation.localParticipants
             .filter { !$0.isSelfUser }
             .map { localParticipant in
-                .init(name: localParticipant.normalizedName ?? localParticipant.name?.normalizedForSearch() as String? ?? "")
+                .init(
+                    name: localParticipant.normalizedName ?? localParticipant.name?
+                        .normalizedForSearch() as String? ?? ""
+                )
             }
     }
 

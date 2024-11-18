@@ -27,6 +27,6 @@ extension Stream {
     }
 
     var isScreenSharing: Bool {
-        return videoState == .some(.screenSharing)
+        videoState == .some(.screenSharing)
     }
 }

@@ -60,7 +60,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
-        let createSut: () -> UIViewController = {
+        {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
@@ -69,8 +69,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             )
             return self.sut.wrapInNavigationController()
         }
-
-        return createSut
     }
 
     // MARK: - Snapshot Tests

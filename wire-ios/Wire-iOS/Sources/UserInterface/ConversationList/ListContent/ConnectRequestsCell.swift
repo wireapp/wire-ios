@@ -27,7 +27,7 @@ protocol SectionListCellType: AnyObject {
 extension SectionListCellType {
 
     var identifier: String {
-        return [obfuscatedSectionName ?? sectionName, cellIdentifier]
+        [obfuscatedSectionName ?? sectionName, cellIdentifier]
             .compactMap { $0 }
             .joined(separator: " - ")
     }
@@ -60,7 +60,11 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
 
         setNeedsUpdateConstraints()
@@ -68,7 +72,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     override var accessibilityIdentifier: String? {
         get {
-            return identifier
+            identifier
         }
         set {
             // no op

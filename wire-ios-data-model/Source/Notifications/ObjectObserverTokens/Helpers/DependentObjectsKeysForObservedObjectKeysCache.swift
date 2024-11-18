@@ -22,14 +22,18 @@ import Foundation
 struct DependentObjectsKeysForObservedObjectKeysCache {
 
     // keyPathsOnDependentObjectForKeyOnObservedObject : [displayName : [userDefinedName, user.name, connection.status]]
-    // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName, relatedConnectionStatus, etc.]]
+    // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName,
+    // relatedConnectionStatus, etc.]]
     //
     let keyPathsOnDependentObjectForKeyOnObservedObject: [StringKeyPath: KeySet]
     let affectedKeysOnObservedObjectForChangedKeysOnDependentObject: [StringKeyPath: KeySet]
 
     static var cachedValues: [AnyClassTuple<KeySet>: DependentObjectsKeysForObservedObjectKeysCache] = [:]
 
-    static func mappingForObject(_ observedObject: NSObject, keysToObserve: KeySet) -> DependentObjectsKeysForObservedObjectKeysCache {
+    static func mappingForObject(
+        _ observedObject: NSObject,
+        keysToObserve: KeySet
+    ) -> DependentObjectsKeysForObservedObjectKeysCache {
 
         let tuple = AnyClassTuple(classOfObject: type(of: observedObject), secondElement: keysToObserve)
 
@@ -42,13 +46,14 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
 
         for key in keysToObserve {
             var keyPaths = KeySet(type(of: observedObject).keyPathsForValuesAffectingValue(forKey: key.rawValue))
-            keyPaths = keyPaths.filter { $0.isPath }
+            keyPaths = keyPaths.filter(\.isPath)
 
             var objectKeysWithPathsToObserve: [StringKeyPath: KeySet] = [:]
 
             for keyPath in keyPaths {
 
-                if let (objectKey, pathToObserveInObject) = keyPath.decompose, let pathToObserve = pathToObserveInObject {
+                if let (objectKey, pathToObserveInObject) = keyPath.decompose,
+                   let pathToObserve = pathToObserveInObject {
                     let previousPathToObserve = objectKeysWithPathsToObserve[objectKey] ?? KeySet()
                     objectKeysWithPathsToObserve[objectKey] = previousPathToObserve.union(KeySet(key: pathToObserve))
                 }
@@ -68,7 +73,10 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
             }
         }
 
-        let result = DependentObjectsKeysForObservedObjectKeysCache(keyPathsOnDependentObjectForKeyOnObservedObject: keysToPathsToObserve, affectedKeysOnObservedObjectForChangedKeysOnDependentObject: observedKeyPathToAffectedKey)
+        let result = DependentObjectsKeysForObservedObjectKeysCache(
+            keyPathsOnDependentObjectForKeyOnObservedObject: keysToPathsToObserve,
+            affectedKeysOnObservedObjectForChangedKeysOnDependentObject: observedKeyPathToAffectedKey
+        )
 
         cachedValues[tuple] = result
         return result

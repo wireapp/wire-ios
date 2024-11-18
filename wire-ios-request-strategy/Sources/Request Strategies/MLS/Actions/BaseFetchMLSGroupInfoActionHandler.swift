@@ -22,7 +22,12 @@ import WireTransport
 
 class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: ActionHandler<T> {
 
-    func request(for action: T, path: String, apiVersion: APIVersion, minRequiredAPIVersion: APIVersion) -> ZMTransportRequest? {
+    func request(
+        for action: T,
+        path: String,
+        apiVersion: APIVersion,
+        minRequiredAPIVersion: APIVersion
+    ) -> ZMTransportRequest? {
         var action = action
 
         guard apiVersion >= minRequiredAPIVersion else {

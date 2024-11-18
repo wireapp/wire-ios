@@ -28,9 +28,9 @@ public struct AVSIdentifier: Hashable, Equatable {
     }
 }
 
-extension AVSIdentifier {
+public extension AVSIdentifier {
 
-    public var serialized: String {
+    var serialized: String {
         var serializedIdentifier = identifier.transportString()
 
         if let domain {
@@ -42,10 +42,11 @@ extension AVSIdentifier {
 
     /// Creates a non optional AVSIdentifier from a string. Crashes when the string format is wrong.
     /// Expected string format: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F@wire.link"
-    /// - Parameter string: A string composed of a UUID string and an optional domain. Components should be separated by "@"
+    /// - Parameter string: A string composed of a UUID string and an optional domain. Components should be separated by
+    /// "@"
     /// - Returns: The avs identifier
 
-    public static func from(string: String) -> AVSIdentifier {
+    static func from(string: String) -> AVSIdentifier {
         guard let identifier = AVSIdentifier(string: string) else {
             fatalError("Wrong format of string passed to AVSIdentifier")
         }
@@ -57,11 +58,11 @@ extension AVSIdentifier {
     /// The string should be composed of a UUID string and an optional domain. Components should be separated by "@".
     /// Example: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F@wire.link"
 
-    init?(string: String) {
+    internal init?(string: String) {
         let components = string.components(separatedBy: "@")
 
         guard
-            1...2 ~= components.count,
+            1 ... 2 ~= components.count,
             let identifier = UUID(uuidString: components[0])
         else {
             return nil

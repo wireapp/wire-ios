@@ -40,14 +40,13 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeMarginConstraint?.constant = isHidden ? 0 : -spacing
             badgeWidthConstraint?.constant = isHidden ? 0 : 28
 
-            let text: String?
-            switch folderBadge {
-            case 1...99:
-                text = String(folderBadge)
+            let text: String? = switch folderBadge {
+            case 1 ... 99:
+                String(folderBadge)
             case 100...:
-                text = "99+"
+                "99+"
             default:
-                text = nil
+                nil
             }
             badgeView.textLabel.text = text
         }
@@ -74,7 +73,8 @@ final class ConversationListHeaderView: UICollectionReusableView {
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
             style: .body2,
-            color: .white)
+            color: .white
+        )
         label.textColor = SemanticColors.Label.textDefault
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return label
@@ -82,7 +82,10 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     let badgeView: RoundedTextBadge = {
         let margin: CGFloat = 12
-        let roundedTextBadge = RoundedTextBadge(contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin), font: FontSpec(.medium, .semibold).font!)
+        let roundedTextBadge = RoundedTextBadge(
+            contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin),
+            font: FontSpec(.medium, .semibold).font!
+        )
 
         roundedTextBadge.textLabel.textColor = SemanticColors.Label.textDefaultWhite
         roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
@@ -94,7 +97,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
     /// display title of the header
     var title: String? {
         get {
-            return titleLabel.text
+            titleLabel.text
         }
 
         set {
@@ -104,7 +107,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -118,8 +121,8 @@ final class ConversationListHeaderView: UICollectionReusableView {
             typealias ConversationList = L10n.Accessibility.ConversationsList
 
             let state = collapsed
-                        ? ConversationListHeader.CollapsedButton.description
-                        : ConversationListHeader.ExpandedButton.description
+                ? ConversationListHeader.CollapsedButton.description
+                : ConversationListHeader.ExpandedButton.description
             guard folderBadge != 0 else {
                 return state
             }
@@ -138,7 +141,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
         return imageView
     }()
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
 
         [titleLabel, arrowIconImageView, badgeView].forEach(addSubview)
@@ -159,7 +162,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
         UIView.animate(withDuration: 0.2, animations: {
             self.collapsed = newCollaped
-             })
+        })
         tapHandler?(newCollaped)
     }
 
@@ -173,11 +176,17 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
         arrowIconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        badgeMarginConstraint = titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: badgeView.leadingAnchor, constant: 0)
+        badgeMarginConstraint = titleLabel.trailingAnchor.constraint(
+            lessThanOrEqualTo: badgeView.leadingAnchor,
+            constant: 0
+        )
         badgeWidthConstraint = badgeView.widthAnchor.constraint(greaterThanOrEqualToConstant: 0)
 
         NSLayoutConstraint.activate([
-            arrowIconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.ConversationList.horizontalMargin),
+            arrowIconImageView.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: CGFloat.ConversationList.horizontalMargin
+            ),
             arrowIconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -187,7 +196,10 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeView.heightAnchor.constraint(equalToConstant: 20),
             badgeWidthConstraint!,
             badgeView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin)
+            badgeView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -CGFloat.ConversationList.horizontalMargin
+            )
         ])
     }
 }

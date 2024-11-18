@@ -66,7 +66,10 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     }
 
     @MainActor
-    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem) {
+    public func sidebarViewController(
+        _ viewController: SidebarViewController,
+        didSelect menuItem: SidebarSelectableMenuItem
+    ) {
         Task {
             switch menuItem {
             case .all:

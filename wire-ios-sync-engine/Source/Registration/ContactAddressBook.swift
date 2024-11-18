@@ -30,15 +30,17 @@ final class ContactAddressBook: AddressBook {
 extension ContactAddressBook: AddressBookAccessor {
 
     /// Gets a specific address book user by the local address book indentifier
-    internal func contact(identifier: String) -> ContactRecord? {
-        return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
+    func contact(identifier: String) -> ContactRecord? {
+        try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
     }
 
     static var keysToFetch: [CNKeyDescriptor] {
-        return  [CNContactPhoneNumbersKey as CNKeyDescriptor,
-                 CNContactEmailAddressesKey as CNKeyDescriptor,
-                 CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-                 CNContactOrganizationNameKey as CNKeyDescriptor]
+        [
+            CNContactPhoneNumbersKey as CNKeyDescriptor,
+            CNContactEmailAddressesKey as CNKeyDescriptor,
+            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+            CNContactOrganizationNameKey as CNKeyDescriptor
+        ]
     }
 
     func rawContacts(matchingQuery query: String) -> [ContactRecord] {
@@ -47,11 +49,14 @@ extension ContactAddressBook: AddressBookAccessor {
         }
 
         guard !query.isEmpty else {
-            return self.firstRawContacts(number: addressBookContactsSearchLimit)
+            return firstRawContacts(number: addressBookContactsSearchLimit)
         }
 
         let predicate: NSPredicate = CNContact.predicateForContacts(matchingName: query.lowercased())
-        guard let foundContacts = try? CNContactStore().unifiedContacts(matching: predicate, keysToFetch: ContactAddressBook.keysToFetch) else {
+        guard let foundContacts = try? CNContactStore().unifiedContacts(
+            matching: predicate,
+            keysToFetch: ContactAddressBook.keysToFetch
+        ) else {
             return []
         }
         return foundContacts
@@ -74,42 +79,44 @@ extension ContactAddressBook: AddressBookAccessor {
 
     /// Number of contacts in the address book
     var numberOfContacts: UInt {
-        return 0
+        0
     }
 }
 
 extension CNContact: ContactRecord {
 
     var rawEmails: [String] {
-        return self.emailAddresses.map { $0.value as String }
+        emailAddresses.map { $0.value as String }
     }
 
     var rawPhoneNumbers: [String] {
-        return self.phoneNumbers.map { $0.value.stringValue }
+        phoneNumbers.map(\.value.stringValue)
     }
 
     var firstName: String {
-        return self.givenName
+        givenName
     }
 
     var lastName: String {
-        return self.familyName
+        familyName
     }
 
     var organization: String {
-        return self.organizationName
+        organizationName
     }
 
     var localIdentifier: String {
-        return self.identifier
+        identifier
     }
 }
 
 extension ZMAddressBookContact {
 
-    convenience init?(contact: CNContact,
-                      phoneNumberNormalizer: @escaping AddressBook.Normalizer,
-                      emailNormalizer: @escaping AddressBook.Normalizer) {
+    convenience init?(
+        contact: CNContact,
+        phoneNumberNormalizer: @escaping AddressBook.Normalizer,
+        emailNormalizer: @escaping AddressBook.Normalizer
+    ) {
         self.init()
 
         // names
@@ -123,13 +130,13 @@ extension ZMAddressBookContact {
         self.emailAddresses = contact.emailAddresses.compactMap { emailNormalizer($0.value as String) }
 
         // phone
-        self.rawPhoneNumbers = contact.phoneNumbers.map { $0.value.stringValue }
+        self.rawPhoneNumbers = contact.phoneNumbers.map(\.value.stringValue)
 
         // normalize phone
-        self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
+        self.phoneNumbers = rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
 
         // ignore contacts with no email nor phones
-        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
+        guard !emailAddresses.isEmpty || !phoneNumbers.isEmpty else {
             return nil
         }
     }
