@@ -123,7 +123,8 @@ public struct CreateFolder: View {
                 dismiss()
                 onComplete()
             } catch {
-                // TODO: Handle error
+                // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
+                assertionFailure("Failed to create and move folder: \(error.localizedDescription)")
             }
         }
     }
