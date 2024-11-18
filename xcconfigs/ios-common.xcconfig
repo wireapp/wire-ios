@@ -21,9 +21,6 @@
 // It gets included by ios.xcconfig or ios-arm64Simulator.xcconfig
 //
 
-SDKROOT = iphoneos
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator
-
 // Deployment
 //
 IPHONEOS_DEPLOYMENT_TARGET = 16.0
