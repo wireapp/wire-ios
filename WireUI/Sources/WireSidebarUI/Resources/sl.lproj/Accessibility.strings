@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Protocol for handling moving a conversation to a specified folder
-public protocol MoveConversationToFolderUseCaseType: Sendable {
-    /// Moves a conversation to a specified folder
-    /// - Parameters:
-    ///   - folder: The destination folder
-    ///   - conversation: The conversation to be moved
-    func invoke(folder: Folder, conversation: Conversation) async throws
-}
+"sidebar.settings.description" = "Open your settings";
+"sidebar.support.description" = "Open support";
+"sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
+"sidebar.name.description" = "Profile name";
+"sidebar.handle.description" = "Uporabniško ime";

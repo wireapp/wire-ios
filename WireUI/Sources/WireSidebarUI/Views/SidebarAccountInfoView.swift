@@ -72,6 +72,8 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
                 Text(displayName)
                     .wireTextStyle(.h3)
                     .foregroundStyle(displayNameColor)
+                    .accessibilityLabel(Text("sidebar.name.description", tableName: "Accessibility", bundle: .module))
+                    .accessibilityValue(displayName)
                 if isE2EICertified {
                     Image(.certificateValid)
                         .frame(height: usernameHeight)
@@ -84,6 +86,8 @@ struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: Vi
             Text(username)
                 .wireTextStyle(.subline1)
                 .foregroundStyle(usernameColor)
+                .accessibilityLabel(Text("sidebar.handle.description", tableName: "Accessibility", bundle: .module))
+                .accessibilityValue(username)
         }
     }
 
