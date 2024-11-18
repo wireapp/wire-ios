@@ -29,6 +29,9 @@ import WireDataModel
 /// as well as the possible source(s) of the models.
 public protocol UserClientsRepositoryProtocol {
     
+    /// Fetches self client locally.
+    /// - returns: The self client if any
+
     func fetchSelfClient() async -> WireDataModel.UserClient?
 
     /// Pulls and stores self user clients locally.
@@ -70,25 +73,51 @@ public protocol UserClientsRepositoryProtocol {
 
     func allSelfUserClientsAreActiveMLSClients() async -> Bool
     
+    /// Stores user client discovery date locally.
+    /// - Parameters:
+    ///     - discoveryDate: The date the client was discovered.
+    ///     - The client to update the discovery date for.
+    
     func storeClient(
         discoveryDate: Date,
         client: WireDataModel.UserClient
     ) async
+    
+    /// Adds new client to the ignored ones.
+    /// - Parameters:
+    ///     - selfClient: The self user client to add the new client for.
+    ///     - newClient: The new user client.
     
     func addNewClientToIgnored(
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient
     ) async
     
+    /// Fetches the Proteus session ID of a given client.
+    /// - parameter client: The client to get the Proteus session ID for.
+    /// - returns: The Proteus session id.
+
     func proteusSessionID(
         for client: WireDataModel.UserClient
     ) async -> ProteusSessionID?
+    
+    /// Indicates a client session was created.
+    /// - Parameters:
+    ///     - selfClient: The self user client.
+    ///     - newClient: The new client that was created.
     
     func clientSessionCreated(
         selfClient: WireDataModel.UserClient,
         newClient: WireDataModel.UserClient
     ) async
     
+    /// Fetches a client locally.
+    /// - Parameters:
+    ///     - id: The client id.
+    ///     - user: The user linked to the client.
+    ///     - createIfNeeded: Creates the client if not found locally.
+    /// - returns: The user client fetched or created locally
+
     func fetchClient(
         id: String,
         forUser user: ZMUser,
@@ -343,10 +372,4 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         }
     }
     
-//    public func updateSecurityLevel(selfClient: UserClient) async {
-//        await context.perform {
-//            selfClient.decrementNumberOfRemainingProteusKeys()
-//            selfClient.updateSecurityLevelAfterDiscovering([context.senderClient])
-//        }
-//    }
 }
