@@ -23,14 +23,14 @@ import WireSyncEngine
 extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.CreateConversationFolderUseCaseProtocol {
 
     public func invoke(name: String) async throws -> Folder {
-        guard let labelType = try await self.fetchLabelType(for: name) else {
+        guard let labelType = try await fetchLabelType(for: name) else {
             throw FolderCreationError.invalidLabelType
         }
         return Folder(labelType)
     }
 
     private func fetchLabelType(for name: String) async throws -> LabelType? {
-        return try await self.invoke(with: name)
+        try await invoke(with: name)
     }
 
     private enum FolderCreationError: Error {

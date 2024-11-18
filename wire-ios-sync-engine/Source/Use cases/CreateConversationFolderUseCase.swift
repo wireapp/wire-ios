@@ -33,7 +33,7 @@ public struct CreateConversationFolderUseCase {
     // MARK: - Public Interface
 
     public func invoke(with name: String) async throws -> LabelType? {
-       try await context.perform {
+        try await context.perform {
             var created = false
             let label = Label.fetchOrCreate(
                 remoteIdentifier: UUID(),
@@ -47,7 +47,7 @@ public struct CreateConversationFolderUseCase {
             do {
                 try context.save()
             } catch {
-               throw error
+                throw error
             }
 
             return label

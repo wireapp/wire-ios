@@ -42,6 +42,10 @@ struct FolderPickerBuilder {
             updateConversationFolderUseCase: useCase
         )
 
-        return FolderPickerHostingController(viewModel: viewModel, createFolderUseCase: createConversationFolderUseCase, conversationName: conversationName)
+        return FolderPickerHostingController(
+            viewModel: viewModel,
+            createFolderUseCase: createConversationFolderUseCase,
+            conversationName: conversationName
+        )
     }
 }

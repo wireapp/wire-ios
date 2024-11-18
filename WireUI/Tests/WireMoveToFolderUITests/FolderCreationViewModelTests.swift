@@ -89,6 +89,7 @@ final class FolderCreationViewModelTests: XCTestCase {
     }
 
     // MARK: - Folder Creation
+
     @MainActor
     func test_createFolder_withEmptyName_throwsError() async {
         // GIVEN

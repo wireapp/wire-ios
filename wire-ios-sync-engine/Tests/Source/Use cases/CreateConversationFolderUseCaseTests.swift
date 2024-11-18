@@ -30,7 +30,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
     private var sut: CreateConversationFolderUseCase!
 
     private var context: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp

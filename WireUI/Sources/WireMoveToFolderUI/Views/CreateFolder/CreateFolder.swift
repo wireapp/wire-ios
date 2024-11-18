@@ -120,8 +120,8 @@ public struct CreateFolder: View {
         Task {
             do {
                 let createdFolder = try await viewModel.createFolder()
-                    dismiss()
-                    onFolderCreated(createdFolder)
+                dismiss()
+                onFolderCreated(createdFolder)
 
             } catch {
                 // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support

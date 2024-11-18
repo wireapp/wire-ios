@@ -32,7 +32,11 @@ public final class FolderPickerHostingController: UIHostingController<FolderPick
         self.viewModel = viewModel
         self.createFolderUseCase = createFolderUseCase
         self.conversationName = conversationName
-        super.init(rootView: FolderPicker(viewModel: viewModel, createFolderUseCase: createFolderUseCase, conversationName: conversationName))
+        super.init(rootView: FolderPicker(
+            viewModel: viewModel,
+            createFolderUseCase: createFolderUseCase,
+            conversationName: conversationName
+        ))
     }
 
     @available(*, unavailable)

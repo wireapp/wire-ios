@@ -362,11 +362,11 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
-        return UpdateConversationFolderUseCase(context: syncContext)
+        UpdateConversationFolderUseCase(context: syncContext)
     }
 
     public func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase {
-        return CreateConversationFolderUseCase(context: syncContext)
+        CreateConversationFolderUseCase(context: syncContext)
     }
 
 }
