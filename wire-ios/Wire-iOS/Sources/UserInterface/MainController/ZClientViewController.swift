@@ -610,7 +610,8 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentOverAll(animated: animated, completion: completion)
-            })
+            }
+        )
     }
 
     private func createTopViewConstraints() {
