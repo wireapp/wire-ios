@@ -20,7 +20,7 @@ import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
 
-extension UpdateConversationFolderUseCase: @retroactive UpdateConversationFolderUseCaseTypeProtocol {
+extension UpdateConversationFolderUseCase: @retroactive UpdateConversationFolderUseCaseProtocol {
 
     public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
         guard let folderID = folder.identifier else { return }

@@ -19,11 +19,7 @@
 import Foundation
 
 /// Protocol for handling moving a conversation to a specified folder
-<<<<<<<< HEAD:WireUI/Sources/WireMoveToFolderUI/Protocols/UpdateConversationFolderUseCaseType.swift
-public protocol UpdateConversationFolderUseCaseType {
-========
 public protocol UpdateConversationFolderUseCaseProtocol {
->>>>>>>> develop:WireUI/Sources/WireMoveToFolderUI/Protocols/UpdateConversationFolderUseCaseProtocol.swift
     /// Moves a conversation to a specified folder
     /// - Parameters:
     ///   - conversationID: The ID of the conversation to be moved
