@@ -116,7 +116,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
-        return try KeychainManager.deleteItem(description)
+        try KeychainManager.deleteItem(description)
     }
 
     // MARK: - Cache

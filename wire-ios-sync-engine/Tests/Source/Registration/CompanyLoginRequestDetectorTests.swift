@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class CompanyLoginRequestDetectorTests: XCTestCase {
 
@@ -261,7 +261,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsSSOCodeCaseIfInputIsSSO() {
         // GIVEN
         let code = "wire-81DD91BA-B3D0-46F0-BC29-E491938F0A54"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: code)
@@ -276,12 +276,12 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsDomainCaseIfInputIsEmail() {
         // GIVEN
         let email = "bob@wire.com"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
         var resultDomain: String?
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: email)
-        if case CompanyLoginRequestDetector.ParserResult.domain(let domain) = result {
+        if case let CompanyLoginRequestDetector.ParserResult.domain(domain) = result {
             resultDomain = domain
             valuesEqual = true
         }
@@ -295,7 +295,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsUnknownCaseIfInputIsInvalid() {
         // GIVEN
         let input = "123pho567"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: input)

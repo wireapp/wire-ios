@@ -31,7 +31,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Process welcome message
 
-    typealias ProcessWelcomeMessageMock = ((Data) async throws -> MLSGroupID)
+    typealias ProcessWelcomeMessageMock = (Data) async throws -> MLSGroupID
     private var mockProcessWelcomeMessage_: ProcessWelcomeMessageMock?
     var mockProcessWelcomeMessage: ProcessWelcomeMessageMock? {
         get { serialQueue.sync { mockProcessWelcomeMessage_ } }
@@ -55,7 +55,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
-    typealias AddMembersMock = (([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias AddMembersMock = ([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent]
     private var _mockAddMembers: AddMembersMock?
     var mockAddMembers: AddMembersMock? {
         get { serialQueue.sync { _mockAddMembers } }
@@ -72,7 +72,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Remove clients
 
-    typealias RemoveClientsMock = (([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias RemoveClientsMock = ([ClientId], MLSGroupID) async throws -> [ZMUpdateEvent]
     private var mockRemoveClients_: RemoveClientsMock?
     var mockRemoveClients: RemoveClientsMock? {
         get { serialQueue.sync { mockRemoveClients_ } }
@@ -89,7 +89,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Update key material
 
-    typealias UpdateKeyMaterialMock = ((MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias UpdateKeyMaterialMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
     private var mockUpdateKeyMaterial_: UpdateKeyMaterialMock?
     var mockUpdateKeyMaterial: UpdateKeyMaterialMock? {
         get { serialQueue.sync { mockUpdateKeyMaterial_ } }
@@ -113,7 +113,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Commit pending proposals
 
-    typealias CommitPendingProposalsMock = ((MLSGroupID) async throws -> [ZMUpdateEvent])
+    typealias CommitPendingProposalsMock = (MLSGroupID) async throws -> [ZMUpdateEvent]
     private var mockCommitPendingProposals_: CommitPendingProposalsMock?
     var mockCommitPendingProposals: CommitPendingProposalsMock? {
         get { serialQueue.sync { mockCommitPendingProposals_ } }
@@ -137,7 +137,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Join group
 
-    typealias JoinGroupMock = ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])
+    typealias JoinGroupMock = (MLSGroupID, Data) async throws -> [ZMUpdateEvent]
     private var mockJoinGroup_: JoinGroupMock?
     var mockJoinGroup: JoinGroupMock? {
         get { serialQueue.sync { mockJoinGroup_ } }
@@ -161,18 +161,21 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Decrypt
 
-    typealias DecryptMessage = ((Data, MLSGroupID) async throws -> DecryptedMessage)
+    typealias DecryptMessage = (Data, MLSGroupID) async throws -> DecryptedMessage
     private var mockDecryptMessage_: DecryptMessage?
     var mockDecryptMessage: DecryptMessage? {
         get { serialQueue.sync { mockDecryptMessage_ } }
         set { serialQueue.sync { mockDecryptMessage_ = newValue } }
     }
+
     private var mockDecryptMessageCount_ = 0
     var mockDecryptMessageCount: Int {
         get { serialQueue.sync { mockDecryptMessageCount_ } }
         set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
     }
-    func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto.DecryptedMessage {
+
+    func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto
+        .DecryptedMessage {
         guard let mock = mockDecryptMessage else {
             fatalError("no mock for `decryptMessage`")
         }

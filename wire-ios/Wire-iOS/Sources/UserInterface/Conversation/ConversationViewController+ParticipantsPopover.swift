@@ -20,9 +20,11 @@ import UIKit
 
 extension ConversationViewController: UIPopoverPresentationControllerDelegate {
 
-    func createAndPresentParticipantsPopoverController(with rect: CGRect,
-                                                       from view: UIView,
-                                                       contentViewController controller: UIViewController) {
+    func createAndPresentParticipantsPopoverController(
+        with rect: CGRect,
+        from view: UIView,
+        contentViewController controller: UIViewController
+    ) {
         self.view.window?.endEditing(true)
 
         controller.presentationController?.delegate = self

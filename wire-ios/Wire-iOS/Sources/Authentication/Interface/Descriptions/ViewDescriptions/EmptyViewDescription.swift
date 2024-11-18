@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A view description for an empty view.
- */
+/// A view description for an empty view.
 
 final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var valueSubmitted: ValueSubmitted?
@@ -29,6 +27,6 @@ final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var constraints: [NSLayoutConstraint] = []
 
     func create() -> UIView {
-        return UIView()
+        UIView()
     }
 }

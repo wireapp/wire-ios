@@ -20,7 +20,8 @@ import UIKit
 import WireFoundation
 
 /// A class which serves as bridge between the `SidebarView` and the `SidebarViewController`.
-/// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a reference.
+/// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a
+/// reference.
 final class SidebarModel: ObservableObject {
 
     @Published var wireAccentColor: WireAccentColor = .default
@@ -41,16 +42,19 @@ final class SidebarModel: ObservableObject {
 
     let accountImageAction: () -> Void
     let menuItemAction: (_ selectedMenuItem: SidebarSelectableMenuItem) -> Void
+    let foldersAction: (CGRect) -> Void
     let connectAction: () -> Void
     let supportAction: () -> Void
 
     init(
         accountImageAction: @escaping () -> Void,
-        menuItemAction: @escaping (_: SidebarSelectableMenuItem) -> Void,
+        menuItemAction: @escaping (SidebarSelectableMenuItem) -> Void,
+        foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         connectAction: @escaping () -> Void,
         supportAction: @escaping () -> Void
     ) {
         self.accountImageAction = accountImageAction
+        self.foldersAction = foldersAction
         self.menuItemAction = menuItemAction
         self.connectAction = connectAction
         self.supportAction = supportAction

@@ -17,8 +17,7 @@
 //
 
 extension ZMUpdateEvent {
-    @objc
-    static let allTypes = ZMUpdateEventType
+    @objc static let allTypes = ZMUpdateEventType
         .allCases
         .map { $0.rawValue as NSNumber }
 }

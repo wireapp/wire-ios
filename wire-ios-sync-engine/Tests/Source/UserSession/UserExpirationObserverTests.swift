@@ -18,13 +18,15 @@
 
 import Foundation
 import WireDataModel
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 extension ZMUser {
     func mockSetExpires(at date: Date) {
-        self.update(withTransportData: ["id": self.remoteIdentifier?.transportString() as Any,
-                                        "expires_at": date.transportString()], authoritative: false)
+        update(withTransportData: [
+            "id": remoteIdentifier?.transportString() as Any,
+            "expires_at": date.transportString()
+        ], authoritative: false)
     }
 }
 
@@ -46,19 +48,19 @@ extension XCTestCase {
 public class UserExpirationObserverTests: MessagingTest {
     var sut: UserExpirationObserver!
 
-    override public func setUp() {
+    public override func setUp() {
         super.setUp()
-        sut = UserExpirationObserver(managedObjectContext: self.uiMOC)
+        sut = UserExpirationObserver(managedObjectContext: uiMOC)
     }
 
-    override public func tearDown() {
+    public override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
     func testThatItIgnoresNonExpiringUsers() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "User"
         user.remoteIdentifier = UUID()
         user.needsToBeUpdatedFromBackend = false
@@ -70,7 +72,7 @@ public class UserExpirationObserverTests: MessagingTest {
 
     func testThatItMarkToBeFetchedExpiredUsers() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "User"
         user.remoteIdentifier = UUID()
         user.needsToBeUpdatedFromBackend = false
@@ -83,7 +85,7 @@ public class UserExpirationObserverTests: MessagingTest {
 
     func testThatItDoesNotMarkSameUserTwice() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "User"
         user.remoteIdentifier = UUID()
         user.needsToBeUpdatedFromBackend = false
@@ -102,7 +104,7 @@ public class UserExpirationObserverTests: MessagingTest {
 
     func testThatItStartsTimerForExpiringUsers() {
         // given
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "User"
         user.remoteIdentifier = UUID()
         user.needsToBeUpdatedFromBackend = false
@@ -113,7 +115,7 @@ public class UserExpirationObserverTests: MessagingTest {
         XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         XCTAssertTrue(sut.expiringUsers.contains(user))
         // when
-        XCTAssertTrue(self.waitInRunLoop(for: { () -> (Bool) in
+        XCTAssertTrue(waitInRunLoop(for: { () -> (Bool) in
             user.needsToBeUpdatedFromBackend == true
         }))
         XCTAssertFalse(sut.expiringUsers.contains(user))
@@ -128,7 +130,7 @@ public class UserExpirationObserverTests: MessagingTest {
             user.name = "User"
             user.remoteIdentifier = UUID()
             user.needsToBeUpdatedFromBackend = false
-            user.mockSetExpires(at: Date(timeIntervalSinceNow: 100000))
+            user.mockSetExpires(at: Date(timeIntervalSinceNow: 100_000))
             // when
             localSut.check(users: Set([user]))
             sut = localSut

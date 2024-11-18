@@ -34,11 +34,11 @@ class ButtonState: ZMManagedObject {
     }
 
     override static func entityName() -> String {
-        return String(describing: ButtonState.self)
+        String(describing: ButtonState.self)
     }
 
     override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     enum State: Int16 {
@@ -49,7 +49,7 @@ class ButtonState: ZMManagedObject {
 
     var state: State {
         get {
-            return State(rawValue: stateValue) ?? .unselected
+            State(rawValue: stateValue) ?? .unselected
         }
         set {
             stateValue = newValue.rawValue

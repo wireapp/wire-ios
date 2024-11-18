@@ -176,7 +176,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Adding Participants (MLS) - Failed to claim Key Packages
 
-    func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages() async throws {
+    func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages(
+    ) async throws {
         // GIVEN
         let (failedUser1, failedUser2) = await uiMOC.perform { [self] in
             conversation.messageProtocol = .mls
@@ -362,7 +363,7 @@ private extension ConversationParticipantsServiceTests {
     typealias DomainUserTuple = (domain: String, user: ZMUser)
 
     func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
-        return await uiMOC.perform { [self] in
+        await uiMOC.perform { [self] in
 
             let applesDomain = "apples.com"
             let bananasDomain = "bananas.com"

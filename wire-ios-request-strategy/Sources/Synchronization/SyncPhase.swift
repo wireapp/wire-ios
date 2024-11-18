@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
+@objc
+public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
 
     // start here for slow sync
     case fetchingLastUpdateEventID
@@ -56,37 +57,37 @@ import Foundation
     public var description: String {
         switch self {
         case .fetchingLastUpdateEventID:
-            return "fetchingLastUpdateEventID"
+            "fetchingLastUpdateEventID"
         case .fetchingConnections:
-            return "fetchingConnections"
+            "fetchingConnections"
         case .fetchingConversations:
-            return "fetchingConversations"
+            "fetchingConversations"
         case .fetchingTeams:
-            return "fetchingTeams"
+            "fetchingTeams"
         case .fetchingTeamMembers:
-            return "fetchingTeamMembers"
+            "fetchingTeamMembers"
         case .fetchingTeamRoles:
-            return "fetchingTeamRoles"
+            "fetchingTeamRoles"
         case .fetchingUsers:
-            return "fetchingUsers"
+            "fetchingUsers"
         case .fetchingSelfUser:
-            return "fetchingSelfUser"
+            "fetchingSelfUser"
         case .fetchingLegalHoldStatus:
-            return "fetchingLegalHoldStatus"
+            "fetchingLegalHoldStatus"
         case .fetchingLabels:
-            return "fetchingLabels"
+            "fetchingLabels"
         case .fetchingFeatureConfig:
-            return "fetchingFeatureConfig"
+            "fetchingFeatureConfig"
         case .fetchingBackendMLSPublicKeys:
-            return "fetchingBackendMLSPublicKeys"
+            "fetchingBackendMLSPublicKeys"
         case .updateSelfSupportedProtocols:
-            return "updateSelfSupportedProtocols"
+            "updateSelfSupportedProtocols"
         case .evaluate1on1ConversationsForMLS:
-            return "evaluate1on1ConversationsForMLS"
+            "evaluate1on1ConversationsForMLS"
         case .fetchingMissedEvents:
-            return "fetchingMissedEvents"
+            "fetchingMissedEvents"
         case .done:
-            return "done"
+            "done"
         }
     }
 }

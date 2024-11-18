@@ -178,10 +178,10 @@ private extension Payload.UserProfile.MessageProtocol {
     var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
 
         case .mls:
-            return .mls
+            .mls
         }
     }
 

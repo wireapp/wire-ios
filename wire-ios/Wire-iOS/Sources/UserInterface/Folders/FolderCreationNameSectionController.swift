@@ -23,11 +23,11 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
     typealias Cell = FolderCreationNameCell
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     var value: SimpleTextField.Value? {
-        return nameCell?.textField.value
+        nameCell?.textField.value
     }
 
     private var conversationName: String
@@ -35,15 +35,11 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
     private weak var textFieldDelegate: SimpleTextFieldDelegate?
     private var footer = SectionFooter(frame: .zero)
 
-    private lazy var footerText: String = {
-        return L10n.Localizable.Folder.Creation.Name.footer
-    }()
+    private lazy var footerText: String = L10n.Localizable.Folder.Creation.Name.footer
 
     private var header = SectionHeader(frame: .zero)
 
-    private lazy var headerText: String = {
-        return L10n.Localizable.Folder.Creation.Name.header(conversationName)
-    }()
+    private lazy var headerText: String = L10n.Localizable.Folder.Creation.Name.header(conversationName)
 
     init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {
         self.textFieldDelegate = delegate
@@ -52,8 +48,16 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
 
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView.flatMap(Cell.register)
-        collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
-        collectionView?.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
+        collectionView?.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
+        collectionView?.register(
+            SectionFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter"
+        )
     }
 
     func becomeFirstResponder() {
@@ -68,39 +72,66 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
 extension FolderCreationNameSectionController {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         cell.textField.textFieldDelegate = textFieldDelegate
         nameCell = cell
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
+            let view = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: "SectionHeader",
+                for: indexPath
+            )
             (view as? SectionHeader)?.titleLabel.text = headerText
             return view
         } else {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
+            let view = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionFooter,
+                withReuseIdentifier: "SectionFooter",
+                for: indexPath
+            )
             (view as? SectionFooter)?.titleLabel.text = footerText
             return view
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         header.titleLabel.text = headerText
         header.size(fittingWidth: collectionView.bounds.width)
         return header.bounds.size
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
         footer.titleLabel.text = footerText
         footer.size(fittingWidth: collectionView.bounds.width)
         return footer.bounds.size

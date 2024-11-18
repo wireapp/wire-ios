@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 class BackendEnvironmentTests: XCTestCase {
 
@@ -30,9 +30,12 @@ class BackendEnvironmentTests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
         let mainBundle = Bundle(for: type(of: self))
-        // Note: this is a copy of public config: https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
-        guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle") else { XCTFail("Could not find Backend.bundle"); return }
-        guard let backendBundle = Bundle(path: backendBundlePath) else { XCTFail("Could not load Backend.bundle"); return }
+        // Note: this is a copy of public config:
+        // https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
+        guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle")
+        else { XCTFail("Could not find Backend.bundle"); return }
+        guard let backendBundle = Bundle(path: backendBundlePath)
+        else { XCTFail("Could not load Backend.bundle"); return }
 
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
@@ -59,18 +62,18 @@ class BackendEnvironmentTests: XCTestCase {
             teamsURL: baseURL.appendingPathComponent("teams"),
             accountsURL: baseURL.appendingPathComponent("accounts"),
             websiteURL: baseURL,
-            countlyURL: baseURL.appendingPathComponent("dummyCountlyURL"))
+            countlyURL: baseURL.appendingPathComponent("dummyCountlyURL")
+        )
         let proxySettings = ProxySettings(host: "127.0.0.1", port: 1080, needsAuthentication: true)
         let trust = ServerCertificateTrust(trustData: [])
         let environmentType = EnvironmentType.custom(url: configURL)
-        let backendEnvironment = BackendEnvironment(
+        return BackendEnvironment(
             title: title,
             environmentType: environmentType,
             endpoints: endpoints,
             proxySettings: proxySettings,
-            certificateTrust: trust)
-
-        return backendEnvironment
+            certificateTrust: trust
+        )
     }
 
     func testThatWeCanLoadBackendEndpoints() {
@@ -95,7 +98,7 @@ class BackendEnvironmentTests: XCTestCase {
 
         guard
             let path: String = backendBundle
-                .path(forResource: "custom", ofType: "json")
+            .path(forResource: "custom", ofType: "json")
         else {
             XCTFail("Could not find configuration for custom")
             return
@@ -130,18 +133,27 @@ class BackendEnvironmentTests: XCTestCase {
     }
 
     func testThatWeCanLoadBackendTrust() {
-        guard let environment = BackendEnvironment(userDefaults: defaultsProd, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
+        guard let environment = BackendEnvironment(userDefaults: defaultsProd, configurationBundle: backendBundle)
+        else { XCTFail("Could not read environment data from Backend.bundle"); return }
 
         guard let trust = environment.certificateTrust as? ServerCertificateTrust else {
             XCTFail(); return
         }
 
         XCTAssertEqual(trust.trustData.count, 1, "Should have one key")
-        guard let data = trust.trustData.first else { XCTFail( ); return }
+        guard let data = trust.trustData.first else { XCTFail(); return }
 
         let hosts = Set(data.hosts.map(\.value))
         XCTAssertEqual(hosts.count, 4)
-        XCTAssertEqual(hosts, Set(["clientblacklist.wire.com", "prod-nginz-ssl.wire.com", "prod-assets.wire.com", "prod-nginz-https.wire.com"]))
+        XCTAssertEqual(
+            hosts,
+            Set([
+                "clientblacklist.wire.com",
+                "prod-nginz-ssl.wire.com",
+                "prod-assets.wire.com",
+                "prod-nginz-https.wire.com"
+            ])
+        )
     }
 
     func testThatWeCanWorkWithoutLoadingTrust() {
@@ -181,7 +193,10 @@ class BackendEnvironmentTests: XCTestCase {
         XCTAssertEqual(loaded?.title, backendEnvironment.title)
         XCTAssertEqual(loaded?.proxySettings?.host, backendEnvironment.proxySettings?.host)
         XCTAssertEqual(loaded?.proxySettings?.port, backendEnvironment.proxySettings?.port)
-        XCTAssertEqual(loaded?.proxySettings?.needsAuthentication, backendEnvironment.proxySettings?.needsAuthentication)
+        XCTAssertEqual(
+            loaded?.proxySettings?.needsAuthentication,
+            backendEnvironment.proxySettings?.needsAuthentication
+        )
 
     }
 

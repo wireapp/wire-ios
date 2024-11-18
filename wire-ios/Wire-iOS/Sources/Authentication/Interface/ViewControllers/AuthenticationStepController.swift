@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-/**
- * A view controller that can display the interface from an authentication step.
- */
+/// A view controller that can display the interface from an authentication step.
 
 class AuthenticationStepController: AuthenticationStepViewController {
 
@@ -72,15 +70,13 @@ class AuthenticationStepController: AuthenticationStepViewController {
     private var rightItemAction: AuthenticationCoordinatorAction?
 
     var contentCenterYAnchor: NSLayoutYAxisAnchor {
-        return contentStack.centerYAnchor
+        contentStack.centerYAnchor
     }
 
     // MARK: - Initialization
 
-    /**
-     * Creates the view controller to display the specified interface description.
-     * - parameter description: The description of the step interface.
-     */
+    /// Creates the view controller to display the specified interface description.
+    /// - parameter description: The description of the step interface.
 
     required init(description: AuthenticationStepDescription, contentCenterConstraintActivation: Bool = true) {
         self.stepDescription = description
@@ -121,23 +117,23 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     // MARK: - View Creation
 
-    /**
-     * Creates the main input view for the view controller. Override this method if you need a different
-     * main view than the one provided by the step description, or to customize its behavior.
-     * - returns: The main view to include in the stack.
-     */
+    /// Creates the main input view for the view controller. Override this method if you need a different
+    /// main view than the one provided by the step description, or to customize its behavior.
+    /// - returns: The main view to include in the stack.
 
     /// Override this method to provide a different main view.
     func createMainView() -> UIView {
-        return stepDescription.mainView.create()
+        stepDescription.mainView.create()
     }
 
     private func createViews() {
         let textPadding = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
         let labelColor = SemanticColors.Label.textDefault
 
-        headlineLabel = DynamicFontLabel(fontSpec: .largeLightWithTextStyleFont,
-                                         color: labelColor)
+        headlineLabel = DynamicFontLabel(
+            fontSpec: .largeLightWithTextStyleFont,
+            color: labelColor
+        )
         headlineLabelContainer = ContentInsetView(headlineLabel, inset: textPadding)
         headlineLabel.textAlignment = .center
         headlineLabel.text = stepDescription.headline
@@ -191,7 +187,13 @@ class AuthenticationStepController: AuthenticationStepViewController {
         footerViewStackView.spacing = 26
         footerViewStackView.translatesAutoresizingMaskIntoConstraints = false
 
-        let subviews = [headlineLabelContainer, subtextLabelContainer, mainView, errorLabelContainer, secondaryViewsStackView].compactMap { $0 }
+        let subviews = [
+            headlineLabelContainer,
+            subtextLabelContainer,
+            mainView,
+            errorLabelContainer,
+            secondaryViewsStackView
+        ].compactMap { $0 }
 
         contentStack = CustomSpacingStackView(customSpacedArrangedSubviews: subviews)
         contentStack.axis = .vertical
@@ -206,10 +208,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         secondaryViewsStackView.isHidden = isHidden
     }
 
-    /**
-     * Updates the constrains for display in regular or compact layout.
-     * - parameter isRegular: Whether the current size class is regular.
-     */
+    /// Updates the constrains for display in regular or compact layout.
+    /// - parameter isRegular: Whether the current size class is regular.
 
     func updateConstraints(forRegularLayout isRegular: Bool) {
         if isRegular {
@@ -271,7 +271,10 @@ class AuthenticationStepController: AuthenticationStepViewController {
             NSLayoutConstraint.activate([
                 footerViewStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 31),
                 footerViewStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -31),
-                footerViewStackView.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+                footerViewStackView.safeAreaLayoutGuide.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -20
+                )
             ])
         }
 
@@ -285,14 +288,20 @@ class AuthenticationStepController: AuthenticationStepViewController {
     // MARK: - Customization
 
     func setRightItem(_ title: String, withAction action: AuthenticationCoordinatorAction, accessibilityID: String) {
-        let button = UIBarButtonItem(title: title.localizedUppercase, style: .plain, target: self, action: #selector(rightItemTapped))
+        let button = UIBarButtonItem(
+            title: title.localizedUppercase,
+            style: .plain,
+            target: self,
+            action: #selector(rightItemTapped)
+        )
         button.accessibilityIdentifier = accessibilityID
         rightItemAction = action
         navigationItem.rightBarButtonItem = button
     }
 
-    @objc private func rightItemTapped() {
-        guard let rightItemAction = self.rightItemAction else {
+    @objc
+    private func rightItemTapped() {
+        guard let rightItemAction else {
             return
         }
 
@@ -313,18 +322,30 @@ class AuthenticationStepController: AuthenticationStepViewController {
         navigationItem.backButtonDisplayMode = .minimal
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Keyboard
 
     private func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
-    @objc private func handleKeyboardPresentation(notification: Notification) {
+    @objc
+    private func handleKeyboardPresentation(notification: Notification) {
         updateOffsetForKeyboard(in: notification)
     }
 
@@ -346,10 +367,12 @@ class AuthenticationStepController: AuthenticationStepViewController {
         }
 
         // Calculate the height of the content under the keyboard
-        let contentRect = CGRect(x: contentStack.frame.origin.x,
-                                 y: contentStack.frame.origin.y + currentOffset,
-                                 width: contentStack.frame.width,
-                                 height: contentStack.frame.height + minimumKeyboardSpacing)
+        let contentRect = CGRect(
+            x: contentStack.frame.origin.x,
+            y: contentStack.frame.origin.y + currentOffset,
+            width: contentStack.frame.width,
+            height: contentStack.frame.height + minimumKeyboardSpacing
+        )
 
         let offset = keyboardFrame.intersection(contentRect).height
 
@@ -373,7 +396,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
     }
 
     override func accessibilityPerformMagicTap() -> Bool {
-        return (mainView as? MagicTappable)?.performMagicTap() == true
+        (mainView as? MagicTappable)?.performMagicTap() == true
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -407,7 +430,7 @@ extension AuthenticationStepController {
     }
 
     var initialValidation: ValueValidation? {
-        return (stepDescription as? DefaultValidatingStepDescription)?.initialValidation
+        (stepDescription as? DefaultValidatingStepDescription)?.initialValidation
     }
 
     func valueValidated(_ validation: ValueValidation?) {
@@ -416,14 +439,14 @@ extension AuthenticationStepController {
 
     func updateValidation(_ suggestedValidation: ValueValidation?) {
         switch suggestedValidation {
-        case .info(let infoText)?:
+        case let .info(infoText)?:
             errorLabel.accessibilityIdentifier = "validation-rules"
             errorLabel.text = infoText
             errorLabel.textColor = UIColor.Team.placeholderColor
             errorLabelContainer.isHidden = false
             showSecondaryView(for: nil)
 
-        case .error(let error, let showVisualFeedback)?:
+        case let .error(error, showVisualFeedback)?:
             UIAccessibility.post(notification: .screenChanged, argument: errorLabel)
             if !showVisualFeedback {
                 // If we do not want to show an error (eg if all the text was deleted,
@@ -453,16 +476,16 @@ extension AuthenticationStepController {
     }
 
     func showSecondaryView(for error: Error?) {
-        if let view = self.secondaryErrorView {
+        if let view = secondaryErrorView {
             secondaryViewsStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = false }
-            self.secondaryErrorView = nil
+            secondaryErrorView = nil
         }
 
         if let error, let errorDescription = stepDescription.secondaryView?.display(on: error) {
             let view = errorDescription.create()
-            self.secondaryErrorView = view
+            secondaryErrorView = view
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = true }
             secondaryViewsStackView.addArrangedSubview(view)
         }

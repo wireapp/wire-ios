@@ -21,7 +21,8 @@ import WireSystem
 
 /// The dimension to use when calculating relative radii.
 enum MaskDimension: Int {
-    case width, height
+    case width
+    case height
 }
 
 /// Define the MaskShape enum to include the required shapes
@@ -98,15 +99,13 @@ final class ContinuousMaskLayer: CALayer {
         case .circle:
             cornerRadius = min(bounds.width, bounds.height) / 2
 
-        case .rounded(let radius):
+        case let .rounded(radius):
             cornerRadius = radius
 
-        case .relative(let multiplier, let dimension):
-            let base: CGFloat
-
-            switch dimension {
-            case .width: base = bounds.width
-            case .height: base = bounds.height
+        case let .relative(multiplier, dimension):
+            let base: CGFloat = switch dimension {
+            case .width: bounds.width
+            case .height: bounds.height
             }
 
             cornerRadius = base * multiplier

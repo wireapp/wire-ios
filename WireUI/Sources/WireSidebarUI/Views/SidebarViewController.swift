@@ -112,18 +112,20 @@ public final class SidebarViewController: UIViewController {
     ) {
         super.init(nibName: nil, bundle: nil)
 
-        model = .init(accountImageAction: { [weak self] in
+        self.model = .init(accountImageAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, foldersAction: { [weak self] rect in
+            self?.delegate?.sidebarViewController(self!, didTapFoldersMenuItem: rect)
         }, connectAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
 
-        setupHostingController = { [weak self] in
+        self.setupHostingController = { [weak self] in
             guard let self else { return }
 
             let sidebarAdapter = SidebarAdapter(
@@ -150,7 +152,7 @@ public final class SidebarViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setupHostingController()
     }
@@ -173,6 +175,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            foldersAction: model.foldersAction,
             connectAction: model.connectAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView,
@@ -184,7 +187,10 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
         .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
-        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(
+            uiColor: model
+                .sidebarMenuItemIsSelectedTitleForegroundColor
+        ))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

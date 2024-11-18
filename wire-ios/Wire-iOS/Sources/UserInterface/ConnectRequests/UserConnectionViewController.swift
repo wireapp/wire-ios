@@ -20,7 +20,8 @@ import UIKit
 import WireSyncEngine
 
 enum IncomingConnectionAction: UInt {
-    case ignore, accept
+    case ignore
+    case accept
 }
 
 final class IncomingConnectionViewController: UIViewController {
@@ -83,7 +84,7 @@ final class UserConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        self.userConnectionView = UserConnectionView(user: self.user)
-        self.view = self.userConnectionView
+        userConnectionView = UserConnectionView(user: user)
+        view = userConnectionView
     }
 }

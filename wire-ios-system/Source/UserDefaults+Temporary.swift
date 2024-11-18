@@ -18,10 +18,11 @@
 
 import Foundation
 
-extension UserDefaults {
+public extension UserDefaults {
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
-    @objc public static func temporary() -> Self {
+    @objc
+    static func temporary() -> Self {
         let suiteName = UUID().uuidString
         let userDefaults = Self(suiteName: suiteName)!
         objc_setAssociatedObject(
@@ -52,7 +53,8 @@ private final class SuiteCleanUp {
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
 
         // try to even delete the plist file from the simulator usually at
-        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app id>/Library/Preferences/<suiteName>.plist
+        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app
+        // id>/Library/Preferences/<suiteName>.plist
         do {
             let fileManager = FileManager.default
             let url = try fileManager

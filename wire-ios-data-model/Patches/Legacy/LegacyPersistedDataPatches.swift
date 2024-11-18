@@ -36,7 +36,11 @@ public final class LegacyPersistedDataPatch {
     }
 
     /// Apply all patches to the MOC
-    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [LegacyPersistedDataPatch]? = nil) {
+    public static func applyAll(
+        in moc: NSManagedObjectContext,
+        fromVersion: String? = nil,
+        patches: [LegacyPersistedDataPatch]? = nil
+    ) {
         guard let currentVersion = Bundle(for: Self.self).infoDictionary!["FrameworkVersion"] as? String else {
             return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
         }
@@ -47,7 +51,8 @@ public final class LegacyPersistedDataPatch {
         }
 
         guard
-            let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
+            let previousPatchVersionString = fromVersion ??
+            (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
             let previousPatchVersion = FrameworkVersion(previousPatchVersionString)
         else {
             return zmLog.safePublic("No previous patch version stored (expected on fresh installs), skipping patches..")
@@ -63,6 +68,7 @@ public final class LegacyPersistedDataPatch {
 let lastDataModelPatchedVersionKey = "zm_lastDataModelVersionKeyThatWasPatched"
 
 // MARK: - Framework version
+
 /// A framework version (major, minor, patch)
 public struct FrameworkVersion: Comparable, Equatable {
 
@@ -71,17 +77,19 @@ public struct FrameworkVersion: Comparable, Equatable {
 
     /// Major component, *10*.3.4
     public var major: Int {
-        return components[0]
+        components[0]
     }
 
     /// Minor component, 10.*3*.4
     public var minor: Int {
-        return components[1]
+        components[1]
     }
+
     /// Patch component, 10.3.*4*
     public var patch: Int {
-        return components[2]
+        components[2]
     }
+
     /// Version in string form
     public let version: String
 
@@ -115,5 +123,5 @@ public struct FrameworkVersion: Comparable, Equatable {
 }
 
 public func == (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
-    return lhs.components == rhs.components
+    lhs.components == rhs.components
 }

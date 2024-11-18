@@ -21,6 +21,7 @@ import WebKit
 import WireUtilities
 
 // MARK: - Error states
+
 enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
@@ -29,15 +30,17 @@ enum DigitalSignatureVerificationError: Error {
 
 final class DigitalSignatureVerificationViewController: UIViewController {
 
-    typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
+    typealias DigitalSignatureCompletion = (_ result: Result<Void, Error>) -> Void
 
     // MARK: - Private Property
+
     private var completion: DigitalSignatureCompletion?
 
     private var webView = WKWebView(frame: .zero)
     private var url: URL?
 
     // MARK: - Init
+
     init(url: URL, completion: DigitalSignatureCompletion? = nil) {
         self.url = url
         self.completion = completion
@@ -56,6 +59,7 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     // MARK: - Private Method
+
     private func setupWebView() {
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
@@ -66,10 +70,12 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func updateButtonMode() {
-        let buttonItem = UIBarButtonItem(title: L10n.Localizable.General.done,
-                                         style: .done,
-                                         target: self,
-                                         action: #selector(onClose))
+        let buttonItem = UIBarButtonItem(
+            title: L10n.Localizable.General.done,
+            style: .done,
+            target: self,
+            action: #selector(onClose)
+        )
         buttonItem.accessibilityIdentifier = "DoneButton"
         buttonItem.accessibilityLabel = L10n.Localizable.General.done
         buttonItem.tintColor = UIColor.black
@@ -82,16 +88,20 @@ final class DigitalSignatureVerificationViewController: UIViewController {
         webView.load(request)
     }
 
-    @objc private func onClose() {
+    @objc
+    private func onClose() {
         dismiss(animated: true, completion: nil)
     }
 }
 
 // MARK: - WKNavigationDelegate
+
 extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
         guard
             let url = navigationAction.request.url,
             let response = parseVerificationURL(url)
@@ -104,7 +114,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         case .success:
             completion?(.success(()))
             decisionHandler(.cancel)
-        case .failure(let error):
+        case let .failure(error):
             completion?(.failure(error))
             decisionHandler(.cancel)
         }
@@ -121,7 +131,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         case "sas-success":
             return .success(())
         case "sas-error-authentication-failed":
-             return .failure(DigitalSignatureVerificationError.authenticationFailed)
+            return .failure(DigitalSignatureVerificationError.authenticationFailed)
         default:
             return .failure(DigitalSignatureVerificationError.otherError)
         }

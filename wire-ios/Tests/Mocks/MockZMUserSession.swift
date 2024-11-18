@@ -37,7 +37,7 @@ final class MockZMUserSession: NSObject, UserSessionInterface {
 
     var mockConversationDirectory = MockConversationDirectory()
     var conversationDirectory: ConversationDirectoryType {
-        return mockConversationDirectory
+        mockConversationDirectory
     }
 
     var isNotificationContentHidden: Bool = false
