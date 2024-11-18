@@ -46,7 +46,6 @@ final class ConversationListContentController: UICollectionViewController {
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
-    private var emptySearchPlaceholderView: UIStackView!
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
