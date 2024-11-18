@@ -52,7 +52,7 @@ extension ZMUser: UserType {
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
-    var isMLSEnabled: Bool {
+    private func isMLSEnabled() -> Bool {
         guard let context = managedObjectContext else { return false }
         let mlsFeature = FeatureRepository(context: context).fetchMLS()
         return mlsFeature.isEnabled
