@@ -137,17 +137,15 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             throw ProteusMessageDecryptorError.selfClientNotFound
         }
         
-        if senderClient.isInserted {
-            await userClientsRepository.storeClient(
-                discoveryDate: eventData.timestamp,
-                client: senderClient
-            )
-            
-            await userClientsRepository.addNewClientToIgnored(
-                selfClient: selfClient,
-                newClient: senderClient
-            )
-        }
+        await userClientsRepository.storeClient(
+            discoveryDate: eventData.timestamp,
+            client: senderClient
+        )
+        
+        await userClientsRepository.addNewClientToIgnored(
+            selfClient: selfClient,
+            newClient: senderClient
+        )
         
         guard let proteusSessionID = await userClientsRepository.proteusSessionID(
             for: senderClient

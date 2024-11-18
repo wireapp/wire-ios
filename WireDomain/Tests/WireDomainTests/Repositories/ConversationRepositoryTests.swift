@@ -36,12 +36,12 @@ final class ConversationRepositoryTests: XCTestCase {
     )
 
     private var teamRepository: MockTeamRepositoryProtocol!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var mlsProvider: MLSProvider!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
-    private var mlsDecryptionService: MockMLSDecryptionServiceInterface!
     private var userLocalStore: MockUserLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
@@ -49,9 +49,7 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        try await super.setUp()
         mlsService = MockMLSServiceInterface()
-        mlsDecryptionService = MockMLSDecryptionServiceInterface()
         mlsProvider = MLSProvider(service: mlsService, isMLSEnabled: true)
         userRepository = MockUserRepositoryProtocol()
         teamRepository = MockTeamRepositoryProtocol()
@@ -60,11 +58,11 @@ final class ConversationRepositoryTests: XCTestCase {
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         userLocalStore = MockUserLocalStoreProtocol()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
         
         conversationsLocalStore = ConversationLocalStore(
             context: context,
             mlsService: mlsService,
-            decryptionService: mlsDecryptionService,
             userLocalStore: userLocalStore
         )
         conversationsAPI = MockConversationsAPI()
@@ -75,13 +73,14 @@ final class ConversationRepositoryTests: XCTestCase {
             conversationsLocalStore: conversationsLocalStore,
             userRepository: userRepository,
             teamRepository: teamRepository,
+            userClientsRepository: userClientsRepository,
             backendInfo: backendInfo,
             mlsProvider: mlsProvider
         )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
+        userClientsRepository = nil
         userRepository = nil
         teamRepository = nil
         mlsProvider = nil
@@ -94,7 +93,6 @@ final class ConversationRepositoryTests: XCTestCase {
         coreDataStackHelper = nil
         modelHelper = nil
         userLocalStore = nil
-        mlsDecryptionService = nil
     }
 
     // MARK: - Tests
@@ -766,59 +764,6 @@ final class ConversationRepositoryTests: XCTestCase {
                 messageType: .participantsAdded,
                 at: timestamp
             )
-        }
-    }
-    
-    func testAddMLSMessage_It_Adds_Message_To_Conversation() async throws {
-        
-        // Mock
-        
-        let encryptedMessageData = Data.random()
-        let decryptedMessageData = Data(base64Encoded: Scaffolding.base64EncodedString)
-        let decryptedMessageText = "Everything"
-        
-        let (conversation, selfUser, user) = await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(in: context)
-            let user = modelHelper.createUser(in: context)
-            let conversation = modelHelper.createMLSConversation(
-                id: Scaffolding.conversationID,
-                mlsGroupID: Scaffolding.mlsGroupID,
-                mlsStatus: .ready,
-                in: context
-            )
-            
-            
-            return (conversation, selfUser, user)
-        }
-        
-        let mlsDecryptionResults = [
-            MLSDecryptResult.message(
-                try XCTUnwrap(decryptedMessageData),
-                Scaffolding.senderClientID.uuidString
-            )
-        ]
-        
-        mlsDecryptionService.decryptMessageForSubconversationType_MockValue = mlsDecryptionResults
-        userLocalStore.fetchSelfUser_MockValue = selfUser
-        userLocalStore.fetchUserIdDomain_MockValue = user
-        
-        // When
-        
-        await sut.addMessage(
-            .mls(encryptedMessage: encryptedMessageData.base64EncodedString(),
-                 subconversation: nil,
-                 conversationID: Scaffolding.conversationID,
-                 conversationDomain: Scaffolding.domain,
-                 senderID: Scaffolding.userID,
-                 senderDomain: Scaffolding.domain,
-                 date: .distantPast)
-        )
-        
-        // Then
-        
-        await context.perform {
-            let lastMessageText = conversation.lastMessage?.textMessageData?.messageText
-            XCTAssertEqual(lastMessageText, decryptedMessageText)
         }
     }
 

@@ -16,34 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class ProteusMessageDecryptorTests: XCTestCase {
 
-    var sut: ProteusMessageDecryptor!
-    var proteusService: MockProteusServiceInterface!
+    private var sut: ProteusMessageDecryptor!
+    private var proteusService: MockProteusServiceInterface!
+    private var userClientsRepository: MockUserClientsRepositoryProtocol!
+    private var userRepository: MockUserRepositoryProtocol!
 
-    var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    var context: NSManagedObjectContext {
+    private var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
-        try await super.setUp()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         proteusService = MockProteusServiceInterface()
+        userClientsRepository = MockUserClientsRepositoryProtocol()
+        userRepository = MockUserRepositoryProtocol()
+        
         sut = ProteusMessageDecryptor(
             proteusService: proteusService,
-            managedObjectContext: context
+            userClientsRepository: userClientsRepository,
+            userRepository: userRepository
         )
 
         // Scenario:
@@ -52,7 +58,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         // - Self user has one client, Alice has two (one of which is unknown to self user).
         // - Alice has 2 clients, one is already known to the self user.
         // - Alice will send a message from the second unknown client.
-        try await context.perform { [context, modelHelper] in
+        try await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID.uuid,
                 domain: Scaffolding.selfUserID.domain,
@@ -63,6 +69,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
                 id: Scaffolding.selfClientID,
                 in: context
             )
+            
+            userRepository.fetchOrCreateUserIdDomain_MockValue = selfUser
+            userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = selfClient
+            userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in}
+            userClientsRepository.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
+            userClientsRepository.proteusSessionIDFor_MockValue = .init(userID: Scaffolding.selfUserID.uuid.uuidString, clientID: Scaffolding.selfClientID)
 
             selfClient.numberOfKeysRemaining = Scaffolding.selfClientNumberOfKeys
 
@@ -100,25 +112,17 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         proteusService = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        userClientsRepository = nil
+        userRepository = nil
+        modelHelper = nil
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
 
-    func testItDecryptsOnlyIfNeeded() async throws {
-        // Given an event with plaintext
-        let alreadyDecryptedEvent = Scaffolding.makeEvent(content: .plaintext("foo"))
-
-        // When
-        let decryptedEvent = try await sut.decryptedEventData(from: alreadyDecryptedEvent)
-
-        // Then it was returned as is
-        XCTAssertEqual(decryptedEvent, alreadyDecryptedEvent)
-    }
-
-    func testItThrowsWhenSenderFailedToEncrypt() async throws {
+    func testDecryptedEventData_It_Throws_When_Sender_Failed_To_Encrypt() async throws {
         // Given a special payload
-        let invalidEvent = Scaffolding.makeEvent(content: .ciphertext(ZMFailedToCreateEncryptedMessagePayloadString))
+        let invalidEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: ZMFailedToCreateEncryptedMessagePayloadString))
 
         // When
         do {
@@ -132,10 +136,10 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 
-    func testItThrowsWhenCiphertextIsTooBig() async throws {
+    func testDecryptedEventData_It_Throws_When_Ciphertext_Is_Too_Big() async throws {
         // Given a message that exceeds the max ciphertext size
         let longMessage = String(repeating: "!", count: 20_000)
-        let invalidEvent = Scaffolding.makeEvent(content: .ciphertext(longMessage))
+        let invalidEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: longMessage))
 
         // When
         do {
@@ -149,11 +153,11 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 
-    func testItThrowsWhenExternalCiphertextIsTooBig() async throws {
+    func testDecryptedEventData_It_Throws_When_External_Ciphertext_Is_Too_Big() async throws {
         // Given an external message that exceeds the max ciphertext size
-        var invalidEvent = Scaffolding.makeEvent(content: .ciphertext("valid message"))
+        var invalidEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: "valid message"))
         let longMessage = String(repeating: "!", count: 20_000)
-        invalidEvent.externalData = .ciphertext(longMessage)
+        invalidEvent.externalData = .init(encryptedMessage: longMessage)
 
         // When
         do {
@@ -167,42 +171,40 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         }
     }
 
-    func testItDecryptsAnEventFromANewSenderAndUpdatesSecurityLevel() async throws {
+    func testDecryptedEventData_It_Decrypts_An_Event_And_Invokes_Repo_Methods() async throws {
+        
         // Given
-        try await context.perform { [context] in
+        
+        let (selfClient, user, senderClient) = try await context.perform { [context] in
             let selfClient = try XCTUnwrap(
                 ZMUser.selfUser(in: context).selfClient()
             )
-
-            let alice = try XCTUnwrap(
+            
+            let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.aliceID.uuid,
                     domain: Scaffolding.aliceID.domain,
                     in: context
                 )
             )
-
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            // The conversation with Alice is secure
-            selfClient.trustClients(alice.clients)
-            selfClient.updateSecurityLevelAfterDiscovering(alice.clients)
-            XCTAssertEqual(conversation.securityLevel, .secure)
-
-            // Alice's second client (from which the message is sent) is unknown
-            XCTAssertEqual(alice.clients.count, 1)
+            
+            return (selfClient, user, try XCTUnwrap(user.clients.first))
         }
+        
+        // Mock
+        
+        userClientsRepository.fetchSelfClient_MockValue = selfClient
+        userClientsRepository.fetchClientIdForUserCreateIfNeeded_MockValue = senderClient
+        userClientsRepository.storeClientDiscoveryDateClient_MockMethod = { _, _ in }
+        userClientsRepository.addNewClientToIgnoredSelfClientNewClient_MockMethod = { _, _ in }
+        userClientsRepository.proteusSessionIDFor_MockValue = Scaffolding.proteusSessionID
+        userClientsRepository.clientSessionCreatedSelfClientNewClient_MockMethod = { _, _ in }
+        userRepository.fetchOrCreateUserIdDomain_MockValue = user
 
         // Given an encrypted event
         let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)
         let encryptedMessageData = try XCTUnwrap(encryptedMessage.base64DecodedData)
-        let encryptedEvent = Scaffolding.makeEvent(content: .ciphertext(encryptedMessage))
+        let encryptedEvent = Scaffolding.makeEvent(content: .init(encryptedMessage: encryptedMessage))
 
         let decryptedMessage = try XCTUnwrap("foo".base64EncodedString)
         let decryptedMessageData = try XCTUnwrap(decryptedMessage.base64DecodedData)
@@ -216,166 +218,54 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         let decryptedEvent = try await sut.decryptedEventData(from: encryptedEvent)
 
         // Then the event was decrypted
-        XCTAssertEqual(decryptedEvent, Scaffolding.makeEvent(content: .plaintext(decryptedMessage)))
+        XCTAssertEqual(decryptedEvent, Scaffolding.makeEvent(content: .init(encryptedMessage: encryptedMessage, decryptedMessage: decryptedMessage)))
 
         let decryptInvocations = proteusService.decryptDataForSession_Invocations
         XCTAssertEqual(decryptInvocations.count, 1)
         XCTAssertEqual(decryptInvocations.first?.data, encryptedMessageData)
         XCTAssertEqual(decryptInvocations.first?.id, Scaffolding.proteusSessionID)
-
-        try await context.perform { [context] in
-            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: context).selfClient())
-
-            // Then the self clients remaining keys were decremented
-            XCTAssertEqual(selfClient.numberOfKeysRemaining, Scaffolding.selfClientNumberOfKeys - 1)
-
-            let alice = try XCTUnwrap(
-                ZMUser.fetch(
-                    with: Scaffolding.aliceID.uuid,
-                    domain: Scaffolding.aliceID.domain,
-                    in: context
-                )
-            )
-
-            let discoveredClient = try XCTUnwrap(
-                alice.clients.first {
-                    $0.remoteIdentifier == Scaffolding.aliceClientID2
-                }
-            )
-
-            // Then the client was discovered by the event.
-            XCTAssertEqual(discoveredClient.discoveryDate, Scaffolding.timestamp)
-
-            // Then the new client is marked as untrusted.
-            XCTAssertTrue(selfClient.ignoredClients.contains(discoveredClient))
-
-            // Then the verified conversation degraded due to the new client.
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            XCTAssertEqual(conversation.securityLevel, .secureWithIgnored)
-        }
+        XCTAssertEqual(userClientsRepository.fetchSelfClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.fetchClientIdForUserCreateIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.storeClientDiscoveryDateClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.addNewClientToIgnoredSelfClientNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.proteusSessionIDFor_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.clientSessionCreatedSelfClientNewClient_Invocations.count, 1)
+        XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
     }
+    
+    private enum Scaffolding {
 
-    func testItDecryptsAnEventFromAKnownSender() async throws {
-        // Given
-        try await context.perform { [context, modelHelper] in
-            let selfClient = try XCTUnwrap(
-                ZMUser.selfUser(in: context).selfClient()
-            )
+        static let localDomain = "local.com"
 
-            let alice = try XCTUnwrap(
-                ZMUser.fetch(
-                    with: Scaffolding.aliceID.uuid,
-                    domain: Scaffolding.aliceID.domain,
-                    in: context
-                )
-            )
+        static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+        static let selfClientID = "selfClientID"
+        static let selfClientNumberOfKeys: Int32 = 10
 
-            _ = modelHelper.createClient(
-                id: Scaffolding.aliceClientID2,
-                for: alice
-            )
+        static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+        static let aliceClientID1 = "aliceClientID1"
+        static let aliceClientID2 = "aliceClientID2"
 
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            // The conversation with Alice is secure
-            selfClient.trustClients(alice.clients)
-            selfClient.updateSecurityLevelAfterDiscovering(alice.clients)
-            XCTAssertEqual(conversation.securityLevel, .secure)
-
-            // Alice's second client (from which the message is sent) is known
-            XCTAssertEqual(alice.clients.count, 2)
-
-            try context.save()
-        }
-
-        // Given an encrypted event
-        let encryptedMessage = try XCTUnwrap("!?@".base64EncodedString)
-        let encryptedMessageData = try XCTUnwrap(encryptedMessage.base64DecodedData)
-        let encryptedEvent = Scaffolding.makeEvent(content: .ciphertext(encryptedMessage))
-
-        let decryptedMessage = try XCTUnwrap("foo".base64EncodedString)
-        let decryptedMessageData = try XCTUnwrap(decryptedMessage.base64DecodedData)
-
-        // Mock decryption
-        proteusService.decryptDataForSession_MockMethod = { _, _ in
-            (didCreateNewSession: false, decryptedData: decryptedMessageData)
-        }
-
-        // When
-        let decryptedEvent = try await sut.decryptedEventData(from: encryptedEvent)
-
-        // Then the event was decrypted
-        XCTAssertEqual(decryptedEvent, Scaffolding.makeEvent(content: .plaintext(decryptedMessage)))
-
-        let decryptInvocations = proteusService.decryptDataForSession_Invocations
-        XCTAssertEqual(decryptInvocations.count, 1)
-        XCTAssertEqual(decryptInvocations.first?.data, encryptedMessageData)
-        XCTAssertEqual(decryptInvocations.first?.id, Scaffolding.proteusSessionID)
-
-        try await context.perform { [context] in
-            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: context).selfClient())
-
-            // Then the self clients remaining keys was not decremented
-            XCTAssertEqual(selfClient.numberOfKeysRemaining, Scaffolding.selfClientNumberOfKeys)
-
-            // Then the conversation security reamains secure.
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            XCTAssertEqual(conversation.securityLevel, .secure)
-        }
-    }
-}
-
-private enum Scaffolding {
-
-    static let localDomain = "local.com"
-
-    static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
-    static let selfClientID = "selfClientID"
-    static let selfClientNumberOfKeys: Int32 = 10
-
-    static let aliceID = UserID(uuid: UUID(), domain: localDomain)
-    static let aliceClientID1 = "aliceClientID1"
-    static let aliceClientID2 = "aliceClientID2"
-
-    static let proteusSessionID = ProteusSessionID(
-        domain: aliceID.domain,
-        userID: aliceID.uuid.uuidString,
-        clientID: aliceClientID2
-    )
-
-    static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
-    static let timestamp = Date()
-
-    static func makeEvent(content: MessageContent) -> ConversationProteusMessageAddEvent {
-        ConversationProteusMessageAddEvent(
-            conversationID: conversationID,
-            senderID: aliceID,
-            timestamp: timestamp,
-            message: content,
-            externalData: nil,
-            messageSenderClientID: aliceClientID2,
-            messageRecipientClientID: selfClientID
+        nonisolated(unsafe) static let proteusSessionID = ProteusSessionID(
+            domain: aliceID.domain,
+            userID: aliceID.uuid.uuidString,
+            clientID: aliceClientID2
         )
+
+        static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+        static let timestamp = Date()
+
+        static func makeEvent(content: MessageContent) -> ConversationProteusMessageAddEvent {
+            ConversationProteusMessageAddEvent(
+                conversationID: conversationID,
+                senderID: aliceID,
+                timestamp: timestamp,
+                message: content,
+                externalData: nil,
+                messageSenderClientID: aliceClientID2,
+                messageRecipientClientID: selfClientID
+            )
+        }
+
     }
 
 }

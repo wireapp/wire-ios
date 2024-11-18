@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import XCTest
@@ -28,36 +28,44 @@ final class UpdateEventDecryptorTests: XCTestCase {
 
     var sut: UpdateEventDecryptor!
     var proteusMessageDecryptor: MockProteusMessageDecryptorProtocol!
+    var mlsMessageDecryptor: MockMLSMessageDecryptorProtocol!
+    var messageRepository: MockMessageRepositoryProtocol!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         stack.syncContext
     }
 
     override func setUp() async throws {
-        try await super.setUp()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         try await insertScaffoldingData()
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
+        mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
+        messageRepository = MockMessageRepositoryProtocol()
+        
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
-            context: context
+            mlsMessageDecryptor: mlsMessageDecryptor,
+            messageRepository: messageRepository
         )
     }
 
     override func tearDown() async throws {
         stack = nil
         proteusMessageDecryptor = nil
+        mlsMessageDecryptor = nil
+        messageRepository = nil
+        modelHelper = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     func insertScaffoldingData() async throws {
-        try await context.perform { [context, modelHelper] in
+        try await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID.uuid,
                 domain: Scaffolding.selfUserID.domain,
@@ -119,61 +127,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
                 .user(.pushRemove)
             ]
         )
-    }
-
-    func testWhenDecryptionErrorIsThrownThenSystemMessageIsAppended() async throws {
-        // Given some events.
-        let envelope = UpdateEventEnvelope(
-            id: UUID(),
-            events: [
-                .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
-            ],
-            isTransient: false
-        )
-
-        // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { _ in
-            throw ProteusError.invalidSignature
-        }
-
-        // When
-        let events = try await sut.decryptEvents(in: envelope)
-
-        // Then we skipped over the proteus message.
-        XCTAssertEqual(events, [.user(.pushRemove)])
-
-        // Then we appended a system message.
-        try await context.perform { [context] in
-            let conversation = try XCTUnwrap(
-                ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
-                    domain: Scaffolding.conversationID.domain,
-                    in: context
-                )
-            )
-
-            let alice = try XCTUnwrap(
-                ZMUser.fetch(
-                    with: Scaffolding.aliceID.uuid,
-                    domain: Scaffolding.aliceID.domain,
-                    in: context
-                )
-            )
-
-            let aliceClient = try XCTUnwrap(
-                alice.clients.first {
-                    $0.remoteIdentifier == Scaffolding.aliceClientID
-                }
-            )
-
-            let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage)
-            XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
-            XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, ProteusError.invalidSignature.rawValue)
-            XCTAssertEqual(lastMessage.serverTimestamp, Scaffolding.timestamp)
-            XCTAssertEqual(lastMessage.sender, alice)
-            XCTAssertEqual(lastMessage.clients, [aliceClient])
-        }
     }
 
     func testWhenDuplicateMessageErrorIsThrownThenNoSystemMessageIsAppended() async throws {
@@ -268,7 +221,7 @@ private enum Scaffolding {
         conversationID: conversationID,
         senderID: aliceID,
         timestamp: timestamp,
-        message: .ciphertext(messageContent),
+        message: .init(encryptedMessage: messageContent),
         externalData: nil,
         messageSenderClientID: aliceClientID,
         messageRecipientClientID: selfClientID

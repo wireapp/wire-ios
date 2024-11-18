@@ -21,7 +21,7 @@ import Foundation
 /// The contents of a message, typically as a base-64 encoded
 /// Protobuf string.
 
-public struct MessageContent: Equatable, Codable {
+public struct MessageContent: Equatable, Codable, Sendable {
 
     /// Encrypted message content.
 

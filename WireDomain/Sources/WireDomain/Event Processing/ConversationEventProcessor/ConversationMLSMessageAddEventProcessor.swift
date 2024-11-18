@@ -45,7 +45,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             (message: $0.message, senderClientID: $0.senderClientID)
         }
         
-        await repository.addMessageToConversation(
+        await repository.addMessage(
             .mls(decryptedMessages: decryptedMessages,
                  conversationID: conversationID.uuid,
                  conversationDomain: conversationID.domain,

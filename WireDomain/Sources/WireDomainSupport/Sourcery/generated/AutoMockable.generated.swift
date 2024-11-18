@@ -936,16 +936,16 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
     public init() {}
 
 
-    // MARK: - addSystemMessageToConversation
+    // MARK: - addSystemMessage
 
-    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations: [(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?)] = []
-    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod: ((SystemMessageType, UUID, String?) async -> Void)?
+    public var addSystemMessageMessageTypeConversationIDConversationDomain_Invocations: [(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?)] = []
+    public var addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod: ((SystemMessageType, UUID, String?) async -> Void)?
 
-    public func addSystemMessageToConversation(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?) async {
-        addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
+    public func addSystemMessage(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?) async {
+        addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod else {
-            fatalError("no mock for `addSystemMessageToConversationMessageTypeConversationIDConversationDomain`")
+        guard let mock = addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `addSystemMessageMessageTypeConversationIDConversationDomain`")
         }
 
         await mock(messageType, conversationID, conversationDomain)
@@ -990,31 +990,31 @@ public class MockMessageRepositoryProtocol: MessageRepositoryProtocol {
     public init() {}
 
 
-    // MARK: - addSystemMessageToConversation
+    // MARK: - addSystemMessage
 
-    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations: [(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?)] = []
-    public var addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod: ((SystemMessageType, UUID, String?) async -> Void)?
+    public var addSystemMessageMessageTypeConversationIDConversationDomain_Invocations: [(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?)] = []
+    public var addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod: ((SystemMessageType, UUID, String?) async -> Void)?
 
-    public func addSystemMessageToConversation(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?) async {
-        addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
+    public func addSystemMessage(messageType: SystemMessageType, conversationID: UUID, conversationDomain: String?) async {
+        addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.append((messageType: messageType, conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod else {
-            fatalError("no mock for `addSystemMessageToConversationMessageTypeConversationIDConversationDomain`")
+        guard let mock = addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `addSystemMessageMessageTypeConversationIDConversationDomain`")
         }
 
         await mock(messageType, conversationID, conversationDomain)
     }
 
-    // MARK: - addMessageToConversation
+    // MARK: - addMessage
 
-    public var addMessageToConversation_Invocations: [MessageType] = []
-    public var addMessageToConversation_MockMethod: ((MessageType) async -> Void)?
+    public var addMessage_Invocations: [MessageType] = []
+    public var addMessage_MockMethod: ((MessageType) async -> Void)?
 
-    public func addMessageToConversation(_ messageType: MessageType) async {
-        addMessageToConversation_Invocations.append(messageType)
+    public func addMessage(_ messageType: MessageType) async {
+        addMessage_Invocations.append(messageType)
 
-        guard let mock = addMessageToConversation_MockMethod else {
-            fatalError("no mock for `addMessageToConversation`")
+        guard let mock = addMessage_MockMethod else {
+            fatalError("no mock for `addMessage`")
         }
 
         await mock(messageType)

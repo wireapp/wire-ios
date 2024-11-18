@@ -24,11 +24,11 @@ import XCTest
 final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
     private var sut: ConversationMLSMessageAddEventProcessor!
-    private var repository: MockConversationRepositoryProtocol!
+    private var repository: MockMessageRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        repository = MockConversationRepositoryProtocol()
+        repository = MockMessageRepositoryProtocol()
         sut = ConversationMLSMessageAddEventProcessor(
             repository: repository
         )

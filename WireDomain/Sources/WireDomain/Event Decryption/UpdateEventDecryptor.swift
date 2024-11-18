@@ -154,7 +154,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             date: eventData.timestamp
         )
         
-        await messageRepository.addSystemMessageToConversation(
+        await messageRepository.addSystemMessage(
             messageType: systemMessageType,
             conversationID: eventData.conversationID.uuid,
             conversationDomain: eventData.conversationID.domain

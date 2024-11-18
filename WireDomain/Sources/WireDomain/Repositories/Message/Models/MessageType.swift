@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum MessageType {
+public enum MessageType: Sendable {
     case mls(
         decryptedMessages: [(message: String, senderClientID: String?)],
         conversationID: UUID,

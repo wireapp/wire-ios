@@ -22,7 +22,7 @@ import WireDataModel
 /// Facilitate access to message related domain objects.
 public protocol MessageRepositoryProtocol {
 
-    func addSystemMessageToConversation(
+    func addSystemMessage(
         messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
@@ -31,7 +31,7 @@ public protocol MessageRepositoryProtocol {
     /// Adds a message to a given conversation.
     /// - parameter messageType: The type of message to add (MLS or Proteus)
 
-    func addMessageToConversation(
+    func addMessage(
         _ messageType: MessageType
     ) async
 
@@ -55,19 +55,19 @@ public class MessageRepository: MessageRepositoryProtocol {
         self.conversationRepository = conversationRepository
     }
 
-    public func addSystemMessageToConversation(
+    public func addSystemMessage(
         messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        await localStore.addSystemMessageToConversation(
+        await localStore.addSystemMessage(
             messageType: messageType,
             conversationID: conversationID,
             conversationDomain: conversationDomain
         )
     }
     
-    public func addMessageToConversation(
+    public func addMessage(
         _ messageType: MessageType
     ) async {
         switch messageType {

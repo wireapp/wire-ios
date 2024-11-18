@@ -24,7 +24,7 @@ import WireCryptobox
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
 
-    func addSystemMessageToConversation(
+    func addSystemMessage(
         messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
@@ -49,7 +49,7 @@ public protocol MessageLocalStoreProtocol {
     /// Adds a Proteus message to a given conversation
     /// - Parameters:
     ///     - message: The message content.
-    ///     - externalData: The message external data.
+    ///     - externalData: The message external data if any (used for large message payload)
     ///     - conversation: The Proteus conversation.
     ///     - senderID: The ID of the user who sent the message.
     ///     - senderDomain: The domain of the user who sent the message.
@@ -92,7 +92,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     // MARK: - Public
 
-    public func addSystemMessageToConversation(
+    public func addSystemMessage(
         messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
@@ -111,6 +111,52 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessages,
             to: conversation
         )
+    }
+    
+    public func addProteusMessage(
+        _ message: String,
+        externalData: String?,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        senderClientID: String,
+        recipientClientID: String,
+        date: Date
+    ) async {
+        
+        await createOrUpdateMessage(
+            message,
+            externalData: externalData,
+            conversation: conversation,
+            senderID: senderID,
+            senderDomain: senderDomain,
+            senderClientID: senderClientID,
+            messageType: "conversation.otr-message-add",
+            date: date
+        )
+        
+    }
+    
+    public func addMLSMessages(
+        decryptedMessages: [(message: String, senderClientID: String?)],
+        mlsConversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date?
+    ) async {
+        
+        for decryptedMessage in decryptedMessages {
+            
+            await createOrUpdateMessage(
+                decryptedMessage.message,
+                conversation: mlsConversation,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                senderClientID: decryptedMessage.senderClientID,
+                messageType: "conversation.mls-message-add",
+                date: date
+            )
+        }
     }
 
     // MARK: - Private
@@ -398,50 +444,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             return [systemMessage]
         }
     }
-    
-    public func addProteusMessage(
-        _ message: String,
-        externalData: String?,
-        conversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String,
-        senderClientID: String,
-        recipientClientID: String,
-        date: Date
-    ) async {
-        
-        await createOrUpdateMessage(
-            message,
-            externalData: externalData,
-            conversation: conversation,
-            senderID: senderID,
-            senderDomain: senderDomain,
-            senderClientID: senderClientID,
-            date: date
-        )
-        
-    }
-    
-    public func addMLSMessages(
-        decryptedMessages: [(message: String, senderClientID: String?)],
-        mlsConversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String,
-        date: Date?
-    ) async {
-        
-        for decryptedMessage in decryptedMessages {
-            
-            await createOrUpdateMessage(
-                decryptedMessage.message,
-                conversation: mlsConversation,
-                senderID: senderID,
-                senderDomain: senderDomain,
-                senderClientID: decryptedMessage.senderClientID,
-                date: date
-            )
-        }
-    }
 
     private func createSystemMessage(
         messageType: ZMSystemMessageType,
@@ -508,6 +510,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
     
+    /// Adds Proteus or MLS message to conversation
+
     private func createOrUpdateMessage(
         _ message: String,
         externalData: String? = nil,
@@ -515,6 +519,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         senderID: UUID,
         senderDomain: String,
         senderClientID: String?,
+        messageType: String,
         date: Date?
     ) async {
         let selfUser = await userLocalStore.fetchSelfUser()
@@ -528,7 +533,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
         
         var logAttributes: LogAttributes = [
-            .messageType: "conversation.mls-message-add",
+            .messageType: messageType,
             .conversationId: conversationID?.safeForLoggingDescription
         ]
 
@@ -558,7 +563,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             date: date,
             conversation: conversation,
             logAttributes: logAttributes
-        ) else { return }
+        ) else {
+            return
+        }
         
         WireLogger.eventProcessing.debug("Processing:\n\(genericMessage)")
         logAttributes[.nonce] = UUID(uuidString: genericMessage.messageID) ?? "<nil>"
@@ -728,7 +735,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     date: date,
                     logAttributes: logAttributes
                 )
-                
             }
 
         }
@@ -746,8 +752,11 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         
         var genericMessage = GenericMessage(withBase64String: base64Message)
         
+        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular message.
+        /// See `External` section from https://github.com/wireapp/generic-message-proto
+        /// See `External messages` section from https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         if let externalData,
-           case .some(.external(let external)) = genericMessage?.content {
+            case .some(.external(let external)) = genericMessage?.content {
             
             let externalData = Data(base64Encoded: externalData)
             let externalSha256 = externalData?.zmSHA256Digest()
@@ -770,27 +779,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             genericMessage = message
         }
         
-        guard let genericMessage = GenericMessage(withBase64String: base64Message),
+        guard let genericMessage = genericMessage,
               let content = genericMessage.content else {
-            
-            if let sender = try? await userLocalStore.fetchUser(
-                id: senderID,
-                domain: senderDomain
-            ) {
-                
-                let systemMessageType: SystemMessageType = .invalid(sender: (senderID, senderDomain), date: date ?? .now)
-                
-                let systemMessage = await createSystemMessages(
-                    from: systemMessageType,
-                    conversation: conversation
-                )
-            
-                await addSystemMessages(
-                    systemMessage,
-                    to: conversation
-                )
 
-            }
+            await addInvalidMessage(
+                conversation: conversation,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                date: date ?? .now
+            )
             
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
@@ -801,6 +798,25 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
         
         return (genericMessage, content)
+    }
+    
+    private func addInvalidMessage(
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async {
+        let systemMessageType: SystemMessageType = .invalid(sender: (senderID, senderDomain), date: date)
+        
+        let systemMessage = await createSystemMessages(
+            from: systemMessageType,
+            conversation: conversation
+        )
+    
+        await addSystemMessages(
+            systemMessage,
+            to: conversation
+        )
     }
     
     private func addParticipantIfNeeded(
