@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "D125F0F6-776C-4A64-9AC7-FEA6C6571756",
+      "id" : "0D1F897E-1847-4B42-8110-AAFFB268E809",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -17,22 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireUtilitiesPackageTests",
-        "name" : "WireUtilitiesPackageTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "WireSystemPackageTests",
         "name" : "WireSystemPackageTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireFoundationTests",
-        "name" : "WireFoundationTests"
       }
     }
   ],

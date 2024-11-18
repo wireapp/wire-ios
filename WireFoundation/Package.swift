@@ -9,6 +9,8 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
+        .library(name: "WireSystemPackage", targets: ["WireSystemPackage"]),
+        .library(name: "WireSystemSupportPackage", targets: ["WireSystemSupportPackage"]),
         .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
@@ -19,25 +21,31 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireFoundation"),
-        .testTarget(
-            name: "WireFoundationTests",
-            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
-        ),
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
-
-        .target(
-            name: "WireUtilitiesPackage",
-            path: "./Sources/WireUtilities"
-        ),
         .testTarget(
-            name: "WireUtilitiesPackageTests",
-            dependencies: ["WireUtilitiesPackage"],
-            path: "./Tests/WireUtilitiesTests"
+            name: "WireFoundationTests",
+            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
         ),
+
+            .target(
+                name: "WireSystemPackage",
+                path: "./Sources/WireSystem"
+            ),
+        .target(
+            name: "WireSystemSupportPackage",
+            dependencies: ["WireSystemPackage"],
+            path: "./Sources/WireSystemSupport",
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+        ),
+            .testTarget(
+                name: "WireSystemPackageTests",
+                dependencies: ["WireSystemPackage", "WireSystemSupportPackage"],
+                path: "./Tests/WireSystemTests"
+            ),
 
         .target(
             name: "WireTestingPackage",
@@ -45,12 +53,21 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        )
+        ),
+
+            .target(
+                name: "WireUtilitiesPackage",
+                path: "./Sources/WireUtilities"
+            ),
+            .testTarget(
+                name: "WireUtilitiesPackageTests",
+                dependencies: ["WireUtilitiesPackage"],
+                path: "./Tests/WireUtilitiesTests"
+            )
     ]
 )
 
 for target in package.targets {
-    guard target.type != .plugin else { continue }
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
