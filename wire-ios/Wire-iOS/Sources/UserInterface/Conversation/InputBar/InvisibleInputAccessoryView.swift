@@ -22,7 +22,10 @@ import UIKit
 // is being done to us and report back
 
 protocol InvisibleInputAccessoryViewDelegate: AnyObject {
-    func invisibleInputAccessoryView(_ invisibleInputAccessoryView: InvisibleInputAccessoryView, superviewFrameChanged frame: CGRect?)
+    func invisibleInputAccessoryView(
+        _ invisibleInputAccessoryView: InvisibleInputAccessoryView,
+        superviewFrameChanged frame: CGRect?
+    )
 }
 
 final class InvisibleInputAccessoryView: UIView {
@@ -36,7 +39,7 @@ final class InvisibleInputAccessoryView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return overriddenIntrinsicContentSize
+        overriddenIntrinsicContentSize
     }
 
     override func didMoveToWindow() {

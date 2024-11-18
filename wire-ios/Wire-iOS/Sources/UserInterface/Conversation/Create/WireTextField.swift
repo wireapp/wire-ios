@@ -33,7 +33,7 @@ class WireTextField: UITextField {
     private let cornerRadius: CGFloat = 12
 
     var defaultBorderColor: UIColor = SemanticColors.SearchBar.borderInputView
-    var selectedBorderColor: UIColor = UIColor.accent()
+    var selectedBorderColor: UIColor = .accent()
 
     weak var wireTextFieldDelegate: WireTextFieldDelegate?
     private let textFieldValidator = SimpleTextFieldValidator()
@@ -75,7 +75,7 @@ class WireTextField: UITextField {
         layer.cornerRadius = cornerRadius
         layer.borderColor = defaultBorderColor.cgColor
         layer.masksToBounds = true
-        self.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 
     private func setupPadding() {
@@ -124,9 +124,9 @@ class WireTextField: UITextField {
         }
         clearButton.addAction(clearAction, for: .touchUpInside)
 
-        self.rightView = clearButton
+        rightView = clearButton
         // Start with clear button hidden
-        self.rightViewMode = .never
+        rightViewMode = .never
     }
 
     // MARK: - Clear Button Visibility

@@ -18,9 +18,9 @@
 
 import UIKit
 
-typealias AuthenticationSecondaryViewDescription = SecondaryViewDescription & AuthenticationActionable
+typealias AuthenticationSecondaryViewDescription = AuthenticationActionable & SecondaryViewDescription
 
-typealias AuthenticationFooterViewDescription = FooterViewDescription & AuthenticationActionable
+typealias AuthenticationFooterViewDescription = AuthenticationActionable & FooterViewDescription
 
 typealias ValueSubmitted = (Any) -> Void
 typealias ValueValidated = (ValueValidation?) -> Void

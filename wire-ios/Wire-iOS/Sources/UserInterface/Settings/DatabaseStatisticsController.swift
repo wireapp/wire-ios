@@ -98,7 +98,10 @@ final class DatabaseStatisticsController: UIViewController {
                 let conversationsCount = try syncMoc.count(for: allConversations)
                 self.addRow(title: "Number of conversations", contents: "\(conversationsCount)")
 
-                allConversations.predicate = NSPredicate(format: "conversationType == %d", ZMConversationType.invalid.rawValue)
+                allConversations.predicate = NSPredicate(
+                    format: "conversationType == %d",
+                    ZMConversationType.invalid.rawValue
+                )
                 let invalidConversationsCount = try syncMoc.count(for: allConversations)
                 self.addRow(title: "   Invalid", contents: "\(invalidConversationsCount)")
 
@@ -118,13 +121,16 @@ final class DatabaseStatisticsController: UIViewController {
 
                 self.addRow(title: "Asset messages:", contents: "")
 
-                func addSize(of assets: [ZMAssetClientMessage], title: String, filter: ((ZMAssetClientMessage) -> Bool)) {
+                func addSize(of assets: [ZMAssetClientMessage], title: String, filter: (ZMAssetClientMessage) -> Bool) {
                     let filtered = assets.filter(filter)
                     let size = filtered.reduce(0) { count, asset -> Int64 in
                         return count + Int64(asset.size)
                     }
                     let titleWithCount = filtered.isEmpty ? title : title + " (\(filtered.count))"
-                    self.addRow(title: titleWithCount, contents: ByteCountFormatter.string(fromByteCount: size, countStyle: .file))
+                    self.addRow(
+                        title: titleWithCount,
+                        contents: ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+                    )
                 }
 
                 addSize(of: allAssets, title: "   Total", filter: { _ in true })

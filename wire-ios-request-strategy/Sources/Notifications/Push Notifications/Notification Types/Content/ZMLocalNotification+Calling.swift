@@ -22,11 +22,17 @@ import WireDataModel
 
 public extension ZMLocalNotification {
 
-    convenience init?(callState: LocalNotificationType.CallState, conversation: ZMConversation?, caller: ZMUser, moc: NSManagedObjectContext) {
+    convenience init?(
+        callState: LocalNotificationType.CallState,
+        conversation: ZMConversation?,
+        caller: ZMUser,
+        moc: NSManagedObjectContext
+    ) {
         guard let conversation,
-              let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else {
-                  return nil
-              }
+              let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation)
+        else {
+            return nil
+        }
         self.init(builder: builder, moc: moc)
     }
 
@@ -38,7 +44,7 @@ public extension ZMLocalNotification {
         let managedObjectContext: NSManagedObjectContext
 
         var notificationType: LocalNotificationType {
-            return .calling(callState)
+            .calling(callState)
         }
 
         init?(callState: LocalNotificationType.CallState, caller: ZMUser, conversation: ZMConversation) {
@@ -50,7 +56,7 @@ public extension ZMLocalNotification {
             }
 
             switch callState {
-            case .incomingCall(let video):
+            case let .incomingCall(video):
                 self.callState = .incomingCall(video: video)
             case .missedCall:
                 self.callState = .missedCall(cancelled: true)
@@ -67,11 +73,11 @@ public extension ZMLocalNotification {
         }
 
         func titleText() -> String? {
-            return notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
+            notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
         }
 
         func bodyText() -> String {
-            return notificationType.messageBodyText(sender: caller, conversation: conversation)
+            notificationType.messageBodyText(sender: caller, conversation: conversation)
         }
 
         func userInfo() -> NotificationUserInfo? {
@@ -80,7 +86,7 @@ public extension ZMLocalNotification {
             guard let selfUserID = selfUser.remoteIdentifier,
                   let senderID = caller.remoteIdentifier,
                   let conversationID = conversation.remoteIdentifier
-                  else { return nil }
+            else { return nil }
 
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID

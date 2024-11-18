@@ -18,44 +18,40 @@
 
 import Foundation
 
-/**
- * The result of an operation, either success or failure.
- */
+/// The result of an operation, either success or failure.
 
 public enum ZiphyResult<T> {
     case success(T)
     case failure(ZiphyError)
 
     var error: ZiphyError! {
-        if case .failure(let error) = self {
-            return error
+        if case let .failure(error) = self {
+            error
         } else {
-            return nil
+            nil
         }
     }
 }
 
-/**
- * A task that can be cancelled.
- */
+/// A task that can be cancelled.
 
 public protocol CancelableTask {
     func cancel()
 }
 
-/**
- * An opaque object that identifies as a single Ziphy network request
- */
+/// An opaque object that identifies as a single Ziphy network request
 
-@objc public protocol ZiphyRequestIdentifier {}
+@objc
+public protocol ZiphyRequestIdentifier {}
 
-/**
- * An object that performs network requests to the Giphy API.
- */
+/// An object that performs network requests to the Giphy API.
 
 public protocol ZiphyURLRequester {
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    ) -> ZiphyRequestIdentifier
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
 
@@ -67,8 +63,11 @@ extension URLSessionDataTask: ZiphyRequestIdentifier, CancelableTask {}
 
 extension URLSession: ZiphyURLRequester {
 
-    public func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
-        let task = self.dataTask(with: request, completionHandler: completionHandler)
+    public func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    ) -> ZiphyRequestIdentifier {
+        let task = dataTask(with: request, completionHandler: completionHandler)
         task.resume()
         return task
     }

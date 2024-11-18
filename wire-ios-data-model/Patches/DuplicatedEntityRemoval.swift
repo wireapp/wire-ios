@@ -31,12 +31,17 @@ enum DuplicatedEntityRemoval {
 
     static func deleteDuplicatedClients(in context: NSManagedObjectContext) {
         // Fetch clients having the same remote identifiers
-        context.findDuplicated(by: #keyPath(UserClient.remoteIdentifier)).forEach { (_: String?, clients: [UserClient]) in
-            // Group clients having the same remote identifiers by user
-            clients.filter { !($0.user?.isSelfUser ?? true) }.group(by: ZMUserClientUserKey).forEach { (_: ZMUser, clients: [UserClient]) in
-                UserClient.merge(clients)
+        context
+            .findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+            .forEach { (_: String?, clients: [UserClient]) in
+                // Group clients having the same remote identifiers by user
+                clients
+                    .filter { !($0.user?.isSelfUser ?? true) }
+                    .group(by: ZMUserClientUserKey)
+                    .forEach { (_: ZMUser, clients: [UserClient]) in
+                        UserClient.merge(clients)
+                    }
             }
-        }
     }
 
 }
@@ -58,9 +63,12 @@ extension UserClient {
 
     // Migration method for merging two duplicated @c UserClient entities
     func merge(with client: UserClient) {
-        precondition(!(self.user?.isSelfUser ?? false), "Cannot merge self user's clients")
-        precondition(client.remoteIdentifier == self.remoteIdentifier, "UserClient's remoteIdentifier should be equal to merge")
-        precondition(client.user == self.user, "UserClient's Users should be equal to merge")
+        precondition(!(user?.isSelfUser ?? false), "Cannot merge self user's clients")
+        precondition(
+            client.remoteIdentifier == remoteIdentifier,
+            "UserClient's remoteIdentifier should be equal to merge"
+        )
+        precondition(client.user == user, "UserClient's Users should be equal to merge")
 
         let addedOrRemovedInSystemMessages = client.addedOrRemovedInSystemMessages
         let ignoredByClients = client.ignoredByClients

@@ -48,8 +48,10 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     private let usersView = WebLinkTextView()
     private let imageContainer = UIView()
     private var imageView = UIImageView()
-    private let button = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                      insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private let button = SecondaryTextButton(
+        fontSpec: FontSpec.buttonSmallSemibold,
+        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    )
 
     private var config: Configuration? {
         didSet {
@@ -73,7 +75,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     // MARK: - Setup UI
 
     func configure(with object: Configuration, animated: Bool) {
-        self.config = object
+        config = object
     }
 
     private func updateUI() {
@@ -137,7 +139,10 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: conversationHorizontalMargins.left),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            stackView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 

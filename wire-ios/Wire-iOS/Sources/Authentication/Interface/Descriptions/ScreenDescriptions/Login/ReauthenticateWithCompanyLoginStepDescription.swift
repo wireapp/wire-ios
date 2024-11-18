@@ -28,13 +28,16 @@ final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDes
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        headline = L10n.Localizable.Registration.Signin.title
-        subtext = .markdown(from: L10n.Localizable.SigninLogout.Sso.subheadline, style: .login)
+        self.backButton = BackButtonDescription()
+        self.headline = L10n.Localizable.Registration.Signin.title
+        self.subtext = .markdown(from: L10n.Localizable.SigninLogout.Sso.subheadline, style: .login)
 
-        mainView = SolidButtonDescription(title: L10n.Localizable.SigninLogout.Sso.buton, accessibilityIdentifier: "company_login")
-        secondaryView = nil
-        footerView = nil
+        self.mainView = SolidButtonDescription(
+            title: L10n.Localizable.SigninLogout.Sso.buton,
+            accessibilityIdentifier: "company_login"
+        )
+        self.secondaryView = nil
+        self.footerView = nil
     }
 
 }

@@ -28,19 +28,19 @@ final class ConversationInputBarButtonState {
     }
 
     var sendButtonHidden: Bool {
-        return editing
+        editing
     }
 
     var ephemeralIndicatorButtonHidden: Bool {
-        return editing || !ephemeral || isEphemeralSendingDisabled
+        editing || !ephemeral || isEphemeralSendingDisabled
     }
 
     var ephemeralIndicatorButtonEnabled: Bool {
-        return !ephemeralIndicatorButtonHidden && !syncedMessageDestructionTimeout && !isEphemeralTimeoutForced
+        !ephemeralIndicatorButtonHidden && !syncedMessageDestructionTimeout && !isEphemeralTimeoutForced
     }
 
     private var hasText: Bool {
-        return textLength != 0
+        textLength != 0
     }
 
     var ephemeral: Bool {
@@ -57,14 +57,16 @@ final class ConversationInputBarButtonState {
     private var isEphemeralSendingDisabled = false
     private var isEphemeralTimeoutForced = false
 
-    func update(textLength: Int,
-                editing: Bool,
-                markingDown: Bool,
-                destructionTimeout: MessageDestructionTimeoutValue?,
-                mode: ConversationInputBarViewControllerMode,
-                syncedMessageDestructionTimeout: Bool,
-                isEphemeralSendingDisabled: Bool,
-                isEphemeralTimeoutForced: Bool) {
+    func update(
+        textLength: Int,
+        editing: Bool,
+        markingDown: Bool,
+        destructionTimeout: MessageDestructionTimeoutValue?,
+        mode: ConversationInputBarViewControllerMode,
+        syncedMessageDestructionTimeout: Bool,
+        isEphemeralSendingDisabled: Bool,
+        isEphemeralTimeoutForced: Bool
+    ) {
 
         self.textLength = textLength
         self.editing = editing

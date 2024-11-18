@@ -30,7 +30,7 @@ enum PreviewBlacklist {
     ]
 
     static func isBlacklisted(_ url: URL) -> Bool {
-        return blacklistedHosts.contains { blacklisted in
+        blacklistedHosts.contains { blacklisted in
             url.absoluteString.lowercased().contains(blacklisted)
         }
     }

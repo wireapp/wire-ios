@@ -31,8 +31,9 @@ extension Notification.Name {
 final class MarkdownTextView: NextResponderTextView {
 
     enum ListType {
-        case number, bullet
-        var prefix: String { return self == .number ? "1. " : "- " }
+        case number
+        case bullet
+        var prefix: String { self == .number ? "1. " : "- " }
     }
 
     // MARK: - Properties
@@ -50,7 +51,7 @@ final class MarkdownTextView: NextResponderTextView {
     /// attributed text.
     var preparedText: (String, [Mention]) {
         let markdownText = parser.parse(attributedString: attributedText)
-        let mentions = self.mentions(from: markdownText)
+        let mentions = mentions(from: markdownText)
         let markdownTextWithMentions = replaceMentionAttachmentsWithPlainText(in: markdownText)
 
         return (markdownTextWithMentions as String, mentions)
@@ -61,8 +62,10 @@ final class MarkdownTextView: NextResponderTextView {
         setText(draft.text, withMentions: draft.mentions)
     }
 
-    override func canPerformAction(_ action: Selector,
-                                   withSender sender: Any?) -> Bool {
+    override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
         if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard {
             let validActions = [
                 #selector(UIResponderStandardEditActions.select(_:)),
@@ -89,7 +92,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     private func mentions(from attributedText: NSAttributedString) -> [Mention] {
         var locationOffset = 0
-        let mentions: [Mention] = mentionAttachmentsWithRange(from: attributedText).map { tuple in
+        return mentionAttachmentsWithRange(from: attributedText).map { tuple in
             let (attachment, range) = tuple
             let length = attachment.attributedText.string.utf16.count
             let adjustedRange = NSRange(location: range.location + locationOffset, length: length)
@@ -97,23 +100,25 @@ final class MarkdownTextView: NextResponderTextView {
 
             return Mention(range: adjustedRange, user: attachment.user)
         }
-        return mentions
     }
 
     private func replaceMentionAttachmentsWithPlainText(in attributedText: NSAttributedString) -> String {
         let textWithPlainTextMentions = NSMutableString(string: attributedText.string)
 
         // We reverse to maintain correct ranges for subsequent inserts.
-        let mentionRanges = mentionAttachmentsWithRange(from: attributedText).map({ attachment, range in
+        let mentionRanges = mentionAttachmentsWithRange(from: attributedText).map { attachment, range in
             (range, attachment.attributedText.string)
-        }).reversed()
+        }.reversed()
 
         mentionRanges.forEach(textWithPlainTextMentions.replaceCharacters)
 
         return textWithPlainTextMentions as String
     }
 
-    private func mentionAttachmentsWithRange(from attributedText: NSAttributedString) -> [(MentionTextAttachment, NSRange)] {
+    private func mentionAttachmentsWithRange(from attributedText: NSAttributedString) -> [(
+        MentionTextAttachment,
+        NSRange
+    )] {
         var result = [(MentionTextAttachment, NSRange)]()
         attributedText.enumerateAttributes(in: attributedText.wholeRange, options: []) { attributes, range, _ in
             if let attachment = attributes[.attachment] as? MentionTextAttachment {
@@ -161,7 +166,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     override var selectedTextRange: UITextRange? {
-        didSet { activeMarkdown = self.markdownAtSelection() }
+        didSet { activeMarkdown = markdownAtSelection() }
     }
 
     // MARK: - Range Helpers
@@ -177,7 +182,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     private var previousLineTextRange: UITextRange? {
-        return previousLineRange?.textRange(in: self)
+        previousLineRange?.textRange(in: self)
     }
 
     // MARK: - Init
@@ -191,15 +196,20 @@ final class MarkdownTextView: NextResponderTextView {
         // create the storage stack
         self.markdownTextStorage = MarkdownTextStorage()
         let layoutManager = NSLayoutManager()
-        self.markdownTextStorage.addLayoutManager(layoutManager)
+        markdownTextStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
         super.init(frame: .zero, textContainer: textContainer)
 
-        currentAttributes = attributes(for: activeMarkdown)
+        self.currentAttributes = attributes(for: activeMarkdown)
         typingAttributes = currentAttributes
 
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidChange), name: UITextView.textDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil
+        )
         setupGestureRecognizer()
     }
 
@@ -213,8 +223,8 @@ final class MarkdownTextView: NextResponderTextView {
     /// Updates the color of the text.
     func updateTextColor(base: UIColor?) {
         let baseColor = base ?? SemanticColors.Label.textDefault
-        self.textColor = baseColor
-        self.style.baseFontColor = baseColor
+        textColor = baseColor
+        style.baseFontColor = baseColor
     }
 
     /// Clears active markdown & updates typing attributes.
@@ -239,7 +249,8 @@ final class MarkdownTextView: NextResponderTextView {
     /// Called after each text change has been committed. We use this opportunity
     /// to insert new list items in the case a newline was entered, as well as
     /// to validate any potential list items on the currently selected line.
-    @objc private func textViewDidChange() {
+    @objc
+    private func textViewDidChange() {
 
         if newlineFlag {
             // flip immediately to avoid infinity
@@ -249,7 +260,7 @@ final class MarkdownTextView: NextResponderTextView {
                 let prevlineRange = previousLineRange,
                 let prevLineTextRange = previousLineTextRange,
                 let selection = selectedTextRange
-                else { return }
+            else { return }
 
             if isEmptyListItem(at: prevlineRange) {
                 // the delete last line
@@ -288,7 +299,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns the markdown at the given location.
     private func markdown(at location: Int) -> Markdown {
-        guard location >= 0 && markdownTextStorage.length > location else { return .none }
+        guard location >= 0, markdownTextStorage.length > location else { return .none }
         let markdown = markdownTextStorage.attribute(.markdownID, at: location, effectiveRange: nil) as? Markdown
         return markdown ?? .none
     }
@@ -388,15 +399,11 @@ final class MarkdownTextView: NextResponderTextView {
         return try! NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
     }()
 
-    private lazy var orderedListItemRegex: NSRegularExpression = {
-        // group 1: prefix, group 2: number, group 3: content
-        return try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
-    }()
+    private lazy var orderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: number, group 3: content
+        try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
 
-    private lazy var unorderedListItemRegex: NSRegularExpression = {
-        // group 1: prefix, group 2: bullet, group 3: content
-        return try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
-    }()
+    private lazy var unorderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: bullet, group 3: content
+        try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
 
     // MARK: - List Methods
 
@@ -423,12 +430,12 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns true if an empty list item is present in the given range.
     private func isEmptyListItem(at range: NSRange) -> Bool {
-        return emptyListItemRegex.numberOfMatches(in: text, options: [], range: range) != 0
+        emptyListItemRegex.numberOfMatches(in: text, options: [], range: range) != 0
     }
 
     /// Returns the list type in the given range, if it exists.
     private func listType(in range: NSRange) -> ListType? {
-        if numberPrefix(at: range) != nil { return .number } else if bulletPrefix(at: range) != nil { return .bullet } else { return nil }
+        if numberPrefix(at: range) != nil { .number } else if bulletPrefix(at: range) != nil { .bullet } else { nil }
     }
 
     /// Returns the range of the list prefix in the given range, if it exists.
@@ -460,8 +467,7 @@ final class MarkdownTextView: NextResponderTextView {
     /// Returns the bullet prefix in the given range, if it exists.
     private func bulletPrefix(at range: NSRange) -> String? {
         if let match = unorderedListItemRegex.firstMatch(in: text, options: [], range: range) {
-            let bullet = markdownTextStorage.attributedSubstring(from: match.range(at: 2)).string
-            return bullet
+            return markdownTextStorage.attributedSubstring(from: match.range(at: 2)).string
         }
         return nil
     }
@@ -486,7 +492,7 @@ final class MarkdownTextView: NextResponderTextView {
             let lineRange = currentLineRange,
             let selection = selectedTextRange,
             let lineStart = NSRange(location: lineRange.location, length: 0).textRange(in: self)
-            else { return }
+        else { return }
 
         let prefix = nextListPrefix(type: type)
 
@@ -506,7 +512,7 @@ final class MarkdownTextView: NextResponderTextView {
             let lineRange = currentLineRange,
             let prefixRange = rangeOfListPrefix(at: lineRange)?.textRange(in: self),
             var selection = selectedTextRange
-            else { return }
+        else { return }
 
         // if the selection is within the prefix range, change selection
         // to be at start of list content
@@ -535,7 +541,7 @@ final class MarkdownTextView: NextResponderTextView {
             let start = position(from: selection.start, offset: delta),
             let end = position(from: selection.end, offset: delta),
             let restoredSelection = textRange(from: start, to: end)
-            else { return }
+        else { return }
 
         selectedTextRange = restoredSelection
     }
@@ -710,7 +716,7 @@ private extension NSRange {
             let start = textInput.position(from: textInput.beginningOfDocument, offset: location),
             let end = textInput.position(from: start, offset: length),
             let range = textInput.textRange(from: start, to: end)
-            else { return nil }
+        else { return nil }
 
         return range
     }

@@ -25,8 +25,7 @@ import WireSyncEngine
 
 struct AccentColorPicker: View {
 
-    @State
-    var selectedColor: AccentColor
+    @State var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
 
     @ObserveInjection var inject
@@ -38,13 +37,12 @@ struct AccentColorPicker: View {
             .enableInjection()
     }
 
-    @ViewBuilder
-    private var accentColorList: some View {
+    @ViewBuilder private var accentColorList: some View {
         List(AccentColor.allCases, id: \.self) { color in
             cell(for: color)
                 .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
                 .onTapGesture {
-                    self.selectedColor = color
+                    selectedColor = color
                     onColorSelect?(color)
                 }
         }

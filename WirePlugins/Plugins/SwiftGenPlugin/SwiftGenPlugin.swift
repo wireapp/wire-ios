@@ -38,7 +38,8 @@ struct SwiftGenPlugin: BuildToolPlugin {
         ] + existentialAnyWorkaround(context: context)
     }
 
-    /// This workaround is needed because at the time of writing `strings/structured-swift5.stencil` of SwiftGen does not support existential any.
+    /// This workaround is needed because at the time of writing `strings/structured-swift5.stencil` of SwiftGen does
+    /// not support existential any.
     private func existentialAnyWorkaround(context: PluginContext) -> [Command] {
         let outputFilesDirectory = context.pluginWorkDirectoryURL
         let outputFile = outputFilesDirectory.appending(path: "Strings+Generated.swift", directoryHint: .notDirectory)

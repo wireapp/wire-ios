@@ -24,7 +24,8 @@ protocol FolderCreationControllerDelegate: AnyObject {
 
     func folderController(
         _ controller: FolderCreationController,
-        didCreateFolder folder: LabelType)
+        didCreateFolder folder: LabelType
+    )
 
 }
 
@@ -32,10 +33,10 @@ final class FolderCreationController: UIViewController {
 
     private let collectionViewController = SectionCollectionViewController()
 
-    private lazy var nameSection: FolderCreationNameSectionController = {
-        return FolderCreationNameSectionController(delegate: self,
-                                                   conversationName: conversation.displayNameWithFallback)
-    }()
+    private lazy var nameSection: FolderCreationNameSectionController = .init(
+        delegate: self,
+        conversationName: conversation.displayNameWithFallback
+    )
 
     private var folderName: String = ""
     private var conversation: ZMConversation
@@ -113,8 +114,8 @@ final class FolderCreationController: UIViewController {
 
     private func setupNavigationBar() {
         typealias FolderCreationName = L10n.Localizable.Folder.Creation.Name
-        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
+        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
@@ -126,7 +127,8 @@ final class FolderCreationController: UIViewController {
             title: FolderCreationName.Button.create,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()
-            })
+            }
+        )
 
         nextButtonItem.accessibilityIdentifier = "button.newfolder.create"
         nextButtonItem.tintColor = UIColor.accent()
@@ -146,7 +148,7 @@ final class FolderCreationController: UIViewController {
             folderName = trimmed
 
             if let folder = ZMUserSession.shared()?.conversationDirectory.createFolder(folderName) {
-                self.delegate?.folderController(self, didCreateFolder: folder)
+                delegate?.folderController(self, didCreateFolder: folder)
             }
         }
     }
@@ -165,7 +167,7 @@ extension FolderCreationController: SimpleTextFieldDelegate {
 
         switch value {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
+        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
 
     }
@@ -174,11 +176,7 @@ extension FolderCreationController: SimpleTextFieldDelegate {
         tryToProceed()
     }
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
+    func textFieldDidBeginEditing(_ textField: SimpleTextField) {}
 
-    }
-
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
-    }
+    func textFieldDidEndEditing(_ textField: SimpleTextField) {}
 }

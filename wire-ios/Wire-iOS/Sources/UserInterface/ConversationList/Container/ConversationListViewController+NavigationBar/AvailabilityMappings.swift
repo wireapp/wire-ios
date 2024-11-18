@@ -38,7 +38,8 @@ extension WireDataModel.Availability {
 extension WireDataModel.Availability {
 
     /// Since `WireSidebarUI` does not know about the type `WireDataModel.Availability`,
-    /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebarUI.SidebarAccountInfo.Availability?`.
+    /// this function serves as an adapter from `WireDataModel.Availability` to
+    /// `WireSidebarUI.SidebarAccountInfo.Availability?`.
 
     func mapToSidebarAccountInfoAvailability() -> WireSidebarUI.SidebarAccountInfo.Availability? {
         switch self {
@@ -53,7 +54,8 @@ extension WireDataModel.Availability {
 extension WireSidebarUI.SidebarAccountInfo.Availability {
 
     /// Since `WireAccountImageUI.Availability` does not know about the type `WireSidebarUI`,
-    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.Availability` to `WireAccountImageUI.Availability`.
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.Availability` to
+    /// `WireAccountImageUI.Availability`.
 
     func mapToAccountImageAvailability() -> WireAccountImageUI.Availability {
         switch self {

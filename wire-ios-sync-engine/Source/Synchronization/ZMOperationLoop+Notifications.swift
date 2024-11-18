@@ -18,8 +18,10 @@
 
 import Foundation
 
-@objc extension ZMOperationLoop {
+@objc
+public extension ZMOperationLoop {
 
-    public static let pushChannelStateChangeNotificationName = Notification.Name(rawValue: "ZMPushChannelStateChangeNotificationName")
+    static let pushChannelStateChangeNotificationName = Notification
+        .Name(rawValue: "ZMPushChannelStateChangeNotificationName")
 
 }

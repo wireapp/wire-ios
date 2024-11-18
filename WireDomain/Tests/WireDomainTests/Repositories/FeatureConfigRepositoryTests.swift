@@ -17,12 +17,12 @@
 //
 
 import Combine
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
@@ -44,8 +44,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         featureConfigsAPI = MockFeatureConfigsAPI()
-        sut = FeatureConfigRepository(featureConfigsAPI: featureConfigsAPI,
-                                      context: context)
+        sut = FeatureConfigRepository(
+            featureConfigsAPI: featureConfigsAPI,
+            context: context
+        )
     }
 
     override func tearDown() async throws {
@@ -72,11 +74,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         // Then
 
         let features = await context.perform { [self] in
-            let allFeatures = Feature.Name.allCases.compactMap {
+            return Feature.Name.allCases.compactMap {
                 Feature.fetch(name: $0, context: context)
             }
-
-            return allFeatures
         }
 
         XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
@@ -157,35 +157,45 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     private enum Scaffolding {
         static let featureConfigs: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
             .mls(.init(
                 status: .enabled,
@@ -199,14 +209,18 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
             )),
-            .mlsMigration(.init(status: .enabled,
-                                startTime: nil,
-                                finaliseRegardlessAfter: nil)),
-            .endToEndIdentity(.init(status: .enabled,
-                                    acmeDiscoveryURL: "https://example.com",
-                                    verificationExpiration: 9_223_372_036_854_776_000,
-                                    crlProxy: "https://example.com",
-                                    useProxyOnMobile: true))
+            .mlsMigration(.init(
+                status: .enabled,
+                startTime: nil,
+                finaliseRegardlessAfter: nil
+            )),
+            .endToEndIdentity(.init(
+                status: .enabled,
+                acmeDiscoveryURL: "https://example.com",
+                verificationExpiration: 9_223_372_036_854_776_000,
+                crlProxy: "https://example.com",
+                useProxyOnMobile: true
+            ))
         ]
 
     }

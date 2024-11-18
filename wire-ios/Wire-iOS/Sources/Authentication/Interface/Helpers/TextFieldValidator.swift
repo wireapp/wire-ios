@@ -52,21 +52,21 @@ final class TextFieldValidator {
                 return .invalidEmail
             }
 
-        case .password(let rules, _):
+        case let .password(rules, _):
             switch rules.validatePassword(text) {
             case .valid:
                 return nil
 
-            case .invalid(let violations):
+            case let .invalid(violations):
                 return .invalidPassword(violations)
             }
 
-        case .passcode(let rules, _):
+        case let .passcode(rules, _):
             switch rules.validatePassword(text) {
             case .valid:
                 return nil
 
-            case .invalid(let violations):
+            case let .invalid(violations):
                 return .invalidPassword(violations)
             }
 
@@ -78,11 +78,13 @@ final class TextFieldValidator {
             } else if stringToValidate.count < 2 {
                 return .tooShort(kind: kind)
             }
+
         case .username:
             let subset = CharacterSet(charactersIn: text).isSubset(of: HandleValidation.allowedCharacters)
-            guard subset && text.isEqualToUnicodeName else { return .invalidUsername }
+            guard subset, text.isEqualToUnicodeName else { return .invalidUsername }
             guard text.count >= HandleValidation.allowedLength.lowerBound else { return .tooShort(kind: .username) }
             guard text.count <= HandleValidation.allowedLength.upperBound else { return .tooLong(kind: .username) }
+
         case .unknown: break
         }
 
@@ -94,7 +96,7 @@ final class TextFieldValidator {
 extension PasswordRuleSet {
 
     var textInputPasswordRules: UITextInputPasswordRules {
-        return UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
+        UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }
 
 }
@@ -102,44 +104,45 @@ extension PasswordRuleSet {
 extension TextFieldValidator.ValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .tooShort(kind: let kind):
+        case let .tooShort(kind: kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.tooshort
+                L10n.Localizable.Name.Guidance.tooshort
             case .email:
-                return L10n.Localizable.Email.Guidance.tooshort
+                L10n.Localizable.Email.Guidance.tooshort
             case .password, .passcode:
-                return PasswordRuleSet.localizedErrorMessage
+                PasswordRuleSet.localizedErrorMessage
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
-                return "unknown.guidance.tooshort".localized
+                "unknown.guidance.tooshort".localized
             case .username:
-                return L10n.Localizable.Name.Guidance.tooshort
+                L10n.Localizable.Name.Guidance.tooshort
             }
-        case .tooLong(kind: let kind):
+        case let .tooLong(kind: kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.toolong
+                L10n.Localizable.Name.Guidance.toolong
             case .email:
-                return L10n.Localizable.Email.Guidance.toolong
+                L10n.Localizable.Email.Guidance.toolong
             case .password, .passcode:
-                return L10n.Localizable.Password.Guidance.toolong
+                L10n.Localizable.Password.Guidance.toolong
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
-                return "unknown.guidance.toolong".localized
+                "unknown.guidance.toolong".localized
             case .username:
-                return L10n.Localizable.Name.Guidance.toolong
+                L10n.Localizable.Name.Guidance.toolong
             }
         case .invalidEmail:
-            return L10n.Localizable.Email.Guidance.invalid
-        case .custom(let description):
-            return description
-        case .invalidPassword(let violations):
-            return violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet.localizedErrorMessage
+            L10n.Localizable.Email.Guidance.invalid
+        case let .custom(description):
+            description
+        case let .invalidPassword(violations):
+            violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet
+                .localizedErrorMessage
         case .invalidUsername:
-            return "invalid"
+            "invalid"
         }
     }
 
@@ -149,15 +152,25 @@ extension TextFieldValidator.ValidationError: LocalizedError {
 
 extension String {
     var isEmail: Bool {
-        guard !self.hasPrefix("mailto:") else { return false }
+        guard !hasPrefix("mailto:") else { return false }
 
-        guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        else { return false }
 
-        let stringToMatch = self.trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
+        let stringToMatch =
+            trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
         let range = NSRange(location: 0, length: stringToMatch.count)
-        let firstMatch = dataDetector.firstMatch(in: stringToMatch, options: NSRegularExpression.MatchingOptions.reportCompletion, range: range)
+        let firstMatch = dataDetector.firstMatch(
+            in: stringToMatch,
+            options: NSRegularExpression.MatchingOptions.reportCompletion,
+            range: range
+        )
 
-        let numberOfMatches = dataDetector.numberOfMatches(in: stringToMatch, options: NSRegularExpression.MatchingOptions.reportCompletion, range: range)
+        let numberOfMatches = dataDetector.numberOfMatches(
+            in: stringToMatch,
+            options: NSRegularExpression.MatchingOptions.reportCompletion,
+            range: range
+        )
 
         if firstMatch?.range.location == NSNotFound { return false }
         if firstMatch?.url?.scheme != "mailto" { return false }
@@ -165,7 +178,7 @@ extension String {
         if numberOfMatches != 1 { return false }
 
         /// patch the NSDataDetector for its false-positive cases
-        if self.contains("..") { return false }
+        if contains("..") { return false }
 
         return true
     }

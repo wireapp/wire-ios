@@ -18,15 +18,16 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to end-to-end identity
- */
+/// Handles client registration errors related to end-to-end identity
 
 class AuthenticationE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle canNotRegisterMoreClients errors

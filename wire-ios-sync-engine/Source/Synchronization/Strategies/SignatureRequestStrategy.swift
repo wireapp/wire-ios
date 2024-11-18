@@ -22,26 +22,37 @@ import Foundation
 public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
     // MARK: - Private Property
+
     private let syncContext: NSManagedObjectContext
     private var signatureResponse: SignatureResponse?
     private var retrieveResponse: SignatureRetrieveResponse?
 
     // MARK: - Public Property
+
     var requestSync: ZMSingleRequestSync?
     var retrieveSync: ZMSingleRequestSync?
 
     // MARK: - AbstractRequestStrategy
-    @objc
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                         applicationStatus: ApplicationStatus) {
 
-        syncContext = managedObjectContext
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
-        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self,
-                                               groupQueue: syncContext)
-        self.retrieveSync = ZMSingleRequestSync(singleRequestTranscoder: self,
-                                                groupQueue: syncContext)
+    @objc
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
+
+        self.syncContext = managedObjectContext
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
+        self.requestSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: syncContext
+        )
+        self.retrieveSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: syncContext
+        )
     }
 
     @objc
@@ -80,16 +91,18 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
         case requestSync:
-            return makeSignatureRequest(apiVersion: apiVersion)
+            makeSignatureRequest(apiVersion: apiVersion)
         case retrieveSync:
-            return makeRetrieveSignatureRequest(apiVersion: apiVersion)
+            makeRetrieveSignatureRequest(apiVersion: apiVersion)
         default:
-            return nil
+            nil
         }
     }
 
-    public func didReceive(_ response: ZMTransportResponse,
-                           forSingleRequest sync: ZMSingleRequestSync) {
+    public func didReceive(
+        _ response: ZMTransportResponse,
+        forSingleRequest sync: ZMSingleRequestSync
+    ) {
         guard let signatureStatus = syncContext.signatureStatus else {
             return
         }
@@ -130,23 +143,28 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     }
 
     // MARK: - Helpers
+
     private func makeSignatureRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let signatureStatus = syncContext.signatureStatus,
             let encodedHash = signatureStatus.encodedHash,
             let documentID = signatureStatus.documentID,
             let fileName = signatureStatus.fileName,
-            let payload = SignaturePayload(documentID: documentID,
-                                           fileName: fileName,
-                                           hash: encodedHash).jsonDictionary as NSDictionary?
+            let payload = SignaturePayload(
+                documentID: documentID,
+                fileName: fileName,
+                hash: encodedHash
+            ).jsonDictionary as NSDictionary?
         else {
             return nil
         }
 
-        return ZMTransportRequest(path: "/signature/request",
-                                  method: .post,
-                                  payload: payload as ZMTransportData,
-                                  apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/signature/request",
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     private func makeRetrieveSignatureRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -155,10 +173,12 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
             return nil
         }
 
-        return ZMTransportRequest(path: "/signature/pending/\(responseID)",
-                                  method: .get,
-                                  payload: nil,
-                                  apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/signature/pending/\(responseID)",
+            method: .get,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     private func processRequestSignatureSuccess(with data: Data?) {
@@ -170,8 +190,10 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         }
 
         do {
-            let decodedResponse = try JSONDecoder().decode(SignatureResponse.self,
-                                                           from: responseData)
+            let decodedResponse = try JSONDecoder().decode(
+                SignatureResponse.self,
+                from: responseData
+            )
             signatureResponse = decodedResponse
             signatureStatus.didReceiveConsentURL(signatureResponse?.consentURL)
         } catch {
@@ -188,8 +210,10 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         }
 
         do {
-            let decodedResponse = try JSONDecoder().decode(SignatureRetrieveResponse.self,
-                                                           from: responseData)
+            let decodedResponse = try JSONDecoder().decode(
+                SignatureRetrieveResponse.self,
+                from: responseData
+            )
             retrieveResponse = decodedResponse
             signatureStatus.didReceiveSignature(with: decodedResponse.cms)
         } catch {
@@ -199,24 +223,27 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
 }
 
 // MARK: - SignaturePayload
+
 private struct SignaturePayload: Codable, Equatable {
     let documentID: String?
     let fileName: String?
     let hash: String?
     var jsonDictionary: [String: String]? {
-        return makeJSONDictionary()
+        makeJSONDictionary()
     }
 
     private enum CodingKeys: String, CodingKey {
         case documentID = "documentId"
         case fileName = "name"
-        case hash = "hash"
+        case hash
     }
 
     private func makeJSONDictionary() -> [String: String]? {
-        let signaturePayload = SignaturePayload(documentID: documentID,
-                                                fileName: fileName,
-                                                hash: hash)
+        let signaturePayload = SignaturePayload(
+            documentID: documentID,
+            fileName: fileName,
+            hash: hash
+        )
         guard
             let jsonData = try? JSONEncoder().encode(signaturePayload),
             let payload = try? JSONDecoder().decode([String: String].self, from: jsonData)
@@ -228,45 +255,47 @@ private struct SignaturePayload: Codable, Equatable {
 }
 
 // MARK: - SignatureResponse
+
 private struct SignatureResponse: Codable, Equatable {
     let responseID: String?
     let consentURL: URL?
 
     private enum CodingKeys: String, CodingKey {
-        case consentURL = "consentURL"
+        case consentURL
         case responseID = "responseId"
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        responseID = try container.decodeIfPresent(String.self, forKey: .responseID)
+        self.responseID = try container.decodeIfPresent(String.self, forKey: .responseID)
         guard
             let consentURLString = try container.decodeIfPresent(String.self, forKey: .consentURL),
             let url = URL(string: consentURLString)
         else {
-            consentURL = nil
+            self.consentURL = nil
             return
         }
 
-        consentURL = url
+        self.consentURL = url
     }
 }
 
 // MARK: - SignatureRetrieveResponse
+
 private struct SignatureRetrieveResponse: Codable, Equatable {
     let documentId: String?
     let cms: Data?
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
+        self.documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         guard
             let cmsBase64String = try container.decodeIfPresent(String.self, forKey: .cms),
             let cmsEncodedData = Data(base64Encoded: cmsBase64String)
         else {
-            cms = nil
+            self.cms = nil
             return
         }
-        cms = cmsEncodedData
+        self.cms = cmsEncodedData
     }
 }

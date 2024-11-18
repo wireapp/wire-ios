@@ -56,12 +56,11 @@ struct FolderPickerViewControllerBuilder {
             FolderPicker(
                 showCloseButton: false,
                 options: folders,
-                helpLink: WireURLs.shared.howToAddAConversationToACustomFolder,
+                helpLink: WireURLs.shared.howToAddConversationToCustomFolder,
                 selected: selected
             )
         }
 
-        let hostingController = UIHostingController(rootView: navigationStack)
-        return hostingController
+        return UIHostingController(rootView: navigationStack)
     }
 }

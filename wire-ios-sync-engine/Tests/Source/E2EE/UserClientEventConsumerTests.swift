@@ -35,7 +35,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
         resolveOneOnOneConversations.invoke_MockMethod = {}
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
                 forServerName: "myServer",
                 userIdentifier: self.userIdentifier,
@@ -67,19 +67,19 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        self.clientRegistrationStatus = nil
-        self.clientUpdateStatus = nil
-        self.sut = nil
+        clientRegistrationStatus = nil
+        clientUpdateStatus = nil
+        sut = nil
         super.tearDown()
     }
 
     static func payloadForAddingClient(
         _ clientId: String,
         label: String = "device label",
-        time: Date = Date(timeIntervalSince1970: 12345)
+        time: Date = Date(timeIntervalSince1970: 12_345)
     ) -> ZMTransportData {
 
-        return [
+        [
             "client": [
                 "id": clientId,
                 "label": label,
@@ -91,7 +91,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
-        return [
+        [
             "client": [
                 "id": clientId
             ],
@@ -104,7 +104,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // given
         let clientId = "94766bd92f56923d"
         let clientLabel = "iPhone 23sd Plus Air Pro C"
-        let clientTime = Date(timeIntervalSince1970: 1234555)
+        let clientTime = Date(timeIntervalSince1970: 1_234_555)
         var selfUser: ZMUser! = nil
         var selfClient: UserClient! = nil
 
@@ -132,7 +132,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -163,7 +163,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         // when
 
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -210,7 +210,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             return
         }
 
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         // then
         await syncMOC.performGrouped {
@@ -256,7 +256,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -283,7 +283,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let existingClient = self.createSelfClient()
 
             // swiftlint:disable:next todo_requires_jira_link
-            // TODO: [John] use flag here 
+            // TODO: [John] use flag here
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 fingerprint = sessionsDirectory.localFingerprint
             }
@@ -304,7 +304,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         guard let event else { return XCTFail("missing event") }
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then

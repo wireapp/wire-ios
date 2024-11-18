@@ -28,13 +28,13 @@ enum FilterImageName: String {
     case textBubbleFill = "text.bubble.fill"
 
     /// Represents an unselected star icon for favorite conversations.
-    case star = "star"
+    case star
 
     /// Represents a selected (filled) star icon for favorite conversations.
     case starFill = "star.fill"
 
     /// Represents an unselected person icon for one-to-one conversations.
-    case person = "person"
+    case person
 
     /// Represents a selected (filled) person icon for one-to-one conversations.
     case personFill = "person.fill"
@@ -46,7 +46,7 @@ enum FilterImageName: String {
     case person3Fill = "person.3.fill"
 
     /// Represents an unselected folder icon for a folder's conversations.
-    case folder = "folder"
+    case folder
 
     /// Represents a selected (filled) folder icon for a folder's conversations.
     case folderFill = "folder.fill"
@@ -54,7 +54,8 @@ enum FilterImageName: String {
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
-    ///   - filter: The type of conversation filter. The `MainConversationFilter` enum is assumed to have the following cases:
+    ///   - filter: The type of conversation filter. The `MainConversationFilter` enum is assumed to have the following
+    /// cases:
     ///     - `.allConversations`: Represents all conversations.
     ///     - `.favorites`: Represents favorite conversations.
     ///     - `.groups`: Represents group conversations.

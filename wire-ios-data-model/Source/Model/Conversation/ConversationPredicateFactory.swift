@@ -32,47 +32,73 @@ public final class ConversationPredicateFactory: NSObject {
     public func predicateForConversationsExcludingArchived() -> NSPredicate {
         let notArchivedPredicate = NSPredicate(format: "\(ZMConversationIsArchivedKey) == NO")
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), notArchivedPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsIncludingArchived(),
+            notArchivedPredicate
+        ])
     }
 
     @objc(predicateForArchivedConversations)
     public func predicateForArchivedConversations() -> NSPredicate {
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsIncludingArchived(),
+            NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")
+        ])
     }
 
     @objc(predicateForConversationsIncludingArchived)
     public func predicateForConversationsIncludingArchived() -> NSPredicate {
-        let notClearedTimestamp = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) == NULL OR \(ZMConversationLastServerTimeStampKey) > \(ZMConversationClearedTimeStampKey) OR (\(ZMConversationLastServerTimeStampKey) == \(ZMConversationClearedTimeStampKey) AND \(ZMConversationIsArchivedKey) == NO)")
+        let notClearedTimestamp =
+            NSPredicate(
+                format: "\(ZMConversationClearedTimeStampKey) == NULL OR \(ZMConversationLastServerTimeStampKey) > \(ZMConversationClearedTimeStampKey) OR (\(ZMConversationLastServerTimeStampKey) == \(ZMConversationClearedTimeStampKey) AND \(ZMConversationIsArchivedKey) == NO)"
+            )
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notClearedTimestamp, predicateForValidConversations()])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            notClearedTimestamp,
+            predicateForValidConversations()
+        ])
     }
 
     @objc(predicateForPendingConversations)
     public func predicateForPendingConversations() -> NSPredicate {
         let basePredicate = ZMConversation.predicateForFilteringResults()
-        let pendingConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.pending.rawValue)")
+        let pendingConversationPredicate =
+            NSPredicate(
+                format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue) AND \(ZMConversationOneOnOneUserKey).connection.status == \(ZMConnectionStatus.pending.rawValue)"
+            )
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
     }
 
     @objc(predicateForClearedConversations)
     public func predicateForClearedConversations() -> NSPredicate {
-        let cleared = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) != NULL AND \(ZMConversationIsArchivedKey) == YES")
+        let cleared =
+            NSPredicate(
+                format: "\(ZMConversationClearedTimeStampKey) != NULL AND \(ZMConversationIsArchivedKey) == YES"
+            )
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [cleared, predicateForValidConversations()])
     }
 
     @objc(predicateForOneToOneConversations)
     public func predicateForOneToOneConversations() -> NSPredicate {
-        // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
-        let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForUnconnectedConversations()])
+        // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing
+        // connection request.
+        let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            predicateForOneToOneConversation(),
+            predicateForUnconnectedConversations()
+        ])
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            oneToOneConversationPredicate
+        ])
     }
 
     @objc(predicateForGroupConversations)
     public func predicateForGroupConversations() -> NSPredicate {
-        let groupConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let groupConversationPredicate =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
 
         return .all(of: [
             predicateForConversationsExcludingArchived(),
@@ -84,7 +110,10 @@ public final class ConversationPredicateFactory: NSObject {
     public func predicateForLabeledConversations(_ label: Label) -> NSPredicate {
         let labelPredicate = NSPredicate(format: "%@ IN \(ZMConversationLabelsKey)", label)
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), labelPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            labelPredicate
+        ])
     }
 
     private func predicateForValidConversations() -> NSPredicate {
@@ -94,7 +123,8 @@ public final class ConversationPredicateFactory: NSObject {
 
     private func isProtocolReady() -> NSPredicate {
         // Proteus
-        let isProteus = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
+        let isProteus =
+            NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)")
 
         // Mixed
         let isMixed = NSPredicate(format: "\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mixed.int16Value)")
@@ -108,11 +138,12 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func isValidConversation() -> NSPredicate {
-        return .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
+        .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
     }
 
     private func isValidConnection() -> NSPredicate {
-        let isConnection = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        let isConnection =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
 
         let isActive = NSPredicate(format: "NOT \(ZMConversationOneOnOneUserKey).connection.status IN %@", [
             NSNumber(value: ZMConnectionStatus.pending.rawValue),
@@ -124,17 +155,19 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func isValidOneOnOne() -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
-        let isConnectionAccepted = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status == \(ZMConnectionStatus.accepted.rawValue)")
+        let isConnectionAccepted =
+            NSPredicate(
+                format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status == \(ZMConnectionStatus.accepted.rawValue)"
+            )
 
-        let isOtherUserInSameTeam = {
-            if let selfTeam {
-                return NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
-            } else {
-                return NSPredicate(value: false)
-            }
-        }()
+        let isOtherUserInSameTeam = if let selfTeam {
+            NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
+        } else {
+            NSPredicate(value: false)
+        }
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
 
@@ -142,7 +175,8 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func isValidGroup() -> NSPredicate {
-        let isGroup = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let isGroup =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         // Fake 1:1 conversations are actually groups, so we check
         // whether this group has a one on one user to filter it out.
         let hasNoOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) == NULL")
@@ -150,13 +184,14 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {
-        let isOneOnOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+        let isOneOnOne =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let hasOneOnOneUser = NSPredicate(format: "\(ZMConversationOneOnOneUserKey) != NULL")
         return NSCompoundPredicate(andPredicateWithSubpredicates: [isOneOnOne, hasOneOnOneUser])
     }
 
     private func predicateForUnconnectedConversations() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
     }
 
 }

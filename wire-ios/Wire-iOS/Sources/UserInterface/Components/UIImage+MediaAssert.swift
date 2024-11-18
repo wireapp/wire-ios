@@ -21,18 +21,18 @@ import UIKit
 extension UIImage: MediaAsset {
     var imageData: Data? {
         if isTransparent {
-            return pngData()
+            pngData()
         } else {
-            return jpegData(compressionQuality: 1.0)
+            jpegData(compressionQuality: 1.0)
         }
     }
 
     var isGIF: Bool {
-        return false
+        false
     }
 
     var isTransparent: Bool {
-        guard let alpha: CGImageAlphaInfo = self.cgImage?.alphaInfo else { return false }
+        guard let alpha: CGImageAlphaInfo = cgImage?.alphaInfo else { return false }
 
         switch alpha {
         case .first, .last, .premultipliedFirst, .premultipliedLast, .alphaOnly:

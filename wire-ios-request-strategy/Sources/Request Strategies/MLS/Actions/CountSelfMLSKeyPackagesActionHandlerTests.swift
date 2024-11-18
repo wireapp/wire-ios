@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelfMLSKeyPackagesAction, CountSelfMLSKeyPackagesActionHandler> {
+class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
+    CountSelfMLSKeyPackagesAction,
+    CountSelfMLSKeyPackagesActionHandler
+> {
 
     let clientID = "clientID"
     let requestPath = "/v5/mls/key-packages/self/clientID/count"
@@ -65,7 +68,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
     func test_itHandlesSuccess() {
         // Given
-        let payload = Payload(count: 123456789)
+        let payload = Payload(count: 123_456_789)
 
         // When
         let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))

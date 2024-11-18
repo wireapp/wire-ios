@@ -19,7 +19,8 @@
 import Foundation
 import WireDataModel
 
-@objc public protocol EventProcessingTrackerProtocol: AnyObject {
+@objc
+public protocol EventProcessingTrackerProtocol: AnyObject {
     func registerEventProcessed()
     func registerDataInsertionPerformed(amount: UInt)
     func registerDataUpdatePerformed(amount: UInt)
@@ -29,7 +30,8 @@ import WireDataModel
     var debugDescription: String { get }
 }
 
-@objc public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
+@objc
+public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
 
     var eventAttributes = [String: [String: NSObject]]()
     public let eventName = "event.processing"
@@ -42,7 +44,7 @@ import WireDataModel
         case savesPerformed
 
         var identifier: String {
-            return "event_" + rawValue
+            "event_" + rawValue
         }
     }
 
@@ -110,14 +112,12 @@ import WireDataModel
     }
 
     public func persistedAttributes(for event: String) -> [String: NSObject] {
-        return eventAttributes[event] ?? [:]
+        eventAttributes[event] ?? [:]
     }
 
-    override public var debugDescription: String {
-        let description = isolationQueue.sync {
+    public override var debugDescription: String {
+        isolationQueue.sync {
             "\(persistedAttributes(for: eventName))"
         }
-
-        return description
     }
 }

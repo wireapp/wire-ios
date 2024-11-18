@@ -35,7 +35,11 @@ extension EventDecoder {
             let payload = try decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload)
             let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
             await context.perform {
-                let conversation = ZMConversation.fetchOrCreate(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
+                let conversation = ZMConversation.fetchOrCreate(
+                    with: payload.id,
+                    domain: payload.qualifiedID?.domain,
+                    in: context
+                )
                 conversation.remoteIdentifier = payload.qualifiedID?.uuid
                 conversation.domain = payload.qualifiedID?.domain
                 conversation.mlsGroupID = groupID
@@ -60,7 +64,8 @@ extension EventDecoder {
         }
 
         let decoder = EventPayloadDecoder()
-        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
+        guard let payload = try? decoder
+            .decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
             WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return []
         }
@@ -75,7 +80,10 @@ extension EventDecoder {
             }
 
             guard conversation.mlsStatus == .ready else {
-                WireLogger.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
+                WireLogger.mls
+                    .warn(
+                        "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))"
+                    )
                 return nil
             }
 
@@ -103,12 +111,15 @@ extension EventDecoder {
             for result in results {
 
                 switch result {
-                case .message(let decryptedData, let senderClientID):
-                    if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {
+                case let .message(decryptedData, senderClientID):
+                    if let event = updateEvent.decryptedMLSEvent(
+                        decryptedData: decryptedData,
+                        senderClientID: senderClientID
+                    ) {
                         events.append(event)
                     }
 
-                case .proposal(let commitDelay):
+                case let .proposal(commitDelay):
                     let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
                     let mlsService = await context.perform {
                         conversation?.commitPendingProposalDate = scheduledDate

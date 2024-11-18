@@ -21,7 +21,10 @@ import WireSyncEngine
 
 extension AuthenticationFlowStep {
 
-    static func makeClientManagementStep(from error: NSError, statusProvider: AuthenticationStatusProvider?) -> AuthenticationFlowStep? {
+    static func makeClientManagementStep(
+        from error: NSError,
+        statusProvider: AuthenticationStatusProvider?
+    ) -> AuthenticationFlowStep? {
         guard let userClientIDs = error.userInfo[ZMClientsKey] as? [NSManagedObjectID] else {
             return nil
         }

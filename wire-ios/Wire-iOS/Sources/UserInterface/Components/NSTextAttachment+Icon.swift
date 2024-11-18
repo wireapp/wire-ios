@@ -34,17 +34,21 @@ extension NSTextAttachment {
         insets: UIEdgeInsets? = nil
     ) -> NSTextAttachment {
 
-        let image: UIImage
-        if let insets {
-            image = icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
+        let image: UIImage = if let insets {
+            icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
         } else {
-            image = icon.makeImage(size: iconSize, color: color)
+            icon.makeImage(size: iconSize, color: color)
         }
 
         let attachment = NSTextAttachment()
         attachment.image = image
         let ratio = image.size.width / image.size.height
-        attachment.bounds = CGRect(x: 0, y: verticalCorrection, width: iconSize.rawValue * ratio, height: iconSize.rawValue)
+        attachment.bounds = CGRect(
+            x: 0,
+            y: verticalCorrection,
+            width: iconSize.rawValue * ratio,
+            height: iconSize.rawValue
+        )
         return attachment
     }
 }

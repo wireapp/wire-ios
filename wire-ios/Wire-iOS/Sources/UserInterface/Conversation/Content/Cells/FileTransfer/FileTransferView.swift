@@ -45,7 +45,7 @@ final class FileTransferView: UIView, TransferView {
 
     private var allViews: [UIView] = []
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = SemanticColors.View.backgroundCollectionCell
 
@@ -68,7 +68,7 @@ final class FileTransferView: UIView, TransferView {
 
         loadingView.isHidden = true
 
-        allViews = [topLabel, bottomLabel, fileTypeIconView, actionButton, progressView, loadingView]
+        self.allViews = [topLabel, bottomLabel, fileTypeIconView, actionButton, progressView, loadingView]
         allViews.forEach(addSubview)
 
         createConstraints()
@@ -87,7 +87,7 @@ final class FileTransferView: UIView, TransferView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
     private func createConstraints() {
@@ -165,7 +165,8 @@ final class FileTransferView: UIView, TransferView {
 
         case .uploading:
             if fileMessageData.size == 0 { fallthrough }
-            let statusText = L10n.Localizable.Content.File.uploading.localizedUppercase && labelFont && labelTextBlendedColor
+            let statusText = L10n.Localizable.Content.File.uploading
+                .localizedUppercase && labelFont && labelTextBlendedColor
             let firstLine = fileNameAttributed
             let secondLine = fileSizeAttributed + dot + statusText
             topLabel.attributedText = firstLine
@@ -178,15 +179,18 @@ final class FileTransferView: UIView, TransferView {
                 topLabel.attributedText = firstLine
                 bottomLabel.attributedText = secondLine
             case .downloading:
-                let statusText = L10n.Localizable.Content.File.downloading.localizedUppercase && labelFont && labelTextBlendedColor
+                let statusText = L10n.Localizable.Content.File.downloading
+                    .localizedUppercase && labelFont && labelTextBlendedColor
                 let firstLine = fileNameAttributed
                 let secondLine = fileSizeAttributed + dot + statusText
                 topLabel.attributedText = firstLine
                 bottomLabel.attributedText = secondLine
             }
         case .uploadingFailed, .uploadingCancelled:
-            let statusText = fileMessageData.transferState == .uploadingFailed ? L10n.Localizable.Content.File.uploadFailed : L10n.Localizable.Content.File.uploadCancelled
-            let attributedStatusText = statusText.localizedUppercase && labelFont && SemanticColors.Label.textErrorDefault
+            let statusText = fileMessageData.transferState == .uploadingFailed ? L10n.Localizable.Content.File
+                .uploadFailed : L10n.Localizable.Content.File.uploadCancelled
+            let attributedStatusText = statusText.localizedUppercase && labelFont && SemanticColors.Label
+                .textErrorDefault
 
             let firstLine = fileNameAttributed
             let secondLine = fileSizeAttributed + dot + attributedStatusText
@@ -198,7 +202,7 @@ final class FileTransferView: UIView, TransferView {
         bottomLabel.accessibilityValue = bottomLabel.attributedText?.string ?? ""
 
         guard let fileName = topLabel.text,
-                let details = bottomLabel.text else {
+              let details = bottomLabel.text else {
             return
         }
         accessibilityLabel = "\(L10n.Accessibility.ConversationSearch.FileName.description): \(fileName), \(details)"
@@ -245,7 +249,8 @@ final class FileTransferView: UIView, TransferView {
 
     // MARK: - Actions
 
-    @objc func onActionButtonPressed(_ sender: UIButton) {
+    @objc
+    func onActionButtonPressed(_ sender: UIButton) {
         guard
             let message = fileMessage,
             let fileMessageData = message.fileMessageData

@@ -55,7 +55,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         // GIVEN
-        let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
+        let message = GenericMessage(content: Text(content: stringLargeEnoughToRequireExternal), nonce: UUID())
 
         // WHEN
         let data = try await internalTestEncryptForTransport(genericMessage: message, qualifiedIds: false)
@@ -83,13 +83,17 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         let clientAID = String.randomClientIdentifier()
         let clientBID = String.randomClientIdentifier()
         let domain = String.randomDomain()
-        let sessionAID: ProteusSessionID = .init(domain: domain,
-                                                userID: userAID.uuid.uuidString,
-                                                clientID: clientAID)
+        let sessionAID: ProteusSessionID = .init(
+            domain: domain,
+            userID: userAID.uuid.uuidString,
+            clientID: clientAID
+        )
 
-        let sessionBID: ProteusSessionID = .init(domain: domain,
-                                                userID: userBID.uuid.uuidString,
-                                                clientID: clientBID)
+        let sessionBID: ProteusSessionID = .init(
+            domain: domain,
+            userID: userBID.uuid.uuidString,
+            clientID: clientBID
+        )
 
         let listClients: MessageInfo.ClientList = [
             userAID.domain: [
@@ -98,17 +102,22 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                 ],
 
                 userBID.uuid: [
-                    UserClientData(sessionID: sessionBID, data: ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!)
+                    UserClientData(
+                        sessionID: sessionBID,
+                        data: ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
+                    )
                 ]
             ]
         ]
 
-        let message = GenericMessage(content: Text(content: self.stringLargeEnoughToRequireExternal), nonce: UUID())
+        let message = GenericMessage(content: Text(content: stringLargeEnoughToRequireExternal), nonce: UUID())
 
         // WHEN
-        let data = try await internalTestEncryptForTransport(genericMessage: message,
-                                                             qualifiedIds: false,
-                                                             listClients: listClients)
+        let data = try await internalTestEncryptForTransport(
+            genericMessage: message,
+            qualifiedIds: false,
+            listClients: listClients
+        )
 
         // THEN
         let createdMessage = try Proteus_NewOtrMessage.with {
@@ -126,11 +135,13 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
     // MARK: - Helpers
 
     @discardableResult
-    private func internalTestEncryptForTransport(genericMessage: GenericMessage,
-                                                 qualifiedIds: Bool = true,
-                                                 listClients: MessageInfo.ClientList,
-                                                 file: StaticString = #filePath,
-                                                 line: UInt = #line) async throws -> Data {
+    private func internalTestEncryptForTransport(
+        genericMessage: GenericMessage,
+        qualifiedIds: Bool = true,
+        listClients: MessageInfo.ClientList,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> Data {
 
         proteusService.encryptBatchedDataForSessions_MockMethod = { data, sessions in
             var result = [String: Data]()
@@ -141,10 +152,12 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         }
 
         sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: qualifiedIds)
-        let messageInfo = MessageInfo(genericMessage: genericMessage,
-                                      listClients: listClients,
-                                      missingClientsStrategy: .doNotIgnoreAnyMissingClient,
-                                      selfClientID: .randomClientIdentifier())
+        let messageInfo = MessageInfo(
+            genericMessage: genericMessage,
+            listClients: listClients,
+            missingClientsStrategy: .doNotIgnoreAnyMissingClient,
+            selfClientID: .randomClientIdentifier()
+        )
 
         // WHEN
         let data = try await sut.encryptForTransport(with: messageInfo)
@@ -155,16 +168,20 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
     }
 
     @discardableResult
-    private func internalTestEncryptForTransport(genericMessage: GenericMessage,
-                                                 qualifiedIds: Bool = true,
-                                                 file: StaticString = #filePath,
-                                                 line: UInt = #line) async throws -> Data {
+    private func internalTestEncryptForTransport(
+        genericMessage: GenericMessage,
+        qualifiedIds: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> Data {
         // GIVEN
         let userID = QualifiedID.random()
         let clientID = String.randomClientIdentifier()
-        let sessionID: ProteusSessionID = .init(domain: .randomDomain(),
-                                                userID: userID.uuid.uuidString,
-                                                clientID: clientID)
+        let sessionID: ProteusSessionID = .init(
+            domain: .randomDomain(),
+            userID: userID.uuid.uuidString,
+            clientID: clientID
+        )
         let listClients: MessageInfo.ClientList = [
             userID.domain: [
                 userID.uuid: [
@@ -172,11 +189,13 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                 ]
             ]
         ]
-        return try await internalTestEncryptForTransport(genericMessage: genericMessage,
-                                                         qualifiedIds: qualifiedIds,
-                                                         listClients: listClients,
-                                                         file: file,
-                                                         line: line)
+        return try await internalTestEncryptForTransport(
+            genericMessage: genericMessage,
+            qualifiedIds: qualifiedIds,
+            listClients: listClients,
+            file: file,
+            line: line
+        )
     }
 
     /// Returns a string large enough to have to be encoded in an external message

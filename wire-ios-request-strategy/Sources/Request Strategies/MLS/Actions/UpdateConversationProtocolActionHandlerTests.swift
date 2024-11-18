@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
+final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
+    UpdateConversationProtocolAction,
+    UpdateConversationProtocolActionHandler
+> {
 
     var uuidString: String!
 
@@ -107,7 +110,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
         // When, Then
         test_itHandlesFailure(
-            status: 12345,
+            status: 12_345,
             payload: wrongPayload,
             expectedError: .unknown
         )

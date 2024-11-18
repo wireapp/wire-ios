@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+@testable import WireSyncEngine
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
@@ -32,7 +32,7 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
     }
 
     func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
-        return nextEnqueueResult
+        nextEnqueueResult
     }
 
     func tearDown() {}
@@ -104,7 +104,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     }
 
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
-        return isAllowedToCreatingNewAccounts
+        isAllowedToCreatingNewAccounts
     }
 
 }
@@ -162,7 +162,10 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(userSessionErrorCode: .needsCredentials, userInfo: nil).localizedDescription)
+        XCTAssertEqual(
+            mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
+            NSError(userSessionErrorCode: .needsCredentials, userInfo: nil).localizedDescription
+        )
     }
 
     func testThatDuringLoginWithEmailItThrowsErrorWhenOffline() {
@@ -173,14 +176,17 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
-                       NSError(userSessionErrorCode: .networkError, userInfo: nil).localizedDescription)
+        XCTAssertEqual(
+            mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
+            NSError(userSessionErrorCode: .networkError, userInfo: nil).localizedDescription
+        )
     }
 
     func testThatItAsksDelegateIfAccountAlreadyExists() throws {
         // given
         let userId = UUID.create()
-        let cookie = "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
+        let cookie =
+            "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
         let response = try createResponse(cookie: cookie, userId: userId, userIdKey: "id")
         mockDelegate.existingAccounts = [Account(userName: "", userIdentifier: userId)]
 
@@ -196,7 +202,8 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
     func testThatItParsesCookieDataAndDoesCallTheDelegateIfTheCookieIsValidAndThereIsAUserIdKeyUser() throws {
         // given
         let userId = UUID.create()
-        let cookie = "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
+        let cookie =
+            "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
 
         // when
         let account = try parseAccount(cookie: cookie, userId: userId, userIdKey: "id")
@@ -209,7 +216,8 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
     func testThatItParsesCookieDataAndDoesCallTheDelegateIfTheCookieIsValidAndThereIsAUserIdKeyId() throws {
         // given
         let userId = UUID.create()
-        let cookie = "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
+        let cookie =
+            "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
 
         // when
         let account = try parseAccount(cookie: cookie, userId: userId, userIdKey: "user")
@@ -221,7 +229,8 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
     func testThatItDoesNotParseAnAccountWithWrongUserIdKey() {
         // given
-        let cookie = "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
+        let cookie =
+            "zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure"
 
         // then
         performIgnoringZMLogError {
@@ -239,7 +248,12 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         }
     }
 
-    private func createResponse(cookie: String, userId: UUID = .create(), userIdKey: String, line: UInt = #line) throws -> ZMTransportResponse {
+    private func createResponse(
+        cookie: String,
+        userId: UUID = .create(),
+        userIdKey: String,
+        line: UInt = #line
+    ) throws -> ZMTransportResponse {
         // given
         let headers = [
             "Date": "Thu, 24 Jul 2014 09:06:45 GMT",
@@ -255,7 +269,12 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         return try ZMTransportResponse(headers: headers, payload: [userIdKey: userId.transportString()])
     }
 
-    private func parseAccount(cookie: String, userId: UUID = .create(), userIdKey: String, line: UInt = #line) throws -> Account {
+    private func parseAccount(
+        cookie: String,
+        userId: UUID = .create(),
+        userIdKey: String,
+        line: UInt = #line
+    ) throws -> Account {
         // given
         let response = try createResponse(cookie: cookie, userId: userId, userIdKey: userIdKey, line: line)
 
@@ -269,10 +288,15 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
     }
 }
 
-fileprivate extension ZMTransportResponse {
+private extension ZMTransportResponse {
 
     convenience init(headers: [String: String], payload: [String: String]) throws {
-        let httpResponse = HTTPURLResponse(url: URL(string: "/")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)!
+        let httpResponse = HTTPURLResponse(
+            url: URL(string: "/")!,
+            statusCode: 200,
+            httpVersion: "HTTP/1.1",
+            headerFields: headers
+        )!
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
         self.init(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: APIVersion.v0.rawValue)
     }

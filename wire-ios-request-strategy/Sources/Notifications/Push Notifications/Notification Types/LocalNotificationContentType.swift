@@ -20,7 +20,11 @@ import Foundation
 import WireDataModel
 
 public enum LocalNotificationEventType {
-    case connectionRequestAccepted, connectionRequestPending, newConnection, conversationCreated, conversationDeleted
+    case connectionRequestAccepted
+    case connectionRequestPending
+    case newConnection
+    case conversationCreated
+    case conversationDeleted
 }
 
 public enum LocalNotificationContentType: Equatable {
@@ -66,7 +70,11 @@ public enum LocalNotificationContentType: Equatable {
     public init?(message: GenericMessage, conversation: ZMConversation?, in moc: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: moc)
 
-        func getQuotedMessage(_ textMessageData: Text, conversation: ZMConversation?, in moc: NSManagedObjectContext) -> ZMOTRMessage? {
+        func getQuotedMessage(
+            _ textMessageData: Text,
+            conversation: ZMConversation?,
+            in moc: NSManagedObjectContext
+        ) -> ZMOTRMessage? {
             guard let conversation else { return nil }
             let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
             return ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: moc)
@@ -87,7 +95,10 @@ public enum LocalNotificationContentType: Equatable {
             if message.ephemeral.hasText {
                 let textMessageData = message.ephemeral.text
                 let quotedMessage = getQuotedMessage(textMessageData, conversation: conversation, in: moc)
-                self = .ephemeral(isMention: textMessageData.isMentioningSelf(selfUser), isReply: textMessageData.isQuotingSelf(quotedMessage))
+                self = .ephemeral(
+                    isMention: textMessageData.isMentioningSelf(selfUser),
+                    isReply: textMessageData.isQuotingSelf(quotedMessage)
+                )
             } else {
                 self = .ephemeral(isMention: false, isReply: false)
             }
@@ -101,13 +112,17 @@ public enum LocalNotificationContentType: Equatable {
             }
 
             let quotedMessage = getQuotedMessage(textMessageData, conversation: conversation, in: moc)
-            self = .text(text, isMention: textMessageData.isMentioningSelf(selfUser), isReply: textMessageData.isQuotingSelf(quotedMessage))
+            self = .text(
+                text,
+                isMention: textMessageData.isMentioningSelf(selfUser),
+                isReply: textMessageData.isQuotingSelf(quotedMessage)
+            )
 
         case .composite:
-            guard let textData = message.composite.items.compactMap({ $0.text }).first else { return nil }
+            guard let textData = message.composite.items.compactMap(\.text).first else { return nil }
             self = .text(textData.content, isMention: textData.isMentioningSelf(selfUser), isReply: false)
 
-        case .asset(let assetData):
+        case let .asset(assetData):
             switch assetData.original.metaData {
             case .audio?:
                 self = .audio
