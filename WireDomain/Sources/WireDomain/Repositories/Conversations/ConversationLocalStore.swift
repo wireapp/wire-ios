@@ -50,7 +50,8 @@ public protocol ConversationLocalStoreProtocol {
     func storeConversation(
         _ conversation: WireAPI.Conversation,
         timestamp: Date,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
@@ -492,7 +493,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
         timestamp: Date,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool
     ) async {
         guard let conversationType = conversation.type else {
             return
@@ -522,7 +524,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 remoteConversation: conversation,
                 remoteConversationID: id,
                 serverTimestamp: timestamp,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                isMLSEnabled: isMLSEnabled
             )
 
         case .`self`:
@@ -908,7 +911,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
         serverTimestamp: Date,
-        isFederationEnabled: Bool
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool
     ) async {
         var isInitialFetch = false
 
@@ -965,7 +969,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
 
-        await updateMLSStatus(from: remoteConversation, for: conversation)
+        await updateMLSStatus(from: remoteConversation, for: conversation, isMLSEnabled: isMLSEnabled)
 
         await context.perform { [self] in
             if isInitialFetch {

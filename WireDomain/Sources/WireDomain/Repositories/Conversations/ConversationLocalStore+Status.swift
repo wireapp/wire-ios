@@ -51,10 +51,10 @@ extension ConversationLocalStore {
 
     func updateMLSStatus(
         from remoteConversation: WireAPI.Conversation,
-        for localConversation: ZMConversation
+        for localConversation: ZMConversation,
+        isMLSEnabled: Bool
     ) async {
-        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
-        guard mlsFeature.isEnabled else { return }
+        guard isMLSEnabled else { return }
 
         await updateConversationIfNeeded(
             localConversation: localConversation,
