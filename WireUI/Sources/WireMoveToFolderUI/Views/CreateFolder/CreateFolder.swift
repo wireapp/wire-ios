@@ -146,6 +146,6 @@ public struct CreateFolder: View {
 
 private struct PreviewCreateFolderUseCase: CreateConversationFolderUseCaseProtocol {
     func invoke(name: String) async throws -> Folder {
-        return Folder(identifier: UUID(), name: name)
+        Folder(identifier: UUID(), name: name)
     }
 }

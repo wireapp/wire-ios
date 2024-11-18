@@ -144,4 +144,3 @@ struct PreviewCreateConversationFolderUseCase: CreateConversationFolderUseCasePr
         Folder(identifier: UUID(), name: "Test")
     }
 }
-
