@@ -40,6 +40,7 @@ final class EmptyConversationSearchResultsView: UIView {
         }))
 
         self.addSubview(hostingViewController.view)
+        hostingViewController.sizingOptions = .intrinsicContentSize
         hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
         let stackView = hostingViewController!.view!
         stackView.backgroundColor = .clear
