@@ -23,18 +23,23 @@ import XCTest
 extension ZMBaseManagedObjectTest {
 
     var storageDirectory: URL {
-        FileManager.default.urls(for: .documentDirectory,
-                                 in: .userDomainMask).first!
+        FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first!
     }
 
     func createClientTextMessage(in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
-        return createClientTextMessage(withText: self.name, in: context)
+        createClientTextMessage(withText: name, in: context)
     }
 
     func createClientTextMessage(withText text: String, in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: context ?? self.uiMOC)
-        let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: context ?? uiMOC)
+        let textMessage = GenericMessage(
+            content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         do {
             try message.setUnderlyingMessage(textMessage)
         } catch {
@@ -44,7 +49,11 @@ extension ZMBaseManagedObjectTest {
     }
 
     @objc(createClientForUser:createSessionWithSelfUser:onMOC:)
-    func createClient(for user: ZMUser, createSessionWithSelfUser: Bool, onMOC moc: NSManagedObjectContext) -> UserClient {
+    func createClient(
+        for user: ZMUser,
+        createSessionWithSelfUser: Bool,
+        onMOC moc: NSManagedObjectContext
+    ) -> UserClient {
         if user.remoteIdentifier == nil {
             user.remoteIdentifier = UUID.create()
         }
@@ -59,7 +68,11 @@ extension ZMBaseManagedObjectTest {
                 do {
                     let prekey = try moc.zm_cryptKeyStore.lastPreKey()
                     let selfClient = try XCTUnwrap(selfClient)
-                    _ = selfClient.establishSession(through: moc.zm_cryptKeyStore, sessionId: userClient.sessionIdentifier!, preKey: prekey)
+                    _ = selfClient.establishSession(
+                        through: moc.zm_cryptKeyStore,
+                        sessionId: userClient.sessionIdentifier!,
+                        preKey: prekey
+                    )
                 } catch {
                     XCTFail("unexpected error: \(String(reflecting: error))")
                 }
@@ -91,10 +104,12 @@ extension ZMBaseManagedObjectTest {
     @objc
     func deleteStorageDirectory() throws {
         let files = try FileManager.default
-            .contentsOfDirectory(at: storageDirectory,
-                                 includingPropertiesForKeys: nil,
-                                 options: [])
+            .contentsOfDirectory(
+                at: storageDirectory,
+                includingPropertiesForKeys: nil,
+                options: []
+            )
 
-        try files.forEach({ try FileManager.default.removeItem(at: $0) })
+        try files.forEach { try FileManager.default.removeItem(at: $0) }
     }
 }

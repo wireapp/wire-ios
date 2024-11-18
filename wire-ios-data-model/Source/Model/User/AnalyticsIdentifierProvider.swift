@@ -51,8 +51,9 @@ public struct AnalyticsIdentifierProvider {
         let message = DataTransfer(trackingIdentifier: identifier)
         do {
             try ZMConversation.sendMessageToSelfClients(message, in: context)
-        } catch let error {
-            WireLogger.messaging.error("Error broadcasting analytics ID: \(identifier.safeForLoggingDescription) \(error)")
+        } catch {
+            WireLogger.messaging
+                .error("Error broadcasting analytics ID: \(identifier.safeForLoggingDescription) \(error)")
         }
     }
 

@@ -30,8 +30,8 @@ public enum ServerReachability {
     case unreachable
 }
 
-extension Notification.Name {
-    public static let NetworkStatus = Notification.Name("NetworkStatusNotification")
+public extension Notification.Name {
+    static let NetworkStatus = Notification.Name("NetworkStatusNotification")
 }
 
 // sourcery: AutoMockable
@@ -48,7 +48,7 @@ public final class NetworkStatus: NetworkStatusObservable {
     private let reachabilityRef: SCNetworkReachability
 
     init() {
-        var zeroAddress: sockaddr_in = sockaddr_in()
+        var zeroAddress = sockaddr_in()
         bzero(&zeroAddress, MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_family = sa_family_t(AF_INET)
@@ -56,9 +56,9 @@ public final class NetworkStatus: NetworkStatusObservable {
         // Passes the reference of the struct
         guard let reachabilityRef = withUnsafePointer(to: &zeroAddress, { pointer in
             // Converts to a generic socket address
-            return pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
+            pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
                 // $0 is the pointer to `sockaddr`
-                return SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, $0)
+                SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, $0)
             }
         }) else {
             fatalError("reachabilityRef can not be inited")
@@ -70,16 +70,30 @@ public final class NetworkStatus: NetworkStatusObservable {
     }
 
     deinit {
-        SCNetworkReachabilityUnscheduleFromRunLoop(reachabilityRef, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode!.rawValue)
+        SCNetworkReachabilityUnscheduleFromRunLoop(
+            reachabilityRef,
+            CFRunLoopGetCurrent(),
+            CFRunLoopMode.defaultMode!.rawValue
+        )
     }
 
     private func startReachabilityObserving() {
-        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: nil,
+            retain: nil,
+            release: nil,
+            copyDescription: nil
+        )
         // Sets `self` as listener object
         context.info = UnsafeMutableRawPointer(Unmanaged<NetworkStatus>.passUnretained(self).toOpaque())
 
         if SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallback, &context) {
-            if SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode!.rawValue) {
+            if SCNetworkReachabilityScheduleWithRunLoop(
+                reachabilityRef,
+                CFRunLoopGetCurrent(),
+                CFRunLoopMode.defaultMode!.rawValue
+            ) {
                 zmLog.info("Scheduled network reachability callback in runloop")
             } else {
                 zmLog.error("Error scheduling network reachability in runloop")
@@ -92,12 +106,12 @@ public final class NetworkStatus: NetworkStatusObservable {
     // MARK: - Public API
 
     /// The shared network status object (status of 0.0.0.0)
-    public static var shared: NetworkStatus = NetworkStatus()
+    public static var shared: NetworkStatus = .init()
 
     /// Current state of the network.
     public var reachability: ServerReachability {
         var returnValue: ServerReachability = .unreachable
-        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags()
+        var flags = SCNetworkReachabilityFlags()
 
         if SCNetworkReachabilityGetFlags(reachabilityRef, &flags) {
 
@@ -123,9 +137,9 @@ public final class NetworkStatus: NetworkStatusObservable {
 
     // MARK: - Utilities
 
-    private var reachabilityCallback: SCNetworkReachabilityCallBack = { (_: SCNetworkReachability, _: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
+    private var reachabilityCallback: SCNetworkReachabilityCallBack = { (_, _, info: UnsafeMutableRawPointer?) in
         guard let info else {
-            assert(false, "info was NULL in ReachabilityCallback")
+            assertionFailure("info was NULL in ReachabilityCallback")
             return
         }
         let networkStatus = Unmanaged<NetworkStatus>.fromOpaque(info).takeUnretainedValue()

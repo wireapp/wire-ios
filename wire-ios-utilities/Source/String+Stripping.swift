@@ -32,7 +32,7 @@ extension String {
     }
 
     public func strippingLeadingAtSign() -> String {
-        return strippingPrefix("@")
+        strippingPrefix("@")
     }
 
 }

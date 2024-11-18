@@ -19,10 +19,11 @@
 import Foundation
 
 extension Notification.Name {
-    static let applicationUpdateDidChangeAvailabilityBehaviour = Notification.Name("applicationUpdateDidChangeAvailabilityBehaviour")
+    static let applicationUpdateDidChangeAvailabilityBehaviour = Notification
+        .Name("applicationUpdateDidChangeAvailabilityBehaviour")
 }
 
-struct AvailabilityBehaviourChange {
+enum AvailabilityBehaviourChange {
 
     static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 

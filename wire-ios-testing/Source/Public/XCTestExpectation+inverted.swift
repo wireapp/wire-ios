@@ -18,9 +18,9 @@
 
 import XCTest
 
-extension XCTestExpectation {
+public extension XCTestExpectation {
 
-    public func inverted() -> Self {
+    func inverted() -> Self {
         isInverted = true
         return self
     }

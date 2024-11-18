@@ -49,7 +49,7 @@ public struct ModelHelper {
         in context: NSManagedObjectContext
     ) throws -> [ZMMessage] {
         let messageSender = sender ?? ZMUser.selfUser(in: context)
-        return try (0..<count).map { index in
+        return try (0 ..< count).map { index in
             let message = try conversation.appendText(content: "\(messagePrefix) \(index)") as! ZMMessage
             message.sender = messageSender
             return message
@@ -165,9 +165,9 @@ public struct ModelHelper {
     ) -> (Team, Set<ZMUser>) {
         let team = createTeam(id: id, in: context)
 
-        let users = (0..<numberOfUsers)
+        let users = (0 ..< numberOfUsers)
             .map { _ in
-                let user = self.createUser(in: context)
+                let user = createUser(in: context)
                 addUser(user, to: team, in: context)
                 return user
             }
@@ -186,7 +186,7 @@ public struct ModelHelper {
 
         let users = membersIDs
             .map { userId in
-                let user = self.createUser(id: userId, domain: nil, in: context)
+                let user = createUser(id: userId, domain: nil, in: context)
                 let member = addUser(user, to: team, in: context)
                 return user
             }

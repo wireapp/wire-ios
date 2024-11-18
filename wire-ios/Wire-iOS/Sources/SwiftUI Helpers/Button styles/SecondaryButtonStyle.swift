@@ -24,16 +24,16 @@ import WireDesign
 struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.secondaryButtonBackground)
-                .foregroundStyle(Color.secondaryButtonText)
-                .clipShape(.rect(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.secondaryButtonBorder, lineWidth: 1)
-                )
-        }
+        configuration.label
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.secondaryButtonBackground)
+            .foregroundStyle(Color.secondaryButtonText)
+            .clipShape(.rect(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.secondaryButtonBorder, lineWidth: 1)
+            )
+    }
 
 }

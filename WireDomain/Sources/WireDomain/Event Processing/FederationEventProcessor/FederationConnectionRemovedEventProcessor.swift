@@ -66,21 +66,24 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
     ) async {
         await context.perform { [self] in
 
-            /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain` and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
+            /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain`
+            /// and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
 
             removeFederationConnection(
                 with: [domain, otherDomain],
                 forConversationsNotOwnedBy: [domain, otherDomain]
             )
 
-            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
+            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from
+            /// `domain` from those conversations.
 
             removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: otherDomain
             )
 
-            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations.
+            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from
+            /// `otherDomain` from those conversations.
 
             removeFederationConnection(
                 with: otherDomain,
@@ -194,15 +197,13 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
     ) -> Set<ZMUser> {
         let localParticipants = Set(conversation.participantRoles.compactMap(\.user))
 
-        let participants = localParticipants.filter { user in
+        return localParticipants.filter { user in
             if let domain = user.domain {
                 domain.isOne(of: domains)
             } else {
                 false
             }
         }
-
-        return participants
     }
 
 }

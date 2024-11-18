@@ -22,7 +22,7 @@ import WireDataModel
 // MARK: - Operators
 
 // Concats the lhs and rhs and returns a NSAttributedString
-infix operator + : AdditionPrecedence
+infix operator +: AdditionPrecedence
 
 func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     let result = NSMutableAttributedString()
@@ -53,39 +53,41 @@ func + (left: NSAttributedString, right: String) -> NSAttributedString {
 }
 
 // Concats the lhs and rhs and assigns the result to the lhs
-infix operator += : AssignmentPrecedence
+infix operator +=: AssignmentPrecedence
 
-@discardableResult func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
+@discardableResult
+func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
     left.append(right.attributedString)
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
     left = left + right
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     left = left + right
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
     guard let rhs = right else { return left }
     return left += rhs
 }
 
 // Applies the attributes on the rhs to the string on the lhs
-infix operator && : LogicalConjunctionPrecedence
+infix operator &&: LogicalConjunctionPrecedence
 
 func && (left: String, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: right)
-    return result
+    NSAttributedString(string: left, attributes: right)
 }
 
 func && (left: String, right: UIFont) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: [.font: right])
-    return result
+    NSAttributedString(string: left, attributes: [.font: right])
 }
 
 func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
@@ -96,8 +98,7 @@ func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
 }
 
 func && (left: String, right: UIColor) -> NSAttributedString {
-    let result = NSAttributedString(string: left, attributes: [.foregroundColor: right])
-    return result
+    NSAttributedString(string: left, attributes: [.foregroundColor: right])
 }
 
 func && (left: NSAttributedString, right: UIColor) -> NSAttributedString {
@@ -130,8 +131,8 @@ enum ParagraphStyleDescriptor {
     var style: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         switch self {
-        case .lineSpacing(let height): style.lineSpacing = height
-        case .paragraphSpacing(let spacing): style.paragraphSpacing = spacing
+        case let .lineSpacing(height): style.lineSpacing = height
+        case let .paragraphSpacing(spacing): style.paragraphSpacing = spacing
         }
         return style
     }
@@ -144,7 +145,7 @@ func && (left: NSAttributedString, right: ParagraphStyleDescriptor) -> NSAttribu
 }
 
 func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
-    return left.attributedString && right
+    left.attributedString && right
 }
 
 // The point of view is important for the localization grammar. In some languages, for example German, the verb has
@@ -167,37 +168,37 @@ enum PointOfView: UInt {
     fileprivate var suffix: String {
         switch self {
         case .none:
-            return ""
+            ""
         case .firstPerson:
-            return "i"
+            "i"
         case .secondPerson:
-            return "you"
+            "you"
         case .thirdPerson:
-            return "they"
+            "they"
         }
     }
 }
 
 extension PointOfView: CustomStringConvertible {
     var description: String {
-        return "POV: \(self.suffix)"
+        "POV: \(suffix)"
     }
 }
 
 extension String {
     /// Retuns the NSLocalizedString version of self from the InfoPlist table
     var infoPlistLocalized: String {
-        return localized(table: "InfoPlist")
+        localized(table: "InfoPlist")
     }
 
     /// Returns the NSLocalizedString version of self as found in specified table
     func localized(table tableName: String, bundle: Bundle = Bundle.main) -> String {
-        return NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
+        NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
     }
 
     /// Used to generate localized strings with plural rules from the stringdict
     func localized(uppercased: Bool = false, pov pointOfView: PointOfView = .none, args: CVarArg...) -> String {
-        return withVaList(args) {
+        withVaList(args) {
             let text = NSString(format: self.localized(pov: pointOfView), arguments: $0) as String
             return uppercased ? text.localizedUppercase : text
         }
@@ -210,7 +211,7 @@ extension String {
         if povVersion != povPath, !povVersion.isEmpty {
             return povVersion
         } else {
-            return self.localized
+            return localized
         }
     }
 }
@@ -218,13 +219,19 @@ extension String {
 extension NSAttributedString {
 
     // Adds the attribtues to the given substring in self and returns the resulting String
-    func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], toSubstring substring: String) -> NSAttributedString {
+    func addAttributes(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        toSubstring substring: String
+    ) -> NSAttributedString {
         let mutableSelf = NSMutableAttributedString(attributedString: self)
         mutableSelf.addAttributes(attributes, to: substring)
         return NSAttributedString(attributedString: mutableSelf)
     }
 
-    func setAttributes(_ attributes: [NSAttributedString.Key: AnyObject], toSubstring substring: String) -> NSAttributedString {
+    func setAttributes(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        toSubstring substring: String
+    ) -> NSAttributedString {
         let substringRange = (string as NSString).range(of: substring)
         guard substringRange.location != NSNotFound else { return self }
 
@@ -234,11 +241,11 @@ extension NSAttributedString {
     }
 
     func adding(color: UIColor, to substring: String) -> NSAttributedString {
-        return addAttributes([.foregroundColor: color], toSubstring: substring)
+        addAttributes([.foregroundColor: color], toSubstring: substring)
     }
 
     func adding(font: UIFont, to substring: String) -> NSAttributedString {
-        return addAttributes([.font: font], toSubstring: substring)
+        addAttributes([.font: font], toSubstring: substring)
     }
 }
 

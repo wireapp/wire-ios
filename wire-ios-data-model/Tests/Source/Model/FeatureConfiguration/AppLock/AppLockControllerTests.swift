@@ -17,9 +17,9 @@
 //
 
 import LocalAuthentication
+import XCTest
 @_spi(AppLockControllerState) @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
@@ -320,7 +320,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         try sut.updatePasscode("boo!")
 
         let mockBiometricsState = MockBiometricsStateProtocol()
-        mockBiometricsState.persistState_MockMethod = { }
+        mockBiometricsState.persistState_MockMethod = {}
         sut.biometricsState = mockBiometricsState
 
         // When

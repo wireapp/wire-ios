@@ -34,6 +34,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     typealias IconColors = SemanticColors.Icon
 
     // MARK: - Properties
+
     let nameLabel = DynamicFontLabel(
         style: .h3,
         color: LabelColors.textDefault
@@ -73,6 +74,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
 
     // MARK: - Initialization
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         createConstraints()
@@ -85,6 +87,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     }
 
     // MARK: - Methods
+
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"
@@ -119,38 +122,64 @@ final class UserClientCell: SeparatorCollectionViewCell {
         contentView.addSubview(contentStackView)
         // Setting the constraints for the view
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: contentWrapView.topAnchor,
-                                           constant: EdgeInsetConstants.default),
-            nameLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
-                                            constant: EdgeInsetConstants.default),
-            nameLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
-                                             constant: -EdgeInsetConstants.default),
+            nameLabel.topAnchor.constraint(
+                equalTo: contentWrapView.topAnchor,
+                constant: EdgeInsetConstants.default
+            ),
+            nameLabel.leftAnchor.constraint(
+                equalTo: contentWrapView.leftAnchor,
+                constant: EdgeInsetConstants.default
+            ),
+            nameLabel.rightAnchor.constraint(
+                lessThanOrEqualTo: contentWrapView.rightAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
 
-            statusStackView.topAnchor.constraint(equalTo: nameLabel.topAnchor,
-                                                 constant: EdgeInsetConstants.small),
-            statusStackView.leftAnchor.constraint(equalTo: nameLabel.rightAnchor,
-                                                  constant: EdgeInsetConstants.medium),
-            statusStackView.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
-                                                   constant: -EdgeInsetConstants.default),
+            statusStackView.topAnchor.constraint(
+                equalTo: nameLabel.topAnchor,
+                constant: EdgeInsetConstants.small
+            ),
+            statusStackView.leftAnchor.constraint(
+                equalTo: nameLabel.rightAnchor,
+                constant: EdgeInsetConstants.medium
+            ),
+            statusStackView.rightAnchor.constraint(
+                lessThanOrEqualTo: contentWrapView.rightAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
 
-            mlsThumbprintLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor,
-                                                    constant: EdgeInsetConstants.medium),
-            mlsThumbprintLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
-                                                     constant: EdgeInsetConstants.default),
-            mlsThumbprintLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
-                                                      constant: -EdgeInsetConstants.default),
+            mlsThumbprintLabel.topAnchor.constraint(
+                equalTo: nameLabel.bottomAnchor,
+                constant: EdgeInsetConstants.medium
+            ),
+            mlsThumbprintLabel.leftAnchor.constraint(
+                equalTo: contentWrapView.leftAnchor,
+                constant: EdgeInsetConstants.default
+            ),
+            mlsThumbprintLabel.rightAnchor.constraint(
+                lessThanOrEqualTo: contentWrapView.rightAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
 
             proteusIdLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor),
-            proteusIdLabel.leftAnchor.constraint(equalTo: contentWrapView.leftAnchor,
-                                                 constant: EdgeInsetConstants.default),
-            proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentWrapView.rightAnchor,
-                                                  constant: -EdgeInsetConstants.default),
-            proteusIdLabel.bottomAnchor.constraint(equalTo: contentWrapView.bottomAnchor,
-                                                   constant: -EdgeInsetConstants.default),
+            proteusIdLabel.leftAnchor.constraint(
+                equalTo: contentWrapView.leftAnchor,
+                constant: EdgeInsetConstants.default
+            ),
+            proteusIdLabel.rightAnchor.constraint(
+                lessThanOrEqualTo: contentWrapView.rightAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
+            proteusIdLabel.bottomAnchor.constraint(
+                equalTo: contentWrapView.bottomAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
 
             contentStackView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            contentStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor,
-                                                    constant: -EdgeInsetConstants.default),
+            contentStackView.rightAnchor.constraint(
+                equalTo: contentView.rightAnchor,
+                constant: -EdgeInsetConstants.default
+            ),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
@@ -166,16 +195,16 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
         guard let deviceName = nameLabel.text,
               let deviceId = proteusIdLabel.text else {
-                  isAccessibilityElement = false
-                  return
-              }
+            isAccessibilityElement = false
+            return
+        }
 
         isAccessibilityElement = true
         accessibilityTraits = .button
 
         let proteusVerificationStatus = viewModel?.isProteusVerified ?? false
-                                    ? ClientListStrings.DeviceVerified.description
-                                    : ClientListStrings.DeviceNotVerified.description
+            ? ClientListStrings.DeviceVerified.description
+            : ClientListStrings.DeviceNotVerified.description
         let mlsThumbprintLabelText = viewModel?.mlsThumbprintLabelText ?? ""
         let e2eIdentityStatus = viewModel?.e2eIdentityStatus?.title ?? ""
         var accessbilityContent = deviceName

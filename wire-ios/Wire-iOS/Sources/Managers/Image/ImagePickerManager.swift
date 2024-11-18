@@ -23,7 +23,7 @@ import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
-        guard let imageData = self.pngData() else {
+        guard let imageData = pngData() else {
             return nil
         }
         return imageData.isJPEG ? imageData : UIImage(data: imageData)?.jpegData(compressionQuality: 1.0)
@@ -33,10 +33,12 @@ extension UIImage {
 class ImagePickerManager: NSObject {
 
     // MARK: - Properties
+
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
+
     func showActionSheet(
         on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
         popoverSourceView: UIView,
@@ -44,22 +46,23 @@ class ImagePickerManager: NSObject {
     ) -> UIAlertController {
         self.completion = completion
 
-        let actionSheet = imagePickerAlert(popoverSourceView: popoverSourceView, viewController: viewController)
-        return actionSheet
+        return imagePickerAlert(popoverSourceView: popoverSourceView, viewController: viewController)
     }
 
     private func imagePickerAlert(popoverSourceView: UIView, viewController: UIViewController?) -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
-        let actionSheet = UIAlertController(title: Alert.title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: Alert.title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
                 guard let self, let viewController else { return }
 
-                self.getImage(
+                getImage(
                     fromSourceType: .photoLibrary,
                     viewController: viewController,
                     popoverSourceView: popoverSourceView
@@ -72,7 +75,7 @@ class ImagePickerManager: NSObject {
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
             guard let self, let viewController else { return }
 
-            self.getImage(
+            getImage(
                 fromSourceType: .camera,
                 viewController: viewController,
                 popoverSourceView: popoverSourceView
@@ -124,9 +127,12 @@ class ImagePickerManager: NSObject {
     }
 }
 
- extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
 
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
@@ -149,9 +155,11 @@ class ImagePickerManager: NSObject {
                 picker.dismiss(animated: true)
             }
 
-            let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                             onConfirm: onConfirm,
-                                                             onCancel: onCancel)
+            let context = ConfirmAssetViewController.Context(
+                asset: .image(mediaAsset: image),
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
 
             let confirmImageViewController = ConfirmAssetViewController(context: context)
             confirmImageViewController.modalPresentationStyle = .fullScreen
@@ -162,6 +170,7 @@ class ImagePickerManager: NSObject {
         case .camera:
             picker.dismiss(animated: true)
             completion?(image)
+
         @unknown default:
             picker.dismiss(animated: true)
             completion?(image)

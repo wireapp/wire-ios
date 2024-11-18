@@ -62,7 +62,10 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
                         events.forEach {
-                            WireLogger.updateEvent.error("Failed to process event from push channel (web socket)", attributes: $0.logAttributes(source: .pushChannel))
+                            WireLogger.updateEvent.error(
+                                "Failed to process event from push channel (web socket)",
+                                attributes: $0.logAttributes(source: .pushChannel)
+                            )
                         }
                     }
                 }
@@ -71,20 +74,24 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
     }
 
     public func pushChannelDidClose() {
-        NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
-                              context: syncMOC.notificationContext,
-                              object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: false]).post()
+        NotificationInContext(
+            name: ZMOperationLoop.pushChannelStateChangeNotificationName,
+            context: syncMOC.notificationContext,
+            object: self,
+            userInfo: [ZMPushChannelIsOpenKey: false]
+        ).post()
 
         syncStatus.pushChannelDidClose()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     public func pushChannelDidOpen() {
-        NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
-                              context: syncMOC.notificationContext,
-                              object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: true]).post()
+        NotificationInContext(
+            name: ZMOperationLoop.pushChannelStateChangeNotificationName,
+            context: syncMOC.notificationContext,
+            object: self,
+            userInfo: [ZMPushChannelIsOpenKey: true]
+        ).post()
 
         syncStatus.pushChannelDidOpen()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)

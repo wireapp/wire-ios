@@ -29,16 +29,18 @@ final class MediaPlayerController: NSObject {
     weak var delegate: MediaPlayerDelegate?
     private var playerRateObserver: NSKeyValueObservation!
 
-    init(player: AVPlayer,
-         message: ZMConversationMessage,
-         delegate: MediaPlayerDelegate) {
+    init(
+        player: AVPlayer,
+        message: ZMConversationMessage,
+        delegate: MediaPlayerDelegate
+    ) {
         self.player = player
         self.message = message
         self.delegate = delegate
 
         super.init()
 
-        playerRateObserver = self.player.observe(\AVPlayer.rate) { [weak self] _, _ in
+        self.playerRateObserver = self.player.observe(\AVPlayer.rate) { [weak self] _, _ in
             self?.playerRateChanged()
         }
     }
@@ -48,7 +50,7 @@ final class MediaPlayerController: NSObject {
     }
 
     func tearDown() {
-        self.delegate?.mediaPlayer(self, didChangeTo: .completed)
+        delegate?.mediaPlayer(self, didChangeTo: .completed)
     }
 
     private func playerRateChanged() {
@@ -63,18 +65,18 @@ final class MediaPlayerController: NSObject {
 extension MediaPlayerController: MediaPlayer {
 
     var title: String? {
-        return message.fileMessageData?.filename
+        message.fileMessageData?.filename
     }
 
     var sourceMessage: ZMConversationMessage? {
-        return message
+        message
     }
 
     var state: MediaPlayerState? {
         if player.rate > 0 {
-            return MediaPlayerState.playing
+            MediaPlayerState.playing
         } else {
-            return MediaPlayerState.paused
+            MediaPlayerState.paused
         }
     }
 

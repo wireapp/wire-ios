@@ -42,14 +42,14 @@ final class AnimatedListMenuView: UIView {
     /// Animation progress. Value from 0 to 1.0
     var progress: CGFloat = 0 {
         didSet {
-            guard !(0...1 ~= progress) else { return }
+            guard !(0 ... 1 ~= progress) else { return }
             progress = min(1, max(0, progress))
         }
     }
 
-    private let leftDotView: MenuDotView = MenuDotView()
-    private let centerDotView: MenuDotView = MenuDotView()
-    private let rightDotView: MenuDotView = MenuDotView()
+    private let leftDotView: MenuDotView = .init()
+    private let centerDotView: MenuDotView = .init()
+    private let rightDotView: MenuDotView = .init()
 
     private var initialConstraintsCreated = false
     private var centerToRightDistanceConstraint: NSLayoutConstraint?
@@ -100,22 +100,28 @@ final class AnimatedListMenuView: UIView {
         dotViews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         translatesAutoresizingMaskIntoConstraints = false
 
-        centerToRightDistanceConstraint = centerDotView.rightAnchor.constraint(equalTo: rightDotView.leftAnchor, constant: centerToRightDistance(forProgress: progress))
+        centerToRightDistanceConstraint = centerDotView.rightAnchor.constraint(
+            equalTo: rightDotView.leftAnchor,
+            constant: centerToRightDistance(forProgress: progress)
+        )
 
-        leftToCenterDistanceConstraint = leftDotView.rightAnchor.constraint(equalTo: centerDotView.leftAnchor, constant: leftToCenterDistance(forProgress: progress))
+        leftToCenterDistanceConstraint = leftDotView.rightAnchor.constraint(
+            equalTo: centerDotView.leftAnchor,
+            constant: leftToCenterDistance(forProgress: progress)
+        )
 
-        let leftDotLeftConstraint = leftDotView.leftAnchor.constraint(equalTo: self.leftAnchor)
+        let leftDotLeftConstraint = leftDotView.leftAnchor.constraint(equalTo: leftAnchor)
 
-        dotViews.forEach {$0.widthAnchor.constraint(equalToConstant: dotWidth).isActive = true
-                          $0.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
+        dotViews.forEach { $0.widthAnchor.constraint(equalToConstant: dotWidth).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
         }
 
         let subviewConstraints: [NSLayoutConstraint] = [
-            leftDotView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            centerDotView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            rightDotView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            leftDotView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            centerDotView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            rightDotView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            rightDotView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -8),
+            rightDotView.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
             leftDotLeftConstraint,
 
             centerToRightDistanceConstraint!,
@@ -129,11 +135,11 @@ final class AnimatedListMenuView: UIView {
     }
 
     func centerToRightDistance(forProgress progress: CGFloat) -> CGFloat {
-        return -(4 + (10 * (1 - progress)))
+        -(4 + (10 * (1 - progress)))
     }
 
     func leftToCenterDistance(forProgress progress: CGFloat) -> CGFloat {
-        return -(4 + (20 * (1 - progress)))
+        -(4 + (20 * (1 - progress)))
     }
 
 }

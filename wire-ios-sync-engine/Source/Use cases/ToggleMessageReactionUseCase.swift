@@ -36,10 +36,10 @@ public struct ToggleMessageReactionUseCase: ToggleMessageReactionUseCaseProtocol
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         _ reaction: String,
         for message: ZMConversationMessage,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) {
         let currentReactions = message.selfUserReactions()
         if currentReactions.contains(reaction) {

@@ -39,7 +39,13 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
 
         // given
         let loudness: [Float] = [0.8, 0.3, 1.0, 0.0, 0.001]
-        let sut = WireProtos.Asset.Original(withSize: 200, mimeType: "audio/m4a", name: "foo.m4a", audioDurationInMillis: 1000, normalizedLoudness: loudness)
+        let sut = WireProtos.Asset.Original(
+            withSize: 200,
+            mimeType: "audio/m4a",
+            name: "foo.m4a",
+            audioDurationInMillis: 1000,
+            normalizedLoudness: loudness
+        )
 
         // when
         let extractedLoudness = sut.audio.normalizedLoudness
@@ -68,7 +74,12 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         // when
         let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let metadata = WireProtos.Asset.ImageMetaData(width: 42, height: 12)
-        let original = WireProtos.Asset.Original(withSize: 256, mimeType: "image/jpeg", name: nil, imageMetaData: metadata)
+        let original = WireProtos.Asset.Original(
+            withSize: 256,
+            mimeType: "image/jpeg",
+            name: nil,
+            imageMetaData: metadata
+        )
         preview.update(withOtrKey: otrKey, sha256: sha256, original: original)
 
         // then
@@ -169,7 +180,8 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
             size: 128,
             mimeType: "image/jpg",
             remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
-            imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420))
+            imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420)
+        )
 
         var sut = GenericMessage(
             content: WireProtos.Asset(original: nil, preview: previewAsset),
@@ -196,10 +208,11 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let previewAsset = WireProtos.Asset.Preview(
-        size: 128,
-        mimeType: "image/jpg",
-        remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
-        imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420))
+            size: 128,
+            mimeType: "image/jpg",
+            remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
+            imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420)
+        )
 
         var sut = GenericMessage(
             content: WireProtos.Asset(original: nil, preview: previewAsset),
@@ -225,7 +238,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     // MARK: - Helper
 
     func createLinkPreview() -> LinkPreview {
-        return LinkPreview.with {
+        LinkPreview.with {
             $0.url = "www.example.com/original"
             $0.permanentURL = "www.example.com/permanent"
             $0.urlOffset = 42
@@ -284,7 +297,12 @@ extension ProtobufUtilitiesTests {
             $0.width = 123
             $0.height = 420
         }
-        let previewAsset = WireProtos.Asset.Preview(size: 128, mimeType: "image/jpg", remoteData: remoteData, imageMetadata: imageMetadata)
+        let previewAsset = WireProtos.Asset.Preview(
+            size: 128,
+            mimeType: "image/jpg",
+            remoteData: remoteData,
+            imageMetadata: imageMetadata
+        )
         let asset = WireProtos.Asset.with {
             $0.preview = previewAsset
         }
@@ -317,7 +335,12 @@ extension ProtobufUtilitiesTests {
             $0.width = 123
             $0.height = 420
         }
-        let previewAsset = WireProtos.Asset.Preview(size: 128, mimeType: "image/jpg", remoteData: remoteData, imageMetadata: imageMetadata)
+        let previewAsset = WireProtos.Asset.Preview(
+            size: 128,
+            mimeType: "image/jpg",
+            remoteData: remoteData,
+            imageMetadata: imageMetadata
+        )
         let asset = WireProtos.Asset.with {
             $0.preview = previewAsset
         }
@@ -337,5 +360,5 @@ extension ProtobufUtilitiesTests {
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetDomain, domain)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.sha256, sha)
-     }
+    }
 }

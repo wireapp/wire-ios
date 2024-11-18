@@ -80,14 +80,14 @@ final class SelfProfileViewController: UIViewController {
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
 
-        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+        self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
             options.insert(.allowEditingProfilePicture)
         }
-        profileHeaderViewController = ProfileHeaderViewController(
+        self.profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
             conversation: .none,
@@ -183,7 +183,8 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: profileContainerView.leadingAnchor),
             profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileContainerView.topAnchor),
             profileHeaderViewController.view.trailingAnchor.constraint(equalTo: profileContainerView.trailingAnchor),
-            profileHeaderViewController.view.bottomAnchor.constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
+            profileHeaderViewController.view.bottomAnchor
+                .constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
 
             // settingsControllerView
@@ -203,7 +204,8 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
+    @objc
+    private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let imageView = profileHeaderViewController.imageView

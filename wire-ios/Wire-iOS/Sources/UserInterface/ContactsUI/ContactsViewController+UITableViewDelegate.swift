@@ -21,23 +21,23 @@ import UIKit
 extension ContactsViewController: UITableViewDelegate {
 
     func headerTitle(section: Int) -> String? {
-        return dataSource.tableView(tableView, titleForHeaderInSection: section)
+        dataSource.tableView(tableView, titleForHeaderInSection: section)
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let title = headerTitle(section: section), title.count > 0 else { return nil }
+        guard let title = headerTitle(section: section), !title.isEmpty else { return nil }
         let headerView = tableView.dequeueReusableHeaderFooter(ofType: ContactsSectionHeaderView.self)
         headerView.label.text = title
         return headerView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard let title = headerTitle(section: section), title.count > 0 else { return 0 }
+        guard let title = headerTitle(section: section), !title.isEmpty else { return 0 }
         return ContactsSectionHeaderView.height
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat.StartUI.CellHeight
+        CGFloat.StartUI.CellHeight
     }
 
 }

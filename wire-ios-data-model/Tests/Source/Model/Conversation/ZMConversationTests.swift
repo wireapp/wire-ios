@@ -57,7 +57,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMClientMessage))
+        XCTAssertTrue(result.first is ZMClientMessage)
     }
 
     func testThatItInsertsEncryptedTextMessages() throws {
@@ -72,7 +72,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMClientMessage))
+        XCTAssertTrue(result.first is ZMClientMessage)
     }
 
     func testThatItInsertsEncryptedImageMessages() throws {
@@ -87,7 +87,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMAssetClientMessage))
+        XCTAssertTrue(result.first is ZMAssetClientMessage)
     }
 
     // MARK: - Domain tests
@@ -137,7 +137,8 @@ extension ZMConversationTests {
             XCTAssertEqual(uuid, created.remoteIdentifier)
             XCTAssertEqual(domain, created.domain)
 
-            // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a swift enum
+            // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a
+            // swift enum
             BackendInfo.isFederationEnabled = false
         }
     }
@@ -149,7 +150,7 @@ extension ZMConversationTestsBase {
     @discardableResult
     @objc(insertConversationWithUnread:context:)
     func insertConversation(withUnread hasUnread: Bool, context: NSManagedObjectContext) -> ZMConversation {
-        let messageDate = Date(timeIntervalSince1970: 230000000)
+        let messageDate = Date(timeIntervalSince1970: 230_000_000)
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .oneOnOne
         conversation.lastServerTimeStamp = messageDate

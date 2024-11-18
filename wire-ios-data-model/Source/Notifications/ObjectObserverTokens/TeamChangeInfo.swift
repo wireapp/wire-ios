@@ -21,8 +21,8 @@ import WireSystem
 
 extension Team: ObjectInSnapshot {
 
-    static public var observableKeys: Set<String> {
-        return [
+    public static var observableKeys: Set<String> {
+        [
             #keyPath(Team.name),
             #keyPath(Team.members),
             #keyPath(Team.imageData),
@@ -31,14 +31,15 @@ extension Team: ObjectInSnapshot {
     }
 
     public var notificationName: Notification.Name {
-        return .TeamChange
+        .TeamChange
     }
 }
 
-@objcMembers public class TeamChangeInfo: ObjectChangeInfo {
+@objcMembers
+public class TeamChangeInfo: ObjectChangeInfo {
 
     static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
-        return TeamChangeInfo(object: team, changes: changes)
+        TeamChangeInfo(object: team, changes: changes)
     }
 
     public required init(object: NSObject) {
@@ -49,24 +50,25 @@ extension Team: ObjectInSnapshot {
     public let team: TeamType
 
     public var membersChanged: Bool {
-        return changedKeys.contains(#keyPath(Team.members))
+        changedKeys.contains(#keyPath(Team.members))
     }
 
     public var nameChanged: Bool {
-        return changedKeys.contains(#keyPath(Team.name))
+        changedKeys.contains(#keyPath(Team.name))
     }
 
     public var imageDataChanged: Bool {
-        return changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
+        changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
     }
 
 }
 
-@objc public protocol TeamObserver: NSObjectProtocol {
+@objc
+public protocol TeamObserver: NSObjectProtocol {
     func teamDidChange(_ changeInfo: TeamChangeInfo)
 }
 
-extension TeamChangeInfo {
+public extension TeamChangeInfo {
 
     // MARK: Registering TeamObservers
 
@@ -74,19 +76,27 @@ extension TeamChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:)
-    public static func add(observer: TeamObserver, for team: Team) -> NSObjectProtocol {
-        return add(observer: observer, for: team, managedObjectContext: team.managedObjectContext!)
+    static func add(observer: TeamObserver, for team: Team) -> NSObjectProtocol {
+        add(observer: observer, for: team, managedObjectContext: team.managedObjectContext!)
     }
 
     /// Adds an observer for the team if one specified or to all Teams is none is specified
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
-    public static func add(observer: TeamObserver, for team: Team?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .TeamChange, managedObjectContext: managedObjectContext, object: team) { [weak observer] note in
-            guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? TeamChangeInfo
-                else { return }
+    static func add(
+        observer: TeamObserver,
+        for team: Team?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .TeamChange,
+            managedObjectContext: managedObjectContext,
+            object: team
+        ) { [weak observer] note in
+            guard let observer,
+                  let changeInfo = note.changeInfo as? TeamChangeInfo
+            else { return }
 
             observer.teamDidChange(changeInfo)
         }

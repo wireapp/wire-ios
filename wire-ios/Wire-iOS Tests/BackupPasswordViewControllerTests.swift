@@ -46,7 +46,7 @@ final class BackupPasswordViewControllerTests: XCTestCase {
     func testThatItCallsTheCallback() {
         // GIVEN
         let validPassword = "Password123!"
-        let expectation = self.expectation(description: "Callback called")
+        let expectation = expectation(description: "Callback called")
         let sut = makeViewController()
         sut.onCompletion = { password in
             XCTAssertEqual(password, validPassword)
@@ -83,8 +83,16 @@ final class BackupPasswordViewControllerTests: XCTestCase {
         }
 
         // WHEN
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "              "))
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "\n"))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "              "
+        ))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "\n"
+        ))
     }
 
     // MARK: - Helpers

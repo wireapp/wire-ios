@@ -34,11 +34,11 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var title: String {
-        return L10n.Localizable.Self.Settings.SoundMenu.title
+        L10n.Localizable.Self.Settings.SoundMenu.title
     }
 
     private var soundAlertProperty: SettingsProperty {
-        return settingsPropertyFactory.property(.soundAlerts)
+        settingsPropertyFactory.property(.soundAlerts)
     }
 
     private var alertsSection: SettingsSectionDescriptorType {

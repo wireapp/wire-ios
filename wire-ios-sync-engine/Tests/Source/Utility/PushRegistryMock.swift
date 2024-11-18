@@ -26,13 +26,13 @@ final class PushPayloadMock: PKPushPayload {
     let mockDictionaryPayload: [AnyHashable: Any]
 
     init(dictionaryPayload: [AnyHashable: Any]) {
-        mockDictionaryPayload = dictionaryPayload
+        self.mockDictionaryPayload = dictionaryPayload
 
         super.init()
     }
 
     override var dictionaryPayload: [AnyHashable: Any] {
-        return mockDictionaryPayload
+        mockDictionaryPayload
     }
 
 }
@@ -43,18 +43,18 @@ final class PushCredentialsMock: PKPushCredentials {
     let mockType: PKPushType
 
     init(token: Data, type: PKPushType) {
-        mockToken = token
-        mockType = type
+        self.mockToken = token
+        self.mockType = type
 
         super.init()
     }
 
     override var token: Data {
-        return mockToken
+        mockToken
     }
 
     override var type: PKPushType {
-        return mockType
+        mockType
     }
 
 }
@@ -66,9 +66,14 @@ final class PushRegistryMock: PKPushRegistry {
 
     func mockIncomingPushPayload(_ payload: [AnyHashable: Any], completion: (() -> Void)? = nil) {
 
-        delegate?.pushRegistry!(self, didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload), for: .voIP, completion: {
-            completion?()
-        })
+        delegate?.pushRegistry!(
+            self,
+            didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload),
+            for: .voIP,
+            completion: {
+                completion?()
+            }
+        )
 
     }
 
@@ -83,7 +88,7 @@ final class PushRegistryMock: PKPushRegistry {
     }
 
     override func pushToken(for type: PKPushType) -> Data? {
-        return mockPushToken
+        mockPushToken
     }
 
 }
