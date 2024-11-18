@@ -227,6 +227,8 @@
 		4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA12AA76BFA0013DE71 /* ReactionData.swift */; };
 		4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */; };
 		4058AAA82AAB65530013DE71 /* ReactionsSortingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */; };
+		4EEE30C02CE79A64002FD6F8 /* backup.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEE30A72CE2CCF1002FD6F8 /* backup.xcframework */; };
+		4EEE30C12CE79A64002FD6F8 /* backup.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4EEE30A72CE2CCF1002FD6F8 /* backup.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		541E4F951CBD182100D82D69 /* FileAssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E4F941CBD182100D82D69 /* FileAssetCache.swift */; };
 		54363A011D7876200048FD7D /* ZMClientMessage+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54363A001D7876200048FD7D /* ZMClientMessage+Encryption.swift */; };
 		543ABF5C1F34A19C00DBE28B /* DatabaseBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543ABF5A1F34A13000DBE28B /* DatabaseBaseTest.swift */; };
@@ -905,6 +907,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4EEE30C22CE79A64002FD6F8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4EEE30C12CE79A64002FD6F8 /* backup.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0125F73A2B28A31C00D989AB /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpyUserClientKeyStore.swift; sourceTree = "<group>"; };
 		0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
@@ -1139,6 +1155,7 @@
 		4058AAA12AA76BFA0013DE71 /* ReactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionData.swift; sourceTree = "<group>"; };
 		4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-109-0.wiredatabase"; sourceTree = "<group>"; };
 		4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsSortingTests.swift; sourceTree = "<group>"; };
+		4EEE30A72CE2CCF1002FD6F8 /* backup.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = backup.xcframework; path = ../TEMPORARY/backup.xcframework; sourceTree = "<group>"; };
 		541E4F941CBD182100D82D69 /* FileAssetCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAssetCache.swift; sourceTree = "<group>"; };
 		543089B71D420165004D8AC4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54363A001D7876200048FD7D /* ZMClientMessage+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Encryption.swift"; sourceTree = "<group>"; };
@@ -1871,6 +1888,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
+				4EEE30C02CE79A64002FD6F8 /* backup.xcframework in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
@@ -3505,7 +3523,6 @@
 				F9C9A4FD1CAD5DF10039E10C /* Products */,
 				F9C9A6701CAD779E0039E10C /* Frameworks */,
 				63709F622993E70A00577D4B /* Packages */,
-				012F3CFE2CD0505D00A9EACB /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -3560,6 +3577,7 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4EEE30A72CE2CCF1002FD6F8 /* backup.xcframework */,
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
@@ -3816,6 +3834,7 @@
 				F9C9A4F71CAD5DF10039E10C /* Sources */,
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
+				4EEE30C22CE79A64002FD6F8 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

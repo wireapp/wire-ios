@@ -38,14 +38,11 @@ extension BackupRestoreController {
             complete(controller.textFields?.first?.text)
         }
 
-        okAction.isEnabled = false
+        okAction.isEnabled = true
 
         controller.addTextField { textField in
             textField.isSecureTextEntry = true
             textField.placeholder = L10n.Localizable.Registration.NoHistory.RestoreBackup.Password.placeholder
-            token = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: .main) { _ in
-                okAction.isEnabled = textField.text?.count ?? 0 >= 0
-            }
         }
 
         controller.addAction(.cancel { complete(nil) })

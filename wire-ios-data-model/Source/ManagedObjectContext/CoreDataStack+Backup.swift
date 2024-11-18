@@ -18,6 +18,7 @@
 
 import Foundation
 import WireUtilities
+import backup
 
 private let log = ZMSLog(tag: "Backup")
 
@@ -188,6 +189,36 @@ extension CoreDataStack {
         )
     }
 
+    fileprivate static func ingest(
+        mpBackupFile: URL,
+        onFailure fail: (CoreDataStack.BackupImportError) -> ()
+    ) {
+        // TODO: Figure out the actual self-user domain before importing
+        let importer = MPBackupImporter(selfUserDomain: "wire.com")
+        let result = importer.import(multiplatformBackupFilePath: mpBackupFile.path())
+        switch result {
+        case let success as BackupImportResult.Success:
+            let backupData = success.backupData
+            for user in backupData.users {
+                // TODO: Import users
+                print("Imported User \(user)")
+            }
+            for conversation in backupData.conversations {
+                // TODO: Import conversations
+                print("Imported Conversation \(conversation)")
+            }
+            for message in backupData.messages{
+                // TODO: Import messages
+                print("Imported Message \(message)")
+            }
+        case let failure as BackupImportResult.ParsingFailure:
+            fail(BackupImportError.incompatibleBackup(NSError()))
+        default:
+            // Only if some case isn't handled above / new error added to library
+            fail(BackupImportError.failedToCopy(NSError()))
+        }
+    }
+    
     static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
@@ -207,6 +238,16 @@ extension CoreDataStack {
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
+
+        let multiplatformBackupFileName = MPBackup().ZIP_ENTRY_DATA
+        let mpBackupFile = backupDirectory.appendingPathComponent(multiplatformBackupFileName)
+        
+        if (fileManager.fileExists(atPath: mpBackupFile.path())) {
+            // It's a MP Backup.
+            ingest(mpBackupFile: mpBackupFile, onFailure: fail)
+            completion(.success(accountDirectory))
+            return
+        }
 
         workQueue.async(group: dispatchGroup) {
             do {

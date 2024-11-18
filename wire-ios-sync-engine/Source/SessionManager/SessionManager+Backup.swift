@@ -145,12 +145,16 @@ extension SessionManager {
             WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {
-                try SessionManager.decrypt(
-                    from: location,
-                    to: decryptedURL,
-                    password: password,
-                    accountId: userId
-                )
+                if (password.isEmpty) {
+                    try FileManager.default.copyItem(at: location, to: decryptedURL)
+                } else {
+                    try SessionManager.decrypt(
+                        from: location,
+                        to: decryptedURL,
+                        password: password,
+                        accountId: userId
+                    )
+                }
             } catch ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed {
                 return complete(.failure(BackupError.decryptionError))
 

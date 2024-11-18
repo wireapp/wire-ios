@@ -97,3 +97,6 @@ vendor/*
 
 # Failing Snapshot Tests
 SnapshotResults
+
+# IntelliJ / Other IDEs
+.idea
