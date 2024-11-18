@@ -19,12 +19,6 @@
 #include "warnings.xcconfig"
 #include "project-common.xcconfig"
 
-// Architectures
-//
-ONLY_ACTIVE_ARCH = YES
-
-
-
 // Deployment
 //
 COPY_PHASE_STRIP = NO

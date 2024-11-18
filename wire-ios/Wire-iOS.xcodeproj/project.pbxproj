@@ -427,6 +427,7 @@
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
+		59DFE7192CEB9997007D4EC6 /* WireDatadog in Frameworks */ = {isa = PBXBuildFile; productRef = 016A141C2CE6BFC4006A7EF5 /* WireDatadog */; };
 		59E12BFC2CC83B7800E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFB2CC83B7700E687CE /* CreateGroupConversationViewControllerBuilderProtocol.swift */; };
 		59E12BFE2CC8EDF400E687CE /* ConnectViewControllerBuilderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */; };
 		59E67CAE2CA8B3A6000F1C17 /* ConversationViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E67CAD2CA8B392000F1C17 /* ConversationViewControllerBuilder.swift */; };
@@ -4020,7 +4021,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				016A141D2CE6BFC4006A7EF5 /* WireDatadog in Frameworks */,
+				59DFE7192CEB9997007D4EC6 /* WireDatadog in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11286,10 +11287,6 @@
 			baseConfigurationReference = F1B24232219B2C9B00F7035C /* Wire-iOS-Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11301,7 +11298,6 @@
 					"-Xlinker",
 					"-interposable",
 				);
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -11314,17 +11310,12 @@
 			baseConfigurationReference = F1B24234219B2C9B00F7035C /* Wire-iOS-Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				"ARCHS[sdk=iphonesimulator*]" = (
-					x86_64,
-					arm64,
-				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
