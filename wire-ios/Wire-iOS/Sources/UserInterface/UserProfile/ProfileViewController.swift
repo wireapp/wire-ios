@@ -601,7 +601,7 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         if let navigationController, navigationController.viewControllers.first != self {
             navigationController.popViewController(animated: true)
         } else {
-            self.presentingViewController?.dismiss(animated: true, completion: nil)
+            presentingViewController?.dismiss(animated: true, completion: nil)
         }
     }
 

@@ -29,7 +29,8 @@ enum UserDetailViewControllerFactory {
     ///   - user: user to show the details
     ///   - conversation: conversation currently displaying
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
-    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
+    /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a
+    /// serviceUser, return a ProfileViewController
     static func createUserDetailViewController(
         user: UserType,
         conversation: ZMConversation,
@@ -40,13 +41,11 @@ enum UserDetailViewControllerFactory {
     ) -> UIViewController {
 
         if user.isServiceUser, let serviceUser = user as? ServiceUser {
-            let serviceDetailViewController = ServiceDetailViewController(
+            return ServiceDetailViewController(
                 serviceUser: serviceUser,
                 actionType: .removeService(conversation),
                 userSession: userSession
             )
-
-            return serviceDetailViewController
 
         } else {
             let profileViewController = ProfileViewController(

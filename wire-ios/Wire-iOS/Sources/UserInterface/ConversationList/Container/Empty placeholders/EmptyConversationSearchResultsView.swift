@@ -24,40 +24,59 @@ final class EmptyConversationSearchResultsView: UIView {
 
     var newConversationAction: () -> Void
     var connectWithPeopleAction: (() -> Void)?
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private var hostingViewController: UIHostingController<EmptyView>!
 
-    init(iPadTargeted: Bool,
-         newConversationAction: @escaping () -> Void,
-         connectWithPeopleAction: (() -> Void)?) {
+    init(
+        iPadTargeted: Bool,
+        newConversationAction: @escaping () -> Void,
+        connectWithPeopleAction: (() -> Void)?
+    ) {
         self.newConversationAction = newConversationAction
         self.connectWithPeopleAction = connectWithPeopleAction
 
         super.init(frame: .zero)
 
-        self.hostingViewController = UIHostingController(rootView: EmptyView(iPadTargeted: iPadTargeted, newConversationAction: { [weak self] in
-            self?.newConversationAction()
-        }, connectWithPeopleAction: { [weak self] in
-            self?.connectWithPeopleAction?()
-        }))
+        self.hostingViewController = UIHostingController(rootView: EmptyView(
+            iPadTargeted: iPadTargeted,
+            newConversationAction: { [weak self] in
+                self?.newConversationAction()
+            },
+            connectWithPeopleAction: { [weak self] in
+                self?.connectWithPeopleAction?()
+            }
+        ))
 
-        self.addSubview(hostingViewController.view)
+        addSubview(hostingViewController.view)
         hostingViewController.sizingOptions = .intrinsicContentSize
         hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
         let stackView = hostingViewController!.view!
         stackView.backgroundColor = .clear
         NSLayoutConstraint.activate([
 
-            stackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            stackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: self.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            stackView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: self.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            self.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
-            self.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
+            stackView.leadingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: safeAreaLayoutGuide.leadingAnchor,
+                multiplier: 1
+            ),
+            stackView.topAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: safeAreaLayoutGuide.topAnchor,
+                multiplier: 1
+            ),
+            safeAreaLayoutGuide.trailingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor,
+                multiplier: 1
+            ),
+            safeAreaLayoutGuide.bottomAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor,
+                multiplier: 1
+            ),
 
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
@@ -72,8 +91,10 @@ private struct EmptyView: View {
 
     var body: some View {
         if iPadTargeted {
-            TabletEmptyView(newConversationAction: newConversationAction,
-                            connectWithPeopleAction: connectWithPeopleAction)
+            TabletEmptyView(
+                newConversationAction: newConversationAction,
+                connectWithPeopleAction: connectWithPeopleAction
+            )
         } else {
             PhoneEmptyView(newConversationAction: newConversationAction)
         }
@@ -128,17 +149,22 @@ private struct TabletEmptyView: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
 
-            CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.ipad,
-                          accessibilityIdentifier: "new-conversation.button", action: newConversationAction)
+            CapsuleButton(
+                title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.Button.ipad,
+                accessibilityIdentifier: "new-conversation.button",
+                action: newConversationAction
+            )
 
             Text(L10n.Localizable.General.or)
                 .font(.textStyle(.body1))
                 .foregroundStyle(Color.secondaryText)
                 .multilineTextAlignment(.center)
 
-            CapsuleButton(title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.connectButton,
-                          accessibilityIdentifier: "connect.button",
-                          action: connectWithPeopleAction)
+            CapsuleButton(
+                title: L10n.Localizable.ConversationList.EmptyPlaceholder.Search.connectButton,
+                accessibilityIdentifier: "connect.button",
+                action: connectWithPeopleAction
+            )
 
         }
     }

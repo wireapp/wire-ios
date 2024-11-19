@@ -111,10 +111,10 @@ final class ProfilePresenter: NSObject {
     }
 
     private func cleanup() {
-        self.onDismiss?()
-        self.controllerToPresentOn = nil
-        self.viewToPresentOn = nil
-        self.presentedFrame = .zero
-        self.onDismiss = nil
+        onDismiss?()
+        controllerToPresentOn = nil
+        viewToPresentOn = nil
+        presentedFrame = .zero
+        onDismiss = nil
     }
 }
