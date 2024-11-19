@@ -221,7 +221,7 @@ final class ConversationListViewModel: NSObject {
     private var sections: [Section] = []
 
     var isEmptyList: Bool {
-        let totalItems = sections.map { $0.items.count }.reduce(0, +)
+        let totalItems = sections.map(\.items.count).reduce(0, +)
         return totalItems == 0
     }
 

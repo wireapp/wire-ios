@@ -22,7 +22,7 @@ import WireSyncEngine
 extension ConversationListViewController {
 
     var isEmptyPlaceholderVisible: Bool {
-        return listContentController.listViewModel.isEmptyList
+        listContentController.listViewModel.isEmptyList
     }
 
     var emptyPlaceholderForSelectedFilter: EmptyPlaceholder {

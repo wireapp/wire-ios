@@ -28,7 +28,7 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
         response: ZMTransportResponse?,
         contains teams: [MockTeam],
         hasMore: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 

@@ -57,7 +57,7 @@ class DatabaseBaseTest: ZMTBaseTest {
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(
         userID: UUID = UUID(),
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> CoreDataStack {
 

@@ -24,7 +24,7 @@ extension ObjectChangeInfo {
     func checkForExpectedChangeFields(
         userInfoKeys: Set<String>,
         expectedChangedFields: Set<String>,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard userInfoKeys.isSuperset(of: expectedChangedFields) else {
