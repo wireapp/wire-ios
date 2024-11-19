@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockTeamMemberEvent: NSObject {
+@objcMembers
+public class MockTeamMemberEvent: NSObject {
 
     public enum Kind: String {
         case leave = "team.member-leave"
@@ -30,7 +31,11 @@ import Foundation
     public let kind: Kind
     public let timestamp = Date()
 
-    public static func createIfNeeded(team: MockTeam, changedValues: [String: Any], selfUser: MockUser) -> [MockTeamMemberEvent] {
+    public static func createIfNeeded(
+        team: MockTeam,
+        changedValues: [String: Any],
+        selfUser: MockUser
+    ) -> [MockTeamMemberEvent] {
         let membersKey = #keyPath(MockTeam.members)
         let oldMembers = team.committedValues(forKeys: [membersKey])
 
@@ -38,13 +43,11 @@ import Foundation
         let previousMembers = oldMembers[membersKey] as? Set<MockMember> ?? Set()
 
         guard    currentMembers.contains(where: { $0.user == selfUser })
-              || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
+            || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
 
-        let removedMembersEvents = previousMembers
+        return previousMembers
             .subtracting(currentMembers)
             .map { MockTeamMemberEvent(kind: .leave, team: team, user: $0.user) }
-
-        return removedMembersEvents
     }
 
     public init(kind: Kind, team: MockTeam, user: MockUser) {
@@ -56,8 +59,8 @@ import Foundation
         ]
     }
 
-    @objc public var payload: ZMTransportData {
-        return [
+    public var payload: ZMTransportData {
+        [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
@@ -66,6 +69,6 @@ import Foundation
     }
 
     public override var debugDescription: String {
-        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

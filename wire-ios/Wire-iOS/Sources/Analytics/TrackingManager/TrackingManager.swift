@@ -30,13 +30,13 @@ final class TrackingManager: NSObject, TrackingInterface {
         self.sessionManager = sessionManager
         super.init()
         AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
-        observerToken = NotificationCenter.default.addObserver(
+        self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
             queue: OperationQueue.main,
             using: { [weak self] _ in
                 guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(!self.isAnalyticsDisabled)
+                AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
             }
         )
     }

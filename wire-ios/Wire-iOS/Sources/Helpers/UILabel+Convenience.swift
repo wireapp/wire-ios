@@ -25,12 +25,13 @@ extension UILabel {
         key: String? = nil,
         size: FontSize = .normal,
         weight: FontWeight = .regular,
-        color: UIColor) {
-            self.init(frame: .zero)
-            text = key.map { $0.localized }
-            font = FontSpec(size, weight).font
-            textColor = color
-        }
+        color: UIColor
+    ) {
+        self.init(frame: .zero)
+        text = key.map(\.localized)
+        font = FontSpec(size, weight).font
+        textColor = color
+    }
 
     func configMultipleLineLabel() {
         numberOfLines = 0
@@ -61,8 +62,10 @@ extension UILabel {
         style.firstLineHeadIndent = leadingMargin
         style.headIndent = leadingMargin
 
-        label.attributedText = NSAttributedString(string: L10n.Localizable.Passcode.hintLabel,
-                                                  attributes: [NSAttributedString.Key.paragraphStyle: style])
+        label.attributedText = NSAttributedString(
+            string: L10n.Localizable.Passcode.hintLabel,
+            attributes: [NSAttributedString.Key.paragraphStyle: style]
+        )
         return label
     }
 }

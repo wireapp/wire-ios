@@ -23,4 +23,4 @@ extension Bundle {
     static let wireCommonComponents = Bundle(for: WireCommonComponentsBundle.self)
 }
 
-private final class WireCommonComponentsBundle { }
+private final class WireCommonComponentsBundle {}

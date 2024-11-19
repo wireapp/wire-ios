@@ -24,6 +24,7 @@ import WireDesign
 final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
+
     typealias View = GuestsAllowedCell
     let configuration: View.Configuration
 
@@ -42,9 +43,10 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     let accessibilityLabel: String? = nil
 
     // MARK: initialization
+
     init() {
-        configuration = View.Configuration()
-        actionController = nil
+        self.configuration = View.Configuration()
+        self.actionController = nil
     }
 
     init(configuration: View.Configuration) {
@@ -54,10 +56,12 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 }
 
 // MARK: GuestAllowedCell
+
 final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Properties
-    struct GuestsAllowedCellConfiguration { }
+
+    struct GuestsAllowedCellConfiguration {}
 
     typealias Configuration = GuestsAllowedCellConfiguration
 
@@ -70,6 +74,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
 
     // MARK: initialization
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -82,6 +87,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     }
 
     // MARK: Setup UI
+
     private func setupViews() {
         stackView.axis = .vertical
         stackView.spacing = 16
@@ -108,11 +114,11 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     }
 
     // MARK: Configuration and actions
-    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {
 
-    }
+    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
 
-    @objc private func inviteButtonTapped(_ sender: UIButton) {
+    @objc
+    private func inviteButtonTapped(_ sender: UIButton) {
         delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: self)
     }
 

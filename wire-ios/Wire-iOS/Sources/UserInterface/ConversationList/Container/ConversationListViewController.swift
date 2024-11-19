@@ -171,7 +171,7 @@ final class ConversationListViewController: UIViewController {
         self.conversationListCoordinator = conversationListCoordinator
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(
+        self.listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
             conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
@@ -216,7 +216,10 @@ final class ConversationListViewController: UIViewController {
 
         setupObservers()
 
-        listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+        listContentController.collectionView.scrollRectToVisible(
+            CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1),
+            animated: false
+        )
 
         applyColorTheme()
 
@@ -316,8 +319,14 @@ final class ConversationListViewController: UIViewController {
         NSLayoutConstraint.activate([
             filterContainerStackView.topAnchor.constraint(equalTo: filterContainerView.topAnchor),
             filterContainerView.bottomAnchor.constraint(equalTo: filterContainerStackView.bottomAnchor),
-            filterContainerStackView.leadingAnchor.constraint(equalToSystemSpacingAfter: filterContainerView.leadingAnchor, multiplier: 2),
-            filterContainerView.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor, multiplier: 2)
+            filterContainerStackView.leadingAnchor.constraint(
+                equalToSystemSpacingAfter: filterContainerView.leadingAnchor,
+                multiplier: 2
+            ),
+            filterContainerView.trailingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: filterContainerStackView.trailingAnchor,
+                multiplier: 2
+            )
         ])
 
         filterContainerStackView.addArrangedSubview(filterLabel)
@@ -328,7 +337,9 @@ final class ConversationListViewController: UIViewController {
     }
 
     func updateFilterContainerView() {
-        filterContainerView.isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController.listViewModel.selectedFilter == .none
+        filterContainerView
+            .isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController
+            .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
 
@@ -405,8 +416,8 @@ final class ConversationListViewController: UIViewController {
 
     func applyColorTheme() {
         view.backgroundColor = mainSplitViewState == .expanded
-        ? ColorTheme.Backgrounds.backgroundVariant
-        : ColorTheme.Backgrounds.surface
+            ? ColorTheme.Backgrounds.backgroundVariant
+            : ColorTheme.Backgrounds.surface
     }
 
     static func makeSearchController() -> UISearchController {
@@ -420,15 +431,15 @@ final class ConversationListViewController: UIViewController {
     private static func searchPlaceholderText(for filter: ConversationFilter?) -> String {
         switch filter {
         case .none:
-            return L10n.Localizable.ConversationList.SearchBar.placeholder
+            L10n.Localizable.ConversationList.SearchBar.placeholder
         case .favorites:
-            return L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
+            L10n.Localizable.ConversationList.SearchBar.favoritesPlaceholder
         case .groups:
-            return L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
+            L10n.Localizable.ConversationList.SearchBar.groupsPlaceholder
         case .oneOnOne:
-            return L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+            L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
         case let .folder(_, name):
-            return L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
+            L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
     }
 
@@ -501,7 +512,8 @@ final class ConversationListViewController: UIViewController {
         let filter = listContentController.listViewModel.selectedFilter
         navigationItem.searchController?.searchBar.placeholder = Self.searchPlaceholderText(for: filter)
         if #available(iOS 16.4, *) {
-            // This should actually be done as a result of an empty list of conversations, not directly when selecting a filter.
+            // This should actually be done as a result of an empty list of conversations, not directly when selecting a
+            // filter.
             navigationItem.searchController?.searchBar.isEnabled = !isEmptyPlaceholderVisible
         }
     }

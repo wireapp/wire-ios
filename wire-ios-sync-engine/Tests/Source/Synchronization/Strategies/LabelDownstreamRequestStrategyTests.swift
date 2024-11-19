@@ -36,7 +36,11 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        sut = LabelDownstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
+        sut = LabelDownstreamRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
 
         syncMOC.performGroupedAndWait {
             self.conversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -58,21 +62,39 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     func successfullFolderResponse() -> ZMTransportResponse {
         let encoder = JSONEncoder()
-        let data = try! encoder.encode(self.folderResponse(name: "folder", conversations: []))
-        let urlResponse = HTTPURLResponse(url: URL(string: "properties/labels")!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-        return ZMTransportResponse(httpurlResponse: urlResponse, data: data, error: nil, apiVersion: APIVersion.v0.rawValue)
+        let data = try! encoder.encode(folderResponse(name: "folder", conversations: []))
+        let urlResponse = HTTPURLResponse(
+            url: URL(string: "properties/labels")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )!
+        return ZMTransportResponse(
+            httpurlResponse: urlResponse,
+            data: data,
+            error: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func favoriteResponse(identifier: UUID = UUID(), favorites: [UUID]) -> WireSyncEngine.LabelPayload {
-        let update = WireSyncEngine.LabelUpdate(id: identifier, type: Label.Kind.favorite.rawValue, name: "", conversations: favorites)
-        let response = WireSyncEngine.LabelPayload(labels: [update])
-        return response
+        let update = WireSyncEngine.LabelUpdate(
+            id: identifier,
+            type: Label.Kind.favorite.rawValue,
+            name: "",
+            conversations: favorites
+        )
+        return WireSyncEngine.LabelPayload(labels: [update])
     }
 
     func folderResponse(identifier: UUID = UUID(), name: String, conversations: [UUID]) -> WireSyncEngine.LabelPayload {
-        let update = WireSyncEngine.LabelUpdate(id: identifier, type: Label.Kind.folder.rawValue, name: name, conversations: conversations)
-        let response = WireSyncEngine.LabelPayload(labels: [update])
-        return response
+        let update = WireSyncEngine.LabelUpdate(
+            id: identifier,
+            type: Label.Kind.folder.rawValue,
+            name: name,
+            conversations: conversations
+        )
+        return WireSyncEngine.LabelPayload(labels: [update])
     }
 
     func updateEvent(with labels: WireSyncEngine.LabelPayload) -> ZMUpdateEvent {
@@ -80,10 +102,11 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         let data = try! encoder.encode(labels)
         let dict = try! JSONSerialization.jsonObject(with: data, options: [])
 
-        let payload = ["value": dict,
-                       "key": "labels",
-                       "type": ZMUpdateEvent.eventTypeString(for: .userPropertiesSet)!
-            ] as [String: Any]
+        let payload = [
+            "value": dict,
+            "key": "labels",
+            "type": ZMUpdateEvent.eventTypeString(for: .userPropertiesSet)!
+        ] as [String: Any]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
@@ -125,7 +148,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             // WHEN
             request.complete(with: self.successfullFolderResponse())
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -140,9 +163,14 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
 
             // WHEN
-            request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -159,7 +187,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             // WHEN
             request.complete(with: self.successfullFolderResponse())
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -174,9 +202,14 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
 
             // WHEN
-            request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -210,7 +243,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -232,9 +265,12 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            self.sut.update(with: self.favoriteResponse(identifier: responseIdentifier, favorites: [self.conversation1.remoteIdentifier!]))
+            self.sut.update(with: self.favoriteResponse(
+                identifier: responseIdentifier,
+                favorites: [self.conversation1.remoteIdentifier!]
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -250,21 +286,35 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: true,
+                in: self.syncMOC,
+                created: &created
+            )
             label?.name = "Folder A"
             label?.conversations = Set([self.conversation1])
             label?.modifiedKeys = Set(["conversations"])
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            self.sut.update(with: self.folderResponse(identifier: folderIdentifier, name: "Folder A", conversations: [self.conversation2.remoteIdentifier!]))
+            self.sut.update(with: self.folderResponse(
+                identifier: folderIdentifier,
+                name: "Folder A",
+                conversations: [self.conversation2.remoteIdentifier!]
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: false,
+                in: self.syncMOC,
+                created: &created
+            )!
             XCTAssertNil(label.modifiedKeys)
         }
     }
@@ -276,19 +326,33 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: true,
+                in: self.syncMOC,
+                created: &created
+            )
             label?.name = "Folder A"
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            self.sut.update(with: self.folderResponse(identifier: folderIdentifier, name: updatedName, conversations: [self.conversation1.remoteIdentifier!]))
+            self.sut.update(with: self.folderResponse(
+                identifier: folderIdentifier,
+                name: updatedName,
+                conversations: [self.conversation1.remoteIdentifier!]
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: false,
+                in: self.syncMOC,
+                created: &created
+            )!
             XCTAssertEqual(label.name, updatedName)
         }
 
@@ -300,20 +364,34 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // GIVEN
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: true, in: self.syncMOC, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: true,
+                in: self.syncMOC,
+                created: &created
+            )
             label?.name = "Folder A"
             label?.conversations = Set([self.conversation1])
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            self.sut.update(with: self.folderResponse(identifier: folderIdentifier, name: "Folder A", conversations: [self.conversation2.remoteIdentifier!]))
+            self.sut.update(with: self.folderResponse(
+                identifier: folderIdentifier,
+                name: "Folder A",
+                conversations: [self.conversation2.remoteIdentifier!]
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: folderIdentifier,
+                create: false,
+                in: self.syncMOC,
+                created: &created
+            )!
             XCTAssertEqual(label.conversations, [self.conversation2])
         }
     }
@@ -336,9 +414,13 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             self.syncMOC.saveOrRollback()
 
             // WHEN
-            self.sut.update(with: self.folderResponse(identifier: label1.remoteIdentifier!, name: "Folder A", conversations: [self.conversation1.remoteIdentifier!]))
+            self.sut.update(with: self.folderResponse(
+                identifier: label1.remoteIdentifier!,
+                name: "Folder A",
+                conversations: [self.conversation1.remoteIdentifier!]
+            ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {

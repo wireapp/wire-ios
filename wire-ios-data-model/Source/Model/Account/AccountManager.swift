@@ -21,9 +21,10 @@ import WireTransport
 
 private let log = ZMSLog(tag: "Accounts")
 
-public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("AccountManagerDidUpdateAccountsNotification")
+public let AccountManagerDidUpdateAccountsNotificationName = Notification
+    .Name("AccountManagerDidUpdateAccountsNotification")
 
-fileprivate extension UserDefaults {
+private extension UserDefaults {
 
     private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }
 
@@ -38,26 +39,26 @@ fileprivate extension UserDefaults {
 public final class AccountManager: NSObject {
 
     private let defaults = UserDefaults.shared()
-    private(set) public var accounts = [Account]()
-    private(set) public var selectedAccount: Account? // The currently selected account or `nil` in case there is none
+    public private(set) var accounts = [Account]()
+    public private(set) var selectedAccount: Account? // The currently selected account or `nil` in case there is none
 
     private var store: AccountStore
 
     /// Returns the sum of unread conversations in all accounts.
     public var totalUnreadCount: Int {
-        return accounts.reduce(0) { return $0 + $1.unreadConversationCount }
+        accounts.reduce(0) { $0 + $1.unreadConversationCount }
     }
 
     /// Creates a new `AccountManager`.
     /// - parameter sharedDirectory: The directory of the shared container.
     public init(sharedDirectory: URL) {
-        store = AccountStore(root: sharedDirectory)
+        self.store = AccountStore(root: sharedDirectory)
         super.init()
         updateAccounts()
     }
 
     /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
-    static public func delete(at root: URL) {
+    public static func delete(at root: URL) {
         AccountStore.delete(at: root)
         UserDefaults.shared().selectedAccountIdentifier = nil
     }
@@ -132,13 +133,13 @@ public final class AccountManager: NSObject {
     }
 
     public func account(with id: UUID) -> Account? {
-        return accounts.first(where: { return $0.userIdentifier == id })
+        accounts.first(where: { $0.userIdentifier == id })
     }
 
     /// Loads and computes the locally selected account if any
     /// - returns: The currently selected account or `nil` if there is none.
     private func computeSelectedAccount() -> Account? {
-        return defaults?.selectedAccountIdentifier.flatMap(store.load)
+        defaults?.selectedAccountIdentifier.flatMap(store.load)
     }
 
     /// Loads and sorts the stored accounts.
@@ -146,11 +147,11 @@ public final class AccountManager: NSObject {
     /// be first, sorted by their user name. Accounts with team will be last,
     /// sorted by their team name.
     private func computeSortedAccounts() -> [Account] {
-        return store.load().sorted { lhs, rhs in
+        store.load().sorted { lhs, rhs in
             switch (lhs.teamName, rhs.teamName) {
             case (.some, .none): return false
             case (.none, .some): return true
-            case (.some(let leftName), .some(let rightName)):
+            case let (.some(leftName), .some(rightName)):
                 guard leftName != rightName else { fallthrough }
                 return leftName < rightName
             default: return lhs.userName < rhs.userName

@@ -21,19 +21,25 @@ import Foundation
 extension CoreDataSnapshotTestCase {
     func appendTextMessage(to conversation: ZMConversation) {
         let message = try! conversation.appendText(content: "test \(conversation.allMessages.count + 1)") as! ZMMessage
-        (message).sender = self.otherUser
+        (message).sender = otherUser
 
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
 
     func appendImage(to conversation: ZMConversation) {
-        (try! conversation.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        (
+            try! conversation
+                .appendImage(
+                    from: image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = otherUser
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
 
     func appendMention(to conversation: ZMConversation) {
-        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-        (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = otherUser
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
@@ -45,7 +51,7 @@ extension CoreDataSnapshotTestCase {
         timestamp: Date? = Date()
     ) {
         let message = (try! conversation.appendText(content: text, replyingTo: selfMessage) as! ZMMessage)
-        message.sender = self.otherUser
+        message.sender = otherUser
         message.serverTimestamp = timestamp
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
         conversation.lastReadServerTimeStamp = Date.distantPast
@@ -60,7 +66,7 @@ extension CoreDataSnapshotTestCase {
 
     func appendMissedCall(to conversation: ZMConversation) {
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        otherMessage.sender = self.otherUser
+        otherMessage.sender = otherUser
         otherMessage.systemMessageType = .missedCall
 
         conversation.append(otherMessage)

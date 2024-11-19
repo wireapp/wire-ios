@@ -61,7 +61,6 @@ struct FolderPickerViewControllerBuilder {
             )
         }
 
-        let hostingController = UIHostingController(rootView: navigationStack)
-        return hostingController
+        return UIHostingController(rootView: navigationStack)
     }
 }

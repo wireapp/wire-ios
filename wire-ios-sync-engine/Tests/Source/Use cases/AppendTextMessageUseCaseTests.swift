@@ -69,7 +69,10 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.count, 1)
-        let appendTextInvocation = try XCTUnwrap(mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first)
+        let appendTextInvocation = try XCTUnwrap(
+            mockConversation
+                .appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations.first
+        )
         XCTAssertEqual(appendTextInvocation.content, "some message")
         XCTAssertEqual(appendTextInvocation.mentions, [])
         XCTAssertEqual(appendTextInvocation.fetchLinkPreview, false)

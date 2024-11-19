@@ -20,14 +20,14 @@ import Foundation
 
 public enum MockConversationAccessRole: String {
     /// Only the team member can join.
-    case team = "team"
+    case team
     /// Only users who have verified their phone number / email can join.
-    case activated = "activated"
+    case activated
     /// Any user can join.
     case nonActivated = "non_activated"
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessRole {
-        return allowGuests ? .nonActivated : .team
+        allowGuests ? .nonActivated : .team
     }
 }
 
@@ -37,20 +37,20 @@ public enum MockConversationAccessRoleV2: String {
     /// Users with Wire accounts belonging to another team or no team.
     case nonTeamMember = "non_team_member"
     /// Users without Wire accounts, or wireless users (i.e users who join with a guest link and temporary account).
-    case guest = "guest"
+    case guest
     /// A service pseudo-user, aka a non-human bot.
-    case service = "service"
+    case service
 
     public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
         switch (allowGuests, allowServices) {
         case (true, true):
-            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
+            [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
         case (false, false):
-            return [teamMember.rawValue]
+            [teamMember.rawValue]
         case (true, false):
-            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
+            [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
         case (false, true):
-            return [teamMember.rawValue, service.rawValue]
+            [teamMember.rawValue, service.rawValue]
         }
     }
 
@@ -62,6 +62,7 @@ public struct MockConversationAccessMode: OptionSet {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
     /// Allowed user can be added by an existing conv member.
     public static let invite    = MockConversationAccessMode(rawValue: 1 << 0)
     /// Allowed user can join the conversation using the code.
@@ -75,17 +76,19 @@ public struct MockConversationAccessMode: OptionSet {
     public static let teamOnly  = MockConversationAccessMode()
     public static let allowGuests: MockConversationAccessMode = [.invite, .code]
 
-    internal static let stringValues: [MockConversationAccessMode: String] = [.invite: "invite",
-                                                                              .code: "code",
-                                                                              .link: "link",
-                                                                              .`private`: "private"]
+    static let stringValues: [MockConversationAccessMode: String] = [
+        .invite: "invite",
+        .code: "code",
+        .link: "link",
+        .private: "private"
+    ]
 
     public var stringValue: [String] {
-        return MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
+        MockConversationAccessMode.stringValues.compactMap { contains($0) ? $1 : nil }
     }
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessMode {
-        return allowGuests ? .allowGuests : .teamOnly
+        allowGuests ? .allowGuests : .teamOnly
     }
 }
 

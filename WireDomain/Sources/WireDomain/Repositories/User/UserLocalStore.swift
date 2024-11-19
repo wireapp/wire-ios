@@ -257,7 +257,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func fetchOrCreateUserClient(
         id: String
     ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        let localUserClient = await context.perform { [context] in
+        await context.perform { [context] in
             if let existingClient = UserClient.fetchExistingUserClient(
                 with: id,
                 in: context
@@ -269,8 +269,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 return (newClient, true)
             }
         }
-
-        return localUserClient
     }
 
     public func cancelSelfUserLegalholdRequest() async {
@@ -348,7 +346,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 ZMUser.completeProfileAssetIdentifierKey
             ]
 
-            /// Do not update assets if user has local modifications: a possible explanation is that if user has local changes to its assets
+            /// Do not update assets if user has local modifications: a possible explanation is that if user has local
+            /// changes to its assets
             /// we don't want to update them and keep these changes as is until they're synced.
             if !user.hasLocalModifications(forKeys: assetKeys) {
                 let previewAssetKey = event.assets?

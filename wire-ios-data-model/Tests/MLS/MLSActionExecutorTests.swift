@@ -100,8 +100,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let sendCommitExpectation = XCTestExpectation(description: "send commit")
         var sendCommitContinuation: CheckedContinuation<Void, Never>?
 
-        let beforeDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has been started/is running")
-        let insideDecryptMessageInvertedExpectation = XCTestExpectation(description: "not yet decrypting message").inverted()
+        let beforeDecryptMessageExpectation =
+            XCTestExpectation(description: "Task to decrypt message has been started/is running")
+        let insideDecryptMessageInvertedExpectation = XCTestExpectation(description: "not yet decrypting message")
+            .inverted()
         let afterDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has finished")
 
         // Mock Update key material.
@@ -299,7 +301,13 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_AddMembers() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let keyPackages = [KeyPackage(client: "client1", domain: "exampel.com", keyPackage: Data.random().base64String(), keyPackageRef: "", userID: .create())]
+        let keyPackages = [KeyPackage(
+            client: "client1",
+            domain: "exampel.com",
+            keyPackage: Data.random().base64String(),
+            keyPackageRef: "",
+            userID: .create()
+        )]
 
         let mockCommit = Data.random()
         let mockWelcome = Data.random()
@@ -325,7 +333,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -356,7 +364,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock adding clients returns new distribution point
         mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = { _, _ in
-            return .init(
+            .init(
                 welcome: .random(),
                 commit: .random(),
                 groupInfo: .init(
@@ -370,7 +378,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock commit sending
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Set up expectation to receive the new distribution points
@@ -398,7 +406,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds = [mlsClientID].compactMap { $0.rawValue.utf8Data }
+        let clientIds = [mlsClientID].compactMap(\.rawValue.utf8Data)
 
         let mockCommit = Data.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
@@ -422,7 +430,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -467,7 +475,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // When
@@ -518,7 +526,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -578,7 +586,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
-            return mockUpdateEvents
+            mockUpdateEvents
         }
 
         // When
@@ -603,7 +611,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock joining by external commit
         mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { _, _, _ in
 
-            return .init(
+            .init(
                 conversationId: .random(),
                 commit: .random(),
                 groupInfo: .init(
@@ -617,7 +625,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock external commit sending
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Mock MLS feature config
@@ -660,7 +668,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
-            return decryptedMessage
+            decryptedMessage
         }
 
         // When

@@ -23,14 +23,14 @@ protocol WipeDatabaseInteractorInput: AnyObject {
     func deleteAccount()
 }
 
-protocol WipeDatabaseInteractorOutput: AnyObject {
-}
+protocol WipeDatabaseInteractorOutput: AnyObject {}
 
 final class WipeDatabaseInteractor {
     weak var output: WipeDatabaseInteractorOutput?
 }
 
 // MARK: - Interface
+
 extension WipeDatabaseInteractor: WipeDatabaseInteractorInput {
     func deleteAccount() {
         guard

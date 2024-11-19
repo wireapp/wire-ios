@@ -22,7 +22,8 @@ public let ZMReactionUnicodeValueKey    = "unicodeValue"
 public let ZMReactionMessageValueKey    = "message"
 public let ZMReactionUsersValueKey      = "users"
 
-@objc public enum TransportReaction: UInt32 {
+@objc
+public enum TransportReaction: UInt32 {
     case none  = 0
     case heart = 1
     case thumbsUp
@@ -32,7 +33,8 @@ public let ZMReactionUsersValueKey      = "users"
     case frowningFace
 }
 
-@objcMembers open class Reaction: ZMManagedObject {
+@objcMembers
+open class Reaction: ZMManagedObject {
 
     @NSManaged var unicodeValue: String?
     @NSManaged var message: ZMMessage?
@@ -40,10 +42,15 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged private var firstReactionDate: Date?
 
     public var creationDate: Date {
-        return firstReactionDate ?? Date.distantPast
+        firstReactionDate ?? Date.distantPast
     }
 
-    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {
+    public static func insertReaction(
+        _ unicodeValue: String,
+        users: [ZMUser],
+        inMessage message: ZMMessage,
+        creationDate: Date?
+    ) -> Reaction {
         let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue
@@ -53,15 +60,15 @@ public let ZMReactionUsersValueKey      = "users"
     }
 
     open override func keysTrackedForLocalModifications() -> Set<String> {
-        return [ZMReactionUsersValueKey]
+        [ZMReactionUsersValueKey]
     }
 
     open override class func entityName() -> String {
-        return "Reaction"
+        "Reaction"
     }
 
     open override class func sortKey() -> String? {
-        return ZMReactionUnicodeValueKey
+        ZMReactionUnicodeValueKey
     }
 
     public static func validate(unicode: String) -> Bool {

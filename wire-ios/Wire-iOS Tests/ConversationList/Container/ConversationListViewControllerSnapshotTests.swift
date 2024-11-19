@@ -60,7 +60,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
         mockGetUserAccountImageSourceUseCase = .init()
-        mockGetUserAccountImageSourceUseCase.invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
+        mockGetUserAccountImageSourceUseCase
+            .invokeUserUserContextAccount_MockValue = .image(UIImage(data: mockImageData)!)
 
         snapshotHelper = .init()
 
@@ -123,7 +124,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     func testForEverythingArchived() {
         let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
         conversation.isArchived = true
-        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory()
+            .refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         snapshotHelper.verify(matching: renderedImage())
     }
@@ -190,7 +192,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             (name: "Web Team", isFavorite: true)
         ]
         let conversations = createConversations(conversationsData: conversationData)
-        userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
+        userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter(\.isFavorite)
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
@@ -223,8 +225,14 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         user2.name = "Bob"
 
-        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: coreDataFixture.coreDataStack.viewContext)
-        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: coreDataFixture.coreDataStack.viewContext)
+        let oneOnOneConversation1 = modelHelper.createOneOnOne(
+            with: user1,
+            in: coreDataFixture.coreDataStack.viewContext
+        )
+        let oneOnOneConversation2 = modelHelper.createOneOnOne(
+            with: user2,
+            in: coreDataFixture.coreDataStack.viewContext
+        )
 
         userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
 

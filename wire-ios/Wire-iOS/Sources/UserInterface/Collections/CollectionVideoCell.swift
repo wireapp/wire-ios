@@ -41,7 +41,7 @@ final class CollectionVideoCell: CollectionCell {
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = self.message else {
+        guard let message else {
             return
         }
 
@@ -71,7 +71,7 @@ final class CollectionVideoCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .movie
+        .movie
     }
 
     private func setup(_ view: UIView) {
@@ -99,6 +99,6 @@ final class CollectionVideoCell: CollectionCell {
 
 extension CollectionVideoCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        self.delegate?.collectionCell(self, performAction: action)
+        delegate?.collectionCell(self, performAction: action)
     }
 }

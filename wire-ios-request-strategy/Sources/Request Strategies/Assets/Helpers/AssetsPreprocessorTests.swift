@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class AssetsPreprocessorTests: MessagingTestBase {
 
@@ -56,7 +56,10 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItPreprocessAssetMessageWithMultipleAssets() {
         // given
-        let message = try! conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         let messageSet: Set<NSManagedObject> = [message]
         let assets = message.assets
         XCTAssertEqual(assets.count, 2)

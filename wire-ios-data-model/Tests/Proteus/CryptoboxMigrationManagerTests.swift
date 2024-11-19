@@ -47,9 +47,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager = nil
         mockSafeCoreCrypto = nil
 
-        syncMOC.performAndWait({
+        syncMOC.performAndWait {
             syncMOC.proteusService = nil
-        })
+        }
 
         proteusViaCoreCryptoFlag.isOn = false
         DeveloperFlag.storage = UserDefaults.standard
@@ -58,7 +58,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     }
 
     var accountDirectory: URL {
-        return FileManager.default
+        FileManager.default
             .temporaryDirectory
             .appendingPathComponent("CryptoBoxMigrationManagerTests")
     }
@@ -133,7 +133,10 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         // When
         await assertItThrows(error: CryptoboxMigrationManager.Failure.failedToMigrateData) {
-            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
+            try await self.sut.performMigration(
+                accountDirectory: self.accountDirectory,
+                coreCrypto: self.mockSafeCoreCrypto
+            )
         }
 
         // Then

@@ -31,7 +31,8 @@ extension ConversationListViewController {
         guard let selectedFilter = listContentController.listViewModel.selectedFilter else {
             return EmptyPlaceholder(
                 headline: Strings.All.headline + " 👋",
-                subheadline: Strings.All.subheadline.attributedString)
+                subheadline: Strings.All.subheadline.attributedString
+            )
         }
         switch selectedFilter {
         case .favorites:
@@ -45,7 +46,8 @@ extension ConversationListViewController {
 
             return EmptyPlaceholder(
                 subheadline: subheadline + "\n\n" + link,
-                showArrow: false)
+                showArrow: false
+            )
         case .groups:
             return EmptyPlaceholder(subheadline: Strings.Group.subheadline.attributedString)
         case .oneOnOne:
@@ -53,7 +55,8 @@ extension ConversationListViewController {
             return EmptyPlaceholder(
                 subheadline: Strings.Oneonone.subheadline(domain).attributedString,
                 showArrow: !isIPadRegular(),
-                showButton: isIPadRegular())
+                showButton: isIPadRegular()
+            )
         case .folder:
             // FIXME: [WPB-13905] Disallow this state
             return EmptyPlaceholder(subheadline: "".attributedString)

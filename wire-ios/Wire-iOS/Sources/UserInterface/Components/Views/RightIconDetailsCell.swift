@@ -22,12 +22,12 @@ class RightIconDetailsCell: DetailsCollectionViewCell {
     private let accessoryIconView = UIImageView()
 
     var accessory: UIImage? {
-        get { return accessoryIconView.image }
+        get { accessoryIconView.image }
         set { updateAccessory(newValue) }
     }
 
     var accessoryColor: UIColor {
-        get { return accessoryIconView.tintColor }
+        get { accessoryIconView.tintColor }
         set { accessoryIconView.tintColor = newValue }
     }
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireMoveToFolderUI
 import WireMoveToFolderUISupport
 import XCTest
+@testable import WireMoveToFolderUI
 
 final class FolderPickerViewModelTests: XCTestCase {
 
@@ -148,7 +148,10 @@ final class FolderPickerViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func createSUT(conversation: Conversation = Conversation(identifier: UUID(), currentFolderIdentifier: nil)) {
+    private func createSUT(conversation: Conversation = Conversation(
+        identifier: UUID(),
+        currentFolderIdentifier: nil
+    )) {
         sut = FolderPickerViewModel(
             conversation: conversation,
             directory: mockDirectory,
