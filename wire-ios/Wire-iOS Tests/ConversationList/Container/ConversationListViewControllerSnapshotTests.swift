@@ -264,6 +264,26 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: renderedImage())
     }
 
+    func testForShowingNoConversationsFilteredBySearchTerm() throws {
+        // GIVEN
+        let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user1.name = "Alice"
+
+        let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user2.name = "Bob"
+
+        userSession.mockConversationDirectory.mockContactsConversations = []
+        sut.navigationItem.searchController?.searchBar.text = "XXX"
+        sut.applySearchText()
+
+        // WHEN
+        // note here the searchBar is not presented but within the app it is
+        sut.hideNoContactLabel(animated: false)
+
+        // THEN
+        snapshotHelper.verify(matching: renderedImage())
+    }
+    
     // MARK: - Helper Methods
 
     private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
