@@ -621,7 +621,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
     }
 
-    func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #filePath, line: UInt = #line) {
+    func verifyAllMessagesAreIndexed(
+        in conversation: ZMConversation,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForNotIndexedMessages(),
             ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)

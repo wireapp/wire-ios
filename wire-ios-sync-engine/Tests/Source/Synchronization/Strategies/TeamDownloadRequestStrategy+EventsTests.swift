@@ -494,7 +494,11 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
     // MARK: - Helper
 
-    private func processEvent(fromPayload eventPayload: [String: Any], file: StaticString = #filePath, line: UInt = #line) {
+    private func processEvent(
+        fromPayload eventPayload: [String: Any],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         guard let event = ZMUpdateEvent(fromEventStreamPayload: eventPayload as ZMTransportData, uuid: nil) else {
             return XCTFail("Unable to create update event from payload", file: file, line: line)
         }

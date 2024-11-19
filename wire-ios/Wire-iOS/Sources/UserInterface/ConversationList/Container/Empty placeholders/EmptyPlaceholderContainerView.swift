@@ -28,30 +28,38 @@ final class EmptyPlaceholderContainerView: UIView {
 
     // MARK: - Init
 
-    init(content: ConversationListViewController.EmptyPlaceholder,
-         connectWithPeopleAction: @escaping () -> Void,
-         newConversationAction: @escaping () -> Void) {
+    init(
+        content: ConversationListViewController.EmptyPlaceholder,
+        connectWithPeopleAction: @escaping () -> Void,
+        newConversationAction: @escaping () -> Void
+    ) {
         self.connectWithPeopleAction = connectWithPeopleAction
         self.newConversationAction = newConversationAction
 
         super.init(frame: .zero)
 
-        self.searchResultsView = EmptyConversationSearchResultsView(iPadTargeted: isIPadRegular(), newConversationAction: { [weak self] in
-            self?.newConversationAction()
-        }, connectWithPeopleAction: { [weak self] in
-            self?.connectWithPeopleAction()
-        })
+        self.searchResultsView = EmptyConversationSearchResultsView(
+            iPadTargeted: isIPadRegular(),
+            newConversationAction: { [weak self] in
+                self?.newConversationAction()
+            },
+            connectWithPeopleAction: { [weak self] in
+                self?.connectWithPeopleAction()
+            }
+        )
 
         let action = UIAction { [weak self] _ in
             self?.connectWithPeopleAction()
         }
         self.placeholderView = EmptyPlaceholderView(content: content, connectWithPeopleAction: action)
 
-        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds.surfaceVariant
+        backgroundColor = isIPadRegular() ? ColorTheme.Backgrounds.backgroundVariant : ColorTheme.Backgrounds
+            .surfaceVariant
 
         setupConstraints()
     }
 
+    @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
