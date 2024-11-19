@@ -96,6 +96,7 @@ final class ProfilePresenter: NSObject {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
+        profileViewController.viewControllerDismisser = self
 
         let navigationController = profileViewController.wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet

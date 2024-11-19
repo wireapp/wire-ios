@@ -57,6 +57,7 @@ enum UserDetailViewControllerFactory {
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = profileViewControllerDelegate
+            profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
     }

@@ -34,6 +34,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             user: user,
             viewer: selfUser,
             conversation: conversation,
+            viewControllerDismisser: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder

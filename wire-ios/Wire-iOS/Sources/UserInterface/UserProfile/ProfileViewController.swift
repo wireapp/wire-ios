@@ -45,6 +45,7 @@ extension ZMConversationType {
 
 final class ProfileViewController: UIViewController {
 
+    weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
     private let viewModel: ProfileViewControllerViewModeling
@@ -65,6 +66,7 @@ final class ProfileViewController: UIViewController {
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
+        viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
@@ -99,6 +101,7 @@ final class ProfileViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
 
+        self.viewControllerDismisser = viewControllerDismisser
     }
 
     required init(
@@ -288,6 +291,12 @@ final class ProfileViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         self.incomingRequestFooterBottomConstraint = incomingRequestFooterBottomConstraint
+    }
+}
+
+extension ProfileViewController: ViewControllerDismisser {
+    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
+        navigationController?.popViewController(animated: true)
     }
 }
 

@@ -388,6 +388,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
+        profileViewController.viewControllerDismisser = self
 
         presentDetailsViewController(profileViewController, above: cell)
     }
