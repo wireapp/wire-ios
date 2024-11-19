@@ -118,7 +118,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
@@ -171,7 +171,7 @@ extension ActionHandlerTestBase {
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
@@ -196,7 +196,7 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Action.Result? {
         var result: Action.Result?

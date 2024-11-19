@@ -50,7 +50,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     func createBackup(
         accountIdentifier: UUID,
         databaseKey: VolatileData? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Result<URL, Error> {
         var result: Result<URL, Error>?
@@ -73,7 +73,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         accountIdentifier: UUID,
         backup: URL,
         migrator: CoreDataMessagingMigratorProtocol,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Result<URL, Error>? {
 
@@ -94,7 +94,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     func createBackupAndDeleteOriginalAccount(
         accountIdentifier: UUID,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> URL {
 

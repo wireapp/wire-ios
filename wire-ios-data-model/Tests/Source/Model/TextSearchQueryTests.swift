@@ -621,7 +621,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
     }
 
-    func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
+    func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #filePath, line: UInt = #line) {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForNotIndexedMessages(),
             ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
@@ -644,7 +644,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         whenSearchingFor query: String,
         shouldFind: Bool = true,
         in conversation: ZMConversation? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         messageModifier: ((ZMMessage) -> Void)? = nil
     ) {
@@ -683,7 +683,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     fileprivate func search(
         for text: String,
         in conversation: ZMConversation,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> [TextQueryResult] {
         let delegate = MockTextSearchQueryDelegate()

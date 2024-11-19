@@ -74,7 +74,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -84,7 +84,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -99,7 +99,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -109,7 +109,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -123,7 +123,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -133,7 +133,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -151,7 +151,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -161,7 +161,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -176,7 +176,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -186,7 +186,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -201,7 +201,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -211,7 +211,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -242,7 +242,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -252,7 +252,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -270,7 +270,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -280,7 +280,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -299,7 +299,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -309,7 +309,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
             .verify(
                 matching: previewView.prepareForSnapshot(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

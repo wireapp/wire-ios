@@ -37,7 +37,7 @@ struct PinnedKeysData: Decodable {
 
 extension SecTrust {
 
-    static func trustWithChain(certificateData: [Data], file: StaticString = #file, line: UInt = #line) -> SecTrust? {
+    static func trustWithChain(certificateData: [Data], file: StaticString = #filePath, line: UInt = #line) -> SecTrust? {
         let policy = SecPolicyCreateBasicX509()
         let certificates: [SecCertificate] = certificateData.compactMap {
             guard let cert = SecCertificateCreateWithData(nil, $0 as CFData) else { XCTFail(

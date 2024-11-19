@@ -776,7 +776,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         expectSystemMessage: Bool,
         expectLegalHoldVerification: Bool,
         messageContent: @escaping () -> MessageCapable,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         syncMOC.performGroupedBlock {

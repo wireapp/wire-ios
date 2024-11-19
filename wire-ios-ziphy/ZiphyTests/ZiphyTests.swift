@@ -29,7 +29,7 @@ final class ZiphTests: XCTestCase {
     }
 
     /// Example checker method which can be reused in different tests
-    fileprivate func checkerExample(file: StaticString = #file, line: UInt = #line) {
+    fileprivate func checkerExample(file: StaticString = #filePath, line: UInt = #line) {
         XCTAssert(true, file: file, line: line)
     }
 

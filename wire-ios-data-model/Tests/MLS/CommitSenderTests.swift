@@ -153,7 +153,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         withRecovery recovery: CommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingCommit: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given
@@ -232,7 +232,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         withRecovery recovery: ExternalCommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingGroup: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given

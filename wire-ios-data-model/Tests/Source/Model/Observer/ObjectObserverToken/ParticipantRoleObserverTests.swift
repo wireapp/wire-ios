@@ -57,7 +57,7 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         modifier: (ParticipantRole) -> Void,
         expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given

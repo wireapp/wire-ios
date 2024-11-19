@@ -341,7 +341,7 @@ extension TopConversationsDirectoryTests {
         in managedObjectContext: NSManagedObjectContext,
         fillWithNew new: Int = 0,
         old: Int = 0,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
@@ -361,14 +361,14 @@ extension TopConversationsDirectoryTests {
         return conversation
     }
 
-    func fill(_ conversation: ZMConversation, with messageCount: Int, file: StaticString = #file, line: UInt = #line) {
+    func fill(_ conversation: ZMConversation, with messageCount: Int, file: StaticString = #filePath, line: UInt = #line) {
         fill(conversation, with: (messageCount, 0), file: file, line: line)
     }
 
     func fill(
         _ conversation: ZMConversation,
         with messageCount: (new: Int, old: Int),
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard messageCount.new > 0 || messageCount.old > 0 else { return }

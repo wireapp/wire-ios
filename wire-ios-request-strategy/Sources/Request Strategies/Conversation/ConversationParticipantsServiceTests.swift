@@ -396,7 +396,7 @@ private extension ConversationParticipantsServiceTests {
     func assertSystemMessageWasInserted(
         forUsers users: Set<ZMUser>,
         in conversation: ZMConversation,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         await uiMOC.perform {
@@ -411,7 +411,7 @@ private extension ConversationParticipantsServiceTests {
 
     func assertReachableUsersWereAddedOnRetry(
         expectedUsers: Set<ZMUser>,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
 
