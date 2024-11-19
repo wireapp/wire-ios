@@ -21,7 +21,7 @@ import Foundation
 /// Reports an error and terminates the application
 public func fatal(
     _ message: String,
-    file: StaticString = #filePath,
+    file: StaticString = #fileID,
     line: UInt = #line
 ) -> Never {
 
@@ -46,7 +46,7 @@ public func fatal(
 }
 
 /// If the condition is not true, reports an error and terminates the application
-public func require(_ condition: Bool, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
+public func require(_ condition: Bool, _ message: String = "", file: StaticString = #fileID, line: UInt = #line) {
     if !condition {
         fatal(message, file: file, line: line)
     }
@@ -83,7 +83,7 @@ public enum AppBuild: UInt8 {
 public func requireInternal(
     _ condition: Bool,
     _ message: @autoclosure () -> String,
-    file: StaticString = #filePath,
+    file: StaticString = #fileID,
     line: UInt = #line
 ) {
     guard !condition else { return }

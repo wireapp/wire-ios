@@ -18,12 +18,6 @@
 
 import Foundation
 
-// public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
-//    .deletingLastPathComponent()
-//    .path
-
-public var SnapshotTestReferenceImageDirectory: String {
-    let url = URL(fileURLWithPath: #filePath)
-    print(url)
-    return url.deletingLastPathComponent().path
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .path

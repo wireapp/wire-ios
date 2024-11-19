@@ -91,26 +91,26 @@ public extension ZMSLog {
         _ message: @autoclosure () -> SanitizedString,
         level: ZMLogLevel = .info,
         osLogOn: Bool = true,
-        file: String = #filePath,
+        file: String = #fileID,
         line: UInt = #line
     ) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
         ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
-    func error(_ message: @autoclosure () -> String, file: String = #filePath, line: UInt = #line) {
+    func error(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.error, message: message(), tag: tag, file: file, line: line)
     }
 
-    func warn(_ message: @autoclosure () -> String, file: String = #filePath, line: UInt = #line) {
+    func warn(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.warn, message: message(), tag: tag, file: file, line: line)
     }
 
-    func info(_ message: @autoclosure () -> String, file: String = #filePath, line: UInt = #line) {
+    func info(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.info, message: message(), tag: tag, file: file, line: line)
     }
 
-    func debug(_ message: @autoclosure () -> String, file: String = #filePath, line: UInt = #line) {
+    func debug(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.debug, message: message(), tag: tag, file: file, line: line)
     }
 }
@@ -228,7 +228,7 @@ extension ZMSLog {
         _ level: ZMLogLevel,
         message: @autoclosure () -> String,
         tag: String?,
-        file: String = #filePath,
+        file: String = #fileID,
         line: UInt = #line
     ) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
@@ -241,7 +241,7 @@ extension ZMSLog {
         isSafe: Bool,
         tag: String?,
         osLogOn: Bool = true,
-        file: String = #filePath,
+        file: String = #fileID,
         line: UInt = #line
     ) {
         logQueue.async {
