@@ -683,7 +683,6 @@ final class ZClientViewController: UIViewController {
                 .conversationViewController {
                 profileViewController.delegate = conversationViewController
 
-                profileViewController.viewControllerDismisser = conversationViewController
             }
             viewController = profileViewController
         }

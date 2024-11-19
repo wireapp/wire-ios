@@ -63,7 +63,6 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     let completion: Completion?
-    weak var viewControllerDismisser: ViewControllerDismisser?
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
@@ -216,8 +215,7 @@ final class ServiceDetailViewController: UIViewController {
                 presentRemoveDialogue(
                     for: serviceUser,
                     from: conversation,
-                    sender: sender,
-                    dismisser: viewControllerDismisser
+                    sender: sender
                 )
 
             case .openConversation:
