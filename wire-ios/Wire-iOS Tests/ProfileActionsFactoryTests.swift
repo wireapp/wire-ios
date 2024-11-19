@@ -861,7 +861,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         conversation: MockConversation?,
         expectedActions: [ProfileAction],
         context: ProfileViewControllerContext = .oneToOneConversation,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let factory = ProfileActionsFactory(

@@ -106,7 +106,7 @@ final class ProfileViewTests: XCTestCase {
     func verifyProfile(
         options: ProfileHeaderViewController.Options,
         availability: Availability = .available,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

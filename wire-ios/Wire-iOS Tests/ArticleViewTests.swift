@@ -321,7 +321,7 @@ final class ArticleViewTests: XCTestCase {
 
     func createTestForArticleViewWithImage(
         named: String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

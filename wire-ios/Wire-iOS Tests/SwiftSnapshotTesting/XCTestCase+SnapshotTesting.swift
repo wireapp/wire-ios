@@ -37,7 +37,7 @@ extension XCTestCase {
         snapshotBackgroundColor: UIColor,
         configuration: ((UIView) -> Swift.Void)? = nil,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -67,7 +67,7 @@ extension XCTestCase {
         matching value: UIView,
         width: CGFloat,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -91,7 +91,7 @@ extension XCTestCase {
         snapshotBackgroundColor: UIColor? = nil,
         configuration: ((UIView) -> Swift.Void)? = nil,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -112,7 +112,7 @@ extension XCTestCase {
 
 extension XCTestCase {
 
-    func snapshotDirectory(file: StaticString = #file) -> String {
+    func snapshotDirectory(file: StaticString = #filePath) -> String {
         let fileName = "\(file)"
         return ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName)
             .deletingPathExtension().lastPathComponent
@@ -121,7 +121,7 @@ extension XCTestCase {
     /// verify for a UIAlertController
     func verify(
         matching value: UIAlertController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
@@ -159,7 +159,7 @@ extension XCTestCase {
     func verify(
         matching value: UIView,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -255,7 +255,7 @@ extension XCTestCase {
         createSut: () -> UIView,
         snapshotBackgroundColor: UIColor? = nil,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -275,7 +275,7 @@ extension XCTestCase {
         createSut: () -> UIViewController,
         snapshotBackgroundColor: UIColor? = nil,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -296,7 +296,7 @@ extension XCTestCase {
         widths: Set<CGFloat>,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -319,7 +319,7 @@ extension XCTestCase {
         widths: Set<CGFloat>,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -342,7 +342,7 @@ extension XCTestCase {
         width: CGFloat,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -374,7 +374,7 @@ extension XCTestCase {
         width: CGFloat,
         snapshotBackgroundColor: UIColor,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

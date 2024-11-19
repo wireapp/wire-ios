@@ -115,7 +115,7 @@ class NSDataDetectorAttachmentTests: XCTestCase {
     private func checkAttachments(
         in text: String,
         expectation: (url: String, type: LinkAttachmentType)?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let attachments = detector.detectLinkAttachments(in: text, excluding: [])

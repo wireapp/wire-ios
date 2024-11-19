@@ -22,7 +22,7 @@ import XCTest
 public func AssertOptionalNil(
     _ condition: @autoclosure () -> (some Any)?,
     _ message: String = "",
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
     if let value = condition() {
@@ -34,7 +34,7 @@ public func AssertOptionalEqual<T: Equatable>(
     _ expression1: @autoclosure () -> T?,
     expression2: @autoclosure () -> T,
     _ message: String = "",
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
     if let v = expression1() {
@@ -47,7 +47,7 @@ public func AssertOptionalEqual<T: Equatable>(
 public func AssertOptionalNotNil<T>(
     _ expression: @autoclosure () -> T?,
     _ message: String = "",
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line,
     block: (T) -> Void = { _ in }
 ) {
@@ -63,7 +63,7 @@ public func AssertDictionaryHasOptionalValue<T: NSObject>(
     key: @autoclosure () -> String,
     expected: @autoclosure () -> T,
     _ message: String = "",
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
     if let v = dictionary()[key()] {
@@ -77,7 +77,7 @@ public func AssertDictionaryHasOptionalNilValue(
     _ dictionary: @autoclosure () -> [String: (some NSObject)?],
     key: @autoclosure () -> String,
     _ message: String = "",
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
     if let v = dictionary()[key()] {

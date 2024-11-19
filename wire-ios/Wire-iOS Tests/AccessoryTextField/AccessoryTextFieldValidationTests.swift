@@ -73,7 +73,7 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
     private func checkSucceed(
         textFieldType: ValidatedTextField.Kind,
         text: String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // WHEN
@@ -110,7 +110,7 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
         textFieldType: ValidatedTextField.Kind,
         text: String?,
         expectedError: TextFieldValidator.ValidationError?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // WHEN

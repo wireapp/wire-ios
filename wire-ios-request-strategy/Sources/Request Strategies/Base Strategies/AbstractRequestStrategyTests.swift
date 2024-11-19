@@ -246,7 +246,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         operationState: OperationState,
         synchronizationState: SynchronizationState,
         sut: RequestStrategy & TestableAbstractRequestStrategy,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 
@@ -264,7 +264,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         operationState: OperationState,
         synchronizationState: SynchronizationState,
         sut: RequestStrategy & TestableAbstractRequestStrategy,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 
