@@ -59,7 +59,7 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
     private func assertDecryptionErrorIsReportedAsRecoverable(
         _ decryptionError: CBoxResult,
         recoverable: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given

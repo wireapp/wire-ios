@@ -51,7 +51,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         let dropProposal = sut.dropProposal(mediaShareRestrictionManager: shareRestrictionManager)
 
         // THEN
-        XCTAssertEqual(dropProposal.operation, UIDropOperation.copy, file: #file, line: #line)
+        XCTAssertEqual(dropProposal.operation, UIDropOperation.copy, file: #filePath, line: #line)
     }
 
     func testThatItPreventsDroppingFiles_FlagDisabled() {
@@ -64,7 +64,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         let dropProposal = sut.dropProposal(mediaShareRestrictionManager: shareRestrictionManager)
 
         // THEN
-        XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #file, line: #line)
+        XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #filePath, line: #line)
     }
 
     private func makeConversationInputBarViewController(conversation: MockInputBarConversationType)

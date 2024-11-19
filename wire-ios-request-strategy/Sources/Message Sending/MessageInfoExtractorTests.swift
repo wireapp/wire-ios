@@ -279,7 +279,7 @@ final class MessageInfoExtractorTests: XCTestCase {
     private func internalTest_NativePush(
         expectedNativePush: Bool,
         message: GenericMessage,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
         var conversation: ZMConversation!

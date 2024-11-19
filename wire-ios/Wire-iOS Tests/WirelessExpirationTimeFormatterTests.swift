@@ -110,7 +110,7 @@ class WirelessExpirationTimeFormatterTests: XCTestCase {
     private func assert(
         remainingTime: TimeInterval,
         expected: String?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let result = WirelessExpirationTimeFormatter.shared.string(for: remainingTime)

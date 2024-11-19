@@ -338,7 +338,7 @@ extension CallGridViewControllerSnapshotTests {
     private func assertHint(
         input: HintTestCase.Input,
         output: HintTestCase.Output,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         mockHintView.didCallHideAndStopTimer = false
@@ -462,7 +462,7 @@ extension CallGridViewControllerSnapshotTests {
 
             func assert(
                 mockHintView: MockCallGridHintNotificationLabel,
-                file: StaticString = #file,
+                file: StaticString = #filePath,
                 line: UInt = #line
             ) {
                 switch self {
