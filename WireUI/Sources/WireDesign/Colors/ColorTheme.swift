@@ -64,9 +64,9 @@ public enum ColorTheme {
         public static let onInverted = UIColor(light: .white, dark: .black)
     }
 
-    public enum Buttons {
+    enum Buttons {
 
-        public enum Primary {
+        enum Primary {
 
             public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
             public static let onEnabled = UIColor(light: .white, dark: .black)
@@ -81,7 +81,7 @@ public enum ColorTheme {
             public static let onSelected = UIColor(light: .white, dark: .black)
         }
 
-        public enum Secondary {
+        enum Secondary {
 
             public static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
@@ -100,7 +100,7 @@ public enum ColorTheme {
             public static let selectedOutline = UIColor(light: .blue300Light, dark: .blue800Dark)
         }
 
-        public enum Tertiary {
+        enum Tertiary {
 
             public static let enabled = UIColor.clear
             public static let onEnabled = UIColor(light: .black, dark: .white)

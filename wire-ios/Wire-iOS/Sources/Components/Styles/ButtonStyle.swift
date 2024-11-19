@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 
+@available(*, deprecated, message: "should use WireDesign's WireButtonStyle instead")
 struct ButtonStyle {
 
     typealias ButtonColors = SemanticColors.Button
