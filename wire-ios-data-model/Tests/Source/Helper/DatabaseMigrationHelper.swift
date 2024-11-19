@@ -97,7 +97,7 @@ struct DatabaseMigrationHelper {
         storeDirectory: URL,
         preMigrationAction: MigrationAction,
         postMigrationAction: MigrationAction,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         // GIVEN
@@ -154,7 +154,7 @@ struct DatabaseMigrationHelper {
         accountIdentifier: UUID,
         versionName: String,
         database: Database = .messaging,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
 
@@ -176,7 +176,7 @@ struct DatabaseMigrationHelper {
         storeFile: URL,
         versionName: String,
         database: Database = .messaging,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         try FileManager.default.createDirectory(
@@ -194,7 +194,7 @@ struct DatabaseMigrationHelper {
     func databaseFixtureURL(
         version: String,
         database: Database = .messaging,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> URL? {
 
@@ -273,7 +273,7 @@ extension XCTestCase {
     func createStorageStackAndWaitForCompletion(
         userID: UUID,
         applicationContainer: URL,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> CoreDataStack {
 

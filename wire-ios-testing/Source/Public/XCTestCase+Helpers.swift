@@ -53,7 +53,7 @@ public extension XCTestCase {
     func assertItThrows(
         error expectedError: some EquatableError,
         block: AsyncThrowingBlock,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         do {
@@ -76,7 +76,7 @@ public extension XCTestCase {
     func assertItThrows(
         error expectedError: some EquatableError,
         block: ThrowingBlock,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertThrowsError(try block(), file: file, line: line) { error in
@@ -92,7 +92,7 @@ public extension XCTestCase {
     func assertError<T: EquatableError>(
         _ error: Error,
         equals expectedError: T,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard let error = error as? T else {
@@ -114,7 +114,7 @@ public extension XCTestCase {
     func assertMethodCompletesWithError<Success, Error: EquatableError>(
         _ expectedError: Error,
         method: (@escaping (Result<Success, Error>) -> Void) -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         assertMethodCompletesWithValidation(method: method) { result in
@@ -133,7 +133,7 @@ public extension XCTestCase {
 
     func assertMethodCompletesWithSuccess<Success, Error: EquatableError>(
         method: (@escaping (Result<Success, Error>) -> Void) -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         assertMethodCompletesWithValidation(method: method, validation: { result in

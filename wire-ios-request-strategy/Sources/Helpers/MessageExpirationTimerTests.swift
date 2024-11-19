@@ -233,7 +233,7 @@ private extension MessageExpirationTimerTests {
     }
 
     /// Checks that the message is expired. Asserts if not.
-    func checkExpiration(of message: ZMMessage, file: StaticString = #file, line: UInt = #line) {
+    func checkExpiration(of message: ZMMessage, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         XCTAssertFalse(message.hasChanges, file: file, line: line)
         XCTAssertNil(message.expirationDate, file: file, line: line)

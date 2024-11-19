@@ -87,7 +87,7 @@ final class SettingsPropertyTests: XCTestCase {
     func saveAndCheck<T>(
         _ property: SettingsProperty,
         value: T,
-        file: String = #file,
+        file: String = #filePath,
         line: UInt = #line
     ) throws where T: Equatable {
         var property = property

@@ -180,7 +180,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     private func log(
         _ message: String,
-        file: String = #file,
+        file: String = #filePath,
         line: Int = #line
     ) {
         let messageWithLineNumber = String(
