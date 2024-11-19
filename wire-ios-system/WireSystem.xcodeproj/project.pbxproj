@@ -53,7 +53,7 @@
 /* Begin PBXFileReference section */
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54A3272C1B99A3190004EB95 /* WireSystem Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireSystem Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../WireFoundation/Sources/WireSystem/README.md; sourceTree = "<group>"; };
+		54F6FD891B31BB5A000EC9BB /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5939CFC02CECAF3D000F6FAD /* CacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CacheTests.swift; path = ../../WireFoundation/Tests/WireSystemTests/CacheTests.swift; sourceTree = "<group>"; };
 		5939CFC12CECAF3D000F6FAD /* CircularArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CircularArrayTests.swift; path = ../../WireFoundation/Tests/WireSystemTests/CircularArrayTests.swift; sourceTree = "<group>"; };
 		5939CFC22CECAF3D000F6FAD /* DispatchGroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DispatchGroupTests.swift; path = ../../WireFoundation/Tests/WireSystemTests/DispatchGroupTests.swift; sourceTree = "<group>"; };
