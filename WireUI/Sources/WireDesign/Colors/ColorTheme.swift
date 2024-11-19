@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 
 // The structure of this type corresponds to the Wire design system.
@@ -145,3 +146,32 @@ private extension UIColor {
         }
     }
 }
+
+extension UIColor {
+    var color: Color {
+        Color(self)
+    }
+}
+
+//protocol SomeColorType {
+//    var enabled: UIColor { get }
+//    var disabled: UIColor { get }
+//}
+//
+//struct WireColorThemModifier: ViewModifier {
+//    @Environment(\.isEnabled) private var isEnabled
+//    
+//    let color: any SomeColorType
+//    @ViewBuilder let content: () -> Content
+//
+//    var body: some View {
+//        content()
+//            .foregroundStyle(isEnabled ? color.enabled : color.disabled)
+//    }
+//}
+//
+//extension View {
+//    func foregroundStyle(_ colorTheme: ColorTheme.Base) -> some View {
+//        let color
+//    }
+//}
