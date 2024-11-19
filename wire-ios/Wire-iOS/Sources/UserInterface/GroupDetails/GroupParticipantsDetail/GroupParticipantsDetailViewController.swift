@@ -206,7 +206,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         role: ConversationRole,
         count: Int
     ) -> ParticipantsSectionController {
-        return ParticipantsSectionController(
+        ParticipantsSectionController(
             participants: participants,
             userStatuses: viewModel.userStatuses,
             conversationRole: role,

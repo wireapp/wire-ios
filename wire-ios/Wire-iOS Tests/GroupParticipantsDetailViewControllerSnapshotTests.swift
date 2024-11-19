@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import WireTestingPackage
 import XCTest
-import WireDesign
 
 @testable import Wire
 
@@ -79,7 +79,7 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
 
     func testThatItRendersALotOfUsers() {
         // GIVEN
-        let users: [MockUserType] = (0..<20).map {
+        let users: [MockUserType] = (0 ..< 20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
             return user
@@ -123,7 +123,7 @@ final class GroupParticipantsDetailViewControllerSnapshotTests: XCTestCase {
 
     func testThatItRendersALotOfUsers_WithoutNames() {
         // GIVEN
-        let users: [MockUserType] = (0..<20).map {
+        let users: [MockUserType] = (0 ..< 20).map {
             let user = MockUserType.createUser(name: "\($0)")
             user.name = nil
             user.handle = nil
