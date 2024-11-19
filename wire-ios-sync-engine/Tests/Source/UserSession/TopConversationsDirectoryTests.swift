@@ -361,7 +361,12 @@ extension TopConversationsDirectoryTests {
         return conversation
     }
 
-    func fill(_ conversation: ZMConversation, with messageCount: Int, file: StaticString = #filePath, line: UInt = #line) {
+    func fill(
+        _ conversation: ZMConversation,
+        with messageCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         fill(conversation, with: (messageCount, 0), file: file, line: line)
     }
 
