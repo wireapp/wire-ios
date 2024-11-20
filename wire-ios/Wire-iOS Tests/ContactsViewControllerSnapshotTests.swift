@@ -28,13 +28,15 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
     var sut: ContactsViewController!
     var snapshotHelper: SnapshotHelper!
-
+    let imageConfig = ViewImageConfig.iPhone14(.portrait)
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
         snapshotHelper = SnapshotHelper()
+            .withUserInterfaceStyle(imageConfig.traits.userInterfaceStyle)
+            .withPreferredContentSizeCategory(imageConfig.traits.preferredContentSizeCategory)
+        
         XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
@@ -64,8 +66,8 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
         snapshotHelper.verify(
             matching: sut,
-            size: ViewImageConfig.iPhone14(.portrait).size,
-            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
         )
     }
 
@@ -82,8 +84,8 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
         snapshotHelper.verify(
             matching: sut,
-            size: ViewImageConfig.iPhone14(.portrait).size,
-            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
         )
     }
 
@@ -100,8 +102,8 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
         snapshotHelper.verify(
             matching: sut,
-            size: ViewImageConfig.iPhone14(.portrait).size,
-            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
         )
     }
 
@@ -119,8 +121,8 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
         snapshotHelper.verify(
             matching: sut,
-            size: ViewImageConfig.iPhone14(.portrait).size,
-            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+            size: imageConfig.size,
+            safeArea: imageConfig.safeArea
         )
     }
 
