@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class UserClientsRepositoryTests: XCTestCase {
 
@@ -164,7 +164,10 @@ final class UserClientsRepositoryTests: XCTestCase {
             XCTAssertTrue(selfUserClientsIDs.contains(Scaffolding.userClientID))
             XCTAssertFalse(selfUserClientsIDs.contains(Scaffolding.otherUserClientID)) // should be deleted
 
-            let updatedClient = try XCTUnwrap(selfUser.clients.first(where: { $0.remoteIdentifier == Scaffolding.userClientID })) // should be updated
+            let updatedClient = try XCTUnwrap(
+                selfUser.clients
+                    .first(where: { $0.remoteIdentifier == Scaffolding.userClientID })
+            ) // should be updated
 
             XCTAssertEqual(updatedClient.type.rawValue, Scaffolding.selfUserClient.type.rawValue)
             XCTAssertEqual(updatedClient.label, Scaffolding.selfUserClient.label)

@@ -66,11 +66,15 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         mockSelfClient.remoteIdentifier = "selfClient123"
         MockUser.mockSelf().clients = Set([mockSelfClient])
 
-        let identifier = AVSIdentifier(identifier: MockUser.mockSelf().remoteIdentifier,
-                                       domain: nil)
+        let identifier = AVSIdentifier(
+            identifier: MockUser.mockSelf().remoteIdentifier,
+            domain: nil
+        )
 
-        selfAVSClient = AVSClient(userId: identifier,
-                                  clientId: mockSelfClient.remoteIdentifier!)
+        selfAVSClient = AVSClient(
+            userId: identifier,
+            clientId: mockSelfClient.remoteIdentifier!
+        )
 
         selfStream = stubProvider.stream(
             user: MockUserType.createUser(name: "Alice"),
@@ -116,7 +120,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func testActiveSpeakersIndicators_OneToOne() throws {
-        throw XCTSkip("This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time.")
+        throw XCTSkip(
+            "This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time."
+        )
         // Given / When
         configuration.streams = [stubProvider.stream(
             user: MockUserType.createUser(name: "Bob"),
@@ -146,7 +152,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func testVideoStoppedBorder_DoesntAppear_OneToOne() throws {
-        throw XCTSkip("This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time.")
+        throw XCTSkip(
+            "This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time."
+        )
         // Given / When
         configuration.streams = [stubProvider.stream(videoState: .stopped)]
         configuration.floatingStream = stubProvider.stream(
@@ -274,19 +282,19 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         var configuration = MockCallGridViewControllerInput()
 
         // Page 1 - video enabled
-        for _ in 0..<CallGridViewController.maxItemsPerPage {
+        for _ in 0 ..< CallGridViewController.maxItemsPerPage {
             configuration.streams += [stubProvider.stream(videoState: .started)]
         }
 
         // Page 2 - First half with video disabled
         let half = CallGridViewController.maxItemsPerPage / 2
-        for _ in 0..<half {
+        for _ in 0 ..< half {
             configuration.streams += [stubProvider.stream(videoState: .stopped)]
         }
 
         // Page 2 - Second half with video enabled
         var expectedClients = [AVSClient]()
-        for _ in half..<CallGridViewController.maxItemsPerPage {
+        for _ in half ..< CallGridViewController.maxItemsPerPage {
             let client = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
             configuration.streams += [stubProvider.stream(client: client, videoState: .started)]
             expectedClients += [client]
@@ -309,7 +317,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut(delegate: mockDelegate)
 
         // this will be one page's worth of streams
-        for _ in 0..<CallGridViewController.maxItemsPerPage {
+        for _ in 0 ..< CallGridViewController.maxItemsPerPage {
             configuration.streams += [stubProvider.stream(videoState: .started)]
         }
 
@@ -327,7 +335,12 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
 extension CallGridViewControllerSnapshotTests {
 
-    private func assertHint(input: HintTestCase.Input, output: HintTestCase.Output, file: StaticString = #file, line: UInt = #line) {
+    private func assertHint(
+        input: HintTestCase.Input,
+        output: HintTestCase.Output,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         mockHintView.didCallHideAndStopTimer = false
         mockHintView.hint = nil
 
@@ -359,7 +372,7 @@ extension CallGridViewControllerSnapshotTests {
         output.assert(mockHintView: mockHintView)
     }
 
-    private struct HintTestCase {
+    private enum HintTestCase {
         enum Input {
             case configurationChanged(participants: Participants)
             case maximizationChanged(state: MaximizationState)
@@ -367,12 +380,12 @@ extension CallGridViewControllerSnapshotTests {
 
             var event: Wire.CallGridEvent {
                 switch self {
-                case .maximizationChanged(state: let state):
-                    return .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
+                case let .maximizationChanged(state: state):
+                    .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
                 case .configurationChanged:
-                    return .configurationChanged
+                    .configurationChanged
                 default:
-                    return .viewDidLoad
+                    .viewDidLoad
                 }
             }
 
@@ -384,10 +397,10 @@ extension CallGridViewControllerSnapshotTests {
 
                 var stream: Wire.Stream? {
                     switch self {
-                    case .two(videoState: let videoState):
-                        return videoState.stream
+                    case let .two(videoState: videoState):
+                        videoState.stream
                     case .moreThanTwo:
-                        return nil
+                        nil
                     }
                 }
 
@@ -398,10 +411,10 @@ extension CallGridViewControllerSnapshotTests {
 
                     var isMaximized: Bool {
                         switch self {
-                        case .sharing(isMaximized: let isMaximized):
-                            return isMaximized
+                        case let .sharing(isMaximized: isMaximized):
+                            isMaximized
                         default:
-                            return false
+                            false
                         }
                     }
 
@@ -412,11 +425,11 @@ extension CallGridViewControllerSnapshotTests {
                     private var videoState: WireSyncEngine.VideoState {
                         switch self {
                         case .notSharing:
-                            return .stopped
+                            .stopped
                         case .sharing:
-                            return .started
+                            .started
                         case .screenSharing:
-                            return .screenSharing
+                            .screenSharing
                         }
                     }
                 }
@@ -430,7 +443,7 @@ extension CallGridViewControllerSnapshotTests {
                     let stubProvider = StreamStubProvider()
 
                     switch self {
-                    case .maximized(isSharingVideo: let isSharingVideo):
+                    case let .maximized(isSharingVideo: isSharingVideo):
                         return stubProvider.stream(videoState: isSharingVideo ? .started : .stopped)
                     case .notMaximized:
                         return stubProvider.stream()
@@ -447,9 +460,13 @@ extension CallGridViewControllerSnapshotTests {
             case showNothing
             case hideHintAndStopTimer
 
-            func assert(mockHintView: MockCallGridHintNotificationLabel, file: StaticString = #file, line: UInt = #line) {
+            func assert(
+                mockHintView: MockCallGridHintNotificationLabel,
+                file: StaticString = #filePath,
+                line: UInt = #line
+            ) {
                 switch self {
-                case .show(hint: let hint):
+                case let .show(hint: hint):
                     XCTAssertEqual(mockHintView.hint, hint, file: file, line: line)
                 case .showNothing:
                     XCTAssertNil(mockHintView.hint, file: file, line: line)

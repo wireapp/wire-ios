@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#if canImport(WireDatadog)
-
-import DatadogLogs
 import WireAnalytics
 import WireDatadog
 import WireSystem
@@ -74,16 +71,16 @@ extension WireDatadog: WireSystem.LoggerProtocol {
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
         if let value {
-            logger?.addAttribute(forKey: key.rawValue, value: value)
+            addAttribute(forKey: key.rawValue, value: value)
         } else {
-            logger?.removeAttribute(forKey: key.rawValue)
+            removeAttribute(forKey: key.rawValue)
         }
     }
 
     // MARK: Helpers
 
     private func log(
-        level: LogLevel,
+        level: WireDatadog.LogLevel,
         message: any LogConvertible,
         error: Error? = nil,
         attributes: [LogAttributes] = []
@@ -106,5 +103,3 @@ extension WireDatadog: WireSystem.LoggerProtocol {
         []
     }
 }
-
-#endif

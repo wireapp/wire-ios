@@ -20,7 +20,7 @@ import Foundation
 
 /// An option to be displayed in the folder picker
 
-public struct FolderPickerOption: Identifiable, Hashable {
+public struct FolderPickerOption: Identifiable, Hashable, Sendable {
 
     /// The unique identifier of the option's corresponding folder
 

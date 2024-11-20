@@ -18,9 +18,10 @@
 
 import Foundation
 
-@objc extension UIDevice {
+@objc
+public extension UIDevice {
 
-    public func zm_model() -> String {
+    func zm_model() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
 
@@ -75,6 +76,10 @@ import Foundation
         case "iPhone15,5":                                  return "iPhone 15 Plus"
         case "iPhone16,1":                                  return "iPhone 15 Pro"
         case "iPhone16,2":                                  return "iPhone 15 Pro Max"
+        case "iPhone17,3":                                  return "iPhone 16"
+        case "iPhone17,4":                                  return "iPhone 16 Plus"
+        case "iPhone17,1":                                  return "iPhone 16 Pro"
+        case "iPhone17,2":                                  return "iPhone 16 Pro Max"
         case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":    return "iPad 2"
         case "iPad3,1", "iPad3,2", "iPad3,3":               return "iPad 3"
         case "iPad3,4", "iPad3,5", "iPad3,6":               return "iPad 4"
@@ -103,6 +108,8 @@ import Foundation
         case "iPad14,1", "iPad14,2":                        return "iPad Mini 6"
         case "iPad14,3", "iPad14,4":                        return "iPad Pro 11-inch 4th Gen"
         case "iPad14,5", "iPad14,6":                        return "iPad Pro 12.9-inch 6th Gen"
+        case "iPad16,3", "iPad16,4":                        return "iPad Pro 11-inch 5th Gen"
+        case "iPad16,5", "iPad16,6":                        return "iPad Pro 12.9-inch 7th Gen"
         case "i386", "x86_64", "arm64":                     return "Simulator"
         default:                                            return identifier
         }

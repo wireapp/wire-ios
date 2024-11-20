@@ -18,18 +18,16 @@
 
 import UIKit
 
-/**
- * @abstract Generates the cell that displays one button
- */
+/// @abstract Generates the cell that displays one button
 class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsButtonCell.self
     let title: String
     let identifier: String?
     var visible: Bool {
-        if let visibilityAction = self.visibilityAction {
-            return visibilityAction(self)
+        if let visibilityAction {
+            visibilityAction(self)
         } else {
-            return true
+            true
         }
     }
 
@@ -46,7 +44,12 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         self.identifier = .none
     }
 
-    init(title: String, isDestructive: Bool, selectAction: @escaping (any SettingsCellDescriptorType) -> Void, visibilityAction: ((any SettingsCellDescriptorType) -> (Bool))? = .none) {
+    init(
+        title: String,
+        isDestructive: Bool,
+        selectAction: @escaping (any SettingsCellDescriptorType) -> Void,
+        visibilityAction: ((any SettingsCellDescriptorType) -> (Bool))? = .none
+    ) {
         self.title = title
         self.isDestructive = isDestructive
         self.selectAction = selectAction
@@ -54,7 +57,13 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         self.identifier = .none
     }
 
-    init(title: String, isDestructive: Bool, identifier: String, selectAction: @escaping (any SettingsCellDescriptorType) -> Void, visibilityAction: ((any SettingsCellDescriptorType) -> (Bool))? = .none) {
+    init(
+        title: String,
+        isDestructive: Bool,
+        identifier: String,
+        selectAction: @escaping (any SettingsCellDescriptorType) -> Void,
+        visibilityAction: ((any SettingsCellDescriptorType) -> (Bool))? = .none
+    ) {
         self.title = title
         self.isDestructive = isDestructive
         self.selectAction = selectAction
@@ -63,7 +72,7 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

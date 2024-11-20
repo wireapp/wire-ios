@@ -45,7 +45,7 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
             label: label
         )
 
-        baseQuery = [
+        self.baseQuery = [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag
         ]
@@ -59,7 +59,7 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
         return query
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueRef] = value
         query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
@@ -69,14 +69,14 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
     // MARK: - Static Access
 
     static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
+        PublicEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPublicPrimary
         )
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
+        PublicEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPublicSecondary
         )

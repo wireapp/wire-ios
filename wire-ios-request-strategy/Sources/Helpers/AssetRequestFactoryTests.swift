@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
+@testable import WireRequestStrategy
 
 class AssetRequestFactoryTests: MessagingTestBase {
 
@@ -76,7 +76,8 @@ class AssetRequestFactoryTests: MessagingTestBase {
         user.teamIdentifier = .init()
 
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(session: self.coreDataStack, participants: [user]) else { return XCTFail("no conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(session: coreDataStack, participants: [user])
+        else { return XCTFail("no conversation") }
 
         // then
         XCTAssert(conversation.containsTeamUser)

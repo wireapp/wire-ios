@@ -26,17 +26,20 @@ protocol ConversationMessageCellMenuPresenter: AnyObject {
 
 extension UITableViewCell {
 
-    @objc func willDisplayCell() {
+    @objc
+    func willDisplayCell() {
         // to be overriden in subclasses
     }
 
-    @objc func didEndDisplayingCell() {
+    @objc
+    func didEndDisplayingCell() {
         // to be overriden in subclasses
     }
 
 }
 
-class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
+    HighlightableView, ConversationMessageCellMenuPresenter {
 
     var cellView: C.View
     var ephemeralCountdownView: EphemeralCountdownView
@@ -63,7 +66,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override var accessibilityIdentifier: String? {
         get {
-            return cellDescription?.accessibilityIdentifier
+            cellDescription?.accessibilityIdentifier
         }
 
         set {
@@ -73,7 +76,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override var accessibilityLabel: String? {
         get {
-            return cellDescription?.accessibilityLabel
+            cellDescription?.accessibilityLabel
         }
 
         set {
@@ -93,9 +96,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
-        self.cellView.translatesAutoresizingMaskIntoConstraints = false
+        cellView.translatesAutoresizingMaskIntoConstraints = false
         self.ephemeralCountdownView = EphemeralCountdownView()
-        self.ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
+        ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -107,12 +110,12 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         contentView.addSubview(cellView)
         contentView.addSubview(ephemeralCountdownView)
 
-        leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+        self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
+        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -124,14 +127,14 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             bottom
         ])
 
-        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
+        self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
 
-        doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
+        self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         contentView.addGestureRecognizer(doubleTapGesture)
 
-        singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
+        self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
@@ -144,10 +147,10 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
         cellView.configure(with: object, animated: false)
-        self.isFullWidth = fullWidth
+        isFullWidth = fullWidth
         self.topMargin = topMargin
-        self.ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
-        self.ephemeralCountdownView.message = cellDescription?.message
+        ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
+        ephemeralCountdownView.message = cellDescription?.message
     }
 
     func configureConstraints(fullWidth: Bool) {
@@ -180,18 +183,23 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     }
 
     func showSecuredMenu() {
-        let actions = [MessageAction.visitLink,
-                       MessageAction.reply,
-                       MessageAction.edit,
-                       MessageAction.openDetails,
-                       MessageAction.delete,
-                       MessageAction.cancel]
+        let actions = [
+            MessageAction.visitLink,
+            MessageAction.reply,
+            MessageAction.edit,
+            MessageAction.openDetails,
+            MessageAction.delete,
+            MessageAction.cancel
+        ]
         guard let controller = messageActionsMenuController(with: actions) else { return }
         display(messageActionsController: controller)
     }
 
     func display(messageActionsController: MessageActionsViewController) {
-        cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: messageActionsController)
+        cellView.delegate?.conversationMessageWantsToShowActionsController(
+            cellView,
+            actionsController: messageActionsController
+        )
     }
 
     @objc
@@ -201,9 +209,15 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    func messageActionsMenuController(with actions: [MessageAction] = MessageAction.allCases) -> MessageActionsViewController? {
+    func messageActionsMenuController(
+        with actions: [MessageAction] = MessageAction
+            .allCases
+    ) -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController.controller(withActions: actions, actionController: actionController)
+        let actionsMenuController = MessageActionsViewController.controller(
+            withActions: actions,
+            actionController: actionController
+        )
 
         if let popoverPresentationController = actionsMenuController.popoverPresentationController {
             popoverPresentationController.sourceView = cellView
@@ -214,16 +228,18 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     // MARK: - Single Tap Action
 
-    @objc private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized && cellDescription?.supportsActions == true {
+    @objc
+    private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
 
     // MARK: - Double Tap Action
 
-    @objc private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized && cellDescription?.supportsActions == true {
+    @objc
+    private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }
@@ -231,19 +247,19 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - SelectableView
 
     var selectionView: UIView! {
-        return cellView.selectionView ?? self
+        cellView.selectionView ?? self
     }
 
     var selectionRect: CGRect {
         if cellView.selectionView != nil {
-            return cellView.selectionRect
+            cellView.selectionRect
         } else {
-            return self.bounds
+            bounds
         }
     }
 
     var highlightContainer: UIView {
-        return self
+        self
     }
 
     override func willDisplayCell() {
@@ -259,7 +275,8 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     }
 
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == singleTapGesture else { return super.gestureRecognizerShouldBegin(gestureRecognizer) }
+        guard gestureRecognizer == singleTapGesture
+        else { return super.gestureRecognizerShouldBegin(gestureRecognizer) }
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.
@@ -271,9 +288,21 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         cellView.prepareForReuse()
     }
 
-    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
-        _ = cellView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+    override func systemLayoutSizeFitting(
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        _ = cellView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
+        return super.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
     }
 }
 
@@ -284,13 +313,23 @@ extension UITableView {
         register(ConversationMessageCellTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
     }
 
-    func dequeueConversationCell<C: ConversationMessageCellDescription>(with description: C, for indexPath: IndexPath) -> ConversationMessageCellTableViewAdapter<C> {
+    func dequeueConversationCell<C: ConversationMessageCellDescription>(
+        with description: C,
+        for indexPath: IndexPath
+    ) -> ConversationMessageCellTableViewAdapter<C> {
         let reuseIdentifier = String(describing: C.self)
 
-        let cell = dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as Any as! ConversationMessageCellTableViewAdapter<C>
+        let cell = dequeueReusableCell(
+            withIdentifier: reuseIdentifier,
+            for: indexPath
+        ) as Any as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
-        cell.configure(with: description.configuration, fullWidth: description.isFullWidth, topMargin: description.topMargin)
+        cell.configure(
+            with: description.configuration,
+            fullWidth: description.isFullWidth,
+            topMargin: description.topMargin
+        )
 
         return cell
     }

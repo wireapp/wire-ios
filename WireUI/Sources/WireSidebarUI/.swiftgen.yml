@@ -1,0 +1,14 @@
+# Every input/output paths in the rest of the config will then be expressed relative to these.
+
+input_dir: ./
+output_dir: ${GENERATED}/
+
+# Generate constants for your localized strings.
+
+strings:
+  inputs:
+    - Resources/en.lproj/Localizable.strings
+  filter:
+  outputs:
+    - templateName: structured-swift5
+      output: Strings+Generated.swift

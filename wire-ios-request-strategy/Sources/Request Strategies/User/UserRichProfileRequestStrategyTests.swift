@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class UserRichProfileRequestStrategyTests: MessagingTestBase {
 
@@ -30,7 +30,10 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
+            self.sut = UserRichProfileRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: self.applicationStatus
+            )
         }
     }
 
@@ -42,12 +45,12 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesARequestWhenSettingIsModified() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
@@ -59,12 +62,12 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItParsesAResponse() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 
@@ -76,7 +79,12 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
                     ["type": type, "value": value]
                 ]
             ]
-            let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as NSDictionary as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             self.sut.update(user, with: response, downstreamSync: nil)
 
             // then
@@ -86,17 +94,22 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItResetsTheFlagOnError() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 
             // when
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             self.sut.delete(user, with: response, downstreamSync: nil)
 
             // then

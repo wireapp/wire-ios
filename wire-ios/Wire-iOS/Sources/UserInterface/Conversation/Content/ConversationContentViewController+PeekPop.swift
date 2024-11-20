@@ -25,7 +25,10 @@ private var lastPreviewURL: URL?
 extension ConversationContentViewController: UIViewControllerPreviewingDelegate {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+    func previewingContext(
+        _ previewingContext: UIViewControllerPreviewing,
+        viewControllerForLocation location: CGPoint
+    ) -> UIViewController? {
 
         let cellLocation = view.convert(location, to: tableView)
 
@@ -43,7 +46,8 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         var controller: UIViewController?
 
         // Preview an URL
-        if message.isText, cell.selectionView is ArticleView, let url = message.textMessageData?.linkPreview?.openableURL as URL? {
+        if message.isText, cell.selectionView is ArticleView,
+           let url = message.textMessageData?.linkPreview?.openableURL as URL? {
             lastPreviewURL = url
             controller = BrowserViewController(url: url)
         } else if message.isImage {
@@ -60,12 +64,18 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             controller = LocationPreviewController(message: message, actionResponder: self)
         }
 
-        previewingContext.sourceRect = previewingContext.sourceView.convert(cell.selectionRect, from: cell.selectionView)
+        previewingContext.sourceRect = previewingContext.sourceView.convert(
+            cell.selectionRect,
+            from: cell.selectionView
+        )
         return controller
     }
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+    func previewingContext(
+        _ previewingContext: UIViewControllerPreviewing,
+        commit viewControllerToCommit: UIViewController
+    ) {
 
         // If the previewed item is an image, show the previously hidden controls.
         if let imagesViewController = viewControllerToCommit as? ConversationImagesViewController {
@@ -78,12 +88,12 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             return
         }
 
-        // In case the user has set a 3rd party application to open the URL we do not 
+        // In case the user has set a 3rd party application to open the URL we do not
         // want to commit the view controller but instead open the url.
         if let url = lastPreviewURL {
             url.open()
         } else {
-            self.messagePresenter.modalTargetController?.present(viewControllerToCommit, animated: true, completion: .none)
+            messagePresenter.modalTargetController?.present(viewControllerToCommit, animated: true, completion: .none)
         }
     }
 }

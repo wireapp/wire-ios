@@ -9,6 +9,7 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "commandLineArgumentEntries" : [
       {
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1",
@@ -18,18 +19,6 @@
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
-    {
-      "selectedTests" : [
-        "SessionManagerTests_EncryptionAtRestIsEnabledByDefault_Option\/testThatEncryptionAtRestIsEnabled_OnActiveUserSession()",
-        "SessionManagerTests_EncryptionAtRestMigration\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled()",
-        "SessionManagerTests_EncryptionAtRestMigration\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled()"
-      ],
-      "target" : {
-        "containerPath" : "container:WireSyncEngine.xcodeproj",
-        "identifier" : "169BA1D125ECDBA300374343",
-        "name" : "IntegrationTests"
-      }
-    },
     {
       "selectedTests" : [
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterEnteringBackground()",

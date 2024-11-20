@@ -22,21 +22,24 @@ import WireSyncEngine
 final class CallController: NSObject {
 
     // MARK: - Public Implentation
+
     weak var router: ActiveCallRouterProtocol?
     var callConversationProvider: CallConversationProvider?
 
     // MARK: - Private Implentation
+
     private var observerTokens: [Any] = []
     private var minimizedCall: ZMConversation?
 
     private var priorityCallConversation: ZMConversation? {
-        return callConversationProvider?.priorityCallConversation
+        callConversationProvider?.priorityCallConversation
     }
 
     private var dateOfLastErrorAlertByConversationId = [AVSIdentifier: Date]()
     private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Init
+
     init(userSession: UserSession) {
         super.init()
         addObservers(userSession: userSession)
@@ -47,6 +50,7 @@ final class CallController: NSObject {
     }
 
     // MARK: - Public Implementation
+
     func updateActiveCallPresentationState() {
         guard let priorityCallConversation else {
             dismissCall()
@@ -57,6 +61,7 @@ final class CallController: NSObject {
     }
 
     // MARK: - Private Implementation
+
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
@@ -112,10 +117,10 @@ final class CallController: NSObject {
 
     private func isClientOutdated(callState: CallState) -> Bool {
         switch callState {
-        case .terminating(let reason) where reason == .outdatedClient:
-            return true
+        case let .terminating(reason) where reason == .outdatedClient:
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -137,13 +142,16 @@ final class CallController: NSObject {
 }
 
 // MARK: - WireCallCenterCallStateObserver
+
 extension CallController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState,
-                             conversation: ZMConversation,
-                             caller: UserType,
-                             timestamp: Date?,
-                             previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
 
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
@@ -163,9 +171,11 @@ extension CallController: WireCallCenterCallStateObserver {
     ///   - conversation: unverified conversation
     ///   - callState: state of the incoming call
     ///   - continueCallBlock: block to execute if no alert is shown or after user confirm or cancel choice on alert
-    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation,
-                                                         callState: CallState,
-                                                         continueCallBlock: @escaping (Bool) -> Void) {
+    private func presentSecurityDegradedAlertIfNecessary(
+        for conversation: ZMConversation,
+        callState: CallState,
+        continueCallBlock: @escaping (Bool) -> Void
+    ) {
         guard let voiceChannel = conversation.voiceChannel else {
             // no alert to show, continue
             continueCallBlock(true)
@@ -191,14 +201,21 @@ extension CallController: WireCallCenterCallStateObserver {
         }
 
         switch (degradationState, callState) {
-        case (.incoming(reason: let degradationReason),
-              .incoming(video: _, shouldRing: true, degraded: true)):
-            router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
-                                                 completion: alertCompletion)
+        case (
+            .incoming(reason: let degradationReason),
+            .incoming(video: _, shouldRing: true, degraded: true)
+        ):
+            router?.presentIncomingSecurityDegradedAlert(
+                for: degradationReason,
+                completion: alertCompletion
+            )
+
         case (_, .terminating(reason: .securityDegraded)):
             if let reason = voiceChannel.degradationReason {
-                router?.presentEndingSecurityDegradedAlert(for: reason,
-                                                           completion: alertCompletion)
+                router?.presentEndingSecurityDegradedAlert(
+                    for: reason,
+                    completion: alertCompletion
+                )
             }
 
         default:
@@ -211,15 +228,19 @@ extension CallController: WireCallCenterCallStateObserver {
 }
 
 // MARK: - ActiveCallViewControllerDelegate
+
 extension CallController: ActiveCallViewControllerDelegate {
-    func activeCallViewControllerDidDisappear(_ activeCallViewController: UIViewController,
-                                              for conversation: ZMConversation?) {
+    func activeCallViewControllerDidDisappear(
+        _ activeCallViewController: UIViewController,
+        for conversation: ZMConversation?
+    ) {
         router?.dismissActiveCall(animated: true, completion: nil)
         minimizedCall = conversation
     }
 }
 
 // MARK: - WireCallCenterCallErrorObserver
+
 extension CallController: WireCallCenterCallErrorObserver {
     func callCenterDidReceiveCallError(_ error: CallError, conversationId: AVSIdentifier) {
         guard
@@ -234,13 +255,13 @@ extension CallController: WireCallCenterCallErrorObserver {
     }
 
     private func shouldDisplayErrorAlert(for conversation: AVSIdentifier) -> Bool {
-           guard let dateOfLastErrorAlert = dateOfLastErrorAlertByConversationId[conversation] else {
-               return true
-           }
+        guard let dateOfLastErrorAlert = dateOfLastErrorAlertByConversationId[conversation] else {
+            return true
+        }
 
-           let elapsedTimeIntervalSinceLastAlert = -dateOfLastErrorAlert.timeIntervalSinceNow
-           return elapsedTimeIntervalSinceLastAlert > alertDebounceInterval
-       }
+        let elapsedTimeIntervalSinceLastAlert = -dateOfLastErrorAlert.timeIntervalSinceNow
+        return elapsedTimeIntervalSinceLastAlert > alertDebounceInterval
+    }
 }
 
 extension CallController {

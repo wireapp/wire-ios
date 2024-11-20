@@ -20,7 +20,7 @@ import UIKit
 
 extension UIViewControllerContextTransitioning {
     var fromView: UIView? {
-        return view(forKey: .from)
+        view(forKey: .from)
     }
 
     var toView: UIView? {
@@ -34,10 +34,10 @@ extension UIViewControllerContextTransitioning {
     }
 
     var fromViewController: UIViewController? {
-        return viewController(forKey: .from)
+        viewController(forKey: .from)
     }
 
     var toViewController: UIViewController? {
-        return viewController(forKey: .to)
+        viewController(forKey: .to)
     }
 }

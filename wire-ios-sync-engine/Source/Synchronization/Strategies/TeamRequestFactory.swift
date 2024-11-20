@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public final class TeamDownloadRequestFactory {
+public enum TeamDownloadRequestFactory {
 
     public static var teamPath: String {
-        return "/teams"
+        "/teams"
     }
 
     public static func getRequest(for identifiers: [UUID], apiVersion: APIVersion) -> ZMTransportRequest {
@@ -28,14 +28,21 @@ public final class TeamDownloadRequestFactory {
     }
 
     public static func requestToDownloadRoles(for identifier: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
-        return ZMTransportRequest(getFromPath: teamPath + "/" + identifier.transportString() + "/conversations/roles", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(
+            getFromPath: teamPath + "/" + identifier.transportString() + "/conversations/roles",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public static func getTeamsRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        return ZMTransportRequest(getFromPath: teamPath, apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(getFromPath: teamPath, apiVersion: apiVersion.rawValue)
     }
 
-    public static func getSingleMemberRequest(for identifier: UUID, in teamIdentifier: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
+    public static func getSingleMemberRequest(
+        for identifier: UUID,
+        in teamIdentifier: UUID,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         let path = teamPath + "/" + teamIdentifier.transportString() + "/members/" + identifier.transportString()
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }

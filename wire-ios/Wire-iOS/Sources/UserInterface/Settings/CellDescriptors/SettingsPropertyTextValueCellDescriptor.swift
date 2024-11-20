@@ -24,8 +24,9 @@ private let zmLog = ZMSLog(tag: "UI")
 final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
     var title: String {
-        return settingsProperty.propertyName.settingsPropertyLabelText
+        settingsProperty.propertyName.settingsPropertyLabelText
     }
+
     var visible: Bool = true
     let identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
@@ -60,12 +61,12 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         if let stringValue = value.value() as? String {
 
             do {
-                try self.settingsProperty << SettingsPropertyValue.string(value: stringValue)
+                try settingsProperty << SettingsPropertyValue.string(value: stringValue)
             } catch let error as NSError {
 
                 // specific error message for name string is too short
-                if error.domain == ZMObjectValidationErrorDomain &&
-                    error.code == ZMManagedObjectValidationErrorCode.tooShort.rawValue {
+                if error.domain == ZMObjectValidationErrorDomain,
+                   error.code == ZMManagedObjectValidationErrorCode.tooShort.rawValue {
 
                     let alert = UIAlertController(
                         title: nil,
