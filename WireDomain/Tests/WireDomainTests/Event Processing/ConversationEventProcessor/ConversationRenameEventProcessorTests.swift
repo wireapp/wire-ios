@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireDataModelSupport
 import WireDomainSupport
 import XCTest
 @testable import WireAPI
@@ -26,72 +24,36 @@ import XCTest
 final class ConversationRenameEventProcessorTests: XCTestCase {
 
     private var sut: ConversationRenameEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
     private var conversationRepository: MockConversationRepositoryProtocol!
-    private var conversationLocalStore: MockConversationLocalStoreProtocol!
-    private var coreDataStack: CoreDataStack!
-    private var coreDataStackHelper: CoreDataStackHelper!
-    private var modelHelper: ModelHelper!
-
-    private var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
 
     override func setUp() async throws {
-        modelHelper = ModelHelper()
-        coreDataStackHelper = CoreDataStackHelper()
-        coreDataStack = try await coreDataStackHelper.createStack()
-        userRepository = MockUserRepositoryProtocol()
         conversationRepository = MockConversationRepositoryProtocol()
-        conversationLocalStore = MockConversationLocalStoreProtocol()
-        
-        sut = ConversationRenameEventProcessor()
+        sut = ConversationRenameEventProcessor(
+            repository: conversationRepository
+        )
     }
 
     override func tearDown() async throws {
-        modelHelper = nil
-        coreDataStack = nil
-        userRepository = nil
         conversationRepository = nil
-        conversationLocalStore = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
+       
         // Mock
-
-        let (user, conversation) = await context.perform { [self] in
-            let user = modelHelper.createUser(in: context)
-            let conversation = modelHelper.createGroupConversation(in: context)
-
-            return (user, conversation)
-        }
-
-        userRepository.fetchUserIdDomain_MockValue = user
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
-        conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_MockMethod = { _, _ in }
-        conversationLocalStore.isConversationArchived_MockValue = true
-        conversationLocalStore.conversationMutedMessageTypes_MockValue = MutedMessageTypes.none
-        conversationLocalStore.storeConversationIsArchivedFor_MockMethod = { _, _ in }
+        
+        conversationRepository.updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _, _ in}
+        
 
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
-
-//        XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
-//        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-//        XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
-//        XCTAssertEqual(conversationLocalStore.storeConversationHasReadReceiptsEnabledFor_Invocations.count, 1)
-//        XCTAssertEqual(conversationLocalStore.isConversationArchived_Invocations.count, 1)
-//        XCTAssertEqual(conversationLocalStore.conversationMutedMessageTypes_Invocations.count, 1)
-//        XCTAssertEqual(conversationLocalStore.storeConversationIsArchivedFor_Invocations.count, 1)
+        
+        XCTAssertEqual(conversationRepository.updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {

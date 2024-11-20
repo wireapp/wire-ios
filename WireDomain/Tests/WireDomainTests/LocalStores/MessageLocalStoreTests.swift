@@ -26,6 +26,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
     private var sut: MessageLocalStore!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -36,13 +37,15 @@ final class MessageLocalStoreTests: XCTestCase {
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
 
         sut = MessageLocalStore(
             context: context,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
         )
     }
 
@@ -53,6 +56,7 @@ final class MessageLocalStoreTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
+        userLocalStore = nil
     }
 
     // MARK: - Tests
@@ -63,30 +67,30 @@ final class MessageLocalStoreTests: XCTestCase {
         let user = await context.perform { [self] in
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
+        
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
+        userLocalStore.fetchUserIdDomain_MockValue = user
+        userLocalStore.fetchSelfUser_MockValue = user
 
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for messageType in Scaffolding.allMessageTypes {
-                taskGroup.addTask { [self] in
-
-                    let conversation = await makeConversation(creator: user)
-                    conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-
-                    // When
-
-                    await sut.addSystemMessageToConversation(
-                        messageType: messageType,
-                        conversationID: UUID(),
-                        conversationDomain: Scaffolding.domain1
-                    )
-
-                    // Then
-
-                    await internalTest_assertConversationLastMessages(
-                        messageType: messageType,
-                        conversation: conversation
-                    )
-                }
-            }
+        for messageType in Scaffolding.allMessageTypes {
+            
+            let conversation = await makeConversation(creator: user)
+            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+            
+            // When
+            
+            await sut.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: UUID(),
+                conversationDomain: Scaffolding.domain1
+            )
+                
+            // Then
+            
+            await internalTest_assertConversationLastMessages(
+                messageType: messageType,
+                conversation: conversation
+            )
         }
     }
 
@@ -131,7 +135,7 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.mlsNotSupportedOtherUser])
         case .teamMemberRemoved:
             (messagesCount: 1, [.teamMemberLeave])
-        case .participantRemoved:
+        case .participantsRemoved:
             (messagesCount: 1, [.participantsRemoved])
         case .newConversationCreated:
             (messagesCount: 2, [.newConversation, .readReceiptsOn])
@@ -143,6 +147,12 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.mlsMigrationFinalized])
         case .receiptModeIsOn:
             (messagesCount: 1, [.readReceiptsOn])
+        case .participantsAdded:
+            (messagesCount: 1, [.participantsAdded])
+        case .conversationNameChanged:
+            (messagesCount: 1, [.conversationNameChanged])
+        case .readReceiptsStatus(let isEnabled, _, _):
+            (messagesCount: 1, [isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled])
         }
     }
 
@@ -164,12 +174,16 @@ final class MessageLocalStoreTests: XCTestCase {
             .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
             .receiptModeIsOn(date: date),
             .newConversationCreated(date: date),
-            .participantRemoved(
-                participant: (id: userID, domain: domain1),
+            .participantsRemoved(
+                participants: [(id: userID, domain: domain1)],
                 sender: (id: otherUserID, domain: domain1),
                 date: date
             ),
-            .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date)
+            .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
+            .participantsAdded(participants: [(id: userID, domain: domain1)], sender: (id: userID, domain: domain1), date: date),
+            .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
+            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
+            
         ]
     }
 
