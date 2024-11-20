@@ -3,8 +3,7 @@ sources:
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
-   ${DERIVED_SOURCES_DIR}
+  ${DERIVED_SOURCES_DIR}
 args:
-   autoMockableImports: []
-   autoMockablePublicImports: ["Foundation"]
-   autoMockableTestableImports: ["WireAPI"]
+  autoMockablePublicImports: ["Foundation"]
+  autoMockableTestableImports: ["WireAPI"]
