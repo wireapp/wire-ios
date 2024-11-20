@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+//import Foundation
 import WireSystem
 
 //@objc(ZMLogger)
 //final class WireLoggerObjC: WireSystem.WireLoggerObjC {}
 
-@objc(ZMSGroupQueue)
-protocol GroupQueue: WireSystem.GroupQueue {}
-
-@objc(ZMSDispatchGroup)
-final class ZMSDispatchGroup: WireSystem.ZMSDispatchGroup, @unchecked Sendable {}
+//@objc(ZMSGroupQueue)
+//protocol GroupQueue: WireSystem.GroupQueue {}
+//
+//@objc(ZMSDispatchGroup)
+//final class ZMSDispatchGroup: WireSystem.ZMSDispatchGroup, @unchecked Sendable {}
