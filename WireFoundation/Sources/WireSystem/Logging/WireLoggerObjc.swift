@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
+public import Foundation
 
 /// Class to proxy WireLogger methods to Objective-C
 @objcMembers
