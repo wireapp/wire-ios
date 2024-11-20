@@ -201,7 +201,7 @@ public struct SnapshotHelper {
 
         XCTAssertNil(failure, file: file, line: line)
     }
-    
+
     /// Verify a `UIView`.
     ///
     /// - Parameters:
@@ -415,9 +415,9 @@ public struct SnapshotHelper {
     }
 }
 
-extension ViewImageConfig {
-    
-    public static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
+public extension ViewImageConfig {
+
+    static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
         let safeArea: UIEdgeInsets
         let size: CGSize
         switch orientation {
@@ -430,6 +430,7 @@ extension ViewImageConfig {
         }
 
         return .init(
-            safeArea: safeArea, size: size, traits: UITraitCollection.iPhone13(orientation))
+            safeArea: safeArea, size: size, traits: UITraitCollection.iPhone13(orientation)
+        )
     }
 }

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import WireTestingPackage
 import XCTest
-import SnapshotTesting
 
 @testable import Wire
 
@@ -33,7 +33,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+
         snapshotHelper = SnapshotHelper()
         XCTestCase.accentColor = .blue
         sut = ContactsViewController()
@@ -62,9 +62,11 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         // Then
         wrapInNavigationController()
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
-        snapshotHelper.verify(matching: sut,
-                              size: ViewImageConfig.iPhone14(.portrait).size,
-                              safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0))
+        snapshotHelper.verify(
+            matching: sut,
+            size: ViewImageConfig.iPhone14(.portrait).size,
+            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+        )
     }
 
     func testForNoSearchResult() {
@@ -78,9 +80,11 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         wrapInNavigationController()
         // workaround for snapshot
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
-        snapshotHelper.verify(matching: sut,
-                              size: ViewImageConfig.iPhone14(.portrait).size,
-                              safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0))
+        snapshotHelper.verify(
+            matching: sut,
+            size: ViewImageConfig.iPhone14(.portrait).size,
+            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+        )
     }
 
     func testForContactsWithoutSections() {
@@ -94,9 +98,11 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         wrapInNavigationController()
         // workaround for snapshot
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
-        snapshotHelper.verify(matching: sut,
-                              size: ViewImageConfig.iPhone14(.portrait).size,
-                              safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0))
+        snapshotHelper.verify(
+            matching: sut,
+            size: ViewImageConfig.iPhone14(.portrait).size,
+            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+        )
     }
 
     func testForContactsAndIndexSectionBarAreShown() {
@@ -111,9 +117,11 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         wrapInNavigationController()
         // workaround for snapshot
         // see issue with KeyboardLayoudGuide: https://github.com/pointfreeco/swift-snapshot-testing/issues/859
-        snapshotHelper.verify(matching: sut,
-                              size: ViewImageConfig.iPhone14(.portrait).size,
-                              safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0))
+        snapshotHelper.verify(
+            matching: sut,
+            size: ViewImageConfig.iPhone14(.portrait).size,
+            safeArea: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0)
+        )
     }
 
     // MARK: - Helper Methods

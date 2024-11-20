@@ -92,7 +92,8 @@ extension ContactsViewController {
             return
         }
 
-        let keyboardConstraint = view.keyboardLayoutGuide.topAnchor.constraint(equalTo: bottomContainerView.bottomAnchor)
+        let keyboardConstraint = view.keyboardLayoutGuide.topAnchor
+            .constraint(equalTo: bottomContainerView.bottomAnchor)
         keyboardConstraint.priority = .defaultHigh
         keyboardConstraint.isActive = true
         // This is necessary to allow the various edge constraints to engage.
