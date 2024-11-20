@@ -92,7 +92,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         super.tearDown()
     }
 
-    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #file, line: UInt = #line) {
+    private func setEncryptionAtRest(enabled: Bool, file: StaticString = #filePath, line: UInt = #line) {
         try? sut.setEncryptionAtRest(enabled: true, skipMigration: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }

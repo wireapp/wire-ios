@@ -411,7 +411,7 @@ extension AppLockControllerTests {
     typealias Input = (passcodePreference: AppLockPasscodePreference, canEvaluate: Bool, biometricsChanged: Bool)
     typealias Output = AppLockAuthenticationResult
 
-    private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
+    private func assert(input: Input, output: Output, file: StaticString = #filePath, line: UInt = #line) {
         mockAuthenticationContext.canEvaluatePolicyError_MockValue = input.canEvaluate
 
         let sut = createSut()

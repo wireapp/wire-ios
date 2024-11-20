@@ -135,7 +135,7 @@ final class ConversationListCellTests: XCTestCase {
     private func verify(
         _ conversation: MockConversation,
         icon: ConversationStatusIcon? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

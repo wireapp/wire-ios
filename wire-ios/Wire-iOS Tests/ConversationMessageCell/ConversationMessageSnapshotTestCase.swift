@@ -37,7 +37,7 @@ private extension ConversationMessageContext {
 func XCTAssertArrayEqual(
     _ descriptions: [Any],
     _ expectedDescriptions: [Any],
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) {
     let classes = descriptions.map { String(describing: $0) }
@@ -68,7 +68,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         allColorSchemes: Bool = false,
         allWidths: Bool = true,
         snapshotBackgroundColor: UIColor? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -127,7 +127,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         named name: String? = nil,
         allColorSchemes: Bool = false,
         allWidths: Bool = true,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

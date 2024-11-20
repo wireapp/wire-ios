@@ -200,7 +200,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
         DeveloperFlag.storage = UserDefaults.standard
     }
 
-    func assertRecipients(_ recipients: [Proteus_UserEntry], file: StaticString = #file, line: UInt = #line) {
+    func assertRecipients(_ recipients: [Proteus_UserEntry], file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertEqual(recipients.count, expectedRecipients.count, file: file, line: line)
 
         for recipientEntry in recipients {
