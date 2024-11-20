@@ -169,6 +169,24 @@ public protocol ConversationRepositoryProtocol {
         at date: Date,
         reason: ConversationMemberLeaveReason
     ) async throws
+    
+    /// Updates the conversation name locally.
+    /// - Parameters:
+    ///     - newName: The new name for the conversation.
+    ///     - conversationID: The conversation ID.
+    ///     - conversationDomain: The conversation domain.
+    ///     - senderID: The user ID.
+    ///     - senderDomain: The user domain.
+    ///     - date: The date the conversation name was updated.
+    
+    func updateConversationName(
+        newName: String,
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String?,
+        date: Date
+    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -261,21 +279,28 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 
-        if let result = try? await conversationsAPI
-            .getLegacyConversationIdentifiers() { // only for api v0 (see `ConversationsAPIV0` method comment)
-            let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
+        if let result =
+            try? await conversationsAPI
+            .getLegacyConversationIdentifiers()
+        {  // only for api v0 (see `ConversationsAPIV0` method comment)
+            let uuids = try await result.reduce(into: [UUID]()) {
+                partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
-            qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain) }
+            qualifiedIds = uuids.map {
+                WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain)
+            }
         } else {
             // fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
-            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
+            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) {
+                partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
         }
 
-        let conversationList = try await conversationsAPI.getConversations(for: qualifiedIds)
+        let conversationList = try await conversationsAPI.getConversations(
+            for: qualifiedIds)
 
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             let foundConversations = conversationList.found
@@ -314,10 +339,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         userID: String,
         userDomain: String
     ) async throws -> String {
-        let mlsConversation = try await conversationsAPI.getMLSOneToOneConversation(
-            userID: userID,
-            in: userDomain
-        )
+        let mlsConversation =
+            try await conversationsAPI.getMLSOneToOneConversation(
+                userID: userID,
+                in: userDomain
+            )
 
         guard let mlsGroupID = mlsConversation.mlsGroupID else {
             throw ConversationRepositoryError.mlsConversationShouldHaveAGroupID
@@ -349,61 +375,61 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         participantDomain: String?,
         removedAt date: Date
     ) async throws {
-        let user = try await userRepository.fetchUser(
-            id: participantID,
-            domain: participantDomain
-        )
 
-        await conversationsLocalStore.removeParticipantFromAllGroupConversations(
-            user: user,
+        try await conversationsLocalStore.removeParticipantFromAllGroupConversations(
+            participantID: participantID,
+            participantDomain: participantDomain,
             date: date
         )
     }
-    
+
     public func updateConversationName(
         newName: String,
         conversationID: UUID,
         conversationDomain: String?,
-        userID: UUID,
-        userDomain: String?,
+        senderID: UUID,
+        senderDomain: String?,
         date: Date
     ) async {
-        
+
         let conversation = await fetchOrCreateConversation(
             id: conversationID,
             domain: conversationDomain
         )
+
+        let currentConversationName = await conversationsLocalStore.conversationName(conversation: conversation)
         
-        let nameDidChange = await conversationsLocalStore.updateConversationName(
+        if currentConversationName != newName {
+            let messageType = MessageType.conversationNameChanged(
+                newName: newName,
+                sender: (senderID, senderDomain),
+                date: date
+            )
+
+            await messageRepository.addMessageToConversation(
+                messageType: messageType,
+                conversationID: conversationID,
+                conversationDomain: conversationDomain
+            )
+        }
+        
+        await conversationsLocalStore.storeConversation(
             newName: newName,
             conversation: conversation
         )
-        
-        guard nameDidChange else {
-            return
-        }
-        
-        let messageType = MessageType.conversationNameChanged(
-            newName: newName,
-            sender: (userID, userDomain),
-            date: date
-        )
-        
-        await messageRepository.addMessageToConversation(
-            messageType: messageType,
-            conversationID: conversationID,
-            conversationDomain: conversationDomain
-        )
+    
     }
 
     public func deleteConversation(
         id: UUID,
         domain: String?
     ) async throws {
-        guard let conversation = await fetchConversation(
-            id: id,
-            domain: domain
-        ) else {
+        guard
+            let conversation = await fetchConversation(
+                id: id,
+                domain: domain
+            )
+        else {
             return WireLogger.conversation.warn(
                 "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
             )
@@ -419,7 +445,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             )
 
             if let mlsGroupID {
-                try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
+                try await conversationsLocalStore.wipeMLSGroup(
+                    groupID: mlsGroupID)
             }
 
             await conversationsLocalStore.deleteConversation(
@@ -464,7 +491,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         conversationID: UUID,
         conversationDomain: String
     ) async throws {
-        var conversation = await fetchConversation(
+        let conversation = await fetchConversation(
             id: conversationID,
             domain: conversationDomain
         )
@@ -475,27 +502,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 id: conversationID,
                 domain: conversationDomain
             )
-
-            conversation = await fetchConversation(
-                id: conversationID,
-                domain: conversationDomain
-            )
-        }
-
-        guard let conversation else {
-            return WireLogger.eventProcessing.error(
-                "Member join update missing conversation, aborting... ",
-                attributes: [
-                    .conversationId: conversationID.safeForLoggingDescription
-                ]
-            )
         }
 
         try await conversationsLocalStore.addParticipants(
             participants,
             addedBy: sender,
             atDate: date,
-            to: conversation
+            conversation: (conversationID, conversationDomain)
         )
     }
 
@@ -512,13 +525,15 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let senderDomain = sender.domain
         let removedUserIDs = userIDs
 
-        let conversation = await conversationsLocalStore.fetchOrCreateConversation(
-            id: conversationID,
-            domain: conversationDomain
-        )
+        let conversation =
+            await conversationsLocalStore.fetchOrCreateConversation(
+                id: conversationID,
+                domain: conversationDomain
+            )
 
         let removedUsers = await getRemovedUsers(from: removedUserIDs)
-        let participants = await conversationsLocalStore.localParticipants(in: conversation)
+        let participants = await conversationsLocalStore.localParticipants(
+            in: conversation)
 
         let sender = try await userRepository.fetchUser(
             id: senderID,
@@ -538,13 +553,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         let isSelfUserRemoved = await isSelfUserRemoved(in: removedUserIDs)
-        let messageProtocol = await conversationsLocalStore.messageProtocol(for: conversation)
-
-        await conversationsLocalStore.removeParticipantsAndUpdateConversationState(
-            conversation: conversation,
-            users: Set(removedUsers),
-            initiatingUser: sender
+        let messageProtocol = await conversationsLocalStore.messageProtocol(
+            for: conversation
         )
+
+        await conversationsLocalStore
+            .removeParticipantsAndUpdateConversationState(
+                conversation: conversation,
+                users: Set(removedUsers),
+                initiatingUser: sender
+            )
 
         let isMLSEnabled = mlsProvider.isMLSEnabled
         let mlsService = mlsProvider.service
@@ -554,7 +572,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 for: conversation
             )
 
-            if isSelfUserRemoved, let mlsGroupID, messageProtocol.isOne(of: .mls, .mixed) {
+            if isSelfUserRemoved, let mlsGroupID,
+                messageProtocol.isOne(of: .mls, .mixed)
+            {
                 try await mlsService.wipeGroup(mlsGroupID)
             }
         }
@@ -567,7 +587,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Private
-    
+
     private func addSystemMessage(
         conversationID: UUID,
         conversationDomain: String?,
@@ -578,7 +598,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         reason: ConversationMemberLeaveReason
     ) async {
         var systemMessageType: MessageType
-        
+
         switch reason {
         case .userDeleted, .left:
             systemMessageType = .teamMemberRemoved(
