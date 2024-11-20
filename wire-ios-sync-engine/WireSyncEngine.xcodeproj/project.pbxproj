@@ -455,7 +455,6 @@
 		E91180E12CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */; };
 		E914CCBC2CDE269B0067F409 /* CreateConversationFolderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */; };
 		E914CCBE2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBD2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift */; };
-		E914CCC02CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */; };
 		E948DB142C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */; };
 		E955D3DF2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */; };
 		E955D3E32C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */; };
@@ -480,7 +479,6 @@
 		E9D6FC212CD4E496007924B8 /* UpdateConversationFolderUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6FC202CD4E496007924B8 /* UpdateConversationFolderUseCase.swift */; };
 		E9D6FC232CD4E92D007924B8 /* UpdateConversationFolderUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6FC222CD4E92D007924B8 /* UpdateConversationFolderUseCaseTests.swift */; };
 		E9D6FC262CD4EC5C007924B8 /* MockLabelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6FC252CD4EC5C007924B8 /* MockLabelType.swift */; };
-		E9D6FC282CD4F201007924B8 /* ToFolderMovableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6FC272CD4F201007924B8 /* ToFolderMovableConversation.swift */; };
 		E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */; };
 		E9EAEAA72BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */; };
 		E9F403152C5B96CD00F81366 /* EnableAnalyticsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */; };
@@ -1173,7 +1171,6 @@
 		E91180E02CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+SelfUserReactions.swift"; sourceTree = "<group>"; };
 		E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCase.swift; sourceTree = "<group>"; };
 		E914CCBD2CDE378D0067F409 /* CreateConversationFolderUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCaseTests.swift; sourceTree = "<group>"; };
-		E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationFolderUseCaseProtocol.swift; sourceTree = "<group>"; };
 		E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendLocationMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E955D3DE2C36CFFF0090BEAB /* ConversationType+ZMConversationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationType+ZMConversationType.swift"; sourceTree = "<group>"; };
 		E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessageUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1196,7 +1193,6 @@
 		E9D6FC202CD4E496007924B8 /* UpdateConversationFolderUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConversationFolderUseCase.swift; sourceTree = "<group>"; };
 		E9D6FC222CD4E92D007924B8 /* UpdateConversationFolderUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConversationFolderUseCaseTests.swift; sourceTree = "<group>"; };
 		E9D6FC252CD4EC5C007924B8 /* MockLabelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLabelType.swift; sourceTree = "<group>"; };
-		E9D6FC272CD4F201007924B8 /* ToFolderMovableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToFolderMovableConversation.swift; sourceTree = "<group>"; };
 		E9E4D4702C2AD61500364352 /* TeamRole+AnalyticsValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TeamRole+AnalyticsValue.swift"; sourceTree = "<group>"; };
 		E9EAEAA62BC7C50B0042F5C9 /* CreateConversationGuestLinkUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkUseCase.swift; sourceTree = "<group>"; };
 		E9F403142C5B96CD00F81366 /* EnableAnalyticsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnableAnalyticsUseCase.swift; sourceTree = "<group>"; };
@@ -2594,9 +2590,7 @@
 		EEE46E5528C5EF3B005F48D7 /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
-				E914CCBF2CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift */,
 				E914CCBB2CDE26980067F409 /* CreateConversationFolderUseCase.swift */,
-				E9D6FC272CD4F201007924B8 /* ToFolderMovableConversation.swift */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
@@ -3517,7 +3511,6 @@
 				06185AA02CEBA634005D3CFE /* GetMLSFeatureUseCase.swift in Sources */,
 				BF3C1B1720DBE254001CE126 /* Conversation+MessageDestructionTimeout.swift in Sources */,
 				1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */,
-				E914CCC02CDE492E0067F409 /* CreateConversationFolderUseCaseProtocol.swift in Sources */,
 				E623B63A2BD68DAE00F91B37 /* UserSessionDependencies.swift in Sources */,
 				16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */,
 				EE5B85202CAADB9F00A8ADF7 /* ZMUserSession+AnalyticsUser.swift in Sources */,
@@ -3578,7 +3571,6 @@
 				E9E4D4712C2AD61500364352 /* TeamRole+AnalyticsValue.swift in Sources */,
 				5E8BB8A22147F89000EEA64B /* CallCenterSupport.swift in Sources */,
 				63C4B3C62C35B56A00C09A93 /* ShareFileUseCase.swift in Sources */,
-				E9D6FC282CD4F201007924B8 /* ToFolderMovableConversation.swift in Sources */,
 				1660AA0D1ECDB0250056D403 /* SearchTask.swift in Sources */,
 				E9AD0A362C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift in Sources */,
 				E91180E12CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift in Sources */,
