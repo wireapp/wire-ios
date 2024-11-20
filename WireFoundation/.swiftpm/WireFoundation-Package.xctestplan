@@ -17,22 +17,22 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireUtilitiesPackageTests",
-        "name" : "WireUtilitiesPackageTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSystemPackageTests",
-        "name" : "WireSystemPackageTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSystemTests",
+        "name" : "WireSystemTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireUtilitiesPackageTests",
+        "name" : "WireUtilitiesPackageTests"
       }
     }
   ],

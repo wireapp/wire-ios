@@ -1,8 +1,8 @@
 {
   "configurations" : [
     {
-      "id" : "0D1F897E-1847-4B42-8110-AAFFB268E809",
-      "name" : "Test Scheme Action",
+      "id" : "342B454A-86CF-470E-912F-1C55AD8C82D4",
+      "name" : "Configuration 1",
       "options" : {
 
       }
@@ -14,13 +14,7 @@
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSystemPackageTests",
-        "name" : "WireSystemPackageTests"
-      }
-    }
+
   ],
   "version" : 1
 }

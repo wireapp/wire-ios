@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public extension UserDefaults {
     /// Creates an instance with a random (UUID string based) `suiteName`.
@@ -37,7 +37,8 @@ public extension UserDefaults {
 
 // MARK: UserDefaults.temporary() helpers
 
-private let zmLog = ZMSLog(tag: "UserDefaults")
+// TODO: try to remvoe nonisolated(unsafe)
+nonisolated(unsafe) private let zmLog = ZMSLog(tag: "UserDefaults")
 
 private final class SuiteCleanUp {
 

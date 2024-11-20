@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 @objc(ZMSDispatchGroup) @objcMembers
-public final class ZMSDispatchGroup: NSObject {
+public final class ZMSDispatchGroup: NSObject, @unchecked Sendable { // TODO: try to remvoe @unchecked
 
     let label: String
 
@@ -70,7 +70,7 @@ public final class ZMSDispatchGroup: NSObject {
     }
 
     @objc(asyncOnQueue:block:)
-    public func async(on queue: dispatch_queue_t, block: @escaping () -> Void) {
+    public func async(on queue: dispatch_queue_t, block: @escaping @Sendable () -> Void) {
         queue.async(group: group, execute: block)
     }
 }
