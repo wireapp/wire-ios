@@ -72,7 +72,7 @@ class SearchRequestTests: MessagingTest {
         from query: String,
         handle expectedHandle: String,
         domain expectedDomain: String?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         // when

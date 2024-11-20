@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -31,21 +31,21 @@ let package = Package(
             dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
         ),
 
-            .target(
-                name: "WireSystemPackage",
-                path: "./Sources/WireSystem"
-            ),
+        .target(
+            name: "WireSystemPackage",
+            path: "./Sources/WireSystem"
+        ),
         .target(
             name: "WireSystemSupportPackage",
             dependencies: ["WireSystemPackage"],
             path: "./Sources/WireSystemSupport",
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
-            .testTarget(
-                name: "WireSystemPackageTests",
-                dependencies: ["WireSystemPackage", "WireSystemSupportPackage"],
-                path: "./Tests/WireSystemTests"
-            ),
+        .testTarget(
+            name: "WireSystemPackageTests",
+            dependencies: ["WireSystemPackage", "WireSystemSupportPackage"],
+            path: "./Tests/WireSystemTests"
+        ),
 
         .target(
             name: "WireTestingPackage",
@@ -55,22 +55,24 @@ let package = Package(
             path: "./Sources/WireTesting"
         ),
 
-            .target(
-                name: "WireUtilitiesPackage",
-                path: "./Sources/WireUtilities"
-            ),
-            .testTarget(
-                name: "WireUtilitiesPackageTests",
-                dependencies: ["WireUtilitiesPackage"],
-                path: "./Tests/WireUtilitiesTests"
-            )
-    ]
+        .target(
+            name: "WireUtilitiesPackage",
+            path: "./Sources/WireUtilities"
+        ),
+        .testTarget(
+            name: "WireUtilitiesPackageTests",
+            dependencies: ["WireUtilitiesPackage"],
+            path: "./Tests/WireUtilitiesTests"
+        )
+    ],
+    swiftLanguageModes: [.v6]
 )
 
 for target in package.targets {
-    target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+    guard target.type != .plugin else { continue }
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("FullTypedThrows"),
+        .enableUpcomingFeature("ExistentialAny")
     ]
 }

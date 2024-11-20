@@ -234,7 +234,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
     func internalTest_wipeMLSGroupWithProtocol(
         _ messageProtocol: MessageProtocol,
         shouldWipe: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given

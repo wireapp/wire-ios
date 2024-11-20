@@ -136,7 +136,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     func insertMessage(
         with state: ZMLinkPreviewState,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> ZMClientMessage {
         let message = try! groupConversation.appendText(content: "Test message") as! ZMClientMessage
@@ -148,7 +148,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     func verifyThatItDoesNotScheduleMessageUpdate(
         for state: ZMLinkPreviewState,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         syncMOC.performGroupedAndWait {

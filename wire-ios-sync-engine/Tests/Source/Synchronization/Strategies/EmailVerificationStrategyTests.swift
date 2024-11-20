@@ -191,7 +191,7 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
         code: UserSessionErrorCode,
         errorLabel: String,
         httpStatus: NSInteger,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given
@@ -206,7 +206,7 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
         code: UserSessionErrorCode,
         errorLabel: String,
         httpStatus: NSInteger,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given

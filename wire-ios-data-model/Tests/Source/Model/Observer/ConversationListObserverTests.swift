@@ -300,7 +300,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func assertThatTheListIsReorderedWhenAConversationChangesTheLastModifiedTime(
         team: Team? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given
@@ -362,7 +362,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func assertThatTheListIsOrderedWhenAConversationIsInserted(
         team: Team? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given
@@ -614,7 +614,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func assertThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges(
         team: Team? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given
@@ -935,7 +935,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func assertThatCanGetTheCurrentStateFromTheChangeInfo(
         team: Team? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given

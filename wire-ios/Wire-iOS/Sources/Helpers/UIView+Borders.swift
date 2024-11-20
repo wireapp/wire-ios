@@ -19,6 +19,13 @@
 import UIKit
 import WireDesign
 
+enum Anchor {
+    case top
+    case bottom
+    case leading
+    case trailing
+}
+
 extension UIView {
 
     func addBorder(
