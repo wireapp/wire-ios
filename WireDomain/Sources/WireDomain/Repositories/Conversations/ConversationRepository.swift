@@ -268,7 +268,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 
-        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { // only for api v0 (see `ConversationsAPIV0` method comment)
+        if let result = try? await conversationsAPI
+            .getLegacyConversationIdentifiers() { // only for api v0 (see `ConversationsAPIV0` method comment)
             let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }

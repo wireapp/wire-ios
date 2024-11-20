@@ -57,7 +57,11 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser, trackingManager: nil)
+        settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: nil
+        )
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
@@ -98,14 +102,18 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isPublicDomain: true, userSession: userSession, useTypeIntrinsicSizeTableView: true)
+        let group = settingsCellDescriptorFactory.accountGroup(
+            isPublicDomain: true,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true
+        )
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
@@ -150,7 +158,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
         sut.view.layoutIfNeeded()
 
-        snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
+        snapshotHelper.verify(
+            matching: sut,
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+        )
     }
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
@@ -197,7 +208,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     private func verify(
         group: Any,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {

@@ -18,11 +18,12 @@
 
 import Foundation
 
-@objc extension ZMUserSession {
+@objc
+public extension ZMUserSession {
 
     // MARK: - Foreground Actions
 
-    public func acceptConnectionRequest(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+    func acceptConnectionRequest(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
 
         guard let senderID = userInfo.senderID,
               let sender = ZMUser.fetch(with: senderID, in: managedObjectContext),
@@ -35,7 +36,7 @@ import Foundation
         })
     }
 
-    public func acceptCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+    func acceptCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
 
         guard let conversation = userInfo.conversation(in: managedObjectContext) else { return }
 
@@ -46,19 +47,21 @@ import Foundation
 
         guard let callState = conversation.voiceChannel?.state else { return }
 
-        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState, callCenter?.activeCallConversations(in: self).count == 0 {
+        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState,
+           callCenter?.activeCallConversations(in: self).isEmpty == true {
             _ = conversation.voiceChannel?.join(video: video, userSession: self)
         }
     }
 
-    func showContent(for userInfo: NotificationUserInfo) {
+    internal func showContent(for userInfo: NotificationUserInfo) {
 
         guard let conversation = userInfo.conversation(in: managedObjectContext) else {
             sessionManager?.showConversationList(in: self)
             return
         }
 
-        guard let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext) as? ZMClientMessage else {
+        guard let message = userInfo
+            .message(in: conversation, managedObjectContext: managedObjectContext) as? ZMClientMessage else {
             return showConversation(conversation)
         }
 
@@ -69,14 +72,15 @@ import Foundation
         }
     }
 
-    fileprivate func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage? = nil) {
+    private func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage? = nil) {
         sessionManager?.showConversation(conversation, at: message, in: self)
     }
 
     // MARK: - Background Actions
 
-    public func ignoreCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "IgnoreCall Action Handler") else {
+    func ignoreCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "IgnoreCall Action Handler") else {
             return
         }
 
@@ -89,8 +93,9 @@ import Foundation
         }
     }
 
-    public func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Mute Conversation Action Handler") else {
+    func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "Mute Conversation Action Handler") else {
             return
         }
 
@@ -104,21 +109,22 @@ import Foundation
         }
     }
 
-    public  func reply(with userInfo: NotificationUserInfo, message: String, completionHandler: @escaping () -> Void) {
+    func reply(with userInfo: NotificationUserInfo, message: String, completionHandler: @escaping () -> Void) {
         guard
             !message.isEmpty,
             let conversation = userInfo.conversation(in: managedObjectContext)
-            else { return completionHandler() }
+        else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "DirectReply Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "DirectReply Action Handler") else {
             return
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let self else { return }
 
-            self.messageReplyObserver = nil
-            self.syncManagedObjectContext.performGroupedBlock {
+            messageReplyObserver = nil
+            syncManagedObjectContext.performGroupedBlock {
 
                 let conversationOnSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 if result == .failed {
@@ -135,18 +141,25 @@ import Foundation
             do {
                 let message = try conversation.appendText(content: message)
                 self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
-                self.messageReplyObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
-                    self?.updateBackgroundTask(with: message)
-                })
+                self.messageReplyObserver = ManagedObjectContextChangeObserver(
+                    context: self.managedObjectContext,
+                    callback: { [weak self] in
+                        self?.updateBackgroundTask(with: message)
+                    }
+                )
             } catch {
-                Logging.messageProcessing.warn("Failed to reply to message from user notification. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to reply to message from user notification. Reason: \(error.localizedDescription)")
             }
         }
     }
 
     private func appendReadReceiptIfNeeded(with userInfo: NotificationUserInfo, in conversation: ZMConversation) {
         guard
-            let originalMessage = userInfo.message(in: conversation, managedObjectContext: self.managedObjectContext) as? ZMClientMessage,
+            let originalMessage = userInfo.message(
+                in: conversation,
+                managedObjectContext: managedObjectContext
+            ) as? ZMClientMessage,
             originalMessage.needsReadConfirmation
         else {
             return
@@ -156,24 +169,26 @@ import Foundation
             let confirmation = GenericMessage(content: Confirmation(messageId: originalMessage.nonce!, type: .read))
             try conversation.appendClientMessage(with: confirmation)
         } catch {
-            Logging.messageProcessing.warn("Failed to append read receipt from user notification. Reason: \(error.localizedDescription)")
+            Logging.messageProcessing
+                .warn("Failed to append read receipt from user notification. Reason: \(error.localizedDescription)")
         }
     }
 
-    public func likeMessage(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+    func likeMessage(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
         guard
             let conversation = userInfo.conversation(in: managedObjectContext),
             let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext)
-            else { return completionHandler() }
+        else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity")
+        else {
             return
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let self else { return }
 
-            self.likeMesssageObserver = nil
+            likeMesssageObserver = nil
             if result == .failed {
                 Logging.push.safePublic("failed to like message via push notification action")
             }
@@ -184,13 +199,16 @@ import Foundation
         enqueue {
             guard let reaction = ZMMessage.addReaction("❤️", to: message) else { return }
             self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
-            self.likeMesssageObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
-                self?.updateBackgroundTask(with: reaction)
-            })
+            self.likeMesssageObserver = ManagedObjectContextChangeObserver(
+                context: self.managedObjectContext,
+                callback: { [weak self] in
+                    self?.updateBackgroundTask(with: reaction)
+                }
+            )
         }
     }
 
-    func updateBackgroundTask(with message: ZMConversationMessage) {
+    internal func updateBackgroundTask(with message: ZMConversationMessage) {
         if message.isSent {
             applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .finished)
         } else if message.deliveryState == .failedToSend {
@@ -202,7 +220,8 @@ import Foundation
 
 public extension ZMUserSession {
     func markAllConversationsAsRead() {
-        let allConversations = managedObjectContext.fetchOrAssert(request: NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
-        allConversations.forEach({ $0.markAsRead() })
+        let allConversations = managedObjectContext
+            .fetchOrAssert(request: NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+        allConversations.forEach { $0.markAsRead() }
     }
 }

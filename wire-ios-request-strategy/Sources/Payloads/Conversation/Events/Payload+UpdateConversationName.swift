@@ -25,7 +25,7 @@ extension Payload {
         var name: String
 
         static var eventType: ZMUpdateEventType {
-            return .conversationRename
+            .conversationRename
         }
 
         init?(_ conversation: ZMConversation) {
@@ -36,7 +36,7 @@ extension Payload {
                 return nil
             }
 
-            name = userDefinedName
+            self.name = userDefinedName
         }
 
         init(name: String) {

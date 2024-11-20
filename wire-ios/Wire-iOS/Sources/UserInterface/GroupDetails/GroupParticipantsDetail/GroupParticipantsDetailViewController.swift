@@ -40,7 +40,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     weak var delegate: GroupDetailsUserDetailPresenter?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -53,13 +53,13 @@ final class GroupParticipantsDetailViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
 
-        viewModel = GroupParticipantsDetailViewModel(
+        self.viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
             conversation: conversation,
             userSession: userSession
         )
 
-        collectionViewController = SectionCollectionViewController()
+        self.collectionViewController = SectionCollectionViewController()
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -138,7 +138,8 @@ final class GroupParticipantsDetailViewController: UIViewController {
         collectionViewController.sections = computeSections()
         collectionViewController.collectionView?.reloadData()
 
-        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker.noSearchResults : ""
+        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker
+            .noSearchResults : ""
         collectionViewController.collectionView?.setEmptyMessage(emptyResultMessage)
     }
 
@@ -187,7 +188,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return viewModel.participants[indexPath.row].isSelfUser == false
+        viewModel.participants[indexPath.row].isSelfUser == false
     }
 }
 
@@ -200,7 +201,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self,
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -228,13 +228,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         navigationController?.pushViewController(detailsViewController, animated: animated)
     }
 
-}
-
-extension GroupParticipantsDetailViewController: ViewControllerDismisser {
-
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true, completion: completion)
-    }
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {

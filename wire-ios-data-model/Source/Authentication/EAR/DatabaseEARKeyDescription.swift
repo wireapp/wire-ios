@@ -40,7 +40,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
             label: label
         )
 
-        baseQuery = [
+        self.baseQuery = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: id
         ]
@@ -54,7 +54,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
         return query
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueData] = value
         return query
@@ -63,7 +63,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
     // MARK: - Static Access
 
     static func keyDescription(accountID: UUID) -> DatabaseEARKeyDescription {
-        return DatabaseEARKeyDescription(
+        DatabaseEARKeyDescription(
             accountID: accountID,
             label: "database"
         )

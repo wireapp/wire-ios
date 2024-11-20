@@ -21,9 +21,18 @@ import Foundation
 
 extension ObjectChangeInfo {
 
-    func checkForExpectedChangeFields(userInfoKeys: Set<String>, expectedChangedFields: Set<String>, file: StaticString = #file, line: UInt = #line) {
+    func checkForExpectedChangeFields(
+        userInfoKeys: Set<String>,
+        expectedChangedFields: Set<String>,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         guard userInfoKeys.isSuperset(of: expectedChangedFields) else {
-            return XCTFail("Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.", file: file, line: line)
+            return XCTFail(
+                "Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.",
+                file: file,
+                line: line
+            )
         }
 
         for key in userInfoKeys {
@@ -39,11 +48,13 @@ extension ObjectChangeInfo {
     }
 }
 
-@objcMembers public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
+@objcMembers
+public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
 
     var dispatcher: NotificationDispatcher! {
-        return sut
+        sut
     }
+
     var sut: NotificationDispatcher!
     var conversationObserver: ConversationObserver!
     var newUnreadMessageObserver: NewUnreadMessageObserver!
@@ -52,23 +63,28 @@ extension ObjectChangeInfo {
     /// Holds a reference to the observer token, so that we don't release it during the test
     var token: Any?
 
-    override public func setUp() {
+    public override func setUp() {
         super.setUp()
         newUnreadMessageObserver = NewUnreadMessageObserver()
         conversationObserver = ConversationObserver()
         sut = NotificationDispatcher(managedObjectContext: uiMOC)
-        NotificationCenter.default.addObserver(self, selector: #selector(NotificationDispatcherTestBase.contextDidMerge(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: syncMOC)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(NotificationDispatcherTestBase.contextDidMerge(_:)),
+            name: Notification.Name.NSManagedObjectContextDidSave,
+            object: syncMOC
+        )
         mergeNotifications = []
     }
 
-    override public func tearDown() {
+    public override func tearDown() {
         NotificationCenter.default.removeObserver(self)
-        self.sut.tearDown()
-        self.sut = nil
-        self.conversationObserver = nil
-        self.newUnreadMessageObserver = nil
-        self.mergeNotifications = []
-        self.token = nil
+        sut.tearDown()
+        sut = nil
+        conversationObserver = nil
+        newUnreadMessageObserver = nil
+        mergeNotifications = []
+        token = nil
         super.tearDown()
     }
 
@@ -78,16 +94,18 @@ extension ObjectChangeInfo {
 
     public func mergeLastChanges() {
         let changedObjects = mergeLastChangesWithoutNotifying()
-        self.dispatcher.didMergeChanges(Set(changedObjects))
+        dispatcher.didMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
     }
-    @discardableResult public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
+
+    @discardableResult
+    public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
         guard let change = mergeNotifications.last else { return [] }
-        let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map { $0.objectID } ?? []
+        let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map(\.objectID) ?? []
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.uiMOC.mergeChanges(fromContextDidSave: change)
+        uiMOC.mergeChanges(fromContextDidSave: change)
         mergeNotifications = []
         return changedObjects
     }
@@ -102,6 +120,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         init(managedObjectContext: NSManagedObjectContext) {
             self.dispatcher = NotificationDispatcher(managedObjectContext: managedObjectContext)
         }
+
         deinit {
             dispatcher.tearDown()
         }
@@ -151,7 +170,10 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) {
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(
+            observer: newUnreadMessageObserver,
+            managedObjectContext: uiMOC
+        )) {
 
             // when
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
@@ -176,7 +198,10 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) {
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(
+            observer: newUnreadMessageObserver,
+            managedObjectContext: uiMOC
+        )) {
 
             // when
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
@@ -226,7 +251,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         XCTAssertTrue(user.isFault)
         XCTAssertEqual(user.name, "foo")
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             syncMOC.performGroupedAndWait {
@@ -255,7 +280,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         XCTAssertTrue(user!.isFault)
         let observer = MockUserObserver()
 
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user!, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user!, in: uiMOC)) {
 
             // when
             user = nil
@@ -281,10 +306,14 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
-            NotificationDispatcher.notifyNonCoreDataChanges(objectID: user.objectID, changedKeys: ["name"], uiContext: uiMOC)
+            NotificationDispatcher.notifyNonCoreDataChanges(
+                objectID: user.objectID,
+                changedKeys: ["name"],
+                uiContext: uiMOC
+            )
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
             // then
@@ -302,7 +331,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             user.name = "bar"
@@ -328,7 +357,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             user.name = "bar"
@@ -357,7 +386,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             sut.isEnabled = false
@@ -378,7 +407,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         sut.isEnabled = false
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             sut.isEnabled = true
@@ -401,7 +430,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             sut.applicationDidEnterBackground()
@@ -422,7 +451,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         sut.applicationDidEnterBackground()
 
         let observer = MockUserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: uiMOC)) {
 
             // when
             sut.applicationWillEnterForeground()
@@ -439,6 +468,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
     }
 
     // MARK: ChangeInfoConsumer
+
     class ChangeConsumer: NSObject, ChangeInfoConsumer {
         var changes: [ClassIdentifier: [ObjectChangeInfo]]?
         var didCallStopObserving = false
@@ -532,7 +562,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertEqual(changes.count, 1)
             guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo],
                   let change = userChanges.first
-            else { return XCTFail()}
+            else { return XCTFail() }
             XCTAssertTrue(change.nameChanged)
         }
     }

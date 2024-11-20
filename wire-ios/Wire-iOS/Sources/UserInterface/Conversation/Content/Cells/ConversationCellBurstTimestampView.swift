@@ -24,7 +24,7 @@ import WireSyncEngine
 final class ConversationCellBurstTimestampView: UIView {
 
     let unreadDot = UIView()
-    private let label: UILabel = UILabel()
+    private let label: UILabel = .init()
 
     private let unreadDotContainer = UIView()
     private let leftSeparator = UIView()

@@ -39,7 +39,7 @@ extension ZMConversationMessage {
 
     var liked: Bool {
         get {
-            return likers.contains { $0.isSelfUser }
+            likers.contains { $0.isSelfUser }
         }
 
         set {
@@ -58,9 +58,11 @@ extension ZMConversationMessage {
     }
 
     var canVisitLink: Bool {
-        guard let url = URL(string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
-                            ?? ""),
-              UIApplication.shared.canOpenURL(url) else {
+        guard let url = URL(
+            string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+                ?? ""
+        ),
+            UIApplication.shared.canOpenURL(url) else {
             return false
         }
         return true
@@ -75,13 +77,13 @@ extension ZMConversationMessage {
     }
 
     func hasReactions() -> Bool {
-        return usersReaction.contains { _, users in
+        usersReaction.contains { _, users in
             !users.isEmpty
         }
     }
 
     var likers: [UserType] {
-        return usersReaction["❤️"] ?? []
+        usersReaction["❤️"] ?? []
     }
 
     var sortedLikers: [UserType] {

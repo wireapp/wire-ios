@@ -21,9 +21,11 @@ import WireSyncEngine
 final class ForegroundNotificationFilter {
 
     // MARK: - Public Property
+
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
+
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
@@ -61,17 +63,12 @@ extension ForegroundNotificationFilter: ForegroundNotificationResponder {
         }
 
         // conversation view is visible for another conversation
-        let svc = clientVC.mainSplitViewController // TODO: [WPB-11994] test this flow manually
+        let svc = clientVC.mainSplitViewController
         let conversationVC = svc.conversationUI ?? svc.tabController.conversationUI
         let conversationListVC = svc.conversationListUI ?? svc.tabController.conversationListUI
         let visibleConversation = conversationVC?.conversationModel ?? conversationListVC?.selectedConversation
-        guard
-            let convID = userInfo.conversationID,
-            convID != visibleConversation?.remoteIdentifier
-        else {
-            return false
-        }
+        guard let convID = userInfo.conversationID else { return false }
 
-        return true
+        return convID != visibleConversation?.remoteIdentifier
     }
 }

@@ -78,7 +78,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversation: ZMConversation
     ) async -> Set<ZMSystemMessage> {
         switch messageType {
-        case .federationTermination(let domains, let date):
+        case let .federationTermination(domains, date):
             let selfUser = await fetchSelfUser()
 
             let systemMessage = await createSystemMessage(
@@ -90,7 +90,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .participantsRemovedAnonymously(let participants, let date):
+        case let .participantsRemovedAnonymously(participants, date):
 
             let removedUsers = await context.perform {
                 participants.compactMap { id, domain in
@@ -126,7 +126,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .mlsMigrationMLSNotSupportedForOtherUser(let otherUser):
+        case let .mlsMigrationMLSNotSupportedForOtherUser(otherUser):
 
             guard let otherUser = await fetchUser(
                 id: otherUser.id,
@@ -143,7 +143,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .teamMemberRemoved(let member, let date):
+        case let .teamMemberRemoved(member, date):
 
             guard let removedMember = await fetchUser(
                 id: member.id,
@@ -159,7 +159,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .participantRemoved(let participant, let sender, let date):
+        case let .participantRemoved(participant, sender, date):
 
             guard let removedParticipant = await fetchUser(
                 id: participant.id,
@@ -180,14 +180,16 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .newConversationCreated(let date):
+        case let .newConversationCreated(date):
 
             let selfUser = await fetchSelfUser()
 
             let (creator, localParticipants, userDefinedName) = await context.perform {
-                (conversation.creator,
-                 conversation.localParticipants,
-                 conversation.userDefinedName)
+                (
+                    conversation.creator,
+                    conversation.localParticipants,
+                    conversation.userDefinedName
+                )
             }
 
             let newConversationMessage = await createSystemMessage(
@@ -231,7 +233,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return Set(systemMessages)
 
-        case .mlsMigrationStarted(let sender, let date):
+        case let .mlsMigrationStarted(sender, date):
 
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -248,7 +250,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .mlsMigrationPotentialGap(let sender, let date):
+        case let .mlsMigrationPotentialGap(sender, date):
 
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -281,7 +283,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .mlsMigrationFinalized(let sender, let date):
+        case let .mlsMigrationFinalized(sender, date):
 
             guard let sender = await fetchUser(
                 id: sender.id,
@@ -298,7 +300,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .receiptModeIsOn(let date):
+        case let .receiptModeIsOn(date):
 
             let creator = await context.perform {
                 conversation.creator

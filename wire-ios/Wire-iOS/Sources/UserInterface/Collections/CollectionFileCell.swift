@@ -32,7 +32,7 @@ final class CollectionFileCell: CollectionCell {
 
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = self.message else {
+        guard let message else {
             return
         }
 
@@ -47,8 +47,8 @@ final class CollectionFileCell: CollectionCell {
             restrictionView.configure(for: message)
         }
         accessibilityLabel = ConversationSearch.SentBy.description(message.senderName)
-                            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
-                            + (fileTransferView.accessibilityLabel ?? "")
+            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
+            + (fileTransferView.accessibilityLabel ?? "")
         accessibilityHint = ConversationSearch.Item.hint
     }
 
@@ -85,7 +85,7 @@ final class CollectionFileCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .document
+        .document
     }
 
     private func setup(_ view: UIView) {
@@ -116,6 +116,6 @@ final class CollectionFileCell: CollectionCell {
 
 extension CollectionFileCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        self.delegate?.collectionCell(self, performAction: action)
+        delegate?.collectionCell(self, performAction: action)
     }
 }

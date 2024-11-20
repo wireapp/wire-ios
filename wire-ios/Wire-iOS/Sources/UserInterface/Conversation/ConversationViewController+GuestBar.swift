@@ -55,7 +55,7 @@ extension ConversationViewController {
         }
 
         let head = states[0]
-        let tail = states.dropFirst().map({ $0.localizedLowercase })
+        let tail = states.dropFirst().map(\.localizedLowercase)
         let list = ([head] + tail).joined(separator: ConversationBanner.separator)
 
         if state == .visibleServices {
@@ -89,7 +89,7 @@ extension ConversationViewController {
 
     /// Updates the visibility of the guest bar.
     func updateGuestsBarVisibility() {
-        let currentState = self.currentGuestBarState
+        let currentState = currentGuestBarState
         guestsBarController.state = currentState
 
         if case .hidden = currentState {

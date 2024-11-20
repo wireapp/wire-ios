@@ -48,7 +48,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Archiver"
+            "value" : "Archives"
           }
         },
         "it" : {
@@ -141,8 +141,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of archived conversations"
+            "state" : "translated",
+            "value" : "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen"
           }
         },
         "en" : {
@@ -213,8 +213,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of archived conversations"
+            "state" : "translated",
+            "value" : "Нажмите дважды, чтобы открыть список архивных бесед"
           }
         },
         "sl" : {
@@ -265,8 +265,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "List of recent conversations"
+            "state" : "translated",
+            "value" : "Liste der letzten Unterhaltungen"
           }
         },
         "en" : {
@@ -337,8 +337,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "List of recent conversations"
+            "state" : "translated",
+            "value" : "Список недавних бесед"
           }
         },
         "sl" : {
@@ -389,8 +389,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of recent conversations"
+            "state" : "translated",
+            "value" : "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen"
           }
         },
         "en" : {
@@ -461,8 +461,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of recent conversations"
+            "state" : "translated",
+            "value" : "Нажмите дважды, чтобы открыть список последних бесед"
           }
         },
         "sl" : {
@@ -637,8 +637,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open Settings"
+            "state" : "translated",
+            "value" : "Doppeltippen, um Einstellungen zu öffnen"
           }
         },
         "en" : {
@@ -709,8 +709,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open Settings"
+            "state" : "translated",
+            "value" : "Нажмите дважды, чтобы открыть настройки"
           }
         },
         "sl" : {

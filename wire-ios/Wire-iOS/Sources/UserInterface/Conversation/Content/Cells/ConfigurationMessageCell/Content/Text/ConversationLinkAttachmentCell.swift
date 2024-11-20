@@ -122,7 +122,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     // MARK: - HighlightableView
 
     var highlightContainer: UIView {
-        return attachmentView
+        attachmentView
     }
 
     // MARK: - Events
@@ -136,7 +136,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
 
 extension ConversationLinkAttachmentCell: LinkViewDelegate {
     var url: URL? {
-        return currentAttachment?.permalink
+        currentAttachment?.permalink
     }
 }
 
@@ -159,7 +159,7 @@ final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDe
     let accessibilityLabel: String? = nil
 
     init(attachment: LinkAttachment, thumbnailResource: WireImageResource?) {
-        configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
-        actionController = nil
+        self.configuration = View.Configuration(attachment: attachment, thumbnailResource: thumbnailResource)
+        self.actionController = nil
     }
 }

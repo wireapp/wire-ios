@@ -42,11 +42,13 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var accessibilityLabel: String?
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
-                                           content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
-                                           isCollapsed: isCollapsed,
-                                           icon: nil,
-                                           buttonAction: buttonAction)
+        self.configuration = View.Configuration(
+            title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
+            content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
+            isCollapsed: isCollapsed,
+            icon: nil,
+            buttonAction: buttonAction
+        )
     }
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
@@ -73,7 +75,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         }
 
         /// The list of participants with incomplete metadata.
-        let usersWithoutName = failedUsers.filter { $0.hasEmptyName }
+        let usersWithoutName = failedUsers.filter(\.hasEmptyName)
         if !usersWithoutName.isEmpty {
             let keyString = "content.system.failedtosend_participants.will_never_get_message"
 
@@ -106,14 +108,18 @@ extension NSAttributedString {
     static var unreachableBackendLearnMoreLink: NSAttributedString {
         typealias SystemContent = L10n.Localizable.Content.System
 
-        return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
-                                  attributes: [.font: UIFont.mediumSemiboldFont,
-                                               .link: WireURLs.shared.unreachableBackendInfo])
+        return NSAttributedString(
+            string: SystemContent.FailedParticipants.learnMore,
+            attributes: [
+                .font: UIFont.mediumSemiboldFont,
+                .link: WireURLs.shared.unreachableBackendInfo
+            ]
+        )
     }
 
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
-        return .markdown(from: text, style: .errorLabelStyle)
-               .adding(font: .mediumSemiboldFont, to: highlighted)
+        .markdown(from: text, style: .errorLabelStyle)
+            .adding(font: .mediumSemiboldFont, to: highlighted)
     }
 
 }

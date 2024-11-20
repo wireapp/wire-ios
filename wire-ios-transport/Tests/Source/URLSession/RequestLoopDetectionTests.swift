@@ -35,7 +35,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
             sut.recordRequest(path: path, contentHint: hash, date: nil)
         }
 
@@ -55,7 +55,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
             sut.recordRequest(path: path, contentHint: hash, date: startDate)
             startDate.addTimeInterval(10 * 60)
         }
@@ -73,7 +73,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
             sut.recordRequest(path: path, contentHint: hash, date: startDate)
             startDate.addTimeInterval(-4 * 60)
         }
@@ -88,7 +88,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold).forEach {
             sut.recordRequest(path: "foo.com/\($0)", contentHint: hash, date: nil)
         }
     }
@@ -101,7 +101,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach {
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold).forEach {
             sut.recordRequest(path: "foo.com", contentHint: "\($0)", date: nil)
         }
     }
@@ -119,7 +119,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold * 3).forEach { _ in
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold * 3).forEach { _ in
             sut.recordRequest(path: path, contentHint: hash, date: nil)
         }
 
@@ -139,10 +139,10 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             let path = paths[$0 % paths.count] // this will insert them in interleaved order
             sut.recordRequest(path: path, contentHint: hash, date: nil)
-         }
+        }
 
         // then
         XCTAssertEqual(triggeredURLs, paths)
@@ -160,7 +160,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
+        (0 ..< RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             sut.recordRequest(path: path, contentHint: "\($0 % 3)", date: nil)
         }
 
@@ -181,7 +181,7 @@ final class RequestLoopDetectionTests: XCTestCase {
 
         // when
         sut.recordRequest(path: path, contentHint: hash, date: nil)
-        (0..<2500).forEach {
+        (0 ..< 2500).forEach {
             sut.recordRequest(path: "url.com", contentHint: "\($0)", date: nil)
         }
         sut.recordRequest(path: path, contentHint: hash, date: nil)

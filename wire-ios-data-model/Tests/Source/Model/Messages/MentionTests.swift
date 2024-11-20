@@ -23,7 +23,12 @@ import XCTest
 
 class MentionTests: ZMBaseManagedObjectTest {
 
-    func createMention(start: Int = 0, length: Int = 1, userId: String = UUID().transportString(), domain: String? = nil) -> WireProtos.Mention {
+    func createMention(
+        start: Int = 0,
+        length: Int = 1,
+        userId: String = UUID().transportString(),
+        domain: String? = nil
+    ) -> WireProtos.Mention {
         // Make user mentioned user exists
         if let remoteIdentifier = UUID(uuidString: userId) {
             let user = ZMUser.insertNewObject(in: uiMOC)

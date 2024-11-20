@@ -18,8 +18,8 @@
 
 import UIKit
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 class BackgroundActivityFactoryTests: XCTestCase {
 
@@ -209,7 +209,10 @@ class BackgroundActivityFactoryTests: XCTestCase {
         simulateApplicationDidEnterBackground()
         simulateApplicationWillEnterForeground()
         // force a wait
-        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler was not called.")], timeout: 3.0)
+        _ = XCTWaiter.wait(
+            for: [XCTestExpectation(description: "The expiration handler was not called.")],
+            timeout: 3.0
+        )
 
         // THEN
         XCTAssertNil(factory.backgroundTaskTimer)
@@ -250,7 +253,8 @@ extension BackgroundActivityFactoryTests {
 
 extension BackgroundActivityFactory {
 
-    @objc func reset() {
+    @objc
+    func reset() {
         currentBackgroundTask = nil
         activities.removeAll()
         activityManager = nil

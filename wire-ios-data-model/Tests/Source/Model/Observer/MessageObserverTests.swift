@@ -38,9 +38,14 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         modifier: (T) -> Void,
         expectedChangedField: String?,
         customAffectedKeys: AffectedKeys? = nil
-        ) {
+    ) {
         let fields: Set<String> = expectedChangedField == nil ? [] : [expectedChangedField!]
-        checkThatItNotifiesTheObserverOfAChange(message, modifier: modifier, expectedChangedFields: fields, customAffectedKeys: customAffectedKeys)
+        checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: modifier,
+            expectedChangedFields: fields,
+            customAffectedKeys: customAffectedKeys
+        )
     }
 
     func checkThatItNotifiesTheObserverOfAChange<T: ZMMessage>(
@@ -48,10 +53,14 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         modifier: (T) -> Void,
         expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil
-        ) {
+    ) {
 
         // given
-        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
+        withExtendedLifetime(MessageChangeInfo.add(
+            observer: messageObserver,
+            for: message,
+            managedObjectContext: uiMOC
+        )) {
 
             self.uiMOC.saveOrRollback()
 
@@ -85,19 +94,21 @@ class MessageObserverTests: NotificationDispatcherTestBase {
 
             guard !expectedChangedFields.isEmpty else { return }
             guard let changes = messageObserver.notifications.first else { return }
-            changes.checkForExpectedChangeFields(userInfoKeys: messageInfoKeys,
-                                                 expectedChangedFields: expectedChangedFields)
+            changes.checkForExpectedChangeFields(
+                userInfoKeys: messageInfoKeys,
+                expectedChangedFields: expectedChangedFields
+            )
         }
     }
 
     func testThatItNotifiesObserverWhenTheFileTransferStateChanges() {
         // given
-        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         message.transferState = .uploading
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { $0.transferState = .uploaded },
             expectedChangedField: #keyPath(MessageChangeInfo.transferStateChanged)
@@ -106,24 +117,30 @@ class MessageObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserverWhenTheMediumImageDataChanges() {
         // given
-        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         uiMOC.saveOrRollback()
 
         let imageData = verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
-        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(),
-                                              macKey: Data.zmRandomSHA256Key(),
-                                              mac: Data.zmRandomSHA256Key())
+        let keys = ZMImageAssetEncryptionKeys(
+            otrKey: Data.randomEncryptionKey(),
+            macKey: Data.zmRandomSHA256Key(),
+            mac: Data.zmRandomSHA256Key()
+        )
 
-        let imageMessage = GenericMessage(content: ImageAsset(mediumProperties: properties,
-                                                              processedProperties: properties,
-                                                              encryptionKeys: keys,
-                                                              format: .preview),
-                                                    nonce: UUID.create())
+        let imageMessage = GenericMessage(
+            content: ImageAsset(
+                mediumProperties: properties,
+                processedProperties: properties,
+                encryptionKeys: keys,
+                format: .preview
+            ),
+            nonce: UUID.create()
+        )
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { try! $0.setUnderlyingMessage(imageMessage) },
             expectedChangedField: #keyPath(MessageChangeInfo.imageChanged)
@@ -164,7 +181,10 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { try! $0.setUnderlyingMessage(updateGenericMessage) },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.underlyingMessageChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.linkPreviewChanged),
+                #keyPath(MessageChangeInfo.underlyingMessageChanged)
+            ]
         )
     }
 
@@ -174,7 +194,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { $0.previewData = verySmallJPEGData() },
             expectedChangedField: nil
@@ -182,12 +202,12 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesWhenAReactionIsAddedOnMessage() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { $0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC)) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
@@ -195,7 +215,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesWhenAReactionIsAddedOnMessageFromADifferentUser() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
@@ -212,15 +232,15 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         message.setReactions(["👻"], forUser: selfUser)
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { $0.setReactions([], forUser: selfUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
@@ -228,14 +248,14 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesWhenAReactionFromADifferentUserIsAddedOnTopOfSelfReaction() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.name = "Hans"
         otherUser.remoteIdentifier = .create()
 
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         message.setReactions(["👻"], forUser: selfUser)
         uiMOC.saveOrRollback()
 
@@ -248,7 +268,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesObserversWhenDeliveredChanges() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         XCTAssertFalse(message.delivered)
         uiMOC.saveOrRollback()
@@ -265,14 +285,14 @@ class MessageObserverTests: NotificationDispatcherTestBase {
 
         // given
         let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             _ = MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)
         }
         // when
         message.serverTimestamp = Date()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(messageObserver.notifications.count, 0)
@@ -292,32 +312,50 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesWhenUserReadsTheMessage() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
-                _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
+                _ = ZMMessageConfirmation(
+                    type: .read,
+                    message: message,
+                    sender: ZMUser.selfUser(in: uiMOC),
+                    serverTimestamp: Date(),
+                    managedObjectContext: uiMOC
+                )
             },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.confirmationsChanged),
+                #keyPath(MessageChangeInfo.deliveryStateChanged)
+            ]
         )
     }
 
     func testThatItNotifiesWhenUserReadsTheMessage_Asset() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendImage(from: verySmallJPEGData())  as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
-                _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
-        },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
+                _ = ZMMessageConfirmation(
+                    type: .read,
+                    message: message,
+                    sender: ZMUser.selfUser(in: uiMOC),
+                    serverTimestamp: Date(),
+                    managedObjectContext: uiMOC
+                )
+            },
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.confirmationsChanged),
+                #keyPath(MessageChangeInfo.deliveryStateChanged)
+            ]
         )
     }
 
@@ -331,26 +369,32 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { try! $0.setUnderlyingMessage(update) },
-            expectedChangedFields: [ #keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.underlyingMessageChanged),
+                #keyPath(MessageChangeInfo.linkPreviewChanged)
+            ]
         )
 
     }
 
     func testThatItNotifiesWhenLinkAttachmentIsAdded() {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
-        let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                        permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                        thumbnails: [URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!],
-                                        originalRange: NSRange(location: 20, length: 43))
+        let attachment = LinkAttachment(
+            type: .youTubeVideo,
+            title: "Pingu Season 1 Episode 1",
+            permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+            thumbnails: [URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!],
+            originalRange: NSRange(location: 20, length: 43)
+        )
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
                 return message.linkAttachments = [attachment]

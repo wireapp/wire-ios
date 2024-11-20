@@ -19,9 +19,9 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 class CommitSenderTests: ZMBaseManagedObjectTest {
 
@@ -91,7 +91,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return [event]
+            [event]
         }
 
         // Mock core crypto
@@ -153,7 +153,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         withRecovery recovery: CommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingCommit: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given
@@ -186,7 +186,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return [event]
+            [event]
         }
 
         // Mock core crypto
@@ -232,7 +232,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         withRecovery recovery: ExternalCommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingGroup: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         // Given
@@ -264,11 +264,11 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Mock commit accepted
-        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { _ in  return nil }
+        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { _ in  nil }
 
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")

@@ -18,36 +18,30 @@
 
 import Foundation
 
-/**
- * A block of code executed when a URL request fails.
- *
- * - parameter error: The error that prevented the request from succeeding.
- */
+/// A block of code executed when a URL request fails.
+///
+/// - parameter error: The error that prevented the request from succeeding.
 
 typealias URLRequestSuccessFailureHandler = (_ error: ZiphyError) -> Void
 
-/**
- * A block of code executed when a URL request completes with success.
- *
- * If you throw an error from its body, it will marked the promise as failed and
- * will trigger its failure handler.
- *
- * - parameter data: The body of the response as returned by the server.
- */
+/// A block of code executed when a URL request completes with success.
+///
+/// If you throw an error from its body, it will marked the promise as failed and
+/// will trigger its failure handler.
+///
+/// - parameter data: The body of the response as returned by the server.
 
 typealias URLRequestSuccessHandler = (_ data: Data) throws -> Void
 
-/**
- * An object that handles the asynchronous delivery of a network response.
- *
- * If you set the `requestIdentifier` property, the promise becomes eligible for cancellation.
- *
- * Use the `failureHandler` to handle network failure. Use the `successHandler` to parse the
- * data from the response.
- *
- * To force failure, call `rejectWithError:`. This will trigger the `failureHandler`. Calling `cancel`
- * fails sliently.
- */
+/// An object that handles the asynchronous delivery of a network response.
+///
+/// If you set the `requestIdentifier` property, the promise becomes eligible for cancellation.
+///
+/// Use the `failureHandler` to handle network failure. Use the `successHandler` to parse the
+/// data from the response.
+///
+/// To force failure, call `rejectWithError:`. This will trigger the `failureHandler`. Calling `cancel`
+/// fails sliently.
 
 final class URLRequestPromise: CancelableTask {
 
@@ -62,7 +56,7 @@ final class URLRequestPromise: CancelableTask {
     /// in the order they were added with the `then` function.
     var successHandler: URLRequestSuccessHandler? {
         didSet {
-            if let result = self.result, isResolved == true, isCancelled == false {
+            if let result, isResolved == true, isCancelled == false {
                 notifyResult(result.0, result.1, result.2).map(handleErrorIfNeeded)
             }
         }
@@ -71,7 +65,7 @@ final class URLRequestPromise: CancelableTask {
     /// The block that will be executed in case the operation fails.
     var failureHandler: URLRequestSuccessFailureHandler? {
         didSet {
-            if let error = self.failureError, isResolved == true, isCancelled == false {
+            if let error = failureError, isResolved == true, isCancelled == false {
                 failureHandler?(error)
             }
         }
@@ -82,12 +76,10 @@ final class URLRequestPromise: CancelableTask {
     private var result: (Data?, URLResponse?, Error?)?
     private var failureError: ZiphyError?
 
-    /**
-     * Creates a new promise for a request, before it is scheduled.
-     *
-     * - parameter requester: The object that will perform the request whose
-     * result is represented by this promise.
-     */
+    /// Creates a new promise for a request, before it is scheduled.
+    ///
+    /// - parameter requester: The object that will perform the request whose
+    /// result is represented by this promise.
 
     init(requester: ZiphyURLRequester) {
         self.requester = requester
@@ -95,21 +87,19 @@ final class URLRequestPromise: CancelableTask {
 
     // MARK: - Response Handling
 
-    /**
-     * Provides the raw result of the response.
-     *
-     * This method will check for errors in the error parameter and the structure
-     * of the response. In case it finds an error, the `failureHandler` will be called.
-     * If the response is valid, it will call the `successHandler`.
-     *
-     * - parameter data: The data returned by the server.
-     * - parameter response: The response provided by the server.
-     * - parameter error: The error provided by the system in case the request could not
-     * be scheduled or performed correctly.
-     */
+    /// Provides the raw result of the response.
+    ///
+    /// This method will check for errors in the error parameter and the structure
+    /// of the response. In case it finds an error, the `failureHandler` will be called.
+    /// If the response is valid, it will call the `successHandler`.
+    ///
+    /// - parameter data: The data returned by the server.
+    /// - parameter response: The response provided by the server.
+    /// - parameter error: The error provided by the system in case the request could not
+    /// be scheduled or performed correctly.
 
     func resolve(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
-        guard !isCancelled && !isResolved else {
+        guard !isCancelled, !isResolved else {
             return
         }
 
@@ -118,14 +108,12 @@ final class URLRequestPromise: CancelableTask {
         isResolved = true
     }
 
-    /**
-     * Cancels the network request if possible.
-     *
-     * The network request will only be cancelled if you set the `requestIdentifier` property
-     * when starting the request.
-     *
-     * If you already cancelled the request, nothing happens.
-     */
+    /// Cancels the network request if possible.
+    ///
+    /// The network request will only be cancelled if you set the `requestIdentifier` property
+    /// when starting the request.
+    ///
+    /// If you already cancelled the request, nothing happens.
 
     func cancel() {
         guard !isCancelled else {
@@ -161,7 +149,7 @@ final class URLRequestPromise: CancelableTask {
             return
         }
 
-        self.failureError = error
+        failureError = error
         failureHandler?(error)
     }
 

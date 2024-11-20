@@ -72,11 +72,17 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     let accessibilityLabel: String?
 
     init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
-        configuration = ConversationLegalHoldCellDescription.configuration(for: systemMessageType, in: conversation)
-        accessibilityLabel = configuration.attributedText?.string
+        self.configuration = ConversationLegalHoldCellDescription.configuration(
+            for: systemMessageType,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
     }
 
-    private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
+    private static func configuration(
+        for systemMessageType: ZMSystemMessageType,
+        in conversation: ZMConversation
+    ) -> View.Configuration {
         let systemMessageTitle = title(for: systemMessageType)
         let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
@@ -88,11 +94,12 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold
+                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+            L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
-            return ""
+            ""
         }
     }
 

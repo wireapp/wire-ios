@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class LastEventIDRepositoryTests: XCTestCase {
 
@@ -47,11 +47,11 @@ final class LastEventIDRepositoryTests: XCTestCase {
     // MARK: - Helper
 
     var userDefaultsKey: String {
-        return "\(userID.uuidString)_lastEventID"
+        "\(userID.uuidString)_lastEventID"
     }
 
     var getStoredValue: String? {
-        return userDefaults.string(forKey: userDefaultsKey)
+        userDefaults.string(forKey: userDefaultsKey)
     }
 
     func storeValue(_ string: String) {
