@@ -21,10 +21,22 @@ import UIKit
 
 public final class FolderPickerHostingController: UIHostingController<FolderPicker> {
     private let viewModel: FolderPickerViewModel
+    private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
+    private let conversationName: String
 
-    public init(viewModel: FolderPickerViewModel) {
+    public init(
+        viewModel: FolderPickerViewModel,
+        createFolderUseCase: any CreateConversationFolderUseCaseProtocol,
+        conversationName: String
+    ) {
         self.viewModel = viewModel
-        super.init(rootView: FolderPicker(viewModel: viewModel))
+        self.createFolderUseCase = createFolderUseCase
+        self.conversationName = conversationName
+        super.init(rootView: FolderPicker(
+            viewModel: viewModel,
+            createFolderUseCase: createFolderUseCase,
+            conversationName: conversationName
+        ))
     }
 
     @available(*, unavailable)
