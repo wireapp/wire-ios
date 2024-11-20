@@ -43,7 +43,7 @@ class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
         userID: UUID,
         userDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: userDefaults
         )

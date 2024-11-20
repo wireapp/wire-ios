@@ -48,6 +48,7 @@ struct SidebarPreview: View {
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
                     accountImageAction: {},
+                    foldersAction: { _ in },
                     connectAction: {},
                     supportAction: {},
                     accountImageView: { _, _ in MockAccountImageView() },

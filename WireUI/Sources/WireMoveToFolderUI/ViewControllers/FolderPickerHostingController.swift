@@ -28,7 +28,8 @@ public final class FolderPickerHostingController: UIHostingController<FolderPick
     }
 
     @available(*, unavailable)
-    @MainActor dynamic required init?(coder aDecoder: NSCoder) {
+    @MainActor
+    dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

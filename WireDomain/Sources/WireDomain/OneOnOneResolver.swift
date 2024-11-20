@@ -71,7 +71,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     public func invoke() async throws {
         switch target {
-        case .user(let id):
+        case let .user(id):
             try await resolveOneOnOneConversation(with: id.toDomainModel())
         case .allUsers:
             // TODO: [WPB-10727] resolve all users 1:1 conversations

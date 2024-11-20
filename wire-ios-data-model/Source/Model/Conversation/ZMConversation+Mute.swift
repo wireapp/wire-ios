@@ -53,7 +53,10 @@ public struct MutedMessageTypes: OptionSet {
 
     /// Only mentions and replies are muted. Only used to check the bits in the bitmask.
     /// Please do not set this as the value on the conversation.
-    public static let mentionsAndReplies = MutedMessageTypes(rawValue: MutedMessageOptionValue.mentionsAndReplies.rawValue)
+    public static let mentionsAndReplies = MutedMessageTypes(
+        rawValue: MutedMessageOptionValue.mentionsAndReplies
+            .rawValue
+    )
 }
 
 public extension ZMConversation {
@@ -62,7 +65,7 @@ public extension ZMConversation {
     /// Returns an option set of messages types which should be muted
     var mutedMessageTypes: MutedMessageTypes {
         get {
-            guard let managedObjectContext = self.managedObjectContext else {
+            guard let managedObjectContext else {
                 return .none
             }
 
@@ -71,11 +74,12 @@ public extension ZMConversation {
             if selfUser.hasTeam {
                 return MutedMessageTypes(rawValue: mutedStatus)
             } else {
-                return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes.all
+                return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes
+                    .all
             }
         }
         set {
-            guard let managedObjectContext = self.managedObjectContext else {
+            guard let managedObjectContext else {
                 return
             }
 
@@ -84,11 +88,12 @@ public extension ZMConversation {
             if selfUser.hasTeam {
                 mutedStatus = newValue.rawValue
             } else {
-                mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none.rawValue : (MutedMessageOptionValue.all.rawValue)
+                mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none
+                    .rawValue : (MutedMessageOptionValue.all.rawValue)
             }
 
             if managedObjectContext.zm_isUserInterfaceContext,
-               let lastServerTimestamp = self.lastServerTimeStamp {
+               let lastServerTimestamp = lastServerTimeStamp {
                 updateMuted(lastServerTimestamp, synchronize: true)
             }
         }
@@ -97,7 +102,7 @@ public extension ZMConversation {
     /// Returns an option set of messages types which should be muted when also considering the
     /// the availability status of the self user.
     var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return .none
         }
 
@@ -112,11 +117,11 @@ extension ZMUser {
     var mutedMessagesTypes: MutedMessageTypes {
         switch availability {
         case .available, .none:
-            return .none
+            .none
         case .busy:
-            return .regular
+            .regular
         case .away:
-            return .all
+            .all
         }
     }
 
@@ -124,7 +129,7 @@ extension ZMUser {
 
 public extension ZMConversation {
     func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return false
         }
 
@@ -134,7 +139,7 @@ public extension ZMConversation {
             return true
         }
 
-        if self.mutedMessageTypesIncludingAvailability == .none {
+        if mutedMessageTypesIncludingAvailability == .none {
             return false
         }
 
@@ -150,7 +155,8 @@ public extension ZMConversation {
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
 
-        if self.mutedMessageTypesIncludingAvailability == .regular && (textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage)) {
+        if mutedMessageTypesIncludingAvailability == .regular,
+           textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
             return false
         } else {
             return true

@@ -34,13 +34,11 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
 
 }
 
-/**
- InsertedObjectSync synchronizes objects which has been inserted locally but does yet exist on the backend.
-
- This only works for core data entities which inherit from `ZMManagedObject`. The rule for when an object does
- not yet exist on the backend is determined by the `predicateForObjectsThatNeedToBeInsertedUpstream()` or
- by the `insertPredicate` if supplied.
- */
+/// InsertedObjectSync synchronizes objects which has been inserted locally but does yet exist on the backend.
+///
+/// This only works for core data entities which inherit from `ZMManagedObject`. The rule for when an object does
+/// not yet exist on the backend is determined by the `predicateForObjectsThatNeedToBeInsertedUpstream()` or
+/// by the `insertPredicate` if supplied.
 class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
 
     let insertPredicate: NSPredicate
@@ -56,7 +54,7 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        var trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
+        var trackedObjects = objects.compactMap { $0 as? Transcoder.Object }
         let indexOfSecondPartition = trackedObjects.partition(by: insertPredicate.evaluate)
         let insertedObjects = trackedObjects[indexOfSecondPartition...]
         let removedObjects = trackedObjects[..<indexOfSecondPartition]
@@ -65,11 +63,11 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return Transcoder.Object.sortedFetchRequest(with: insertPredicate)
+        Transcoder.Object.sortedFetchRequest(with: insertPredicate)
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let insertedObjects = objects.compactMap({ $0 as? Transcoder.Object })
+        let insertedObjects = objects.compactMap { $0 as? Transcoder.Object }
 
         addInsertedObjects(insertedObjects)
     }

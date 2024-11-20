@@ -30,7 +30,7 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
     private var sut: CreateConversationFolderUseCase!
 
     private var managedObjectContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp
@@ -78,7 +78,11 @@ final class CreateConversationFolderUseCaseTests: XCTestCase {
         await managedObjectContext.perform {
             XCTAssertNotNil(firstLabel, "Expected a non-nil LabelType for the first folder")
             XCTAssertNotNil(secondLabel, "Expected a non-nil LabelType for the second folder")
-            XCTAssertNotEqual(firstLabel?.remoteIdentifier, secondLabel?.remoteIdentifier, "Each folder should have a unique identifier")
+            XCTAssertNotEqual(
+                firstLabel?.remoteIdentifier,
+                secondLabel?.remoteIdentifier,
+                "Each folder should have a unique identifier"
+            )
         }
     }
 }

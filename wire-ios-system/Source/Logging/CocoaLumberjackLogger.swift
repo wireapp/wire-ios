@@ -22,7 +22,7 @@ import Foundation
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
 
-    private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+    private let fileLogger: DDFileLogger = .init() // File Logger
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -67,13 +67,14 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         }
 
         // TODO: [WPB-6432] enable when ZMSLog is cleaned up
-        /* let isSafe = mergedAttributes[.public] as? Bool == true
-        guard isDebug || isSafe else {
-            // skips logs in production builds with non redacted info
-            return
-        }*/
+        // let isSafe = mergedAttributes[.public] as? Bool == true
+        // guard isDebug || isSafe else {
+        //    // skips logs in production builds with non redacted info
+        //    return
+        // }
 
-        var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
+        var entry =
+            "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
         if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"

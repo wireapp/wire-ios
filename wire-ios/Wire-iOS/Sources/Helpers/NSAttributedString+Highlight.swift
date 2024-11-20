@@ -20,47 +20,60 @@ import UIKit
 
 extension String {
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        return NSRange(range, in: self)
+        NSRange(range, in: self)
     }
 
     func containsCharacters(from characterSet: CharacterSet) -> Bool {
-        return self.rangeOfCharacter(from: characterSet) != .none
+        rangeOfCharacter(from: characterSet) != .none
     }
 
-    func range(of strings: [String], options: CompareOptions = [], range: Range<String.Index>? = .none) -> Range<String.Index>? {
-        return strings.compactMap {
-                self.range(of: $0,
-                           options: options,
-                           range: range,
-                           locale: nil)
-            }.sorted { $0.lowerBound < $1.lowerBound }.first
+    func range(
+        of strings: [String],
+        options: CompareOptions = [],
+        range: Range<String.Index>? = .none
+    ) -> Range<String.Index>? {
+        strings.compactMap {
+            self.range(
+                of: $0,
+                options: options,
+                range: range,
+                locale: nil
+            )
+        }.sorted { $0.lowerBound < $1.lowerBound }.first
     }
 
     static let ellipsis: String = "…"
 }
 
 extension NSString {
-    func allRanges(of strings: [String], options: NSString.CompareOptions = [], range: NSRange? = .none) -> [String: [NSRange]] {
-        let initialQueryRange = range ?? NSRange(location: 0, length: self.length)
+    func allRanges(
+        of strings: [String],
+        options: NSString.CompareOptions = [],
+        range: NSRange? = .none
+    ) -> [String: [NSRange]] {
+        let initialQueryRange = range ?? NSRange(location: 0, length: length)
         var result = [String: [NSRange]]()
 
         for query in strings {
             var queryRange = initialQueryRange
-            var currentRange: NSRange = NSRange(location: NSNotFound, length: 0)
+            var currentRange = NSRange(location: NSNotFound, length: 0)
 
             var queryResult = [NSRange]()
 
             repeat {
-                currentRange = self.range(of: query, options: [.caseInsensitive, .diacriticInsensitive], range: queryRange)
+                currentRange = self.range(
+                    of: query,
+                    options: [.caseInsensitive, .diacriticInsensitive],
+                    range: queryRange
+                )
                 if currentRange.location != NSNotFound {
                     queryRange.location = currentRange.location + currentRange.length
-                    queryRange.length = self.length - queryRange.location
+                    queryRange.length = length - queryRange.location
 
                     queryResult.append(currentRange)
                 }
-            }
-            while currentRange.location != NSNotFound
-            if queryResult.count > 0 {
+            } while currentRange.location != NSNotFound
+            if !queryResult.isEmpty {
                 result[query] = queryResult
             }
         }
@@ -72,42 +85,54 @@ extension NSString {
 extension NSAttributedString {
     func layoutSize() -> CGSize {
         let framesetter = CTFramesetterCreateWithAttributedString(self)
-        let targetSize = CGSize(width: 10000, height: CGFloat.greatestFiniteMagnitude)
-        let labelSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, self.length), nil, targetSize, nil)
-
-        return labelSize
+        let targetSize = CGSize(width: 10_000, height: CGFloat.greatestFiniteMagnitude)
+        return CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, length), nil, targetSize, nil)
     }
 
     // This method cuts the prefix from `self` up to the beginning of the word prior to the word on position @c from.
     // The result is then prefixed with ellipsis of the same style as the beginning of the string.
     func cutAndPrefixedWithEllipsis(from: Int, fittingIntoWidth: CGFloat) -> NSAttributedString {
-        let text = self.string as NSString
+        let text = string as NSString
 
         let rangeUntilFrom = NSRange(location: 0, length: from)
-        let previousSpace = text.rangeOfCharacter(from: .whitespacesAndNewlines, options: [.backwards], range: rangeUntilFrom)
+        let previousSpace = text.rangeOfCharacter(
+            from: .whitespacesAndNewlines,
+            options: [.backwards],
+            range: rangeUntilFrom
+        )
 
         // There is no prior whitespace
         if previousSpace.location == NSNotFound {
-            return self.attributedSubstring(from: NSRange(location: from, length: self.length - from)).prefixedWithEllipsis()
+            return attributedSubstring(from: NSRange(location: from, length: length - from)).prefixedWithEllipsis()
         } else {
             // Check if we accidentally jumped to the previous line
-            let textSkipped = text.substring(with: NSRange(location: previousSpace.location + previousSpace.length, length: from - previousSpace.location))
+            let textSkipped = text.substring(with: NSRange(
+                location: previousSpace.location + previousSpace.length,
+                length: from - previousSpace.location
+            ))
             let skippedNewline = textSkipped.containsCharacters(from: .newlines)
 
             if skippedNewline {
-                return self.attributedSubstring(from: NSRange(location: from, length: self.length - from)).prefixedWithEllipsis()
+                return attributedSubstring(from: NSRange(location: from, length: length - from)).prefixedWithEllipsis()
             }
         }
 
         let rangeUntilPreviousSpace = NSRange(location: 0, length: previousSpace.location)
-        var prePreviousSpace = text.rangeOfCharacter(from: .whitespacesAndNewlines, options: [.backwards], range: rangeUntilPreviousSpace)
+        var prePreviousSpace = text.rangeOfCharacter(
+            from: .whitespacesAndNewlines,
+            options: [.backwards],
+            range: rangeUntilPreviousSpace
+        )
 
         // There is no whitespace before the previousSpace
         if prePreviousSpace.location == NSNotFound {
             prePreviousSpace = previousSpace
         } else {
             // Check if we accidentally jumped to the previous line
-            let textSkipped = text.substring(with: NSRange(location: prePreviousSpace.location + prePreviousSpace.length, length: from - prePreviousSpace.location))
+            let textSkipped = text.substring(with: NSRange(
+                location: prePreviousSpace.location + prePreviousSpace.length,
+                length: from - prePreviousSpace.location
+            ))
             let preSkippedNewline = textSkipped.containsCharacters(from: .newlines)
 
             if preSkippedNewline {
@@ -115,43 +140,51 @@ extension NSAttributedString {
             }
         }
 
-        let rangeFromPrePreviousSpaceToFrom = NSRange(location: prePreviousSpace.location + prePreviousSpace.length,
-                                                      length: from - (prePreviousSpace.location + prePreviousSpace.length))
+        let rangeFromPrePreviousSpaceToFrom = NSRange(
+            location: prePreviousSpace.location + prePreviousSpace.length,
+            length: from -
+                (prePreviousSpace.location + prePreviousSpace.length)
+        )
 
-        let textFromNextSpace = self.attributedSubstring(from: rangeFromPrePreviousSpaceToFrom)
+        let textFromNextSpace = attributedSubstring(from: rangeFromPrePreviousSpaceToFrom)
 
         let textSize = textFromNextSpace.layoutSize()
 
         if textSize.width > fittingIntoWidth {
-            return self.attributedSubstring(from: NSRange(location: from, length: self.length - from)).prefixedWithEllipsis()
+            return attributedSubstring(from: NSRange(location: from, length: length - from)).prefixedWithEllipsis()
         } else {
-            let rangeFromPrePreviousSpaceToEnd = NSRange(location: prePreviousSpace.location + prePreviousSpace.length,
-                                                         length: self.length - (prePreviousSpace.location + prePreviousSpace.length))
+            let rangeFromPrePreviousSpaceToEnd = NSRange(
+                location: prePreviousSpace.location + prePreviousSpace.length,
+                length: length -
+                    (prePreviousSpace.location + prePreviousSpace.length)
+            )
 
-            return self.attributedSubstring(from: rangeFromPrePreviousSpaceToEnd).prefixedWithEllipsis()
+            return attributedSubstring(from: rangeFromPrePreviousSpaceToEnd).prefixedWithEllipsis()
         }
     }
 
     private func prefixedWithEllipsis() -> NSAttributedString {
-        guard !self.string.isEmpty else {
+        guard !string.isEmpty else {
             return self
         }
 
-        var attributes = self.attributes(at: 0, effectiveRange: .none)
+        var attributes = attributes(at: 0, effectiveRange: .none)
         attributes[.backgroundColor] = .none
 
         let ellipsisString = NSAttributedString(string: String.ellipsis, attributes: attributes)
         return ellipsisString + self
     }
 
-    func highlightingAppearances(of query: [String],
-                                 with attributes: [NSAttributedString.Key: Any],
-                                 upToWidth: CGFloat,
-                                 totalMatches: UnsafeMutablePointer<Int>?) -> NSAttributedString {
+    func highlightingAppearances(
+        of query: [String],
+        with attributes: [NSAttributedString.Key: Any],
+        upToWidth: CGFloat,
+        totalMatches: UnsafeMutablePointer<Int>?
+    ) -> NSAttributedString {
 
-        let attributedText = self.mutableCopy() as! NSMutableAttributedString
+        let attributedText = mutableCopy() as! NSMutableAttributedString
 
-        let allRanges = (self.string as NSString).allRanges(of: query, options: [.caseInsensitive, .diacriticInsensitive])
+        let allRanges = (string as NSString).allRanges(of: query, options: [.caseInsensitive, .diacriticInsensitive])
 
         if let totalMatches {
             totalMatches.pointee = allRanges.map { $1.count }.reduce(0, +)
@@ -159,7 +192,10 @@ extension NSAttributedString {
 
         for (_, results) in allRanges {
             for currentRange in results {
-                let substring = self.attributedSubstring(from: NSRange(location: 0, length: currentRange.location + currentRange.length))
+                let substring = attributedSubstring(from: NSRange(
+                    location: 0,
+                    length: currentRange.location + currentRange.length
+                ))
 
                 if upToWidth == 0 || substring.layoutSize().width < upToWidth {
                     attributedText.addAttributes(attributes, range: currentRange)

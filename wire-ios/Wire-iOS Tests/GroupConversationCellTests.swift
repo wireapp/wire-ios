@@ -45,9 +45,7 @@ final class GroupConversationCellTests: XCTestCase {
     private func createOneOnOneConversation() -> MockStableRandomParticipantsConversation {
         otherUser = MockUserType.createDefaultOtherUser()
 
-        let otherUserConversation = MockStableRandomParticipantsConversation.createOneOnOneConversation(otherUser: otherUser)
-
-        return otherUserConversation
+        return MockStableRandomParticipantsConversation.createOneOnOneConversation(otherUser: otherUser)
     }
 
     private func createGroupConversation() -> MockStableRandomParticipantsConversation {
@@ -65,7 +63,7 @@ final class GroupConversationCellTests: XCTestCase {
 
     private func verify(
         conversation: GroupConversationCellConversation,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

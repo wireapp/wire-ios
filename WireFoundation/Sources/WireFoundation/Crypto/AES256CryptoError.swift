@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CommonCrypto
+public import CommonCrypto
 import Foundation
 
 /// Errors originating from `AES256Crypto`.

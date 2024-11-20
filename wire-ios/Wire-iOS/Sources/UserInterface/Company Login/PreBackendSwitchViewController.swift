@@ -32,7 +32,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     typealias Login = L10n.Localizable.Login.Sso.BackendSwitch
 
     var delegate: PreBackendSwitchViewControllerDelegate? {
-        return authenticationCoordinator
+        authenticationCoordinator
     }
 
     // MARK: - UI Styles
@@ -40,6 +40,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     static let informationBlue = UIColor(red: 35 / 255, green: 145 / 255, blue: 211 / 255, alpha: 1)
 
     // MARK: - UI Elements
+
     let wireLogoInfoView = WireLogoInfoView(title: Login.title, subtitle: Login.subtitle)
 
     let progressView: TimedCircularProgressView = {
@@ -53,9 +54,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }()
 
     let informationLabel: UILabel = {
-        let label = DynamicFontLabel(text: Login.information,
-                                     fontSpec: .normalSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Login.information,
+            fontSpec: .normalSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.accessibilityValue = label.text
@@ -63,6 +66,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }()
 
     // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -112,7 +116,8 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
             // information label
             informationLabel.topAnchor.constraint(equalTo: wireLogoInfoView.subtitleLabel.bottomAnchor, constant: 10),
             informationLabel.leadingAnchor.constraint(equalTo: wireLogoInfoView.contentView.leadingAnchor),
-            informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor)])
+            informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor)
+        ])
     }
 
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {

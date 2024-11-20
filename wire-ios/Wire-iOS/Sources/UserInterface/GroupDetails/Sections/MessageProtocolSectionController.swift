@@ -41,11 +41,11 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     // MARK: - Methods
 
     override var isHidden: Bool {
-        return false
+        false
     }
 
     override var sectionTitle: String? {
-        return L10n.Localizable.GroupDetails.MessageProtocol.sectionTile.uppercased()
+        L10n.Localizable.GroupDetails.MessageProtocol.sectionTile.uppercased()
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -95,6 +95,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case (.mls, 2) where Bundle.developerModeEnabled:
             cell.title = "Group ID (hashed)"
             cell.status = groupID?.safeForLoggingDescription
+
         default:
             break
         }
@@ -124,9 +125,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     override func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
-    ) {
-        return
-    }
+    ) {}
 
 }
 
@@ -135,12 +134,13 @@ private extension MessageProtocol {
     var name: String {
         switch self {
         case .proteus:
-            return "Proteus"
+            "Proteus"
 
         case .mls:
-            return "MLS"
+            "MLS"
+
         case .mixed:
-            return "Mixed"
+            "Mixed"
         }
     }
 

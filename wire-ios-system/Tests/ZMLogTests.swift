@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 class ZMLogTests: XCTestCase {
 
@@ -154,6 +154,7 @@ class ZMLogTests: XCTestCase {
 }
 
 // MARK: - Log level management
+
 extension ZMLogTests {
 
     func testThatLogIsNotRegisteredIfNoLogIsCalled() {
@@ -202,6 +203,7 @@ extension ZMLogTests {
 }
 
 // MARK: - Debug hook
+
 extension ZMLogTests {
 
     func testThatLogHookIsCalledWithError() {
@@ -211,7 +213,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -223,7 +225,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -259,7 +261,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.warn
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -271,7 +273,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).warn(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -308,7 +310,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.debug
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -321,7 +323,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -366,8 +368,8 @@ extension ZMLogTests {
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation1 = self.expectation(description: "Log received")
-        let expectation2 = self.expectation(description: "Log received")
+        let expectation1 = expectation(description: "Log received")
+        let expectation2 = expectation(description: "Log received")
 
         let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
@@ -386,7 +388,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token1)
@@ -452,7 +454,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 
@@ -473,7 +475,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 
@@ -516,6 +518,7 @@ extension ZMLogTests {
 }
 
 // MARK: - Save on disk
+
 extension ZMLogTests {
 
     func testThatItSavesLogsOnDisk() {
@@ -679,7 +682,7 @@ extension ZMLogTests {
         XCTAssertTrue(lines[4].hasSuffix("[4] [tag] DEBUG"))
     }
 
-    func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
+    func getLinesFromCurrentLog(file: StaticString = #filePath, line: UInt = #line) -> [String] {
 
         guard
             let currentLog = ZMSLog.currentLogURL,

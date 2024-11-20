@@ -21,21 +21,32 @@ import WireRequestStrategy
 
 /// TeamImageAssetUpdateStrategy is responsible for downloading the image associated with a team
 
-public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
+public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMDownstreamTranscoder {
 
     fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate var observer: Any!
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                                    entityName: Team.entityName(),
-                                                                    predicateForObjectsToDownload: Team.imageDownloadFilter,
-                                                                    managedObjectContext: managedObjectContext)
+        self.downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: Team.entityName(),
+            predicateForObjectsToDownload: Team
+                .imageDownloadFilter,
+            managedObjectContext: managedObjectContext
+        )
 
-        observer = NotificationInContext.addObserver(name: .teamDidRequestAsset, context: managedObjectContext.notificationContext, using: { [weak self] in self?.requestAssetForNotification(note: $0) })
+        self.observer = NotificationInContext.addObserver(
+            name: .teamDidRequestAsset,
+            context: managedObjectContext.notificationContext,
+            using: { [weak self] in self?.requestAssetForNotification(note: $0) }
+        )
     }
 
     private func requestAssetForNotification(note: NotificationInContext) {
@@ -49,18 +60,22 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamRequestSync?.nextRequest(for: apiVersion)
+        downstreamRequestSync?.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamRequestSync]
+        [downstreamRequestSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         guard let team = object as? Team, let assetId = team.pictureAssetId else { return nil }
 
         let path: String

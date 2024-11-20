@@ -35,9 +35,9 @@ public struct AppendImageMessageUseCase: AppendImageMessageUseCaseProtocol {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
-    public func invoke<Conversation: MessageAppendableConversation>(
+    public func invoke(
         withImageData imageData: Data,
-        in conversation: Conversation
+        in conversation: some MessageAppendableConversation
     ) throws {
         try conversation.appendImage(from: imageData, nonce: UUID())
         analyticsEventTracker?.trackEvent(

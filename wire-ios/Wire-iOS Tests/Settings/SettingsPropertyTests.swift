@@ -34,7 +34,7 @@ final class MockZMEditableUser: MockUser, EditableUserType {
     }
 
     static func validate(name: inout String?) throws -> Bool {
-        return false
+        false
     }
 }
 
@@ -43,7 +43,7 @@ final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
 
     var intensityLevel: AVSIntensityLevel = .none
 
-    func playMediaByName(_ name: String!) { }
+    func playMediaByName(_ name: String!) {}
 }
 
 final class ZMMockTracking: TrackingInterface {
@@ -53,7 +53,7 @@ final class ZMMockTracking: TrackingInterface {
 
     func requestAnalyticsConsent() async throws -> Bool {
         // no op
-        return false
+        false
     }
 
     func disableAnalytics() throws {
@@ -84,10 +84,12 @@ final class SettingsPropertyTests: XCTestCase {
         super.tearDown()
     }
 
-    func saveAndCheck<T>(_ property: SettingsProperty,
-                         value: T,
-                         file: String = #file,
-                         line: UInt = #line) throws where T: Equatable {
+    func saveAndCheck<T>(
+        _ property: SettingsProperty,
+        value: T,
+        file: String = #filePath,
+        line: UInt = #line
+    ) throws where T: Equatable {
         var property = property
         try property << value
         if let readValue: T = property.rawValue() as? T {
@@ -116,10 +118,10 @@ final class SettingsPropertyTests: XCTestCase {
         let property = SettingsUserDefaultsProperty(
             propertyName: SettingsPropertyName.darkMode,
             userDefaultsKey: SettingKey.colorScheme.rawValue,
-            userDefaults: self.userDefaults
+            userDefaults: userDefaults
         )
         // when & then
-        try! self.saveAndCheck(property, value: "light")
+        try! saveAndCheck(property, value: "light")
     }
 
     func testThatBoolUserDefaultsSettingSave() {
@@ -127,10 +129,10 @@ final class SettingsPropertyTests: XCTestCase {
         let property = SettingsUserDefaultsProperty(
             propertyName: SettingsPropertyName.chatHeadsDisabled,
             userDefaultsKey: SettingKey.chatHeadsDisabled.rawValue,
-            userDefaults: self.userDefaults
+            userDefaults: userDefaults
         )
         // when & then
-        try! self.saveAndCheck(property, value: NSNumber(value: true))
+        try! saveAndCheck(property, value: NSNumber(value: true))
     }
 
     func testThatNamePropertySetsValue() {
@@ -140,7 +142,7 @@ final class SettingsPropertyTests: XCTestCase {
         let trackingManager = ZMMockTracking()
 
         let factory = SettingsPropertyFactory(
-            userDefaults: self.userDefaults,
+            userDefaults: userDefaults,
             mediaManager: mediaManager,
             userSession: userSession,
             selfUser: selfUser,
@@ -149,7 +151,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.profileName)
         // when & then
-        try! self.saveAndCheck(property, value: "Test")
+        try! saveAndCheck(property, value: "Test")
     }
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
@@ -181,7 +183,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
-        try! self.saveAndCheck(property, value: 1)
+        try! saveAndCheck(property, value: 1)
     }
 
     func testThatIntegerBlockSettingSave() {
@@ -200,7 +202,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
-        try! self.saveAndCheck(property, value: 1)
+        try! saveAndCheck(property, value: 1)
     }
 
     func testThatItCanSetAIntegerUserDefaultsSettingsPropertyLargerThanOne() {
@@ -255,7 +257,7 @@ final class SettingsPropertyTests: XCTestCase {
         let settings = Settings()
         let account = Account(userName: "bob", userIdentifier: UUID())
         let key = SettingKey.blackListDownloadInterval
-        let value: Int = 42
+        let value = 42
         settings[key] = value
 
         // when & then

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
@@ -42,16 +42,34 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helpers
 
-    @discardableResult func createFileMessage(transferState: AssetTransferState = .uploading, hasCompletedPreprocessing: Bool = true, line: UInt = #line) -> ZMAssetClientMessage {
+    @discardableResult
+    func createFileMessage(
+        transferState: AssetTransferState = .uploading,
+        hasCompletedPreprocessing: Bool = true,
+        line: UInt = #line
+    ) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
-        let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-        let message = try! targetConversation.appendFile(with: ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())) as! ZMAssetClientMessage
+        let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(
+            forResource: "Lorem Ipsum",
+            withExtension: "txt"
+        )!
+        let message = try! targetConversation.appendFile(with: ZMFileMetadata(
+            fileURL: url,
+            thumbnail: verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
 
         if hasCompletedPreprocessing {
             for asset in message.assets {
                 if asset.needsPreprocessing {
-                    asset.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 100, mimeType: "image/jpeg"))
+                    asset.updateWithPreprocessedData(
+                        verySmallJPEGData(),
+                        imageProperties: ZMIImageProperties(
+                            size: CGSize(width: 100, height: 100),
+                            length: 100,
+                            mimeType: "image/jpeg"
+                        )
+                    )
                 }
                 asset.encrypt()
             }
@@ -62,14 +80,25 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         return message
     }
 
-    @discardableResult func createImageMessage(transferState: AssetTransferState = .uploading, line: UInt = #line) -> ZMAssetClientMessage {
+    @discardableResult
+    func createImageMessage(
+        transferState: AssetTransferState = .uploading,
+        line: UInt = #line
+    ) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
         let message = try! targetConversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
 
         for asset in message.assets {
             if asset.needsPreprocessing {
-                asset.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 100, mimeType: "image/jpeg"))
+                asset.updateWithPreprocessedData(
+                    verySmallJPEGData(),
+                    imageProperties: ZMIImageProperties(
+                        size: CGSize(width: 100, height: 100),
+                        length: 100,
+                        mimeType: "image/jpeg"
+                    )
+                )
             }
             asset.encrypt()
         }
@@ -176,7 +205,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
         }
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             // when
             message.fileMessageData?.cancelTransfer()
             let messageSet: Set<NSManagedObject> = [message]
@@ -184,7 +213,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // then - the cancellation provider should be informed to cancel the request
             let cancelledIdentifier = self.mockApplicationStatus.cancelledIdentifiers.first
             XCTAssertEqual(self.mockApplicationStatus.cancelledIdentifiers.count, 1)
@@ -226,7 +255,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
+            request?.complete(with: ZMTransportResponse(
+                payload: ["key": "asset-id-123"] as ZMTransportData,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 0
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -245,7 +279,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
+            request?.complete(with: ZMTransportResponse(
+                payload: ["key": "asset-id-123"] as ZMTransportData,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 0
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -265,7 +304,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": expectedAssetId] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
+            request?.complete(with: ZMTransportResponse(
+                payload: ["key": expectedAssetId] as ZMTransportData,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: 0
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -284,7 +328,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // when
-            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: 0))
+            request?.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: 0
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

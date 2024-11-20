@@ -81,49 +81,49 @@ extension Payload {
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
             case .mls, .mixed:
-                messageProtocol = "mls"
-                creatorClient = action.creatorClientID
-                qualifiedUsers = nil
-                users = nil
+                self.messageProtocol = "mls"
+                self.creatorClient = action.creatorClientID
+                self.qualifiedUsers = nil
+                self.users = nil
 
             case .proteus:
-                messageProtocol = "proteus"
-                creatorClient = nil
-                qualifiedUsers = action.qualifiedUserIDs
-                users = action.unqualifiedUserIDs
+                self.messageProtocol = "proteus"
+                self.creatorClient = nil
+                self.qualifiedUsers = action.qualifiedUserIDs
+                self.users = action.unqualifiedUserIDs
             }
 
-            name = action.name
-            access = action.accessMode?.stringValue
-            legacyAccessRole = action.legacyAccessRole?.rawValue
-            accessRoles = action.accessRoles.map(\.rawValue)
-            conversationRole = ZMConversation.defaultMemberRoleName
-            team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
-            readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
-            messageTimer = nil
+            self.name = action.name
+            self.access = action.accessMode?.stringValue
+            self.legacyAccessRole = action.legacyAccessRole?.rawValue
+            self.accessRoles = action.accessRoles.map(\.rawValue)
+            self.conversationRole = ZMConversation.defaultMemberRoleName
+            self.team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
+            self.readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
+            self.messageTimer = nil
         }
 
         init(from decoder: Decoder, apiVersion: WireTransport.APIVersion) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            users = try container.decodeIfPresent([UUID].self, forKey: .users)
-            qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
-            access = try container.decodeIfPresent([String].self, forKey: .access)
-            name = try container.decodeIfPresent(String.self, forKey: .name)
-            team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
-            messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-            readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-            conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
-            creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
-            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+            self.users = try container.decodeIfPresent([UUID].self, forKey: .users)
+            self.qualifiedUsers = try container.decodeIfPresent([QualifiedID].self, forKey: .qualifiedUsers)
+            self.access = try container.decodeIfPresent([String].self, forKey: .access)
+            self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            self.team = try container.decodeIfPresent(Payload.ConversationTeamInfo.self, forKey: .team)
+            self.messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+            self.readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            self.conversationRole = try container.decodeIfPresent(String.self, forKey: .conversationRole)
+            self.creatorClient = try container.decodeIfPresent(String.self, forKey: .creatorClient)
+            self.messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
 
             switch apiVersion {
             case .v0, .v1, .v2:
-                legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+                self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
             case .v3, .v4, .v5, .v6:
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
-                legacyAccessRole = nil
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+                self.legacyAccessRole = nil
             }
         }
 

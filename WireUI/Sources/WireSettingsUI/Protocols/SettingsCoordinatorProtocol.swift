@@ -31,7 +31,7 @@ public final class AnySettingsCoordinator: SettingsCoordinatorProtocol {
     public init(
         settingsCoordinator: some SettingsCoordinatorProtocol
     ) {
-        _showSettingsContent = { topLevelMenuItem in
+        self._showSettingsContent = { topLevelMenuItem in
             settingsCoordinator.showSettingsContent(topLevelMenuItem)
         }
     }

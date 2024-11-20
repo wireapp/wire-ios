@@ -26,9 +26,12 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState
 
-        static func == (lhs: ConversationMessageToolboxCell.Configuration, rhs: ConversationMessageToolboxCell.Configuration) -> Bool {
-            return lhs.deliveryState == rhs.deliveryState &&
-            lhs.message == rhs.message
+        static func == (
+            lhs: ConversationMessageToolboxCell.Configuration,
+            rhs: ConversationMessageToolboxCell.Configuration
+        ) -> Bool {
+            lhs.deliveryState == rhs.deliveryState &&
+                lhs.message == rhs.message
         }
     }
 
@@ -72,9 +75,16 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         toolboxView.configureForMessage(object.message, animated: animated)
     }
 
-    func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode) {
+    func messageToolboxDidRequestOpeningDetails(
+        _ messageToolboxView: MessageToolboxView,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    ) {
         guard let message, let delegate else { return }
-        delegate.conversationMessageWantsToOpenMessageDetails(self, for: message, preferredDisplayMode: preferredDisplayMode)
+        delegate.conversationMessageWantsToOpenMessageDetails(
+            self,
+            for: message,
+            preferredDisplayMode: preferredDisplayMode
+        )
 
     }
 

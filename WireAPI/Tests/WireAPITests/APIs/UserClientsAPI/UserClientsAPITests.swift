@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
-import XCTest
 
 final class UserClientsAPITests: XCTestCase {
 

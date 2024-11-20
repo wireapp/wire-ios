@@ -41,11 +41,9 @@ final class SwitchBackendViewModel: ObservableObject {
 
     let items: [Item]
 
-    @Published
-    var selectedItemID: Item.ID
+    @Published var selectedItemID: Item.ID
 
-    @Published
-    var alertItem: AlertItem?
+    @Published var alertItem: AlertItem?
 
     struct AlertItem: Identifiable {
 
@@ -81,7 +79,7 @@ final class SwitchBackendViewModel: ObservableObject {
             items.append(selectedItem!)
         }
         self.items = items
-        selectedItemID = selectedItem!.id
+        self.selectedItemID = selectedItem!.id
     }
 
     // MARK: - Events

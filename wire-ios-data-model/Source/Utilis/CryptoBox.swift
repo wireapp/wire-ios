@@ -19,11 +19,11 @@
 import Foundation
 import WireCryptobox
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     private static let AccountDirectoryURLKey = "AccountDirectoryURLKey"
 
-    public var accountDirectoryURL: URL? {
+    var accountDirectoryURL: URL? {
         get {
             precondition(zm_isSyncContext, "accountDirectoryURL should only be accessed on the sync context")
             return userInfo[Self.AccountDirectoryURLKey] as? URL
@@ -37,7 +37,7 @@ extension NSManagedObjectContext {
 
     private static let ApplicationContainerURLKey = "ApplicationContainerURLKey"
 
-    public var applicationContainerURL: URL? {
+    var applicationContainerURL: URL? {
         get {
             precondition(zm_isSyncContext, "applicationContainerURL should only be accessed on the sync context")
             return userInfo[Self.ApplicationContainerURLKey] as? URL
@@ -52,17 +52,20 @@ extension NSManagedObjectContext {
     private static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
 
     @objc(setupUserKeyStoreInAccountDirectory:applicationContainer:)
-    public func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) {
-        if !self.zm_isSyncContext {
+    func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) {
+        if !zm_isSyncContext {
             fatal("Can't initiliazie crypto box on non-sync context")
         }
 
-        let newKeyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
-        self.userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
+        let newKeyStore = UserClientKeysStore(
+            accountDirectory: accountDirectory,
+            applicationContainer: applicationContainer
+        )
+        userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
     }
 
     /// Returns the cryptobox instance associated with this managed object context
-    @objc public var zm_cryptKeyStore: UserClientKeysStore! {
+    @objc var zm_cryptKeyStore: UserClientKeysStore! {
         guard zm_isSyncContext else {
             fatal("Can't access key store: Currently not on sync context")
         }
@@ -71,8 +74,9 @@ extension NSManagedObjectContext {
         return keyStore as? UserClientKeysStore
     }
 
-    @objc public func zm_tearDownCryptKeyStore() {
-        self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
+    @objc
+    func zm_tearDownCryptKeyStore() {
+        userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
     }
 }
 
@@ -86,8 +90,7 @@ public extension FileManager {
         if createParentIfNeeded {
             try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
-        let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
-        return keyStoreDirectory
+        return accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
     }
 
 }
@@ -102,7 +105,7 @@ public enum UserClientKeyStoreError: Error {
 open class UserClientKeysStore: NSObject {
 
     /// Maximum possible ID for prekey
-    public static let MaxPreKeyID: UInt16 = UInt16.max - 1
+    public static let MaxPreKeyID: UInt16 = .max - 1
 
     open var encryptionContext: EncryptionContext
 
@@ -116,9 +119,12 @@ open class UserClientKeysStore: NSObject {
 
     /// Loads new key store (if not present) or load an existing one
     public init(accountDirectory: URL, applicationContainer: URL) {
-        self.cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+        self.cryptoboxDirectory = FileManager.keyStoreURL(
+            accountDirectory: accountDirectory,
+            createParentIfNeeded: true
+        )
         self.applicationContainer = applicationContainer
-        self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory)!
+        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
     }
 
     private static func setupContext(in directory: URL) -> EncryptionContext? {
@@ -128,21 +134,21 @@ open class UserClientKeysStore: NSObject {
 
     open func deleteAndCreateNewBox() {
         _ = try? FileManager.default.removeItem(at: cryptoboxDirectory)
-        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
-        self.internalLastPreKey = nil
+        encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
+        internalLastPreKey = nil
     }
 
     open func lastPreKey() throws -> String {
         var error: NSError?
         if internalLastPreKey == nil {
-            encryptionContext.perform({ [weak self] sessionsDirectory in
+            encryptionContext.perform { [weak self] sessionsDirectory in
                 guard let self else { return }
                 do {
                     internalLastPreKey = try sessionsDirectory.generateLastPrekey()
                 } catch let anError as NSError {
                     error = anError
                 }
-            })
+            }
         }
         if let error {
             throw error
@@ -156,16 +162,16 @@ open class UserClientKeysStore: NSObject {
             var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
-            encryptionContext.perform({sessionsDirectory in
+            encryptionContext.perform { sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
-                    if newPreKeys.count == 0 {
+                    if newPreKeys.isEmpty {
                         error = UserClientKeyStoreError.canNotGeneratePreKeys
                     }
                 } catch let anError as NSError {
                     error = anError
                 }
-            })
+            }
             if let error {
                 throw error
             }

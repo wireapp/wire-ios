@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class AccessRoleMappingTests: XCTestCase {
 
@@ -39,7 +39,10 @@ class AccessRoleMappingTests: XCTestCase {
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .guest]), .nonActivated)
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .guest, .service]), .nonActivated)
+        XCTAssertEqual(
+            ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .guest, .service]),
+            .nonActivated
+        )
 
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRole.fromAccessRoleV2([.teamMember, .nonTeamMember, .service]), .activated)
@@ -85,7 +88,10 @@ class AccessRoleMappingTests: XCTestCase {
         XCTAssertEqual(ConversationAccessRoleV2.fromLegacyAccessRole(.activated), [.teamMember, .nonTeamMember, .guest])
 
         // WHEN & THEN
-        XCTAssertEqual(ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated), [.teamMember, .nonTeamMember, .guest, .service])
+        XCTAssertEqual(
+            ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated),
+            [.teamMember, .nonTeamMember, .guest, .service]
+        )
 
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRoleV2.fromLegacyAccessRole(.private), [])

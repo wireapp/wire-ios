@@ -62,7 +62,7 @@ extension LinkOpeningOption {
 
     static var storedPreference: ApplicationOptionEnum {
         if let openingRawValue: ApplicationOptionEnum.RawValue = Settings.shared[settingKey],
-            let openingOption: ApplicationOptionEnum = ApplicationOptionEnum.init(rawValue: openingRawValue) {
+           let openingOption = ApplicationOptionEnum(rawValue: openingRawValue) {
             return openingOption
         }
 
@@ -70,11 +70,11 @@ extension LinkOpeningOption {
     }
 
     static var availableOptions: [Self] {
-        return allOptions.filter { $0.isAvailable }
+        allOptions.filter(\.isAvailable)
     }
 
     static var optionsAvailable: Bool {
-        return availableOptions.count > 1
+        availableOptions.count > 1
     }
 
 }
@@ -82,7 +82,7 @@ extension LinkOpeningOption {
 extension UIApplication {
 
     func canHandleScheme(_ scheme: String) -> Bool {
-        return URL(string: scheme).map(canOpenURL) ?? false
+        URL(string: scheme).map(canOpenURL) ?? false
     }
 
 }

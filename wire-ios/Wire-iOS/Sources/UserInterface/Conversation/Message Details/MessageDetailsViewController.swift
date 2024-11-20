@@ -22,19 +22,18 @@ import WireDesign
 import WireMainNavigationUI
 import WireSyncEngine
 
-/**
- * A view controller wrapping the message details.
- */
+/// A view controller wrapping the message details.
 
 final class MessageDetailsViewController: UIViewController {
 
-    /**
-     * The collection of view controllers displaying the content.
-     */
+    /// The collection of view controllers displaying the content.
 
     enum ViewControllers {
         /// We are displaying the combined view.
-        case combinedView(readReceipts: MessageDetailsContentViewController, reactions: MessageDetailsContentViewController)
+        case combinedView(
+            readReceipts: MessageDetailsContentViewController,
+            reactions: MessageDetailsContentViewController
+        )
 
         /// We are displaying the single view.
         case singleView(MessageDetailsContentViewController)
@@ -42,26 +41,26 @@ final class MessageDetailsViewController: UIViewController {
         /// The read receipts view controller.
         var readReceipts: MessageDetailsContentViewController {
             switch self {
-            case .combinedView(let readReceipts, _): return readReceipts
-            case .singleView(let viewController): return viewController
+            case let .combinedView(readReceipts, _): readReceipts
+            case let .singleView(viewController): viewController
             }
         }
 
         /// The reactions view controller.
         var reactions: MessageDetailsContentViewController {
             switch self {
-            case .combinedView(_, let reactions): return reactions
-            case .singleView(let viewController): return viewController
+            case let .combinedView(_, reactions): reactions
+            case let .singleView(viewController): viewController
             }
         }
 
         /// All the view controllers.
         var all: [MessageDetailsContentViewController] {
             switch self {
-            case .combinedView(let readReceipts, let reactions):
-                return [readReceipts, reactions]
-            case .singleView(let viewController):
-                return [viewController]
+            case let .combinedView(readReceipts, reactions):
+                [readReceipts, reactions]
+            case let .singleView(viewController):
+                [viewController]
             }
         }
     }
@@ -141,7 +140,10 @@ final class MessageDetailsViewController: UIViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
+            self.viewControllers = .combinedView(
+                readReceipts: readReceiptsViewController,
+                reactions: reactionsViewController
+            )
 
         case .reactions:
             let reactionsViewController = MessageDetailsContentViewController(
@@ -151,7 +153,7 @@ final class MessageDetailsViewController: UIViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            viewControllers = .singleView(reactionsViewController)
+            self.viewControllers = .singleView(reactionsViewController)
 
         case .receipts:
             let readReceiptsViewController = MessageDetailsContentViewController(
@@ -161,10 +163,10 @@ final class MessageDetailsViewController: UIViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            viewControllers = .singleView(readReceiptsViewController)
+            self.viewControllers = .singleView(readReceiptsViewController)
         }
 
-        container = TabBarController(viewControllers: viewControllers.all)
+        self.container = TabBarController(viewControllers: viewControllers.all)
 
         if case .combined = dataSource.displayMode {
             let tabIndex = preferredDisplayMode == .reactions ? 1 : 0
@@ -202,7 +204,7 @@ final class MessageDetailsViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        self.presentingViewController?.dismiss(animated: true)
+        presentingViewController?.dismiss(animated: true)
         return true
     }
 
@@ -215,7 +217,7 @@ final class MessageDetailsViewController: UIViewController {
         setupNavigationBarTitle(dataSource.title)
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             guard let self else { return }
-            self.presentingViewController?.dismiss(animated: true)
+            presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
 
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
@@ -268,11 +270,11 @@ final class MessageDetailsViewController: UIViewController {
     // MARK: - Orientation
 
     override var shouldAutorotate: Bool {
-        return false
+        false
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 }
 

@@ -24,22 +24,21 @@ final class SearchResultsView: UIView {
     let accessoryViewMargin: CGFloat = 16.0
     let emptyResultContainer = UIView()
 
-    @objc
-    let collectionView: UICollectionView
+    @objc let collectionView: UICollectionView
     let collectionViewLayout: UICollectionViewFlowLayout
     let accessoryContainer = UIView()
-    var lastLayoutBounds: CGRect = CGRect.zero
+    var lastLayoutBounds: CGRect = .zero
     var accessoryContainerHeightConstraint: NSLayoutConstraint?
     var accessoryViewBottomOffsetConstraint: NSLayoutConstraint?
     weak var parentViewController: UIViewController?
 
     init() {
-        collectionViewLayout = UICollectionViewFlowLayout()
+        self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12
         collectionViewLayout.minimumLineSpacing = 0
 
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = SemanticColors.View.backgroundDefault
         collectionView.allowsMultipleSelection = true
         collectionView.keyboardDismissMode = .onDrag
@@ -53,10 +52,12 @@ final class SearchResultsView: UIView {
         addSubview(emptyResultContainer)
         createConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameDidChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameDidChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -159,24 +160,29 @@ final class SearchResultsView: UIView {
         let firstResponder = UIResponder.currentFirst
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: self,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
-            layoutIfNeeded()
-        })
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
+                layoutIfNeeded()
+            }
+        )
     }
 
     private func updateContentInset() {
 
-        if let accessoryView = self.accessoryView {
+        if let accessoryView {
             accessoryView.layoutIfNeeded()
 
             // Use the safeAreaInsets of the window or screen directly to determine if there's a notch
             if let window = UIApplication.shared.windows.first {
                 let safeAreaInsets = window.safeAreaInsets
-                let bottomInset = (safeAreaInsets.bottom > 0 ? accessoryViewMargin : 0) + accessoryView.frame.height - safeAreaInsets.bottom
+                let bottomInset = (safeAreaInsets.bottom > 0 ? accessoryViewMargin : 0) + accessoryView.frame
+                    .height - safeAreaInsets.bottom
 
                 // Add padding at the bottom of the screen
                 collectionView.contentInset.bottom = bottomInset

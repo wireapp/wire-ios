@@ -30,7 +30,8 @@ protocol MediaPlaybackManagerChangeObserver: AnyObject {
 }
 
 extension Notification.Name {
-    static let mediaPlaybackManagerPlayerStateChanged = Notification.Name("MediaPlaybackManagerPlayerStateChangedNotification")
+    static let mediaPlaybackManagerPlayerStateChanged = Notification
+        .Name("MediaPlaybackManagerPlayerStateChangedNotification")
     static let activeMediaPlayerChanged = Notification.Name("activeMediaPlayerChanged")
 }
 
@@ -55,7 +56,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
     var looping: Bool {
         get {
-            return false
+            false
         }
 
         set {
@@ -65,7 +66,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
     var playbackMuted: Bool {
         get {
-            return false
+            false
         }
 
         set {

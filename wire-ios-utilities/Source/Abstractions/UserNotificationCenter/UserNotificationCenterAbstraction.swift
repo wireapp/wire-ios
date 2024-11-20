@@ -18,7 +18,7 @@
 
 import UserNotifications
 
-// TODO [WPB-9200]: let Sourcery create the mock // sourcery: AutoMockable
+// TODO: [WPB-9200]: let Sourcery create the mock // sourcery: AutoMockable
 /// An abstraction of the `UNUserNotificationCenter` object to facilitate mocking for unit tests.
 public protocol UserNotificationCenterAbstraction {
 
@@ -38,7 +38,10 @@ public protocol UserNotificationCenterAbstraction {
     @available(*, noasync)
     func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void)
     @available(*, noasync)
-    func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void)
+    func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    )
 
     /// Schedules the request to display a local notification.
     func add(_ request: UNNotificationRequest) async throws
@@ -54,19 +57,19 @@ public protocol UserNotificationCenterAbstraction {
     func removeDeliveredNotifications(withIdentifiers identifiers: [String])
 }
 
-extension UserNotificationCenterAbstraction {
+public extension UserNotificationCenterAbstraction {
 
-    public func requestAuthorization() async throws -> Bool {
+    func requestAuthorization() async throws -> Bool {
         try await requestAuthorization(options: [])
     }
 
     @available(*, noasync)
-    public func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+    func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void) {
         requestAuthorization(options: [], completionHandler: completionHandler)
     }
 
     @available(*, noasync)
-    public func add(_ request: UNNotificationRequest) {
+    func add(_ request: UNNotificationRequest) {
         add(request, withCompletionHandler: nil)
     }
 }

@@ -29,13 +29,12 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     private let userSession: ZMUserSession
     private var observerToken: Any! = nil
 
-    weak var dismisser: ViewControllerDismisser?
-
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
-    }()
+    private lazy var collectionView: UICollectionView = .init(
+        frame: .zero,
+        collectionViewLayout: self.collectionViewLayout
+    )
 
     private lazy var sizingFooter = SectionFooter()
 
@@ -45,7 +44,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     @available(*, unavailable)
@@ -62,7 +61,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,8 +82,16 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         collectionViewLayout.minimumLineSpacing = 0
 
         CheckmarkCell.register(in: collectionView)
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
-        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
+        collectionView.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
+        collectionView.register(
+            SectionFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter"
+        )
     }
 
     private func configureConstraints() {
@@ -98,17 +105,21 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
 // MARK: - Table View
 
-extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
 
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
@@ -120,14 +131,23 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
-            return view
+            return collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: "SectionHeader",
+                for: indexPath
+            )
         } else {
-            let dequeuedView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                                                               withReuseIdentifier: "SectionFooter",
-                                                                               for: indexPath)
+            let dequeuedView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionFooter,
+                withReuseIdentifier: "SectionFooter",
+                for: indexPath
+            )
 
             guard let view = dequeuedView as? SectionFooter else { return UICollectionReusableView(frame: .zero) }
             view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
@@ -164,12 +184,20 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 32)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 
 }
@@ -185,10 +213,10 @@ extension MutedMessageTypes {
 
     var localizationKey: String? {
         switch self {
-        case .none:         return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
-        case .regular:      return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
-        case .all:          return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
-        default:            return nil
+        case .none:         L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .regular:      L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .all:          L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
+        default:            nil
         }
     }
 }

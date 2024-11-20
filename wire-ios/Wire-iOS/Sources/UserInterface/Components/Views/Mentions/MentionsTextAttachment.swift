@@ -59,14 +59,18 @@ final class MentionTextAttachment: NSTextAttachment {
     }
 
     private func updateImageIfNeeded(for textContainer: NSTextContainer?, characterIndex charIndex: Int) {
-        guard let font = textContainer?.layoutManager?.textStorage?.attribute(.font, at: charIndex, effectiveRange: nil) as? UIFont,
-              let textContainerSize = textContainer?.size else { return }
+        guard let font = textContainer?.layoutManager?.textStorage?.attribute(
+            .font,
+            at: charIndex,
+            effectiveRange: nil
+        ) as? UIFont,
+            let textContainerSize = textContainer?.size else { return }
 
         guard font != self.font || textContainerSize != lastFittingSize else { return }
 
         self.font = font
-        self.lastFittingSize = textContainerSize
-        self.attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
+        lastFittingSize = textContainerSize
+        attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
 
         image = mentionImage(fittingIntoSize: textContainerSize)
     }
@@ -83,14 +87,27 @@ final class MentionTextAttachment: NSTextAttachment {
 
     private static func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
         // Replace all spaces with non-breaking space to avoid wrapping when displaying mention
-        let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
+        let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(
+            of: String.breakingSpace,
+            with: String.nonBreakingSpace
+        )
         return "@" + (nameWithNonBreakingSpaces ?? "") && font && color && [.paragraphStyle: paragraphStyle]
     }
 
-    override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
+    override func attachmentBounds(
+        for textContainer: NSTextContainer?,
+        proposedLineFragment lineFrag: CGRect,
+        glyphPosition position: CGPoint,
+        characterIndex charIndex: Int
+    ) -> CGRect {
         updateImageIfNeeded(for: textContainer, characterIndex: charIndex)
 
-        return super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
+        return super.attachmentBounds(
+            for: textContainer,
+            proposedLineFragment: lineFrag,
+            glyphPosition: position,
+            characterIndex: charIndex
+        )
     }
 
 }

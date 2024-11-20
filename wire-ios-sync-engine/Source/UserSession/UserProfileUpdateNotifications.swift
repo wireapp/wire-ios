@@ -20,38 +20,51 @@ import Foundation
 import WireUtilities
 
 // MARK: - Observer
-@objc public protocol UserProfileUpdateObserver: NSObjectProtocol {
+
+@objc
+public protocol UserProfileUpdateObserver: NSObjectProtocol {
 
     /// Invoked when the password could not be set on the backend
-    @objc optional func passwordUpdateRequestDidFail()
+    @objc
+    optional func passwordUpdateRequestDidFail()
 
     /// Invoked when the email could not be set on the backend (duplicated?).
-    /// The password might already have been set though - this is how BE is designed and there's nothing SE can do about it
-    @objc optional func emailUpdateDidFail(_ error: Error!)
+    /// The password might already have been set though - this is how BE is designed and there's nothing SE can do about
+    /// it
+    @objc
+    optional func emailUpdateDidFail(_ error: Error!)
 
     /// Invoked when the email was sent to the backend
-    @objc optional func didSendVerificationEmail()
+    @objc
+    optional func didSendVerificationEmail()
 
     /// Invoked when the availability of a handle was determined
-    @objc optional func didCheckAvailiabilityOfHandle(handle: String, available: Bool)
+    @objc
+    optional func didCheckAvailiabilityOfHandle(handle: String, available: Bool)
 
     /// Invoked when failed to check for availability of a handle
-    @objc optional func didFailToCheckAvailabilityOfHandle(handle: String)
+    @objc
+    optional func didFailToCheckAvailabilityOfHandle(handle: String)
 
     /// Invoked when the handle is set
-    @objc optional func didSetHandle()
+    @objc
+    optional func didSetHandle()
 
     /// Invoked when failed to set the handle
-    @objc optional func didFailToSetHandle()
+    @objc
+    optional func didFailToSetHandle()
 
     /// Invoked when failed to set the handle because already taken
-    @objc optional func didFailToSetHandleBecauseExisting()
+    @objc
+    optional func didFailToSetHandleBecauseExisting()
 
     /// Invoked when a good handle suggestion is found
-    @objc optional func didFindHandleSuggestion(handle: String)
+    @objc
+    optional func didFindHandleSuggestion(handle: String)
 }
 
 // MARK: - Notification
+
 enum UserProfileUpdateNotificationType {
     case passwordUpdateDidFail
     case emailUpdateDidFail(error: Error)
@@ -71,34 +84,38 @@ struct UserProfileUpdateNotification: SelfPostingNotification {
     let type: UserProfileUpdateNotificationType
 }
 
-extension UserProfileUpdateStatus {
+public extension UserProfileUpdateStatus {
 
-    public func add(observer: UserProfileUpdateObserver) -> Any {
+    func add(observer: UserProfileUpdateObserver) -> Any {
         Self.add(
             observer: observer,
             in: managedObjectContext.notificationContext
         )
     }
 
-    public static func add(
+    static func add(
         observer: UserProfileUpdateObserver,
         in notificationContext: NotificationContext
     ) -> SelfUnregisteringNotificationCenterToken {
-        NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(
+            name: UserProfileUpdateNotification.notificationName,
+            context: notificationContext,
+            queue: .main
+        ) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
                   let observer else {
-                    return
+                return
             }
             switch note.type {
-            case .emailUpdateDidFail(let error):
+            case let .emailUpdateDidFail(error):
                 observer.emailUpdateDidFail?(error)
             case .passwordUpdateDidFail:
                 observer.passwordUpdateRequestDidFail?()
             case .emailDidSendVerification:
                 observer.didSendVerificationEmail?()
-            case .didCheckAvailabilityOfHandle(let handle, let available):
+            case let .didCheckAvailabilityOfHandle(handle, available):
                 observer.didCheckAvailiabilityOfHandle?(handle: handle, available: available)
-            case .didFailToCheckAvailabilityOfHandle(let handle):
+            case let .didFailToCheckAvailabilityOfHandle(handle):
                 observer.didFailToCheckAvailabilityOfHandle?(handle: handle)
             case .didSetHandle:
                 observer.didSetHandle?()
@@ -106,7 +123,7 @@ extension UserProfileUpdateStatus {
                 observer.didFailToSetHandle?()
             case .didFailToSetHandleBecauseExisting:
                 observer.didFailToSetHandleBecauseExisting?()
-            case .didFindHandleSuggestion(let handle):
+            case let .didFindHandleSuggestion(handle):
                 observer.didFindHandleSuggestion?(handle: handle)
             }
         }

@@ -29,7 +29,7 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
     private let lock = NSRecursiveLock()
 
     public var didPerformAction: Bool {
-        return results.isEmpty
+        results.isEmpty
     }
 
     public var performedActions: [Action] = []
@@ -40,7 +40,7 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
     public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
-        token = Action.registerHandler(self, context: context)
+        self.token = Action.registerHandler(self, context: context)
     }
 
     public func performAction(_ action: Action) {
