@@ -37,15 +37,18 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     let context: NSManagedObjectContext
     let conversationLocalStore: any ConversationLocalStoreProtocol
+    let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
-        conversationLocalStore: any ConversationLocalStoreProtocol
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
     ) {
         self.context = context
         self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
@@ -142,6 +145,23 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
+        case .participantsAdded(let participants, let sender, let date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+            
+            let newUsers = await fetchUsers(userIDs: participants)
+            
+            let systemMessage = await createSystemMessage(
+                messageType: .participantsAdded,
+                sender: sender,
+                users: newUsers
+            )
+            
+            return [systemMessage]
 
         case .mlsMigrationMLSNotSupportedForSelfUser:
 
@@ -343,6 +363,31 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
             
             return [systemMessage]
+            
+        case .readReceiptsStatus(let isEnabled, let sender, let date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+            
+            let systemMessage = await createSystemMessage(
+                messageType: isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled,
+                sender: sender,
+                timestamp: date
+            )
+            
+            await context.perform {
+                let isArchived = conversation.isArchived
+                let mutedMessageTypes = conversation.mutedMessageTypes
+                
+                if isArchived, mutedMessageTypes == .none {
+                    conversation.isArchived = false
+                }
+            }
+            
+            return [systemMessage]
         }
     }
 
@@ -394,25 +439,42 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
         }
     }
+    
+    private func fetchUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser> {
+        await withTaskGroup(of: ZMUser.self) { taskGroup in
+            for userID in userIDs {
+                taskGroup.addTask { [self] in
+                    await userLocalStore.fetchOrCreateUser(
+                        id: userID.id,
+                        domain: userID.domain
+                    )
+                }
+                
+            }
+            
+            var users = Set<ZMUser>()
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: Use UserLocalStore when related PRs are merged.
+            for await user in taskGroup {
+                users.insert(user)
+            }
+            
+            return users
+        }
+    }
+
     private func fetchUser(
         id: UUID,
         domain: String?
     ) async -> ZMUser? {
-        await context.perform { [context] in
-            ZMUser.fetch(
-                with: id,
-                domain: domain,
-                in: context
-            )
-        }
+        try? await userLocalStore.fetchUser(
+            id: id,
+            domain: domain
+        )
     }
 
     private func fetchSelfUser() async -> ZMUser {
-        await context.perform { [context] in
-            ZMUser.selfUser(in: context)
-        }
+        await userLocalStore.fetchSelfUser()
     }
 }

@@ -34,6 +34,12 @@ public enum MessageType: Sendable {
         sender: (id: UUID, domain: String?),
         date: Date
     )
+    
+    case participantsAdded(
+        participants: [(id: UUID, domain: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
 
     case mlsMigrationMLSNotSupportedForSelfUser
 
@@ -74,4 +80,11 @@ public enum MessageType: Sendable {
     case receiptModeIsOn(
         date: Date
     )
+    
+    case readReceiptsStatus(
+        isEnabled: Bool,
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
+    
 }
