@@ -26,7 +26,11 @@ extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.Creat
         guard let labelType = try await fetchLabelType(for: name) else {
             throw FolderCreationError.invalidLabelType
         }
-        return Folder(labelType)
+        
+        return Folder(
+            identifier: labelType.remoteIdentifier,
+            name: labelType.name ?? ""
+        )
     }
 
     private func fetchLabelType(for name: String) async throws -> LabelType? {
