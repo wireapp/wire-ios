@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          lfs: 'true'
+          lfs: 'false' # as long as we use lfs only for snapshotTesting it should not be useful here
       - uses: dorny/paths-filter@v2
         id: filter
         with:
