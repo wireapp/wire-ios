@@ -47,12 +47,15 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     func getValidAccessToken() async throws -> AccessToken {
         switch currentToken {
         case .renewing(let task):
+            // A new token will come soon, wait
             return try await task.value
 
         case .cached(let accessToken) where !accessToken.isExpiring:
+            // This one is still good.
             return accessToken
 
         default:
+            // Time for a new token.
             return try await refreshAccessToken()
         }
     }
@@ -60,11 +63,11 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
     func refreshAccessToken() async throws -> AccessToken {
         switch currentToken {
         case .renewing(let task):
-            // A request is in flight, we wait for its result.
+            // A new token will come soon, wait
             return try await task.value
 
         case .cached(let accessToken):
-            // We are renewing a token.
+            // We are replacing an old token.
             let task = makeRenewTokenTask(lastKnownAccessToken: accessToken)
             currentToken = .renewing(task)
             return try await task.value
@@ -101,7 +104,9 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
                 .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
                 .parse(code: response.statusCode, data: data)
 
+            // We must make sure to store the token before the task completes.
             currentToken = .cached(accessToken)
+
             return accessToken
         }
     }
