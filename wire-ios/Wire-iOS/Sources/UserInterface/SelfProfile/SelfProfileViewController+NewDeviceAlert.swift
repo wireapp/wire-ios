@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension SelfProfileViewController {
@@ -29,24 +30,33 @@ extension SelfProfileViewController {
         }
         let clientsRequiringUserAttention = Array(selfUser.clientsRequiringUserAttention)
 
-        if clientsRequiringUserAttention.count > 0 {
-            self.presentNewLoginAlertController(clientsRequiringUserAttention)
+        if !clientsRequiringUserAttention.isEmpty {
+            presentNewLoginAlertController(clientsRequiringUserAttention)
             return true
         } else {
             return false
         }
     }
 
-    fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
+    private func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
-            self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
+        let actionManageDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.manageDevices,
+            style: .default
+        ) { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showSettings()
+                self?.mainCoordinator.showSettingsContent(.init(.devices))
+            }
         }
 
         newLoginAlertController.addAction(actionManageDevices)
 
-        let actionTrustDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.trustDevices, style: .default) { [weak self] _ in
+        let actionTrustDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.trustDevices,
+            style: .default
+        ) { [weak self] _ in
             self?.presentUserSettingChangeControllerIfNeeded()
         }
 
@@ -60,40 +70,6 @@ extension SelfProfileViewController {
             }
         }
     }
-
-    @discardableResult
-    func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
-        var resultViewController: UIViewController? = .none
-        // Let's assume for the moment that menu is only 2 levels deep
-        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
-
-            if let cellIdentifier = topCellDescriptor.identifier,
-               let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
-               let viewController = cellGroupDescriptor.generateViewController(),
-               cellIdentifier == identifier {
-                self.navigationController?.pushViewController(viewController, animated: false)
-                resultViewController = viewController
-            }
-
-            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
-                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
-                    if let cellIdentifier = cellDescriptor.identifier,
-                       let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
-                       let topViewController = topCellGroupDescriptor.generateViewController(),
-                       let viewController = cellGroupDescriptor.generateViewController(),
-                       cellIdentifier == identifier {
-                        self.navigationController?.pushViewController(topViewController, animated: false)
-                        self.navigationController?.pushViewController(viewController, animated: false)
-                        resultViewController = viewController
-                    }
-                })
-            }
-
-        })
-
-        return resultViewController
-    }
-
 }
 
 extension UIAlertController {
@@ -102,19 +78,16 @@ extension UIAlertController {
         var deviceNamesAndDates: [String] = []
 
         for userClient in clients {
-            let deviceName: String
-
-            if let model = userClient.model, !model.isEmpty {
-                deviceName = model
+            let deviceName: String = if let model = userClient.model, !model.isEmpty {
+                model
             } else {
-                deviceName = userClient.type.rawValue
+                userClient.type.rawValue
             }
 
-            let formattedDate: String
-            if let activationDate = userClient.activationDate {
-                formattedDate = activationDate.formattedDate
+            let formattedDate: String = if let activationDate = userClient.activationDate {
+                activationDate.formattedDate
             } else {
-                formattedDate = ""
+                ""
             }
 
             let deviceActivationDate = L10n.Localizable.Registration.Devices.activated(formattedDate)
@@ -126,15 +99,12 @@ extension UIAlertController {
 
         let messageBody = deviceNamesAndDates.joined(separator: "\n\n")
 
-        let messageFormat: String
-
-        if clients.count > 1 {
-            messageFormat = L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
+        let messageFormat: String = if clients.count > 1 {
+            L10n.Localizable.Self.NewDeviceAlert.messagePlural(messageBody)
         } else {
-            messageFormat = L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
+            L10n.Localizable.Self.NewDeviceAlert.message(messageBody)
         }
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }
-
 }

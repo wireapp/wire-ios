@@ -61,12 +61,10 @@ class SettingsDebugReportViewController: UIViewController {
         }
     )
 
-    private lazy var shareReportButton: UIButton = {
-        return createButton(
-            title: Strings.TechnicalReport.shareReport.capitalized,
-            action: UIAction { [weak self] _ in self?.didTapShareReport() }
-        )
-    }()
+    private lazy var shareReportButton: UIButton = createButton(
+        title: Strings.TechnicalReport.shareReport.capitalized,
+        action: UIAction { [weak self] _ in self?.didTapShareReport() }
+    )
 
     // MARK: - Life cycle
 
@@ -104,29 +102,46 @@ class SettingsDebugReportViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            infoLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstants.padding),
+            infoLabel.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: LayoutConstants.padding
+            ),
             infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
             infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
 
-            shareReportButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -LayoutConstants.safeBottomPadding),
+            shareReportButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -LayoutConstants.safeBottomPadding
+            ),
             shareReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
-            shareReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
+            shareReportButton.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -LayoutConstants.padding
+            ),
             shareReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight),
 
-            sendReportButton.bottomAnchor.constraint(equalTo: shareReportButton.topAnchor, constant: -LayoutConstants.spacing),
+            sendReportButton.bottomAnchor.constraint(
+                equalTo: shareReportButton.topAnchor,
+                constant: -LayoutConstants.spacing
+            ),
             sendReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
-            sendReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
+            sendReportButton.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -LayoutConstants.padding
+            ),
             sendReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight)
         ])
     }
 
     // MARK: - Actions
 
-    @objc private func didTapSendReport(sender: UIView) {
+    @objc
+    private func didTapSendReport(sender: UIView) {
         viewModel.sendReport(sender: sender)
     }
 
-    @objc private func didTapShareReport() {
+    @objc
+    private func didTapShareReport() {
         Task { await viewModel.shareReport() }
     }
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSettingsUI
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
@@ -40,13 +41,22 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
-    init(user: UserType, userSession: UserSession) {
+    init(
+        user: UserType,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool,
+        settingsCoordinator: AnySettingsCoordinator
+    ) {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
             userProfile: userSession.userProfile
         )
-        super.init(style: .grouped)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView,
+            settingsCoordinator: settingsCoordinator
+        )
         setupViews()
     }
 
@@ -127,7 +137,13 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         activityIndicator.setIsActive(false)
         updateSaveButtonState()
         if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: true,
+                settingsCoordinator: settingsCoordinator
+            )
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }
@@ -135,11 +151,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     // MARK: - SettingsBaseTableViewController
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -167,8 +183,13 @@ extension ChangeEmailViewController: UserProfileUpdateObserver {
 // MARK: - ConfirmEmailDelegate
 
 extension ChangeEmailViewController: ConfirmEmailDelegate {
+
     func didConfirmEmail(inController controller: ConfirmEmailViewController) {
-        _ = navigationController?.popToPrevious(of: self)
+        let viewControllers = navigationController?.viewControllers ?? []
+        if let index = viewControllers.firstIndex(of: self), viewControllers.indices.contains(index - 1) {
+            let previousController = viewControllers[index - 1]
+            navigationController?.popToViewController(previousController, animated: true)
+        }
     }
 
     func resendVerification(inController controller: ConfirmEmailViewController) {
@@ -179,7 +200,8 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
 // MARK: - TextFieldValidationDelegate
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
-    @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
+    @objc
+    func emailTextFieldEditingChanged(sender: ValidatedTextField) {
         let newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
         viewModel.updateNewEmail(newEmail)
         sender.validateInput()

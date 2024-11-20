@@ -20,9 +20,9 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
-import XCTest
 
 final class TeamRepositoryTests: XCTestCase {
 
@@ -267,8 +267,8 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Mock
 
-        userRespository.deleteUserAccountWithDomainAt_MockMethod = { _, _, _ in }
-        userRespository.fetchUserWithDomain_MockValue = user
+        userRespository.deleteUserAccountIdDomainAt_MockMethod = { _, _, _ in }
+        userRespository.fetchUserIdDomain_MockValue = user
 
         // When
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
@@ -40,9 +40,10 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatItAddsFailedToSendRecipients() throws {
-        try self.syncMOC.performGroupedAndWait {
+        try syncMOC.performGroupedAndWait {
             // given
-            guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
+            guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage
+            else {
                 XCTFail("Failed to add message")
                 return
             }
@@ -52,9 +53,11 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             // When
             let qualifiedID = try XCTUnwrap(self.otherUser.qualifiedID)
             let failedToSendUsers = [qualifiedID]
-            let payload = Payload.MLSMessageSendingStatus(time: Date(),
-                                                          events: [Data()],
-                                                          failedToSend: failedToSendUsers)
+            let payload = Payload.MLSMessageSendingStatus(
+                time: Date(),
+                events: [Data()],
+                failedToSend: failedToSendUsers
+            )
             self.sut.updateFailedRecipients(
                 from: payload,
                 for: message

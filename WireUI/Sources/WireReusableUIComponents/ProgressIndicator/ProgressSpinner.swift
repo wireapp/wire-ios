@@ -64,7 +64,7 @@ public final class ProgressSpinner: UIView {
         spinner.layer.animation(forKey: "rotateAnimation") != nil
     }
 
-    override public init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
@@ -98,16 +98,24 @@ public final class ProgressSpinner: UIView {
 
         hidesWhenStopped = true
 
-        didBecomeActiveNotificationToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+        didBecomeActiveNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.applicationDidBecomeActive()
         }
 
-        didEnterBackgroundNotificationToken = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+        didEnterBackgroundNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.applicationDidEnterBackground()
         }
     }
 
-    override public func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
 
         let frame = spinner.layer.frame
@@ -115,7 +123,7 @@ public final class ProgressSpinner: UIView {
         spinner.layer.frame = frame
     }
 
-    override public func didMoveToWindow() {
+    public override func didMoveToWindow() {
         if window == nil {
             // CABasicAnimation delegate is strong so we stop all animations when the view is removed.
             stopAnimationInternal()
@@ -124,7 +132,7 @@ public final class ProgressSpinner: UIView {
         }
     }
 
-    override public var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         spinner.image?.size ?? super.intrinsicContentSize
     }
 

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
-func localizeString (stringToLocalize: String, language: String) -> String? {
+func localizeString(stringToLocalize: String, language: String) -> String? {
     guard let path = Bundle.main.path(forResource: language, ofType: "lproj") else { return nil }
 
     let languageBundle = Bundle(path: path)
-    return languageBundle! .localizedString(forKey: stringToLocalize, value: "", table: nil)
+    return languageBundle!.localizedString(forKey: stringToLocalize, value: "", table: nil)
 }
 
 final class StatusMessageTypeTests: XCTestCase {

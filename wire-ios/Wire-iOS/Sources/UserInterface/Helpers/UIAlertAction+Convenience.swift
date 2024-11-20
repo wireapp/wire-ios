@@ -23,7 +23,7 @@ import WireDesign
 extension UIAlertAction {
 
     static func cancel(_ completion: Completion? = nil) -> UIAlertAction {
-        return UIAlertAction(
+        UIAlertAction(
             title: L10n.Localizable.General.cancel,
             style: .cancel,
             handler: { _ in completion?() }
@@ -31,7 +31,7 @@ extension UIAlertAction {
     }
 
     static func confirm(style: Style = .cancel, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
-        return UIAlertAction(
+        UIAlertAction(
             title: L10n.Localizable.General.confirm,
             style: style,
             handler: handler
@@ -44,7 +44,7 @@ extension UIAlertAction {
         presenter: UIViewController?,
         onDismiss: (() -> Void)? = nil
     ) -> Self {
-        return .init(
+        .init(
             title: title,
             style: .default
         ) { [weak presenter] _ in
@@ -54,7 +54,12 @@ extension UIAlertAction {
         }
     }
 
-    convenience init(icon: StyleKitIcon?, title: String, tintColor: UIColor, handler: ((UIAlertAction) -> Void)? = nil) {
+    convenience init(
+        icon: StyleKitIcon?,
+        title: String,
+        tintColor: UIColor,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
         self.init(title: title, style: .default, handler: handler)
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")

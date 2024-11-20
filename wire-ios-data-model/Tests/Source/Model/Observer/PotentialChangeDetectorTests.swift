@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class PotentialChangeDetectorTests: BaseZMMessageTests {
 
@@ -27,7 +27,7 @@ final class PotentialChangeDetectorTests: BaseZMMessageTests {
     // MARK: - Helpers
 
     func createObject() -> ZMManagedObject {
-        return ZMConversation.insertNewObject(in: uiMOC)
+        ZMConversation.insertNewObject(in: uiMOC)
     }
 
     // MARK: - Tests
@@ -97,14 +97,16 @@ final class PotentialChangeDetectorTests: BaseZMMessageTests {
         let object4 = createObject()
 
         // When
-        sut.detectChanges(for:
+        sut.detectChanges(
+            for:
             ModifiedObjects(
                 updated: [object1],
                 refreshed: [object2]
             )
         )
 
-        sut.detectChanges(for:
+        sut.detectChanges(
+            for:
             ModifiedObjects(
                 inserted: [object3],
                 deleted: [object4]

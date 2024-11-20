@@ -134,7 +134,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         conversation.remoteIdentifier = nonce
         conversation.lastReadServerTimeStamp = Date(timeIntervalSince1970: 0)
 
-        let timeinterval: Int64 = 10000
+        let timeinterval: Int64 = 10_000
         let lastRead = LastRead.with {
             $0.conversationID = nonce.transportString()
             $0.lastReadTimestamp = timeinterval
@@ -162,7 +162,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
         conversation.remoteIdentifier = nonce
         conversation.clearedTimeStamp = Date(timeIntervalSince1970: 0)
 
-        let timeinterval: Int64 = 10000
+        let timeinterval: Int64 = 10_000
         let cleared = Cleared.with {
             $0.conversationID = nonce.transportString()
             $0.clearedTimestamp = timeinterval

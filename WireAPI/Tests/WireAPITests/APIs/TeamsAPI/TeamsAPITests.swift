@@ -55,7 +55,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembersRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2_000)
+            _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
@@ -183,7 +183,7 @@ final class TeamsAPITests: XCTestCase {
         // When
         let result = try await sut.getTeamMembers(
             for: Team.ID(),
-            maxResults: 2_000
+            maxResults: 2000
         )
 
         // Then
@@ -192,7 +192,10 @@ final class TeamsAPITests: XCTestCase {
             [
                 TeamMember(
                     userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
-                    creationDate: try XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2024-05-14T08:55:04.779Z")),
+                    creationDate: try XCTUnwrap(
+                        ISO8601DateFormatter.fractionalInternetDateTime
+                            .date(from: "2024-05-14T08:55:04.779Z")
+                    ),
                     creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
                     legalholdStatus: .pending,
                     permissions: TeamMemberPermissions(
@@ -214,7 +217,7 @@ final class TeamsAPITests: XCTestCase {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -229,7 +232,7 @@ final class TeamsAPITests: XCTestCase {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -244,7 +247,7 @@ final class TeamsAPITests: XCTestCase {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -367,7 +370,7 @@ final class TeamsAPITests: XCTestCase {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }

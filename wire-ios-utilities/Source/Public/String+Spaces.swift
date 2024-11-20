@@ -18,10 +18,10 @@
 
 import Foundation
 
-extension String {
+public extension String {
     /// A classic whitespace.
-    public static let breakingSpace = " "
+    static let breakingSpace = " "
 
     /// A standard non-breaking space (&#160;).
-    public static let nonBreakingSpace = "\u{00A0}"
+    static let nonBreakingSpace = "\u{00A0}"
 }

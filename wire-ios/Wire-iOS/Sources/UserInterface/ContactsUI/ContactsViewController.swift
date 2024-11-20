@@ -174,11 +174,13 @@ final class ContactsViewController: UIViewController {
             self.tableView.isHidden = !hidden
         }
 
-        UIView.animate(withDuration: 0.25,
-                       delay: 0,
-                       options: .beginFromCurrentState,
-                       animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
-                       completion: completion)
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: .beginFromCurrentState,
+            animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
+            completion: completion
+        )
     }
 
     // MARK: - Keyboard Observation
@@ -188,10 +190,12 @@ final class ContactsViewController: UIViewController {
         // of the view. We can avoid this by laying out the view first.
         view.layoutIfNeeded()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @objc

@@ -18,10 +18,10 @@
 
 import UIKit
 
-fileprivate extension CGAffineTransform {
+private extension CGAffineTransform {
 
     static var verticallyMirrored: CGAffineTransform {
-        return CGAffineTransform(scaleX: -1, y: 1)
+        CGAffineTransform(scaleX: -1, y: 1)
     }
 
 }
@@ -33,7 +33,7 @@ extension UIView {
     }
 
     var isRightToLeft: Bool {
-        return UIView.userInterfaceLayoutDirection(for: semanticContentAttribute) == .rightToLeft
+        UIView.userInterfaceLayoutDirection(for: semanticContentAttribute) == .rightToLeft
     }
 
 }

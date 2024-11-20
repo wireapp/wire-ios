@@ -51,7 +51,7 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
         )
         resultsController = ZiphySearchResultsController(client: client, pageSize: 5)
 
-        let searchTerm: String = "apple"
+        let searchTerm = "apple"
         sut = GiphySearchViewController(
             searchTerm: searchTerm,
             conversation: (mockConversation as Any) as! ZMConversation,

@@ -123,7 +123,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         at time: Date
     ) async throws {
         let user = try await userRepository.fetchUser(
-            with: userID,
+            id: userID,
             domain: domain
         )
 
@@ -140,7 +140,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         }
 
         try await userRepository.deleteUserAccount(
-            with: userID,
+            id: userID,
             domain: domain,
             at: time
         )
@@ -179,7 +179,7 @@ public class TeamRepository: TeamRepositoryProtocol {
     private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
         let selfUser = await userRepository.fetchSelfUser()
 
-        return await context.perform { [context] in
+        await context.perform { [context] in
             let team = WireDataModel.Team.fetchOrCreate(
                 with: teamAPIModel.id,
                 in: context
@@ -256,7 +256,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         do {
             return try await teamsAPI.getTeamMembers(
                 for: selfTeamID,
-                maxResults: 2_000
+                maxResults: 2000
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)

@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: View {
+struct SidebarAccountInfoView<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @Environment(\.sidebarAccountInfoViewDisplayNameColor) private var displayNameColor
     @Environment(\.sidebarAccountInfoViewUsernameColor) private var usernameColor
@@ -28,53 +28,97 @@ struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: Vi
 
     let displayName: String
     let username: String
+    let isE2EICertified: Bool
+    let isVerified: Bool
+    let isLegalHoldIndicatorVisible: Bool
     let accountImageView: () -> AccountImageView
+    let legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
-    @State private var accountImageDiameter: CGFloat = 0
+    @State private var displayNameHeight: CGFloat = 0
+    @State private var usernameHeight: CGFloat = 0
 
     var body: some View {
-        HStack {
-            accountImageView()
-                .frame(width: accountImageDiameter, height: accountImageDiameter)
-
-            // Let the account image height be exactly the same as one line
-            // of the display name plus one line of the username (+ spacing)
-            // and not grow with the wrapped texts (otherwise everything
-            // together grows exponentially).
-            // Therefore layout the texts twice, one preventing to be line-wrapped
-            // and being invisible
-
-            ZStack {
-                displayNameAndUsername(displayName, username)
-                    .lineLimit(1)
-                    .layoutPriority(-1)
-                    .opacity(0)
-                    .disabled(true)
-                    .background(GeometryReader { geometryProxy in
-                        Color.clear.preference(
-                            key: ProfileSwitcherHeightKey.self,
-                            value: geometryProxy.size.height
-                        )
-                    })
-                    .onPreferenceChange(ProfileSwitcherHeightKey.self) { height in
-                        accountImageDiameter = height
-                    }
-
-                displayNameAndUsername(displayName, username)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                accountImageView()
+                    .frame(
+                        width: displayNameHeight + usernameHeight,
+                        height: displayNameHeight + usernameHeight
+                    )
+                ZStack {
+                    determineLineHeights
+                    displayNameAndUsername
+                }
+            }
+            if isLegalHoldIndicatorVisible {
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .frame(width: displayNameHeight + usernameHeight, height: 0)
+                        .padding(.trailing, 8)
+                    legalHoldIndicatorView()
+                        .frame(height: usernameHeight)
+                        .padding(.trailing, 4)
+                    Text("sidebar.legalHold.title", bundle: .module)
+                        .wireTextStyle(.subline1)
+                }
             }
         }
     }
 
-    @ViewBuilder
-    private func displayNameAndUsername(_ displayName: String, _ username: String) -> some View {
+    @ViewBuilder private var displayNameAndUsername: some View {
         VStack(alignment: .leading) {
-            Text(displayName)
-                .font(.headline)
-                .foregroundStyle(displayNameColor)
+            HStack(alignment: .bottom, spacing: 4) {
+                Text(displayName)
+                    .wireTextStyle(.h3)
+                    .foregroundStyle(displayNameColor)
+                    .accessibilityLabel(Text("sidebar.name.description", tableName: "Accessibility", bundle: .module))
+                    .accessibilityValue(displayName)
+                if isE2EICertified {
+                    Image(.certificateValid)
+                        .frame(height: usernameHeight)
+                }
+                if isVerified {
+                    Image(.verified)
+                        .frame(height: usernameHeight)
+                }
+            }
             Text(username)
-                .font(.subheadline)
+                .wireTextStyle(.subline1)
                 .foregroundStyle(usernameColor)
+                .accessibilityLabel(Text("sidebar.handle.description", tableName: "Accessibility", bundle: .module))
+                .accessibilityValue(username)
         }
+    }
+
+    @ViewBuilder private var determineLineHeights: some View {
+        VStack {
+            Text("W")
+                .wireTextStyle(.h3)
+                .background(GeometryReader { geometryProxy in
+                    Color.clear.preference(
+                        key: DisplayNameHeightKey.self,
+                        value: geometryProxy.size.height
+                    )
+                })
+                .onPreferenceChange(DisplayNameHeightKey.self) { height in
+                    displayNameHeight = height
+                }
+            Text("@")
+                .wireTextStyle(.subline1)
+                .background(GeometryReader { geometryProxy in
+                    Color.clear.preference(
+                        key: UsernameHeightKey.self,
+                        value: geometryProxy.size.height
+                    )
+                })
+                .onPreferenceChange(UsernameHeightKey.self) { height in
+                    usernameHeight = height
+                }
+        }
+        .lineLimit(1)
+        .layoutPriority(-1)
+        .opacity(0)
+        .disabled(true)
     }
 }
 
@@ -83,17 +127,32 @@ extension SidebarAccountInfoView {
     init(
         _ displayName: String,
         _ username: String,
-        _ accountImageView: @escaping () -> AccountImageView
+        _ isE2EICertified: Bool,
+        _ isVerified: Bool,
+        _ isLegalHoldIndicatorVisible: Bool,
+        _ accountImageView: @escaping () -> AccountImageView,
+        _ legalHoldIndicatorView: @escaping () -> LegalHoldIndicatorView
     ) {
         self.init(
             displayName: displayName,
             username: username,
-            accountImageView: accountImageView
+            isE2EICertified: isE2EICertified,
+            isVerified: isE2EICertified,
+            isLegalHoldIndicatorVisible: isLegalHoldIndicatorVisible,
+            accountImageView: accountImageView,
+            legalHoldIndicatorView: legalHoldIndicatorView
         )
     }
 }
 
-private struct ProfileSwitcherHeightKey: PreferenceKey {
+private struct DisplayNameHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+private struct UsernameHeightKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
@@ -104,7 +163,9 @@ private struct ProfileSwitcherHeightKey: PreferenceKey {
 
 extension View {
     func sidebarAccountInfoViewDisplayNameColor(_ displayNameColor: Color) -> some View {
-        modifier(SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor))
+        modifier(
+            SidebarAccountInfoViewDisplayNameColorViewModifier(sidebarAccountInfoViewDisplayNameColor: displayNameColor)
+        )
     }
 
     func sidebarAccountInfoViewUsernameColor(_ usernameColor: Color) -> some View {

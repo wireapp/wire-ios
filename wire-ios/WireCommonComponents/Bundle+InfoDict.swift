@@ -19,17 +19,20 @@
 import UIKit
 import WireUtilities
 
-extension Bundle {
+public extension Bundle {
 
-    public var appInfo: Bundle.Info {
-        return Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
+    var appInfo: Bundle.Info {
+        Info(
+            version: shortVersionString ?? "-",
+            build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-"
+        )
     }
 
-    public var shortVersionString: String? {
-        return Bundle.main.infoForKey("CFBundleShortVersionString")
+    var shortVersionString: String? {
+        Bundle.main.infoForKey("CFBundleShortVersionString")
     }
 
-    public static var appMainBundle: Bundle {
+    static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
@@ -42,7 +45,7 @@ extension Bundle {
         return mainBundle
     }
 
-    public struct Info: SafeForLoggingStringConvertible {
+    struct Info: SafeForLoggingStringConvertible {
         var version: String
         var build: String
 

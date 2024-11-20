@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireUtilities
 import XCTest
+@testable import WireUtilities
 
 private struct Person {
     let name: String
@@ -61,8 +61,8 @@ class MapKeyPathTests: XCTestCase {
         XCTAssertEqual(botName, String?.some("Bot"))
         XCTAssertEqual(botAge, Int??.some(.none))
 
-        XCTAssertEqual(ghostName, Optional<String>.none)
-        XCTAssertEqual(ghostAge, Optional<Optional<Int>>.none)
+        XCTAssertEqual(ghostName, String?.none)
+        XCTAssertEqual(ghostAge, Int??.none)
     }
 
     func testOptionalFlatMap() {
@@ -78,16 +78,16 @@ class MapKeyPathTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(humanAge, Int?.some(20))
-        XCTAssertEqual(botAge, Optional<Int>.none)
-        XCTAssertEqual(ghostAge, Optional<Int>.none)
+        XCTAssertEqual(botAge, Int?.none)
+        XCTAssertEqual(ghostAge, Int?.none)
     }
 
     // MARK: - Sequence
 
     func testSequenceKeyPath() {
         // GIVEN
-        let personWithAge: Person = Person(name: "Human", age: 20)
-        let personWithoutAge: Person = Person(name: "Bot", age: nil)
+        let personWithAge = Person(name: "Human", age: 20)
+        let personWithoutAge = Person(name: "Bot", age: nil)
 
         let alice = SocialPerson(name: "Alice", friends: ["@bob"])
         let bob = SocialPerson(name: "Bob", friends: ["@alice"])

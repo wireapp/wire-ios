@@ -31,7 +31,7 @@ public final class AccountImageView: UIView {
     // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
-    private let initialsLabelSizeMultiplier: CGFloat = 7 / 10
+    private let initialsLabelSizeMultiplier: CGFloat = 3 / 5
 
     enum Defaults {
         static let imageViewBorderWidth: CGFloat = 1
@@ -99,7 +99,7 @@ public final class AccountImageView: UIView {
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
 
-    override public var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
             height: imageBorderWidth * 2 + accountImageHeight
@@ -118,13 +118,13 @@ public final class AccountImageView: UIView {
         fatalError("init(coder:) is not supported")
     }
 
-    override public func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         updateAccountImageBorder()
         updateShape()
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if #unavailable(iOS 17.0), previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
@@ -177,7 +177,7 @@ public final class AccountImageView: UIView {
             return constraint
         })
 
-        initialsLabel.font = .systemFont(ofSize: 100, weight: .light)
+        initialsLabel.font = .systemFont(ofSize: 100, weight: .regular)
         initialsLabel.textAlignment = .center
         initialsLabel.adjustsFontSizeToFitWidth = true
         initialsLabel.minimumScaleFactor = 0.1
@@ -187,23 +187,47 @@ public final class AccountImageView: UIView {
 
         NSLayoutConstraint.activate([
             // image mode
-            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: imageBorderWidth),
-            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: imageBorderWidth),
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: imageBorderWidth),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: imageBorderWidth),
+            accountImageView.leadingAnchor.constraint(
+                equalTo: accountImageViewWrapper.leadingAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageView.topAnchor.constraint(
+                equalTo: accountImageViewWrapper.topAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageViewWrapper.trailingAnchor.constraint(
+                equalTo: accountImageView.trailingAnchor,
+                constant: imageBorderWidth
+            ),
+            accountImageViewWrapper.bottomAnchor.constraint(
+                equalTo: accountImageView.bottomAnchor,
+                constant: imageBorderWidth
+            ),
             // text mode
             initialsLabel.centerXAnchor.constraint(equalTo: accountImageViewWrapper.centerXAnchor),
             initialsLabel.centerYAnchor.constraint(equalTo: accountImageViewWrapper.centerYAnchor),
-            initialsLabel.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: initialsLabelSizeMultiplier),
-            initialsLabel.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: initialsLabelSizeMultiplier)
+            initialsLabel.widthAnchor.constraint(
+                equalTo: accountImageViewWrapper.widthAnchor,
+                multiplier: initialsLabelSizeMultiplier
+            ),
+            initialsLabel.heightAnchor.constraint(
+                equalTo: accountImageViewWrapper.heightAnchor,
+                multiplier: initialsLabelSizeMultiplier
+            )
         ])
 
         // view which renders the availability status
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityIndicatorView)
         NSLayoutConstraint.activate([
-            availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
-            availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
+            availabilityIndicatorView.widthAnchor.constraint(
+                equalTo: accountImageViewWrapper.widthAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
+            availabilityIndicatorView.heightAnchor.constraint(
+                equalTo: accountImageViewWrapper.heightAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
         ])
@@ -228,11 +252,11 @@ public final class AccountImageView: UIView {
 
     private func updateAccountImage() {
         switch source {
-        case .image(let image):
+        case let .image(image):
             initialsLabel.text = nil
             accountImageView.image = image
 
-        case .text(let initials):
+        case let .text(initials):
             initialsLabel.text = initials
             accountImageView.image = nil
         }

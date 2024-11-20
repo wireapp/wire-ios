@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireMainNavigationUI
 import WireSyncEngine
 
 extension MessagePresenter {
@@ -28,13 +29,15 @@ extension MessagePresenter {
     ///   - message: a message with image data
     ///   - actionResponder: a action responder
     ///   - isPreviewing: is peeking with 3D touch?
-    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
+    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in
+    /// navigation controller
     func imagesViewController(
         for message: ZMConversationMessage,
         actionResponder: MessageActionResponder,
         isPreviewing: Bool,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: AnyMainCoordinator,
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {
@@ -47,15 +50,18 @@ extension MessagePresenter {
 
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
 
-        let collection = AssetCollectionWrapper(conversation: conversation,
-                                                matchingCategories: [imagesCategoryMatch])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [imagesCategoryMatch]
+        )
 
         let imagesController = ConversationImagesViewController(
             collection: collection,
             initialMessage: message,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
         imagesController.isPreviewing = isPreviewing
 
@@ -75,9 +81,12 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.modalTargetController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.modalTargetController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
 
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
@@ -85,7 +94,8 @@ extension MessagePresenter {
             self?.modalTargetController?.dismiss(animated: true, completion: completion)
         }
 
-        return isPreviewing ? imagesController : imagesController.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+        return isPreviewing ? imagesController : imagesController
+            .wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
 
     @objc

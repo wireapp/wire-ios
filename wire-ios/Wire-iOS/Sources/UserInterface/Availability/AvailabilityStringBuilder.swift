@@ -92,18 +92,21 @@ enum AvailabilityStringBuilder {
 
     static func icon(for availability: Availability, with color: UIColor, and size: FontSize) -> NSTextAttachment? {
         guard availability != .none, let iconType = availability.iconType
-            else { return nil }
+        else { return nil }
 
-        let verticalCorrection: CGFloat
-
-        switch size {
+        let verticalCorrection: CGFloat = switch size {
         case .small:
-            verticalCorrection = -1
+            -1
         case .medium, .large, .normal, .header, .titleThree, .subHeadline, .bodyTwo, .buttonSmall, .body, .buttonBig:
-            verticalCorrection = 0
+            0
         }
 
-        return NSTextAttachment.textAttachment(for: iconType, with: color, iconSize: 12, verticalCorrection: verticalCorrection)
+        return NSTextAttachment.textAttachment(
+            for: iconType,
+            with: color,
+            iconSize: 12,
+            verticalCorrection: verticalCorrection
+        )
     }
 
     static func color(for availability: Availability) -> UIColor {

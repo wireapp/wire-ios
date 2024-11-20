@@ -32,7 +32,8 @@ public class Label: ZMManagedObject, LabelType {
 
     @objc
     public enum Kind: Int16 {
-        case folder, favorite
+        case folder
+        case favorite
     }
 
     @NSManaged public var name: String?
@@ -45,7 +46,7 @@ public class Label: ZMManagedObject, LabelType {
     public override var ignoredKeys: Set<AnyHashable>? {
         var ignoredKeys = super.ignoredKeys
 
-        _ = ignoredKeys?.insert((#keyPath(Label.type)))
+        _ = ignoredKeys?.insert(#keyPath(Label.type))
 
         return ignoredKeys
     }
@@ -62,7 +63,7 @@ public class Label: ZMManagedObject, LabelType {
 
     public var kind: Kind {
         get {
-            return Kind(rawValue: type) ?? .folder
+            Kind(rawValue: type) ?? .folder
         }
         set {
             type = newValue.rawValue
@@ -74,27 +75,29 @@ public class Label: ZMManagedObject, LabelType {
     }
 
     public override static func entityName() -> String {
-        return "Label"
+        "Label"
     }
 
-    override public static func sortKey() -> String {
-        return #keyPath(Label.name)
+    public override static func sortKey() -> String {
+        #keyPath(Label.name)
     }
 
-    override public static func defaultSortDescriptors() -> [NSSortDescriptor]? {
-        return [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
+    public override static func defaultSortDescriptors() -> [NSSortDescriptor]? {
+        [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
     }
 
     public override static func predicateForFilteringResults() -> NSPredicate? {
-        return NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
+        NSPredicate(
+            format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO"
+        )
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return true
+        true
     }
 
     public static func fetchFavoriteLabel(in context: NSManagedObjectContext) -> Label {
-        return fetchOrCreateFavoriteLabel(in: context, create: false)
+        fetchOrCreateFavoriteLabel(in: context, create: false)
     }
 
     @discardableResult
@@ -105,11 +108,13 @@ public class Label: ZMManagedObject, LabelType {
         // Looping through all objects in the context is way cheaper, because it does not involve (1)
         // taking any locks, nor (2) touching the file system.
         context.performAndWait {
-            guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()] else {
+            guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()]
+            else {
                 fatal("Label entity not registered in managed object model")
             }
 
-            for managedObject in context.registeredObjects where managedObject.entity == entity && !managedObject.isFault {
+            for managedObject in context.registeredObjects
+                where managedObject.entity == entity && !managedObject.isFault {
                 guard let label = managedObject as? Label, label.kind == .favorite else { continue }
                 return label
 
@@ -143,7 +148,12 @@ public class Label: ZMManagedObject, LabelType {
         }
     }
 
-    public static func fetchOrCreate(remoteIdentifier: UUID, create: Bool, in context: NSManagedObjectContext, created: inout Bool) -> Label? {
+    public static func fetchOrCreate(
+        remoteIdentifier: UUID,
+        create: Bool,
+        in context: NSManagedObjectContext,
+        created: inout Bool
+    ) -> Label? {
         if let existing = fetch(with: remoteIdentifier, in: context) {
             created = false
             return existing

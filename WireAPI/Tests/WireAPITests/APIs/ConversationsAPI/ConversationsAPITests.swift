@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
 
@@ -98,7 +98,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            )
         ]
 
         // when
@@ -119,7 +122,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            )
         ]
 
         let expectedIDs: [UUID] = [
@@ -165,7 +171,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            )
         ]
 
         // when
@@ -186,7 +195,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            )
         ]
 
         let expectedIDs: [QualifiedID] = [

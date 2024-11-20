@@ -31,7 +31,7 @@ struct URLRequestBuilder {
     }
 
     init(url: URL) {
-        request = URLRequest(url: url)
+        self.request = URLRequest(url: url)
     }
 
     func build() -> URLRequest {

@@ -20,24 +20,25 @@ import Foundation
 
 extension Label: ObjectInSnapshot {
 
-    static public var observableKeys: Set<String> {
-        return [
+    public static var observableKeys: Set<String> {
+        [
             #keyPath(Label.name), #keyPath(Label.markedForDeletion), #keyPath(Label.conversations)
         ]
     }
 
     public var notificationName: Notification.Name {
-        return .LabelChange
+        .LabelChange
     }
 
 }
 
-@objcMembers public class LabelChangeInfo: ObjectChangeInfo {
+@objcMembers
+public class LabelChangeInfo: ObjectChangeInfo {
 
     public let label: LabelType
 
     static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
-        return LabelChangeInfo(object: label, changes: changes)
+        LabelChangeInfo(object: label, changes: changes)
     }
 
     public required init(object: NSObject) {
@@ -46,32 +47,33 @@ extension Label: ObjectInSnapshot {
     }
 
     public var nameChanged: Bool {
-        return changedKeys.contains(#keyPath(Label.name))
+        changedKeys.contains(#keyPath(Label.name))
     }
 
     public var markedForDeletion: Bool {
-        return changedKeys.contains(#keyPath(Label.markedForDeletion))
+        changedKeys.contains(#keyPath(Label.markedForDeletion))
     }
 
     public var conversationsChanged: Bool {
-        return changedKeys.contains(#keyPath(Label.conversations))
+        changedKeys.contains(#keyPath(Label.conversations))
     }
 
 }
 
-@objc public protocol LabelObserver: NSObjectProtocol {
+@objc
+public protocol LabelObserver: NSObjectProtocol {
     func labelDidChange(_ changeInfo: LabelChangeInfo)
 }
 
 // MARK: Registering Label observers
 
-extension LabelChangeInfo {
+public extension LabelChangeInfo {
 
     /// Adds an observer for a label
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:)
-    public static func add(observer: LabelObserver, for label: LabelType) -> NSObjectProtocol? {
+    static func add(observer: LabelObserver, for label: LabelType) -> NSObjectProtocol? {
         guard let label = label as? Label else { return nil }
         return add(observer: observer, for: label, managedObjectContext: label.managedObjectContext!)
     }
@@ -80,11 +82,19 @@ extension LabelChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
-    public static func add(observer: LabelObserver, for label: LabelType?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
-            guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? LabelChangeInfo
-                else { return }
+    static func add(
+        observer: LabelObserver,
+        for label: LabelType?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .LabelChange,
+            managedObjectContext: managedObjectContext,
+            object: label
+        ) { [weak observer] note in
+            guard let observer,
+                  let changeInfo = note.changeInfo as? LabelChangeInfo
+            else { return }
 
             observer.labelDidChange(changeInfo)
         }

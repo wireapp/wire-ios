@@ -118,9 +118,12 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
 
             default:
                 let errorInfo = response.errorInfo
-                action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+                action.fail(with: .unknown(
+                    status: errorInfo.status,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
             }
-
         }
     }
 

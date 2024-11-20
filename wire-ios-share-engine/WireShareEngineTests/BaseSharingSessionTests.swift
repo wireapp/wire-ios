@@ -20,10 +20,10 @@ import WireDataModel
 import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import WireTestingPackage
 import XCTest
+@testable import WireShareEngine
 
 @testable import WireDataModelSupport
 
@@ -73,9 +73,9 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(
@@ -122,7 +122,10 @@ class BaseTest: ZMTBaseTest {
         strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext),
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(
+                linkPreviewDetector: linkPreviewDetector,
+                managedObjectContext: coreDataStack.syncContext
+            ),
             transportSession: transportSession
         )
 
@@ -142,8 +145,8 @@ class BaseTest: ZMTBaseTest {
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabase_MockMethod = { }
-        mockEARService.lockDatabase_MockMethod = { }
+        mockEARService.unlockDatabase_MockMethod = {}
+        mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()

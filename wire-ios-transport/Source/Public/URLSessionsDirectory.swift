@@ -30,10 +30,10 @@ public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
     public var foregroundSession: ZMURLSession
     public var backgroundSession: ZMURLSession
     public var allSessions: [ZMURLSession] {
-        return [foregroundSession, backgroundSession]
+        [foregroundSession, backgroundSession]
     }
 
-    @objc public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession) {
+    public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession
     }

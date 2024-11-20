@@ -31,15 +31,15 @@ protocol IconImageStyle {
 
 extension IconImageStyle {
     var accessibilityPrefix: String {
-        return "img"
+        "img"
     }
 
     var accessibilityIdentifier: String {
-        return "\(accessibilityPrefix).\(accessibilitySuffix)"
+        "\(accessibilityPrefix).\(accessibilitySuffix)"
     }
 
     var tintColor: UIColor? {
-        return nil
+        nil
     }
 }
 
@@ -57,13 +57,14 @@ class IconImageView: UIImageView {
         self.init(frame: .zero)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override var accessibilityIdentifier: String? {
         get {
-            return style?.accessibilityIdentifier
+            style?.accessibilityIdentifier
         }
         set {
             super.accessibilityIdentifier = newValue
@@ -72,16 +73,18 @@ class IconImageView: UIImageView {
 
     override var accessibilityLabel: String? {
         get {
-            return style?.accessibilityLabel
+            style?.accessibilityLabel
         }
         set {
             super.accessibilityLabel = newValue
         }
     }
 
-    func set(style: IconImageStyle? = nil,
-             size: StyleKitIcon.Size? = nil,
-             color: UIColor? = nil) {
+    func set(
+        style: IconImageStyle? = nil,
+        size: StyleKitIcon.Size? = nil,
+        color: UIColor? = nil
+    ) {
         // save size and color if needed
         set(size: size, color: color)
 
@@ -94,8 +97,8 @@ class IconImageView: UIImageView {
         }
 
         isHidden = false
-        self.tintColor = style.tintColor ?? self.color
-        self.setTemplateIcon(icon, size: self.size)
+        tintColor = style.tintColor ?? self.color
+        setTemplateIcon(icon, size: self.size)
         self.style = style
     }
 

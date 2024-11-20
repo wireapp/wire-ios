@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
+import WireTestingPackage
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import WireTestingPackage
-import XCTest
 
 final class OneOnOneResolverTests: XCTestCase {
 
@@ -209,8 +209,7 @@ final class OneOnOneResolverTests: XCTestCase {
         )
 
         let conversation = await syncContext.perform { [self] in
-            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
-            return conversation
+            return makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
         }
 
         do {

@@ -31,8 +31,10 @@ final class TextSearchInputView: UIView {
 
     let iconView = UIImageView()
     let searchInput = SearchTextView(style: .default)
-    let placeholderLabel = DynamicFontLabel(style: .body1,
-                                            color: SearchBarColors.textInputViewPlaceholder)
+    let placeholderLabel = DynamicFontLabel(
+        style: .body1,
+        color: SearchBarColors.textInputViewPlaceholder
+    )
     let clearButton = IconButton(style: .default)
 
     private let spinner = ProgressSpinner()
@@ -40,14 +42,14 @@ final class TextSearchInputView: UIView {
     weak var delegate: TextSearchInputViewDelegate?
     var query: String = "" {
         didSet {
-            self.updateForSearchQuery()
-            self.delegate?.searchView(self, didChangeQueryTo: self.query)
+            updateForSearchQuery()
+            delegate?.searchView(self, didChangeQueryTo: query)
         }
     }
 
     var placeholderString: String = "" {
         didSet {
-            self.placeholderLabel.text = placeholderString
+            placeholderLabel.text = placeholderString
         }
     }
 
@@ -76,7 +78,11 @@ final class TextSearchInputView: UIView {
         placeholderLabel.isAccessibilityElement = false
 
         clearButton.setIcon(.clearInput, size: .tiny, for: .normal)
-        clearButton.addTarget(self, action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)), for: .touchUpInside)
+        clearButton.addTarget(
+            self,
+            action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)),
+            for: .touchUpInside
+        )
         clearButton.isHidden = true
         clearButton.accessibilityIdentifier = "cancel search"
         clearButton.accessibilityLabel = L10n.Accessibility.SearchView.ClearButton.description
@@ -95,8 +101,12 @@ final class TextSearchInputView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        NSLayoutConstraint.activate(
-            searchInput.fitInConstraints(view: self, inset: 8) + [
+        NSLayoutConstraint.activate([
+            searchInput.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            searchInput.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            searchInput.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            searchInput.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+
             iconView.leadingAnchor.constraint(equalTo: searchInput.leadingAnchor, constant: 16),
             iconView.centerYAnchor.constraint(equalTo: searchInput.centerYAnchor),
 
@@ -118,7 +128,7 @@ final class TextSearchInputView: UIView {
             spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
             spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
             spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue)
-            ])
+        ])
     }
 
     @available(*, unavailable)
@@ -128,18 +138,18 @@ final class TextSearchInputView: UIView {
 
     @objc
     func onCancelButtonTouchUpInside(_ sender: AnyObject!) {
-        self.query = ""
-        self.searchInput.text = ""
-        self.searchInput.resignFirstResponder()
+        query = ""
+        searchInput.text = ""
+        searchInput.resignFirstResponder()
     }
 
     fileprivate func updatePlaceholderLabel() {
-        self.placeholderLabel.isHidden = !self.query.isEmpty
+        placeholderLabel.isHidden = !query.isEmpty
     }
 
     fileprivate func updateForSearchQuery() {
-        self.updatePlaceholderLabel()
-        clearButton.isHidden = self.query.isEmpty
+        updatePlaceholderLabel()
+        clearButton.isHidden = query.isEmpty
     }
 }
 
@@ -152,7 +162,7 @@ extension TextSearchInputView: UITextViewDelegate {
         let containsReturn = text.rangeOfCharacter(from: .newlines, options: [], range: .none) != .none
 
         let newText = (currentText as NSString).replacingCharacters(in: range, with: text)
-        self.query = containsReturn ? currentText : newText
+        query = containsReturn ? currentText : newText
 
         if containsReturn {
             let shouldReturn = delegate?.searchViewShouldReturn(self) ?? true
@@ -165,11 +175,11 @@ extension TextSearchInputView: UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(_ textView: UITextView) {
-        self.updatePlaceholderLabel()
+        updatePlaceholderLabel()
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        self.updatePlaceholderLabel()
+        updatePlaceholderLabel()
     }
 
 }

@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
     /// Create a new team one on one with another user.
     ///
@@ -27,7 +27,7 @@ extension ZMUserSession {
     ///   - user: the other user.
     ///   - completion: a result handler.
 
-    public func createTeamOneOnOne(
+    func createTeamOneOnOne(
         with user: UserType,
         completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     ) {
@@ -58,7 +58,8 @@ extension ZMUserSession {
                 )
 
                 try await self.viewContext.perform {
-                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation else {
+                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation
+                    else {
                         throw CreateTeamOneOnOneConversationError.conversationNotFound
                     }
 
