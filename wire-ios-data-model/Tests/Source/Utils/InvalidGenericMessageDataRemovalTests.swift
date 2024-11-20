@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
 
@@ -27,10 +27,10 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
         let conversation = createConversation()
         let textMessage = try! conversation.appendText(content: "Hello world") as! ZMClientMessage
         let genericMessageData = textMessage.dataSet.firstObject! as! ZMGenericMessageData
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertFalse(genericMessageData.isDeleted)
@@ -42,7 +42,7 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
         let conversation = createConversation()
         let textMessage = try! conversation.appendText(content: "Hello world") as! ZMClientMessage
         let genericMessageData = textMessage.dataSet.firstObject! as! ZMGenericMessageData
-        try self.moc.save()
+        try moc.save()
 
         // Then
         XCTAssertFalse(genericMessageData.isDeleted)
@@ -50,10 +50,10 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
 
         // And when
         genericMessageData.message = nil
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertTrue(genericMessageData.isDeleted)
@@ -63,12 +63,12 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesNotRemoveValidGenericMessageData_Asset() throws {
         // Given
         let conversation = createConversation()
-        let assetMessage = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMAssetClientMessage
+        let assetMessage = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         let genericMessageData = assetMessage.dataSet.firstObject! as! ZMGenericMessageData
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertFalse(genericMessageData.isDeleted)
@@ -78,9 +78,9 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesRemoveInvalidGenericMessageData_Asset() throws {
         // Given
         let conversation = createConversation()
-        let assetMessage = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMAssetClientMessage
+        let assetMessage = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         let genericMessageData = assetMessage.dataSet.firstObject! as! ZMGenericMessageData
-        try self.moc.save()
+        try moc.save()
 
         // Then
         XCTAssertFalse(genericMessageData.isDeleted)
@@ -89,10 +89,10 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
         // And when
 
         genericMessageData.asset = nil
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidGenericMessageDataRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertTrue(genericMessageData.isDeleted)

@@ -17,10 +17,28 @@
 //
 
 import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
 
-public protocol CreateConversationFolderUseCaseProtocol {
-    /// Creates a new conversation folder with the specified name
-    /// - Parameter name: The name of the folder to be created
-    /// - Returns: The created `LabelType`, or `nil` if creation fails
-    func invoke(with name: String) async -> LabelType?
+extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.CreateConversationFolderUseCaseProtocol {
+
+    public func invoke(name: String) async throws -> Folder {
+        guard let labelType = try await fetchLabelType(for: name) else {
+            throw FolderCreationError.invalidLabelType
+        }
+
+        return Folder(
+            identifier: labelType.remoteIdentifier,
+            name: labelType.name ?? ""
+        )
+    }
+
+    private func fetchLabelType(for name: String) async throws -> LabelType? {
+        try await invoke(with: name)
+    }
+
+    private enum FolderCreationError: Error {
+        case invalidLabelType
+    }
+
 }

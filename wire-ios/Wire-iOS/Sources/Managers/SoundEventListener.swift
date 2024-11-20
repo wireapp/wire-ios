@@ -22,11 +22,11 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     var isSentBySelfUser: Bool {
-        return senderUser?.isSelfUser ?? false
+        senderUser?.isSelfUser ?? false
     }
 
     var isRecentMessage: Bool {
-        return (self.serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
+        (serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
     }
 
     var isSystemMessageWithSoundNotification: Bool {
@@ -63,15 +63,25 @@ final class SoundEventListener: NSObject {
         self.userSession = userSession
         super.init()
 
-        networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+        self.networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
             self,
             notificationContext: userSession.managedObjectContext.notificationContext
         )
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
-        unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
-        unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
+        self.unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
 
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = UIApplication.shared.applicationState == .background
@@ -84,10 +94,10 @@ final class SoundEventListener: NSObject {
 
     func provideHapticFeedback(for message: ZMConversationMessage) {
         if message.isNormal,
-            message.isRecentMessage,
-            message.isSentBySelfUser,
-            let localMessage = message as? ZMMessage,
-            localMessage.deliveryState == .pending {
+           message.isRecentMessage,
+           message.isSentBySelfUser,
+           let localMessage = message as? ZMMessage,
+           localMessage.deliveryState == .pending {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }
@@ -108,9 +118,9 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 
             provideHapticFeedback(for: message)
 
-            guard (message.isNormal || message.isSystemMessageWithSoundNotification) &&
-                  message.isRecentMessage &&
-                  !message.isSentBySelfUser &&
+            guard message.isNormal || message.isSystemMessageWithSoundNotification,
+                  message.isRecentMessage,
+                  !message.isSentBySelfUser,
                   !isSilenced else {
                 continue
             }
@@ -132,7 +142,7 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
             let isSilenced = message.isSilenced
             let isSentBySelfUser = message.senderUser?.isSelfUser ?? false
 
-            guard message.isKnock && isRecentMessage && !isSilenced && !isSentBySelfUser else {
+            guard message.isKnock, isRecentMessage, !isSilenced, !isSentBySelfUser else {
                 continue
             }
 
@@ -144,7 +154,13 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 
 extension SoundEventListener: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
 
         guard let mediaManager = AVSMediaManager.sharedInstance(),
               let userSession,
@@ -159,13 +175,14 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 
         switch callState {
         case .incoming(video: _, shouldRing: true, degraded: _):
-            guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else { return }
+            guard let sessionManager = SessionManager.shared,
+                  conversation.mutedMessageTypesIncludingAvailability == .none else { return }
 
-            let otherNonIdleCalls = callCenter.nonIdleCalls.filter({ (key: AVSIdentifier, _) -> Bool in
+            let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
                 return key != conversationId
-            })
+            }
 
-            if otherNonIdleCalls.count > 0 {
+            if !otherNonIdleCalls.isEmpty {
                 playSoundIfAllowed(.ringingFromThemInCallSound)
             } else if sessionManager.callNotificationStyle != .callKit {
                 playSoundIfAllowed(.ringingFromThemSound)
@@ -173,7 +190,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         case .incoming(video: _, shouldRing: false, degraded: _):
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             switch reason {
             case .normal, .canceled:
                 break

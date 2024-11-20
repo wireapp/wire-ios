@@ -19,23 +19,27 @@
 import Foundation
 import WireLinkPreview
 
-extension ArticleMetadata {
-    public convenience init(protocolBuffer: LinkPreview) {
-        self.init(originalURLString: protocolBuffer.url,
-                  permanentURLString: protocolBuffer.permanentURL,
-                  resolvedURLString: protocolBuffer.permanentURL,
-                  offset: Int(protocolBuffer.urlOffset))
+public extension ArticleMetadata {
+    convenience init(protocolBuffer: LinkPreview) {
+        self.init(
+            originalURLString: protocolBuffer.url,
+            permanentURLString: protocolBuffer.permanentURL,
+            resolvedURLString: protocolBuffer.permanentURL,
+            offset: Int(protocolBuffer.urlOffset)
+        )
         title = protocolBuffer.title.removingExtremeCombiningCharacters
         summary = protocolBuffer.summary.removingExtremeCombiningCharacters
     }
 }
 
-extension TwitterStatusMetadata {
-    public convenience init(protocolBuffer: LinkPreview) {
-        self.init(originalURLString: protocolBuffer.url,
-                  permanentURLString: protocolBuffer.permanentURL,
-                  resolvedURLString: protocolBuffer.permanentURL,
-                  offset: Int(protocolBuffer.urlOffset))
+public extension TwitterStatusMetadata {
+    convenience init(protocolBuffer: LinkPreview) {
+        self.init(
+            originalURLString: protocolBuffer.url,
+            permanentURLString: protocolBuffer.permanentURL,
+            resolvedURLString: protocolBuffer.permanentURL,
+            offset: Int(protocolBuffer.urlOffset)
+        )
         message = protocolBuffer.title.removingExtremeCombiningCharacters
         let newAuthor = protocolBuffer.hasTweet ? protocolBuffer.tweet.author : nil
         author = newAuthor?.removingExtremeCombiningCharacters

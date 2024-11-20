@@ -25,7 +25,8 @@ public protocol NotificationSettingsRegistrable {
 }
 
 /// An abstraction of the application (UIApplication, NSApplication)
-@objc public protocol ZMApplication: NSObjectProtocol {
+@objc
+public protocol ZMApplication: NSObjectProtocol {
 
     /// The current application state
     var applicationState: UIApplication.State { get }
@@ -40,54 +41,94 @@ public protocol NotificationSettingsRegistrable {
     func registerForRemoteNotifications()
 
     /// Register for change in application state: didBecomeActive
-    @objc func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector)
+    @objc
+    func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector)
 
     /// Register for change in application state: willResignActive
-    @objc func registerObserverForWillResignActive(_ object: NSObject, selector: Selector)
+    @objc
+    func registerObserverForWillResignActive(_ object: NSObject, selector: Selector)
 
     /// Register for change in application state: didBecomeActive
-    @objc func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector)
+    @objc
+    func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector)
 
     /// Register for change in application state: willResignActive
-    @objc func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector)
+    @objc
+    func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector)
 
     /// Register for application will terminate
-    @objc func registerObserverForApplicationWillTerminate(_ object: NSObject, selector: Selector)
+    @objc
+    func registerObserverForApplicationWillTerminate(_ object: NSObject, selector: Selector)
 
     /// Unregister for change in application state
-    @objc func unregisterObserverForStateChange(_ object: NSObject)
+    @objc
+    func unregisterObserverForStateChange(_ object: NSObject)
 
     /// Sets minimum interval for background fetch
-    @objc func setMinimumBackgroundFetchInterval(_ minimumBackgroundFetchInterval: TimeInterval)
+    @objc
+    func setMinimumBackgroundFetchInterval(_ minimumBackgroundFetchInterval: TimeInterval)
 }
 
 extension UIApplication: ZMApplication {
 
     public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     public func registerObserverForWillResignActive(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
     }
 
     public func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     public func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
     public func registerObserverForApplicationWillTerminate(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willTerminateNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
     }
 
     public func unregisterObserverForStateChange(_ object: NSObject) {
         NotificationCenter.default.removeObserver(object, name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(object, name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.removeObserver(object, name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(object, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(
+            object,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            object,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
         NotificationCenter.default.removeObserver(object, name: UIApplication.willTerminateNotification, object: nil)
     }
 }

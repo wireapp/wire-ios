@@ -34,7 +34,12 @@ final class StartUIInviteActionBar: UIView {
         createInviteButton()
         createConstraints()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -60,7 +65,7 @@ final class StartUIInviteActionBar: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: isHidden ? 0 : 56.0)
+        CGSize(width: UIView.noIntrinsicMetric, height: isHidden ? 0 : 56.0)
     }
 
     private func createConstraints() {
@@ -72,7 +77,10 @@ final class StartUIInviteActionBar: UIView {
             inviteButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -padding),
             inviteButton.topAnchor.constraint(equalTo: topAnchor, constant: padding)
         ])
-        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -padding)
+        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(
+            equalTo: safeAreaLayoutGuide.bottomAnchor,
+            constant: -padding
+        )
         bottomEdgeConstraint.isActive = true
 
         inviteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true

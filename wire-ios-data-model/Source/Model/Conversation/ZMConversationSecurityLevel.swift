@@ -22,11 +22,11 @@ extension ZMConversationSecurityLevel: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .notSecure:
-            return "notSecure"
+            "notSecure"
         case .secure:
-            return "secure"
+            "secure"
         case .secureWithIgnored:
-            return "secureWithIgnored"
+            "secureWithIgnored"
         }
     }
 }

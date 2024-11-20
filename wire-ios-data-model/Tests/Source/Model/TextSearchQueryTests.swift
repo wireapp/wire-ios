@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 
@@ -49,8 +49,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let otherMessage = try! otherConversation.appendText(content: "This is the first message in the other conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let otherMessage = try! otherConversation
+            .appendText(content: "This is the first message in the other conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 40, normalized: false)
         fillConversationWithMessages(conversation: otherConversation, messageCount: 40, normalized: false)
         [firstMessage, otherMessage].forEach {
@@ -85,8 +87,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let otherMessage = try! otherConversation.appendText(content: "This is the first message in the other conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let otherMessage = try! otherConversation
+            .appendText(content: "This is the first message in the other conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 40, normalized: true)
         fillConversationWithMessages(conversation: otherConversation, messageCount: 40, normalized: true)
 
@@ -119,7 +123,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
 
         // When
-        let message = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let message = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
         XCTAssert(uiMOC.saveOrRollback())
 
         // Then
@@ -131,10 +136,13 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let secondMessage = try! conversation
+            .appendText(content: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: false)
-        let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = try! conversation
+            .appendText(content: "This is the last message in the conversation") as! ZMMessage
         [firstMessage, secondMessage, lastMessage].forEach {
             $0.normalizedText = nil
         }
@@ -171,9 +179,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
         firstMessage.serverTimestamp = Date()
-        let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = try! conversation
+            .appendText(content: "This is the second message in the conversation") as! ZMMessage
         secondMessage.serverTimestamp = firstMessage.serverTimestamp?.addingTimeInterval(100)
 
         XCTAssert(uiMOC.saveOrRollback())
@@ -212,12 +222,15 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
         Thread.sleep(forTimeInterval: 0.05)
-        let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = try! conversation
+            .appendText(content: "This is the second message in the conversation") as! ZMMessage
         Thread.sleep(forTimeInterval: 0.05)
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: true)
-        let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = try! conversation
+            .appendText(content: "This is the last message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -250,10 +263,13 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let secondMessage = try! conversation
+            .appendText(content: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 2, normalized: true)
-        let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = try! conversation
+            .appendText(content: "This is the last message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -264,12 +280,18 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // When
         let delegate = MockTextSearchQueryDelegate()
         let configuration = TextSearchQueryFetchConfiguration(notIndexedBatchSize: 2, indexedBatchSize: 2)
-        let sut = TextSearchQuery(conversation: conversation, query: "in the conversation", delegate: delegate, configuration: configuration)
+        let sut = TextSearchQuery(
+            conversation: conversation,
+            query: "in the conversation",
+            delegate: delegate,
+            configuration: configuration
+        )
         sut?.execute()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        guard delegate.fetchedResults.count == 3 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard delegate.fetchedResults.count == 3
+        else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
 
         let firstResult = delegate.fetchedResults.first!
         XCTAssertTrue(firstResult.hasMore)
@@ -291,11 +313,14 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
 
         // We insert old messages that have not yet been indexed
-        let firstMessage = try! conversation.appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = try! conversation
+            .appendText(content: "This is the first message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: false)
-        let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = try! conversation
+            .appendText(content: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: true)
-        let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = try! conversation
+            .appendText(content: "This is the last message in the conversation") as! ZMMessage
         [firstMessage, secondMessage].forEach {
             $0.normalizedText = nil
         }
@@ -369,7 +394,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "aa:bb", whenSearchingFor: "bb")
         verifyThatItFindsMessage(withText: "@peter", whenSearchingFor: "peter")
         verifyThatItFindsMessage(withText: "rené", whenSearchingFor: "Rene")
-        verifyThatItFindsMessage(withText: "https://www.link.com/something-to-read?q=12&second#reader", whenSearchingFor: "something to read")
+        verifyThatItFindsMessage(
+            withText: "https://www.link.com/something-to-read?q=12&second#reader",
+            whenSearchingFor: "something to read"
+        )
         verifyThatItFindsMessage(withText: "<8000 x a's>", whenSearchingFor: "<8000 x a's>")
         verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "бб")
         verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "bb")
@@ -378,7 +406,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     func testThatItUsesANDConjunctionForSearchTerms() {
         verifyThatItFindsMessage(withText: "This is a test message", whenSearchingFor: "this message")
-        verifyThatItFindsMessage(withText: "This is a test message", whenSearchingFor: "this conversation", shouldFind: false)
+        verifyThatItFindsMessage(
+            withText: "This is a test message",
+            whenSearchingFor: "this conversation",
+            shouldFind: false
+        )
     }
 
     func testThatItDoesNotCreateASearchQueryWithQuerySmallerThanTwoCharacters() {
@@ -389,7 +421,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Then
         XCTAssertNil(TextSearchQuery(conversation: conversation, query: "", delegate: MockTextSearchQueryDelegate()))
         XCTAssertNil(TextSearchQuery(conversation: conversation, query: "a", delegate: MockTextSearchQueryDelegate()))
-        XCTAssertNotNil(TextSearchQuery(conversation: conversation, query: "ab", delegate: MockTextSearchQueryDelegate()))
+        XCTAssertNotNil(TextSearchQuery(
+            conversation: conversation,
+            query: "ab",
+            delegate: MockTextSearchQueryDelegate()
+        ))
     }
 
     func testThatItDoesNotReturnsAnyResultsWithOnlyOneCharacterSearchTerms() {
@@ -409,7 +445,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        guard delegate.fetchedResults.count == 1 else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
+        guard delegate.fetchedResults.count == 1
+        else { return XCTFail("Unexpected count \(delegate.fetchedResults.count)") }
         let result = delegate.fetchedResults.first!
         XCTAssertFalse(result.hasMore)
 
@@ -435,7 +472,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         guard let originalMatches = search(for: "hakon", in: conversation).first?.matches,
               let editedMatches = search(for: "coracao", in: conversation).first?.matches else {
-                return XCTFail("Unable to get matches")
+            return XCTFail("Unable to get matches")
         }
 
         XCTAssert(originalMatches.isEmpty)
@@ -453,10 +490,13 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.conversationType = .group
         conversation.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
 
-        let message = try! conversation.appendText(content: "This is a regular message in the conversation") as! ZMMessage
-        let otherMessage = try! conversation.appendText(content: "This is the another message in the conversation") as! ZMMessage
+        let message = try! conversation
+            .appendText(content: "This is a regular message in the conversation") as! ZMMessage
+        let otherMessage = try! conversation
+            .appendText(content: "This is the another message in the conversation") as! ZMMessage
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
-        let ephemeralMessage = try! conversation.appendText(content: "This is a timed message in the conversation") as! ZMMessage
+        let ephemeralMessage = try! conversation
+            .appendText(content: "This is a timed message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(message.normalizedText)
@@ -466,8 +506,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // When
         guard let ephemeralMatches = search(for: "timed", in: conversation).first?.matches,
-            let firstMessageMatches = search(for: "regular message", in: conversation).first?.matches else {
-                return XCTFail("Unable to get matches")
+              let firstMessageMatches = search(for: "regular message", in: conversation).first?.matches else {
+            return XCTFail("Unable to get matches")
         }
 
         // Then
@@ -480,7 +520,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     }
 
     func testThatItCanSearchForALargeMessage() throws {
-        let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
+        let longText = try String(
+            contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"),
+            encoding: .utf8
+        )
         let text = longText + "search query"
         verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
     }
@@ -497,8 +540,16 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "search term query test", whenSearchingFor: "search query") { message in
             // When we add a linkpreview to the message before searching
             guard let clientMessage = message as? ZMClientMessage else { return XCTFail("No client message") }
-            let (title, summary, url, permanentURL) = ("title", "summary", "www.example.com/original", "www.example.com/permanent")
-            let image = WireProtos.Asset(withUploadedOTRKey: Data.secureRandomData(ofLength: 16), sha256: Data.secureRandomData(ofLength: 16))
+            let (title, summary, url, permanentURL) = (
+                "title",
+                "summary",
+                "www.example.com/original",
+                "www.example.com/permanent"
+            )
+            let image = WireProtos.Asset(
+                withUploadedOTRKey: Data.secureRandomData(ofLength: 16),
+                sha256: Data.secureRandomData(ofLength: 16)
+            )
 
             let preview = LinkPreview.with {
                 $0.url = url
@@ -523,14 +574,22 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     }
 
     func testThatItCanSearchForAMessageThatContainsALinkWithoutPreview() {
-        verifyThatItFindsMessage(withText: "Hey, check out this amazing link: www.wire.com", whenSearchingFor: "wire.com")
+        verifyThatItFindsMessage(
+            withText: "Hey, check out this amazing link: www.wire.com",
+            whenSearchingFor: "wire.com"
+        )
     }
 
     func testThatItDoesNotReturnAnyMessagesOtherThanTextInTheResults() throws {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        try conversation.appendLocation(with: LocationData(latitude: 52.520008, longitude: 13.404954, name: "Berlin, Germany", zoomLevel: 8))
+        try conversation.appendLocation(with: LocationData(
+            latitude: 52.520008,
+            longitude: 13.404954,
+            name: "Berlin, Germany",
+            zoomLevel: 8
+        ))
         try conversation.appendImage(from: mediumJPEGData())
         try conversation.appendKnock()
         try conversation.appendImage(from: verySmallJPEGData())
@@ -549,7 +608,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     // MARK: Helper
 
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
-        for index in 0..<messageCount {
+        for index in 0 ..< messageCount {
             let text = "This is the text message at index \(index)"
             let message = try! conversation.appendText(content: text) as! ZMMessage
             if normalized {
@@ -562,7 +621,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         uiMOC.saveOrRollback()
     }
 
-    func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
+    func verifyAllMessagesAreIndexed(
+        in conversation: ZMConversation,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForNotIndexedMessages(),
             ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
@@ -585,10 +648,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         whenSearchingFor query: String,
         shouldFind: Bool = true,
         in conversation: ZMConversation? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         messageModifier: ((ZMMessage) -> Void)? = nil
-        ) {
+    ) {
 
         // Given
         let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
@@ -609,14 +672,24 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         if shouldFind {
             guard let match = result.matches.first else { return XCTFail("No match found", file: file, line: line) }
-            XCTAssertEqual(match.textMessageData?.messageText, message.textMessageData?.messageText, file: file, line: line)
+            XCTAssertEqual(
+                match.textMessageData?.messageText,
+                message.textMessageData?.messageText,
+                file: file,
+                line: line
+            )
             verifyAllMessagesAreIndexed(in: conversation, file: file, line: line)
         } else {
             XCTAssertTrue(result.matches.isEmpty, "Expected to not find a match", file: file, line: line)
         }
     }
 
-    fileprivate func search(for text: String, in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> [TextQueryResult] {
+    fileprivate func search(
+        for text: String,
+        in conversation: ZMConversation,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [TextQueryResult] {
         let delegate = MockTextSearchQueryDelegate()
         guard let sut = TextSearchQuery(conversation: conversation, query: text, delegate: delegate) else {
             XCTFail("Unable to create a query object, ensure the query is >= 2 characters", file: file, line: line)

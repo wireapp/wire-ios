@@ -19,9 +19,9 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class ConversationDeleteEventProcessorTests: XCTestCase {
 
@@ -117,7 +117,8 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
 
         static let conversationID = ConversationID(uuid: id, domain: domain)
 
-        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+        static let base64EncodedString =
+            "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         static let mlsServiceError = MockMLSError.failedToWipeGroup
 

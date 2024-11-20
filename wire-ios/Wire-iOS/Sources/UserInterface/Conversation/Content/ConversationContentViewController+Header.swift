@@ -22,22 +22,23 @@ import WireSyncEngine
 extension ConversationContentViewController {
     func updateTableViewHeaderView() {
         guard let userSession = ZMUserSession.shared(),
-            dataSource.hasOlderMessagesToLoad == false ||
+              dataSource.hasOlderMessagesToLoad == false ||
               conversation.conversationType == .connection else {
-                // Don't display the conversation header if the message window doesn't include the first message and it is not a connection
+            // Don't display the conversation header if the message window doesn't include the first message and it is
+            // not a connection
             return
         }
 
         var headerView: UIView?
 
-        let otherParticipant: ZMUser?
-        if conversation.conversationType == .connection {
-            otherParticipant = conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
+        let otherParticipant: ZMUser? = if conversation.conversationType == .connection {
+            conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
         } else {
-            otherParticipant = conversation.firstActiveParticipantOtherThanSelf
+            conversation.firstActiveParticipantOtherThanSelf
         }
 
-        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation.conversationType == .oneOnOne
+        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
+            .conversationType == .oneOnOne
 
         if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)

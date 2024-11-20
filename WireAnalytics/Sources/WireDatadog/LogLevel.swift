@@ -16,8 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-protocol ViewControllerDismisser: AnyObject {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?)
+public extension WireDatadog {
+    enum LogLevel: String, Codable {
+        case debug
+        case info
+        case notice
+        case warn
+        case error
+        case critical
+    }
 }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class SyncStatusTests: MessagingTest {
 
@@ -401,7 +401,7 @@ final class SyncStatusTests: MessagingTest {
         sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()

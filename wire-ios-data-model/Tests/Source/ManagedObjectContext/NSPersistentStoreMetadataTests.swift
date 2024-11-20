@@ -22,12 +22,12 @@ import XCTest
 class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
 
     override var shouldUseInMemoryStore: Bool {
-        return false
+        false
     }
 
     func forceSave() {
         // I need to insert or modify an entity, or core data will not save
-        self.uiMOC.forceSaveOrRollback()
+        uiMOC.forceSaveOrRollback()
     }
 }
 
@@ -40,10 +40,10 @@ extension NSPersistentStoreMetadataTests {
         let key = "boo"
 
         // WHEN
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(data, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatItDeletesMetadataFromMemory() {
@@ -51,13 +51,13 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // WHEN
-        self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
+        uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
 
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(nil, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatMetadataAreNotPersisted() {
@@ -65,13 +65,13 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // WHEN
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(nil, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatItPersistsMetadataWhenSaving() {
@@ -79,14 +79,14 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // WHEN
-        self.forceSave()
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        forceSave()
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(data, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatItDiscardsMetadataWhenRollingBack() {
@@ -94,17 +94,17 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // WHEN
-        self.uiMOC.enableForceRollback()
-        self.forceSave()
+        uiMOC.enableForceRollback()
+        forceSave()
 
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(nil, uiMOC.persistentStoreMetadata(forKey: key) as? String)
 
         // AFTER
-        self.uiMOC.disableForceRollback()
+        uiMOC.disableForceRollback()
     }
 
     func testThatItDeletesAlreadySetMetadataInMemory() {
@@ -112,14 +112,14 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
-        self.forceSave()
+        uiMOC.setPersistentStoreMetadata(data, key: key)
+        forceSave()
 
         // WHEN
-        self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
+        uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
 
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(nil, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatItDiscardsDeletesAlreadySetMetadataInMemory() {
@@ -127,15 +127,15 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
-        self.forceSave()
-        self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
+        forceSave()
+        uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
 
         // WHEN
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(data, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 
     func testThatItDeletesAlreadySetMetadataFromStore() {
@@ -143,61 +143,66 @@ extension NSPersistentStoreMetadataTests {
         // GIVEN
         let data = "foo"
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
-        self.forceSave()
-        self.uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
+        forceSave()
+        uiMOC.setPersistentStoreMetadata(nil as String?, key: key)
 
         // WHEN
-        self.forceSave()
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        forceSave()
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        XCTAssertEqual(nil, self.uiMOC.persistentStoreMetadata(forKey: key) as? String)
+        XCTAssertEqual(nil, uiMOC.persistentStoreMetadata(forKey: key) as? String)
     }
 }
 
 // MARK: - What can be saved
+
 extension NSPersistentStoreMetadataTests {
 
-    func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(data: T, file: StaticString = #file, line: UInt = #line) {
+    func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(
+        data: T,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
 
         // GIVEN
         let key = "boo"
-        self.uiMOC.setPersistentStoreMetadata(data, key: key)
+        uiMOC.setPersistentStoreMetadata(data, key: key)
 
         // WHEN
-        self.forceSave()
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        forceSave()
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        XCTAssertEqual(data, self.uiMOC.persistentStoreMetadata(forKey: key) as? T, file: file, line: line)
+        XCTAssertEqual(data, uiMOC.persistentStoreMetadata(forKey: key) as? T, file: file, line: line)
     }
 
     func testThatItCanStoreStrings() {
-        self.checkThatItCanSave(data: "Foo")
+        checkThatItCanSave(data: "Foo")
     }
 
     func testThatItCanStoreDates() {
-        self.checkThatItCanSave(data: Date())
+        checkThatItCanSave(data: Date())
     }
 
     func testThatItCanStoreData() {
-        self.checkThatItCanSave(data: Data([21, 3]))
+        checkThatItCanSave(data: Data([21, 3]))
     }
 
     func testThatItCanStoreArrayOfString() {
         // GIVEN
         let key = "boo"
         let data = ["a", "z"]
-        self.uiMOC.setPersistentStoreMetadata(array: data, key: key)
+        uiMOC.setPersistentStoreMetadata(array: data, key: key)
 
         // WHEN
-        self.forceSave()
-        self.resetUIandSyncContextsAndResetPersistentStore(false)
+        forceSave()
+        resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        for i in 0..<data.count {
-            XCTAssertEqual(data[i], (self.uiMOC.persistentStoreMetadata(forKey: key) as? [String])?[i])
+        for i in 0 ..< data.count {
+            XCTAssertEqual(data[i], (uiMOC.persistentStoreMetadata(forKey: key) as? [String])?[i])
         }
     }
 }

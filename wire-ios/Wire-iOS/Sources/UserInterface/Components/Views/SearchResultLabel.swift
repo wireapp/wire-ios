@@ -37,19 +37,19 @@ final class SearchResultLabel: UILabel, Copyable {
 
     var isObfuscated: Bool = false {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
     override var font: UIFont! {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
     override var textColor: UIColor! {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
@@ -60,7 +60,7 @@ final class SearchResultLabel: UILabel, Copyable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.lineBreakMode = .byTruncatingTail
-        textColor = SemanticColors.Label.textDefault
+        self.textColor = SemanticColors.Label.textDefault
     }
 
     @available(*, unavailable)
@@ -70,48 +70,62 @@ final class SearchResultLabel: UILabel, Copyable {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard !self.bounds.equalTo(self.previousLayoutBounds) else {
+        guard !bounds.equalTo(previousLayoutBounds) else {
             return
         }
 
-        self.previousLayoutBounds = self.bounds
+        previousLayoutBounds = bounds
 
-        self.updateText()
+        updateText()
     }
 
     func configure(with text: String, queries: [String]) {
-        guard let font = self.font,
-              let color = self.textColor else {
-                self.attributedText = .none
-                return
+        guard let font,
+              let color = textColor else {
+            self.attributedText = .none
+            return
         }
 
-        self.resultText = text
+        resultText = text
         self.queries = queries
 
         let currentFont = isObfuscated ? redactedFont.withSize(font.pointSize) : font
-        let attributedText = NSMutableAttributedString(string: text, attributes: [.font: currentFont, .foregroundColor: color])
+        let attributedText = NSMutableAttributedString(
+            string: text,
+            attributes: [.font: currentFont, .foregroundColor: color]
+        )
 
-        let currentRange = text.range(of: queries,
-                                      options: [.diacriticInsensitive, .caseInsensitive])
+        let currentRange = text.range(
+            of: queries,
+            options: [.diacriticInsensitive, .caseInsensitive]
+        )
 
         if let range = currentRange {
             let nsRange = text.nsRange(from: range)
 
-            let highlightedAttributes = [NSAttributedString.Key.font: font,
-                                         .backgroundColor: UIColor.accentDarken]
+            let highlightedAttributes = [
+                NSAttributedString.Key.font: font,
+                .backgroundColor: UIColor.accentDarken
+            ]
 
-            if self.fits(attributedText: attributedText, fromRange: nsRange) {
-                self.attributedText = attributedText.highlightingAppearances(of: queries,
-                                                                             with: highlightedAttributes,
-                                                                             upToWidth: self.bounds.width,
-                                                                             totalMatches: &estimatedMatchesCount)
+            if fits(attributedText: attributedText, fromRange: nsRange) {
+                self.attributedText = attributedText.highlightingAppearances(
+                    of: queries,
+                    with: highlightedAttributes,
+                    upToWidth: bounds.width,
+                    totalMatches: &estimatedMatchesCount
+                )
             } else {
-                self.attributedText = attributedText.cutAndPrefixedWithEllipsis(from: nsRange.location, fittingIntoWidth: self.bounds.width)
-                    .highlightingAppearances(of: queries,
-                                             with: highlightedAttributes,
-                                             upToWidth: self.bounds.width,
-                                             totalMatches: &estimatedMatchesCount)
+                self.attributedText = attributedText.cutAndPrefixedWithEllipsis(
+                    from: nsRange.location,
+                    fittingIntoWidth: bounds.width
+                )
+                .highlightingAppearances(
+                    of: queries,
+                    with: highlightedAttributes,
+                    upToWidth: bounds.width,
+                    totalMatches: &estimatedMatchesCount
+                )
             }
         } else {
             self.attributedText = attributedText
@@ -119,18 +133,21 @@ final class SearchResultLabel: UILabel, Copyable {
     }
 
     private func updateText() {
-        guard let text = self.resultText else {
-                self.attributedText = .none
-                return
+        guard let text = resultText else {
+            attributedText = .none
+            return
         }
-        self.configure(with: text, queries: self.queries)
+        configure(with: text, queries: queries)
     }
 
     fileprivate func fits(attributedText: NSAttributedString, fromRange: NSRange) -> Bool {
-        let textCutToRange = attributedText.attributedSubstring(from: NSRange(location: 0, length: fromRange.location + fromRange.length))
+        let textCutToRange = attributedText.attributedSubstring(from: NSRange(
+            location: 0,
+            length: fromRange.location + fromRange.length
+        ))
 
         let labelSize = textCutToRange.layoutSize()
 
-        return labelSize.height <= self.bounds.height && labelSize.width <= self.bounds.width
+        return labelSize.height <= bounds.height && labelSize.width <= bounds.width
     }
 }

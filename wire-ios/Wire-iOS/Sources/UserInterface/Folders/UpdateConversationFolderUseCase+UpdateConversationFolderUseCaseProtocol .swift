@@ -16,10 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireDatadogProtocol {
+import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
 
-    /// Unique obfuscated identifier of the current device across app and extensions.
-    var userIdentifier: String { get }
+extension UpdateConversationFolderUseCase: @retroactive UpdateConversationFolderUseCaseProtocol {
 
-    func enable()
+    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+        guard let folderID = folder.identifier else { return }
+        try await invoke(conversationID: conversation.identifier, folderID: folderID)
+    }
 }

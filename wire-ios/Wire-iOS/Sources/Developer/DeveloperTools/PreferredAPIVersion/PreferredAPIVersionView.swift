@@ -22,8 +22,7 @@ struct PreferredAPIVersionView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: PreferredAPIVersionViewModel
+    @StateObject var viewModel: PreferredAPIVersionViewModel
 
     // MARK: - Views
 

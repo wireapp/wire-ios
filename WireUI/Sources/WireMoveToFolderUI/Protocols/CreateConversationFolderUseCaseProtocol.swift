@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// A protocol defining behavior for moving conversations between folders
-public protocol ToFolderMovableConversation {
-
-   /// Moves the conversation to a specified folder
-   /// - Parameter folder: The destination folder to move the conversation to
-   func moveToFolder(_ folder: LabelType)
+/// Protocol for handling creating a folder
+public protocol CreateConversationFolderUseCaseProtocol {
+    /// Creates a folder
+    /// - Parameters:
+    ///   - name: The name of the folder to create
+    @MainActor
+    func invoke(name: String) async throws -> Folder
 }
-
-extension ZMConversation: ToFolderMovableConversation { }

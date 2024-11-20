@@ -33,7 +33,10 @@ final class ConversationEncryptionProtocolSectionController: ConversationCreateS
 
 extension ConversationEncryptionProtocolSectionController {
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell
         cell.setUp()

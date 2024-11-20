@@ -42,7 +42,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         self.selectedReactions = selectedReactions
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
+        self.emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         searchBar.delegate = self
@@ -50,10 +50,12 @@ final class CompleteReactionPickerViewController: UIViewController {
         setupViews()
         createConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(preferredContentSizeChanged(_:)),
-                                               name: UIContentSizeCategory.didChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(preferredContentSizeChanged(_:)),
+            name: UIContentSizeCategory.didChangeNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -120,11 +122,20 @@ final class CompleteReactionPickerViewController: UIViewController {
             searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
 
             sectionViewControllerView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: -8.0),
-            sectionViewControllerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
-            sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
+            sectionViewControllerView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: 10.0
+            ),
+            sectionViewControllerView.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -10.0
+            ),
             sectionViewControllerView.heightAnchor.constraint(equalToConstant: 44.0),
 
-            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeAreaLayoutGuide.bottomAnchor, constant: 18.0),
+            collectionView.topAnchor.constraint(
+                equalTo: sectionViewControllerView.safeAreaLayoutGuide.bottomAnchor,
+                constant: 18.0
+            ),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -134,7 +145,10 @@ final class CompleteReactionPickerViewController: UIViewController {
     // MARK: - Collection View
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         cell.isCurrent = selectedReactions.contains(emoji.value)
@@ -142,9 +156,9 @@ final class CompleteReactionPickerViewController: UIViewController {
     }
 
     func updateSectionSelection() {
-        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
+        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
+        sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
     // MARK: - Accessibility
@@ -175,7 +189,8 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
         if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
             collectionView.setContentOffset(
                 CGPoint(x: collectionView.contentOffset.x, y: attributes.frame.minY),
-                animated: !scrolling)
+                animated: !scrolling
+            )
         } else {
             collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
         }
@@ -197,8 +212,12 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         updateSectionSelection()
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 }
 

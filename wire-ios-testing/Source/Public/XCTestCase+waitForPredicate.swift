@@ -18,9 +18,9 @@
 
 import XCTest
 
-extension XCTestCase {
+public extension XCTestCase {
 
-    public func wait(
+    func wait(
         forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
         timeout seconds: TimeInterval
     ) {

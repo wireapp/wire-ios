@@ -41,7 +41,7 @@ struct MembershipPayload: Decodable {
         case userID = "user"
         case createdBy = "created_by"
         case createdAt = "created_at"
-        case permissions = "permissions"
+        case permissions
     }
 
     let userID: UUID
@@ -71,20 +71,27 @@ extension MembershipPayload {
 
 }
 
-fileprivate extension Member {
+private extension Member {
 
-    static let predicateForObjectsNeedingToBeUpdated = NSPredicate(format: "%K == YES", #keyPath(Member.needsToBeUpdatedFromBackend))
+    static let predicateForObjectsNeedingToBeUpdated = NSPredicate(
+        format: "%K == YES",
+        #keyPath(Member.needsToBeUpdatedFromBackend)
+    )
 
 }
 
-public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
+public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMRequestGeneratorSource, ZMDownstreamTranscoder {
 
     fileprivate var sync: ZMDownstreamObjectSync!
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
-        sync = ZMDownstreamObjectSync(
+        self.sync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Member.entityName(),
             predicateForObjectsToDownload: Member.predicateForObjectsNeedingToBeUpdated,
@@ -94,22 +101,30 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return sync.nextRequest(for: apiVersion)
+        sync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [sync]
+        [sync]
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-        return [sync]
+        [sync]
     }
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let member = object as? Member, downstreamSync as? ZMDownstreamObjectSync == sync else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
-        guard let identifier = member.remoteIdentifier, let teamId = member.team?.remoteIdentifier else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard let member = object as? Member,
+              downstreamSync as? ZMDownstreamObjectSync == sync
+        else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
+        guard let identifier = member.remoteIdentifier,
+              let teamId = member.team?.remoteIdentifier
+        else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
         return TeamDownloadRequestFactory.getSingleMemberRequest(for: identifier, in: teamId, apiVersion: apiVersion)
     }
 

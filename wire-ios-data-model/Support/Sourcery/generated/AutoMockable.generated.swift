@@ -24,16 +24,16 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
+public import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
+public import UIKit
 #elseif os(OSX)
-import AppKit
+public import AppKit
 #endif
 
-import LocalAuthentication
-import Combine
-import WireCoreCrypto
+public import LocalAuthentication
+public import Combine
+public import WireCoreCrypto
 
 @testable import WireDataModel
 

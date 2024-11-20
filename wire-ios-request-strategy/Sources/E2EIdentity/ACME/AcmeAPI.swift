@@ -30,7 +30,8 @@ public protocol AcmeAPIInterface {
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
 
-/// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
+/// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI
+/// certificate.
 public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
@@ -44,8 +45,10 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     // MARK: - Life cycle
 
     // TODO: [WPB-6785] refactor HttpClientE2EI
-    public init(acmeDiscoveryPath: String,
-                httpClient: HttpClientCustom = HttpClientE2EI()) {
+    public init(
+        acmeDiscoveryPath: String,
+        httpClient: HttpClientCustom = HttpClientE2EI()
+    ) {
         self.acmeDiscoveryPath = acmeDiscoveryPath
         self.httpClient = httpClient
     }
@@ -171,10 +174,12 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
 
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
-        return ACMEAuthorizationResponse(nonce: replayNonce,
-                                         location: location,
-                                         response: data,
-                                         challengeType: type)
+        return ACMEAuthorizationResponse(
+            nonce: replayNonce,
+            location: location,
+            response: data,
+            challengeType: type
+        )
     }
 
     public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
@@ -196,12 +201,14 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             throw NetworkError.errorDecodingURLResponse(response)
         }
 
-        return ChallengeResponse(type: challengeResponse.type,
-                                 url: challengeResponse.url,
-                                 status: challengeResponse.status,
-                                 token: challengeResponse.token,
-                                 target: challengeResponse.target,
-                                 nonce: replayNonce)
+        return ChallengeResponse(
+            type: challengeResponse.type,
+            url: challengeResponse.url,
+            status: challengeResponse.status,
+            token: challengeResponse.token,
+            target: challengeResponse.target,
+            nonce: replayNonce
+        )
     }
 
     private struct Challenge: Codable, Equatable {
@@ -268,7 +275,7 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
     }
 
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return try await urlSession.data(for: request)
+        try await urlSession.data(for: request)
     }
 
 }

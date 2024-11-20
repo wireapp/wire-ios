@@ -1010,30 +1010,6 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockSubmitCallQualitySurveyUseCaseProtocol: SubmitCallQualitySurveyUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [CallQualitySurveyReview] = []
-    public var invoke_MockMethod: ((CallQualitySurveyReview) -> Void)?
-
-    public func invoke(_ review: CallQualitySurveyReview) {
-        invoke_Invocations.append(review)
-
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
-        }
-
-        mock(review)
-    }
-
-}
-
 public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
 
     // MARK: - Life cycle
@@ -1057,30 +1033,6 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
-    }
-
-}
-
-public class MockToFolderMovableConversation: ToFolderMovableConversation {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        guard let mock = moveToFolder_MockMethod else {
-            fatalError("no mock for `moveToFolder`")
-        }
-
-        mock(folder)
     }
 
 }

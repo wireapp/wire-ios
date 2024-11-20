@@ -27,7 +27,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationMemberJoin
+            .conversationMemberJoin
         }
 
         let userIDs: [UUID]?
