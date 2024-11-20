@@ -66,7 +66,6 @@
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
 		5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */; };
-		591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		591B6E7E2C8B0A23009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		591B6E812C8B0A27009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
@@ -344,7 +343,6 @@
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
-		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
@@ -395,7 +393,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5939CAA92CEBAC1A000F6FAD /* WireSystemPackage in Frameworks */,
-				591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */,
 				59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,7 +553,6 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 			);
 			name = Frameworks;
