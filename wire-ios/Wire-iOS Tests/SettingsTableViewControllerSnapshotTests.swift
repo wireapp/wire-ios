@@ -102,7 +102,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
@@ -208,7 +208,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     private func verify(
         group: Any,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {

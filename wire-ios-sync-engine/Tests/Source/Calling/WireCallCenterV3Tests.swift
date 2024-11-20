@@ -140,7 +140,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         expectedCallerId: AVSIdentifier,
         expectedConversationId: AVSIdentifier,
         line: UInt = #line,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         actionBlock: () throws -> Void
     ) rethrows {
         // expect

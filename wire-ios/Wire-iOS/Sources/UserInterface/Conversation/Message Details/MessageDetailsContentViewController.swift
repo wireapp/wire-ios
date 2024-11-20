@@ -388,7 +388,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
-        profileViewController.viewControllerDismisser = self
 
         presentDetailsViewController(profileViewController, above: cell)
     }
@@ -397,14 +396,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         updateFooterPosition(for: scrollView)
     }
 
-}
-
-// MARK: - ViewControllerDismisser
-
-extension MessageDetailsContentViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        viewController.dismiss(animated: true, completion: nil)
-    }
 }
 
 // MARK: - ProfileViewControllerDelegate
