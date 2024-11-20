@@ -26,7 +26,7 @@ extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.Creat
         guard let labelType = try await fetchLabelType(for: name) else {
             throw FolderCreationError.invalidLabelType
         }
-        
+
         return Folder(
             identifier: labelType.remoteIdentifier,
             name: labelType.name ?? ""
