@@ -20,10 +20,25 @@ import WireDataModel
 import WireMoveToFolderUI
 import WireSyncEngine
 
-extension UpdateConversationFolderUseCase: UpdateConversationFolderUseCaseProtocol {
+extension CreateConversationFolderUseCase: @retroactive WireMoveToFolderUI.CreateConversationFolderUseCaseProtocol {
 
-    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
-        guard let folderID = folder.identifier else { return }
-        try await invoke(conversationID: conversation.identifier, folderID: folderID)
+    public func invoke(name: String) async throws -> Folder {
+        guard let labelType = try await fetchLabelType(for: name) else {
+            throw FolderCreationError.invalidLabelType
+        }
+
+        return Folder(
+            identifier: labelType.remoteIdentifier,
+            name: labelType.name ?? ""
+        )
     }
+
+    private func fetchLabelType(for name: String) async throws -> LabelType? {
+        try await invoke(with: name)
+    }
+
+    private enum FolderCreationError: Error {
+        case invalidLabelType
+    }
+
 }

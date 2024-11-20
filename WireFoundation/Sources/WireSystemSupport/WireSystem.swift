@@ -16,11 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-
-public protocol CreateConversationFolderUseCaseProtocol {
-    /// Creates a new conversation folder with the specified name
-    /// - Parameter name: The name of the folder to be created
-    /// - Returns: The created `LabelType`, or `nil` if creation fails
-    func invoke(with name: String) async -> LabelType?
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
