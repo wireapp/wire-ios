@@ -18,9 +18,9 @@
 
 import WireDataModel
 
-extension MLSGroupID {
+public extension MLSGroupID {
 
-    public static func random() -> Self {
+    static func random() -> Self {
         .init(Data.random(byteCount: 32))
     }
 }

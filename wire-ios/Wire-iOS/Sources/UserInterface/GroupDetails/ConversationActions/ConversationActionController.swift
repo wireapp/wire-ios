@@ -22,7 +22,8 @@ import WireSyncEngine
 final class ConversationActionController {
 
     enum Context {
-        case list, details
+        case list
+        case details
     }
 
     private let conversation: GroupDetailsConversationType
@@ -46,12 +47,11 @@ final class ConversationActionController {
 
     func presentMenu(from sourceView: UIView, context: Context) {
 
-        let actions: [ZMConversation.Action]
-        switch context {
+        let actions: [ZMConversation.Action] = switch context {
         case .details:
-            actions = (conversation as? ZMConversation)?.detailActions ?? []
+            (conversation as? ZMConversation)?.detailActions ?? []
         case .list:
-            actions = (conversation as? ZMConversation)?.listActions ?? []
+            (conversation as? ZMConversation)?.listActions ?? []
         }
 
         let title = context == .list ? conversation.displayName : nil
@@ -91,20 +91,20 @@ final class ConversationActionController {
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
-        case .archive(isArchived: let isArchived): self.transitionToListAndEnqueue {
-            conversation.isArchived = !isArchived
+        case let .archive(isArchived: isArchived): transitionToListAndEnqueue {
+                conversation.isArchived = !isArchived
             }
-        case .markRead: self.enqueue {
-            conversation.markAsRead()
+        case .markRead: enqueue {
+                conversation.markAsRead()
             }
-        case .markUnread: self.enqueue {
-            conversation.markAsUnread()
+        case .markUnread: enqueue {
+                conversation.markAsUnread()
             }
-        case .configureNotifications: self.requestNotificationResult(for: conversation) { result in
-            self.handleNotificationResult(result, for: conversation)
-        }
-        case .silence(isSilenced: let isSilenced): self.enqueue {
-            conversation.mutedMessageTypes = isSilenced ? .none : .all
+        case .configureNotifications: requestNotificationResult(for: conversation) { result in
+                self.handleNotificationResult(result, for: conversation)
+            }
+        case let .silence(isSilenced: isSilenced): enqueue {
+                conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
             request(LeaveResult.self) { result in
@@ -116,32 +116,30 @@ final class ConversationActionController {
             }
         case .cancelRequest:
             guard let user = conversation.connectedUser else { return }
-            self.requestCancelConnectionRequestResult(for: user) { result in
+            requestCancelConnectionRequestResult(for: user) { result in
                 self.handleConnectionRequestResult(result, for: conversation)
             }
-        case .block: self.requestBlockResult(for: conversation) { result in
-            self.handleBlockResult(result, for: conversation)
+        case .block: requestBlockResult(for: conversation) { result in
+                self.handleBlockResult(result, for: conversation)
             }
         case .moveToFolder:
-            self.openMoveToFolder(for: conversation)
+            openMoveToFolder(for: conversation)
         case .removeFromFolder:
             enqueue {
                 conversation.removeFromFolder()
             }
-        case .favorite(isFavorite: let isFavorite):
+        case let .favorite(isFavorite: isFavorite):
             enqueue {
                 conversation.isFavorite = !isFavorite
             }
         case .remove: fatalError()
-        case .duplicateConversation:
-            duplicateConversation()
         }
     }
 
     private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
-        return action.alertAction { [weak self] in
+        action.alertAction { [weak self] in
             guard let self else { return }
-            self.handleAction(action)
+            handleAction(action)
         }
     }
 
@@ -156,32 +154,6 @@ final class ConversationActionController {
         }
 
         target.present(controller, animated: true)
-    }
-
-    private func duplicateConversation() {
-        guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
-
-        guard let context = (userSession as? ZMUserSession)?.syncContext,
-            let conversation = conversation as? ZMConversation else {
-            return
-        }
-        context.performAndWait {
-            guard let original = ZMConversation.existingObject(for: conversation.objectID, in: context) else {
-                return
-            }
-            let duplicate = ZMConversation.insertNewObject(in: context)
-            duplicate.remoteIdentifier = original.remoteIdentifier
-            duplicate.domain = original.domain
-            duplicate.nonTeamRoles = original.nonTeamRoles
-            duplicate.creator = original.creator
-            duplicate.conversationType = original.conversationType
-            duplicate.participantRoles = original.participantRoles
-
-            context.saveOrRollback()
-
-            WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
-        }
-
     }
 
 }

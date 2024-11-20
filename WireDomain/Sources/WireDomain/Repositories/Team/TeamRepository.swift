@@ -46,12 +46,12 @@ public protocol TeamRepositoryProtocol {
 
     /// Deletes the member of a team.
     /// - Parameter userID: The ID of the team member.
-    /// - Parameter teamID: The ID of the team.
+    /// - Parameter domain: The domain of the team member.
     /// - Parameter time: The time the member left the team.
 
     func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
+        for userID: UUID,
+        domain: String?,
         at time: Date
     ) async throws
 
@@ -69,6 +69,8 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: create TeamLocalStore
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
@@ -103,8 +105,10 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
-        let selfUserID: UUID = await context.perform { [userRepository] in
-            userRepository.fetchSelfUser().remoteIdentifier
+        let selfUser = await userRepository.fetchSelfUser()
+
+        let selfUserID: UUID = await context.perform {
+            selfUser.remoteIdentifier
         }
 
         return try await teamsAPI.getLegalholdStatus(
@@ -114,25 +118,30 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func deleteMembership(
-        forUser userID: UUID,
-        fromTeam teamID: UUID,
+        for userID: UUID,
+        domain: String?,
         at time: Date
     ) async throws {
         let user = try await userRepository.fetchUser(
-            with: userID,
-            domain: nil
+            id: userID,
+            domain: domain
         )
 
         let member = try await context.perform {
             guard let member = user.membership else {
-                throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
+                throw TeamRepositoryError.userNotAMemberInTeam(user: userID)
             }
 
             return member
         }
 
-        await userRepository.deleteUserAccount(
-            for: user,
+        let domain = await context.perform {
+            user.domain
+        }
+
+        try await userRepository.deleteUserAccount(
+            id: userID,
+            domain: domain,
             at: time
         )
 
@@ -168,13 +177,13 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
-        await context.perform { [context, userRepository] in
+        let selfUser = await userRepository.fetchSelfUser()
+
+        await context.perform { [context] in
             let team = WireDataModel.Team.fetchOrCreate(
                 with: teamAPIModel.id,
                 in: context
             )
-
-            let selfUser = userRepository.fetchSelfUser()
 
             _ = WireDataModel.Member.getOrUpdateMember(
                 for: selfUser,
@@ -247,7 +256,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         do {
             return try await teamsAPI.getTeamMembers(
                 for: selfTeamID,
-                maxResults: 2_000
+                maxResults: 2000
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)

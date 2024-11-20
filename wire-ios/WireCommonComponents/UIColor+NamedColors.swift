@@ -18,9 +18,9 @@
 
 import UIKit
 
-extension UIColor {
+public extension UIColor {
 
-    public struct Wire {
+    enum Wire {
 
         public static var primaryLabel: UIColor {
             label

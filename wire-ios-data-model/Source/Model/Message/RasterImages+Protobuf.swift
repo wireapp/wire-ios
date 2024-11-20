@@ -28,9 +28,9 @@ public extension WireProtos.Asset.Original {
     }
 }
 
-fileprivate extension ImageAsset {
+private extension ImageAsset {
     var isRaster: Bool {
-        return !UTIHelper.conformsToVectorType(mime: mimeType)
+        !UTIHelper.conformsToVectorType(mime: mimeType)
     }
 }
 
@@ -38,11 +38,11 @@ public extension GenericMessage {
     var hasRasterImage: Bool {
         guard let content else { return false }
         switch content {
-        case .image(let data):
+        case let .image(data):
             return data.isRaster
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .image(let image)?:
+            case let .image(image)?:
                 return image.isRaster
             default:
                 return false

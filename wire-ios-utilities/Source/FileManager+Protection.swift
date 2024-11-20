@@ -26,25 +26,25 @@ public enum FileManagerError: Error {
 
 }
 
-extension FileManager {
+public extension FileManager {
 
-    /// Creates a new directory if needed, sets the file protection 
+    /// Creates a new directory if needed, sets the file protection
     /// to `completeUntilFirstUserAuthentication` and excludes the URL from backups.
     ///
     /// Throws: FileManagerError
 
-    public func createAndProtectDirectory(at url: URL) throws {
+    func createAndProtectDirectory(at url: URL) throws {
         if !fileExists(atPath: url.path) {
             do {
                 try createDirectory(at: url, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
             } catch let error as NSError {
                 // Only when building on simulator
                 #if arch(i386) || arch(x86_64)
-                if error.code == CocoaError.fileWriteUnknown.rawValue {
-                    // This error happens when installing app build with iOS10 on iOS11 simulator
-                    // Seems to be working fine on device or older iOS.
-                    return
-                }
+                    if error.code == CocoaError.fileWriteUnknown.rawValue {
+                        // This error happens when installing app build with iOS10 on iOS11 simulator
+                        // Seems to be working fine on device or older iOS.
+                        return
+                    }
                 #endif
 
                 throw FileManagerError.failedToCreateDirectory(error)
@@ -59,10 +59,10 @@ extension FileManager {
     }
 
     /// Sets the protection to FileProtectionType.completeUntilFirstUserAuthentication
-    public func setProtectionUntilFirstUserAuthentication(_ url: URL) throws {
+    func setProtectionUntilFirstUserAuthentication(_ url: URL) throws {
         do {
             let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
-            try self.setAttributes(attributes, ofItemAtPath: url.path)
+            try setAttributes(attributes, ofItemAtPath: url.path)
         } catch {
             throw FileManagerError.failedToSetProtection(error)
         }
@@ -97,6 +97,6 @@ public extension URL {
     }
 
     static func directory(for searchPathDirectory: FileManager.SearchPathDirectory) -> URL {
-        return URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
+        URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
     }
 }

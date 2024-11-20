@@ -47,6 +47,7 @@ final class GridLayoutView: UIView {
         setUpViews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,6 +58,7 @@ final class GridLayoutView: UIView {
     }
 
     // MARK: - Layout
+
     func prepareForReuse() {
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)

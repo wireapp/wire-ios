@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireTransport
 import XCTest
+@testable import Wire
 
 final class URL_WireTests: XCTestCase {
 
@@ -40,5 +40,9 @@ final class URL_WireTests: XCTestCase {
     func testThatAccountURLsAreLoadedCorrectly() {
         let accountsURL = URL(string: "https://account.wire.com")!
         XCTAssertEqual(be.accountsURL, accountsURL)
+    }
+
+    func test_passwordReset_URLIsCorrect() {
+        XCTAssertEqual(URL.wr_passwordReset, be.accountsURL.appendingPathComponent("forgot"))
     }
 }

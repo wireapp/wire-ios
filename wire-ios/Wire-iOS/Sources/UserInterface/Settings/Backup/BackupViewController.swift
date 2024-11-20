@@ -106,14 +106,13 @@ private extension BackupViewController {
             guard let self, let password = result else { return }
             activityIndicator.start()
 
-            self.backupSource.backupActiveAccount(password: password) { backupResult in
+            backupSource.backupActiveAccount(password: password) { backupResult in
                 self.activityIndicator.stop()
 
                 switch backupResult {
-                case .failure(let error):
+                case let .failure(error):
                     self.presentAlert(for: error)
-                    BackupEvent.exportFailed.track()
-                case .success(let url):
+                case let .success(url):
                     self.presentShareSheet(with: url, from: indexPath)
                 }
             }
@@ -127,7 +126,8 @@ private extension BackupViewController {
                 completion(password)
             }
         }
-        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
+        let navigationController = KeyboardAvoidingViewController(viewController: passwordController)
+            .wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
         present(navigationController, animated: true)
     }
@@ -155,6 +155,6 @@ private extension BackupViewController {
             $0.sourceView = tableView
             $0.sourceRect = tableView.rectForRow(at: indexPath)
         }
-        self.present(activityController, animated: true)
+        present(activityController, animated: true)
     }
 }

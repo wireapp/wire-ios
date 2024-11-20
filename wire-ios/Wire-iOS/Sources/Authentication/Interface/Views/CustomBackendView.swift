@@ -21,9 +21,10 @@ import WireDesign
 
 final class CustomBackendView: UIView {
     lazy var backendLabel: UILabel = {
-        let label = DynamicFontLabel(text: nil,
-                                     fontSpec: .headerSemiboldFont,
-                                     color: SemanticColors.Label.textSectionHeader)
+        let label = DynamicFontLabel(
+            style: .h3,
+            color: SemanticColors.Label.textSectionHeader
+        )
         label.textAlignment = .right
         label.accessibilityIdentifier = "Backend domain"
         return label
@@ -47,20 +48,20 @@ final class CustomBackendView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.heightAnchor.constraint(equalToConstant: imageSize).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: imageSize).isActive = true
-        self.addSubview(imageView)
+        addSubview(imageView)
 
         backendLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(backendLabel)
+        addSubview(backendLabel)
 
         // Horizontal
-        backendLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: -imageSize / 2).isActive = true
-        backendLabel.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor).isActive = true
+        backendLabel.centerXAnchor.constraint(equalTo: centerXAnchor, constant: -imageSize / 2).isActive = true
+        backendLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor).isActive = true
         backendLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -2).isActive = true
-        imageView.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor).isActive = true
+        imageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor).isActive = true
 
         // Vertical
-        imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        backendLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        backendLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     func setBackendUrl(_ url: URL) {

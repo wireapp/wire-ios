@@ -24,12 +24,14 @@ public enum TeamOrConversation {
 
     /// Creates a team if the conversation belongs to a team, or a conversation otherwise
     public static func matching(_ conversation: ZMConversation) -> TeamOrConversation {
-        return self.fromTeamOrConversation(team: conversation.team, conversation: conversation)
+        fromTeamOrConversation(team: conversation.team, conversation: conversation)
     }
 
     /// Creates a team or a conversation
-    static func fromTeamOrConversation(team: Team?,
-                                       conversation: ZMConversation?) -> TeamOrConversation {
+    static func fromTeamOrConversation(
+        team: Team?,
+        conversation: ZMConversation?
+    ) -> TeamOrConversation {
         if let team {
             return .team(team)
 
@@ -56,57 +58,68 @@ public final class Role: ZMManagedObject {
     @NSManaged public var conversation: ZMConversation?
 
     public override static func entityName() -> String {
-        return String(describing: Role.self)
+        String(describing: Role.self)
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
-                              name: String,
-                              conversation: ZMConversation) -> Role {
-        return create(managedObjectContext: managedObjectContext,
-                      name: name,
-                      teamOrConversation: .conversation(conversation))
+    public static func create(
+        managedObjectContext: NSManagedObjectContext,
+        name: String,
+        conversation: ZMConversation
+    ) -> Role {
+        create(
+            managedObjectContext: managedObjectContext,
+            name: name,
+            teamOrConversation: .conversation(conversation)
+        )
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
-                              name: String,
-                              team: Team) -> Role {
-        return create(managedObjectContext: managedObjectContext,
-                      name: name,
-                      teamOrConversation: .team(team))
+    public static func create(
+        managedObjectContext: NSManagedObjectContext,
+        name: String,
+        team: Team
+    ) -> Role {
+        create(
+            managedObjectContext: managedObjectContext,
+            name: name,
+            teamOrConversation: .team(team)
+        )
     }
 
-    static public func create(managedObjectContext: NSManagedObjectContext,
-                              name: String,
-                              teamOrConversation: TeamOrConversation) -> Role {
+    public static func create(
+        managedObjectContext: NSManagedObjectContext,
+        name: String,
+        teamOrConversation: TeamOrConversation
+    ) -> Role {
 
         let entry = Role.insertNewObject(in: managedObjectContext)
         entry.name = name
         switch teamOrConversation {
-        case .team(let team):
+        case let .team(team):
             entry.team = team
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             entry.conversation = conversation
         }
         return entry
     }
 
-    static func fetchExistingRole(with name: String,
-                                  teamOrConversation: TeamOrConversation,
-                                  in context: NSManagedObjectContext) -> Role? {
+    static func fetchExistingRole(
+        with name: String,
+        teamOrConversation: TeamOrConversation,
+        in context: NSManagedObjectContext
+    ) -> Role? {
         let fetchRequest = NSFetchRequest<Role>(entityName: Role.entityName())
         let namePredicate = NSPredicate(format: "%K == %@", Role.nameKey, name)
-        let teamOrConvoPredicate: NSPredicate
-        switch teamOrConversation {
-        case .team(let team):
-            teamOrConvoPredicate = NSPredicate(format: "%K == %@", Role.teamKey, team)
-        case .conversation(let convo):
-            teamOrConvoPredicate = NSPredicate(format: "%K == %@", Role.conversationKey, convo)
+        let teamOrConvoPredicate = switch teamOrConversation {
+        case let .team(team):
+            NSPredicate(format: "%K == %@", Role.teamKey, team)
+        case let .conversation(convo):
+            NSPredicate(format: "%K == %@", Role.conversationKey, convo)
         }
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             namePredicate,
@@ -117,12 +130,16 @@ public final class Role: ZMManagedObject {
         return context.fetchOrAssert(request: fetchRequest).first
     }
 
-    public static func fetchOrCreateRole(with name: String,
-                                         teamOrConversation: TeamOrConversation,
-                                         in context: NSManagedObjectContext) -> Role {
-        let existingRole = self.fetchExistingRole(with: name,
-                                                  teamOrConversation: teamOrConversation,
-                                                  in: context)
+    public static func fetchOrCreateRole(
+        with name: String,
+        teamOrConversation: TeamOrConversation,
+        in context: NSManagedObjectContext
+    ) -> Role {
+        let existingRole = fetchExistingRole(
+            with: name,
+            teamOrConversation: teamOrConversation,
+            in: context
+        )
         return existingRole ?? create(managedObjectContext: context, name: name, teamOrConversation: teamOrConversation)
     }
 
@@ -143,16 +160,20 @@ public final class Role: ZMManagedObject {
     }
 
     @discardableResult
-    public static func createOrUpdate(with payload: [String: Any],
-                                      teamOrConversation: TeamOrConversation,
-                                      context: NSManagedObjectContext) -> Role? {
+    public static func createOrUpdate(
+        with payload: [String: Any],
+        teamOrConversation: TeamOrConversation,
+        context: NSManagedObjectContext
+    ) -> Role? {
         guard let conversationRole = payload["conversation_role"] as? String,
               let actionNames = payload["actions"] as? [String]
         else { return nil }
 
-        let fetchedRole = fetchExistingRole(with: conversationRole,
-                                            teamOrConversation: teamOrConversation,
-                                            in: context)
+        let fetchedRole = fetchExistingRole(
+            with: conversationRole,
+            teamOrConversation: teamOrConversation,
+            in: context
+        )
 
         let role = fetchedRole ?? Role.insertNewObject(in: context)
 
@@ -166,9 +187,9 @@ public final class Role: ZMManagedObject {
         }
 
         switch teamOrConversation {
-        case .team(let team):
+        case let .team(team):
             role.team = team
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             role.conversation = conversation
         }
         role.name = conversationRole

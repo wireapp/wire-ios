@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import SwiftUI
+public import SnapshotTesting
+public import SwiftUI
 import XCTest
 
 /// A helper object for verifying image snapshots.
@@ -40,7 +40,8 @@ public struct SnapshotHelper {
     ///
     /// Perceptual precision is the threshold at which two pixels are considered to be the same.
     ///
-    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value of 0 indicates no precision.
+    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value
+    /// of 0 indicates no precision.
     /// - Returns: A copy of the current helper with the new perceptual precision.
 
     public func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
@@ -90,7 +91,8 @@ public struct SnapshotHelper {
 
     /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
-    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment
+    /// variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
@@ -111,7 +113,7 @@ public struct SnapshotHelper {
 
     public func verify<View: SwiftUI.View>(
         testName: String = #function,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         matching createView: () -> View
     ) {
@@ -135,9 +137,11 @@ public struct SnapshotHelper {
         matching value: View,
         named name: String? = nil,
         testName: String = #function,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image(
@@ -146,7 +150,7 @@ public struct SnapshotHelper {
                 traits: traits
             ),
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -171,18 +175,23 @@ public struct SnapshotHelper {
         size: CGSize? = nil,
         named name: String? = nil,
         record recording: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
 
         let failure = verifySnapshot(
             of: value,
-            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
+                perceptualPrecision: perceptualPrecision,
+                traits: traits
+            ),
             named: name,
             record: recording,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -203,15 +212,17 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIView,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -245,10 +256,12 @@ public struct SnapshotHelper {
 
     public func verifyInAllDeviceSizes(
         matching value: UIViewController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
 
         for (config, name) in allDevices {
@@ -256,7 +269,7 @@ public struct SnapshotHelper {
                 of: value,
                 as: .image(on: config, perceptualPrecision: perceptualPrecision),
                 named: name,
-                snapshotDirectory: snapshotDirectory(file: file),
+                snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -278,10 +291,12 @@ public struct SnapshotHelper {
     public func verifyInAllIPhoneSizes(
         matching value: UIViewController,
         orientation: ViewImageConfig.Orientation = .portrait,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         for (config, name) in SnapshotHelper.phoneConfigs {
             let failure = verifySnapshot(
                 of: value,
@@ -289,7 +304,7 @@ public struct SnapshotHelper {
                     on: config,
                     perceptualPrecision: perceptualPrecision
                 ),
-                named: name, snapshotDirectory: snapshotDirectory(file: file),
+                named: name, snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -311,15 +326,17 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let failure = verifySnapshot(
             of: value,
             as: .image,
             named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
+            snapshotDirectory: snapshotDirectory,
             file: file,
             testName: testName,
             line: line
@@ -340,10 +357,12 @@ public struct SnapshotHelper {
     public func verifyForDynamicType(
         matching value: UIView,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
+        let snapshotDirectory = snapshotDirectory(file: file)
+        setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         [
             "extra-small": UIContentSizeCategory.extraSmall,
             "small": .small,
@@ -364,7 +383,7 @@ public struct SnapshotHelper {
                     traits: .init(preferredContentSizeCategory: contentSize)
                 ),
                 named: name,
-                snapshotDirectory: snapshotDirectory(file: file),
+                snapshotDirectory: snapshotDirectory,
                 file: file,
                 testName: testName,
                 line: line
@@ -374,7 +393,7 @@ public struct SnapshotHelper {
         }
     }
 
-    private func snapshotDirectory(file: StaticString = #file) -> String {
+    private func snapshotDirectory(file: StaticString = #filePath) -> String {
         var snapshotReferenceDirectory = snapshotReferenceDirectory
         if snapshotReferenceDirectory.isEmpty {
             snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!
@@ -382,5 +401,14 @@ public struct SnapshotHelper {
 
         let filePath = URL(fileURLWithPath: "\(file)").deletingPathExtension().lastPathComponent
         return NSString.path(withComponents: [snapshotReferenceDirectory, filePath])
+    }
+
+    private func setArtifactsDirectoryIfNeeded(basedOn snapshotDirectory: String) {
+        let artifactsDirectory = URL(fileURLWithPath: snapshotDirectory)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("SnapshotResults")
+            .path
+        setenv("SNAPSHOT_ARTIFACTS", artifactsDirectory, 0)
     }
 }

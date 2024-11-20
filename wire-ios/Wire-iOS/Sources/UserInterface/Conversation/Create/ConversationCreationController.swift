@@ -24,6 +24,7 @@ import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
+    @MainActor
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
@@ -41,8 +42,6 @@ final class ConversationCreationController: UIViewController {
 
     private let collectionViewController = SectionCollectionViewController()
 
-    fileprivate var navBarBackgroundView = UIView()
-
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
 
@@ -50,21 +49,26 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Sections
 
-    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
+    private lazy var nameSection = ConversationCreateNameSectionController(
+        selfUser: userSession.selfUser,
+        delegate: self
+    )
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
-    private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
-        let section = ConversationCreateOptionsSectionController(values: values)
-        section.tapHandler = optionsTapped
-        return section
-    }()
+    private lazy var optionsSections: [ConversationCreateSectionController] = {
+        let sections = [
+            guestsSection,
+            servicesSection,
+            receiptsSection,
+            shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+        ].compactMap { $0 }
 
-    private lazy var optionsSections = [
-        guestsSection,
-        servicesSection,
-        receiptsSection,
-        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-    ].compactMap { $0 }
+        if let firstSection = sections.first {
+            firstSection.headerTitle = L10n.Localizable.Conversation.Create.Options.title
+        }
+
+        return sections
+    }()
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {
@@ -80,11 +84,10 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
         let section = ConversationCreateGuestsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] allowGuests in
-            self.values.allowGuests = allowGuests
-            self.updateOptions()
+            values.allowGuests = allowGuests
+            updateOptions()
         }
 
         return section
@@ -92,22 +95,20 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var servicesSection: ConversationCreateServicesSectionController = {
         let section = ConversationCreateServicesSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] allowServices in
-            self.values.allowServices = allowServices
-            self.updateOptions()
+            values.allowServices = allowServices
+            updateOptions()
         }
         return section
     }()
 
     private lazy var receiptsSection: ConversationCreateReceiptsSectionController = {
         let section = ConversationCreateReceiptsSectionController(values: values)
-        section.isHidden = true
 
         section.toggleAction = { [unowned self] enableReceipts in
-            self.values.enableReceipts = enableReceipts
-            self.updateOptions()
+            values.enableReceipts = enableReceipts
+            updateOptions()
         }
 
         return section
@@ -155,10 +156,6 @@ final class ConversationCreationController: UIViewController {
 
         setupViews()
 
-        // try to overtake the first responder from the other view
-        if UIResponder.currentFirst != nil {
-            nameSection.becomeFirstResponder()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -166,15 +163,10 @@ final class ConversationCreationController: UIViewController {
         setupNavigationBar()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        nameSection.becomeFirstResponder()
-    }
-
     // MARK: - Methods
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -203,20 +195,9 @@ final class ConversationCreationController: UIViewController {
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
-            collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
+            collectionViewController.sections.append(contentsOf: optionsSections)
         }
 
-        navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
-        view.addSubview(navBarBackgroundView)
-
-        navBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
-            navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
-        ])
     }
 
     private func setupNavigationBar() {
@@ -232,7 +213,8 @@ final class ConversationCreationController: UIViewController {
             title: L10n.Localizable.General.next,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()
-            })
+            }
+        )
 
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
@@ -240,7 +222,7 @@ final class ConversationCreationController: UIViewController {
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
-    func proceedWith(value: SimpleTextField.Value) {
+    func proceedWith(value: WireTextField.Value) {
         switch value {
         case let .error(error):
             errorSection.displayError(error)
@@ -270,10 +252,9 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateOptions() {
-        self.optionsToggle.configure(with: values)
-        self.guestsSection.configure(with: values)
-        self.servicesSection.configure(with: values)
-        self.encryptionProtocolSection.configure(with: values)
+        guestsSection.configure(with: values)
+        servicesSection.configure(with: values)
+        encryptionProtocolSection.configure(with: values)
     }
 }
 
@@ -281,9 +262,12 @@ final class ConversationCreationController: UIViewController {
 
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
 
-    func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction) {
+    func addParticipantsViewController(
+        _ addParticipantsViewController: AddParticipantsViewController,
+        didPerform action: AddParticipantsViewController.CreateAction
+    ) {
         switch action {
-        case .updatedUsers(let users):
+        case let .updatedUsers(users):
             values.participants = users
 
         case .create:
@@ -316,7 +300,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 addParticipantsViewController.setLoadingView(isVisible: false)
 
                 switch result {
-                case .success(let conversation):
+                case let .success(conversation):
                     delegate?.conversationCreationController(
                         self,
                         didCreateConversation: conversation
@@ -325,10 +309,10 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 case .failure(.networkError(.missingLegalholdConsent)):
                     showMissingLegalholdConsentAlert()
 
-                case .failure(.networkError(.nonFederatingDomains(let domains))):
+                case let .failure(.networkError(.nonFederatingDomains(domains))):
                     showNonFederatingDomainsAlert(domains: domains)
 
-                case .failure(let error):
+                case let .failure(error):
                     WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
                     showGenericErrorAlert()
                 }
@@ -412,66 +396,24 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
 }
 
-// MARK: - SimpleTextFieldDelegate
+// MARK: - WireTextFieldDelegate
 
-extension ConversationCreationController: SimpleTextFieldDelegate {
+extension ConversationCreationController: WireTextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: WireTextField) {}
 
-    func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
-        errorSection.clearError()
-        switch value {
-        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
-        }
+    func textFieldDidBeginEditing(_ textField: WireTextField) {}
 
-    }
-
-    func textFieldReturnPressed(_ textField: SimpleTextField) {
+    func textFieldReturnPressed(_ textField: WireTextField) {
         tryToProceed()
     }
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-
-    }
-
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
-    }
-}
-
-// MARK: - Handlers
-
-extension ConversationCreationController {
-
-    private func optionsTapped(expanded: Bool) {
-        guard let collectionView = collectionViewController.collectionView else {
-            return
+    func textField(_ textField: WireTextField, valueChanged value: WireTextField.Value) {
+        errorSection.clearError()
+        switch value {
+        case .error: navigationItem.rightBarButtonItem?.isEnabled = false
+        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
 
-        let changes: () -> Void
-        let indexSet = IndexSet(integersIn: 3..<(3 + optionsSections.count))
-
-        if expanded {
-            nameSection.resignFirstResponder()
-            expandOptions()
-            changes = { collectionView.insertSections(indexSet) }
-        } else {
-            collapseOptions()
-            changes = { collectionView.deleteSections(indexSet) }
-        }
-
-        collectionView.performBatchUpdates(changes)
-    }
-
-    func expandOptions() {
-        optionsSections.forEach {
-            $0.isHidden = false
-        }
-    }
-
-    func collapseOptions() {
-        optionsSections.forEach {
-            $0.isHidden = true
-        }
     }
 
 }
@@ -493,12 +435,15 @@ extension ConversationCreationController {
         present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void)
+        -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
         let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection.proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable.ProtocolSelection.mls
+        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+            .proteusDefault : Localizable.ProtocolSelection.proteus
+        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+            .ProtocolSelection.mls
 
         let alert = UIAlertController(
             title: Localizable.Mls.pickerTitle,

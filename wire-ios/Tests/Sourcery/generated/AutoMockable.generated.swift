@@ -24,16 +24,16 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
+public import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
+public import UIKit
 #elseif os(OSX)
-import AppKit
+public import AppKit
 #endif
 
-import CoreLocation
-import WireDataModel
-import WireSyncEngine
+public import CoreLocation
+public import WireDataModel
+public import WireSyncEngine
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -305,6 +305,33 @@ class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
 }
 
+class MockConnectViewControllerBuilderProtocol: ConnectViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
+    }
+
+}
+
 class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsViewModelDelegate {
 
     // MARK: - Life cycle
@@ -455,6 +482,33 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
         }
 
         mock()
+    }
+
+}
+
+class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
     }
 
 }
@@ -1362,6 +1416,33 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(delegate)
+    }
+
+}
+
+class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBuilderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - build
+
+    var build_Invocations: [Void] = []
+    var build_MockMethod: (() -> UIViewController)?
+    var build_MockValue: UIViewController?
+
+    @MainActor
+    func build() -> UIViewController {
+        build_Invocations.append(())
+
+        if let mock = build_MockMethod {
+            return mock()
+        } else if let mock = build_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `build`")
+        }
     }
 
 }

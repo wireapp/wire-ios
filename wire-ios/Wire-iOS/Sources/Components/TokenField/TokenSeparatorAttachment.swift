@@ -30,11 +30,11 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
     private let dotSpacing: CGFloat = 8
 
     private var dotColor: UIColor? {
-        return tokenField.dotColor
+        tokenField.dotColor
     }
 
     private var backgroundColor: UIColor? {
-        return tokenField.tokenBackgroundColor
+        tokenField.tokenBackgroundColor
     }
 
     init(token: Token<NSObjectProtocol>, tokenField: TokenField) {
@@ -56,7 +56,7 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
             // Setting isAccessibilityElement to false does not seem to work for this
             // `NSTextAttachment`. VoiceOver will still dictate “Attachment. PNG. File” which is
             // really weird. Returning an empty label here so nothing will just be dictated at all.
-            return " "
+            " "
         }
         set {
             super.accessibilityLabel = newValue
@@ -86,7 +86,12 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         context.setLineWidth(1)
 
         // draw dot
-        let dotPath = UIBezierPath(ovalIn: CGRect(x: dotSpacing, y: ceil((imageSize.height + dotSize) / 2), width: dotSize, height: dotSize))
+        let dotPath = UIBezierPath(ovalIn: CGRect(
+            x: dotSpacing,
+            y: ceil((imageSize.height + dotSize) / 2),
+            width: dotSize,
+            height: dotSize
+        ))
 
         if let dotColor {
             context.setFillColor(dotColor.cgColor)

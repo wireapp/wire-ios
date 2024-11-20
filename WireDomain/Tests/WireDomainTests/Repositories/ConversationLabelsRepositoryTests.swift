@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
-@testable import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
+@testable import WireDataModel
+@testable import WireDomain
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
@@ -47,8 +47,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         /// Batch requests don't work with in-memory store
         /// so we need to use a persistent store.
         stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
-        cleanUpEntity()
-        setupConversations()
+        await cleanUpEntity()
+        await setupConversations()
         userPropertiesAPI = MockUserPropertiesAPI()
         sut = ConversationLabelsRepository(
             userPropertiesAPI: userPropertiesAPI,
@@ -222,7 +222,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
     }
 
-    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed(
+    ) async throws {
         // Given
 
         _ = await context.perform { [context] in
@@ -263,7 +264,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let labelNames = results.compactMap(\.name)
 
             let expected = [
-                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.favoriteConversationLabel1.name!,
+                /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
                 Scaffolding.conversationLabel3.name!
             ]
@@ -313,7 +315,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
     }
 
-    func testUpdateConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+    func testUpdateConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed(
+    ) async throws {
         // Given
 
         _ = await context.perform { [context] in
@@ -350,7 +353,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let labelNames = results.compactMap(\.name)
 
             let expected = [
-                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.favoriteConversationLabel1.name!,
+                /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
                 Scaffolding.conversationLabel3.name!
             ]
@@ -362,21 +366,25 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 }
 
 private extension ConversationLabelsRepositoryTests {
-    func cleanUpEntity() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        _ = try? context.execute(batchDeleteRequest)
+    func cleanUpEntity() async {
+        await context.perform { [self] in
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            _ = try? context.execute(batchDeleteRequest)
+        }
     }
 
-    func setupConversations() {
-        conversation1 = ZMConversation.insertNewObject(in: context)
-        conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
+    func setupConversations() async {
+        await context.perform { [self] in
+            conversation1 = ZMConversation.insertNewObject(in: context)
+            conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
 
-        conversation2 = ZMConversation.insertNewObject(in: context)
-        conversation2.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[1]
+            conversation2 = ZMConversation.insertNewObject(in: context)
+            conversation2.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[1]
 
-        conversation3 = ZMConversation.insertNewObject(in: context)
-        conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
+            conversation3 = ZMConversation.insertNewObject(in: context)
+            conversation3.remoteIdentifier = Scaffolding.updatedConversationLabel1.conversationIDs[2]
+        }
     }
 
     private enum Scaffolding {

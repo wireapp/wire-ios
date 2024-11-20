@@ -27,7 +27,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         let location: LocationMessageData
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -52,7 +52,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -161,7 +161,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
             mapView.setCenterCoordinate(locationData.coordinate, zoomLevel: Int(locationData.zoomLevel))
         } else {
             // As the zoom level is optional we use a viewport of 250m x 250m if none is specified
-            let region = MKCoordinateRegion(center: locationData.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
+            let region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
             mapView.setRegion(region, animated: false)
         }
     }
@@ -195,12 +199,12 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
+        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
     }
 
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage, location: LocationMessageData) {
-        configuration = View.Configuration(location: location, message: message)
+        self.configuration = View.Configuration(location: location, message: message)
     }
 }

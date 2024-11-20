@@ -16,49 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
-/**
- * Tests for calculating the state of external users presence in a team conversation.
- *
- * Expected matrix:
- *
- * +---------------------------------------------------------------------------------+
- * | Conversation Type | Self User  | Other Users          | Expected State For Self |
- * |-------------------|------------|----------------------|-------------------------|
- * | 1:1               | Personal   | Personal             | None                    |
- * | 1:1               | Personal   | Team                 | None                    |
- * | 1:1               | Team       | Team                 | None                    |
- * | 1:1               | Team       | Personal             | None                    |
- * | 1:1               | Team       | Service              | None                    |
- * | 1:1               | Team       | External              | None                    |
- * | 1:1               | External   | External             | None                    |
- * | 1:1               | External   | Team                 | None                    |
- * |-------------------|------------|----------------------|-------------------------|
- * | Group             | Personal   | Personal             | None                    |
- * | Group             | Personal   | Team                 | None                    |
- * | Group             | Personal   | Service                 | None                    |
- * | Group             | Team        | Team                 | None                    |
- * | Group             | Team       | Service              | None                    |
- * | Group             | External       | External         | None                    |
- * | Group             | External       | Team              | None                    |
- * | Group             | External       | Service           | None                    |
- * | Group             | Team       | Personal             | Only Guests             |
- * | Group             | External       | Personal             | Only Guests             |
- * | Group             | Team       | Team & Service       | Only Services           |
- * | Group             | Personal   | Team & Service       | Only Services           |
- * | Group             | External       | Team & Service       | Only Services           |
- * | Group             | Team       | External       | Only External           |
- * | Group             | Personal       | External       | Only External           |
- * | Group             | Team       | Personal & Service   | Guests & Services       |
- * | Group             | External       | Personal & Service   | Guests & Services       |
- * | Group             | Team       | Personal & External   | Guests & External       |
- * | Group             | Team       | Personal & External   | External & Services       |
- * | Group             | Personal       | Personal & External   | External & Services       |
- * | Group             | Team       | Personal & Service & External   | Guests & Services & External        |
- * +---------------------------------------------------------------------------------+
- */
+/// Tests for calculating the state of external users presence in a team conversation.
+///
+/// Expected matrix:
+///
+/// +---------------------------------------------------------------------------------+
+/// | Conversation Type | Self User  | Other Users          | Expected State For Self |
+/// |-------------------|------------|----------------------|-------------------------|
+/// | 1:1               | Personal   | Personal             | None                    |
+/// | 1:1               | Personal   | Team                 | None                    |
+/// | 1:1               | Team       | Team                 | None                    |
+/// | 1:1               | Team       | Personal             | None                    |
+/// | 1:1               | Team       | Service              | None                    |
+/// | 1:1               | Team       | External              | None                    |
+/// | 1:1               | External   | External             | None                    |
+/// | 1:1               | External   | Team                 | None                    |
+/// |-------------------|------------|----------------------|-------------------------|
+/// | Group             | Personal   | Personal             | None                    |
+/// | Group             | Personal   | Team                 | None                    |
+/// | Group             | Personal   | Service                 | None                    |
+/// | Group             | Team        | Team                 | None                    |
+/// | Group             | Team       | Service              | None                    |
+/// | Group             | External       | External         | None                    |
+/// | Group             | External       | Team              | None                    |
+/// | Group             | External       | Service           | None                    |
+/// | Group             | Team       | Personal             | Only Guests             |
+/// | Group             | External       | Personal             | Only Guests             |
+/// | Group             | Team       | Team & Service       | Only Services           |
+/// | Group             | Personal   | Team & Service       | Only Services           |
+/// | Group             | External       | Team & Service       | Only Services           |
+/// | Group             | Team       | External       | Only External           |
+/// | Group             | Personal       | External       | Only External           |
+/// | Group             | Team       | Personal & Service   | Guests & Services       |
+/// | Group             | External       | Personal & Service   | Guests & Services       |
+/// | Group             | Team       | Personal & External   | Guests & External       |
+/// | Group             | Team       | Personal & External   | External & Services       |
+/// | Group             | Personal       | Personal & External   | External & Services       |
+/// | Group             | Team       | Personal & Service & External   | Guests & Services & External        |
+/// +---------------------------------------------------------------------------------+
 
 class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
 
@@ -77,7 +75,12 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.oneOnOne, selfUser: .personal, otherUsers: [.federated], expectedResult: [])
 
         // Team
-        assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam], expectedResult: [])
+        assertMatrixRow(
+            .oneOnOne,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.memberOfHostingTeam],
+            expectedResult: []
+        )
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [])
@@ -101,24 +104,59 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.service], expectedResult: [])
 
         // Only Remotes
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.federated], expectedResult: [.visibleRemotes])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.federated],
+            expectedResult: [.visibleRemotes]
+        )
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.federated], expectedResult: [.visibleRemotes])
 
         // Only Guests
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [.visibleGuests])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.personal],
+            expectedResult: [.visibleGuests]
+        )
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.personal], expectedResult: [.visibleGuests])
 
         // Only Services
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
-        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
-        assertMatrixRow(.group, selfUser: .external, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
+        assertMatrixRow(
+            .group,
+            selfUser: .personal,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
+        assertMatrixRow(
+            .group,
+            selfUser: .external,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
 
         // Only Externals
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [.visibleExternals])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.external],
+            expectedResult: [.visibleExternals]
+        )
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.external], expectedResult: [.visibleExternals])
 
         // Guests and Services and Externals and Remotes
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal, .service, .external, .federated], expectedResult: [.visibleGuests, .visibleServices, .visibleExternals, .visibleRemotes])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.personal, .service, .external, .federated],
+            expectedResult: [.visibleGuests, .visibleServices, .visibleExternals, .visibleRemotes]
+        )
     }
 
     // MARK: - Helpers
@@ -130,7 +168,14 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         return conversation
     }
 
-    func assertMatrixRow(_ conversationType: ZMConversationType, selfUser selfUserType: RelativeUserState, otherUsers: [RelativeUserState], expectedResult: ZMConversation.ExternalParticipantsState, file: StaticString = #file, line: UInt = #line) {
+    func assertMatrixRow(
+        _ conversationType: ZMConversationType,
+        selfUser selfUserType: RelativeUserState,
+        otherUsers: [RelativeUserState],
+        expectedResult: ZMConversation.ExternalParticipantsState,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let conversation = createConversationWithSelfUser()
         conversation.conversationType = conversationType
 
@@ -187,6 +232,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             case .external:
                 let external = createExternal(in: uiMOC)
                 conversation.addParticipantAndUpdateConversationState(user: external, role: nil)
+
             case .federated:
                 let otherUser = createUser(in: uiMOC)
                 otherUser.domain = "other.com"

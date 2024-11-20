@@ -22,8 +22,10 @@ import WireDesign
 final class BackupStatusCell: UITableViewCell {
 
     let descriptionLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            style: .body1,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .left
         label.numberOfLines = 0
         return label

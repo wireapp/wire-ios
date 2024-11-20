@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc class TypingUsers: NSObject {
+@objc
+class TypingUsers: NSObject {
 
     // MARK: - Properties
 
@@ -26,7 +27,7 @@ import Foundation
 
     // MARK: - Internal Methods
 
-    @objc (updateTypingUsers:inConversation:)
+    @objc(updateTypingUsers:inConversation:)
     func update(typingUsers: Set<ZMUser>, in conversation: ZMConversation) {
         let conversationId = conversation.objectID
         require(!conversationId.isTemporaryID)

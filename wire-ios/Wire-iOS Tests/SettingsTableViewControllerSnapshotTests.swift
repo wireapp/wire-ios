@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSettingsUI
 import WireTestingPackage
-import XCTest
-
 import WireTransport
+import XCTest
 
 @testable import Wire
 
@@ -28,6 +28,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     var sut: SettingsTableViewController!
+    private var mockSettingsCoordinator: AnySettingsCoordinator!
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
     var settingsPropertyFactory: SettingsPropertyFactory!
     var userSession: UserSessionMock!
@@ -36,8 +37,12 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - setUp
 
+    @MainActor
+    override func setUp() async throws {
+        mockSettingsCoordinator = .init(settingsCoordinator: MockSettingsCoordinator())
+    }
+
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         selfUser = MockZMEditableUser()
 
@@ -52,11 +57,16 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser,
+            trackingManager: nil
+        )
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: MockUserRight.self
+            userRightInterfaceType: MockUserRight.self,
+            settingsCoordinator: mockSettingsCoordinator
         )
 
         MockUserRight.isPermitted = true
@@ -65,6 +75,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        mockSettingsCoordinator = nil
         snapshotHelper = nil
         sut = nil
         settingsCellDescriptorFactory = nil
@@ -80,23 +91,29 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForSettingGroup() throws {
-        // prevent app crash when checking Analytics.shared.isOptout
-        Analytics.shared = Analytics(optedOut: true)
-        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.settingsGroup(
+            isPublicDomain: true,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true
+        )
         try verify(group: group)
     }
 
     private func testForAccountGroup(
         federated: Bool,
         disabledEditing: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
+        let group = settingsCellDescriptorFactory.accountGroup(
+            isPublicDomain: true,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true
+        )
         try verify(group: group, file: file, testName: testName, line: line)
     }
 
@@ -129,7 +146,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         userSession.isAppLockAvailable = true
 
         let group = settingsCellDescriptorFactory.optionsGroup
-        sut = SettingsTableViewController(group: group as! SettingsInternalGroupCellDescriptorType)
+        sut = SettingsTableViewController(
+            group: group as! SettingsInternalGroupCellDescriptorType,
+            settingsCoordinator: mockSettingsCoordinator
+        )
 
         sut.view.backgroundColor = .black
         sut.view.overrideUserInterfaceStyle = .dark
@@ -138,16 +158,22 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
         sut.view.layoutIfNeeded()
 
-        snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
+        snapshotHelper.verify(
+            matching: sut,
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+        )
     }
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
         // given
         userSession.isAppLockAvailable = true
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
-        settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
-                                              userRightInterfaceType: MockUserRight.self)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser, trackingManager: nil)
+        settingsCellDescriptorFactory = .init(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: MockUserRight.self,
+            settingsCoordinator: mockSettingsCoordinator
+        )
 
         // then
         XCTAssertTrue(settingsCellDescriptorFactory.isAppLockAvailable)
@@ -157,9 +183,12 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         // given
         userSession.isAppLockAvailable = false
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
-        settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
-                                              userRightInterfaceType: MockUserRight.self)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser, trackingManager: nil)
+        settingsCellDescriptorFactory = .init(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: MockUserRight.self,
+            settingsCoordinator: mockSettingsCoordinator
+        )
 
         // then
         XCTAssertFalse(settingsCellDescriptorFactory.isAppLockAvailable)
@@ -170,18 +199,24 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     func testForDarkThemeOptionsGroup() throws {
         setToLightTheme()
 
-        let group = SettingsCellDescriptorFactory.darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
+        let group = SettingsCellDescriptorFactory.darkThemeGroup(
+            for: settingsPropertyFactory.property(.darkMode),
+            settingsCoordinator: mockSettingsCoordinator
+        )
         try verify(group: group)
     }
 
     private func verify(
         group: Any,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) throws {
         let group = try XCTUnwrap(group as? SettingsInternalGroupCellDescriptorType)
-        sut = SettingsTableViewController(group: group)
+        sut = SettingsTableViewController(
+            group: group,
+            settingsCoordinator: mockSettingsCoordinator
+        )
 
         sut.view.backgroundColor = .black
         snapshotHelper
@@ -198,8 +233,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - data usage permissions
 
-    func testForDataUsagePermissionsForTeamMember() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
+    func testForDataUsagePermissionsForPublicDomain() throws {
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isPublicDomain: true)
         try verify(group: group)
     }
 }

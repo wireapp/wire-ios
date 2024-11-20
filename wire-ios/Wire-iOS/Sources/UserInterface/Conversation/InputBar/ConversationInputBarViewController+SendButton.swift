@@ -43,7 +43,11 @@ extension ConversationInputBarViewController {
             updateWritingState(animated: true)
         } else {
             clearInputBar()
-            delegate?.conversationInputBarViewControllerDidComposeText(text: text, mentions: mentions, replyingTo: quote)
+            delegate?.conversationInputBarViewControllerDidComposeText(
+                text: text,
+                mentions: mentions,
+                replyingTo: quote
+            )
         }
 
         dismissMentionsIfNeeded()

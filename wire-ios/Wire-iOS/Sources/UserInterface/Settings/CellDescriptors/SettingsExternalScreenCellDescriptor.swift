@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSettingsUI
 
 enum PresentationStyle: Int {
     case modal
@@ -42,6 +43,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     let icon: StyleKitIcon?
     var copiableText: String?
 
+    let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+
     private let accessoryViewMode: AccessoryViewMode
 
     weak var group: SettingsGroupCellDescriptorType?
@@ -60,18 +63,21 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .none,
-            copiableText: nil
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
         )
     }
 
-    convenience init(title: String,
-                     isDestructive: Bool,
-                     presentationStyle: PresentationStyle,
-                     presentationAction: @escaping () -> (UIViewController?),
-                     previewGenerator: PreviewGeneratorType? = .none,
-                     icon: StyleKitIcon? = nil,
-                     accessoryViewMode: AccessoryViewMode = .default,
-                     copiableText: String? = nil) {
+    convenience init(
+        title: String,
+        isDestructive: Bool,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping () -> (UIViewController?),
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessoryViewMode: AccessoryViewMode = .default,
+        copiableText: String? = nil
+    ) {
         self.init(
             title: title,
             isDestructive: isDestructive,
@@ -81,20 +87,23 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             previewGenerator: previewGenerator,
             icon: icon,
             accessoryViewMode: accessoryViewMode,
-            copiableText: copiableText
+            copiableText: copiableText,
+            settingsTopLevelMenuItem: nil
         )
     }
 
-    init(title: String,
-         isDestructive: Bool,
-         presentationStyle: PresentationStyle,
-         identifier: String?,
-         presentationAction: @escaping () -> (UIViewController?),
-         previewGenerator: PreviewGeneratorType? = .none,
-         icon: StyleKitIcon? = nil,
-         accessoryViewMode: AccessoryViewMode = .default,
-         copiableText: String?) {
-
+    init(
+        title: String,
+        isDestructive: Bool,
+        presentationStyle: PresentationStyle,
+        identifier: String?,
+        presentationAction: @escaping () -> (UIViewController?),
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessoryViewMode: AccessoryViewMode = .default,
+        copiableText: String?,
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+    ) {
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle
@@ -104,25 +113,27 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.icon = icon
         self.accessoryViewMode = accessoryViewMode
         self.copiableText = copiableText
+        self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = self.generateViewController() else {
+        guard let controllerToShow = generateViewController() else {
             return
         }
 
-        switch self.presentationStyle {
+        switch presentationStyle {
         case .modal:
             if controllerToShow.modalPresentationStyle == .popover,
-                let sourceView = self.viewController?.view,
-                let popoverPresentation = controllerToShow.popoverPresentationController {
+               let sourceView = viewController?.view,
+               let popoverPresentation = controllerToShow.popoverPresentationController {
                 popoverPresentation.sourceView = sourceView
                 popoverPresentation.sourceRect = sourceView.bounds
             }
 
             controllerToShow.modalPresentationCapturesStatusBarAppearance = true
-            self.viewController?.present(controllerToShow, animated: true, completion: .none)
+            viewController?.present(controllerToShow, animated: true, completion: .none)
         case .navigation:
+            controllerToShow.hidesBottomBarWhenPushed = true
             viewController?.navigationController?.pushViewController(controllerToShow, animated: true)
         case .alert:
             break
@@ -130,22 +141,22 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
 
         if let tableCell = cell as? SettingsTableCell {
             tableCell.valueLabel.accessibilityIdentifier = title + "Field"
             tableCell.valueLabel.isAccessibilityElement = true
         }
 
-        if let previewGenerator = self.previewGenerator {
+        if let previewGenerator {
             let preview = previewGenerator(self)
             cell.preview = preview
         }
-        cell.icon = self.icon
+        cell.icon = icon
         if let groupCell = cell as? SettingsTableCell {
             switch accessoryViewMode {
             case .default:
-                if self.presentationStyle == .modal {
+                if presentationStyle == .modal {
                     groupCell.hideDisclosureIndicator()
                 } else {
                     groupCell.showDisclosureIndicator()
@@ -159,6 +170,6 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func generateViewController() -> UIViewController? {
-        return self.presentationAction()
+        presentationAction()
     }
 }

@@ -30,10 +30,10 @@ final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
     }
 
     func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        return NSObject()
+        NSObject()
     }
 }

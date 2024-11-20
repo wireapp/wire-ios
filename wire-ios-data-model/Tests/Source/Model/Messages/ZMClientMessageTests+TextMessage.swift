@@ -173,7 +173,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(preview)
     }
 
-    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkMetadata, line: UInt = #line) {
+    func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(
+        _ preview: LinkMetadata,
+        line: UInt = #line
+    ) {
 
         // given
         let nonce = UUID.create()
@@ -194,10 +197,12 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 
         // when
-        let expectation = self.customExpectation(description: "Notified")
-        let token: Any? = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
-                                          context: self.uiMOC.notificationContext,
-                                          object: clientMessage.objectID) { _ in
+        let expectation = customExpectation(description: "Notified")
+        let token: Any? = NotificationInContext.addObserver(
+            name: ZMClientMessage.linkPreviewImageDownloadNotification,
+            context: uiMOC.notificationContext,
+            object: clientMessage.objectID
+        ) { _ in
             expectation.fulfill()
         }
 

@@ -18,20 +18,23 @@
 
 import Foundation
 
-extension NSString {
+public extension NSString {
 
     // TODO: [WPB-11016] Move this test code from production targets
     #if DEBUG
-    @objc static func randomAlphanumerical(length: UInt) -> String {
-        String.randomAlphanumerical(length: length)
-    }
+        @objc
+        static func randomAlphanumerical(length: UInt) -> String {
+            String.randomAlphanumerical(length: length)
+        }
 
-    @objc public static func randomClientIdentifier() -> String {
-        String.randomClientIdentifier()
-    }
+        @objc
+        static func randomClientIdentifier() -> String {
+            String.randomClientIdentifier()
+        }
 
-    @objc public static func randomRemoteIdentifier() -> String {
-        String.randomRemoteIdentifier()
-    }
+        @objc
+        static func randomRemoteIdentifier() -> String {
+            String.randomRemoteIdentifier()
+        }
     #endif
 }

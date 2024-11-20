@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 
@@ -45,11 +45,11 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
     }
 
     func assertFeatureExists(name: Feature.Name) {
-        XCTAssertNotNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNotNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     func assertFeatureDoesNotExist(name: Feature.Name) {
-        XCTAssertNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     // MARK: - App lock
@@ -793,9 +793,10 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.E2EI.Config(
                 acmeDiscoveryUrl: "http://acme",
-                verificationExpiration: 12345,
+                verificationExpiration: 12_345,
                 crlProxy: "http://example",
-                useProxyOnMobile: true)
+                useProxyOnMobile: true
+            )
 
             Feature.updateOrCreate(havingName: .e2ei, in: self.syncMOC) { feature in
                 feature.status = .disabled
@@ -858,7 +859,8 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 
             let config = Feature.E2EI.Config(
                 acmeDiscoveryUrl: "http://acme",
-                verificationExpiration: 12345)
+                verificationExpiration: 12_345
+            )
 
             let e2ei = Feature.E2EI(
                 status: .enabled,
@@ -935,7 +937,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 private extension Data {
 
     func decode<T: Decodable>(as type: T.Type) -> T? {
-        return try? JSONDecoder().decode(type, from: self)
+        try? JSONDecoder().decode(type, from: self)
     }
 
 }

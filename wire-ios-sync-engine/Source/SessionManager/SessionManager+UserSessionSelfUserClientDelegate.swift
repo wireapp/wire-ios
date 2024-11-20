@@ -33,7 +33,7 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
         WireLogger.sessionManager.debug("Client registration was successful")
 
-        if self.configuration.encryptionAtRestEnabledByDefault {
+        if configuration.encryptionAtRestEnabledByDefault {
             do {
                 try activeUserSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
             } catch {
@@ -59,7 +59,19 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
 
     public func clientCompletedInitialSync(accountId: UUID) {
         let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+
+        guard account == accountManager.selectedAccount else {
+            return
+        }
+
+        Task {
+            if let activeUserSession {
+                await configureAnalytics(for: activeUserSession)
+            }
+
+            await MainActor.run {
+                delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
+            }
+        }
     }
 }

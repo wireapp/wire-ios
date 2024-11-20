@@ -27,10 +27,10 @@ public protocol EphemeralMessageCapable: MessageCapable {
     func setEphemeralContent(on ephemeral: inout Ephemeral)
 }
 
-extension MessageCapable {
-    public var expectsReadConfirmation: Bool {
+public extension MessageCapable {
+    var expectsReadConfirmation: Bool {
         get {
-            return false
+            false
         }
         set {}
     }
@@ -131,6 +131,12 @@ extension LastRead: MessageCapable {
 extension Calling: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.calling = self
+    }
+}
+
+extension InCallEmoji: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.inCallEmoji = self
     }
 }
 

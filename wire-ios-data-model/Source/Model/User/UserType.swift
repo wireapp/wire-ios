@@ -39,9 +39,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Email for the user
     var emailAddress: String? { get }
 
-    /// The phone number of the user
-    var phoneNumber: String? { get }
-
     /// Whether this is the self user
     var isSelfUser: Bool { get }
 
@@ -262,7 +259,8 @@ public protocol UserConnections {
     var canBeConnected: Bool { get }
 
     /// Sends a connection request to the given user. May be a no-op, eg. if we're already connected.
-    /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
+    /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status
+    /// change
     /// You should stop from observing the searchUser and start observing the user from there on
     func connect(completion: @escaping (Error?) -> Void)
 

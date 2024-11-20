@@ -76,12 +76,12 @@ final class ConversationServiceTests: MessagingTestBase {
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, groupConversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -130,12 +130,12 @@ final class ConversationServiceTests: MessagingTestBase {
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, groupConversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -180,7 +180,7 @@ final class ConversationServiceTests: MessagingTestBase {
         // When
         sut.createTeamOneOnOneProteusConversation(user: user1) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 // Then we got back newly created conversation.
                 XCTAssertEqual(conversation, oneToOneConversation)
 
@@ -189,7 +189,7 @@ final class ConversationServiceTests: MessagingTestBase {
                 XCTAssertEqual(self.user1.oneOnOneConversation, conversation)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -231,7 +231,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -266,7 +266,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -297,7 +297,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
-            return ciphersuite
+            ciphersuite
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -326,12 +326,12 @@ final class ConversationServiceTests: MessagingTestBase {
             messageProtocol: .mls
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 XCTAssertEqual(conversation.mlsStatus, .ready)
                 XCTAssertEqual(conversation.ciphersuite, ciphersuite)
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -379,7 +379,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -411,7 +411,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -484,7 +484,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 didFinish.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -520,7 +520,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -542,8 +542,10 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            results: [.failure(.unreachableDomains([unreachableDomain])),
-                      .success(groupConversation.objectID)],
+            results: [
+                .failure(.unreachableDomains([unreachableDomain])),
+                .success(groupConversation.objectID)
+            ],
             context: uiMOC.notificationContext
         )
 
@@ -559,7 +561,7 @@ final class ConversationServiceTests: MessagingTestBase {
             defer { didFinish.fulfill() }
 
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 XCTAssertEqual(conversation, groupConversation)
                 // Then a system message is added.
                 guard let systemMessage = conversation.lastMessage?.systemMessageData else {
@@ -568,7 +570,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
                 XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }
@@ -608,7 +610,7 @@ final class ConversationServiceTests: MessagingTestBase {
             case .success:
                 XCTFail("unexpected success")
 
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail("unexpected error: \(error)")
             }
         }

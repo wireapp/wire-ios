@@ -60,15 +60,15 @@ public class Team: ZMManagedObject, TeamType {
     }
 
     public override static func entityName() -> String {
-        return "Team"
+        "Team"
     }
 
-    override public static func sortKey() -> String {
-        return #keyPath(Team.name)
+    public override static func sortKey() -> String {
+        #keyPath(Team.name)
     }
 
     public override static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     @objc(fetchOrCreateTeamWithRemoteIdentifier:inContext:)
@@ -88,9 +88,9 @@ public class Team: ZMManagedObject, TeamType {
     }
 }
 
-extension Team {
+public extension Team {
 
-    public func members(matchingQuery query: String) -> [Member] {
+    func members(matchingQuery query: String) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
         return members
@@ -105,11 +105,12 @@ extension Team {
 }
 
 // MARK: - Logo Image
-extension Team {
 
-    @objc static let pictureAssetIdKey = #keyPath(Team.pictureAssetId)
+public extension Team {
 
-    public var imageData: Data? {
+    @objc internal static let pictureAssetIdKey = #keyPath(Team.pictureAssetId)
+
+    var imageData: Data? {
         get {
             guard let cache = managedObjectContext?.zm_fileAssetCache else {
                 return nil
@@ -140,9 +141,9 @@ extension Team {
         }
     }
 
-    public func requestImage() {
+    func requestImage() {
         guard
-            let context = self.managedObjectContext,
+            let context = managedObjectContext,
             context.zm_isUserInterfaceContext,
             let cache = context.zm_fileAssetCache,
             !cache.hasImageData(for: self)
@@ -157,7 +158,7 @@ extension Team {
         ).post()
     }
 
-    public static var imageDownloadFilter: NSPredicate {
+    static var imageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", Team.pictureAssetIdKey)
         let notCached = NSPredicate { team, _ -> Bool in
             guard let team = team as? Team else { return false }

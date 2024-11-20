@@ -23,15 +23,10 @@ final class PushChannel: PushChannelProtocol {
 
     typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
-    private let request: URLRequest
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
 
-    init(
-        request: URLRequest,
-        webSocket: any WebSocketProtocol
-    ) {
-        self.request = request
+    init(webSocket: any WebSocketProtocol) {
         self.webSocket = webSocket
     }
 
@@ -40,7 +35,7 @@ final class PushChannel: PushChannelProtocol {
         return try webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
-                case .data(let data):
+                case let .data(data):
                     print("received web socket data, decoding...")
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()

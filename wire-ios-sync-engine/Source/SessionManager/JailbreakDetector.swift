@@ -29,13 +29,13 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
     public func isJailbroken() -> Bool {
         #if targetEnvironment(simulator)
-        return false
+            return false
         #else
-        return hasJailbrokenFiles ||
-            hasWriteablePaths ||
-            hasSymlinks ||
-            callsFork ||
-            canOpenJailbrokenStores
+            return hasJailbrokenFiles ||
+                hasWriteablePaths ||
+                hasSymlinks ||
+                callsFork ||
+                canOpenJailbrokenStores
         #endif
     }
 
@@ -108,8 +108,8 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
         for link in symlinks {
             if fm.fileExists(atPath: link),
-                let attributes = try? fm.attributesOfItem(atPath: link),
-                attributes[.type] as? String == "NSFileTypeSymbolicLink" {
+               let attributes = try? fm.attributesOfItem(atPath: link),
+               attributes[.type] as? String == "NSFileTypeSymbolicLink" {
                 return true
             }
         }
@@ -127,9 +127,11 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
     private var canOpenJailbrokenStores: Bool {
 
-        let jailbrokenStoresURLs: [String] = ["cydia://app",
-                                              "sileo://package",
-                                              "sileo://source"]
+        let jailbrokenStoresURLs: [String] = [
+            "cydia://app",
+            "sileo://package",
+            "sileo://source"
+        ]
 
         for url in jailbrokenStoresURLs where UIApplication.shared.canOpenURL(URL(string: url)!) {
             return true
@@ -139,7 +141,8 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
 }
 
-@objcMembers public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {
+@objcMembers
+public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {
 
     public var jailbroken: Bool = false
 
@@ -149,6 +152,6 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     }
 
     public func isJailbroken() -> Bool {
-        return jailbroken
+        jailbroken
     }
 }

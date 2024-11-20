@@ -26,30 +26,33 @@ final class Image: Editable {
             updateImageTransform()
         }
     }
+
     var rotation: CGFloat {
         didSet {
             updateImageTransform()
         }
     }
+
     var position: CGPoint {
         didSet {
             updateImageTransform()
         }
     }
+
     var selected: Bool
     var selectable = true
     var imageView = UIImageView()
 
     var size: CGSize {
-        return image.size
+        image.size
     }
 
     var bounds: CGRect {
-        return CGRect(x: 0, y: 0, width: size.width, height: size.height).applying(transform)
+        CGRect(x: 0, y: 0, width: size.width, height: size.height).applying(transform)
     }
 
     var selectedView: UIView {
-        return imageView
+        imageView
     }
 
     public init(image: UIImage, at position: CGPoint) {
@@ -58,9 +61,9 @@ final class Image: Editable {
         self.rotation = 0
         self.position = position
         self.selected = false
-        self.imageView.image = image
-        self.imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
-        self.imageView.sizeToFit()
+        imageView.image = image
+        imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
+        imageView.sizeToFit()
 
         updateImageTransform()
     }
@@ -75,14 +78,15 @@ final class Image: Editable {
     }
 
     var transform: CGAffineTransform {
-            let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let toCenter = CGAffineTransform(translationX: -center.x, y: -center.y)
-            let restoreCenter = CGAffineTransform(translationX: center.x, y: center.y)
-            let scaleTransform = CGAffineTransform(scaleX: scale, y: scale)
-            let rotationTransform = CGAffineTransform(rotationAngle: rotation)
-            let translate = CGAffineTransform(translationX: position.x, y: position.y)
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let toCenter = CGAffineTransform(translationX: -center.x, y: -center.y)
+        let restoreCenter = CGAffineTransform(translationX: center.x, y: center.y)
+        let scaleTransform = CGAffineTransform(scaleX: scale, y: scale)
+        let rotationTransform = CGAffineTransform(rotationAngle: rotation)
+        let translate = CGAffineTransform(translationX: position.x, y: position.y)
 
-            return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter).concatenating(translate)
+        return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter)
+            .concatenating(translate)
     }
 
     func sizeToFit(inRect rect: CGRect) {

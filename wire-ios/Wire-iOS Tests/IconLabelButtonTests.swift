@@ -48,7 +48,7 @@ final class IconLabelButtonTests: XCTestCase {
         }
     }
 
-    func verify(appearance: IconLabelButtonTestCase.Appearance, file: StaticString = #file, line: UInt = #line) {
+    func verify(appearance: IconLabelButtonTestCase.Appearance, file: StaticString = #filePath, line: UInt = #line) {
         button.appearance = appearance.callActionAppearance
         button.isEnabled = appearance.isEnabled
         button.isSelected = appearance.isSelected
@@ -84,43 +84,44 @@ struct IconLabelButtonTestCase {
 
         var callActionAppearance: CallActionAppearance {
             switch self {
-            case .dark(let blurState, _, _): return .dark(blurred: blurState.isBlurred)
-            case .light: return .light
+            case let .dark(blurState, _, _): .dark(blurred: blurState.isBlurred)
+            case .light: .light
             }
         }
 
         var isSelected: Bool {
-            return selectionState.isSelected
+            selectionState.isSelected
         }
 
         var isEnabled: Bool {
-            return interactionState.isEnabled
+            interactionState.isEnabled
         }
 
         var description: String {
             switch self {
-            case .dark(let blurState, let selectionState, let interactionState):
-                return "dark_\(blurState.rawValue)_\(selectionState.rawValue)_\(interactionState.rawValue)"
-            case .light(let selectionState, let interactionState):
-                return "light_\(selectionState.rawValue)_\(interactionState.rawValue)"
+            case let .dark(blurState, selectionState, interactionState):
+                "dark_\(blurState.rawValue)_\(selectionState.rawValue)_\(interactionState.rawValue)"
+            case let .light(selectionState, interactionState):
+                "light_\(selectionState.rawValue)_\(interactionState.rawValue)"
             }
         }
 
         private var selectionState: SelectionState {
             switch self {
-            case .dark(_, let selectionState, _), .light(let selectionState, _): return selectionState
+            case let .dark(_, selectionState, _), let .light(selectionState, _): selectionState
             }
         }
 
         private var interactionState: InteractionState {
             switch self {
-            case .dark(_, _, let interactionState), .light(_, let interactionState): return interactionState
+            case let .dark(_, _, interactionState), let .light(_, interactionState): interactionState
             }
         }
     }
 
     enum BlurState: String, CaseIterable {
-        case blurred, notBlurred
+        case blurred
+        case notBlurred
 
         var isBlurred: Bool {
             if case .blurred = self { return true }
@@ -129,7 +130,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum SelectionState: String, CaseIterable {
-        case selected, unselected
+        case selected
+        case unselected
 
         var isSelected: Bool {
             if case .selected = self { return true }
@@ -138,7 +140,8 @@ struct IconLabelButtonTestCase {
     }
 
     enum InteractionState: String, CaseIterable {
-        case enabled, disabled
+        case enabled
+        case disabled
 
         var isEnabled: Bool {
             if case .enabled = self { return true }

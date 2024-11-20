@@ -32,6 +32,7 @@ public struct PushSupportedProtocolsUseCase {
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
+    let userClientsRepository: any UserClientsRepositoryProtocol
 
     private let logger = WireLogger(tag: "supported-protocols")
 
@@ -45,7 +46,7 @@ public struct PushSupportedProtocolsUseCase {
 
         let remoteProtocols = await remotelySupportedProtocols()
         let migrationState = await currentMigrationState()
-        let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
+        let allClientsMLSReady = await allSelfUserClientsAreActiveMLSClients()
 
         logger.debug(
             "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
@@ -94,8 +95,10 @@ public struct PushSupportedProtocolsUseCase {
             type: Feature.MLS.Config.self
         )
 
-        let mls = (status: mlsFeature?.status ?? .disabled,
-                   config: mlsFeature?.config ?? Feature.MLS.Config())
+        let mls = (
+            status: mlsFeature?.status ?? .disabled,
+            config: mlsFeature?.config ?? Feature.MLS.Config()
+        )
 
         guard mls.status == .enabled else {
             /// If there is no MLS then there can only be proteus.
@@ -121,8 +124,10 @@ public struct PushSupportedProtocolsUseCase {
             type: Feature.MLSMigration.Config.self
         )
 
-        let mlsMigration = (status: mlsMigrationFeature?.status ?? .disabled,
-                            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config())
+        let mlsMigration = (
+            status: mlsMigrationFeature?.status ?? .disabled,
+            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config()
+        )
 
         guard mlsMigration.status == .enabled else {
             return .disabled
@@ -147,28 +152,8 @@ public struct PushSupportedProtocolsUseCase {
         return .finalised
     }
 
-    private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        userRepository.fetchSelfUser().clients.all { userClient in
-            let hasMLSIdentity = !userClient.mlsPublicKeys.isEmpty
-
-            let isRecentlyActive: Bool = {
-                if userClient.isSelfClient() {
-                    return true
-                }
-
-                guard let lastActiveDate = userClient.lastActiveDate else {
-                    return false
-                }
-
-                guard lastActiveDate <= Date() else {
-                    return true
-                }
-
-                return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
-            }()
-
-            return hasMLSIdentity && isRecentlyActive
-        }
+    private func allSelfUserClientsAreActiveMLSClients() async -> Bool {
+        await userClientsRepository.allSelfUserClientsAreActiveMLSClients()
     }
 
 }

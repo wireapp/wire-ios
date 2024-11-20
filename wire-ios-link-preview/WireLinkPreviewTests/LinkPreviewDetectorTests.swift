@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class LinkPreviewDetectorTests: XCTestCase {
 
@@ -152,7 +152,7 @@ class LinkPreviewDetectorTests: XCTestCase {
 
         guard let twitterStatus = result.first as? TwitterStatusMetadata else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(twitterStatus.imageURLs.count, 4)
-        XCTAssertEqual(twitterStatus.imageURLs.map { $0.absoluteString }, openGraphData.imageUrls)
+        XCTAssertEqual(twitterStatus.imageURLs.map(\.absoluteString), openGraphData.imageUrls)
         XCTAssertEqual(twitterStatus.characterOffsetInText, 36)
         XCTAssertEqual(twitterStatus.permanentURL?.absoluteString, openGraphData.url)
         XCTAssertEqual(twitterStatus.originalURLString, "www.example.com")
@@ -195,7 +195,11 @@ class LinkPreviewDetectorTests: XCTestCase {
     func assertThatItCallsTheCompletionClosure(withText text: String, line: UInt = #line) {
         // given
         let queue = OperationQueue()
-        sut = LinkPreviewDetector(previewDownloader: previewDownloader, imageDownloader: imageDownloader, workerQueue: queue)
+        sut = LinkPreviewDetector(
+            previewDownloader: previewDownloader,
+            imageDownloader: imageDownloader,
+            workerQueue: queue
+        )
         let completionExpectation = expectation(description: "It calls the completion closure")
 
         // when

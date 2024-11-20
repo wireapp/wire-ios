@@ -18,16 +18,15 @@
 
 import Foundation
 
-extension ZMClientMessage {
-    @objc
-    override public var isEphemeral: Bool {
-        return destructionDate != nil
+public extension ZMClientMessage {
+    @objc override var isEphemeral: Bool {
+        destructionDate != nil
             || ephemeral != nil
             || isObfuscated
     }
 
-    var ephemeral: Ephemeral? {
-        return dataSet.lazy
+    internal var ephemeral: Ephemeral? {
+        dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .first(where: { message -> Bool in
                 guard case .ephemeral? = message.content else {
@@ -37,9 +36,8 @@ extension ZMClientMessage {
             })?.ephemeral
     }
 
-    @objc
-    override public var deletionTimeout: TimeInterval {
-        guard let ephemeral = self.ephemeral else {
+    @objc override var deletionTimeout: TimeInterval {
+        guard let ephemeral else {
             return -1
         }
         return TimeInterval(ephemeral.expireAfterMillis / 1000)

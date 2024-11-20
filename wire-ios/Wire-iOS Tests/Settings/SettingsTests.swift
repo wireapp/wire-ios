@@ -22,7 +22,7 @@ import XCTest
 
 final class SettingsTests: XCTestCase {
 
-    static override func tearDown() {
+    override static func tearDown() {
         Settings.shared.reset()
     }
 

@@ -54,17 +54,17 @@ class AnyMessage {
     private let _sender: AnyConstantProperty<String>
     private let _numberOfLikes: AnyMutableProperty<Int>
 
-    init<T: Message>(_ message: T) {
-        _sender = AnyConstantProperty(message, keyPath: \.sender)
-        _numberOfLikes = AnyMutableProperty(message, keyPath: \.numberOfLikes)
+    init(_ message: some Message) {
+        self._sender = AnyConstantProperty(message, keyPath: \.sender)
+        self._numberOfLikes = AnyMutableProperty(message, keyPath: \.numberOfLikes)
     }
 
     var sender: String {
-        return _sender.getter()
+        _sender.getter()
     }
 
     var numberOfLikes: Int {
-        get { return _numberOfLikes.getter() }
+        get { _numberOfLikes.getter() }
         set { _numberOfLikes.setter(newValue) }
     }
 }

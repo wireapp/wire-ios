@@ -79,7 +79,11 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         //  2. The only participants are the current user and the selected user
         //  3. It does not have a custom display name
         let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
         let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
         let sameParticipant = NSPredicate(
             format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
@@ -96,6 +100,10 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             noUserDefinedName,
             sameParticipant
         ])
+
+        //  4. sort by their fully qualified conversation ID in ascending oder, and use the first one.
+        // primary_key is basically the qualified id
+        request.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
 
         guard
             let conversation = try context.fetch(request).first

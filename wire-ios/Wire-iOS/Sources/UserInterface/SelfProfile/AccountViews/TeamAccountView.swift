@@ -26,9 +26,8 @@ final class TeamAccountView: BaseAccountView {
     private var conversationListObserver: NSObjectProtocol!
 
     required init?(user: ZMUser?, account: Account, displayContext: DisplayContext) {
-
         if let content = user?.team?.teamImageViewContent ?? account.teamImageViewContent {
-            imageView = TeamImageView(content: content, style: .big)
+            self.imageView = TeamImageView(content: content, style: .big)
         } else {
             return nil
         }
@@ -40,29 +39,25 @@ final class TeamAccountView: BaseAccountView {
         shouldGroupAccessibilityChildren = true
 
         imageView.contentMode = .scaleAspectFill
-
         imageViewContainer.addSubview(imageView)
 
-        selectionView.pathGenerator = { size in
-            let radius = 6
-            let radii = CGSize(width: radius, height: radius)
-            let path = UIBezierPath(roundedRect: CGRect(origin: .zero, size: size),
-                                    byRoundingCorners: UIRectCorner.allCorners,
-                                    cornerRadii: radii)
-            return path
-        }
+        selectionView.layer.masksToBounds = true
 
         createConstraints()
-
         update()
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         addGestureRecognizer(tapGesture)
 
         if let team = user?.team {
-            teamObserver = TeamChangeInfo.add(observer: self, for: team)
+            self.teamObserver = TeamChangeInfo.add(observer: self, for: team)
             team.requestImage()
         }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        selectionView.layer.cornerRadius = 6
     }
 
     private func createConstraints() {
@@ -85,24 +80,9 @@ final class TeamAccountView: BaseAccountView {
 
     override func update() {
         super.update()
-
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.teamName ?? "") + " " + accessibilityState
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(account.teamName ?? "") + " " + accessibilityState
         accessibilityIdentifier = "\(account.teamName ?? "") team"
-    }
-
-    override func createDotConstraints() -> [NSLayoutConstraint] {
-        let dotSize: CGFloat = 9
-        let dotInset: CGFloat = 2
-
-        dotView.translatesAutoresizingMaskIntoConstraints = false
-        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
-
-        return [
-            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
-            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
-            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-            dotView.widthAnchor.constraint(equalToConstant: dotSize)
-        ]
     }
 }
 

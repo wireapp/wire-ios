@@ -25,12 +25,17 @@ extension MarkdownTextView {
         addGestureRecognizer(tapRecognizer)
     }
 
-    @objc func didTapTextView(_ recognizer: UITapGestureRecognizer) {
+    @objc
+    func didTapTextView(_ recognizer: UITapGestureRecognizer) {
         var location = recognizer.location(in: self)
         location.x -= textContainerInset.left
         location.y -= textContainerInset.top
 
-        let characterIndex = layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        let characterIndex = layoutManager.characterIndex(
+            for: location,
+            in: textContainer,
+            fractionOfDistanceBetweenInsertionPoints: nil
+        )
         selectTextAttachmentIfNeeded(at: characterIndex)
     }
 
@@ -38,7 +43,7 @@ extension MarkdownTextView {
         guard attributedText.wholeRange.contains(index) else { return }
 
         let attributes = attributedText.attributes(at: index, effectiveRange: nil)
-        guard attributes[NSAttributedString.Key.attachment] as? MentionTextAttachment != nil else { return }
+        guard attributes[NSAttributedString.Key.attachment] is MentionTextAttachment else { return }
 
         guard let start = position(from: beginningOfDocument, offset: index) else { return }
         guard let end = position(from: start, offset: 1) else { return }
@@ -48,9 +53,13 @@ extension MarkdownTextView {
 }
 
 extension MarkdownTextView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
 
-        // prevent recognizing other UIPanGestureRecognizers at the same time, e.g. SplitViewController's panGestureRecognizers will dismiss the keyboard and this MarkdownTextView moves down immediately
+        // prevent recognizing other UIPanGestureRecognizers at the same time, e.g. SplitViewController's
+        // panGestureRecognizers will dismiss the keyboard and this MarkdownTextView moves down immediately
         if otherGestureRecognizer is UIPanGestureRecognizer {
             return false
         }

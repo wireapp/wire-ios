@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import XCTest
+@testable import WireAPI
 
 final class UserEventDecodingTests: XCTestCase {
 
@@ -282,7 +282,7 @@ final class UserEventDecodingTests: XCTestCase {
         }
 
         static let clientAddEvent = UserClientAddEvent(
-            client: UserClient(
+            client: SelfUserClient(
                 id: "2a1fd72806d84e26",
                 type: .permanent,
                 activationDate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
@@ -331,12 +331,15 @@ final class UserEventDecodingTests: XCTestCase {
             qualifiedUserID: QualifiedID(
                 uuid: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
                 domain: "example.com"
-            )
+            ),
+            time: fractionalDate(from: "2021-05-12T10:52:02.671Z")
         )
 
-        static let legalholdDisableEvent = UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
+        static let legalholdDisableEvent =
+            UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
 
-        static let legalholdEnableEvent = UserLegalholdEnableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
+        static let legalholdEnableEvent =
+            UserLegalholdEnableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
 
         static let legalholdRequestEvent = UserLegalholdRequestEvent(
             userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,
