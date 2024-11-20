@@ -17,7 +17,7 @@
 //
 
 #import <WireLegacy/WireLegacy.h>
-#import <WireLegacyTests-Swift.h>
+//#import <WireLegacyTests-Swift.h>
 #import <XCTest/XCTest.h>
 
 @interface ZMDefinesTest : XCTestCase

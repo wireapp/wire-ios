@@ -20,7 +20,7 @@ public import Foundation
 
 /// Class to proxy WireLogger methods to Objective-C
 @objcMembers
-open class WireLoggerObjC: NSObject {
+open class WireLoggerObjCBase: NSObject {
 
     public static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
