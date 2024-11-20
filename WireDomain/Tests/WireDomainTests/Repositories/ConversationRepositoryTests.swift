@@ -32,7 +32,8 @@ final class ConversationRepositoryTests: XCTestCase {
     private var userRepository: MockUserRepositoryProtocol!
     private let backendInfo: ConversationRepository.BackendInfo = .init(
         domain: "example.com",
-        isFederationEnabled: false
+        isFederationEnabled: false,
+        isMLSEnabled: true
     )
 
     private var teamRepository: MockTeamRepositoryProtocol!
