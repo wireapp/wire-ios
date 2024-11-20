@@ -23,45 +23,26 @@ import XCTest
 @testable import WireAPI
 @testable import WireFoundationSupport
 
-final class PersistentAuthenticationStorageTests: XCTestCase {
+final class CookieStorageTests: XCTestCase {
 
-    var sut: PersistentAuthenticationStorage!
-    var userDefaults: UserDefaults!
+    var sut: CookieStorage!
+    var cookieEncryptionKey: Data!
     var keychain: MockKeychainProtocol!
 
-    override func setUp() {
-        userDefaults = .temporary()
+    override func setUpWithError() throws {
+        cookieEncryptionKey = try Scaffolding.cookieEncryptionKey()
         keychain = MockKeychainProtocol()
-        sut = PersistentAuthenticationStorage(
+        sut = CookieStorage(
             userID: Scaffolding.userID,
-            sharedUserDefaults: userDefaults,
+            cookieEncryptionKey: cookieEncryptionKey,
             keychain: keychain
         )
     }
 
     override func tearDown() {
-        sut = nil
-        userDefaults = nil
+        cookieEncryptionKey = nil
         keychain = nil
-    }
-
-    // MARK: - Access token
-
-    func testFetchAccessToken_Non_Exists() async {
-        // When
-        let accessToken = await sut.fetchAccessToken()
-
-        // Then
-        XCTAssertNil(accessToken)
-    }
-
-    func testStoreAccessToken_Then_Fetch() async throws {
-        // When
-        await sut.storeAccessToken(Scaffolding.accessToken)
-
-        // Then
-        let storedAccessToken = await sut.fetchAccessToken()
-        XCTAssertEqual(storedAccessToken, Scaffolding.accessToken)
+        sut = nil
     }
 
     // MARK: - Cookies
@@ -195,11 +176,9 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
     func testFetchCookies() async throws {
         // Given
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
-        let encryptionKey = try AES256Crypto.generateRandomEncryptionKey()
-        userDefaults.set(encryptionKey, forKey: "ZMCookieKey")
         let storedCookieData = try Scaffolding.encodeAndEncryptCookieData(
             for: [validCookie],
-            encryptionKey: encryptionKey
+            encryptionKey: cookieEncryptionKey
         )
 
         // Mock existing cookie.
@@ -218,18 +197,54 @@ final class PersistentAuthenticationStorageTests: XCTestCase {
         )
     }
 
+    // MARK: - Helpers
+
+    private func assertStoredCookieData(
+        _ storedCookieData: Data,
+        equals cookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        do {
+            let actualHTTPCookies = try Scaffolding.decryptAndDecodeCookieData(
+                storedCookieData,
+                encryptionKey: cookieEncryptionKey
+            )
+            try assertCookies(
+                actualHTTPCookies,
+                equals: cookie
+            )
+        } catch {
+            XCTFail(
+                "failed to assert cookie data: \(error)",
+                file: file,
+                line: line
+            )
+        }
+    }
+
+    private func assertCookies(
+        _ cookies: [HTTPCookie],
+        equals cookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        try XCTAssertCount(cookies, count: 1)
+        XCTAssertEqual(cookies[0].name, cookie.name)
+        XCTAssertEqual(cookies[0].value, cookie.value)
+        XCTAssertEqual(cookies[0].path, cookie.path)
+        XCTAssertEqual(cookies[0].domain, cookie.domain)
+    }
+
 }
 
 private enum Scaffolding {
 
     static let userID = UUID()
 
-    static let accessToken = AccessToken(
-        userID: userID,
-        token: "123456789",
-        type: "Bearer",
-        expirationDate: Date(timeIntervalSinceNow: 10)
-    )
+    static func cookieEncryptionKey() throws -> Data {
+        try AES256Crypto.generateRandomEncryptionKey()
+    }
 
     static let invalidCookie = HTTPCookie(properties: [
         .name: "invalid-name",
@@ -269,45 +284,5 @@ private enum Scaffolding {
         return try HTTPCookieCodec.decodeData(decryptedData)
     }
 
-    // MARK: - Helpers
-
-    private func assertStoredCookieData(
-        _ storedCookieData: Data,
-        equals cookie: HTTPCookie,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) {
-        do {
-            let encryptionKey = try XCTUnwrap(userDefaults.data(forKey: "ZMCookieKey"))
-            let actualHTTPCookies = try Scaffolding.decryptAndDecodeCookieData(
-                storedCookieData,
-                encryptionKey: encryptionKey
-            )
-            try assertCookies(
-                actualHTTPCookies,
-                equals: cookie
-            )
-        } catch {
-            XCTFail(
-                "failed to assert cookie data: \(error)",
-                file: file,
-                line: line
-            )
-        }
-    }
-
-    private func assertCookies(
-        _ cookies: [HTTPCookie],
-        equals cookie: HTTPCookie,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) throws {
-        try XCTAssertCount(cookies, count: 1)
-        XCTAssertEqual(cookies[0].name, cookie.name)
-        XCTAssertEqual(cookies[0].value, cookie.value)
-        XCTAssertEqual(cookies[0].path, cookie.path)
-        XCTAssertEqual(cookies[0].domain, cookie.domain)
-    }
-
-
 }
+

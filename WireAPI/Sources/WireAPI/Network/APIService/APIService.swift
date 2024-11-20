@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 // sourcery: AutoMockable
 /// A service for network communication to a specific backend.
@@ -49,9 +50,8 @@ public protocol APIServiceProtocol {
 
 public final class APIService: APIServiceProtocol {
 
-    private let clientID: String
     private let networkService: NetworkService
-    private let authenticationStorage: any AuthenticationStorage
+    private let authenticationManager: any AuthenticationManagerProtocol
 
     /// Create a new `APIService`.
     ///
@@ -62,10 +62,12 @@ public final class APIService: APIServiceProtocol {
     ///   - minTLSVersion: The minimum supported TLS version.
 
     public convenience init(
+        userID: UUID,
         clientID: String,
         backendURL: URL,
-        authenticationStorage: any AuthenticationStorage,
-        minTLSVersion: TLSVersion
+        minTLSVersion: TLSVersion,
+        cookieEncryptionKey: Data,
+        keychain: any KeychainProtocol
     ) {
         let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = configFactory.makeRESTAPISessionConfiguration()
@@ -73,21 +75,30 @@ public final class APIService: APIServiceProtocol {
         let urlSession = URLSession(configuration: configuration)
         networkService.configure(with: urlSession)
 
-        self.init(
+        let cookieStorage = CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookieEncryptionKey,
+            keychain: keychain
+        )
+
+        let authenticationManager = AuthenticationManager(
             clientID: clientID,
+            cookieStorage: cookieStorage,
+            networkService: networkService
+        )
+
+        self.init(
             networkService: networkService,
-            authenticationStorage: authenticationStorage
+            authenticationManager: authenticationManager
         )
     }
 
     init(
-        clientID: String,
         networkService: NetworkService,
-        authenticationStorage: any AuthenticationStorage
+        authenticationManager: any AuthenticationManagerProtocol
     ) {
-        self.clientID = clientID
         self.networkService = networkService
-        self.authenticationStorage = authenticationStorage
+        self.authenticationManager = authenticationManager
     }
 
     /// Execute a request to the backend.
@@ -105,82 +116,23 @@ public final class APIService: APIServiceProtocol {
         var request = request
 
         if requiringAccessToken {
-            let accessToken = try await getAccessToken()
+            let accessToken = try await authenticationManager.getValidAccessToken()
             request.setAccessToken(accessToken)
         }
 
-        return try await networkService.executeRequest(request)
-    }
+        let firstAttempt = try await networkService.executeRequest(request)
 
-    private func getAccessToken() async throws -> AccessToken {
-        guard
-            let currentAccessToken = await authenticationStorage.fetchAccessToken(),
-            !currentAccessToken.isExpiring
-        else {
-            let newAccessToken = try await getNewAccessToken()
-            await authenticationStorage.storeAccessToken(newAccessToken)
-            return newAccessToken
+        // If we get an authentication error, it could be that we erroneously
+        // thought we had a valid access token (e.g the device moved to a new
+        // timezone and we miscalculated its expiry date). We'll attempt a
+        // single retry with a new token just in case.
+        if HTTPStatusCode(rawValue: firstAttempt.1.statusCode) == .unauthorized {
+            let accessToken = try await authenticationManager.refreshAccessToken()
+            request.setAccessToken(accessToken)
+            return try await networkService.executeRequest(request)
+        } else {
+            return firstAttempt
         }
-
-        return currentAccessToken
-    }
-
-    private func getNewAccessToken() async throws -> AccessToken {
-        let cookies = try await authenticationStorage.fetchCookies()
-
-        var request = try URLRequestBuilder(path: "/access")
-            .withQueryItem(name: "client_id", value: clientID)
-            .withMethod(.post)
-            .withAcceptType(.json)
-            .withCookies(cookies)
-            .build()
-
-        if let lastKnownAccessToken = await authenticationStorage.fetchAccessToken() {
-            request.setAccessToken(lastKnownAccessToken)
-        }
-
-        let (data, response) = try await networkService.executeRequest(request)
-
-        return try ResponseParser()
-            .success(code: .ok, type: AccessTokenPayload.self)
-            .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
-            .parse(code: response.statusCode, data: data)
-    }
-
-}
-
-private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
-
-    let user: UUID
-    let accessToken: String
-    let tokenType: String
-    let expiresIn: Int
-
-    enum CodingKeys: String, CodingKey {
-
-        case user
-        case accessToken = "access_token"
-        case tokenType = "token_type"
-        case expiresIn = "expires_in"
-
-    }
-
-    func toAPIModel() -> AccessToken {
-        AccessToken(
-            userID: user,
-            token: accessToken,
-            type: tokenType,
-            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
-        )
-    }
-
-}
-
-private extension AccessToken {
-
-    var isExpiring: Bool {
-        let secondsRemaining = expirationDate.timeIntervalSinceNow
-        return secondsRemaining < 40
     }
 
 }
