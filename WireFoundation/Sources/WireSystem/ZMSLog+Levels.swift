@@ -21,9 +21,10 @@ import os.log
 
 // MARK: - Log level management
 
+// TODO: try to remove nonisolated(unsafe)
 /// Map of the level set for each log tag
-private var logTagToLevel: [String: ZMLogLevel] = [:]
-private var logTagToLogger: [String: OSLog] = [:]
+nonisolated(unsafe) private var logTagToLevel: [String: ZMLogLevel] = [:]
+nonisolated(unsafe) private var logTagToLogger: [String: OSLog] = [:]
 
 @objc
 extension ZMSLog {

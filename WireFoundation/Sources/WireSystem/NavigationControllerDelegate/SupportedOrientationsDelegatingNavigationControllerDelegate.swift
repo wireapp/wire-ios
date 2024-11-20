@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public import UIKit
 
 /// Implements the delegate method `navigationControllerSupportedInterfaceOrientations(_: UINavigationController)`
 /// and returns the value of the top view controller's supported interface orientations.

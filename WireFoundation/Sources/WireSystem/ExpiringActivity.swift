@@ -40,25 +40,25 @@ public struct ExpiringActivityNotAllowedToRun: Error {}
 ///   - reason: Description of what the activity does, helpful for debugging purposes.
 ///   - block: async operation which supports cancellation.
 
-public func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
+public func withExpiringActivity(reason: String, block: @escaping @Sendable () async throws -> Void) async throws {
     let manager = ExpiringActivityManager()
     try await manager.withExpiringActivity(reason: reason, block: block)
 }
 
 actor ExpiringActivityManager {
 
-    let api: ExpiringActivityInterface
-    var task: Task<Void, Error>?
+    let api: any ExpiringActivityInterface
+    var task: Task<Void, any Error>?
 
     init() {
         self.init(api: ProcessInfo.processInfo)
     }
 
-    init(api: ExpiringActivityInterface) {
+    init(api: any ExpiringActivityInterface) {
         self.api = api
     }
 
-    func withExpiringActivity(reason: String, block: @escaping () async throws -> Void) async throws {
+    func withExpiringActivity(reason: String, block: @escaping @Sendable () async throws -> Void) async throws {
         try await withCheckedThrowingContinuation { continuation in
             api.performExpiringActivity(withReason: reason) { expiring in
                 if !expiring {
@@ -90,7 +90,7 @@ actor ExpiringActivityManager {
         }
     }
 
-    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, Error> {
+    func startWork(block: @escaping @Sendable () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")
