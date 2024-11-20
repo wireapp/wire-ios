@@ -30,6 +30,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
 				WireLegacy.h,
+				ZMSAsserts.h,
+				ZMSDefines.h,
+				ZMSLogging.h,
 			);
 			target = 59BA6D4E2CEE11DE0023684C /* WireLegacy */;
 		};

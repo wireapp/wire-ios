@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
-@import XCTest;
+#import <WireLegacy/WireLegacy.h>
+#import <XCTest/XCTest.h>
 
 @interface ZMDefinesTest : XCTestCase
 

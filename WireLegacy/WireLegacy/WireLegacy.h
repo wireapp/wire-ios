@@ -26,4 +26,6 @@ FOUNDATION_EXPORT const unsigned char WireLegacyVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <WireLegacy/PublicHeader.h>
 
-
+#import <WireLegacy/ZMSAsserts.h>
+#import <WireLegacy/ZMSDefines.h>
+#import <WireLegacy/ZMSLogging.h>
