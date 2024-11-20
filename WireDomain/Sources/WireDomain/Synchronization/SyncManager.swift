@@ -48,15 +48,6 @@ final class SyncManager: SyncManagerProtocol {
         self.updateEventsRepository = updateEventsRepository
         self.updateEventProcessor = updateEventProcessor
     }
-    
-    func performSlowSync() {
-//        await teamRepository.pullSelfTeam()
-//        await userRepository.pullUsers(userIDs: [])
-//        await featureConfigs.pullFeatureConfigs()
-        
-        featureConfigRepository.fetchFeatureConfig(with: <#T##Feature.Name#>, type: <#T##T#>)
-        
-    }
 
     func performQuickSync() async throws {
         if case .quickSync = syncState {
