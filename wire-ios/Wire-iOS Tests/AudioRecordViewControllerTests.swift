@@ -64,7 +64,7 @@ final class AudioRecordViewControllerTests: XCTestCase {
     }
 
     func verify(
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

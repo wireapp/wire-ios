@@ -83,7 +83,7 @@ class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelega
         states.append(currentState)
     }
 
-    func check(lastStates: [ProfileUpdateState], file: StaticString = #file, line: UInt = #line) {
+    func check(lastStates: [ProfileUpdateState], file: StaticString = #filePath, line: UInt = #line) {
         XCTAssert(
             states.count >= lastStates.count,
             "Not enough transitions happened. States: \(states)",
@@ -131,7 +131,7 @@ protocol StateTransition: Equatable {
 }
 
 extension StateTransition {
-    func checkThatTransition(to newState: Self, isValid: Bool, file: StaticString = #file, line: UInt = #line) {
+    func checkThatTransition(to newState: Self, isValid: Bool, file: StaticString = #filePath, line: UInt = #line) {
         let result = canTransition(to: newState)
         if isValid {
             XCTAssertTrue(result, "Should transition: [\(self)] -> [\(newState)]", file: file, line: line)
@@ -143,7 +143,7 @@ extension StateTransition {
     static func canTransition(
         from oldState: Self,
         onlyTo newStates: [Self],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         for state in allStates {

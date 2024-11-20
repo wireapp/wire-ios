@@ -682,7 +682,7 @@ extension ZMLogTests {
         XCTAssertTrue(lines[4].hasSuffix("[4] [tag] DEBUG"))
     }
 
-    func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
+    func getLinesFromCurrentLog(file: StaticString = #filePath, line: UInt = #line) -> [String] {
 
         guard
             let currentLog = ZMSLog.currentLogURL,

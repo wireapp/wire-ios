@@ -241,7 +241,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     private func initialStateLayoutSizeCompact(
         with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -294,7 +294,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     private func initialStateLayoutSizeRegularPortrait(
         with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -348,7 +348,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     func initialStateLayoutSizeRegularLandscape(
         with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -402,7 +402,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     private func cameraScrolledHorizontallySomePercent(
         with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -457,7 +457,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     private func cameraScrolledHorizontallyAwayPercent(
         with permissions: PhotoPermissionsController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

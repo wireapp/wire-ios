@@ -48,7 +48,7 @@ final class IconLabelButtonTests: XCTestCase {
         }
     }
 
-    func verify(appearance: IconLabelButtonTestCase.Appearance, file: StaticString = #file, line: UInt = #line) {
+    func verify(appearance: IconLabelButtonTestCase.Appearance, file: StaticString = #filePath, line: UInt = #line) {
         button.appearance = appearance.callActionAppearance
         button.isEnabled = appearance.isEnabled
         button.isSelected = appearance.isSelected

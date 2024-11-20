@@ -182,7 +182,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     private func decryptFromURL(
         _ url: URL,
         passphrase: Sut.Passphrase,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> Data {
         let outputURL = createTemporaryURL()

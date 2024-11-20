@@ -66,7 +66,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
-    func mockSearchResultUsers(file: StaticString = #file, line: UInt = #line) -> [UserType] {
+    func mockSearchResultUsers(file: StaticString = #filePath, line: UInt = #line) -> [UserType] {
         var allUsers: [UserType] = []
 
         for name in MockUserType.usernames {
@@ -103,7 +103,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -113,7 +113,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -128,7 +128,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
