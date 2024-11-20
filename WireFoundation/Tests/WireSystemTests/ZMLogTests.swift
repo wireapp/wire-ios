@@ -206,6 +206,7 @@ extension ZMLogTests {
 
 extension ZMLogTests {
 
+    @MainActor
     func testThatLogHookIsCalledWithError() {
 
         // GIVEN
@@ -231,6 +232,7 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token)
     }
 
+    @MainActor
     func testThatLogHookIsNotCalledWithInfo() {
 
         // GIVEN
@@ -254,6 +256,7 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token)
     }
 
+    @MainActor
     func testThatLogHookIsCalledWithWarning() {
 
         // GIVEN
@@ -303,6 +306,7 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token)
     }
 
+    @MainActor
     func testThatLogHookIsCalledWithDebugIfEnabled() {
 
         // GIVEN
@@ -361,6 +365,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
     }
 
+    @MainActor
     func testThatCallsMultipleLogHook() {
 
         // GIVEN
