@@ -238,7 +238,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);
 
-            [WireLoggerObjc logRequestLoopAtPath:path];
+            [WireLoggerObjC logRequestLoopAtPath:path];
             if(self.requestLoopDetectionCallback != nil) {
                 self.requestLoopDetectionCallback(path);
             }
@@ -412,7 +412,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
-    [WireLoggerObjc logRequest:URLRequest];
+    [WireLoggerObjC logRequest:URLRequest];
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
 }
@@ -469,7 +469,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
-    [WireLoggerObjc logHTTPResponse:httpResponse];
+    [WireLoggerObjC logHTTPResponse:httpResponse];
 
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     if (response.result == ZMTransportResponseStatusExpired) {

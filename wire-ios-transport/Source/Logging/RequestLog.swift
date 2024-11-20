@@ -164,7 +164,7 @@ extension WireLogger {
     }
 }
 
-extension WireLoggerObjc {
+extension WireLoggerObjC {
     static func logRequest(_ request: NSURLRequest) {
         WireLogger.network.log(request: request)
     }

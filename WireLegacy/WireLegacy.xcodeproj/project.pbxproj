@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		59883CDB2CEE254B00E79137 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59883CDA2CEE254B00E79137 /* WireSystem */; };
 		59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59883CDB2CEE254B00E79137 /* WireSystem in Frameworks */,
 				59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,12 +76,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		59883CD92CEE254B00E79137 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		59BA6D452CEE11DE0023684C = {
 			isa = PBXGroup;
 			children = (
 				59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */,
 				59BA6D512CEE11DE0023684C /* WireLegacy */,
 				59BA6D5D2CEE11DE0023684C /* WireLegacyTests */,
+				59883CD92CEE254B00E79137 /* Frameworks */,
 				59BA6D502CEE11DE0023684C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -147,6 +157,7 @@
 			);
 			name = WireLegacyTests;
 			packageProductDependencies = (
+				59883CDA2CEE254B00E79137 /* WireSystem */,
 			);
 			productName = WireLegacyTests;
 			productReference = 59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */;
@@ -166,6 +177,7 @@
 					};
 					59BA6D582CEE11DE0023684C = {
 						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
@@ -343,7 +355,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -404,7 +416,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -421,6 +433,7 @@
 		59BA6D682CEE11DE0023684C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -428,6 +441,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireLegacyTests/WireLegacyTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -435,6 +451,7 @@
 		59BA6D692CEE11DE0023684C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -442,6 +459,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireLegacyTests/WireLegacyTests-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -477,6 +496,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		59883CDA2CEE254B00E79137 /* WireSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystem;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 59BA6D462CEE11DE0023684C /* Project object */;
 }
