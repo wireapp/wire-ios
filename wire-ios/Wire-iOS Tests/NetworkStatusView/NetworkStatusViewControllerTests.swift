@@ -115,7 +115,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     private func checkResult(
         listState: NetworkStatusViewState,
         rootState: NetworkStatusViewState,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertEqual(
@@ -149,7 +149,7 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         orientation: UIInterfaceOrientation,
         listState: NetworkStatusViewState,
         rootState: NetworkStatusViewState,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // GIVEN & WHEN

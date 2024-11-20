@@ -273,7 +273,7 @@ extension MessagingTestBase {
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
     func outgoingMessageWrapper(
         from request: ZMTransportRequest,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Proteus_NewOtrMessage? {
         guard let data = request.binaryData else {
@@ -288,7 +288,7 @@ extension MessagingTestBase {
         from request: ZMTransportRequest,
         for client: UserClient,
         line: UInt = #line,
-        file: StaticString = #file
+        file: StaticString = #filePath
     ) -> GenericMessage? {
 
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {

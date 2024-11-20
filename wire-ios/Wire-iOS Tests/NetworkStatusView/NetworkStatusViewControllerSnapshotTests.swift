@@ -96,7 +96,7 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
     private func verify(
         for newState: NetworkState,
         testName: String = #function,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // GIVEN

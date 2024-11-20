@@ -457,7 +457,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     private func verify(
         _ detailsViewController: MessageDetailsViewController,
         configuration: ((MessageDetailsViewController) -> Void)? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

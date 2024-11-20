@@ -165,7 +165,7 @@ class MetaStreamContainerTests: XCTestCase {
         _ html: String,
         expectedHead: String,
         encoding: String.Encoding = .utf8,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // when
@@ -205,7 +205,11 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
     }
 
-    func assertThatItAppendsBytes(file: StaticString = #file, line: UInt = #line, encoding: String.Encoding = .utf8) {
+    func assertThatItAppendsBytes(
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        encoding: String.Encoding = .utf8
+    ) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Second".data(using: encoding)!

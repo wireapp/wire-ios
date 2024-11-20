@@ -503,7 +503,7 @@ private func checkEqual(
     lhs: [String: [String]]?,
     rhs: [String: [String]]?,
     line: UInt = #line,
-    file: StaticString = #file
+    file: StaticString = #filePath
 ) {
     guard let lhs, let rhs else {
         XCTFail("Value is nil", file: file, line: line)

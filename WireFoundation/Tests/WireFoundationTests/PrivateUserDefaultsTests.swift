@@ -18,7 +18,8 @@
 
 import Foundation
 import XCTest
-@testable import WireFoundation
+
+@testable public import WireFoundation
 
 final class PrivateUserDefaultsTests: XCTestCase {
     var sut: PrivateUserDefaults<String>!
