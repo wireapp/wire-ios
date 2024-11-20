@@ -6,4 +6,5 @@ output:
    ${DERIVED_SOURCES_DIR}
 args:
    autoMockableImports: []
+   autoMockablePublicImports: ["Foundation"]
    autoMockableTestableImports: ["WireAPI"]

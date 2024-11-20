@@ -6,3 +6,4 @@ output:
    ${DERIVED_SOURCES_DIR}
 args:
    autoMockableImports: ["WireFoundation"]
+   autoMockablePublicImports: ["UIKit"]
