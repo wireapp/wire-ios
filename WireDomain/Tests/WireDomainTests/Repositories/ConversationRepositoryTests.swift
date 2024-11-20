@@ -296,8 +296,9 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         userLocalStore.fetchUserIdDomain_MockValue = removedUser
-        messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
-        
+        messageLocalStore
+            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+
         // When
 
         try await sut.removeParticipantFromAllGroupConversations(
@@ -549,7 +550,8 @@ final class ConversationRepositoryTests: XCTestCase {
         userRepository.isSelfUserIdDomain_MockValue = true
         mlsService.wipeGroup_MockMethod = { _ in }
         teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in }
-        messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        messageRepository
+            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -568,7 +570,10 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
-        XCTAssertEqual(messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
 
         let newParticipants = await context.perform {
             conversation.localParticipants
@@ -639,7 +644,8 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = addedUser
-        messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        messageLocalStore
+            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -658,19 +664,23 @@ final class ConversationRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+                .count,
+            1
+        )
 
         await context.perform {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
     }
-    
+
     func testUpdateConversationName() async {
-        
+
         // Mock
-        
+
         let newConversationName = "new"
-        
+
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
@@ -678,14 +688,15 @@ final class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
             conversation.userDefinedName = "old"
-            
+
             return conversation
         }
-        
-        messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in}
-        
+
+        messageRepository
+            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+
         // When
-        
+
         await sut.updateConversationName(
             newName: newConversationName,
             conversationID: Scaffolding.conversationID,
@@ -694,15 +705,18 @@ final class ConversationRepositoryTests: XCTestCase {
             senderDomain: Scaffolding.domain,
             date: .now
         )
-        
+
         // Then
-        
-        XCTAssertEqual(messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
-        
+
+        XCTAssertEqual(
+            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
+
         await context.perform {
             XCTAssertEqual(conversation.userDefinedName, newConversationName)
         }
-        
+
     }
 
     private enum Scaffolding {

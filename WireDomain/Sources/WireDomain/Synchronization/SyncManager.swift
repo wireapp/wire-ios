@@ -39,7 +39,6 @@ final class SyncManager: SyncManagerProtocol {
 
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
     private let updateEventProcessor: any UpdateEventProcessorProtocol
-    
 
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
