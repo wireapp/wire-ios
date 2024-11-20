@@ -91,5 +91,5 @@ struct SystemLogger: LoggerProtocol {
     }
 }
 
-// TODO: try to remvoe nonisolated(unsafe)
+// TODO: try to remove nonisolated(unsafe)
 nonisolated(unsafe) private var loggers: [String: OSLog] = [:]

@@ -20,7 +20,7 @@ public import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-    // TODO: try to remvoe nonisolated(unsafe)
+    // TODO: try to remove nonisolated(unsafe)
     nonisolated(unsafe) private static var provider = AggregatedLogger(loggers: [
         SystemLogger(),
         CocoaLumberjackLogger()

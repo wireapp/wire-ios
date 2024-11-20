@@ -46,6 +46,7 @@
 		595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */; };
 		59883D002CEE2C6A00E79137 /* WireLegacyBridging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59883CFF2CEE2C6A00E79137 /* WireLegacyBridging.swift */; };
 		59883D022CEE2CAC00E79137 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59883D012CEE2CAC00E79137 /* WireSystem */; };
+		5994B7EA2CEE4D37000F3378 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5994B7E92CEE4D37000F3378 /* WireLegacy.framework */; };
 		634CCB112BAC54FF00A11AB3 /* GenericArrayActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */; };
 		87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */; };
 		CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = CE6B7B2C1C11ED5F00FC4C2E /* ZMMockEntity.m */; };
@@ -118,6 +119,7 @@
 		595D4B1A2C09FA5800AF6269 /* XCTestCase+waitForPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+waitForPredicate.swift"; sourceTree = "<group>"; };
 		595D4B1F2C0A1A0500AF6269 /* XCTestExpectation+inverted.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestExpectation+inverted.swift"; sourceTree = "<group>"; };
 		59883CFF2CEE2C6A00E79137 /* WireLegacyBridging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyBridging.swift; sourceTree = "<group>"; };
+		5994B7E92CEE4D37000F3378 /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		634CCB102BAC54FF00A11AB3 /* GenericArrayActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericArrayActor.swift; sourceTree = "<group>"; };
 		87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectContextChangesMerger.swift; sourceTree = "<group>"; };
 		CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity.h; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 			files = (
 				59883D022CEE2CAC00E79137 /* WireSystem in Frameworks */,
 				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
+				5994B7EA2CEE4D37000F3378 /* WireLegacy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +229,7 @@
 		096AD7EC1B68D8DF00E007A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5994B7E92CEE4D37000F3378 /* WireLegacy.framework */,
 				EE67F6AE296F0510001D7C88 /* OCMock.xcframework */,
 			);
 			name = Frameworks;

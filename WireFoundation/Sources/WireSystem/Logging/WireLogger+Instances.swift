@@ -18,7 +18,7 @@
 
 public extension WireLogger {
 
-    // TODO: try to remvoe nonisolated(unsafe)
+    // TODO: try to remove nonisolated(unsafe)
     nonisolated(unsafe) static let apiMigration = WireLogger(tag: "api-migration")
     nonisolated(unsafe) static let appState = WireLogger(tag: "AppState")
     nonisolated(unsafe) static let appDelegate = WireLogger(tag: "AppDelegate")

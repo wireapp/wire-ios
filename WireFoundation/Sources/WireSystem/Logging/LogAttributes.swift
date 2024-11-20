@@ -43,6 +43,6 @@ public enum LogAttributesKey: String, Comparable {
 }
 
 public extension LogAttributes {
-    // TODO: try to remvoe nonisolated(unsafe)
+    // TODO: try to remove nonisolated(unsafe)
     nonisolated(unsafe) static var safePublic = [LogAttributesKey.public: true]
 }

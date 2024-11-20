@@ -37,7 +37,7 @@ public extension UserDefaults {
 
 // MARK: UserDefaults.temporary() helpers
 
-// TODO: try to remvoe nonisolated(unsafe)
+// TODO: try to remove nonisolated(unsafe)
 nonisolated(unsafe) private let zmLog = ZMSLog(tag: "UserDefaults")
 
 private final class SuiteCleanUp {
