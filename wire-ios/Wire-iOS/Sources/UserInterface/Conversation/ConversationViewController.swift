@@ -114,8 +114,8 @@ final class ConversationViewController: UIViewController {
         default:
             break
         }
-
-        return viewController?.wrapInNavigationController()
+        guard let viewController else { return nil }
+        return UINavigationController(rootViewController: viewController)
     }
 
     required init(
