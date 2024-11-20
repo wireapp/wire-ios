@@ -41,9 +41,3 @@ extension ConversationViewController: UIAdaptivePresentationControllerDelegate {
         return .formSheet
     }
 }
-
-extension ConversationViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        dismiss(animated: true, completion: completion)
-    }
-}

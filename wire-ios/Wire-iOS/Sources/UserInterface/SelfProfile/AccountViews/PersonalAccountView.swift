@@ -65,7 +65,13 @@ final class PersonalAccountView: BaseAccountView {
 
         imageViewContainer.addSubview(userImageView)
         userImageView.translatesAutoresizingMaskIntoConstraints = false
-        userImageView.fitIn(view: imageViewContainer, inset: 2)
+
+        NSLayoutConstraint.activate([
+            userImageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: 2),
+            userImageView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: -2),
+            userImageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: 2),
+            userImageView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -2)
+        ])
 
         update()
     }

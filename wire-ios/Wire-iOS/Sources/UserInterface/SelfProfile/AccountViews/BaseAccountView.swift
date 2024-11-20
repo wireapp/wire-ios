@@ -153,22 +153,24 @@ class BaseAccountView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        NSLayoutConstraint.activate(
-            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
-                [
-                    imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
-                    imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-                    widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
+        NSLayoutConstraint.activate([
+            selectionView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: -1),
+            selectionView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: 1),
+            selectionView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: -1),
+            selectionView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: 1),
 
-                    imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
-                    imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+            imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
+            imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+            widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
 
-                    imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
-                    imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
-                    imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
-                    widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-                ]
-        )
+            imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
+            imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+
+            imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
+            imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
+            imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
+            widthAnchor.constraint(lessThanOrEqualToConstant: 128)
+        ])
     }
 
     // MARK: - Actions
