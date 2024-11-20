@@ -23,6 +23,7 @@
 /* Begin PBXFileReference section */
 		59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLegacyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireLegacy.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -76,6 +77,7 @@
 		59BA6D452CEE11DE0023684C = {
 			isa = PBXGroup;
 			children = (
+				59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */,
 				59BA6D512CEE11DE0023684C /* WireLegacy */,
 				59BA6D5D2CEE11DE0023684C /* WireLegacyTests */,
 				59BA6D502CEE11DE0023684C /* Products */,
