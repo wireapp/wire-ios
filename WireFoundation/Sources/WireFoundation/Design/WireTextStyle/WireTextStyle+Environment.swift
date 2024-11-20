@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 
 /// Used for getting the text style mapping from the environment.
 private struct WireTextStyleView<Content: View>: View {
