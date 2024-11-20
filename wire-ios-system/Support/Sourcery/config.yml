@@ -1,5 +1,5 @@
 sources:
-  - ../../Source
+  - ../../../WireFoundation/Sources/WireSystem
 templates:
   - ./AutoMockable.stencil
 output:
