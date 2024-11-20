@@ -174,16 +174,6 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async -> WireDataModel.MessageProtocol
 
-    /// Adds a system message to a given conversation.
-    /// - parameters:
-    ///     - message: The system message to add.
-    ///     - conversation: The conversation to add the system message to.
-
-    func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async
-
     /// Retrieves conversation muted message types
     /// - parameter conversation: The conversation to get the muted message types for.
     /// - returns: The muted message types.
@@ -291,6 +281,17 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
+    
+    /// Updates the conversation name.
+    /// - Parameters:
+    ///     - newName: The new name for the conversation.
+    ///     - conversation: The conversation to update the name for.
+    /// - Returns: Whether the new conversation name is different from the previous one.
+    
+    func updateConversationName(
+        newName: String,
+        conversation: ZMConversation
+    ) async -> Bool
 
 }
 
@@ -459,35 +460,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
-        }
-    }
-
-    public func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async {
-        await context.perform { [context] in
-            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
-            systemMessage.systemMessageType = message.type
-            systemMessage.sender = message.sender
-            systemMessage.users = message.users ?? Set()
-            systemMessage.addedUsers = message.addedUsers
-            systemMessage.clients = message.clients ?? Set()
-            systemMessage.serverTimestamp = message.timestamp
-
-            if let duration = message.duration {
-                systemMessage.duration = duration
-            }
-
-            if let messageTimer = message.messageTimer {
-                systemMessage.messageTimer = NSNumber(value: messageTimer)
-            }
-
-            systemMessage.relevantForConversationStatus = message.relevantForStatus
-            systemMessage.participantsRemovedReason = message.removedReason
-            systemMessage.domains = message.domains
-
-            conversation.append(systemMessage)
         }
     }
 
@@ -784,6 +756,21 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.localParticipants
         }
+    }
+    
+    public func updateConversationName(
+        newName: String,
+        conversation: ZMConversation
+    ) async -> Bool {
+        
+        let nameDidChange = await context.perform {
+            let nameDidChange = conversation.userDefinedName != newName
+            conversation.userDefinedName = newName
+            
+            return nameDidChange
+        }
+        
+        return nameDidChange
     }
 
     // MARK: - Private

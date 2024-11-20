@@ -39,6 +39,7 @@ final class SyncManager: SyncManagerProtocol {
 
     private let updateEventsRepository: any UpdateEventsRepositoryProtocol
     private let updateEventProcessor: any UpdateEventProcessorProtocol
+    
 
     init(
         updateEventsRepository: any UpdateEventsRepositoryProtocol,
@@ -46,6 +47,15 @@ final class SyncManager: SyncManagerProtocol {
     ) {
         self.updateEventsRepository = updateEventsRepository
         self.updateEventProcessor = updateEventProcessor
+    }
+    
+    func performSlowSync() {
+//        await teamRepository.pullSelfTeam()
+//        await userRepository.pullUsers(userIDs: [])
+//        await featureConfigs.pullFeatureConfigs()
+        
+        featureConfigRepository.fetchFeatureConfig(with: <#T##Feature.Name#>, type: <#T##T#>)
+        
     }
 
     func performQuickSync() async throws {

@@ -28,6 +28,12 @@ public enum MessageType: Sendable {
         participants: [(id: UUID, domain: String?)],
         date: Date
     )
+    
+    case participantsRemoved(
+        participants: [(id: UUID, domain: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
 
     case mlsMigrationMLSNotSupportedForSelfUser
 
@@ -40,13 +46,13 @@ public enum MessageType: Sendable {
         date: Date
     )
 
-    case participantRemoved(
-        participant: (id: UUID, domain: String?),
-        sender: (id: UUID, domain: String?),
+    case newConversationCreated(
         date: Date
     )
-
-    case newConversationCreated(
+    
+    case conversationNameChanged(
+        newName: String,
+        sender: (id: UUID, domain: String?),
         date: Date
     )
 

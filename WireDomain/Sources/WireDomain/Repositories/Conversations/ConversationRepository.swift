@@ -169,16 +169,6 @@ public protocol ConversationRepositoryProtocol {
         at date: Date,
         reason: ConversationMemberLeaveReason
     ) async throws
-
-    /// Adds a system message to a given conversation.
-    /// - parameters:
-    ///     - message: The system message to add.
-    ///     - conversation: The conversation to add the system message to.
-
-    func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -194,6 +184,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let conversationsLocalStore: any ConversationLocalStoreProtocol
     private let userRepository: any UserRepositoryProtocol
     private let teamRepository: any TeamRepositoryProtocol
+    private let messageRepository: any MessageRepositoryProtocol
     private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
@@ -204,6 +195,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         conversationsLocalStore: any ConversationLocalStoreProtocol,
         userRepository: any UserRepositoryProtocol,
         teamRepository: any TeamRepositoryProtocol,
+        messageRepository: any MessageRepositoryProtocol,
         backendInfo: BackendInfo,
         mlsProvider: MLSProvider
     ) {
@@ -211,6 +203,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.conversationsLocalStore = conversationsLocalStore
         self.userRepository = userRepository
         self.teamRepository = teamRepository
+        self.messageRepository = messageRepository
         self.backendInfo = backendInfo
         self.mlsProvider = mlsProvider
     }
@@ -366,6 +359,42 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             date: date
         )
     }
+    
+    public func updateConversationName(
+        newName: String,
+        conversationID: UUID,
+        conversationDomain: String?,
+        userID: UUID,
+        userDomain: String?,
+        date: Date
+    ) async {
+        
+        let conversation = await fetchOrCreateConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+        
+        let nameDidChange = await conversationsLocalStore.updateConversationName(
+            newName: newName,
+            conversation: conversation
+        )
+        
+        guard nameDidChange else {
+            return
+        }
+        
+        let messageType = MessageType.conversationNameChanged(
+            newName: newName,
+            sender: (userID, userDomain),
+            date: date
+        )
+        
+        await messageRepository.addMessageToConversation(
+            messageType: messageType,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        )
+    }
 
     public func deleteConversation(
         id: UUID,
@@ -474,34 +503,38 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         _ userIDs: Set<UserID>,
         from conversation: ConversationID,
         initiatedBy sender: UserID,
-        at time: Date,
+        at date: Date,
         reason: ConversationMemberLeaveReason
     ) async throws {
-        let id = conversation.uuid
-        let domain = conversation.domain
+        let conversationID = conversation.uuid
+        let conversationDomain = conversation.domain
+        let senderID = sender.uuid
+        let senderDomain = sender.domain
         let removedUserIDs = userIDs
 
         let conversation = await conversationsLocalStore.fetchOrCreateConversation(
-            id: id,
-            domain: domain
+            id: conversationID,
+            domain: conversationDomain
         )
 
         let removedUsers = await getRemovedUsers(from: removedUserIDs)
         let participants = await conversationsLocalStore.localParticipants(in: conversation)
 
         let sender = try await userRepository.fetchUser(
-            id: sender.uuid,
-            domain: sender.domain
+            id: senderID,
+            domain: senderDomain
         )
 
         if !participants.isDisjoint(with: removedUsers) {
-            let systemMessage = SystemMessage(
-                type: reason.toDomainModel(),
-                sender: sender,
-                timestamp: time
+            await addSystemMessage(
+                conversationID: conversationID,
+                conversationDomain: conversationDomain,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                date: date,
+                removedUsers: removedUserIDs,
+                reason: reason
             )
-
-            await addSystemMessage(systemMessage, to: conversation)
         }
 
         let isSelfUserRemoved = await isSelfUserRemoved(in: removedUserIDs)
@@ -530,20 +563,42 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             return
         }
 
-        await deleteMembership(for: removedUserIDs, time: time)
-    }
-
-    public func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async {
-        await conversationsLocalStore.addSystemMessage(
-            message,
-            to: conversation
-        )
+        await deleteMembership(for: removedUserIDs, time: date)
     }
 
     // MARK: - Private
+    
+    private func addSystemMessage(
+        conversationID: UUID,
+        conversationDomain: String?,
+        senderID: UUID,
+        senderDomain: String?,
+        date: Date,
+        removedUsers: Set<UserID>,
+        reason: ConversationMemberLeaveReason
+    ) async {
+        var systemMessageType: MessageType
+        
+        switch reason {
+        case .userDeleted, .left:
+            systemMessageType = .teamMemberRemoved(
+                member: (senderID, senderDomain),
+                date: date
+            )
+        case .removed:
+            systemMessageType = .participantsRemoved(
+                participants: removedUsers.map { ($0.uuid, $0.domain) },
+                sender: (senderID, senderDomain),
+                date: date
+            )
+        }
+
+        await messageRepository.addMessageToConversation(
+            messageType: systemMessageType,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain
+        )
+    }
 
     private func getRemovedUsers(
         from userIDs: Set<UserID>

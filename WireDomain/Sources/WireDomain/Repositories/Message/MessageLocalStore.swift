@@ -113,6 +113,35 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+            
+        case let .participantsRemoved(participants, sender, date):
+
+            let removedUsers = await context.perform {
+                participants.compactMap { id, domain in
+                    let existing = conversation.localParticipants
+
+                    return existing.first(where: {
+                        $0.remoteIdentifier == id && $0.domain == domain
+                    })
+                }
+            }
+
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .participantsRemoved,
+                sender: sender,
+                users: Set(removedUsers),
+                timestamp: date
+            )
+
+            return [systemMessage]
+
 
         case .mlsMigrationMLSNotSupportedForSelfUser:
 
@@ -154,27 +183,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 messageType: .teamMemberLeave,
                 sender: removedMember,
                 users: Set([removedMember]),
-                timestamp: date
-            )
-
-            return [systemMessage]
-
-        case let .participantRemoved(participant, sender, date):
-
-            guard let removedParticipant = await fetchUser(
-                id: participant.id,
-                domain: participant.domain
-            ) else { return [] }
-
-            let sender = await fetchUser(
-                id: sender.id,
-                domain: sender.domain
-            )
-
-            let systemMessage = await createSystemMessage(
-                messageType: .participantsRemoved,
-                sender: sender ?? removedParticipant,
-                users: Set([removedParticipant]),
                 timestamp: date
             )
 
@@ -312,6 +320,28 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 timestamp: date
             )
 
+            return [systemMessage]
+            
+        case .conversationNameChanged(let newName, let sender, let date):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+            
+            let systemMessage = await createSystemMessage(
+                messageType: .conversationNameChanged,
+                sender: sender,
+                timestamp: date
+            )
+            
+            await context.perform {
+                systemMessage.text = newName
+                systemMessage.visibleInConversation = conversation
+                conversation.updateTimestampsAfterUpdatingMessage(systemMessage)
+            }
+            
             return [systemMessage]
         }
     }
