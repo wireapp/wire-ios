@@ -102,11 +102,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
-    func pullMLSPublicKeys() async {
-//        let mlsPublicKeys = featureConfigsAPI.getMLSPublicKeys()
-//        localStore.store(mlsPublicKeys)
-    }
-
     func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
         featureStateSubject.eraseToAnyPublisher()
     }
