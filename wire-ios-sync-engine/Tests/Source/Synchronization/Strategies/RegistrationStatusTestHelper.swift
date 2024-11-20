@@ -48,7 +48,7 @@ extension RegistrationStatusStrategyTestHelper {
         code: UserSessionErrorCode,
         errorLabel: String,
         httpStatus: NSInteger,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         registrationStatus.phase = phase

@@ -194,7 +194,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
         userInterfaceStyle: UIUserInterfaceStyle = .dark,
         isE2EICertified: Bool = false,
         isProteusVerified: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         testName: String = #function
     ) {

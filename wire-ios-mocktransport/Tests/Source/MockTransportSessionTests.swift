@@ -54,7 +54,7 @@ extension MockTransportSessionTests {
     func assertExpectedPayload(
         _ expectedPayload: [String: Any],
         in response: ZMTransportResponse,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let keys = [String](expectedPayload.keys)

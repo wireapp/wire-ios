@@ -103,7 +103,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     func internalTestPullConnections_GivenConnectionDoesNotExist(
         federationEnabled: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
         // Mock

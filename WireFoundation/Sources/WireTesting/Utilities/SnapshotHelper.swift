@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import SwiftUI
+public import SnapshotTesting
+public import SwiftUI
 import XCTest
 
 /// A helper object for verifying image snapshots.
@@ -113,7 +113,7 @@ public struct SnapshotHelper {
 
     public func verify<View: SwiftUI.View>(
         testName: String = #function,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         matching createView: () -> View
     ) {
@@ -137,7 +137,7 @@ public struct SnapshotHelper {
         matching value: View,
         named name: String? = nil,
         testName: String = #function,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
@@ -176,7 +176,7 @@ public struct SnapshotHelper {
         size: CGSize? = nil,
         named name: String? = nil,
         record recording: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         safeArea: UIEdgeInsets = .zero,
         line: UInt = #line
@@ -214,7 +214,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIView,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -258,7 +258,7 @@ public struct SnapshotHelper {
 
     public func verifyInAllDeviceSizes(
         matching value: UIViewController,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -293,7 +293,7 @@ public struct SnapshotHelper {
     public func verifyInAllIPhoneSizes(
         matching value: UIViewController,
         orientation: ViewImageConfig.Orientation = .portrait,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -328,7 +328,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -359,7 +359,7 @@ public struct SnapshotHelper {
     public func verifyForDynamicType(
         matching value: UIView,
         named name: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -395,7 +395,7 @@ public struct SnapshotHelper {
         }
     }
 
-    private func snapshotDirectory(file: StaticString = #file) -> String {
+    private func snapshotDirectory(file: StaticString = #filePath) -> String {
         var snapshotReferenceDirectory = snapshotReferenceDirectory
         if snapshotReferenceDirectory.isEmpty {
             snapshotReferenceDirectory = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]!

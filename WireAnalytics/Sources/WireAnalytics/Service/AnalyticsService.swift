@@ -77,6 +77,12 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly != nil
     }
 
+    /// Whether tracking can be enabled.
+
+    public var canEnableTracking: Bool {
+        config != nil
+    }
+
     /// Start sending analytics data.
 
     public func enableTracking() async throws {

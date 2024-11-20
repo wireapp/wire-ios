@@ -27,7 +27,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         hasType type: ZMUpdateEventType,
         team: MockTeam,
         data: [String: String] = [:],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
@@ -38,7 +38,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         hasType type: ZMUpdateEventType,
         teamIdentifier: String,
         data: [String: String?] = [:],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard let event else { XCTFail("Should have event", file: file, line: line); return }

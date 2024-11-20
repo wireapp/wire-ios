@@ -162,7 +162,7 @@ extension NSPersistentStoreMetadataTests {
 
     func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(
         data: T,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 
