@@ -101,7 +101,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             await sendFeatureState(for: featureConfig)
         }
     }
-    
+
     func pullMLSPublicKeys() async {
 //        let mlsPublicKeys = featureConfigsAPI.getMLSPublicKeys()
 //        localStore.store(mlsPublicKeys)

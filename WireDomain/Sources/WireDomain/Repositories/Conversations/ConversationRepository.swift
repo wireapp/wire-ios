@@ -169,7 +169,7 @@ public protocol ConversationRepositoryProtocol {
         at date: Date,
         reason: ConversationMemberLeaveReason
     ) async throws
-    
+
     /// Updates the conversation name locally.
     /// - Parameters:
     ///     - newName: The new name for the conversation.
@@ -178,7 +178,7 @@ public protocol ConversationRepositoryProtocol {
     ///     - senderID: The user ID.
     ///     - senderDomain: The user domain.
     ///     - date: The date the conversation name was updated.
-    
+
     func updateConversationName(
         newName: String,
         conversationID: UUID,
@@ -281,10 +281,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         if let result =
             try? await conversationsAPI
-            .getLegacyConversationIdentifiers()
-        {  // only for api v0 (see `ConversationsAPIV0` method comment)
-            let uuids = try await result.reduce(into: [UUID]()) {
-                partialResult, uuids in
+                .getLegacyConversationIdentifiers() {  // only for api v0 (see `ConversationsAPIV0` method comment)
+            let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
             qualifiedIds = uuids.map {
@@ -293,14 +291,14 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         } else {
             // fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
-            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) {
-                partialResult, uuids in
+            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
                 partialResult.append(contentsOf: uuids)
             }
         }
 
         let conversationList = try await conversationsAPI.getConversations(
-            for: qualifiedIds)
+            for: qualifiedIds
+        )
 
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             let foundConversations = conversationList.found
@@ -398,7 +396,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         )
 
         let currentConversationName = await conversationsLocalStore.conversationName(conversation: conversation)
-        
+
         if currentConversationName != newName {
             let messageType = MessageType.conversationNameChanged(
                 newName: newName,
@@ -412,12 +410,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 conversationDomain: conversationDomain
             )
         }
-        
+
         await conversationsLocalStore.storeConversation(
             newName: newName,
             conversation: conversation
         )
-    
+
     }
 
     public func deleteConversation(
@@ -446,7 +444,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             if let mlsGroupID {
                 try await conversationsLocalStore.wipeMLSGroup(
-                    groupID: mlsGroupID)
+                    groupID: mlsGroupID
+                )
             }
 
             await conversationsLocalStore.deleteConversation(
@@ -533,7 +532,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
         let removedUsers = await getRemovedUsers(from: removedUserIDs)
         let participants = await conversationsLocalStore.localParticipants(
-            in: conversation)
+            in: conversation
+        )
 
         let sender = try await userRepository.fetchUser(
             id: senderID,
@@ -573,8 +573,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             )
 
             if isSelfUserRemoved, let mlsGroupID,
-                messageProtocol.isOne(of: .mls, .mixed)
-            {
+               messageProtocol.isOne(of: .mls, .mixed) {
                 try await mlsService.wipeGroup(mlsGroupID)
             }
         }
@@ -597,16 +596,14 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         removedUsers: Set<UserID>,
         reason: ConversationMemberLeaveReason
     ) async {
-        var systemMessageType: MessageType
-
-        switch reason {
+        var systemMessageType: MessageType = switch reason {
         case .userDeleted, .left:
-            systemMessageType = .teamMemberRemoved(
+            .teamMemberRemoved(
                 member: (senderID, senderDomain),
                 date: date
             )
         case .removed:
-            systemMessageType = .participantsRemoved(
+            .participantsRemoved(
                 participants: removedUsers.map { ($0.uuid, $0.domain) },
                 sender: (senderID, senderDomain),
                 date: date

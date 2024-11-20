@@ -116,7 +116,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
-            
+
         case let .participantsRemoved(participants, sender, date):
 
             let removedUsers = await context.perform {
@@ -145,22 +145,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case .participantsAdded(let participants, let sender, let date):
+        case let .participantsAdded(participants, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
             ) else {
                 return []
             }
-            
+
             let newUsers = await fetchUsers(userIDs: participants)
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
                 users: newUsers
             )
-            
+
             return [systemMessage]
 
         case .mlsMigrationMLSNotSupportedForSelfUser:
@@ -341,52 +341,52 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
-            
-        case .conversationNameChanged(let newName, let sender, let date):
+
+        case let .conversationNameChanged(newName, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
             ) else {
                 return []
             }
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: .conversationNameChanged,
                 sender: sender,
                 timestamp: date
             )
-            
+
             await context.perform {
                 systemMessage.text = newName
                 systemMessage.visibleInConversation = conversation
                 conversation.updateTimestampsAfterUpdatingMessage(systemMessage)
             }
-            
+
             return [systemMessage]
-            
-        case .readReceiptsStatus(let isEnabled, let sender, let date):
+
+        case let .readReceiptsStatus(isEnabled, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
             ) else {
                 return []
             }
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled,
                 sender: sender,
                 timestamp: date
             )
-            
+
             await context.perform {
                 let isArchived = conversation.isArchived
                 let mutedMessageTypes = conversation.mutedMessageTypes
-                
+
                 if isArchived, mutedMessageTypes == .none {
                     conversation.isArchived = false
                 }
             }
-            
+
             return [systemMessage]
         }
     }
@@ -439,7 +439,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
         }
     }
-    
+
     private func fetchUsers(
         userIDs: [(id: UUID, domain: String?)]
     ) async -> Set<ZMUser> {
@@ -451,15 +451,15 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                         domain: userID.domain
                     )
                 }
-                
+
             }
-            
+
             var users = Set<ZMUser>()
 
             for await user in taskGroup {
                 users.insert(user)
             }
-            
+
             return users
         }
     }

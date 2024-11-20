@@ -33,13 +33,13 @@ protocol ConversationRenameEventProcessorProtocol {
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
     let repository: any ConversationRepositoryProtocol
-    
+
     func processEvent(_ event: ConversationRenameEvent) async throws {
         let newName = event.newName
         let conversationID = event.conversationID
         let senderID = event.senderID
         let timestamp = event.timestamp
-        
+
         await repository.updateConversationName(
             newName: newName,
             conversationID: conversationID.uuid,

@@ -257,20 +257,20 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
-    
+
     /// Fetches the current conversation name
     /// - parameter conversation: The conversation to fetch the name for.
     /// - returns: The conversation name
-    
+
     func conversationName(
         conversation: ZMConversation
     ) async -> String?
-    
+
     /// Updates the conversation name.
     /// - Parameters:
     ///     - newName: The new name for the conversation.
     ///     - conversation: The conversation to update the name for.
-    
+
     func storeConversation(
         newName: String,
         conversation: ZMConversation
@@ -388,12 +388,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversation: (id: UUID, domain: String)
     ) async throws {
         typealias UserAndRole = (user: ZMUser, role: Role?)
-        
+
         let localConversation = await fetchConversation(
             id: conversation.id,
             domain: conversation.domain
         )
-        
+
         guard let localConversation else {
             return WireLogger.eventProcessing.error(
                 "Member join update missing conversation, aborting... ",
@@ -438,22 +438,22 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             in: localConversation
         )
         let newUsers = users.subtracting(existingUsers)
-        
+
         if !newUsers.isEmpty, await isGroupConversation(localConversation) {
-            
+
             let systemMessageType: MessageType = .participantsAdded(
-                participants: participants.map { ($0.id, $0.domain )},
+                participants: participants.map { ($0.id, $0.domain) },
                 sender: sender,
                 date: date
             )
-            
+
             await messageLocalStore.addSystemMessageToConversation(
                 messageType: systemMessageType,
                 conversationID: conversation.id,
                 conversationDomain: conversation.domain
             )
         }
-        
+
         await context.perform {
             localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
@@ -605,12 +605,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         participantDomain: String?,
         date: Date
     ) async throws {
-        
+
         let user = try await userLocalStore.fetchUser(
             id: participantID,
             domain: participantDomain
         )
-        
+
         let allGroupConversations = await context.perform {
             // swiftformat:disable:next redundantProperty
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
@@ -626,9 +626,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         for conversation in allGroupConversations {
             let (userTeam, isTeamMember, conversationTeam, conversationID, conversationDomain) = await context.perform {
-                (user.team, user.isTeamMember, conversation.team, conversation.remoteIdentifier as UUID, conversation.domain)
+                (
+                    user.team,
+                    user.isTeamMember,
+                    conversation.team,
+                    conversation.remoteIdentifier as UUID,
+                    conversation.domain
+                )
             }
-
 
             if isTeamMember, conversationTeam == userTeam {
 
@@ -749,7 +754,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.localParticipants
         }
     }
-    
+
     public func conversationName(
         conversation: ZMConversation
     ) async -> String? {
@@ -757,7 +762,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.userDefinedName
         }
     }
-    
+
     public func storeConversation(
         newName: String,
         conversation: ZMConversation

@@ -41,25 +41,31 @@ final class ConversationRenameEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
-       
+
         // Mock
-        
-        conversationRepository.updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _, _ in}
-        
+
+        conversationRepository
+            .updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod =
+            { _, _, _, _, _, _ in }
 
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
-        
-        XCTAssertEqual(conversationRepository.updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_Invocations.count, 1)
+
+        XCTAssertEqual(
+            conversationRepository
+                .updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_Invocations
+                .count,
+            1
+        )
     }
 
     private enum Scaffolding {
         static let id = UUID.mockID1
         static let domain = "domain.com"
-    
+
         static let event = ConversationRenameEvent(
             conversationID: ConversationID(uuid: id, domain: domain),
             senderID: UserID(uuid: id, domain: domain),
@@ -68,4 +74,3 @@ final class ConversationRenameEventProcessorTests: XCTestCase {
         )
     }
 }
-
