@@ -173,7 +173,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         selfUser selfUserType: RelativeUserState,
         otherUsers: [RelativeUserState],
         expectedResult: ZMConversation.ExternalParticipantsState,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let conversation = createConversationWithSelfUser()

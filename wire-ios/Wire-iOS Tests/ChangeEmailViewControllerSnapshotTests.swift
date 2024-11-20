@@ -79,7 +79,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: viewController,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

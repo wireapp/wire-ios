@@ -40,7 +40,7 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
         changes.append(callState)
     }
 
-    func checkLastNotificationHasCallState(_ callState: CallState, line: UInt = #line, file: StaticString = #file) {
+    func checkLastNotificationHasCallState(_ callState: CallState, line: UInt = #line, file: StaticString = #filePath) {
         guard let lastCallState = changes.last else {
             return XCTFail("Did not receive a notification", file: file, line: line)
         }

@@ -182,7 +182,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func internalTest_UpdateConversationMemberLeave(
         messageProtocol: MessageProtocol,
         shouldWipeMLSGroup: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
         // Given
