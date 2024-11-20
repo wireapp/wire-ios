@@ -18,7 +18,8 @@
 
 import Foundation
 
-public final class FolderCreationViewModel: ObservableObject {
+@MainActor
+public final class CreateFolderViewModel: ObservableObject {
 
     // MARK: - Properties
 
@@ -29,15 +30,15 @@ public final class FolderCreationViewModel: ObservableObject {
         }
     }
 
-    private let useCase: any FolderCreationUseCaseType
+    private let useCase: any CreateConversationFolderUseCaseProtocol
 
     // MARK: - Lifecycle
 
-    public init(useCase: any FolderCreationUseCaseType) {
+    public init(useCase: any CreateConversationFolderUseCaseProtocol) {
         self.useCase = useCase
     }
 
-    // MARK: - Public Inreface
+    // MARK: - Public Interface
 
     public func createFolder() async throws -> Folder {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
