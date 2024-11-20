@@ -22,8 +22,6 @@ import WireSyncEngine
 struct AnalyticsServiceConfigurationBuilder {
 
     func build() -> AnalyticsServiceConfiguration? {
-        let secretKey = Bundle.countlyAppKey
-        let countlyURL = BackendEnvironment.shared.countlyURL
         guard
             let secretKey = Bundle.countlyAppKey,
             !secretKey.isEmpty,
