@@ -19,7 +19,7 @@
 public import Foundation
 
 @objc(ZMSDispatchGroup) @objcMembers
-public final class ZMSDispatchGroup: NSObject, @unchecked Sendable { // TODO: try to remvoe @unchecked
+open class ZMSDispatchGroup: NSObject, @unchecked Sendable { // TODO: try to remvoe @unchecked
 
     let label: String
 
