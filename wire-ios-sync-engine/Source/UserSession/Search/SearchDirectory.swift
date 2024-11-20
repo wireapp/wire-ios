@@ -30,20 +30,23 @@ public class SearchDirectory: NSObject {
     private let refreshUsersMissingMetadataAction: RecurringAction
     private let refreshConversationsMissingMetadataAction: RecurringAction
 
+    private let defaultProtocol: MessageProtocol
+
     private let searchUsersCache: SearchUsersCache?
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
 
-    public convenience init(userSession: ZMUserSession) {
+    public convenience init(userSession: ZMUserSession) {//
         self.init(
             searchContext: userSession.searchManagedObjectContext,
             contextProvider: userSession,
             transportSession: userSession.transportSession,
             searchUsersCache: userSession.searchUsersCache,
             refreshUsersMissingMetadataAction: userSession.refreshUsersMissingMetadataAction,
-            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction
+            refreshConversationsMissingMetadataAction: userSession.refreshConversationsMissingMetadataAction,
+            defaultProtocol: userSession.mlsFeature.config.defaultProtocol == .mls ? .mls : .proteus
         )
     }
 
@@ -53,12 +56,14 @@ public class SearchDirectory: NSObject {
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
         refreshUsersMissingMetadataAction: RecurringAction,
-        refreshConversationsMissingMetadataAction: RecurringAction
+        refreshConversationsMissingMetadataAction: RecurringAction,
+        defaultProtocol: MessageProtocol
     ) {
         self.searchContext = searchContext
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.searchUsersCache = searchUsersCache
+        self.defaultProtocol = defaultProtocol
 
         self.refreshUsersMissingMetadataAction = refreshUsersMissingMetadataAction
         self.refreshConversationsMissingMetadataAction = refreshConversationsMissingMetadataAction

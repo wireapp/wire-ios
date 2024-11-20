@@ -315,7 +315,7 @@ extension SearchTask {
         return result
     }
 
-    func connectedUsers(matchingQuery query: String) -> [ZMUser] {
+    func connectedUsers(matchingQuery query: String) -> [ZMUser] {//
         let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }

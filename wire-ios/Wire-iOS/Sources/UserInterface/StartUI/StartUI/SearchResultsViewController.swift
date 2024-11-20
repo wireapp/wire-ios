@@ -306,7 +306,7 @@ final class SearchResultsViewController: UIViewController {
             .directory
         ]
 
-        if isFederationEnabled {
+        if isFederationEnabled { // Add flag
             options.formUnion(.federated)
         }
 
@@ -383,7 +383,7 @@ final class SearchResultsViewController: UIViewController {
 
     func updateSections(withSearchResult searchResult: SearchResult) {
 
-        var contacts = searchResult.contacts
+        var contacts = searchResult.contacts//.filter { !$0.isFederated } // remove federated if needed
         var teamContacts = searchResult.teamMembers
 
         if let filteredParticpants = filterConversation?.localParticipants {
@@ -420,10 +420,10 @@ final class SearchResultsViewController: UIViewController {
             teamMemberAndContactsSection.contacts = teamContacts
         }
 
-        directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
+        directorySection.suggestions = searchResult.directory.filter { !$0.isFederated } // ?
         conversationsSection.groupConversations = searchResult.conversations
         servicesSection.services = searchResult.services
-        federationSection.users = searchResult.directory.filter(\.isFederated)
+        federationSection.users = searchResult.directory.filter(\.isFederated)// ?
 
         sectionController.collectionView?.reloadData()
     }

@@ -32,7 +32,7 @@ public extension ZMUser {
     /// - Returns: predicate having search query and ZMConnectionStatusAccepted connection statuses
     @objc(predicateForConnectedUsersWithSearchString:)
     static func predicateForConnectedUsers(withSearch query: String) -> NSPredicate {
-        predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue]) //
     }
 
     /// Retrieves all users with name or handle matching search string
