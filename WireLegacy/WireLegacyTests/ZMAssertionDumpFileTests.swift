@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireSystem
+@testable import WireLegacy
 
 final class ZMAssertionDumpFileTests: XCTestCase {
 
