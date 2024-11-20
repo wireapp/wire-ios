@@ -126,7 +126,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     // MARK: - Setup
 
     func setupViews() {
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = ColorTheme.Backgrounds.background
 
         // Setup search controller
         navigationItem.searchController = searchController
