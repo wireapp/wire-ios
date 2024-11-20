@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// A protocol defining behavior for moving conversations between folders
-public protocol ToFolderMovableConversation {
+import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
 
-    /// Moves the conversation to a specified folder
-    /// - Parameter folder: The destination folder to move the conversation to
-    func moveToFolder(_ folder: LabelType)
+extension UpdateConversationFolderUseCase: @retroactive UpdateConversationFolderUseCaseProtocol {
+
+    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+        guard let folderID = folder.identifier else { return }
+        try await invoke(conversationID: conversation.identifier, folderID: folderID)
+    }
 }
-
-extension ZMConversation: ToFolderMovableConversation {}

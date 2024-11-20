@@ -23,9 +23,17 @@ import WireReusableUIComponents
 public struct FolderPicker: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var viewModel: FolderPickerViewModel
+    private let createFolderUseCase: any CreateConversationFolderUseCaseProtocol
+    let conversationName: String
 
-    public init(viewModel: FolderPickerViewModel) {
+    public init(
+        viewModel: FolderPickerViewModel,
+        createFolderUseCase: any CreateConversationFolderUseCaseProtocol,
+        conversationName: String
+    ) {
         self.viewModel = viewModel
+        self.createFolderUseCase = createFolderUseCase
+        self.conversationName = conversationName
     }
 
     public var body: some View {
@@ -53,7 +61,24 @@ public struct FolderPicker: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        // TODO: [WPB-12012] Implement folder creation view
+                        CreateFolder(
+                            viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
+                            conversationName: conversationName,
+                            onFolderCreated: { [weak viewModel] createdFolder in
+                                guard let viewModel else { return }
+                                Task {
+                                    do {
+                                        try await viewModel.select(createdFolder)
+                                        dismiss()
+                                    } catch {
+                                        // TODO: [WPB-12173] Move WireLogger to a dedicated Swift Package Manager module for modular logging support
+                                        assertionFailure(
+                                            "Failed to move conversation to folder: \(error.localizedDescription)"
+                                        )
+                                    }
+                                }
+                            }
+                        )
                     } label: {
                         Image(systemName: "plus")
                             .accessibilityIdentifier("button.newfolder.create")
@@ -101,7 +126,7 @@ public struct FolderPicker: View {
                 ]
             ),
             updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
-        )
+        ), createFolderUseCase: PreviewCreateConversationFolderUseCase(), conversationName: "Test"
     )
 }
 
@@ -112,4 +137,10 @@ struct PreviewFolderDirectory: FolderDirectoryTypeProtocol {
 struct PreviewMoveConversationToFolderUseCase: UpdateConversationFolderUseCaseProtocol {
     func invoke(conversationID: UUID, folderID: UUID) async throws {}
 
+}
+
+struct PreviewCreateConversationFolderUseCase: CreateConversationFolderUseCaseProtocol {
+    func invoke(name: String) async throws -> Folder {
+        Folder(identifier: UUID(), name: "Test")
+    }
 }
