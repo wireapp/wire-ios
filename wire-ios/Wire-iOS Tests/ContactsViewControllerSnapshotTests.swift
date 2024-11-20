@@ -29,6 +29,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     var sut: ContactsViewController!
     var snapshotHelper: SnapshotHelper!
     let imageConfig = ViewImageConfig.iPhone14(.portrait)
+
     // MARK: - setUp
 
     override func setUp() {
@@ -36,7 +37,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
             .withUserInterfaceStyle(imageConfig.traits.userInterfaceStyle)
             .withPreferredContentSizeCategory(imageConfig.traits.preferredContentSizeCategory)
-        
+
         XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
