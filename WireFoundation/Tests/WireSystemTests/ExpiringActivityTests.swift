@@ -18,18 +18,30 @@
 
 import Foundation
 import XCTest
+
 @testable import WireSystem
 
-class ExpiringActivityTests: XCTestCase {
+final class ExpiringActivityTests: XCTestCase {
 
-    let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
+    private var api: MockExpiringActivityAPI!
+    private var concurrentQueue: DispatchQueue!
+    private var sut: ExpiringActivityManager!
+
+    override func setUp() async throws {
+        concurrentQueue = .init(label: "activity queue", attributes: [.concurrent])
+        api = .init()
+        sut = .init(api: api)
+    }
+
+    override func tearDown() {
+        sut = nil
+        api = nil
+        concurrentQueue = nil
+    }
 
     func testThatTaskIsCancelled_WhenActivityExpires() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
-
         api.method = { _, block in
             self.concurrentQueue.async {
                 block(false)
@@ -54,9 +66,6 @@ class ExpiringActivityTests: XCTestCase {
     func testThatTaskIsCancelled_WhenActivityIsNotAllowedToBegin() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
-
         api.method = { _, block in
             self.concurrentQueue.async {
                 block(true)
@@ -78,9 +87,6 @@ class ExpiringActivityTests: XCTestCase {
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
 
         // given
-        let api = MockExpiringActivityAPI()
-        let sut = ExpiringActivityManager(api: api)
-
         api.method = { _, block in
             self.concurrentQueue.async {
                 block(false)
@@ -99,7 +105,7 @@ class ExpiringActivityTests: XCTestCase {
 
 }
 
-private class MockExpiringActivityAPI: ExpiringActivityInterface {
+private class MockExpiringActivityAPI: ExpiringActivityInterface, @unchecked Sendable {
 
     typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void
 
