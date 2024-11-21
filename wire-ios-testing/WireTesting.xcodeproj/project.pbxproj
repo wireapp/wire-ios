@@ -1,0 +1,427 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		166264A7216BB64100300F45 /* large.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166264A6216BB64000300F45 /* large.jpg */; };
+		54AFD7E11CB6986A0090E33A /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DB1CB698690090E33A /* 1900x1500.jpg */; };
+		54AFD7E21CB6986A0090E33A /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DC1CB698690090E33A /* animated.gif */; };
+		54AFD7E31CB6986A0090E33A /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DD1CB698690090E33A /* Lorem Ipsum.txt */; };
+		54AFD7E41CB6986A0090E33A /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DE1CB698690090E33A /* medium.jpg */; };
+		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
+		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
+		591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
+		591B6E872C8B0A2F009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
+		EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49A5562954850800406C4F /* WireSystem.framework */; };
+		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		096AD7C81B68D41D00E007A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 096AD7B21B68D41D00E007A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 096AD7BA1B68D41D00E007A8;
+			remoteInfo = ZMTesting;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTesting-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = WireTesting.plist; sourceTree = "<group>"; };
+		09F1863A1B6903A4007A3DA6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTesting.xcconfig; sourceTree = "<group>"; };
+		166264A6216BB64000300F45 /* large.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = large.jpg; sourceTree = "<group>"; };
+		54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
+		54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		54AFD7DB1CB698690090E33A /* 1900x1500.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1900x1500.jpg; sourceTree = "<group>"; };
+		54AFD7DC1CB698690090E33A /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
+		54AFD7DD1CB698690090E33A /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
+		54AFD7DE1CB698690090E33A /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
+		54AFD7DF1CB698690090E33A /* not_animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = not_animated.gif; sourceTree = "<group>"; };
+		54AFD7E01CB698690090E33A /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
+		54BD49F11D41FA56006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		EE49A5562954850800406C4F /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE67F6AE296F0510001D7C88 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
+		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		594CDC6F2CEFDA84005536D5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				"Public/Mock Data Model/ZMMockEntity.h",
+				"Public/Mock Data Model/ZMMockEntity2.h",
+				"Public/NSData+WireTesting.h",
+				"Public/NSOperationQueue+WireTesting.h",
+				"Public/NSUUID+WireTesting.h",
+				Public/WireTesting.h,
+				"Public/XCTestCase+Helpers.h",
+				Public/ZMMockManagedObjectContextFactory.h,
+				Public/ZMTAsserts.h,
+				Public/ZMTBaseTest.h,
+				Public/ZMTFailureRecorder.h,
+				Public/ZMTImageComparator.h,
+			);
+			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		594CDC212CEFDA59005536D5 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		594CDC4C2CEFDA84005536D5 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594CDC6F2CEFDA84005536D5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		096AD7B71B68D41D00E007A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */,
+				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		096AD7C31B68D41D00E007A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591B6E872C8B0A2F009F8A7B /* WireTesting.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		096AD7B11B68D41D00E007A8 = {
+			isa = PBXGroup;
+			children = (
+				EE9AEC852BD1589E00F7853F /* WireTesting.docc */,
+				54BD49F11D41FA56006E29D1 /* README.md */,
+				594CDC4C2CEFDA84005536D5 /* Source */,
+				594CDC212CEFDA59005536D5 /* Tests */,
+				096AD7DB1B68D6BD00E007A8 /* Resources */,
+				096AD7EC1B68D8DF00E007A8 /* Frameworks */,
+				096AD7BC1B68D41D00E007A8 /* Products */,
+			);
+			indentWidth = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
+		};
+		096AD7BC1B68D41D00E007A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				096AD7BB1B68D41D00E007A8 /* WireTesting.framework */,
+				096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		096AD7DB1B68D6BD00E007A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				166264A6216BB64000300F45 /* large.jpg */,
+				54AFD7DB1CB698690090E33A /* 1900x1500.jpg */,
+				54AFD7DC1CB698690090E33A /* animated.gif */,
+				54AFD7DD1CB698690090E33A /* Lorem Ipsum.txt */,
+				54AFD7DE1CB698690090E33A /* medium.jpg */,
+				54AFD7DF1CB698690090E33A /* not_animated.gif */,
+				54AFD7E01CB698690090E33A /* tiny.jpg */,
+				09F1862E1B6903A4007A3DA6 /* Configurations */,
+				096AD7DC1B68D6BD00E007A8 /* WireTesting.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		096AD7EC1B68D8DF00E007A8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EE49A5562954850800406C4F /* WireSystem.framework */,
+				EE67F6AE296F0510001D7C88 /* OCMock.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		09F1862E1B6903A4007A3DA6 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				54AD5CF71EEFEEC00072FC97 /* zmc-config */,
+				09F1863A1B6903A4007A3DA6 /* version.xcconfig */,
+				09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		54AD5CF71EEFEEC00072FC97 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */,
+				54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */,
+				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
+				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
+				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		096AD7B81B68D41D00E007A8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		096AD7BA1B68D41D00E007A8 /* WireTesting */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 096AD7D11B68D41D00E007A8 /* Build configuration list for PBXNativeTarget "WireTesting" */;
+			buildPhases = (
+				096AD7B81B68D41D00E007A8 /* Headers */,
+				096AD7B61B68D41D00E007A8 /* Sources */,
+				096AD7B71B68D41D00E007A8 /* Frameworks */,
+				096AD7B91B68D41D00E007A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				594CDC4C2CEFDA84005536D5 /* Source */,
+			);
+			name = WireTesting;
+			productName = ZMTesting;
+			productReference = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		096AD7C51B68D41D00E007A8 /* WireTesting-Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 096AD7D41B68D41D00E007A8 /* Build configuration list for PBXNativeTarget "WireTesting-Tests" */;
+			buildPhases = (
+				096AD7C21B68D41D00E007A8 /* Sources */,
+				096AD7C31B68D41D00E007A8 /* Frameworks */,
+				096AD7C41B68D41D00E007A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				096AD7C91B68D41D00E007A8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				594CDC212CEFDA59005536D5 /* Tests */,
+			);
+			name = "WireTesting-Tests";
+			productName = ZMTestingTests;
+			productReference = 096AD7C61B68D41D00E007A8 /* WireTesting-Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		096AD7B21B68D41D00E007A8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftMigration = 0710;
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 1240;
+				ORGANIZATIONNAME = Wire;
+				TargetAttributes = {
+					096AD7BA1B68D41D00E007A8 = {
+						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 1000;
+					};
+					096AD7C51B68D41D00E007A8 = {
+						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 1000;
+					};
+				};
+			};
+			buildConfigurationList = 096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 096AD7B11B68D41D00E007A8;
+			productRefGroup = 096AD7BC1B68D41D00E007A8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				096AD7BA1B68D41D00E007A8 /* WireTesting */,
+				096AD7C51B68D41D00E007A8 /* WireTesting-Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		096AD7B91B68D41D00E007A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54AFD7E11CB6986A0090E33A /* 1900x1500.jpg in Resources */,
+				54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */,
+				54AFD7E31CB6986A0090E33A /* Lorem Ipsum.txt in Resources */,
+				54AFD7E41CB6986A0090E33A /* medium.jpg in Resources */,
+				166264A7216BB64100300F45 /* large.jpg in Resources */,
+				54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */,
+				54AFD7E21CB6986A0090E33A /* animated.gif in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		096AD7C41B68D41D00E007A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		096AD7B61B68D41D00E007A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		096AD7C21B68D41D00E007A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		096AD7C91B68D41D00E007A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
+			targetProxy = 096AD7C81B68D41D00E007A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		096AD7CF1B68D41D00E007A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+			};
+			name = Debug;
+		};
+		096AD7D01B68D41D00E007A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+			};
+			name = Release;
+		};
+		096AD7D21B68D41D00E007A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		096AD7D31B68D41D00E007A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		096AD7D51B68D41D00E007A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		096AD7D61B68D41D00E007A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		096AD7B51B68D41D00E007A8 /* Build configuration list for PBXProject "WireTesting" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				096AD7CF1B68D41D00E007A8 /* Debug */,
+				096AD7D01B68D41D00E007A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		096AD7D11B68D41D00E007A8 /* Build configuration list for PBXNativeTarget "WireTesting" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				096AD7D21B68D41D00E007A8 /* Debug */,
+				096AD7D31B68D41D00E007A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		096AD7D41B68D41D00E007A8 /* Build configuration list for PBXNativeTarget "WireTesting-Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				096AD7D51B68D41D00E007A8 /* Debug */,
+				096AD7D61B68D41D00E007A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 096AD7B21B68D41D00E007A8 /* Project object */;
+}
