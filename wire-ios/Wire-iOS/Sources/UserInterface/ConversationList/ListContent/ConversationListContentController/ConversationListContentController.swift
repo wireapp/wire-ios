@@ -132,8 +132,6 @@ final class ConversationListContentController: UICollectionViewController {
         // conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
-
-        // TODO: delegate?
     }
 
     func updateVisibleCells() {
