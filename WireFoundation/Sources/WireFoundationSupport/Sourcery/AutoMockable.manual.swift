@@ -21,7 +21,6 @@ public import WireFoundation
 
 public actor MockKeychainProtocol: KeychainProtocol {
 
-
     // MARK: - addItem
 
     public var addItemQuery_Invocations: [Set<KeychainQueryItem>] = []

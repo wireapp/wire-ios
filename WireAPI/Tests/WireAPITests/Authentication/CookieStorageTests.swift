@@ -87,7 +87,7 @@ final class CookieStorageTests: XCTestCase {
         await keychain.setFetchItemQuery_MockValue(nil)
 
         // Mock successul add.
-        await keychain.setAddItemQuery_MockMethod({ _ in })
+        await keychain.setAddItemQuery_MockMethod { _ in }
 
         // When
         try await sut.storeCookies([validCookie])
@@ -112,7 +112,7 @@ final class CookieStorageTests: XCTestCase {
         await keychain.setFetchItemQuery_MockValue(data)
 
         // Mock successul update.
-        await keychain.setUpdateItemQueryAttributesToUpdate_MockMethod({ _, _ in })
+        await keychain.setUpdateItemQueryAttributesToUpdate_MockMethod { _, _ in }
 
         // When
         try await sut.storeCookies([validCookie])
@@ -253,7 +253,7 @@ private enum Scaffolding {
             .returningData(true)
         ]
     }
-    
+
     static let invalidCookie = HTTPCookie(properties: [
         .name: "invalid-name",
         .path: "some path",

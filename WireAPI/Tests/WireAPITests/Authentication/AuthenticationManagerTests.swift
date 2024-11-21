@@ -146,7 +146,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
         // When mutliple tasks all want an access token.
         await withThrowingTaskGroup(of: Void.self) { group in
-            for _ in 1...10 {
+            for _ in 1 ... 10 {
                 group.addTask { [sut] in
                     guard let sut else { return }
                     let accessToken = try await sut.getValidAccessToken()
@@ -193,7 +193,7 @@ final class AuthenticationManagerTests: XCTestCase {
         }
 
         // When we try again.
-        let accessToken = try await self.sut.refreshAccessToken()
+        let accessToken = try await sut.refreshAccessToken()
 
         // Then it succeeds.
         XCTAssertEqual(accessToken.userID, Scaffolding.userID)
@@ -214,11 +214,11 @@ private enum Scaffolding {
     static func cookie() throws -> HTTPCookie {
         try XCTUnwrap(
             HTTPCookie(properties: [
-                 .name: "zuid",
-                 .path: "some path",
-                 .value: "some value",
-                 .domain: "some domain"
-             ])
+                .name: "zuid",
+                .path: "some path",
+                .value: "some value",
+                .domain: "some domain"
+            ])
         )
     }
 

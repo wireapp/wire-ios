@@ -70,25 +70,24 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
     func toCFDictionaryEntry() -> (CFString, Any) {
         switch self {
-        case .service(let string):
+        case let .service(string):
             (kSecAttrService, string)
 
-        case .account(let string):
+        case let .account(string):
             (kSecAttrAccount, string)
 
-        case .itemClass(let itemClass):
+        case let .itemClass(itemClass):
             (kSecClass, itemClass)
 
         case .accessible(.afterFirstUnlock):
             (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)
 
-        case .returningData(let bool):
+        case let .returningData(bool):
             (kSecReturnData, bool)
 
-        case .data(let data):
+        case let .data(data):
             (kSecValueData, data)
         }
     }
-
 
 }

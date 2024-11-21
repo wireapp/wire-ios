@@ -56,7 +56,7 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
         self.cookieStorage = cookieStorage
         self.networkService = networkService
     }
-    
+
     /// Get a valid access token to make authenticated requests.
     ///
     /// If a valid token exists in the cache then it will be returned,
@@ -66,20 +66,20 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
 
     func getValidAccessToken() async throws -> AccessToken {
         switch currentToken {
-        case .renewing(let task):
+        case let .renewing(task):
             // A new token will come soon, wait
-            return try await task.value
+            try await task.value
 
-        case .cached(let accessToken) where !accessToken.isExpiring:
+        case let .cached(accessToken) where !accessToken.isExpiring:
             // This one is still good.
-            return accessToken
+            accessToken
 
         default:
             // Time for a new token.
-            return try await refreshAccessToken()
+            try await refreshAccessToken()
         }
     }
-    
+
     /// Get a new access token from the backend.
     ///
     /// This method will fetch a new access token from the backend
