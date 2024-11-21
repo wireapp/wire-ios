@@ -161,7 +161,7 @@ jobs:
           path: ${{ env.PACKAGES_DIR }}
           key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_DATADOG }}
 
-        # Resolve Swift Package Dependencies 
+        # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
         run: |
           ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
