@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// Class to proxy WireLogger methods to Objective-C
 @objcMembers
-public final class WireLoggerObjc: NSObject {
+public final class WireLoggerObjC: NSObject {
 
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
@@ -32,7 +32,7 @@ public final class WireLoggerObjc: NSObject {
     }
 
     @objc(logSaveCoreDataError:)
-    static func logSaveCoreData(error: Error) {
+    static func logSaveCoreData(error: any Error) {
         WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
 }

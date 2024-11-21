@@ -35,31 +35,31 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    func debug(_ message: LogConvertible, attributes: LogAttributes...) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    func info(_ message: LogConvertible, attributes: LogAttributes...) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func notice(_ message: LogConvertible, attributes: LogAttributes...) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func warn(_ message: LogConvertible, attributes: LogAttributes...) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    func error(_ message: LogConvertible, attributes: LogAttributes...) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    func critical(_ message: LogConvertible, attributes: LogAttributes...) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
+    private func log(_ message: any LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
 
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {

@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
 import OSLog
 
 public protocol FileLoggerDestination {
@@ -70,7 +71,7 @@ struct SystemLogger: LoggerProtocol {
         // do nothing, as it's only available on datadog
     }
 
-    private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
+    private func log(_ message: any LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {
             mergedAttributes.merge($0) { _, new in new }
@@ -91,4 +92,5 @@ struct SystemLogger: LoggerProtocol {
     }
 }
 
-private var loggers: [String: OSLog] = [:]
+// TODO: try to delete nonisolated(unsafe)
+nonisolated(unsafe) private var loggers: [String: OSLog] = [:]
