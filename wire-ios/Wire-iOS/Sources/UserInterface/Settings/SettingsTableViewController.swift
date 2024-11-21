@@ -151,7 +151,8 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
-
+    private let backButtonDescription = BackButtonDescription()
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(group.title)
@@ -200,11 +201,21 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+
+        setCustomBackButton()
         setupNavigationBarAccessibility()
+    }
+    
+    private func setCustomBackButton() {
+        let backButton = backButtonDescription.create()
+        navigationItem.backBarButtonItem = UIBarButtonItem(customView: backButton)
+        backButtonDescription.buttonTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
 
     func configureNavigationBarAppearance() {
