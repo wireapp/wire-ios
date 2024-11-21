@@ -70,7 +70,7 @@ final class AuthenticationManagerTests: XCTestCase {
         let snapshotter = HTTPRequestSnapshotHelper()
         await snapshotter.verifyRequest(request: receivedRequests[0])
 
-        // Then we got back a vaild access token.
+        // Then we got back a valid access token.
         XCTAssertEqual(accessToken.userID, Scaffolding.userID)
         XCTAssertEqual(accessToken.type, Scaffolding.tokenType)
         XCTAssertEqual(accessToken.token, Scaffolding.validAccessToken)
@@ -144,14 +144,14 @@ final class AuthenticationManagerTests: XCTestCase {
             )
         }
 
-        // When mutliple tasks all want an access token.
+        // When multiple tasks all want an access token.
         await withThrowingTaskGroup(of: Void.self) { group in
             for _ in 1 ... 10 {
                 group.addTask { [sut] in
                     guard let sut else { return }
                     let accessToken = try await sut.getValidAccessToken()
 
-                    // Then each task go back a vaild access token.
+                    // Then each task go back a valid access token.
                     XCTAssertEqual(accessToken.userID, Scaffolding.userID)
                     XCTAssertEqual(accessToken.type, Scaffolding.tokenType)
                     XCTAssertEqual(accessToken.token, Scaffolding.validAccessToken)

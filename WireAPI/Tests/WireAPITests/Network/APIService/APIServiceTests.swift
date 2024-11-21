@@ -29,7 +29,6 @@ final class APIServiceTests: XCTestCase {
     var authenticationManager: MockAuthenticationManagerProtocol!
 
     override func setUp() async throws {
-        try await super.setUp()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         authenticationManager = MockAuthenticationManagerProtocol()
         let networkService = NetworkService(baseURL: backendURL)
@@ -44,7 +43,6 @@ final class APIServiceTests: XCTestCase {
         backendURL = nil
         authenticationManager = nil
         sut = nil
-        try await super.tearDown()
     }
 
     // MARK: - Execute request
