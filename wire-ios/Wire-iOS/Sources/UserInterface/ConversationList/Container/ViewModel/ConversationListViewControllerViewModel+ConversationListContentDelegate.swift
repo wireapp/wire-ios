@@ -37,7 +37,7 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
     }
 
     func conversationListContentControllerDidReload(_ controller: ConversationListContentController) {
-        fatalError("TODO: Implement")
+        viewController?.conversationListViewControllerViewModelDidReloadContent(self)
     }
 }
 
