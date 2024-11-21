@@ -15,24 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUtilitiesPackage"
-               BuildableName = "WireUtilitiesPackage"
-               BlueprintName = "WireUtilitiesPackage"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireFoundation"
                BuildableName = "WireFoundation"
                BlueprintName = "WireFoundation"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireFoundation">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,10 +29,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireFoundationSupport"
-               BuildableName = "WireFoundationSupport"
-               BlueprintName = "WireFoundationSupport"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "WireUtilitiesPackage"
+               BuildableName = "WireUtilitiesPackage"
+               BlueprintName = "WireUtilitiesPackage"
+               ReferencedContainer = "container:WireFoundation">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -60,7 +46,21 @@
                BlueprintIdentifier = "WireTestingPackage"
                BuildableName = "WireTestingPackage"
                BlueprintName = "WireTestingPackage"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireFoundation">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireFoundationSupport"
+               BuildableName = "WireFoundationSupport"
+               BlueprintName = "WireFoundationSupport"
+               ReferencedContainer = "container:WireFoundation">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -72,7 +72,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:../../../WireFoundation/Project/AllTests.xctestplan"
+            reference = "container:WireFoundation/Project/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -97,10 +97,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireUtilitiesPackage"
-            BuildableName = "WireUtilitiesPackage"
-            BlueprintName = "WireUtilitiesPackage"
-            ReferencedContainer = "container:">
+            BlueprintIdentifier = "WireFoundation"
+            BuildableName = "WireFoundation"
+            BlueprintName = "WireFoundation"
+            ReferencedContainer = "container:WireFoundation">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

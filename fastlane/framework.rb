@@ -107,7 +107,7 @@ class Framework
         when "wire-ios"
             "Wire-iOS"
         when "WireFoundation"
-            "WireFoundation-Packages" # use a custom scheme that includes all targets of WireFoundation
+            "WireFoundationAll" # use a custom scheme that includes all targets of WireFoundation
         when "WireUI"
             "WireUI" # use a custom scheme that includes all targets of WireUI
         when "WireDomain", "WireAPI", "WireAnalytics"
