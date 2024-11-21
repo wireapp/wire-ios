@@ -38,6 +38,12 @@
       <FileRef
          location = "group:Matchfile">
       </FileRef>
+      <FileRef
+         location = "group:framework.rb">
+      </FileRef>
+      <FileRef
+         location = "group:README.md">
+      </FileRef>
    </Group>
    <FileRef
       location = "group:wire-avs.json">
