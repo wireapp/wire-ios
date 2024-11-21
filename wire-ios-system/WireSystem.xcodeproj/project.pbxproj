@@ -12,6 +12,7 @@
 		591B6E8F2C8B0A3A009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
 		59B5BC132CEFE95E00584043 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B5BC122CEFE95E00584043 /* WireFoundation */; };
+		59B5BE962CEFF1CD00584043 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 59B5BE952CEFF1CD00584043 /* CocoaLumberjackSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,7 @@
 			files = (
 				591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */,
 				59B5BC132CEFE95E00584043 /* WireFoundation in Frameworks */,
+				59B5BE962CEFF1CD00584043 /* CocoaLumberjackSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +193,7 @@
 			name = WireSystem;
 			packageProductDependencies = (
 				59B5BC122CEFE95E00584043 /* WireFoundation */,
+				59B5BE952CEFF1CD00584043 /* CocoaLumberjackSwift */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -267,6 +270,7 @@
 			);
 			mainGroup = 3ECC34C31AD430BB0089FD4B;
 			packageReferences = (
+				59B5BE942CEFF1CD00584043 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 			);
 			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
 			projectDirPath = "";
@@ -661,10 +665,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		59B5BE942CEFF1CD00584043 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.8.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		59B5BC122CEFE95E00584043 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+		};
+		59B5BE952CEFF1CD00584043 /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59B5BE942CEFF1CD00584043 /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
