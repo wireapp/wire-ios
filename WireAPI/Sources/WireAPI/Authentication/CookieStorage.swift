@@ -33,9 +33,6 @@ actor CookieStorage: CookieStorageProtocol {
 
         case malformedCookieData
         case failedToDecodeCookieData(any Error)
-        case failedKeychainFetch(status: Int32?)
-        case failedKeychainAdd(status: Int32)
-        case failedKeychainUpdate(status: Int32)
         case missingCookieEncryptionKey
         case failedToEncryptCookie(any Error)
         case failedToDecryptCookie(any Error)
