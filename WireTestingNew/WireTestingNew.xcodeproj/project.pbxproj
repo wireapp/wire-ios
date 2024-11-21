@@ -10,6 +10,9 @@
 		59B4523E2CEF6FA800D946D6 /* WireTestingNew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B452332CEF6FA800D946D6 /* WireTestingNew.framework */; };
 		59B452502CEF6FC500D946D6 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B4524F2CEF6FC500D946D6 /* OCMock.xcframework */; };
 		59B452542CEF6FD900D946D6 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59B452532CEF6FD900D946D6 /* WireSystem */; };
+		59B452912CEF70C100D946D6 /* WireTestingNew.h in Headers */ = {isa = PBXBuildFile; fileRef = 59B4528E2CEF70C100D946D6 /* WireTestingNew.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59B452922CEF70C100D946D6 /* WireTestingNew.docc in Sources */ = {isa = PBXBuildFile; fileRef = 59B4528F2CEF70C100D946D6 /* WireTestingNew.docc */; };
+		59B452952CEF70C100D946D6 /* WireTestingNewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B452932CEF70C100D946D6 /* WireTestingNewTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,33 +30,10 @@
 		59B4523D2CEF6FA800D946D6 /* WireTestingNewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireTestingNewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		59B4524F2CEF6FC500D946D6 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		59B452672CEF708100D946D6 /* WireTestingNew.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireTestingNew.xctestplan; sourceTree = "<group>"; };
+		59B4528E2CEF70C100D946D6 /* WireTestingNew.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireTestingNew.h; sourceTree = "<group>"; };
+		59B4528F2CEF70C100D946D6 /* WireTestingNew.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTestingNew.docc; sourceTree = "<group>"; };
+		59B452932CEF70C100D946D6 /* WireTestingNewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WireTestingNewTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		59B452452CEF6FA800D946D6 /* Exceptions for "WireTestingNew" folder in "WireTestingNew" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				WireTestingNew.h,
-			);
-			target = 59B452322CEF6FA800D946D6 /* WireTestingNew */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		59B452352CEF6FA800D946D6 /* WireTestingNew */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				59B452452CEF6FA800D946D6 /* Exceptions for "WireTestingNew" folder in "WireTestingNew" target */,
-			);
-			path = WireTestingNew;
-			sourceTree = "<group>";
-		};
-		59B452412CEF6FA800D946D6 /* WireTestingNewTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireTestingNewTests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		59B452302CEF6FA800D946D6 /* Frameworks */ = {
@@ -79,9 +59,9 @@
 		59B452292CEF6FA800D946D6 = {
 			isa = PBXGroup;
 			children = (
+				59B452902CEF70C100D946D6 /* WireTestingNew */,
+				59B452942CEF70C100D946D6 /* WireTestingNewTests */,
 				59B452672CEF708100D946D6 /* WireTestingNew.xctestplan */,
-				59B452352CEF6FA800D946D6 /* WireTestingNew */,
-				59B452412CEF6FA800D946D6 /* WireTestingNewTests */,
 				59B4524E2CEF6FC500D946D6 /* Frameworks */,
 				59B452342CEF6FA800D946D6 /* Products */,
 			);
@@ -104,6 +84,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		59B452902CEF70C100D946D6 /* WireTestingNew */ = {
+			isa = PBXGroup;
+			children = (
+				59B4528E2CEF70C100D946D6 /* WireTestingNew.h */,
+				59B4528F2CEF70C100D946D6 /* WireTestingNew.docc */,
+			);
+			path = WireTestingNew;
+			sourceTree = "<group>";
+		};
+		59B452942CEF70C100D946D6 /* WireTestingNewTests */ = {
+			isa = PBXGroup;
+			children = (
+				59B452932CEF70C100D946D6 /* WireTestingNewTests.m */,
+			);
+			path = WireTestingNewTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -111,6 +108,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59B452912CEF70C100D946D6 /* WireTestingNew.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,9 +127,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				59B452352CEF6FA800D946D6 /* WireTestingNew */,
 			);
 			name = WireTestingNew;
 			packageProductDependencies = (
@@ -153,9 +148,6 @@
 			);
 			dependencies = (
 				59B452402CEF6FA800D946D6 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				59B452412CEF6FA800D946D6 /* WireTestingNewTests */,
 			);
 			name = WireTestingNewTests;
 			packageProductDependencies = (
@@ -223,6 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59B452922CEF70C100D946D6 /* WireTestingNew.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59B452952CEF70C100D946D6 /* WireTestingNewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
