@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// A simple wrapper around the Keychain api.
 
@@ -27,12 +27,16 @@ public struct Keychain: KeychainProtocol {
     /// For more information, refer to the documentation of `SecItemAdd`.
 
     public func addItem(
-        query: [CFString: Any]
-    ) -> OSStatus {
-        SecItemAdd(
-            query as CFDictionary,
+        query: Set<KeychainQueryItem>
+    ) async throws {
+        let status = SecItemAdd(
+            query.toCFDictionary(),
             nil
         )
+
+        guard status == errSecSuccess else {
+            throw KeychainError.errorStatus(status)
+        }
     }
 
     /// Modify zero or more items which match a search query.
@@ -40,27 +44,46 @@ public struct Keychain: KeychainProtocol {
     /// For more information, refer to the documentation of `SecItemUpdate`.
 
     public func updateItem(
-        query: [CFString: Any],
-        attributesToUpdate: [CFString: Any]
-    ) -> OSStatus {
-        SecItemUpdate(
-            query as CFDictionary,
-            attributesToUpdate as CFDictionary
+        query: Set<KeychainQueryItem>,
+        attributesToUpdate: Set<KeychainQueryItem>
+    ) async throws {
+        let status = SecItemUpdate(
+            query.toCFDictionary(),
+            attributesToUpdate.toCFDictionary()
         )
+
+        guard status == errSecSuccess else {
+            throw KeychainError.errorStatus(status)
+        }
     }
 
     /// Returns one or more items which match a search query.
     ///
     /// For more information, refer to the documentation of `SecItemCopyMatching`.
 
-    public func fetchItem(
-        query: [CFString: Any],
-        result: UnsafeMutablePointer<CFTypeRef?>?
-    ) -> OSStatus {
-        SecItemCopyMatching(
-            query as CFDictionary,
-            result
+    public func fetchItem<T>(
+        query: Set<KeychainQueryItem>
+    ) async throws -> T? {
+        var result: CFTypeRef?
+
+        let status = SecItemCopyMatching(
+            query.toCFDictionary(),
+            &result
         )
+
+        if status == errSecItemNotFound {
+            return nil
+        }
+
+        guard status == errSecSuccess else {
+            throw KeychainError.errorStatus(status)
+        }
+
+        guard let castedResult = result as? T else {
+            throw KeychainError.failedToCastResult
+        }
+
+        return castedResult
     }
 
     /// Delete zero or more items which match a search query.
@@ -68,11 +91,30 @@ public struct Keychain: KeychainProtocol {
     /// For more information, refer to the documentation of `SecItemDelete`.
 
     public func deleteItem(
-        query: [CFString: Any]
-    ) -> OSStatus {
-        SecItemDelete(
-            query as CFDictionary
+        query: Set<KeychainQueryItem>
+    ) async throws {
+        let status = SecItemDelete(
+            query.toCFDictionary()
         )
+
+        guard status == errSecSuccess else {
+            throw KeychainError.errorStatus(status)
+        }
+    }
+
+}
+
+private extension Set<KeychainQueryItem> {
+
+    func toCFDictionary() -> CFDictionary {
+        var dictionary = [CFString: Any]()
+
+        for item in self {
+            let entry = item.toCFDictionaryEntry()
+            dictionary[entry.0] = entry.1
+        }
+
+        return dictionary as CFDictionary
     }
 
 }

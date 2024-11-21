@@ -17,7 +17,7 @@
 //
 
 import CommonCrypto
-import Foundation
+public import Foundation
 
 /// A namespace for AES256 cryptographic operations.
 

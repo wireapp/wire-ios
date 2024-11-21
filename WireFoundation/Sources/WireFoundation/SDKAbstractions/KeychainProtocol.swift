@@ -16,28 +16,79 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
 /// A protocol mirroring Keychain api to allow mocking in tests.
 public protocol KeychainProtocol: Sendable {
 
     func addItem(
-        query: [CFString: Any]
-    ) -> OSStatus
+        query: Set<KeychainQueryItem>
+    ) async throws
 
     func updateItem(
-        query: [CFString: Any],
-        attributesToUpdate: [CFString: Any]
-    ) -> OSStatus
+        query: Set<KeychainQueryItem>,
+        attributesToUpdate: Set<KeychainQueryItem>
+    ) async throws
 
-    func fetchItem(
-        query: [CFString: Any],
-        result: UnsafeMutablePointer<CFTypeRef?>?
-    ) -> OSStatus
+    func fetchItem<T>(
+        query: Set<KeychainQueryItem>
+    ) async throws -> T?
 
     func deleteItem(
-        query: [CFString: Any]
-    ) -> OSStatus
+        query: Set<KeychainQueryItem>
+    ) async throws
+
+}
+
+public enum KeychainError: Error {
+
+    case failedToCastResult
+    case errorStatus(OSStatus)
+
+}
+
+public enum KeychainQueryItem: Hashable, Equatable, Sendable {
+
+    case service(String)
+    case account(String)
+    case itemClass(ItemClass)
+    case accessible(ItemAccessibility)
+    case returningData(Bool)
+    case data(Data)
+
+    public enum ItemClass: Equatable, Sendable {
+
+        case genericPassword
+
+    }
+
+    public enum ItemAccessibility: Equatable, Sendable {
+
+        case afterFirstUnlock
+
+    }
+
+    func toCFDictionaryEntry() -> (CFString, Any) {
+        switch self {
+        case .service(let string):
+            (kSecAttrService, string)
+
+        case .account(let string):
+            (kSecAttrAccount, string)
+
+        case .itemClass(let itemClass):
+            (kSecClass, itemClass)
+
+        case .accessible(.afterFirstUnlock):
+            (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)
+
+        case .returningData(let bool):
+            (kSecReturnData, bool)
+
+        case .data(let data):
+            (kSecValueData, data)
+        }
+    }
+
 
 }

@@ -99,14 +99,14 @@ actor CookieStorage: CookieStorageProtocol {
         }
 
         if try await fetchCookieData() != nil {
-            try updateCookieInKeychain(encryptedCookieData)
+            try await updateCookieInKeychain(encryptedCookieData)
         } else {
-            try addCookieToKeychain(encryptedCookieData)
+            try await addCookieToKeychain(encryptedCookieData)
         }
     }
 
     private func fetchCookieData() async throws -> Data? {
-        guard let encryptedCookieData = try fetchCookieDataFromKeychain() else {
+        guard let encryptedCookieData = try await fetchCookieDataFromKeychain() else {
             return nil
         }
 
@@ -122,69 +122,49 @@ actor CookieStorage: CookieStorageProtocol {
 
     // MARK: - Keychain
 
-    private func addCookieToKeychain(_ cookieData: Data) throws {
+    private func addCookieToKeychain(_ cookieData: Data) async throws {
         let query = addQuery(cookieData: cookieData)
-        let status = keychain.addItem(query: query)
-
-        guard status == errSecSuccess else {
-            throw Failure.failedKeychainAdd(status: status)
-        }
+        try await keychain.addItem(query: query)
     }
 
-    private func updateCookieInKeychain(_ cookieData: Data) throws {
+    private func updateCookieInKeychain(_ cookieData: Data) async throws {
         let updateQuery = updateQuery(cookieData: cookieData)
-        let status = keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
-
-        guard status == errSecSuccess else {
-            throw Failure.failedKeychainUpdate(status: status)
-        }
+        try await keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
     }
 
-    private func fetchCookieDataFromKeychain() throws -> Data? {
-        var result: CFTypeRef?
-        let status = keychain.fetchItem(query: fetchQuery, result: &result)
-
-        switch status {
-        case errSecItemNotFound:
+    private func fetchCookieDataFromKeychain() async throws -> Data? {
+        guard let base64CookieData: Data = try await keychain.fetchItem(query: fetchQuery) else {
             return nil
-
-        case errSecSuccess:
-            guard let base64CookieData = result as? Data else {
-                throw Failure.failedKeychainFetch(status: nil)
-            }
-
-            guard let cookieData = Data(base64Encoded: base64CookieData) else {
-                throw Failure.malformedCookieData
-            }
-
-            return cookieData
-
-        default:
-            throw Failure.failedKeychainFetch(status: status)
         }
+
+        guard let cookieData = Data(base64Encoded: base64CookieData) else {
+            throw Failure.malformedCookieData
+        }
+
+        return cookieData
     }
 
-    private lazy var baseQuery: [CFString: Any] = [
-        kSecAttrService: "Wire: Credentials for wire.com",
-        kSecAttrAccount: userID.uuidString,
-        kSecClass: kSecClassGenericPassword
+    private lazy var baseQuery: Set<KeychainQueryItem> = [
+        .service("Wire: Credentials for wire.com"),
+        .account(userID.uuidString),
+        .itemClass(.genericPassword)
     ]
 
-    private lazy var fetchQuery: [CFString: Any] = {
+    private lazy var fetchQuery: Set<KeychainQueryItem> = {
         var result = baseQuery
-        result[kSecReturnData] = true
+        result.insert(.returningData(true))
         return result
     }()
 
-    private func addQuery(cookieData: Data) -> [CFString: Any] {
+    private func addQuery(cookieData: Data) -> Set<KeychainQueryItem> {
         var result = updateQuery(cookieData: cookieData)
-        result[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+        result.insert(.accessible(.afterFirstUnlock))
         return result
     }
 
-    private func updateQuery(cookieData: Data) -> [CFString: Any] {
+    private func updateQuery(cookieData: Data) -> Set<KeychainQueryItem> {
         var result = baseQuery
-        result[kSecValueData] = cookieData.base64EncodedData()
+        result.insert(.data(cookieData.base64EncodedData()))
         return result
     }
 

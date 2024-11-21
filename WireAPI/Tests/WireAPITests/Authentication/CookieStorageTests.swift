@@ -84,36 +84,23 @@ final class CookieStorageTests: XCTestCase {
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
 
         // Mock no existing cookie.
-        keychain.fetchItemQueryResult_MockValue = errSecItemNotFound
+        await keychain.setFetchItemQuery_MockValue(nil)
 
         // Mock successul add.
-        keychain.addItemQuery_MockValue = errSecSuccess
+        await keychain.setAddItemQuery_MockMethod({ _ in })
 
         // When
         try await sut.storeCookies([validCookie])
 
         // Then first we tried to fetch an existing cookie.
-        let fetchInvocations = keychain.fetchItemQueryResult_Invocations
+        let fetchInvocations = await keychain.fetchItemQuery_Invocations
         try XCTAssertCount(fetchInvocations, count: 1)
-        let fetchQuery = fetchInvocations[0].query
-
-        XCTAssertEqual(fetchQuery[kSecAttrService] as? String, "Wire: Credentials for wire.com")
-        XCTAssertEqual(fetchQuery[kSecAttrAccount] as? String, Scaffolding.userID.uuidString)
-        XCTAssertEqual(fetchQuery[kSecClass] as! CFString, kSecClassGenericPassword)
-        XCTAssertEqual(fetchQuery[kSecReturnData] as? Bool, true)
+        XCTAssertEqual(fetchInvocations[0], Scaffolding.fetchQuery)
 
         // Then we added the new cookie.
-        let addInvocations = keychain.addItemQuery_Invocations
+        let addInvocations = await keychain.addItemQuery_Invocations
         try XCTAssertCount(addInvocations, count: 1)
-        let addQuery = addInvocations[0]
-
-        XCTAssertEqual(addQuery[kSecAttrService] as? String, "Wire: Credentials for wire.com")
-        XCTAssertEqual(addQuery[kSecAttrAccount] as? String, Scaffolding.userID.uuidString)
-        XCTAssertEqual(addQuery[kSecClass] as! CFString, kSecClassGenericPassword)
-        XCTAssertEqual(addQuery[kSecAttrAccessible] as! CFString, kSecAttrAccessibleAfterFirstUnlock)
-
-        let encryptedCookieData = try XCTUnwrap(addQuery[kSecValueData] as? Data)
-        assertStoredCookieData(encryptedCookieData, equals: validCookie)
+        try assertAddQuery(addInvocations[0], addedCookie: validCookie)
     }
 
     func testStoreCookies_Updates_Keychain() async throws {
@@ -121,50 +108,31 @@ final class CookieStorageTests: XCTestCase {
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
 
         // Mock existing cookie.
-        keychain.fetchItemQueryResult_MockMethod = { _, result in
-            let data = Data("raw cookie".utf8).base64EncodedData()
-            result?.pointee = data as AnyObject?
-            return errSecSuccess
-        }
+        let data = Data("raw cookie".utf8).base64EncodedData()
+        await keychain.setFetchItemQuery_MockValue(data)
 
         // Mock successul update.
-        keychain.updateItemQueryAttributesToUpdate_MockValue = errSecSuccess
+        await keychain.setUpdateItemQueryAttributesToUpdate_MockMethod({ _, _ in })
 
         // When
         try await sut.storeCookies([validCookie])
 
         // Then first we tried to fetch an existing cookie.
-        let fetchInvocations = keychain.fetchItemQueryResult_Invocations
+        let fetchInvocations = await keychain.fetchItemQuery_Invocations
         try XCTAssertCount(fetchInvocations, count: 1)
-
-        let fetchQuery1 = fetchInvocations[0].query
-        XCTAssertEqual(fetchQuery1[kSecAttrService] as? String, "Wire: Credentials for wire.com")
-        XCTAssertEqual(fetchQuery1[kSecAttrAccount] as? String, Scaffolding.userID.uuidString)
-        XCTAssertEqual(fetchQuery1[kSecClass] as! CFString, kSecClassGenericPassword)
-        XCTAssertEqual(fetchQuery1[kSecReturnData] as? Bool, true)
+        XCTAssertEqual(fetchInvocations[0], Scaffolding.fetchQuery)
 
         // Then we updated the keychain with the new cookie.
-        let updateInvocations = keychain.updateItemQueryAttributesToUpdate_Invocations
+        let updateInvocations = await keychain.updateItemQueryAttributesToUpdate_Invocations
         try XCTAssertCount(updateInvocations, count: 1)
 
-        let fetchQuery2 = updateInvocations[0].query
-        XCTAssertEqual(fetchQuery2[kSecAttrService] as? String, "Wire: Credentials for wire.com")
-        XCTAssertEqual(fetchQuery2[kSecAttrAccount] as? String, Scaffolding.userID.uuidString)
-        XCTAssertEqual(fetchQuery2[kSecClass] as! CFString, kSecClassGenericPassword)
-        XCTAssertEqual(fetchQuery2[kSecReturnData] as? Bool, true)
-
-        let updateQuery = updateInvocations[0].attributesToUpdate
-        XCTAssertEqual(updateQuery[kSecAttrService] as? String, "Wire: Credentials for wire.com")
-        XCTAssertEqual(updateQuery[kSecAttrAccount] as? String, Scaffolding.userID.uuidString)
-        XCTAssertEqual(updateQuery[kSecClass] as! CFString, kSecClassGenericPassword)
-
-        let encryptedCookieData = try XCTUnwrap(updateQuery[kSecValueData] as? Data)
-        assertStoredCookieData(encryptedCookieData, equals: validCookie)
+        XCTAssertEqual(updateInvocations[0].query, Scaffolding.fetchQuery)
+        try assertUpdateQuery(updateInvocations[0].attributesToUpdate, updatedCookie: validCookie)
     }
 
     func testFetchCookies_No_Cookies_EXist() async throws {
         // Mock no existing cookie.
-        keychain.fetchItemQueryResult_MockValue = errSecItemNotFound
+        await keychain.setFetchItemQuery_MockValue(nil)
 
         // When
         let cookies = try await sut.fetchCookies()
@@ -182,10 +150,7 @@ final class CookieStorageTests: XCTestCase {
         )
 
         // Mock existing cookie.
-        keychain.fetchItemQueryResult_MockMethod = { _, result in
-            result?.pointee = storedCookieData as AnyObject?
-            return errSecSuccess
-        }
+        await keychain.setFetchItemQuery_MockValue(storedCookieData)
 
         // When
         let cookies = try await sut.fetchCookies()
@@ -198,6 +163,38 @@ final class CookieStorageTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func assertAddQuery(
+        _ query: Set<KeychainQueryItem>,
+        addedCookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        XCTAssertTrue(query.contains(.accessible(.afterFirstUnlock)), file: file, line: line)
+        try assertUpdateQuery(query, updatedCookie: addedCookie, file: file, line: line)
+    }
+
+    private func assertUpdateQuery(
+        _ query: Set<KeychainQueryItem>,
+        updatedCookie: HTTPCookie,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        XCTAssertTrue(query.contains(.service("Wire: Credentials for wire.com")), file: file, line: line)
+        XCTAssertTrue(query.contains(.account(Scaffolding.userID.uuidString)), file: file, line: line)
+        XCTAssertTrue(query.contains(.itemClass(.genericPassword)), file: file, line: line)
+
+        var storedData: Data?
+        for item in query {
+            if case let .data(data) = item {
+                storedData = data
+                break
+            }
+        }
+
+        let encryptedCookieData = try XCTUnwrap(storedData, file: file, line: line)
+        assertStoredCookieData(encryptedCookieData, equals: updatedCookie, file: file, line: line)
+    }
 
     private func assertStoredCookieData(
         _ storedCookieData: Data,
@@ -212,7 +209,9 @@ final class CookieStorageTests: XCTestCase {
             )
             try assertCookies(
                 actualHTTPCookies,
-                equals: cookie
+                equals: cookie,
+                file: file,
+                line: line
             )
         } catch {
             XCTFail(
@@ -229,11 +228,11 @@ final class CookieStorageTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        try XCTAssertCount(cookies, count: 1)
-        XCTAssertEqual(cookies[0].name, cookie.name)
-        XCTAssertEqual(cookies[0].value, cookie.value)
-        XCTAssertEqual(cookies[0].path, cookie.path)
-        XCTAssertEqual(cookies[0].domain, cookie.domain)
+        try XCTAssertCount(cookies, count: 1, file: file, line: line)
+        XCTAssertEqual(cookies[0].name, cookie.name, file: file, line: line)
+        XCTAssertEqual(cookies[0].value, cookie.value, file: file, line: line)
+        XCTAssertEqual(cookies[0].path, cookie.path, file: file, line: line)
+        XCTAssertEqual(cookies[0].domain, cookie.domain, file: file, line: line)
     }
 
 }
@@ -246,6 +245,15 @@ private enum Scaffolding {
         try AES256Crypto.generateRandomEncryptionKey()
     }
 
+    static var fetchQuery: Set<KeychainQueryItem> {
+        [
+            .service("Wire: Credentials for wire.com"),
+            .account(userID.uuidString),
+            .itemClass(.genericPassword),
+            .returningData(true)
+        ]
+    }
+    
     static let invalidCookie = HTTPCookie(properties: [
         .name: "invalid-name",
         .path: "some path",
@@ -285,4 +293,3 @@ private enum Scaffolding {
     }
 
 }
-

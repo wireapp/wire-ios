@@ -57,7 +57,7 @@ public class MockUpdateConversationFolderUseCase: @unchecked Sendable, UpdateCon
     }
 }
 
-public class MockFolderCreationUseCaseType: @unchecked Sendable, FolderCreationUseCaseType {
+public class MockCreateConversationFolderUseCase: @unchecked Sendable, CreateConversationFolderUseCaseProtocol {
 
     // MARK: - Life cycle
 

@@ -64,29 +64,24 @@ final class MessageLocalStoreTests: XCTestCase {
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
 
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for messageType in Scaffolding.allMessageTypes {
-                taskGroup.addTask { [self] in
+        for messageType in Scaffolding.allMessageTypes {
+            let conversation = await makeConversation(creator: user)
+            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
 
-                    let conversation = await makeConversation(creator: user)
-                    conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+            // When
 
-                    // When
+            await sut.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: UUID(),
+                conversationDomain: Scaffolding.domain1
+            )
 
-                    await sut.addSystemMessageToConversation(
-                        messageType: messageType,
-                        conversationID: UUID(),
-                        conversationDomain: Scaffolding.domain1
-                    )
+            // Then
 
-                    // Then
-
-                    await internalTest_assertConversationLastMessages(
-                        messageType: messageType,
-                        conversation: conversation
-                    )
-                }
-            }
+            await internalTest_assertConversationLastMessages(
+                messageType: messageType,
+                conversation: conversation
+            )
         }
     }
 
