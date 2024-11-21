@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireSystem
+import Foundation
+import WireSystem
 
 @objc(WireLoggerObjC)
-public final class WireLoggerObjC: WireLoggerObjCBase {}
+final class WireLoggerObjC: WireLoggerObjCBase {}

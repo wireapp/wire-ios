@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5994B7F22CEE4F40000F3378 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 5994B7F12CEE4F40000F3378 /* WireSystem */; };
-		59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */; };
+		59380F972CEF56720046661E /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59380F962CEF56720046661E /* WireSystem */; };
+		59380FCF2CEF58140046661E /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +61,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5994B7F22CEE4F40000F3378 /* WireSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,19 +68,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */,
+				59380FCF2CEF58140046661E /* WireLegacy.framework in Frameworks */,
+				59380F972CEF56720046661E /* WireSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		59380F952CEF56720046661E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		59BA6D452CEE11DE0023684C = {
 			isa = PBXGroup;
 			children = (
 				59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */,
 				59BA6D512CEE11DE0023684C /* WireLegacy */,
 				59BA6D5D2CEE11DE0023684C /* WireLegacyTests */,
+				59380F952CEF56720046661E /* Frameworks */,
 				59BA6D502CEE11DE0023684C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -126,7 +134,6 @@
 			);
 			name = WireLegacy;
 			packageProductDependencies = (
-				5994B7F12CEE4F40000F3378 /* WireSystem */,
 			);
 			productName = WireLegacy;
 			productReference = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */;
@@ -150,6 +157,7 @@
 			);
 			name = WireLegacyTests;
 			packageProductDependencies = (
+				59380F962CEF56720046661E /* WireSystem */,
 			);
 			productName = WireLegacyTests;
 			productReference = 59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */;
@@ -169,6 +177,7 @@
 					};
 					59BA6D582CEE11DE0023684C = {
 						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
@@ -424,6 +433,7 @@
 		59BA6D682CEE11DE0023684C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -431,6 +441,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireLegacyTests/WireLegacyTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -438,6 +451,7 @@
 		59BA6D692CEE11DE0023684C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -445,6 +459,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireLegacyTests/WireLegacyTests-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -482,7 +498,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5994B7F12CEE4F40000F3378 /* WireSystem */ = {
+		59380F962CEF56720046661E /* WireSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystem;
 		};
