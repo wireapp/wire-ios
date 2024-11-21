@@ -43,6 +43,30 @@ actor CookieStorage: CookieStorageProtocol {
     private let cookieEncryptionKey: Data
     private let keychain: any KeychainProtocol
 
+    private lazy var baseQuery: Set<KeychainQueryItem> = [
+        .service("Wire: Credentials for wire.com"),
+        .account(userID.uuidString),
+        .itemClass(.genericPassword)
+    ]
+
+    private lazy var fetchQuery: Set<KeychainQueryItem> = {
+        var result = baseQuery
+        result.insert(.returningData(true))
+        return result
+    }()
+
+    private func addQuery(cookieData: Data) -> Set<KeychainQueryItem> {
+        var result = updateQuery(cookieData: cookieData)
+        result.insert(.accessible(.afterFirstUnlock))
+        return result
+    }
+
+    private func updateQuery(cookieData: Data) -> Set<KeychainQueryItem> {
+        var result = baseQuery
+        result.insert(.data(cookieData.base64EncodedData()))
+        return result
+    }
+
     init(
         userID: UUID,
         cookieEncryptionKey: Data,
@@ -139,30 +163,6 @@ actor CookieStorage: CookieStorageProtocol {
         }
 
         return cookieData
-    }
-
-    private lazy var baseQuery: Set<KeychainQueryItem> = [
-        .service("Wire: Credentials for wire.com"),
-        .account(userID.uuidString),
-        .itemClass(.genericPassword)
-    ]
-
-    private lazy var fetchQuery: Set<KeychainQueryItem> = {
-        var result = baseQuery
-        result.insert(.returningData(true))
-        return result
-    }()
-
-    private func addQuery(cookieData: Data) -> Set<KeychainQueryItem> {
-        var result = updateQuery(cookieData: cookieData)
-        result.insert(.accessible(.afterFirstUnlock))
-        return result
-    }
-
-    private func updateQuery(cookieData: Data) -> Set<KeychainQueryItem> {
-        var result = baseQuery
-        result.insert(.data(cookieData.base64EncodedData()))
-        return result
     }
 
 }
