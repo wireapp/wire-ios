@@ -36,7 +36,7 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
             fromConversation: true
         )
         let navigationControllerWrapper = selfClientController.wrapInNavigationController()
-        navigationControllerWrapper.presentTopmost()
+        navigationControllerWrapper.presentOverAll()
     }
 
     func howToDoThat() {

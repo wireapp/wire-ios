@@ -168,6 +168,7 @@ public struct SnapshotHelper {
     ///   - recording: A `Bool` indicating whether to record a new reference snapshot. Defaults to `false`.
     ///   - file: The invoking file name.
     ///   - testName: The name of the reference image.
+    ///   - safeArea: safeArea of the snapshot. Defaults to `zero`
     ///   - line: The invoking line number.
 
     public func verify(
@@ -177,11 +178,12 @@ public struct SnapshotHelper {
         record recording: Bool = false,
         file: StaticString = #filePath,
         testName: String = #function,
+        safeArea: UIEdgeInsets = .zero,
         line: UInt = #line
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
+        let config = size.map { ViewImageConfig(safeArea: safeArea, size: $0, traits: traits) }
 
         let failure = verifySnapshot(
             of: value,
@@ -410,5 +412,25 @@ public struct SnapshotHelper {
             .appendingPathComponent("SnapshotResults")
             .path
         setenv("SNAPSHOT_ARTIFACTS", artifactsDirectory, 0)
+    }
+}
+
+public extension ViewImageConfig {
+
+    static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
+        let safeArea: UIEdgeInsets
+        let size: CGSize
+        switch orientation {
+        case .landscape:
+            safeArea = .init(top: 0, left: 50, bottom: 20, right: 50) // Adjusted for iPhone 14
+            size = .init(width: 852, height: 393) // iPhone 14 landscape dimensions
+        case .portrait:
+            safeArea = .init(top: 50, left: 0, bottom: 34, right: 0) // Adjusted for iPhone 14
+            size = .init(width: 393, height: 852) // iPhone 14 portrait dimensions
+        }
+
+        return .init(
+            safeArea: safeArea, size: size, traits: UITraitCollection.iPhone13(orientation)
+        )
     }
 }
