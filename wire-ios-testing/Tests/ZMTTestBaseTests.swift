@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import XCTest
 
-final class ZMTTestBaseTests: ZMTBaseTest {
+class ZMTTestBaseTests: ZMTBaseTest {
 
     func testVerySmallJPEG() {
 

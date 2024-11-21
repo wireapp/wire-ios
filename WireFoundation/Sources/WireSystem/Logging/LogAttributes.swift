@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LogAttributes = [LogAttributesKey: any Encodable]
+public typealias LogAttributes = [LogAttributesKey: Encodable]
 
 public enum LogAttributesKey: String, Comparable {
 
@@ -43,6 +43,5 @@ public enum LogAttributesKey: String, Comparable {
 }
 
 public extension LogAttributes {
-    // TODO: try to remove nonisolated(unsafe)
-    nonisolated(unsafe) static var safePublic = [LogAttributesKey.public: true]
+    static var safePublic = [LogAttributesKey.public: true]
 }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 // sourcery: AutoMockable
 /// Abstracts accessing the current system date in order to be mockable in unit tests.

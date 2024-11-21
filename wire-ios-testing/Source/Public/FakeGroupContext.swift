@@ -19,7 +19,7 @@
 import Foundation
 import WireSystem
 
-@objc(FakeGroupContext) @objcMembers
+@objcMembers
 public class FakeGroupContext: NSObject, GroupQueue {
 
     public let dispatchGroup: ZMSDispatchGroup?
@@ -50,7 +50,7 @@ public class FakeGroupContext: NSObject, GroupQueue {
         // swiftlint:enable legacy_random
     }
 
-    public func performGroupedBlock(_ block: @escaping @Sendable () -> Void) {
+    public func performGroupedBlock(_ block: @escaping () -> Void) {
         dispatchGroup?.async(on: queue, block: block)
     }
 }

@@ -16,6 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
-// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
-// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
+@import CoreData;
+
+@interface ZMMockEntity : NSManagedObject
+
+@property (nonatomic) int64_t identifier;
+@property (nonatomic) int16_t field;
+@property (nonatomic) NSString *field2;
+@property (nonatomic) NSString *field3;
+
+@property (nonatomic) NSMutableSet *mockEntities;
+
+@end

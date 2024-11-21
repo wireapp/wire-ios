@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 public extension DispatchQueue {
-    func async(group: ZMSDispatchGroup, execute: @escaping @Sendable () -> Void) {
+    func async(group: ZMSDispatchGroup, execute: @escaping  () -> Void) {
         group.enter()
         async {
             execute()

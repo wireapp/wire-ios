@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 import os.log
 import ZipArchive
 
 /// Represents an entry to be logged.
 @objcMembers
-public final class ZMSLogEntry: NSObject, Sendable {
+public final class ZMSLogEntry: NSObject {
     public let text: String
     public let timestamp: Date
 
@@ -60,13 +60,11 @@ public final class ZMSLog: NSObject {
     /// Tag to use for this logging facility
     fileprivate let tag: String
 
-    // TODO: try to remove nonisolated(unsafe)
     /// FileHandle instance used for updating the log
-    nonisolated(unsafe) fileprivate static var updatingHandle: FileHandle?
+    fileprivate static var updatingHandle: FileHandle?
 
-    // TODO: try to remove nonisolated(unsafe)
     /// Log observers
-    nonisolated(unsafe) fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
+    fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
 
     @objc
     public init(tag: String) {

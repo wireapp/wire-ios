@@ -19,7 +19,7 @@
 #import <Foundation/Foundation.h>
 #import <AssertMacros.h>
 
-#import <WireLegacy/ZMSDefines.h>
+#import <WireSystem/ZMSDefines.h>
 
 /**
  
@@ -131,7 +131,7 @@ do { \
                         ""]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjC assertionDumpLog:output]; \
+    [WireLoggerObjc assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \
@@ -149,7 +149,7 @@ do { \
                         message]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjC assertionDumpLog:output]; \
+    [WireLoggerObjc assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \

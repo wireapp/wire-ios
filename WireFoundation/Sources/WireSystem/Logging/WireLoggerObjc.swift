@@ -16,15 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <CoreData/CoreData.h>
+import Foundation
 
-@interface ZMMockEntity : NSManagedObject
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+public final class WireLoggerObjc: NSObject {
 
-@property (nonatomic) int64_t identifier;
-@property (nonatomic) int16_t field;
-@property (nonatomic) NSString *field2;
-@property (nonatomic) NSString *field3;
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
 
-@property (nonatomic) NSMutableSet *mockEntities;
+    @objc(logReceivedUpdateEventWithId:)
+    static func logReceivedUpdateEvent(eventId: String) {
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
+    }
 
-@end
+    @objc(logSaveCoreDataError:)
+    static func logSaveCoreData(error: Error) {
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
+    }
+}

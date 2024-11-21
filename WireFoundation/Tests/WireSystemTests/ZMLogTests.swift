@@ -206,7 +206,7 @@ extension ZMLogTests {
 
 extension ZMLogTests {
 
-    func testThatLogHookIsCalledWithError() async {
+    func testThatLogHookIsCalledWithError() {
 
         // GIVEN
         let tag = "Network"
@@ -225,13 +225,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        await fulfillment(of: [expectation], timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
-    func testThatLogHookIsNotCalledWithInfo() async throws {
+    func testThatLogHookIsNotCalledWithInfo() {
 
         // GIVEN
         let tag = "Network"
@@ -248,13 +248,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).info(message)
 
         // THEN
-        try await Task.sleep(for: .seconds(0.2))
+        Thread.sleep(forTimeInterval: 0.2)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
-    func testThatLogHookIsCalledWithWarning() async {
+    func testThatLogHookIsCalledWithWarning() {
 
         // GIVEN
         let tag = "Network"
@@ -273,13 +273,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).warn(message)
 
         // THEN
-        await fulfillment(of: [expectation], timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
-    func testThatLogHookIsNotCalledWithDebug() async throws {
+    func testThatLogHookIsNotCalledWithDebug() {
 
         // GIVEN
         let tag = "Network"
@@ -297,13 +297,13 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        try await Task.sleep(for: .seconds(0.2))
+        Thread.sleep(forTimeInterval: 0.2)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
     }
 
-    func testThatLogHookIsCalledWithDebugIfEnabled() async {
+    func testThatLogHookIsCalledWithDebugIfEnabled() {
 
         // GIVEN
         let tag = "Network"
@@ -323,7 +323,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        await fulfillment(of: [expectation], timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -361,7 +361,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
     }
 
-    func testThatCallsMultipleLogHook() async {
+    func testThatCallsMultipleLogHook() {
 
         // GIVEN
         let tag = "Network"
@@ -388,7 +388,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        await fulfillment(of: [expectation1, expectation2], timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token1)

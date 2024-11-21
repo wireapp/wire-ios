@@ -18,8 +18,7 @@
 
 import Foundation
 
-// TODO: try to remove nonisolated(unsafe)// TODO: try to remove nonisolated(unsafe)
-nonisolated(unsafe) private var recordingToken: LogHookToken?
+private var recordingToken: LogHookToken?
 
 public extension ZMSLog {
 
@@ -55,8 +54,7 @@ public extension ZMSLog {
         }
     }
 
-    // TODO: try to remove nonisolated(unsafe)
-    nonisolated(unsafe) private static var dateFormatter: DateFormatter = {
+    private static var dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"
         return df

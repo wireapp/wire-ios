@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 public struct WireLogger: LoggerProtocol {
 
-    // TODO: try to remove nonisolated(unsafe)
-    nonisolated(unsafe) private static var provider = AggregatedLogger(loggers: [
+    private static var provider = AggregatedLogger(loggers: [
         SystemLogger(),
         CocoaLumberjackLogger()
     ])
@@ -76,7 +73,7 @@ public struct WireLogger: LoggerProtocol {
 
     // MARK: - Private Helpers
 
-    private func shouldLogMessage(_ message: any LogConvertible) -> Bool {
+    private func shouldLogMessage(_ message: LogConvertible) -> Bool {
         !message.logDescription.isEmpty
     }
 
@@ -96,7 +93,7 @@ public struct WireLogger: LoggerProtocol {
         provider.logFiles
     }
 
-    public static func addLogger(_ logger: any LoggerProtocol) {
+    public static func addLogger(_ logger: LoggerProtocol) {
         provider.addLogger(logger)
     }
 }

@@ -66,6 +66,7 @@
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
 		5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */; };
+		591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE712FC7295487A8006EA7B3 /* WireSystem.framework */; };
 		591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		591B6E7E2C8B0A23009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0AD296EFBE60055E981 /* WireTesting.framework */; };
 		591B6E812C8B0A27009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
@@ -75,8 +76,6 @@
 		598E86B62BF4D64100FC5438 /* WireUtilitiesSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */; };
 		59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C592C89CB1F00EA7999 /* WireFoundation */; };
-		59CD9F7C2CEF620C008D0232 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD9F7B2CEF620C008D0232 /* WireSystem */; };
-		59CD9F7E2CEF628B008D0232 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59CD9F7D2CEF628B008D0232 /* WireLegacy.framework */; };
 		59E3C25C2BD8053000C95BD7 /* ZMAccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */; };
 		59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59F654252BF83DC500E521E0 /* MockUserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */; };
@@ -279,7 +278,6 @@
 		598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		598E86C42BF4D77200FC5438 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		598E86C52BF4D77200FC5438 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
-		59CD9F7D2CEF628B008D0232 /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColorTests.swift; sourceTree = "<group>"; };
 		59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAccentColor.h; sourceTree = "<group>"; };
 		59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
@@ -345,6 +343,7 @@
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
 		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
+		EE712FC7295487A8006EA7B3 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0AD296EFBE60055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC872BD158BC00F7853F /* WireUtilities.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireUtilities.docc; sourceTree = "<group>"; };
 		EEAB73832A31CE4100EAB4E5 /* Data+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Bytes.swift"; sourceTree = "<group>"; };
@@ -394,9 +393,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59CD9F7C2CEF620C008D0232 /* WireSystem in Frameworks */,
+				591B6E7A2C8B0A1B009F8A7B /* WireSystem.framework in Frameworks */,
 				59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */,
-				59CD9F7E2CEF628B008D0232 /* WireLegacy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,7 +554,7 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59CD9F7D2CEF628B008D0232 /* WireLegacy.framework */,
+				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
 				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 			);
 			name = Frameworks;
@@ -879,7 +877,6 @@
 			name = WireUtilities;
 			packageProductDependencies = (
 				59B48C592C89CB1F00EA7999 /* WireFoundation */,
-				59CD9F7B2CEF620C008D0232 /* WireSystem */,
 			);
 			productName = WireUtilities;
 			productReference = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */;
@@ -1272,8 +1269,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
 			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -1282,7 +1277,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
 			buildSettings = {
-				SDKROOT = iphoneos;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -1293,6 +1287,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
 			};
@@ -1406,8 +1401,10 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUtilitiesSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1488,6 +1485,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUtilitiesSupport;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1554,10 +1552,6 @@
 		59B48C592C89CB1F00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
-		};
-		59CD9F7B2CEF620C008D0232 /* WireSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSystem;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 
+import XCTest
 @testable import WireSystem
 
 struct Item {
@@ -27,8 +27,7 @@ struct Item {
 }
 
 extension Item: SafeForLoggingStringConvertible {
-    // TODO: try to delete nonisolated(unsafe)
-    nonisolated(unsafe) static var redacted = "<redacted>"
+    static var redacted = "<redacted>"
 
     var safeForLoggingDescription: String {
         Item.redacted

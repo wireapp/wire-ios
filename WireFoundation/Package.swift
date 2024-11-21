@@ -9,52 +9,24 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireSystem", targets: ["WireSystem"]),
-        .library(name: "WireSystemSupport", targets: ["WireSystemSupport"]),
         .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../WirePlugins")
     ],
     targets: [
         .target(name: "WireFoundation"),
-        .target(
-            name: "WireFoundationSupport",
-            dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
         .testTarget(
             name: "WireFoundationTests",
             dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]
         ),
-
         .target(
-            name: "WireSystem",
-            dependencies: [
-                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-                "ZipArchive"
-            ]
-        ),
-        .target(
-            name: "WireSystemSupport",
-            dependencies: ["WireSystem"],
+            name: "WireFoundationSupport",
+            dependencies: ["WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
-        .testTarget(
-            name: "WireSystemTests",
-            dependencies: ["WireSystem", "WireSystemSupport"]
-        ),
-
-        .target(
-            name: "WireTestingPackage",
-            dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
-            ],
-            path: "./Sources/WireTesting"
         ),
 
         .target(
@@ -67,13 +39,19 @@ let package = Package(
             path: "./Tests/WireUtilitiesTests"
         ),
 
-        .binaryTarget(name: "ZipArchive", path: "../Carthage/Build/ZipArchive.xcframework")
+        .target(
+            name: "WireTestingPackage",
+            dependencies: [
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+            ],
+            path: "./Sources/WireTesting"
+        )
     ],
     swiftLanguageModes: [.v6]
 )
 
 for target in package.targets {
-    guard target.type != .binary else { continue }
+    guard target.type != .plugin else { continue }
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("FullTypedThrows"),

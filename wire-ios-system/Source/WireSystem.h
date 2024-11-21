@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+#import <Foundation/Foundation.h>
 
-/// Class to proxy WireLogger methods to Objective-C
-@objcMembers
-open class WireLoggerObjC: NSObject {
+//! Project version number for ZMSystem.
+FOUNDATION_EXPORT double ZMSystemVersionNumber;
 
-    public static func assertionDumpLog(_ message: String) {
-        WireLogger.system.critical(message, attributes: .safePublic)
-    }
+//! Project version string for ZMSystem.
+FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
 
-    @objc(logReceivedUpdateEventWithId:)
-    public static func logReceivedUpdateEvent(eventId: String) {
-        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
-    }
+// In this header, you should import all the public headers of your framework using statements like #import <ZMSystem/PublicHeader.h>
 
-    @objc(logSaveCoreDataError:)
-    public static func logSaveCoreData(error: any Error) {
-        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
-    }
-}
+#import <WireSystem/ZMSAsserts.h>
+#import <WireSystem/ZMSDefines.h>
+#import <WireSystem/ZMSLogging.h>

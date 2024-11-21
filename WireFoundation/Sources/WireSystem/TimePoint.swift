@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers

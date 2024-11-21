@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 /// Similar to a dispatch queue or NSOperationQueue.
 @objc(ZMSGroupQueue)
@@ -29,5 +29,5 @@ public protocol GroupQueue: NSObjectProtocol {
     /// Submits a block to the receiver's private queue and associates it with the receiver's group.
     /// This will use `NSManagedObjectContext.performBlock(_:)` internally and hence encapsulates
     /// an autorelease pool and a call to `NSManagedObjectContext.processPendingChanges()`.
-    func performGroupedBlock(_ block: @escaping @Sendable () -> Void)
+    func performGroupedBlock(_ block: @escaping () -> Void)
 }

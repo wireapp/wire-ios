@@ -24,13 +24,6 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireSystemTests",
-        "name" : "WireSystemTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "WireUtilitiesPackageTests",
         "name" : "WireUtilitiesPackageTests"
       }
