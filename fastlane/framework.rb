@@ -35,6 +35,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
+        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
         
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
@@ -100,9 +101,11 @@ class Framework
         case name
         when "wire-ios"
             "Wire-iOS"
+        when "WireFoundation"
+            "WireFoundation-Package"
         when "WireUI"
             "WireUI-Package"
-        when "WireDomain", "WireAPI", "WireAnalytics", "WireUI", "WireFoundation"
+        when "WireDomain", "WireAPI", "WireAnalytics"
             name
         when "wire-ios-mocktransport"
             "WireMockTransport"

@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "A32707A7-C104-45A8-B589-1A01369DE203",
+      "id" : "D125F0F6-776C-4A64-9AC7-FEA6C6571756",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -9,11 +9,6 @@
     }
   ],
   "defaultOptions" : {
-    "commandLineArgumentEntries" : [
-      {
-        "argument" : "-NSShowNonLocalizedStrings YES"
-      }
-    ],
     "language" : "en",
     "region" : "DE",
     "testExecutionOrdering" : "random"
@@ -21,7 +16,14 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:..\/WireFoundation",
+        "identifier" : "WireUtilitiesPackageTests",
+        "name" : "WireUtilitiesPackageTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireFoundation",
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
       }
