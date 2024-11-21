@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+#import <WireLegacy/WireLegacy.h>
 #import <XCTest/XCTest.h>
-#import <WireTesting/ZMTFailureRecorder.h>
-@import WireSystem;
+#import "ZMTFailureRecorder.h"
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
 
 typedef BOOL(^VerificationBlock)(void);
 
+@class ZMSDispatchGroup;
+@protocol ZMSGroupQueue;
 
 @interface ZMTBaseTest : XCTestCase
 

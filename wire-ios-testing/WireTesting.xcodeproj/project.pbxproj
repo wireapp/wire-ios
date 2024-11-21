@@ -54,30 +54,9 @@
 		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		594CDC6F2CEFDA84005536D5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				"Public/Mock Data Model/ZMMockEntity.h",
-				"Public/Mock Data Model/ZMMockEntity2.h",
-				"Public/NSData+WireTesting.h",
-				"Public/NSOperationQueue+WireTesting.h",
-				"Public/NSUUID+WireTesting.h",
-				Public/WireTesting.h,
-				"Public/XCTestCase+Helpers.h",
-				Public/ZMMockManagedObjectContextFactory.h,
-				Public/ZMTAsserts.h,
-				Public/ZMTBaseTest.h,
-				Public/ZMTFailureRecorder.h,
-				Public/ZMTImageComparator.h,
-			);
-			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		594CDC212CEFDA59005536D5 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
-		594CDC4C2CEFDA84005536D5 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (594CDC6F2CEFDA84005536D5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
+		594CDC4C2CEFDA84005536D5 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

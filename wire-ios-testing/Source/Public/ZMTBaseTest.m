@@ -21,8 +21,9 @@
 
 #import "ZMTBaseTest.h"
 #import "ZMTExpectation.h"
+#import "ZMTFailureRecorder.h"
 #import <libkern/OSAtomic.h>
-#import <WireTesting/WireTesting-Swift.h>
+#import "WireTesting-Swift.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import "NSUUID+WireTesting.h"
 

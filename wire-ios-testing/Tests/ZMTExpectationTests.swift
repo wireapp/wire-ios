@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSystem
 import XCTest
 
-class ZMTExpectationTests: ZMTBaseTest {
+final class ZMTExpectationTests: ZMTBaseTest {
 
     let notificationName = "ZMTFooBar"
 
