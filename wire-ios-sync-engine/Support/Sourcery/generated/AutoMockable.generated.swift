@@ -24,14 +24,14 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
+public import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
+public import UIKit
 #elseif os(OSX)
-import AppKit
+public import AppKit
 #endif
 
-import WireAnalytics
+public import WireAnalytics
 
 @testable import WireSyncEngine
 
@@ -1033,30 +1033,6 @@ public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceIn
         } else {
             fatalError("no mock for `calculateSupportedProtocols`")
         }
-    }
-
-}
-
-public class MockToFolderMovableConversation: ToFolderMovableConversation {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - moveToFolder
-
-    public var moveToFolder_Invocations: [LabelType] = []
-    public var moveToFolder_MockMethod: ((LabelType) -> Void)?
-
-    public func moveToFolder(_ folder: LabelType) {
-        moveToFolder_Invocations.append(folder)
-
-        guard let mock = moveToFolder_MockMethod else {
-            fatalError("no mock for `moveToFolder`")
-        }
-
-        mock(folder)
     }
 
 }

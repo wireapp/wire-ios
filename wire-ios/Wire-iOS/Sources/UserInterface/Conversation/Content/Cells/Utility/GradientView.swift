@@ -21,15 +21,15 @@ import UIKit
 final class GradientView: UIView {
 
     override static var layerClass: AnyClass {
-        return CAGradientLayer.self
+        CAGradientLayer.self
     }
 
     var gradientLayer: CAGradientLayer {
-        if let gradientLayer = self.layer as? CAGradientLayer {
+        if let gradientLayer = layer as? CAGradientLayer {
             return gradientLayer
         }
 
-        fatalError("gradientLayer is missing: \(self.layer)")
+        fatalError("gradientLayer is missing: \(layer)")
     }
 
     func setStartPoint(_ startPoint: CGPoint, endPoint: CGPoint, locations: [CGFloat]) {

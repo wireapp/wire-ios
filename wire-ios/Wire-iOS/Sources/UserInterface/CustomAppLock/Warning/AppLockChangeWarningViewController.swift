@@ -36,7 +36,7 @@ final class AppLockChangeWarningViewController: UIViewController {
     private var isAppLockActive: Bool
     private let userSession: UserSession
 
-    private let contentView: UIView = UIView()
+    private let contentView: UIView = .init()
 
     private lazy var confirmButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
@@ -54,7 +54,11 @@ final class AppLockChangeWarningViewController: UIViewController {
     }()
 
     private lazy var messageLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: messageLabelText, fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: messageLabelText,
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -64,9 +68,10 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     private var messageLabelText: String {
         if isAppLockActive {
-            return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
+            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel
+                .forcedApplock
         } else {
-            return L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
+            L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
         }
     }
 
@@ -78,6 +83,7 @@ final class AppLockChangeWarningViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -140,9 +146,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     @objc
     func confirmButtonTapped(sender: AnyObject?) {
-            userSession.perform {
-                self.userSession.needsToNotifyUserOfAppLockConfiguration = false
-            }
+        userSession.perform {
+            self.userSession.needsToNotifyUserOfAppLockConfiguration = false
+        }
 
         dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
     }

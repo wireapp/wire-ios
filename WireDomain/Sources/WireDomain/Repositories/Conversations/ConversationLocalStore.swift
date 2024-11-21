@@ -29,7 +29,8 @@ import WireFoundation
 ///
 /// Check out some of the private methods in `ConversationLocalStore` for a general context.
 ///
-/// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
+/// Check out the Confluence page for full details
+/// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
     /// Fetches or creates a conversation locally.
@@ -55,7 +56,8 @@ public protocol ConversationLocalStoreProtocol {
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from
+    /// backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
     func storeConversation(
@@ -651,6 +653,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         date: Date
     ) async {
         let allGroupConversations = await context.perform {
+            // swiftformat:disable:next redundantProperty
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
                 guard $0.conversation?.conversationType == .group else {
                     return nil
@@ -1100,7 +1103,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
     }
 
-    /// A helper method (for all conversations) that fetches or creates a conversation locally and executes a completion block.
+    /// A helper method (for all conversations) that fetches or creates a conversation locally and executes a completion
+    /// block.
     ///
     /// - Parameter conversationID: The conversation ID to fetch or create the local conversation from.
     /// - Parameter domain: The domain to fetch or create the conversation from.

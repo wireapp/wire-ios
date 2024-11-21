@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Observes call state to prompt the user for call quality feedback when appropriate.
- */
+/// Observes call state to prompt the user for call quality feedback when appropriate.
 
 class CallQualityController: NSObject {
 
@@ -40,7 +38,7 @@ class CallQualityController: NSObject {
         super.init()
 
         if let userSession = ZMUserSession.shared() {
-            token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+            self.token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         }
     }
 
@@ -55,42 +53,36 @@ class CallQualityController: NSObject {
     /// The minimum duration for calls to trigger a survey.
     let miminumSignificantCallDuration: TimeInterval = 0
 
-    /**
-     * Whether the call quality survey can be presented.
-     *
-     * We only present the call quality survey for internal users and if the application is in the foreground.
-     */
+    /// Whether the call quality survey can be presented.
+    ///
+    /// We only present the call quality survey for internal users and if the application is in the foreground.
 
     var canPresentCallQualitySurvey: Bool {
-#if DISABLE_CALL_QUALITY_SURVEY
-        return false
-#else
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+        #if DISABLE_CALL_QUALITY_SURVEY
             return false
-        }
-        return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-        && appDelegate.launchType != .unknown
-#endif
+        #else
+            guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+                return false
+            }
+            return !AutomationHelper.sharedHelper.disableCallQualitySurvey
+                && appDelegate.launchType != .unknown
+        #endif
     }
 
     // MARK: - Events
 
-    /**
-     * Handles the start of the call in the specified conversation. Call this method when the call
-     * is established.
-     * - parameter conversation: The conversation where the call is ongoing.
-     */
+    /// Handles the start of the call in the specified conversation. Call this method when the call
+    /// is established.
+    /// - parameter conversation: The conversation where the call is ongoing.
 
     private func handleCallStart(in conversation: ZMConversation) {
         answeredCalls[conversation.remoteIdentifier!] = Date()
     }
 
-    /**
-     * Handles the end of a call in the specified conversation.
-     * - parameter conversation: The conversation where the call ended.
-     * - parameter reason: The reason why the call ended.
-     * - parameter eventDate: The date when the call ended.
-     */
+    /// Handles the end of a call in the specified conversation.
+    /// - parameter conversation: The conversation where the call ended.
+    /// - parameter reason: The reason why the call ended.
+    /// - parameter eventDate: The date when the call ended.
 
     private func handleCallCompletion(in conversation: ZMConversation, reason: CallClosedReason, eventDate: Date) {
         // Check for the call start date (do not show feedback for unanswered calls)
@@ -122,14 +114,14 @@ class CallQualityController: NSObject {
             return
         }
 
-        guard self.canRequestSurvey(at: callEndDate) else {
+        guard canRequestSurvey(at: callEndDate) else {
             submitCallQualitySurvey.invoke(.notDisplayed(reason: .muted, duration: callDuration))
             return
         }
 
-#if !DISABLE_CALL_QUALITY_SURVEY
-        router?.presentCallQualitySurvey(with: callDuration)
-#endif
+        #if !DISABLE_CALL_QUALITY_SURVEY
+            router?.presentCallQualitySurvey(with: callDuration)
+        #endif
     }
 }
 
@@ -137,14 +129,20 @@ class CallQualityController: NSObject {
 
 extension CallQualityController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         guard canPresentCallQualitySurvey else { return }
         let eventDate = Date()
 
         switch callState {
         case .established:
             handleCallStart(in: conversation)
-        case .terminating(let terminationReason):
+        case let .terminating(terminationReason):
             handleCallCompletion(in: conversation, reason: terminationReason, eventDate: eventDate)
         case .incoming:
             // When call incoming, dismiss CallQuality VC in CallController.presentCall

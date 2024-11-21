@@ -32,7 +32,7 @@ final class OpenGraphScanner: NSObject {
     init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
         self.xmlString = xmlString
         self.completion = completion
-        originalURL = url
+        self.originalURL = url
         super.init()
     }
 
@@ -73,8 +73,8 @@ final class OpenGraphScanner: NSObject {
     /// Attempts to extract the OpenGraph metadata from an HTML element.
     private func parseOpenGraphMetadata(_ element: HTMLElement) {
         if let rawProperty = element[attribute: OpenGraphAttribute.property]?.stringValue(removingEntities: false),
-            let property = OpenGraphPropertyType(rawValue: rawProperty),
-            let content = element[attribute: OpenGraphAttribute.content]?.stringValue(removingEntities: true) {
+           let property = OpenGraphPropertyType(rawValue: rawProperty),
+           let content = element[attribute: OpenGraphAttribute.content]?.stringValue(removingEntities: true) {
             addProperty(property, value: content)
         }
     }

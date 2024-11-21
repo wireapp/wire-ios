@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
 
@@ -52,7 +52,7 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         let message = MockMessageFactory.textMessage(withText: "Hello")
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
-        message.serverTimestamp = Date(timeIntervalSince1970: 1497798000)
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_497_798_000)
 
         // WHEN
         let cellDescription = ConversationReplyCellDescription(quotedMessage: message)

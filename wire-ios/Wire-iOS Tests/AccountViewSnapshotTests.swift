@@ -29,7 +29,8 @@ final class AccountViewSnapshotTests: XCTestCase {
     override func setUp() {
         snapshotHelper = SnapshotHelper()
         accentColor = .purple
-        imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!.jpegData(compressionQuality: 0.9)
+        imageData = UIImage(inTestBundleNamed: "unsplash_matterhorn.jpg", for: AccountViewSnapshotTests.self)!
+            .jpegData(compressionQuality: 0.9)
     }
 
     override func tearDown() {
@@ -52,7 +53,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.overrideUserInterfaceStyle = .light
-        // WHEN 
+        // WHEN
         sut.selected = true
 
         // THEN
@@ -72,7 +73,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        // WHEN 
+        // WHEN
         sut.selected = true
         // THEN
         snapshotHelper.verify(matching: sut)
@@ -98,7 +99,13 @@ final class AccountViewSnapshotTests: XCTestCase {
 
     func testThatItShowsBasicAccountWithPicture_Team() throws {
         // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
+        let account = Account(
+            userName: "Iggy Pop",
+            userIdentifier: UUID(),
+            teamName: "Wire",
+            imageData: nil,
+            teamImageData: imageData
+        )
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN && THEN
         snapshotHelper.verify(matching: sut)
@@ -106,7 +113,13 @@ final class AccountViewSnapshotTests: XCTestCase {
 
     func testThatItShowsBasicAccountWithPictureSelected_Team() throws {
         // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
+        let account = Account(
+            userName: "Iggy Pop",
+            userIdentifier: UUID(),
+            teamName: "Wire",
+            imageData: nil,
+            teamImageData: imageData
+        )
         let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
         // WHEN
         sut.selected = true
@@ -115,6 +128,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     }
 
     // MARK: - smaller icon for conversation list
+
     func testThatItShowsBasicAccount_Team_conversationListContext() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)

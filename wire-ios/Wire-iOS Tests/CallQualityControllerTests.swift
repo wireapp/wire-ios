@@ -20,8 +20,8 @@ import WireCommonComponents
 import WireTestingPackage
 import XCTest
 
-@testable import Wire
 import WireSyncEngineSupport
+@testable import Wire
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -105,6 +105,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - CallQualitySurvey Presentation Tests
+
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
 
         // GIVEN
@@ -206,6 +207,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 }
 
 // MARK: - Helpers
+
 extension CallQualityControllerTests {
     private func configure(view: UIView, isTablet: Bool) {
         callQualityViewController?.dimmingView.alpha = 1
@@ -213,17 +215,20 @@ extension CallQualityControllerTests {
     }
 
     private func callQualityController_callCenterDidChange(callState: CallState, conversation: ZMConversation) {
-        sut.callCenterDidChange(callState: callState,
-                                conversation: conversation,
-                                caller: otherUser,
-                                timestamp: nil,
-                                previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
     }
 }
 
 // MARK: - ActiveCallRouterMock
+
 final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {
-        return true
+        true
     }
 }

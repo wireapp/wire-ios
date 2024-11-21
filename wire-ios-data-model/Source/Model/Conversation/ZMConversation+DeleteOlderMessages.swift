@@ -18,21 +18,26 @@
 
 import Foundation
 
-extension ZMConversation {
-    @objc public func deleteOlderMessages() {
+public extension ZMConversation {
+    @objc
+    func deleteOlderMessages() {
 
-        guard let managedObjectContext = self.managedObjectContext,
-              let clearedTimeStamp = self.clearedTimeStamp,
+        guard let managedObjectContext,
+              let clearedTimeStamp,
               managedObjectContext.zm_isSyncContext else {
             return
         }
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "(%K == %@ OR %K == %@) AND %K <= %@",
-                                             ZMMessageConversationKey, self,
-                                             ZMMessageHiddenInConversationKey, self,
-                                             #keyPath(ZMMessage.serverTimestamp),
-                                             clearedTimeStamp as CVarArg)
+        fetchRequest.predicate = NSPredicate(
+            format: "(%K == %@ OR %K == %@) AND %K <= %@",
+            ZMMessageConversationKey,
+            self,
+            ZMMessageHiddenInConversationKey,
+            self,
+            #keyPath(ZMMessage.serverTimestamp),
+            clearedTimeStamp as CVarArg
+        )
 
         let result = try! managedObjectContext.fetch(fetchRequest) as! [ZMMessage]
 

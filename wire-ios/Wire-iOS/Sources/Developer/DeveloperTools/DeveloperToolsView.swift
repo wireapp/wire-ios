@@ -23,8 +23,7 @@ struct DeveloperToolsView: View {
 
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperToolsViewModel
+    @StateObject var viewModel: DeveloperToolsViewModel
 
     @ObserveInjection var inject
 
@@ -76,7 +75,6 @@ struct DeveloperToolsView: View {
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
-
         }
     }
 

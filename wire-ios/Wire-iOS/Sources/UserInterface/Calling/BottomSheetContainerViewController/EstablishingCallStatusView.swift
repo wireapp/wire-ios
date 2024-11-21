@@ -26,27 +26,28 @@ extension CallStatusViewState {
 
     var isIncoming: Bool {
         switch self {
-        case .ringingIncoming: return true
-        default: return false
+        case .ringingIncoming: true
+        default: false
         }
     }
+
     var requiresShowingStatusView: Bool {
         switch self {
-        case .none, .established: return false
-        default: return true
+        case .none, .established: false
+        default: true
         }
     }
 
     var displayString: String {
         switch self {
-        case .none: return ""
-        case .connecting: return CallStatus.connecting
-        case .ringingIncoming(name: let name?): return CallStatus.Incoming.user("\(name)")
-        case .ringingIncoming(name: nil): return CallStatus.incoming
-        case .ringingOutgoing: return CallStatus.outgoing
-        case .established(duration: let duration): return callDurationFormatter.string(from: duration) ?? ""
-        case .reconnecting: return CallStatus.reconnecting
-        case .terminating: return CallStatus.terminating
+        case .none: ""
+        case .connecting: CallStatus.connecting
+        case let .ringingIncoming(name: name?): CallStatus.Incoming.user("\(name)")
+        case .ringingIncoming(name: nil): CallStatus.incoming
+        case .ringingOutgoing: CallStatus.outgoing
+        case let .established(duration: duration): callDurationFormatter.string(from: duration) ?? ""
+        case .reconnecting: CallStatus.reconnecting
+        case .terminating: CallStatus.terminating
         }
     }
 }
@@ -75,6 +76,7 @@ final class EstablishingCallStatusView: UIView {
         setupConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -107,8 +109,10 @@ final class EstablishingCallStatusView: UIView {
             profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor),
 
             profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).withPriority(.defaultLow + 1.0),
-            profileImageView.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16.0).withPriority(.required),
-            profileImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -20.0).withPriority(.required),
+            profileImageView.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16.0)
+                .withPriority(.required),
+            profileImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -20.0)
+                .withPriority(.required),
             spaceView.heightAnchor.constraint(equalToConstant: spacerHeight)
         ])
     }

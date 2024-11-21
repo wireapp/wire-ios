@@ -21,18 +21,28 @@ import WireCommonComponents
 import WireSyncEngine
 
 enum AlertChoice {
-    case cancel, confirm, alreadyPresented, ok
+    case cancel
+    case confirm
+    case alreadyPresented
+    case ok
 }
 
 // MARK: - ActiveCallRouterProtocol
+
 protocol ActiveCallRouterProtocol: AnyObject {
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool)
     func dismissActiveCall(animated: Bool, completion: Completion?)
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
-    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
+    func presentEndingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    )
+    func presentIncomingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    )
     func dismissSecurityDegradedAlertIfNeeded()
     func presentUnsupportedVersionAlert()
 }
@@ -47,14 +57,15 @@ protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualityRejection(mainWindow: UIWindow)
 }
 
-typealias PostCallAction = ((@escaping Completion) -> Void)
+typealias PostCallAction = (@escaping Completion) -> Void
 
 // MARK: - ActiveCallRouter
 
 final class ActiveCallRouter<TopOverlayPresenter>
-where TopOverlayPresenter: TopOverlayPresenting {
+    where TopOverlayPresenter: TopOverlayPresenting {
 
     // MARK: - Public Property
+
     var isActiveCallShown = false {
         didSet {
             if isActiveCallShown {
@@ -88,26 +99,32 @@ where TopOverlayPresenter: TopOverlayPresenting {
         self.userSession = userSession
         self.topOverlayPresenter = topOverlayPresenter
 
-        callController = CallController(userSession: userSession)
+        self.callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
 
-        callQualityController = CallQualityController(mainWindow: mainWindow, submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase())
-        transitioningDelegate = CallQualityAnimator()
+        self.callQualityController = CallQualityController(
+            mainWindow: mainWindow,
+            submitCallQualitySurvey: userSession.makeCallQualitySurveyUseCase()
+        )
+        self.transitioningDelegate = CallQualityAnimator()
 
         callController.router = self
         callQualityController.router = self
     }
 
     // MARK: - Public Implementation
+
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
 }
 
 // MARK: - ActiveCallRouterProtocol
+
 extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - ActiveCall
+
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         guard
             !isPresentingActiveCall,
@@ -120,11 +137,17 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         // first responder when the call overlay is interactively dismissed but canceled.
         UIResponder.currentFirst?.resignFirstResponder()
         var activeCallViewController: UIViewController!
-        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel, userSession: userSession)
+        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(
+            voiceChannel: voiceChannel,
+            userSession: userSession
+        )
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController
 
-        let modalVC = ModalPresentationViewController(viewController: activeCallViewController, enableDismissOnPan: !CallingConfiguration.config.paginationEnabled)
+        let modalVC = ModalPresentationViewController(
+            viewController: activeCallViewController,
+            enableDismissOnPan: !CallingConfiguration.config.paginationEnabled
+        )
 
         if mainWindow.rootViewController?.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
@@ -160,6 +183,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - CallTopOverlay
+
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
@@ -175,26 +199,28 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - Alerts
 
-    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason,
-                                            completion: @escaping (AlertChoice) -> Void) {
-        guard self.presentedDegradedAlert == nil else {
+    func presentEndingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
+        guard presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert: UIAlertController
-            switch reason {
-            case .degradedUser(user: let user):
-                alert = UIAlertController.makeOutgoingDegradedProteusCall(
+            let alert = switch reason {
+            case let .degradedUser(user: user):
+                UIAlertController.makeOutgoingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: true,
                     confirmationBlock: { continueDegradedCall in
                         completion(continueDegradedCall ? .confirm : .cancel)
                         postCallActionCompletion()
-                })
+                    }
+                )
             case .invalidCertificate:
-                alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
+                UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
                     completion(.ok)
                     postCallActionCompletion()
                 })
@@ -206,26 +232,28 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
     }
 
-    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason,
-                                              completion: @escaping (AlertChoice) -> Void) {
-        guard self.presentedDegradedAlert == nil else {
+    func presentIncomingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
+        guard presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert: UIAlertController
-            switch reason {
-            case .degradedUser(user: let user):
-                alert = UIAlertController.makeIncomingDegradedProteusCall(
+            let alert = switch reason {
+            case let .degradedUser(user: user):
+                UIAlertController.makeIncomingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: false,
                     confirmationBlock: { continueDegradedCall in
                         completion(continueDegradedCall ? .confirm : .cancel)
                         postCallActionCompletion()
-                    })
+                    }
+                )
             case .invalidCertificate:
-                alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
+                UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
                 })
@@ -238,10 +266,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissSecurityDegradedAlertIfNeeded() {
-        guard let alert = self.presentedDegradedAlert else { return }
+        guard let alert = presentedDegradedAlert else { return }
 
         alert.dismissIfNeeded()
-        self.presentedDegradedAlert = nil
+        presentedDegradedAlert = nil
     }
 
     func presentUnsupportedVersionAlert() {
@@ -275,7 +303,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func executeOrSchedulePostCallAction(_ action: @escaping PostCallAction) {
         if !isActiveCallShown {
-            action({})
+            action {}
         } else {
             scheduledPostCallAction = action
         }
@@ -283,6 +311,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 }
 
 // MARK: - CallQualityRouterProtocol
+
 extension ActiveCallRouter: CallQualityRouterProtocol {
 
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
@@ -307,7 +336,8 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallFailureDebugAlert(mainWindow: UIWindow) {
         let presentingViewController = mainWindow.rootViewController!
 
-        let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
+        let logsMessage =
+            "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
         let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
             sourceView: presentingViewController.view,
             sourceRect: .init(
@@ -328,7 +358,8 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallQualityRejection(mainWindow: UIWindow) {
         let presentingViewController = mainWindow.rootViewController!
 
-        let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
+        let logsMessage =
+            "Sending the debug logs can help us improve the quality of calls and the overall app experience."
         let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
             sourceView: presentingViewController.view,
             sourceRect: .init(
@@ -348,8 +379,10 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 
     private func buildCallQualitySurvey(with callDuration: TimeInterval) -> CallQualityViewController {
         let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
-        let qualityController = CallQualityViewController(questionLabelText: questionLabelText,
-                                                          callDuration: callDuration)
+        let qualityController = CallQualityViewController(
+            questionLabelText: questionLabelText,
+            callDuration: callDuration
+        )
         qualityController.delegate = callQualityController
 
         qualityController.modalPresentationCapturesStatusBarAppearance = true
@@ -360,6 +393,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 }
 
 // MARK: - CallTopOverlayControllerDelegate
+
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
         guard let voiceChannel else { return }

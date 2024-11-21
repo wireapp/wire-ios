@@ -19,7 +19,10 @@
 import Foundation
 
 public enum MainConversationFilter: Sendable, Equatable {
-    case favorites, groups, oneOnOne, folder(id: UUID, name: String)
+    case favorites
+    case groups
+    case oneOnOne
+    case folder(id: UUID, name: String)
 }
 
 extension MainConversationFilter: MainConversationFilterRepresentable {

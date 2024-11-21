@@ -30,11 +30,13 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsActions 
     func showMyDevice() {
         guard let selfUserClient = userSession.selfUserClient else { return }
 
-        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
-                                                                userSession: userSession,
-                                                                fromConversation: true)
+        let selfClientController = SettingsClientViewController(
+            userClient: selfUserClient,
+            userSession: userSession,
+            fromConversation: true
+        )
         let navigationControllerWrapper = selfClientController.wrapInNavigationController()
-        navigationControllerWrapper.presentTopmost()
+        navigationControllerWrapper.presentOverAll()
     }
 
     func howToDoThat() {

@@ -78,7 +78,7 @@ final class ImageResourceThumbnailView: RoundedView {
     // MARK: - Content
 
     override var intrinsicContentSize: CGSize {
-        return imageView.intrinsicContentSize
+        imageView.intrinsicContentSize
     }
 
     func setResource(_ resource: PreviewableImageResource, isVideoPreview: Bool) {
@@ -86,7 +86,10 @@ final class ImageResourceThumbnailView: RoundedView {
             DispatchQueue.main.async {
                 let needsVideoCoverView = isVideoPreview && self.imageView.mediaAsset != nil
                 self.coverView.isHidden = !needsVideoCoverView
-                self.assetTypeBadge.image = needsVideoCoverView ? StyleKitIcon.camera.makeImage(size: .tiny, color: .white) : nil
+                self.assetTypeBadge.image = needsVideoCoverView ? StyleKitIcon.camera.makeImage(
+                    size: .tiny,
+                    color: .white
+                ) : nil
             }
         }
     }

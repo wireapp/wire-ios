@@ -48,33 +48,31 @@ enum SettingsPropertyValue: Equatable {
     static func propertyValue(_ object: Any?) -> SettingsPropertyValue {
         switch object {
         case let number as NSNumber:
-            return SettingsPropertyValue.number(value: number)
+            SettingsPropertyValue.number(value: number)
 
         case let stringValue as Swift.String:
-            return SettingsPropertyValue.string(value: stringValue)
+            SettingsPropertyValue.string(value: stringValue)
 
         default:
-            return .none
+            .none
         }
     }
 
     func value() -> Any? {
         switch self {
-        case .number(let value):
-            return value as AnyObject?
-        case .string(let value):
-            return value as AnyObject?
-        case .bool(let value):
-            return value as AnyObject?
+        case let .number(value):
+            value as AnyObject?
+        case let .string(value):
+            value as AnyObject?
+        case let .bool(value):
+            value as AnyObject?
         case .none:
-            return .none
+            .none
         }
     }
 }
 
-/**
- *  Generic settings property
- */
+///  Generic settings property
 protocol SettingsProperty {
     var propertyName: SettingsPropertyName { get }
     func value() -> SettingsPropertyValue
@@ -84,40 +82,34 @@ protocol SettingsProperty {
 
 extension SettingsProperty {
     func rawValue() -> Any? {
-        return self.value().value()
+        value().value()
     }
 }
 
-/**
- Set value to property
-
- - parameter property: Property to set the value on
- - parameter expr:     Property value (raw)
- */
+/// Set value to property
+///
+/// - parameter property: Property to set the value on
+/// - parameter expr:     Property value (raw)
 func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws {
     let value = expr()
 
     try property.set(newValue: SettingsPropertyValue.propertyValue(value), resultHandler: { _ in })
 }
 
-/**
- Set value to property
- 
- - parameter property: Property to set the value on
- - parameter expr:     Property value
- */
+/// Set value to property
+///
+/// - parameter property: Property to set the value on
+/// - parameter expr:     Property value
 func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsPropertyValue) throws {
     let value = expr()
 
     try property.set(newValue: value, resultHandler: { _ in })
 }
 
-/**
- Read value from property
- 
- - parameter value:    Value to assign
- - parameter property: Property to read the value from
- */
+/// Read value from property
+///
+/// - parameter value:    Value to assign
+/// - parameter property: Property to read the value from
 func << (value: inout Any?, property: SettingsProperty) {
     value = property.rawValue()
 }
@@ -132,19 +124,22 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
     var enabled: Bool = true
 
     func set(newValue: SettingsPropertyValue) throws {
-        self.userDefaults.set(newValue.value(), forKey: self.userDefaultsKey)
+        userDefaults.set(newValue.value(), forKey: userDefaultsKey)
 
-        NotificationCenter.default.post(name: Notification.Name(rawValue: self.propertyName.changeNotificationName), object: self)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: propertyName.changeNotificationName),
+            object: self
+        )
     }
 
     func value() -> SettingsPropertyValue {
-        switch self.userDefaults.object(forKey: self.userDefaultsKey) as AnyObject? {
+        switch userDefaults.object(forKey: userDefaultsKey) as AnyObject? {
         case let numberValue as NSNumber:
-            return SettingsPropertyValue.propertyValue(numberValue.intValue as AnyObject?)
+            SettingsPropertyValue.propertyValue(numberValue.intValue as AnyObject?)
         case let stringValue as String:
-            return SettingsPropertyValue.propertyValue(stringValue as AnyObject?)
+            SettingsPropertyValue.propertyValue(stringValue as AnyObject?)
         default:
-            return .none
+            .none
         }
     }
 
@@ -160,7 +155,11 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
 }
 
 typealias GetAction = (SettingsBlockProperty) -> SettingsPropertyValue
-typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue, @escaping (Result<Void, any Error>) -> Void) throws -> Void
+typealias SetAction = (
+    SettingsBlockProperty,
+    SettingsPropertyValue,
+    @escaping (Result<Void, any Error>) -> Void
+) throws -> Void
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {
@@ -169,12 +168,15 @@ final class SettingsBlockProperty: SettingsProperty {
 
     let propertyName: SettingsPropertyName
     func value() -> SettingsPropertyValue {
-        return self.getAction(self)
+        getAction(self)
     }
 
     func set(newValue: SettingsPropertyValue, resultHandler: @escaping (Result<Void, any Error>) -> Void) throws {
         try setAction(self, newValue, resultHandler)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: propertyName.changeNotificationName), object: self)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: propertyName.changeNotificationName),
+            object: self
+        )
     }
 
     private let getAction: GetAction

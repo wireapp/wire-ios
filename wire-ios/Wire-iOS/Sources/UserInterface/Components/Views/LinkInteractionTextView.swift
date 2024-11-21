@@ -28,15 +28,17 @@ final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 
     override var selectedTextRange: UITextRange? {
-        get { return nil }
+        get { nil }
         set { /* no-op */ }
     }
 
     // URLs with these schemes should be handled by the os.
-    fileprivate let dataDetectedURLSchemes = [ "x-apple-data-detectors", "tel", "mailto"]
+    fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
 
-    override init(frame: CGRect,
-                  textContainer: NSTextContainer?) {
+    override init(
+        frame: CGRect,
+        textContainer: NSTextContainer?
+    ) {
         super.init(frame: frame, textContainer: textContainer)
         delegate = self
 
@@ -80,7 +82,7 @@ final class LinkInteractionTextView: UITextView {
     }
 
     private func isMarkdownLink(in range: NSRange) -> Bool {
-        return attributedText.ranges(containing: .link, inRange: range) == [range]
+        attributedText.ranges(containing: .link, inRange: range) == [range]
     }
 
     /// An alert is shown (asking the user if they wish to open the url) if the
@@ -91,26 +93,30 @@ final class LinkInteractionTextView: UITextView {
             return false
         }
 
-        ZClientViewController.shared?.present(confirmationAlert(for: url), animated: true)
+        confirmationAlert(for: url).presentOverAll(animated: true)
         return true
     }
 }
 
 extension LinkInteractionTextView: UITextViewDelegate {
 
-    func textView(_ textView: UITextView,
-                  shouldInteractWith textAttachment: NSTextAttachment,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith textAttachment: NSTextAttachment,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         guard interaction == .presentActions else { return true }
         interactionDelegate?.textViewDidLongPress(self)
         return false
     }
 
-    func textView(_ textView: UITextView,
-                  shouldInteractWith URL: URL,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         // present system context preview
         if  UIApplication.shared.canOpenURL(URL),
             interaction == .presentActions,
@@ -131,7 +137,8 @@ extension LinkInteractionTextView: UITextViewDelegate {
                 if self.showAlertIfNeeded(for: URL, in: characterRange) { return false }
 
                 // data detector links should be handle by the system
-                return self.dataDetectedURLSchemes.contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
+                return self.dataDetectedURLSchemes
+                    .contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
             }
 
             return performLinkInteraction()
@@ -141,6 +148,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
             // do not allow peeking links, as it blocks showing the menu for replies
             interactionDelegate?.textViewDidLongPress(self)
             return false
+
         @unknown default:
             interactionDelegate?.textViewDidLongPress(self)
             return false
@@ -152,10 +160,14 @@ extension LinkInteractionTextView: UITextViewDelegate {
 
 extension LinkInteractionTextView: UITextDragDelegate {
 
-    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
+    func textDraggableView(
+        _ textDraggableView: UIView & UITextDraggable,
+        itemsForDrag dragRequest: UITextDragRequest
+    ) -> [UIDragItem] {
 
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
-            return attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
+            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention
+                .mentionScheme
         }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {

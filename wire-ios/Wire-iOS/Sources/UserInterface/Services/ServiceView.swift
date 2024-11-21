@@ -27,7 +27,7 @@ final class ServiceDetailView: UIView {
     var service: Service {
         didSet {
             updateForService()
-            serviceView.service = self.service
+            serviceView.service = service
         }
     }
 
@@ -65,7 +65,8 @@ final class ServiceDetailView: UIView {
             descriptionTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
             descriptionTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
             descriptionTextView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16)])
+            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16)
+        ])
     }
 
     private func updateForService() {
@@ -109,7 +110,7 @@ final class ServiceView: UIView {
     }
 
     private func createConstraints() {
-        self.translatesAutoresizingMaskIntoConstraints = false
+        translatesAutoresizingMaskIntoConstraints = false
         logoView.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         providerLabel.translatesAutoresizingMaskIntoConstraints = false

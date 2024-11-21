@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AddressBookSearchTests: MessagingTest {
 
@@ -27,18 +27,19 @@ class AddressBookSearchTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.addressBook = MockAddressBook()
-        self.sut = WireSyncEngine.AddressBookSearch(addressBook: self.addressBook)
+        addressBook = MockAddressBook()
+        sut = WireSyncEngine.AddressBookSearch(addressBook: addressBook)
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.addressBook = nil
+        sut = nil
+        addressBook = nil
         super.tearDown()
     }
 }
 
 // MARK: - Search query
+
 extension AddressBookSearchTests {
 
     func testThatItSearchesByNameWithMatch() {
@@ -63,7 +64,12 @@ extension AddressBookSearchTests {
         // given
         let identifier = "233124"
         addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olivia 1", emailAddresses: ["oli@example.com"], phoneNumbers: [], identifier: identifier),
+            MockAddressBookContact(
+                firstName: "Olivia 1",
+                emailAddresses: ["oli@example.com"],
+                phoneNumbers: [],
+                identifier: identifier
+            ),
             MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [], phoneNumbers: ["+155505012"])
         ]
 

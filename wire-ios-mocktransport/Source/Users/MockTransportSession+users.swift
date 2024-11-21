@@ -18,42 +18,63 @@
 
 import Foundation
 
-extension MockTransportSession {
+public extension MockTransportSession {
 
     @objc(fetchUserWithIdentifier:)
-    public func fetchUser(withIdentifier identifier: String) -> MockUser? {
-        let request = MockUser.sortedFetchRequest(withPredicate: NSPredicate(format: "%K == %@", #keyPath(MockUser.identifier), identifier.lowercased()))
+    func fetchUser(withIdentifier identifier: String) -> MockUser? {
+        let request = MockUser.sortedFetchRequest(withPredicate: NSPredicate(
+            format: "%K == %@",
+            #keyPath(MockUser.identifier),
+            identifier.lowercased()
+        ))
         let users = try? managedObjectContext.fetch(request)
 
         return users?.first
     }
 
     @objc(processRichProfileFetchForUser:apiVersion:)
-    public func processRichProfileFetchFor(user userID: String, apiVersion: APIVersion) -> ZMTransportResponse {
-        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue) }
-        if let members = self.selfUser.currentTeamMembers {
+    func processRichProfileFetchFor(user userID: String, apiVersion: APIVersion) -> ZMTransportResponse {
+        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 404,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        ) }
+        if let members = selfUser.currentTeamMembers {
             guard members.contains(user) else {
-                return ZMTransportResponse(payload: ["label": "insufficient-permissions"] as NSDictionary, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+                return ZMTransportResponse(
+                    payload: ["label": "insufficient-permissions"] as NSDictionary,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: apiVersion.rawValue
+                )
             }
         }
 
         let fields = user.richProfile ?? []
-        return ZMTransportResponse(payload: ["fields": fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: ["fields": fields] as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     @objc(insertUserWithName:includeClient:)
-    public func insertUserWith(name: String, includeClient: Bool) -> MockUser {
+    func insertUserWith(name: String, includeClient: Bool) -> MockUser {
         let user = NSEntityDescription.insertNewObject(forEntityName: "User", into: managedObjectContext) as! MockUser
         user.name = name
         user.identifier = UUID.create().transportString()
         user.handle = UUID.create().transportString()
 
         if includeClient {
-            let client = MockUserClient.insertClient(label: user.identifier,
-                                                     type: "permanent",
-                                                     deviceClass: "phone",
-                                                     for: user,
-                                                     in: managedObjectContext)
+            let client = MockUserClient.insertClient(
+                label: user.identifier,
+                type: "permanent",
+                deviceClass: "phone",
+                for: user,
+                in: managedObjectContext
+            )
             user.clients = NSMutableSet(array: [client!])
         }
 
@@ -61,8 +82,8 @@ extension MockTransportSession {
     }
 
     @objc(insertUserWithName:)
-    public func insertUserWithName(name: String) -> MockUser {
+    func insertUserWithName(name: String) -> MockUser {
 
-        return self.insertUserWith(name: name, includeClient: true)
+        insertUserWith(name: name, includeClient: true)
     }
 }

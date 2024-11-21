@@ -50,7 +50,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     weak var delegate: IdentifierObjectSyncDelegate?
 
     var isSyncing: Bool {
-        return !pending.isEmpty || !downloading.isEmpty
+        !pending.isEmpty || !downloading.isEmpty
     }
 
     /// - parameter managedObjectContext: Managed object context on which the sync will operate
@@ -70,10 +70,10 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     ///
     /// If the identifiers have already been added this method has no effect.
 
-    public func sync<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
+    public func sync(identifiers: some Sequence<Transcoder.T>) {
         let newIdentifiers = Set(identifiers)
 
-        if newIdentifiers.isEmpty && downloading.isEmpty && pending.isEmpty {
+        if newIdentifiers.isEmpty, downloading.isEmpty, pending.isEmpty {
             delegate?.didFinishSyncingAllObjects()
         } else {
             pending.formUnion(Set(identifiers).subtracting(downloading))
@@ -86,7 +86,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     ///
     /// If the identifiers have been or are currently being downloaded this method has no effect.
 
-    public func cancel<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
+    public func cancel(identifiers: some Sequence<Transcoder.T>) {
         pending.subtract(identifiers)
     }
 
@@ -105,8 +105,8 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
 
             switch response.result {
             case .permanentError, .success:
-                self.downloading.subtract(scheduled)
-                self.transcoder?.didReceive(response: response, for: scheduled) {
+                downloading.subtract(scheduled)
+                transcoder?.didReceive(response: response, for: scheduled) {
                     self.managedObjectContext.perform {
                         if case .permanentError = response.result {
                             self.delegate?.didFailToSyncAllObjects()
@@ -119,14 +119,14 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
                     }
                 }
             default:
-                self.downloading.subtract(scheduled)
-                self.pending.formUnion(scheduled)
+                downloading.subtract(scheduled)
+                pending.formUnion(scheduled)
 
-                if !self.isSyncing {
-                    self.delegate?.didFinishSyncingAllObjects()
+                if !isSyncing {
+                    delegate?.didFinishSyncingAllObjects()
                 }
 
-                self.managedObjectContext.enqueueDelayedSave()
+                managedObjectContext.enqueueDelayedSave()
             }
         })
 

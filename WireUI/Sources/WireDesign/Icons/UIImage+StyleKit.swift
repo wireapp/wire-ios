@@ -20,12 +20,10 @@ import UIKit
 
 public extension StyleKitIcon {
 
-    /**
-     * Creates an image of the icon, with specified size and color.
-     * - parameter size: The desired size of the image.
-     * - parameter color: The color of the image.
-     * - returns: The image that represents the icon.
-     */
+    /// Creates an image of the icon, with specified size and color.
+    /// - parameter size: The desired size of the image.
+    /// - parameter color: The color of the image.
+    /// - returns: The image that represents the icon.
 
     func makeImage(size: StyleKitIcon.Size, color: UIColor) -> UIImage {
         let imageProperties = renderingProperties
@@ -35,7 +33,10 @@ public extension StyleKitIcon {
         let renderer = UIGraphicsImageRenderer(size: targetSize)
 
         return renderer.image { context in
-            context.cgContext.scaleBy(x: imageSize / imageProperties.originalSize, y: imageSize / imageProperties.originalSize)
+            context.cgContext.scaleBy(
+                x: imageSize / imageProperties.originalSize,
+                y: imageSize / imageProperties.originalSize
+            )
             imageProperties.renderingMethod(color)
         }
     }
@@ -44,13 +45,11 @@ public extension StyleKitIcon {
 
 public extension UIImage {
 
-    /**
-     * Creates an image with the specified icon, size and color.
-     * - parameter icon: The icon to display.
-     * - parameter size: The desired size of the image.
-     * - parameter color: The color of the image.
-     * - returns: The image to use in the specified configuration.
-     */
+    /// Creates an image with the specified icon, size and color.
+    /// - parameter icon: The icon to display.
+    /// - parameter size: The desired size of the image.
+    /// - parameter color: The color of the image.
+    /// - returns: The image to use in the specified configuration.
 
     static func imageForIcon(
         _ icon: StyleKitIcon,
@@ -60,13 +59,11 @@ public extension UIImage {
         icon.makeImage(size: .custom(size), color: color)
     }
 
-    /**
-     * Resizes the image to the desired size.
-     * - parameter targetSize: The size you want to give to the image.
-     * - returns: The resized image.
-     * - warning: Passing a target size bigger than the size of the receiver is a
-     * programmer error and will cause an assertion failure.
-     */
+    /// Resizes the image to the desired size.
+    /// - parameter targetSize: The size you want to give to the image.
+    /// - returns: The resized image.
+    /// - warning: Passing a target size bigger than the size of the receiver is a
+    /// programmer error and will cause an assertion failure.
 
     func downscaling(to targetSize: CGSize) -> UIImage {
         assert(targetSize.width < size.width)
@@ -84,26 +81,22 @@ public extension UIImage {
 
 public extension UIImageView {
 
-    /**
-     * Sets the image of the image view to the given icon, size and color.
-     * - parameter icon: The icon to display.
-     * - parameter size: The desired size of the image.
-     * - parameter color: The color of the image.
-     * - returns: The image that represents the icon.
-     */
+    /// Sets the image of the image view to the given icon, size and color.
+    /// - parameter icon: The icon to display.
+    /// - parameter size: The desired size of the image.
+    /// - parameter color: The color of the image.
+    /// - returns: The image that represents the icon.
 
     func setIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size, color: UIColor) {
         image = icon.makeImage(size: size, color: color)
     }
 
-    /**
-     * Sets the image of the image view to the given icon, size and color and forces its
-     * to be always be a template.
-     * - parameter icon: The icon to display.
-     * - parameter size: The desired size of the image.
-     * - parameter color: The color of the image.
-     * - returns: The image that represents the icon.
-     */
+    /// Sets the image of the image view to the given icon, size and color and forces its
+    /// to be always be a template.
+    /// - parameter icon: The icon to display.
+    /// - parameter size: The desired size of the image.
+    /// - parameter color: The color of the image.
+    /// - returns: The image that represents the icon.
 
     func setTemplateIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size) {
         image = icon.makeImage(size: size, color: .black).withRenderingMode(.alwaysTemplate)

@@ -38,8 +38,10 @@ extension ZMConversationTests {
 
         // when
 
-        conversation.internalRemoveParticipants([user2],
-                                                sender: user1)
+        conversation.internalRemoveParticipants(
+            [user2],
+            sender: user1
+        )
 
         uiMOC.processPendingChanges()
 

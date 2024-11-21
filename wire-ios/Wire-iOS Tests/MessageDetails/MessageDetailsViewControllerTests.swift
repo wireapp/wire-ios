@@ -68,9 +68,9 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 5).map({
+        let users = MockUserType.usernames.prefix(upTo: 5).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
@@ -99,9 +99,9 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 5).map({
+        let users = MockUserType.usernames.prefix(upTo: 5).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
 
@@ -131,9 +131,9 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users = MockUserType.usernames.prefix(upTo: 20).map({
+        let users = MockUserType.usernames.prefix(upTo: 20).map {
             MockUserType.createUser(name: $0)
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
@@ -161,11 +161,11 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users: [UserType] = MockUserType.usernames.prefix(upTo: 6).map({
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 6).map {
             let user = MockUserType.createUser(name: $0)
             user.handle = nil
             return user
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
@@ -193,11 +193,11 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.deliveryState = .read
         message.needsReadConfirmation = true
 
-        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map({
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map {
             let user = MockUserType.createUser(name: $0)
             user.handle = nil
             return user
-        })
+        }
 
         message.readReceipts = createReceipts(users: users)
         message.backingUsersReaction = [
@@ -417,9 +417,9 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             message.senderUser = SelfUser.provider?.providedSelfUser
             message.conversationLike = conversation
 
-            let users = MockUserType.usernames.prefix(upTo: 5).map({
+            let users = MockUserType.usernames.prefix(upTo: 5).map {
                 MockUserType.createUser(name: $0)
-            })
+            }
 
             message.readReceipts = createReceipts(users: users)
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
@@ -447,19 +447,17 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     }
 
     private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
-        let receipts: [MockReadReceipt] = users.map({ user in
+        users.map { user in
             let receipt = MockReadReceipt(user: ZMUser())
             receipt.userType = user
             return receipt
-        })
-
-        return receipts
+        }
     }
 
     private func verify(
         _ detailsViewController: MessageDetailsViewController,
         configuration: ((MessageDetailsViewController) -> Void)? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
 
@@ -81,7 +81,11 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
         in context: NSManagedObjectContext
     ) throws -> [Team] {
         let fetchRequest = NSFetchRequest<Team>(entityName: Team.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", Team.remoteIdentifierDataKey(), identifier.uuidData as CVarArg)
+        fetchRequest.predicate = NSPredicate(
+            format: "%K == %@",
+            Team.remoteIdentifierDataKey(),
+            identifier.uuidData as CVarArg
+        )
         return try context.fetch(fetchRequest)
     }
 

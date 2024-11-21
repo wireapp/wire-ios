@@ -17,8 +17,8 @@
 //
 
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 final class ZMTransportRequestLoggingTests: ZMTBaseTest {
 
@@ -33,10 +33,12 @@ final class ZMTransportRequestLoggingTests: ZMTBaseTest {
         ]
 
         // when
-        let requestDescription = ZMTransportRequest(path: "/test",
-                                                    method: .get,
-                                                    payload: payload as ZMTransportData,
-                                                    apiVersion: 0).description
+        let requestDescription = ZMTransportRequest(
+            path: "/test",
+            method: .get,
+            payload: payload as ZMTransportData,
+            apiVersion: 0
+        ).description
 
         // then
         XCTAssertTrue(requestDescription.contains("password = \"<redacted>\""))

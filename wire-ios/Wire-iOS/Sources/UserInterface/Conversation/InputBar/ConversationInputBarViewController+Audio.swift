@@ -51,33 +51,38 @@ extension ConversationInputBarViewController {
             return
         }
 
-        switch self.mode {
+        switch mode {
         case .audioRecord:
-            if self.inputBar.textView.isFirstResponder {
+            if inputBar.textView.isFirstResponder {
                 hideInKeyboardAudioRecordViewController()
             } else {
-                self.inputBar.textView.becomeFirstResponder()
+                inputBar.textView.becomeFirstResponder()
             }
         default:
-            UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ accepted in
+            UIApplication.wr_requestOrWarnAboutMicrophoneAccess { accepted in
                 if accepted {
                     self.mode = .audioRecord
                     self.inputBar.textView.becomeFirstResponder()
                 }
-            })
+            }
         }
     }
 
     private func displayAudioMessageAlertIfNeeded() -> Bool {
-        return CameraAccess.displayAlertIfOngoingCall(at: .recordAudioMessage, from: self)
+        CameraAccess.displayAlertIfOngoingCall(at: .recordAudioMessage, from: self)
     }
 
-    @objc func audioButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
-        guard self.mode != .audioRecord, !displayAudioMessageAlertIfNeeded() else {
+    @objc
+    func audioButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
+        guard mode != .audioRecord, !displayAudioMessageAlertIfNeeded() else {
             return
         }
 
-        type(of: self).cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideInlineAudioRecordViewController), object: nil)
+        type(of: self).cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(hideInlineAudioRecordViewController),
+            object: nil
+        )
 
         switch sender.state {
         case .began:
@@ -92,7 +97,7 @@ extension ConversationInputBarViewController {
 
     }
 
-    fileprivate func showAudioRecordViewControllerIfGrantedAccess() {
+    private func showAudioRecordViewControllerIfGrantedAccess() {
         if audioSession.recordPermission == .granted {
             audioRecordViewController?.beginRecording()
         } else {
@@ -103,7 +108,10 @@ extension ConversationInputBarViewController {
     func createAudioViewController(audioRecorder: AudioRecorderType? = nil, userSession: UserSession) {
         removeAudioViewController()
 
-        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
+        let audioRecordViewController = AudioRecordViewController(
+            audioRecorder: audioRecorder,
+            userSession: userSession
+        )
         audioRecordViewController.view.translatesAutoresizingMaskIntoConstraints = false
         audioRecordViewController.delegate = self
 
@@ -138,15 +146,15 @@ extension ConversationInputBarViewController {
         audioRecordViewController = nil
     }
 
-    fileprivate func requestMicrophoneAccess() {
+    private func requestMicrophoneAccess() {
         UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
             guard granted else { return }
         }
     }
 
     func showAudioRecordViewController(animated: Bool = true) {
-        guard let audioRecordViewContainer = self.audioRecordViewContainer,
-              let audioRecordViewController = self.audioRecordViewController else {
+        guard let audioRecordViewContainer,
+              let audioRecordViewController else {
             return
         }
 
@@ -154,11 +162,17 @@ extension ConversationInputBarViewController {
 
         if animated {
             audioRecordViewController.setOverlayState(.hidden, animated: false)
-            UIView.transition(with: inputBar, duration: 0.1, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
-                audioRecordViewContainer.isHidden = false
-            }, completion: { _ in
-                audioRecordViewController.setOverlayState(.expanded(0), animated: true)
-            })
+            UIView.transition(
+                with: inputBar,
+                duration: 0.1,
+                options: [.transitionCrossDissolve, .allowUserInteraction],
+                animations: {
+                    audioRecordViewContainer.isHidden = false
+                },
+                completion: { _ in
+                    audioRecordViewController.setOverlayState(.expanded(0), animated: true)
+                }
+            )
         } else {
             audioRecordViewContainer.isHidden = false
             audioRecordViewController.setOverlayState(.expanded(0), animated: false)
@@ -166,34 +180,34 @@ extension ConversationInputBarViewController {
     }
 
     func hideAudioRecordViewController() {
-        if self.mode == .audioRecord {
+        if mode == .audioRecord {
             hideInKeyboardAudioRecordViewController()
         } else {
             hideInlineAudioRecordViewController()
         }
     }
 
-    fileprivate func hideInKeyboardAudioRecordViewController() {
-        self.inputBar.textView.resignFirstResponder()
+    private func hideInKeyboardAudioRecordViewController() {
+        inputBar.textView.resignFirstResponder()
         delay(0.3) {
             self.mode = .textInput
         }
     }
 
     @objc
-    fileprivate func hideInlineAudioRecordViewController() {
-        self.inputBar.buttonContainer.isHidden = false
-        guard let audioRecordViewContainer = self.audioRecordViewContainer else {
+    private func hideInlineAudioRecordViewController() {
+        inputBar.buttonContainer.isHidden = false
+        guard let audioRecordViewContainer else {
             return
         }
 
         UIView.transition(with: inputBar, duration: 0.2, options: .transitionCrossDissolve, animations: {
             audioRecordViewContainer.isHidden = true
-            }, completion: nil)
+        }, completion: nil)
     }
 
     func hideCameraKeyboardViewController(_ completion: @escaping () -> Void) {
-        self.inputBar.textView.resignFirstResponder()
+        inputBar.textView.resignFirstResponder()
         delay(0.3) {
             self.mode = .textInput
             completion()
@@ -204,18 +218,23 @@ extension ConversationInputBarViewController {
 extension ConversationInputBarViewController: AudioRecordViewControllerDelegate {
 
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController) {
-        self.hideAudioRecordViewController()
+        hideAudioRecordViewController()
     }
 
     func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController) {
         if mode != .audioRecord {
-            self.showAudioRecordViewController()
+            showAudioRecordViewController()
         }
     }
 
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    ) {
 
-        let checker = PrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+        let checker = PrivacyWarningChecker(conversation: conversation) { [weak self] in
             self?.uploadFile(at: recordingURL as URL)
 
             self?.hideAudioRecordViewController()
@@ -227,16 +246,22 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         let isRecording = audioRecordKeyboardViewController?.isRecording
 
         switch (callState, isRecording, wasRecordingBeforeCall) {
         case (.incoming(_, true, _), true, _),              // receiving incoming call while audio keyboard is visible
-            (.outgoing, true, _):                          // making an outgoing call while audio keyboard is visible
+             (.outgoing, true, _):                          // making an outgoing call while audio keyboard is visible
             wasRecordingBeforeCall = true                   // -> remember that the audio keyboard was visible
             callCountWhileCameraKeyboardWasVisible += 1     // -> increment calls in progress counter
         case (.incoming(_, false, _), _, true),             // refusing an incoming call
-            (.terminating, _, true):                       // terminating/closing the current call
+             (.terminating, _, true):                       // terminating/closing the current call
             callCountWhileCameraKeyboardWasVisible -= 1     // -> decrement calls in progress counter
         default: break
         }
@@ -255,8 +280,8 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
               let mainWindow = appDelegate.mainWindow,
               mainWindow.isKeyWindow else { return }
 
-        self.wasRecordingBeforeCall = false
-        self.mode = .audioRecord
-        self.inputBar.textView.becomeFirstResponder()
+        wasRecordingBeforeCall = false
+        mode = .audioRecord
+        inputBar.textView.becomeFirstResponder()
     }
 }

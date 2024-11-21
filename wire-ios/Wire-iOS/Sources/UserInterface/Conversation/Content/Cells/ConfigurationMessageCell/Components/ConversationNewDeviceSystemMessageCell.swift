@@ -21,7 +21,7 @@ import WireDataModel
 
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let userClientURL: URL = URL(string: "settings://user-client")!
+    static let userClientURL: URL = .init(string: "settings://user-client")!
 
     var linkTarget: LinkTarget?
 
@@ -75,9 +75,9 @@ extension ConversationNewDeviceSystemMessageCell {
               let zClientViewController = ZClientViewController.shared else { return false }
 
         switch linkTarget {
-        case .user(let user):
+        case let .user(user):
             zClientViewController.openClientListScreen(for: user)
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             zClientViewController.openDetailScreen(for: conversation)
         }
 

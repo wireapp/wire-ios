@@ -31,9 +31,9 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     init(style: WireTextStyle = .body1) {
         // Not needed when we use a font style.
-        onRedrawFont = { return nil }
+        self.onRedrawFont = { nil }
         super.init(frame: .zero)
-        self.titleLabel?.font = .font(for: style)
+        titleLabel?.font = .font(for: style)
         titleLabel?.adjustsFontForContentSizeCategory = true
     }
 
@@ -45,6 +45,7 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
         titleLabel?.font = fontSpec.font
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -53,7 +54,7 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     func redrawFont() {
         guard let newFont = onRedrawFont() else { return }
-        self.titleLabel?.font = newFont
+        titleLabel?.font = newFont
     }
 
 }
