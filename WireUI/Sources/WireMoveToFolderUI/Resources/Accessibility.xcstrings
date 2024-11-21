@@ -24,7 +24,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Close folder picker"
+            "value" : "Close folder overview"
           }
         },
         "es" : {
@@ -89,7 +89,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Закрыть выбор папок"
           }
         },
