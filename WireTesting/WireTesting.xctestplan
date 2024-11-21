@@ -1,0 +1,27 @@
+{
+  "configurations" : [
+    {
+      "id" : "35D7284A-5D13-4183-A82C-4A00FF0F121E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:WireTesting.xcodeproj",
+        "identifier" : "596B02872CEF88F100376708",
+        "name" : "WireTestingTests"
+      }
+    }
+  ],
+  "version" : 1
+}
