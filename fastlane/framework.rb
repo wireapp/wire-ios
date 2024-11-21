@@ -100,6 +100,8 @@ class Framework
         case name
         when "wire-ios"
             "Wire-iOS"
+        when "WireUI"
+            "WireUI-Package"
         when "WireDomain", "WireAPI", "WireAnalytics", "WireUI", "WireFoundation"
             name
         when "wire-ios-mocktransport"
