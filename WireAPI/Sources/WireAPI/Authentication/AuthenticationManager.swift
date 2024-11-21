@@ -132,7 +132,10 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
 
             let (data, response) = try await networkService.executeRequest(request)
 
-            return try ResponseParser()
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+            return try ResponseParser(decoder: decoder)
                 .success(code: .ok, type: AccessTokenPayload.self)
                 .failure(code: .forbidden, label: "invalid-credentials", error: Failure.invalidCredentials)
                 .parse(code: response.statusCode, data: data)
@@ -156,15 +159,6 @@ private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
     let accessToken: String
     let tokenType: String
     let expiresIn: Int
-
-    enum CodingKeys: String, CodingKey {
-
-        case user
-        case accessToken = "access_token"
-        case tokenType = "token_type"
-        case expiresIn = "expires_in"
-
-    }
 
     func toAPIModel() -> AccessToken {
         AccessToken(
