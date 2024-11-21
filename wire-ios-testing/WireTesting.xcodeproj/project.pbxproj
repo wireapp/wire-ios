@@ -14,7 +14,6 @@
 		54AFD7E41CB6986A0090E33A /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DE1CB698690090E33A /* medium.jpg */; };
 		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
-		59121DBC2CEF787200368D29 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59121DBB2CEF787200368D29 /* WireSystem */; };
 		591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
 		596B026F2CEF7AF000376708 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
 		5994B7EA2CEE4D37000F3378 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5994B7E92CEE4D37000F3378 /* WireLegacy.framework */; };
@@ -98,7 +97,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				596B026F2CEF7AF000376708 /* WireTesting.framework in Frameworks */,
-				59121DBC2CEF787200368D29 /* WireSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,10 +428,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		59121DBB2CEF787200368D29 /* WireSystem */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireSystem;
-		};
 		5994B8332CEE525C000F3378 /* WireSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystem;
