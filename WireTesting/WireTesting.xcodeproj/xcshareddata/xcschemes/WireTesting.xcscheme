@@ -15,8 +15,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "596B027D2CEF88F100376708"
-               BuildableName = "WireTesting.framework"
+               BlueprintIdentifier = "596B08792CEFC7D700376708"
+               BuildableName = "libWireTesting.a"
                BlueprintName = "WireTesting"
                ReferencedContainer = "container:WireTesting.xcodeproj">
             </BuildableReference>
@@ -34,19 +34,6 @@
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "596B02872CEF88F100376708"
-               BuildableName = "WireTestingTests.xctest"
-               BlueprintName = "WireTestingTests"
-               ReferencedContainer = "container:WireTesting.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -68,8 +55,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "596B027D2CEF88F100376708"
-            BuildableName = "WireTesting.framework"
+            BlueprintIdentifier = "596B08792CEFC7D700376708"
+            BuildableName = "libWireTesting.a"
             BlueprintName = "WireTesting"
             ReferencedContainer = "container:WireTesting.xcodeproj">
          </BuildableReference>

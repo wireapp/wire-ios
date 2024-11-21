@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "35D7284A-5D13-4183-A82C-4A00FF0F121E",
+      "id" : "08292E38-29E9-4F20-8285-107C00D36920",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -15,10 +15,9 @@
   },
   "testTargets" : [
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:WireTesting.xcodeproj",
-        "identifier" : "596B02872CEF88F100376708",
+        "identifier" : "596B08A32CEFC86A00376708",
         "name" : "WireTestingTests"
       }
     }

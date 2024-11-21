@@ -2,7 +2,7 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-//#import <WireTesting/ZMTBaseTest.h>
+#import "ZMTBaseTest.h"
 //#import <WireTesting/XCTestCase+Helpers.h>
 //#import <WireTesting/ZMTFailureRecorder.h>
 //#import <WireTesting/ZMTAsserts.h>

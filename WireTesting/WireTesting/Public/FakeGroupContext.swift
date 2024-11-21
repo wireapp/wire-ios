@@ -50,7 +50,7 @@ public class FakeGroupContext: NSObject, GroupQueue {
         // swiftlint:enable legacy_random
     }
 
-    public func performGroupedBlock(_ block: @escaping () -> Void) {
+    public func performGroupedBlock(_ block: @escaping @Sendable () -> Void) {
         dispatchGroup?.async(on: queue, block: block)
     }
 }

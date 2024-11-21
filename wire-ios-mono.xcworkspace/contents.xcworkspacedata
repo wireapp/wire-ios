@@ -107,13 +107,10 @@
       location = "group:wire-ios-link-preview/WireLinkPreview.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-utilities/../wire-ios-images/WireImages.xcodeproj">
+      location = "group:wire-ios-images/WireImages.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-utilities/WireUtilities.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireTestingStatic/WireTestingStatic.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireTesting/WireTesting.xcodeproj">
