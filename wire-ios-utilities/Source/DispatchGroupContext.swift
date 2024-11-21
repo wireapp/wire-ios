@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 @objcMembers
 public final class DispatchGroupContext: NSObject {

@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-@import Foundation;
-
+#import <Foundation/Foundation.h>
 
 typedef NS_ENUM(int8_t, ZMAPSEnvironment) {
     ZMAPSEnvironmentUnknown = 0,
