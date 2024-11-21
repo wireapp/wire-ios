@@ -31,18 +31,25 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
 
     private var currentToken: CurrentToken?
     private let clientID: String
-    private let cookieStorage: CookieStorage
+    private let cookieStorage: any CookieStorageProtocol
     private let networkService: NetworkService
 
     init(
         clientID: String,
-        cookieStorage: CookieStorage,
+        cookieStorage: any CookieStorageProtocol,
         networkService: NetworkService
     ) {
         self.clientID = clientID
         self.cookieStorage = cookieStorage
         self.networkService = networkService
     }
+    
+    /// Get a valid access token to make authenticated requests.
+    ///
+    /// If a valid token exists in the cache then it will be returned,
+    /// otherwise a new token will be retrieved from the backend.
+    ///
+    /// - Returns: A valid (non-expired) access token.
 
     func getValidAccessToken() async throws -> AccessToken {
         switch currentToken {
@@ -59,29 +66,42 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
             return try await refreshAccessToken()
         }
     }
+    
+    /// Get a new access token from the backend.
+    ///
+    /// This method will fetch a new access token from the backend
+    /// and then store it in the cache. Only a single request is made
+    /// at a time, and repeated calls will await the result of any
+    /// in-flight requests.
+    ///
+    /// - Returns: A new access token.
 
     func refreshAccessToken() async throws -> AccessToken {
-        switch currentToken {
-        case .renewing(let task):
+        if case let .renewing(task) = currentToken {
             // A new token will come soon, wait
             return try await task.value
+        }
 
-        case .cached(let accessToken):
-            // We are replacing an old token.
-            let task = makeRenewTokenTask(lastKnownAccessToken: accessToken)
-            currentToken = .renewing(task)
-            return try await task.value
+        var lastKnownToken: AccessToken?
+        if case let .cached(token) = currentToken {
+            lastKnownToken = token
+        }
 
-        default:
-            // We are getting the first token.
-            let task = makeRenewTokenTask(lastKnownAccessToken: nil)
-            currentToken = .renewing(task)
-            return try await task.value
+        let task = makeRenewTokenTask(lastKnownToken: lastKnownToken)
+        currentToken = .renewing(task)
+
+        do {
+            let newToken = try await task.value
+            currentToken = .cached(newToken)
+            return newToken
+        } catch {
+            currentToken = nil
+            throw error
         }
     }
 
     private func makeRenewTokenTask(
-        lastKnownAccessToken: AccessToken?
+        lastKnownToken: AccessToken?
     ) -> Task<AccessToken, any Error> {
         Task {
             let cookies = try await cookieStorage.fetchCookies()
@@ -93,21 +113,16 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
                 .withCookies(cookies)
                 .build()
 
-            if let lastKnownAccessToken {
-                request.setAccessToken(lastKnownAccessToken)
+            if let lastKnownToken {
+                request.setAccessToken(lastKnownToken)
             }
 
             let (data, response) = try await networkService.executeRequest(request)
 
-            let accessToken = try ResponseParser()
+            return try ResponseParser()
                 .success(code: .ok, type: AccessTokenPayload.self)
                 .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
                 .parse(code: response.statusCode, data: data)
-
-            // We must make sure to store the token before the task completes.
-            currentToken = .cached(accessToken)
-
-            return accessToken
         }
     }
 
