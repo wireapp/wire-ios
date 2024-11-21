@@ -411,7 +411,7 @@ extension SearchTask {
             apiVersion >= .v1,
             case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
-            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
+            !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])//
         else {
             return
         }

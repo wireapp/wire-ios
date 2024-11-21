@@ -239,7 +239,7 @@ final class AddParticipantsViewController: UIViewController {
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchContactList()
+        searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.filterConversation?.canAddUsersWithOtherDomains ?? true)
         searchResultsViewController.delegate = self
 
         userSelection.add(observer: self)
@@ -577,6 +577,17 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
             WireURLs.shared.searchSupport.open()
+        }
+    }
+}
+
+extension ZMConversation {
+    var canAddUsersWithOtherDomains: Bool {
+        switch messageProtocol {
+        case .proteus:
+            false
+        default:
+            true
         }
     }
 }
