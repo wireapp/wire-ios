@@ -23,7 +23,7 @@
 #import "ZMTExpectation.h"
 #import "ZMTFailureRecorder.h"
 #import <libkern/OSAtomic.h>
-#import <WireTesting/WireTesting-Swift.h>
+#import <WireTestingNew/WireTestingNew-Swift.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import "NSUUID+WireTesting.h"
 
