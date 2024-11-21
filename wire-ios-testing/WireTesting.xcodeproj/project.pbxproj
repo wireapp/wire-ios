@@ -14,12 +14,23 @@
 		54AFD7E41CB6986A0090E33A /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DE1CB698690090E33A /* medium.jpg */; };
 		54AFD7E51CB6986A0090E33A /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7DF1CB698690090E33A /* not_animated.gif */; };
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
+		59121DBC2CEF787200368D29 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 59121DBB2CEF787200368D29 /* WireSystem */; };
 		591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
+		596B026F2CEF7AF000376708 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
 		5994B7EA2CEE4D37000F3378 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5994B7E92CEE4D37000F3378 /* WireLegacy.framework */; };
 		5994B8342CEE525C000F3378 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 5994B8332CEE525C000F3378 /* WireSystem */; };
-		59A5D6722CEF5FF3004FD851 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59A5D6712CEF5FF3004FD851 /* XCTest.framework */; platformFilter = ios; };
 		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		596B02712CEF7AF000376708 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 096AD7B21B68D41D00E007A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 096AD7BA1B68D41D00E007A8;
+			remoteInfo = WireTesting;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		096AD7BB1B68D41D00E007A8 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,7 +52,6 @@
 		54AFD7E01CB698690090E33A /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = tiny.jpg; sourceTree = "<group>"; };
 		54BD49F11D41FA56006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5994B7E92CEE4D37000F3378 /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59A5D6712CEF5FF3004FD851 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		EE67F6AE296F0510001D7C88 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,7 +90,6 @@
 				5994B8342CEE525C000F3378 /* WireSystem in Frameworks */,
 				591B6E842C8B0A2B009F8A7B /* OCMock.xcframework in Frameworks */,
 				5994B7EA2CEE4D37000F3378 /* WireLegacy.framework in Frameworks */,
-				59A5D6722CEF5FF3004FD851 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +97,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				596B026F2CEF7AF000376708 /* WireTesting.framework in Frameworks */,
+				59121DBC2CEF787200368D29 /* WireSystem in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,7 +150,6 @@
 		096AD7EC1B68D8DF00E007A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				59A5D6712CEF5FF3004FD851 /* XCTest.framework */,
 				5994B7E92CEE4D37000F3378 /* WireLegacy.framework */,
 				EE67F6AE296F0510001D7C88 /* OCMock.xcframework */,
 			);
@@ -213,6 +223,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				596B02722CEF7AF000376708 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				59118C552CEF761500141574 /* Tests */,
@@ -303,6 +314,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		596B02722CEF7AF000376708 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 096AD7BA1B68D41D00E007A8 /* WireTesting */;
+			targetProxy = 596B02712CEF7AF000376708 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		096AD7CF1B68D41D00E007A8 /* Debug */ = {
@@ -411,6 +430,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		59121DBB2CEF787200368D29 /* WireSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystem;
+		};
 		5994B8332CEE525C000F3378 /* WireSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystem;

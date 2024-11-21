@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <WireTesting/WireTesting.h>
+@import WireSystem;
+@import WireTesting;
 
 @interface WireTestingTests : ZMTBaseTest
 
