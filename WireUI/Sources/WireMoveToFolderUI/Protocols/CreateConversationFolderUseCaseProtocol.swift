@@ -17,9 +17,10 @@
 //
 
 /// Protocol for handling creating a folder
-public protocol FolderCreationUseCaseType: Sendable {
+public protocol CreateConversationFolderUseCaseProtocol {
     /// Creates a folder
     /// - Parameters:
     ///   - name: The name of the folder to create
+    @MainActor
     func invoke(name: String) async throws -> Folder
 }

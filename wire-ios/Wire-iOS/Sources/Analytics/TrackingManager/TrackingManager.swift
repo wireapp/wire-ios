@@ -51,8 +51,9 @@ final class TrackingManager: NSObject, TrackingInterface {
 
     @MainActor
     func firstTimeRequestToEnableAnalytics() async throws {
-        // Only ask if user has not given a preference yet.
-        guard !doesUserConsentPreferenceExist else {
+        // Ask if user has not given a preference yet
+        // and tracking can be enabled
+        guard !doesUserConsentPreferenceExist, sessionManager.canEnableTracking else {
             return
         }
 
