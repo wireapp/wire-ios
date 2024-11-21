@@ -239,7 +239,7 @@
 		09A217E61B78DFAF0076547A /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				59B452DE2CEF71A400D946D6 /* Mock Data Model */,
+				CE6B7B2A1C11ECC000FC4C2E /* Mock Data Model */,
 				59883CFF2CEE2C6A00E79137 /* WireLegacyBridging.swift */,
 				09A217F01B78DFAF0076547A /* WireTesting.h */,
 				09A217E71B78DFAF0076547A /* ZMTImageComparator.h */,
@@ -295,7 +295,7 @@
 			path = "zmc-config";
 			sourceTree = "<group>";
 		};
-		59B452DE2CEF71A400D946D6 /* Mock Data Model */ = {
+		CE6B7B2A1C11ECC000FC4C2E /* Mock Data Model */ = {
 			isa = PBXGroup;
 			children = (
 				CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */,
@@ -303,7 +303,7 @@
 				CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */,
 				CE6B7B2E1C11ED5F00FC4C2E /* ZMMockEntity2.m */,
 			);
-			path = "Mock Data Model";
+			name = "Mock Data Model";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -500,6 +500,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -514,6 +515,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

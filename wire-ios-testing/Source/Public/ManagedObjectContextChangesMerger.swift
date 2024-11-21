@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
-import XCTest
+import Foundation
 
 public final class ManagedObjectContextChangesMerger: NSObject {
     public let managedObjectContexts: Set<NSManagedObjectContext>

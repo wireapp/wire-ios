@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <CoreData/CoreData.h>
+@import CoreData;
 
-@interface ZMMockEntity2 : NSManagedObject
+@interface ZMMockEntity : NSManagedObject
 
 @property (nonatomic) int64_t identifier;
 @property (nonatomic) int16_t field;
-@property (nonatomic) int16_t field2;
-@property (nonatomic) int16_t field3;
+@property (nonatomic) NSString *field2;
+@property (nonatomic) NSString *field3;
+
+@property (nonatomic) NSMutableSet *mockEntities;
 
 @end
