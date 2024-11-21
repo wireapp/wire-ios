@@ -46,3 +46,14 @@ extension APIVersion: Comparable {
     }
 
 }
+
+extension APIVersion {
+    public var useQualifiedIds: Bool {
+        switch self {
+        case .v0:
+            return false
+        case .v1, .v2, .v3, .v4, .v5, .v6:
+            return true
+        }
+    }
+}

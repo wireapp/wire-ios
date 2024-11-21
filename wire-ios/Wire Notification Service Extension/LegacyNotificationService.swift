@@ -120,7 +120,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
         removeNotification(withSameMessageId: notification.messageNonce)
 
-        WireLogger.notifications.info("session did generate a notification")
+        WireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes)
 
         defer { tearDown() }
 
@@ -138,7 +138,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             content.badge = badgeCount
         }
 
-        WireLogger.notifications.info("showing notification to user")
+        WireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes)
         contentHandler(content)
     }
 
@@ -194,7 +194,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
           applicationGroupIdentifier: appGroupID,
           accountIdentifier: accountID,
           environment: BackendEnvironment.shared,
-          analytics: nil,
           sharedUserDefaults: .applicationGroup,
           minTLSVersion: SecurityFlags.minTLSVersion.stringValue
       )

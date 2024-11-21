@@ -1,5 +1,6 @@
 {
     "type": "team.member-leave",
+    "time": "2021-05-12T10:52:02.671Z",
     "team": "6f96e56c-8b3b-4821-925a-457f62f9de32",
     "data": {
         "user": "d6344976-f86c-4010-afe2-bc07447ab412"

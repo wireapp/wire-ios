@@ -46,7 +46,6 @@ class RegistrationStatusTests: MessagingTest {
         user.accentColor = .amber
         user.verificationCode = code
         user.acceptedTermsOfService = true
-        user.marketingConsent = true
     }
 
     override func tearDown() {

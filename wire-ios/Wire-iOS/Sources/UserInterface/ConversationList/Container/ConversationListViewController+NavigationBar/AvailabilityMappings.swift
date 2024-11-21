@@ -16,18 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAccountImage
+import WireAccountImageUI
 import WireDataModel
-import WireReusableUIComponents
+import WireSidebarUI
 
 extension WireDataModel.Availability {
 
-    /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
-    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
+    /// Since `WireAccountImageUI` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImageUI.Availability?`.
 
-    func map() -> WireAccountImage.Availability? {
+    func mapToAccountImageAvailability() -> WireAccountImageUI.Availability? {
         switch self {
         case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
+    }
+}
+
+extension WireDataModel.Availability {
+
+    /// Since `WireSidebarUI` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebarUI.SidebarAccountInfo.Availability?`.
+
+    func mapToSidebarAccountInfoAvailability() -> WireSidebarUI.SidebarAccountInfo.Availability? {
+        switch self {
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
+    }
+}
+
+extension WireSidebarUI.SidebarAccountInfo.Availability {
+
+    /// Since `WireAccountImageUI.Availability` does not know about the type `WireSidebarUI`,
+    /// this function serves as an adapter from `WireSidebarUI.SidebarAccountInfo.Availability` to `WireAccountImageUI.Availability`.
+
+    func mapToAccountImageAvailability() -> WireAccountImageUI.Availability {
+        switch self {
         case .available: .available
         case .busy: .busy
         case .away: .away

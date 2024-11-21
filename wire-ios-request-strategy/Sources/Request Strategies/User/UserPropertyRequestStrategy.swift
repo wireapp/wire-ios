@@ -24,7 +24,7 @@ private enum UserProperty: CaseIterable {
 }
 
 extension UserProperty {
-    static let propertiesPath = "properties"
+    static let propertiesPath = "/properties"
 
     var propertyName: String {
         switch self {

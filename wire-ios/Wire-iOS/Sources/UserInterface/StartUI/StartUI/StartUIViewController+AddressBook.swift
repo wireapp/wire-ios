@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
-import WireUIFoundation
+import WireMainNavigationUI
 
 extension StartUIViewController {
 
@@ -42,19 +42,16 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
     }
 
     func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
-        guard let tabBarController = presentingViewController as? UITabBarController else {
-            return assertionFailure("wrong assumption!")
-        }
-        dismiss(animated: true) {
-            // point to the contacts tab item
-            var tabItemFrame = tabBarController.tabBar.bounds
-            tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
-            tabItemFrame.origin.x = CGFloat(MainTabBarController.Tab.contacts.rawValue) * tabItemFrame.size.width
-            tabBarController.presentInviteActivityViewController(
-                popoverPresentationConfiguration: .sourceView(
-                    sourceView: tabBarController.tabBar,
-                    sourceRect: tabItemFrame
-                )
+        guard
+            let navigationController,
+            let sourceView = quickActionsBar.inviteButton?.superview,
+            let sourceRect = quickActionsBar.inviteButton?.frame.insetBy(dx: -2, dy: -2)
+        else { return }
+
+        navigationController.popViewController(animated: true) { [weak self] in
+            self?.presentInviteActivityViewController(
+                popoverPresentationConfiguration: .sourceView(sourceView, sourceRect),
+                completionWithItemsHandler: { _, _, _, _ in self?.dismiss(animated: true) }
             )
         }
     }

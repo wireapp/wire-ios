@@ -187,17 +187,6 @@ public protocol UserSession: AnyObject {
 
     func acknowledgeFeatureChange(for feature: Feature.Name)
 
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    )
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    )
-
     func classification(
         users: [UserType],
         conversationDomain: String?
@@ -265,6 +254,24 @@ public protocol UserSession: AnyObject {
     func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
+
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
+
+    func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol
+
+    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
+
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+
+    func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
+
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol
+
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol
+
+    func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase
+
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

@@ -21,11 +21,15 @@ import Foundation
 /// An event where the self backend stopped federating
 /// with another backend.
 
-public struct FederationDeleteEvent: Equatable, Codable {
+public struct FederationDeleteEvent: Equatable, Codable, Sendable {
 
     /// The domain of the backend that is no longer
     /// federating with the self backend.
 
     public let domain: String
+
+    public init(domain: String) {
+        self.domain = domain
+    }
 
 }

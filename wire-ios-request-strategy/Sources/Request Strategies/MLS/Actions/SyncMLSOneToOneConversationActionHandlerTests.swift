@@ -94,19 +94,55 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
 
     // MARK: - Response
 
-    func test_itHandlesSuccess_200() throws {
+    func test_itHandlesSuccess_200_APIV5() throws {
         // Given
+        let apiVersion: APIVersion = .v5
         var payload = Payload.Conversation.stub()
         payload.qualifiedID = QualifiedID.random()
         payload.type = BackendConversationType.oneOnOne.rawValue
         let encoder = JSONEncoder.defaultEncoder
-        encoder.setAPIVersion(.v5)
+        encoder.setAPIVersion(apiVersion)
         let jsonString = try payload.encodeToJSONString(encoder: encoder)
 
         // When
         test_itHandlesSuccess(
             status: 200,
-            payload: jsonString as ZMTransportData
+            payload: jsonString as ZMTransportData,
+            apiVersion: apiVersion
+        )
+    }
+
+    func test_itHandlesSuccess_200_APIV6() throws {
+        // Given
+        let apiVersion: APIVersion = .v6
+        var conversation = Payload.Conversation.stub()
+        conversation.qualifiedID = qualifiedID
+        conversation.type = BackendConversationType.oneOnOne.rawValue
+
+        let removalKey = Data([1, 2, 3])
+        let publicKeys = Payload.ExternalSenderKeys(
+            removal: .init(
+                ed25519: removalKey.base64EncodedString(),
+                ed448: removalKey.base64EncodedString(),
+                p256: removalKey.base64EncodedString(),
+                p384: removalKey.base64EncodedString(),
+                p521: removalKey.base64EncodedString()
+            )
+        )
+
+        var payload = Payload.ConversationWithRemovalKeys(
+            conversation: conversation,
+            publicKeys: publicKeys)
+
+        let encoder = JSONEncoder.defaultEncoder
+        encoder.setAPIVersion(apiVersion)
+        let jsonString = try payload.encodeToJSONString(encoder: encoder)
+
+        // When
+        test_itHandlesSuccess(
+            status: 200,
+            payload: jsonString as ZMTransportData,
+            apiVersion: apiVersion
         )
     }
 

@@ -44,6 +44,9 @@ public enum URLAction: Equatable {
     /// Switch to a custom backend
     case accessBackend(configurationURL: URL)
 
+    /// Import external events
+    case importEvents
+
     public var causesLogout: Bool {
         switch self {
         case .startCompanyLogin: return true
@@ -56,7 +59,8 @@ public enum URLAction: Equatable {
         case .joinConversation,
              .openConversation,
              .openUserProfile,
-             .connectBot:
+             .connectBot,
+             .importEvents:
              return true
         default: return false
         }
@@ -115,6 +119,9 @@ extension URLAction {
             } else {
                 throw DeepLinkRequestError.invalidConversationLink
             }
+
+        case URL.DeepLink.importEvents:
+            self = .importEvents
 
         case URL.Host.startSSO:
             if let uuidCode = url.pathComponents.last.flatMap(CompanyLoginRequestDetector.requestCode) {

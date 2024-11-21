@@ -167,7 +167,7 @@ final class ServiceDetailViewController: UIViewController {
             detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
+            actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             detailView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48)
@@ -203,7 +203,6 @@ final class ServiceDetailViewController: UIViewController {
 
                     switch result {
                     case .success:
-                        Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
                         completion?(.success(conversation: conversation))
                     case .failure(let error):
                         completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
@@ -223,10 +222,6 @@ final class ServiceDetailViewController: UIViewController {
                     completion?(.success(conversation: existingConversation))
                 } else {
                     serviceUser.createConversation(in: userSession, completionHandler: { result in
-                        if case let .success(conversation) = result {
-                            Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
-                        }
-
                         switch result {
                         case .success(let conversation):
                             completion?(.success(conversation: conversation))

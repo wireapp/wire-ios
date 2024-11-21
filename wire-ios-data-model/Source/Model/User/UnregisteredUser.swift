@@ -32,7 +32,6 @@ public class UnregisteredUser {
     public var name: String?
     public var accentColorValue: ZMAccentColorRawValue?
     public var acceptedTermsOfService: Bool?
-    public var marketingConsent: Bool?
     public var password: String?
 
     public var accentColor: AccentColor? {
@@ -60,7 +59,6 @@ public class UnregisteredUser {
             && name != nil
             && accentColor != nil
             && acceptedTermsOfService != nil
-            && marketingConsent != nil
             && passwordStepFinished
     }
 
@@ -81,7 +79,6 @@ extension UnregisteredUser: Equatable {
             && lhs.name == rhs.name
             && lhs.accentColor == rhs.accentColor
             && lhs.acceptedTermsOfService == rhs.acceptedTermsOfService
-            && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
 

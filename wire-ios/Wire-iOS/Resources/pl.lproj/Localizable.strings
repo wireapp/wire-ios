@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Ty)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Szukaj według nazwy lub nazwy użytkownika";
 "peoplepicker.header.top_people" = "Osoby";
-"peoplepicker.button.create_conversation" = "Załóż grupę";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Dodaj uczestników";
 "peoplepicker.header.conversations" = "Grupy";
 "peoplepicker.header.team_conversations" = "Grupy zespołu %@";
@@ -61,8 +59,8 @@
 "peoplepicker.header.directory" = "Połącz";
 "peoplepicker.header.federation" = "Połącz z inną domeną";
 
-"peoplepicker.group.title.singular" = "Dodaj uczestników";
-"peoplepicker.group.title.plural" = "Dodaj uczestników (%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Pomiń";
 "peoplepicker.group.done" = "Gotowe";
 "peoplepicker.group.create" = "Utwórz";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Zaproś więcej osób";
 "peoplepicker.invite_team_members" = "Zaproś osoby do zespołu";
 "peoplepicker.quick-action.open-conversation" = "Otwórz";
-"peoplepicker.quick-action.create-conversation" = "Załóż grupę";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Zarządzaj usługami";
 
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
@@ -127,6 +123,23 @@
 "conversation_list.empty.all_archived.message" = "Wszystko zarchiwizowane";
 "conversation_list.empty.no_contacts.message" = "Rozpocznij rozmowę lub\nutwórz grupę.";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Ulubione ";
+"conversation_list.filter.groups.title" = "Grupy";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Folders";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Usuń";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Dołącz";
@@ -134,6 +147,15 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Dotknij, aby aktywować.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktywuj teraz.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ma nowe wiadomości.";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "w kontaktach";
@@ -300,10 +322,10 @@
 "conversation.input_bar.message_too_long.message" = "Możesz wysyłać wiadomości do %d znaków.";
 
 "conversation.create.group_name.title" = "Utwórz grupę";
-"conversation.create.group_name.placeholder" = "Nazwa grupy";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "Co najmniej 1 znak";
 "conversation.create.guidance.toolong" = "Zbyt wiele znaków";
-"conversation.create.options.title" = "Opcje rozmów";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Zezwalaj na gości";
 "conversation.create.guests.subtitle" = "Wyraź zgodę na dołączenie do rozmowy osób spoza twojej drużyny.";
@@ -506,6 +528,7 @@
 "content.system.message_delivered_timestamp" = "Dostarczono";
 "content.system.message_read_timestamp" = "Przeczytane";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1031,8 +1054,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "Ustawienia";
 "self.profile" = "Profil";
 "self.account" = "Konto";
@@ -1151,10 +1180,14 @@
 "self.settings.privacy_analytics.title" = "Wysyłaj anonimowe dane użytkowania";
 "self.settings.privacy_analytics_menu.description.title" = "Dane użycia pozwalają Wire zrozumieć, jak aplikacja jest używana i jak można ją poprawić. Dane są anonimowe i nie zawierają treści Twojej komunikacji (takich jak wiadomości, pliki lub połączenia).";
 
-"self.settings.receiveNews_and_offers.title" = "Otrzymuj newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Otrzymuj wiadomości i aktualizacje produktów od Wire za pośrednictwem poczty elektronicznej.";
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
 
-
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Odrzuć";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "Polityka prywatności";
 
 // Change Username
 
@@ -1916,13 +1949,6 @@
 
 "url_action.invalid_link.title" = "Nieprawidłowy link.";
 "url_action.invalid_link.message" = "Link który otworzyłeś jest nieprawidłowy.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Czy chcesz otrzymywać informacje o nowościach i aktualizacjach Wire na e-mail?";
-"news_offers.consent.message" = "Możesz anulować subskrypcję w każdej chwili.";
-"news_offers.consent.button.privacy_policy.title" = "Polityka prywatności";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

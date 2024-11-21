@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
@@ -260,29 +261,6 @@ extension ZMUserSession: UserSession {
         featureRepository.setNeedsToNotifyUser(false, for: feature)
     }
 
-    public func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    ) {
-        ZMUser.selfUser(inUserSession: self).fetchConsent(
-            for: .marketing,
-            on: transportSession,
-            completion: completion
-        )
-    }
-
-    public func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-        ZMUser.selfUser(inUserSession: self).setMarketingConsent(
-            to: granted,
-            in: self,
-            completion: completion
-        )
-    }
-
     // MARK: Context provider
 
     public var contextProvider: any ContextProvider {
@@ -353,6 +331,43 @@ extension ZMUserSession: UserSession {
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
     }
+
+    public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
+        return AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
+        return AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendKnockMessageUseCase() -> AppendKnockMessageUseCaseProtocol {
+        return AppendKnockMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendLocationMessageUseCase() -> AppendLocationMessagekUseCaseProtocol {
+        return AppendLocationMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
+        return AppendFileMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeToggleMessageReactionUseCase() -> ToggleMessageReactionUseCaseProtocol {
+        return ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeCallQualitySurveyUseCase() -> SubmitCallQualitySurveyUseCaseProtocol {
+        return SubmitCallQualitySurveyUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase {
+        return UpdateConversationFolderUseCase(context: self.syncContext)
+    }
+
+    public func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCaseProtocol {
+        return CreateConversationFolderUseCase(managedObjectContext: syncContext)
+    }
+
 }
 
 extension UInt64 {

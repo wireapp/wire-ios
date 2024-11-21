@@ -19,8 +19,6 @@
 import avs
 import Foundation
 
-private let zmLog = ZMSLog(tag: "calling")
-
 // MARK: Conversation Changes
 
 extension WireCallCenterV3: ZMConversationObserver {
@@ -115,10 +113,9 @@ extension WireCallCenterV3 {
 
     private func handleEvent(_ description: String, _ handlerBlock: @escaping () -> Void) {
         Self.logger.info("handle avs event: \(description)")
-        zmLog.debug("Handle AVS event: \(description)")
 
         guard let context = self.uiMOC else {
-            zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
+            Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
 
@@ -129,7 +126,7 @@ extension WireCallCenterV3 {
 
     private func handleEventInContext(_ description: String, _ handlerBlock: @escaping (NSManagedObjectContext) -> Void) {
         guard let context = self.uiMOC else {
-            zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
+            Self.logger.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
 
@@ -212,14 +209,8 @@ extension WireCallCenterV3 {
 
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
-        do {
-            let metricsData = Data(metrics.utf8)
-            let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
-            guard let attributes = jsonObject as? [String: NSObject] else { return }
-            analytics?.tagEvent("calling.avs_metrics_ended_call", attributes: attributes)
-        } catch {
-            zmLog.error("Unable to parse call metrics JSON: \(error)")
-        }
+        let metricsData = Data(metrics.utf8)
+        WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self))")
     }
 
     /// Handle requests for refreshing the calling configuration.
@@ -247,7 +238,7 @@ extension WireCallCenterV3 {
                 selfUser.avsIdentifier == senderUserId,
                 selfUser.selfClient()?.remoteIdentifier == senderClientId
             else {
-                zmLog.warn("Received request to send calling message from non self user and/or client")
+                Self.logger.warn("Received request to send calling message from non self user and/or client")
                 return
             }
 
@@ -264,7 +255,7 @@ extension WireCallCenterV3 {
 
     /// Called when AVS is ready.
     func setCallReady(version: Int32) {
-        zmLog.debug("wcall intialized with protocol version: \(version)")
+        Self.logger.debug("wcall intialized with protocol version: \(version)")
         handleEvent("call-ready") {
             self.isReady = true
         }
@@ -273,7 +264,7 @@ extension WireCallCenterV3 {
     func handleParticipantChange(conversationId: AVSIdentifier, data: String) {
         handleEvent("participant-change") {
             guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid participant change data")
+                Self.logger.info("Invalid participant change data", attributes: .safePublic)
                 return
             }
 
@@ -296,7 +287,8 @@ extension WireCallCenterV3 {
                 let members = change.members.map(AVSCallMember.init)
                 self.callParticipantsChanged(conversationId: AVSIdentifier.from(string: change.convid), participants: members)
             } catch {
-                zmLog.safePublic("Cannot decode participant change JSON")
+                let change = String(decoding: data, as: UTF8.self)
+                Self.logger.info("Cannot decode participant change JSON: \(change)", attributes: .safePublic)
             }
         }
     }
@@ -365,7 +357,7 @@ extension WireCallCenterV3 {
             self.transport?.requestClientsList(conversationId: conversationId) { clients in
 
                 guard let json = AVSClientList(clients: clients).jsonString(encoder) else {
-                    zmLog.error("Could not encode client list to JSON")
+                    Self.logger.error("Could not encode client list to JSON")
                     return
                 }
 
@@ -385,7 +377,7 @@ extension WireCallCenterV3 {
         handleEventInContext("active-speakers-change") {
 
             guard let data = data.data(using: .utf8) else {
-                WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
+                Self.logger.error("Invalid active speakers data", attributes: .safePublic)
                 return
             }
 
@@ -418,7 +410,7 @@ extension WireCallCenterV3 {
                     WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
                 }
             } catch {
-                WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
+                Self.logger.error("Cannot decode active speakers change JSON", attributes: .safePublic)
             }
         }
     }
@@ -470,7 +462,7 @@ extension WireCallCenterV3 {
                     do {
                         try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
                     } catch {
-                        WireLogger.calling.error("failed to generate new epoch: \(String(reflecting: error))")
+                        Self.logger.error("failed to generate new epoch: \(String(reflecting: error))")
                     }
                 }
             }

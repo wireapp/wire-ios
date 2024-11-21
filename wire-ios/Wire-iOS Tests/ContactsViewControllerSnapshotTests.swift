@@ -106,7 +106,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     }
 
     private func wrapInNavigationController() {
-        let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        let navigationController = UIViewController().wrapInNavigationController()
         navigationController.pushViewController(sut, animated: false)
         sut.tableView.reloadData()
     }

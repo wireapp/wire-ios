@@ -20,7 +20,7 @@ import WireAPI
 
 /// Errors originating from `ConversationLabelsRepository`.
 
-enum ConversationLabelsRepositoryError: Error {
+enum ConversationLabelsRepositoryError: Error, Equatable {
 
     /// Unable to store label locally
 

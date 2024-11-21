@@ -61,10 +61,6 @@ extension ZMOTRMessage {
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
 
-        if !message.knownMessage {
-            UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
-        }
-
         // Verify sender is part of conversation
         conversation.verifySender(of: updateEvent, moc: moc)
 
@@ -115,7 +111,12 @@ extension ZMOTRMessage {
                 return nil
             }
             conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
+
         case .calling, .availability:
+            return nil
+
+        case .inCallEmoji:
+            // Not supported yet, just discard.
             return nil
 
         default:

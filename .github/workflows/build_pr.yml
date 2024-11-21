@@ -14,7 +14,14 @@ permissions:
 
 jobs:
   build_develop:
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event.action != 'edited' || (
+        github.event.changes.title == null &&
+        github.event.changes.body == null &&
+        github.event.changes.assignees == null &&
+        github.event.changes.reviewers == null &&
+        github.event.changes.labels == null
+      ) && github.event.pull_request.draft == false
     uses: ./.github/workflows/_reusable_app_release_without_changelog.yml
     with:
       datadog_enabled: false

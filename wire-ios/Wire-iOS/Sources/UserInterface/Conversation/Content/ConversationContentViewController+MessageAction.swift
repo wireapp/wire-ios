@@ -42,7 +42,8 @@ extension ConversationContentViewController {
             targetView: tableView.targetView(for: message, dataSource: dataSource),
             actionResponder: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 
@@ -151,18 +152,23 @@ extension ConversationContentViewController {
             let detailsViewController = MessageDetailsViewController(
                 message: message,
                 userSession: userSession,
-                mainCoordinator: mainCoordinator
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder
             )
-            parent?.present(detailsViewController, animated: true)
+
+            let navigationController = UINavigationController(rootViewController: detailsViewController)
+            navigationController.modalPresentationStyle = .formSheet
+
+            parent?.present(navigationController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
             activityIndicator.start()
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
         case .react(let reaction):
-            Analytics.shared.tagReacted(in: conversation)
             userSession.perform {
-                message.react(reaction)
+                let useCase = self.userSession.makeToggleMessageReactionUseCase()
+                useCase.invoke(reaction, for: message, in: self.conversation)
             }
         case .visitLink:
             if let textMessageData = message.textMessageData,

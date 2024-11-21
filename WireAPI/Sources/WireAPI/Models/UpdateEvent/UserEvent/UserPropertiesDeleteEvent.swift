@@ -21,10 +21,14 @@ import Foundation
 /// An event where one of the self user's persisted
 /// properties was deleted.
 
-public struct UserPropertiesDeleteEvent: Equatable, Codable {
+public struct UserPropertiesDeleteEvent: Equatable, Codable, Sendable {
 
     /// The property key that was deleted.
 
     public let key: String
+
+    public init(key: String) {
+        self.key = key
+    }
 
 }

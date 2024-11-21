@@ -67,13 +67,13 @@ final class SessionManagerProxyTests: IntegrationTest {
             proxyCredentials: nil,
             isUnauthenticatedTransportSessionReady: false,
             sharedUserDefaults: sharedUserDefaults,
-            deleteUserLogs: {}
+            deleteUserLogs: {},
+            analyticsServiceConfiguration: nil
         )
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
         sessionManager?.start(launchOptions: [:])
-
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
