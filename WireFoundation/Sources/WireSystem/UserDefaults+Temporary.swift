@@ -35,7 +35,7 @@ public extension UserDefaults {
     }
 }
 
-// MARK: UserDefaults.temporary() helpers    // MARK: Helpers
+// MARK: UserDefaults.temporary() helpers
 
 private let zmLog = ZMSLog(tag: "UserDefaults")
 
