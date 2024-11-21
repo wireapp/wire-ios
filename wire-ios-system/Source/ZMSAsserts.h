@@ -131,7 +131,7 @@ do { \
                         ""]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjc assertionDumpLog:output]; \
+    [WireLoggerObjC assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \
@@ -149,7 +149,7 @@ do { \
                         message]; \
 \
     /* report error to datadog or other loggers */ \
-    [WireLoggerObjc assertionDumpLog:output]; \
+    [WireLoggerObjC assertionDumpLog:output]; \
 \
     /* prepare and dump to file */ \
     [ZMAssertionDumpFile writeWithContent:output error:nil]; \
