@@ -150,7 +150,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How to add a conversation to a folder"
+            "value" : "Learn more"
           }
         },
         "es" : {
@@ -215,7 +215,7 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Как добавить беседу в папку"
           }
         },
