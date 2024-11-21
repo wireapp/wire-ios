@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import Foundation
-import WireSystem
-
-//@objc(ZMLogger)
-//final class WireLoggerObjC: WireSystem.WireLoggerObjC {}
+//import WireSystem
 
 //@objc(ZMSGroupQueue)
 //protocol GroupQueue: WireSystem.GroupQueue {}
