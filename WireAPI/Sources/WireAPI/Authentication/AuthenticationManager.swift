@@ -29,6 +29,19 @@ protocol AuthenticationManagerProtocol {
 
 actor AuthenticationManager: AuthenticationManagerProtocol {
 
+    enum Failure: Error, Equatable {
+
+        case invalidCredentials
+
+    }
+
+    private enum CurrentToken {
+
+        case cached(AccessToken)
+        case renewing(Task<AccessToken, any Error>)
+
+    }
+
     private var currentToken: CurrentToken?
     private let clientID: String
     private let cookieStorage: any CookieStorageProtocol
@@ -121,25 +134,14 @@ actor AuthenticationManager: AuthenticationManagerProtocol {
 
             return try ResponseParser()
                 .success(code: .ok, type: AccessTokenPayload.self)
-                .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
+                .failure(code: .forbidden, label: "invalid-credentials", error: Failure.invalidCredentials)
                 .parse(code: response.statusCode, data: data)
         }
     }
 
 }
 
-private extension AuthenticationManager {
-
-    enum CurrentToken {
-
-        case cached(AccessToken)
-        case renewing(Task<AccessToken, any Error>)
-
-    }
-
-}
-
-private extension AccessToken {
+extension AccessToken {
 
     var isExpiring: Bool {
         let secondsRemaining = expirationDate.timeIntervalSinceNow

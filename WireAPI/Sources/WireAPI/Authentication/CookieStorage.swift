@@ -19,7 +19,15 @@
 import Foundation
 import WireFoundation
 
-actor CookieStorage {
+// sourcery: AutoMockable
+protocol CookieStorageProtocol: Sendable {
+
+    func storeCookies(_ cookies: [HTTPCookie]) async throws
+    func fetchCookies() async throws -> [HTTPCookie]
+
+}
+
+actor CookieStorage: CookieStorageProtocol {
 
     private let userID: UUID
     private let cookieEncryptionKey: Data
@@ -43,7 +51,7 @@ actor CookieStorage {
     ///
     /// - Parameter cookies: The cookies to store.
 
-    public func storeCookies(_ cookies: [HTTPCookie]) async throws {
+    func storeCookies(_ cookies: [HTTPCookie]) async throws {
         let cookieData = try HTTPCookieCodec.encodeCookies(cookies)
         try await storeCookieData(cookieData)
     }
@@ -56,7 +64,7 @@ actor CookieStorage {
     ///
     /// - Returns: The stored cookies.
 
-    public func fetchCookies() async throws -> [HTTPCookie] {
+    func fetchCookies() async throws -> [HTTPCookie] {
         guard let cookieData = try await fetchCookieData() else {
             return []
         }
