@@ -75,11 +75,12 @@ platform :ios do
        
        # hardcoded values that are required - not meaningful for testing
        options[:build_type] = "Development"
-       options[:build_number] = generate_build_number
+       options[:build_number] = 1
        build = Build.new(options: options)
        
        testplan = options[:testplan] || "AllTests"
        schemas.each do |scheme|
+           UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
            test_plan(build, scheme, testplan)
        end
     end
@@ -457,8 +458,12 @@ platform :ios do
             buildlog_path: build.build_path,
             result_bundle: true,
             output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-            output_types: "junit"
-        )    
+            output_types: "junit",
+            cloned_source_packages_path: ENV['PACKAGES_DIR'],
+            disable_package_automatic_updates: true,
+            skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
+
+        )
 
     end
 
