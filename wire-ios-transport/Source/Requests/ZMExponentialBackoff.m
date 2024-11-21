@@ -19,6 +19,7 @@
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
 
+@import WireFoundation;
 @import WireSystem;
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;

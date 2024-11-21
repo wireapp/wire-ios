@@ -18,6 +18,7 @@
 
 import Foundation
 import Starscream
+import WireFoundation
 
 @objcMembers
 final class StarscreamPushChannel: NSObject, PushChannelType {

@@ -18,6 +18,7 @@
 
 @import CoreGraphics;
 @import ImageIO;
+@import WireFoundation;
 @import WireSystem;
 @import UniformTypeIdentifiers;
 

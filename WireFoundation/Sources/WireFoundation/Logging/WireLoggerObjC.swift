@@ -19,7 +19,7 @@
 public import Foundation
 
 /// Class to proxy WireLogger methods to Objective-C
-@objcMembers
+@objc(WireLoggerObjC) @objcMembers
 public final class WireLoggerObjC: NSObject {
 
     public static func assertionDumpLog(_ message: String) {
