@@ -7,208 +7,219 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		591585D82CEF59150055000D /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 591585D72CEF59150055000D /* WireSystem */; };
-		59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */; };
+		596B08A82CEFC86A00376708 /* libWireTesting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B087A2CEFC7D700376708 /* libWireTesting.a */; };
+		596B09662CEFC98E00376708 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B09652CEFC98E00376708 /* WireLegacy.framework */; };
+		596B096A2CEFC99100376708 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 596B09692CEFC99100376708 /* WireSystem */; };
+		596B096C2CEFC9F200376708 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B096B2CEFC9F200376708 /* OCMock.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		59BA6D5B2CEE11DE0023684C /* PBXContainerItemProxy */ = {
+		596B08A92CEFC86A00376708 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 59BA6D462CEE11DE0023684C /* Project object */;
+			containerPortal = 596B08722CEFC7D700376708 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 59BA6D4E2CEE11DE0023684C;
-			remoteInfo = WireLegacy;
+			remoteGlobalIDString = 596B08792CEFC7D700376708;
+			remoteInfo = WireTesting;
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		596B08782CEFC7D700376708 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLegacyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireLegacy.xctestplan; sourceTree = "<group>"; };
+		596B087A2CEFC7D700376708 /* libWireTesting.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWireTesting.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		596B089F2CEFC84700376708 /* WireTesting.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireTesting.xctestplan; sourceTree = "<group>"; };
+		596B08A42CEFC86A00376708 /* WireTestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireTestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		596B09652CEFC98E00376708 /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		596B096B2CEFC9F200376708 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		59BA6D612CEE11DE0023684C /* Exceptions for "WireLegacy" folder in "WireLegacy" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				WireLegacy.h,
-				ZMSAsserts.h,
-				ZMSDefines.h,
-				ZMSLogging.h,
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		596B09B72CEFCC6100376708 /* Exceptions for "WireTesting" folder in "Copy Files" phase from "WireTesting" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 596B08782CEFC7D700376708 /* CopyFiles */;
+			membershipExceptions = (
+				"Public/Mock Data Model/ZMMockEntity.h",
+				"Public/Mock Data Model/ZMMockEntity2.h",
+				"Public/NSData+WireTesting.h",
+				"Public/NSOperationQueue+WireTesting.h",
+				"Public/NSUUID+WireTesting.h",
+				"Public/XCTestCase+Helpers.h",
+				Public/ZMMockManagedObjectContextFactory.h,
+				Public/ZMTAsserts.h,
+				Public/ZMTBaseTest.h,
+				Public/ZMTFailureRecorder.h,
+				Public/ZMTImageComparator.h,
 			);
-			target = 59BA6D4E2CEE11DE0023684C /* WireLegacy */;
 		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		59BA6D512CEE11DE0023684C /* WireLegacy */ = {
+		596B087C2CEFC7D700376708 /* WireTesting */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				59BA6D612CEE11DE0023684C /* Exceptions for "WireLegacy" folder in "WireLegacy" target */,
+				596B09B72CEFCC6100376708 /* Exceptions for "WireTesting" folder in "Copy Files" phase from "WireTesting" target */,
 			);
-			path = WireLegacy;
+			path = WireTesting;
 			sourceTree = "<group>";
 		};
-		59BA6D5D2CEE11DE0023684C /* WireLegacyTests */ = {
+		596B08A52CEFC86A00376708 /* WireTestingTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireLegacyTests;
+			path = WireTestingTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		59BA6D4C2CEE11DE0023684C /* Frameworks */ = {
+		596B08772CEFC7D700376708 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				596B096C2CEFC9F200376708 /* OCMock.xcframework in Frameworks */,
+				596B096A2CEFC99100376708 /* WireSystem in Frameworks */,
+				596B09662CEFC98E00376708 /* WireLegacy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59BA6D562CEE11DE0023684C /* Frameworks */ = {
+		596B08A12CEFC86A00376708 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				591585D82CEF59150055000D /* WireSystem in Frameworks */,
-				59BA6D5A2CEE11DE0023684C /* WireLegacy.framework in Frameworks */,
+				596B08A82CEFC86A00376708 /* libWireTesting.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		591585D62CEF59150055000D /* Frameworks */ = {
+		596B08712CEFC7D700376708 = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		59BA6D452CEE11DE0023684C = {
-			isa = PBXGroup;
-			children = (
-				59BA6E3E2CEE15C80023684C /* WireLegacy.xctestplan */,
-				59BA6D512CEE11DE0023684C /* WireLegacy */,
-				59BA6D5D2CEE11DE0023684C /* WireLegacyTests */,
-				591585D62CEF59150055000D /* Frameworks */,
-				59BA6D502CEE11DE0023684C /* Products */,
+				596B087C2CEFC7D700376708 /* WireTesting */,
+				596B08A52CEFC86A00376708 /* WireTestingTests */,
+				596B089F2CEFC84700376708 /* WireTesting.xctestplan */,
+				596B09642CEFC98E00376708 /* Frameworks */,
+				596B087B2CEFC7D700376708 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		59BA6D502CEE11DE0023684C /* Products */ = {
+		596B087B2CEFC7D700376708 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */,
-				59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */,
+				596B087A2CEFC7D700376708 /* libWireTesting.a */,
+				596B08A42CEFC86A00376708 /* WireTestingTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
+		596B09642CEFC98E00376708 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				596B096B2CEFC9F200376708 /* OCMock.xcframework */,
+				596B09652CEFC98E00376708 /* WireLegacy.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		59BA6D4A2CEE11DE0023684C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		59BA6D4E2CEE11DE0023684C /* WireLegacy */ = {
+		596B08792CEFC7D700376708 /* WireTesting */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 59BA6D622CEE11DE0023684C /* Build configuration list for PBXNativeTarget "WireLegacy" */;
+			buildConfigurationList = 596B08842CEFC7D700376708 /* Build configuration list for PBXNativeTarget "WireTesting" */;
 			buildPhases = (
-				59BA6D4A2CEE11DE0023684C /* Headers */,
-				59BA6D4B2CEE11DE0023684C /* Sources */,
-				59BA6D4C2CEE11DE0023684C /* Frameworks */,
-				59BA6D4D2CEE11DE0023684C /* Resources */,
+				596B08762CEFC7D700376708 /* Sources */,
+				596B08772CEFC7D700376708 /* Frameworks */,
+				596B08782CEFC7D700376708 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				59BA6D512CEE11DE0023684C /* WireLegacy */,
+				596B087C2CEFC7D700376708 /* WireTesting */,
 			);
-			name = WireLegacy;
+			name = WireTesting;
 			packageProductDependencies = (
+				596B09692CEFC99100376708 /* WireSystem */,
 			);
-			productName = WireLegacy;
-			productReference = 59BA6D4F2CEE11DE0023684C /* WireLegacy.framework */;
-			productType = "com.apple.product-type.framework";
+			productName = WireTesting;
+			productReference = 596B087A2CEFC7D700376708 /* libWireTesting.a */;
+			productType = "com.apple.product-type.library.static";
 		};
-		59BA6D582CEE11DE0023684C /* WireLegacyTests */ = {
+		596B08A32CEFC86A00376708 /* WireTestingTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 59BA6D672CEE11DE0023684C /* Build configuration list for PBXNativeTarget "WireLegacyTests" */;
+			buildConfigurationList = 596B08AB2CEFC86A00376708 /* Build configuration list for PBXNativeTarget "WireTestingTests" */;
 			buildPhases = (
-				59BA6D552CEE11DE0023684C /* Sources */,
-				59BA6D562CEE11DE0023684C /* Frameworks */,
-				59BA6D572CEE11DE0023684C /* Resources */,
+				596B08A02CEFC86A00376708 /* Sources */,
+				596B08A12CEFC86A00376708 /* Frameworks */,
+				596B08A22CEFC86A00376708 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				59BA6D5C2CEE11DE0023684C /* PBXTargetDependency */,
+				596B08AA2CEFC86A00376708 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				59BA6D5D2CEE11DE0023684C /* WireLegacyTests */,
+				596B08A52CEFC86A00376708 /* WireTestingTests */,
 			);
-			name = WireLegacyTests;
+			name = WireTestingTests;
 			packageProductDependencies = (
-				591585D72CEF59150055000D /* WireSystem */,
 			);
-			productName = WireLegacyTests;
-			productReference = 59BA6D592CEE11DE0023684C /* WireLegacyTests.xctest */;
+			productName = WireTestingTests;
+			productReference = 596B08A42CEFC86A00376708 /* WireTestingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		59BA6D462CEE11DE0023684C /* Project object */ = {
+		596B08722CEFC7D700376708 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
-					59BA6D4E2CEE11DE0023684C = {
+					596B08792CEFC7D700376708 = {
 						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
 					};
-					59BA6D582CEE11DE0023684C = {
+					596B08A32CEFC86A00376708 = {
 						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
 					};
 				};
 			};
-			buildConfigurationList = 59BA6D492CEE11DE0023684C /* Build configuration list for PBXProject "WireLegacy" */;
+			buildConfigurationList = 596B08752CEFC7D700376708 /* Build configuration list for PBXProject "WireTesting" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 59BA6D452CEE11DE0023684C;
+			mainGroup = 596B08712CEFC7D700376708;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 59BA6D502CEE11DE0023684C /* Products */;
+			productRefGroup = 596B087B2CEFC7D700376708 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				59BA6D4E2CEE11DE0023684C /* WireLegacy */,
-				59BA6D582CEE11DE0023684C /* WireLegacyTests */,
+				596B08792CEFC7D700376708 /* WireTesting */,
+				596B08A32CEFC86A00376708 /* WireTestingTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		59BA6D4D2CEE11DE0023684C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		59BA6D572CEE11DE0023684C /* Resources */ = {
+		596B08A22CEFC86A00376708 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -218,14 +229,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		59BA6D4B2CEE11DE0023684C /* Sources */ = {
+		596B08762CEFC7D700376708 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		59BA6D552CEE11DE0023684C /* Sources */ = {
+		596B08A02CEFC86A00376708 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -235,73 +246,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		59BA6D5C2CEE11DE0023684C /* PBXTargetDependency */ = {
+		596B08AA2CEFC86A00376708 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 59BA6D4E2CEE11DE0023684C /* WireLegacy */;
-			targetProxy = 59BA6D5B2CEE11DE0023684C /* PBXContainerItemProxy */;
+			target = 596B08792CEFC7D700376708 /* WireTesting */;
+			targetProxy = 596B08A92CEFC86A00376708 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		59BA6D632CEE11DE0023684C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacy;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		59BA6D642CEE11DE0023684C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacy;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		59BA6D652CEE11DE0023684C /* Debug */ = {
+		596B08822CEFC7D700376708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -335,8 +288,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -360,15 +313,11 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
-				SWIFT_VERSION = 6.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		59BA6D662CEE11DE0023684C /* Release */ = {
+		596B08832CEFC7D700376708 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -402,8 +351,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -420,39 +369,71 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
-				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
-		59BA6D682CEE11DE0023684C /* Debug */ = {
+		596B08852CEFC7D700376708 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
+				DEFINES_MODULE = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireTesting/WireTesting-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		59BA6D692CEE11DE0023684C /* Release */ = {
+		596B08862CEFC7D700376708 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireTesting/WireTesting-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		596B08AC2CEFC86A00376708 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLegacyTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireTestingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireTestingTests/WireTestingTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		596B08AD2CEFC86A00376708 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireTestingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "WireTestingTests/WireTestingTests-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -460,29 +441,29 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		59BA6D492CEE11DE0023684C /* Build configuration list for PBXProject "WireLegacy" */ = {
+		596B08752CEFC7D700376708 /* Build configuration list for PBXProject "WireTesting" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				59BA6D652CEE11DE0023684C /* Debug */,
-				59BA6D662CEE11DE0023684C /* Release */,
+				596B08822CEFC7D700376708 /* Debug */,
+				596B08832CEFC7D700376708 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		59BA6D622CEE11DE0023684C /* Build configuration list for PBXNativeTarget "WireLegacy" */ = {
+		596B08842CEFC7D700376708 /* Build configuration list for PBXNativeTarget "WireTesting" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				59BA6D632CEE11DE0023684C /* Debug */,
-				59BA6D642CEE11DE0023684C /* Release */,
+				596B08852CEFC7D700376708 /* Debug */,
+				596B08862CEFC7D700376708 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		59BA6D672CEE11DE0023684C /* Build configuration list for PBXNativeTarget "WireLegacyTests" */ = {
+		596B08AB2CEFC86A00376708 /* Build configuration list for PBXNativeTarget "WireTestingTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				59BA6D682CEE11DE0023684C /* Debug */,
-				59BA6D692CEE11DE0023684C /* Release */,
+				596B08AC2CEFC86A00376708 /* Debug */,
+				596B08AD2CEFC86A00376708 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -490,11 +471,11 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		591585D72CEF59150055000D /* WireSystem */ = {
+		596B09692CEFC99100376708 /* WireSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystem;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 59BA6D462CEE11DE0023684C /* Project object */;
+	rootObject = 596B08722CEFC7D700376708 /* Project object */;
 }
