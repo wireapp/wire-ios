@@ -514,6 +514,7 @@ final class ZClientViewController: UIViewController {
         Task {
             let currentFilter = conversationListViewController.conversationFilter
             await mainCoordinator.showConversationList(conversationFilter: currentFilter)
+            conversationListViewController.configureEmptyPlaceholder() // TODO: undo
             completion?()
         }
     }

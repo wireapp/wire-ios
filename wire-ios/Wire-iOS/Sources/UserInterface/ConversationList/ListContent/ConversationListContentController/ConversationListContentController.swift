@@ -132,6 +132,8 @@ final class ConversationListContentController: UICollectionViewController {
         // conv
         // and then unarchive all at the same time
         view.layoutIfNeeded()
+
+        // TODO: delegate?
     }
 
     func updateVisibleCells() {
@@ -471,6 +473,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         let reloadClosure = {
             self.collectionView.reloadSections(IndexSet(integer: section))
             self.ensureCurrentSelection()
+            self.contentDelegate?.conversationListContentControllerDidReload(self)
         }
 
         if animated {
@@ -490,6 +493,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         setData: (C?) -> Void
     ) {
         collectionView.reload(using: stagedChangeset, interrupt: interrupt, setData: setData)
+        contentDelegate?.conversationListContentControllerDidReload(self)
     }
 }
 
