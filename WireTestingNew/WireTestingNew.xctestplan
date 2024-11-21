@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "3EAB8695-7B29-4675-B9E9-AD7AC6CE0E91",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:WireTestingNew.xcodeproj",
+        "identifier" : "59B4523C2CEF6FA800D946D6",
+        "name" : "WireTestingNewTests"
+      }
+    }
+  ],
+  "version" : 1
+}
