@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		596B02892CEF88F100376708 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B027E2CEF88F100376708 /* WireTesting.framework */; };
 		596B02EC2CEF89BA00376708 /* WireLegacy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B02EB2CEF89BA00376708 /* WireLegacy.framework */; };
+		596B03822CEF900200376708 /* WireSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 596B03812CEF900200376708 /* WireSystem */; };
+		596B03842CEF907A00376708 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596B03832CEF907A00376708 /* OCMock.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,12 +28,24 @@
 		596B02882CEF88F100376708 /* WireTestingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireTestingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		596B029F2CEF895A00376708 /* WireTesting.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = WireTesting.xctestplan; sourceTree = "<group>"; };
 		596B02EB2CEF89BA00376708 /* WireLegacy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLegacy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		596B03832CEF907A00376708 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		596B02902CEF88F100376708 /* Exceptions for "WireTesting" folder in "WireTesting" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
+				"Public/Mock Data Model/ZMMockEntity.h",
+				"Public/Mock Data Model/ZMMockEntity2.h",
+				"Public/NSData+WireTesting.h",
+				"Public/NSOperationQueue+WireTesting.h",
+				"Public/NSUUID+WireTesting.h",
+				"Public/XCTestCase+Helpers.h",
+				Public/ZMMockManagedObjectContextFactory.h,
+				Public/ZMTAsserts.h,
+				Public/ZMTBaseTest.h,
+				Public/ZMTFailureRecorder.h,
+				Public/ZMTImageComparator.h,
 				WireTesting.h,
 			);
 			target = 596B027D2CEF88F100376708 /* WireTesting */;
@@ -59,6 +73,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				596B03842CEF907A00376708 /* OCMock.xcframework in Frameworks */,
+				596B03822CEF900200376708 /* WireSystem in Frameworks */,
 				596B02EC2CEF89BA00376708 /* WireLegacy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,9 +93,9 @@
 		596B02742CEF88F100376708 = {
 			isa = PBXGroup;
 			children = (
-				596B029F2CEF895A00376708 /* WireTesting.xctestplan */,
 				596B02802CEF88F100376708 /* WireTesting */,
 				596B028C2CEF88F100376708 /* WireTestingTests */,
+				596B029F2CEF895A00376708 /* WireTesting.xctestplan */,
 				596B02EA2CEF89BA00376708 /* Frameworks */,
 				596B027F2CEF88F100376708 /* Products */,
 			);
@@ -97,6 +113,7 @@
 		596B02EA2CEF89BA00376708 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				596B03832CEF907A00376708 /* OCMock.xcframework */,
 				596B02EB2CEF89BA00376708 /* WireLegacy.framework */,
 			);
 			name = Frameworks;
@@ -133,6 +150,7 @@
 			);
 			name = WireTesting;
 			packageProductDependencies = (
+				596B03812CEF900200376708 /* WireSystem */,
 			);
 			productName = WireTesting;
 			productReference = 596B027E2CEF88F100376708 /* WireTesting.framework */;
@@ -250,6 +268,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -279,6 +298,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -358,6 +378,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -415,6 +436,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -480,6 +502,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		596B03812CEF900200376708 /* WireSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSystem;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 596B02752CEF88F100376708 /* Project object */;
 }

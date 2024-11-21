@@ -17,7 +17,6 @@
 //
 
 import CoreData
-import XCTest
 
 public final class ManagedObjectContextChangesMerger: NSObject {
     public let managedObjectContexts: Set<NSManagedObjectContext>
