@@ -18,25 +18,9 @@
 
 import Foundation
 
-final class InMemoryAuthenticationStorage: AuthenticationStorage {
+enum HTTPCookieCodecError: Error {
 
-    private var accessToken: AccessToken?
-    private var cookieData: Data?
-
-    func storeAccessToken(_ accessToken: AccessToken) {
-        self.accessToken = accessToken
-    }
-
-    func fetchAccessToken() -> AccessToken? {
-        accessToken
-    }
-
-    func storeCookieData(_ cookieData: Data?) {
-        self.cookieData = cookieData
-    }
-
-    func fetchCookieData() -> Data? {
-        cookieData
-    }
+    case invalidCookies
+    case invalidCookieData(reason: String)
 
 }

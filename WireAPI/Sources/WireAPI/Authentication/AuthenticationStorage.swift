@@ -18,12 +18,32 @@
 
 import Foundation
 
-/// Errors originating from `APIService`.
+/// Storage for authentication primitives.
 
-public enum APIServiceError: Error {
+public protocol AuthenticationStorage {
 
-    /// An access token is required but none is available.
+    /// Store an access token.
+    ///
+    /// - Parameter accessToken: The token to store.
 
-    case missingAccessToken
+    func storeAccessToken(_ accessToken: AccessToken) async
+
+    /// Fetch a stored access token.
+    ///
+    /// - Returns: The stored access token.
+
+    func fetchAccessToken() async -> AccessToken?
+
+    /// Store cookies.
+    ///
+    /// - Parameter cookies: The cookies to store.
+
+    func storeCookies(_ cookies: [HTTPCookie]) async throws
+
+    /// Fetch stored cookies.
+    ///
+    /// - Returns: The stored cookies.
+
+    func fetchCookies() async throws -> [HTTPCookie]
 
 }
