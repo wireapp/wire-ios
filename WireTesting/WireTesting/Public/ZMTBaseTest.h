@@ -18,13 +18,13 @@
 
 #import <WireLegacy/WireLegacy.h>
 #import <XCTest/XCTest.h>
+#import "ZMTFailureRecorder.h"
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
 
 typedef BOOL(^VerificationBlock)(void);
 
 @class ZMSDispatchGroup;
-@class ZMTFailureRecorder;
 @protocol ZMSGroupQueue;
 
 @interface ZMTBaseTest : XCTestCase

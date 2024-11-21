@@ -48,7 +48,17 @@
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 596B08782CEFC7D700376708 /* CopyFiles */;
 			membershipExceptions = (
+				"Public/Mock Data Model/ZMMockEntity.h",
+				"Public/Mock Data Model/ZMMockEntity2.h",
+				"Public/NSData+WireTesting.h",
+				"Public/NSOperationQueue+WireTesting.h",
+				"Public/NSUUID+WireTesting.h",
+				"Public/XCTestCase+Helpers.h",
+				Public/ZMMockManagedObjectContextFactory.h,
+				Public/ZMTAsserts.h,
 				Public/ZMTBaseTest.h,
+				Public/ZMTFailureRecorder.h,
+				Public/ZMTImageComparator.h,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -279,6 +289,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -341,6 +352,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
