@@ -29,6 +29,19 @@ protocol CookieStorageProtocol: Sendable {
 
 actor CookieStorage: CookieStorageProtocol {
 
+    enum Failure: Error {
+
+        case malformedCookieData
+        case failedToDecodeCookieData(any Error)
+        case failedKeychainFetch(status: Int32?)
+        case failedKeychainAdd(status: Int32)
+        case failedKeychainUpdate(status: Int32)
+        case missingCookieEncryptionKey
+        case failedToEncryptCookie(any Error)
+        case failedToDecryptCookie(any Error)
+
+    }
+
     private let userID: UUID
     private let cookieEncryptionKey: Data
     private let keychain: any KeychainProtocol
@@ -82,7 +95,7 @@ actor CookieStorage: CookieStorageProtocol {
                 key: cookieEncryptionKey
             ).data
         } catch {
-            throw PersistentAuthenticationStorageError.failedToEncryptCookie(error)
+            throw Failure.failedToEncryptCookie(error)
         }
 
         if try await fetchCookieData() != nil {
@@ -103,7 +116,7 @@ actor CookieStorage: CookieStorageProtocol {
                 key: cookieEncryptionKey
             )
         } catch {
-            throw PersistentAuthenticationStorageError.failedToDecryptCookie(error)
+            throw Failure.failedToDecryptCookie(error)
         }
     }
 
@@ -114,7 +127,7 @@ actor CookieStorage: CookieStorageProtocol {
         let status = keychain.addItem(query: query)
 
         guard status == errSecSuccess else {
-            throw PersistentAuthenticationStorageError.failedKeychainAdd(status: status)
+            throw Failure.failedKeychainAdd(status: status)
         }
     }
 
@@ -123,7 +136,7 @@ actor CookieStorage: CookieStorageProtocol {
         let status = keychain.updateItem(query: fetchQuery, attributesToUpdate: updateQuery)
 
         guard status == errSecSuccess else {
-            throw PersistentAuthenticationStorageError.failedKeychainUpdate(status: status)
+            throw Failure.failedKeychainUpdate(status: status)
         }
     }
 
@@ -137,17 +150,17 @@ actor CookieStorage: CookieStorageProtocol {
 
         case errSecSuccess:
             guard let base64CookieData = result as? Data else {
-                throw PersistentAuthenticationStorageError.failedKeychainFetch(status: nil)
+                throw Failure.failedKeychainFetch(status: nil)
             }
 
             guard let cookieData = Data(base64Encoded: base64CookieData) else {
-                throw PersistentAuthenticationStorageError.malformedCookieData
+                throw Failure.malformedCookieData
             }
 
             return cookieData
 
         default:
-            throw PersistentAuthenticationStorageError.failedKeychainFetch(status: status)
+            throw Failure.failedKeychainFetch(status: status)
         }
     }
 
