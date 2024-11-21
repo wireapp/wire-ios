@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 private let log = ZMSLog(tag: "Conversations")
 

@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-import WireFoundation
 
 // sourcery: AutoMockable
 public protocol ConversationParticipantsServiceInterface {

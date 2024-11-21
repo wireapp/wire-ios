@@ -18,7 +18,6 @@
 
 import UIKit
 import WireUtilities
-import WireFoundation
 
 /// Manages the creation and lifecycle of background tasks.
 ///

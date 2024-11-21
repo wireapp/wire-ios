@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     let trustData: [TrustData]

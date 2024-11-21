@@ -19,7 +19,6 @@
 import Foundation
 import WireAPI
 import WireDataModel
-import WireFoundation
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 @objc
 public extension ZMAccessTokenHandler {

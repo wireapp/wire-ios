@@ -18,7 +18,6 @@
 
 import Foundation
 import LocalAuthentication
-import WireFoundation
 import Security
 
 // sourcery: AutoMockable

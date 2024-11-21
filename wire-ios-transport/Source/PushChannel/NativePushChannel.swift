@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 @objcMembers
 final class NativePushChannel: NSObject, PushChannelType {
