@@ -21,7 +21,6 @@ import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
 import WireTesting
-import WireTestingPackage
 import XCTest
 @testable import WireShareEngine
 

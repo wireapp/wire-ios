@@ -19,7 +19,6 @@
 import Foundation
 
 public extension UserDefaults {
-
     /// Creates an instance with a random (UUID string based) `suiteName`.
     /// When the instance is deallocated, the storage is cleaned up.
     @objc
@@ -36,7 +35,9 @@ public extension UserDefaults {
     }
 }
 
-// MARK: Helpers
+// MARK: UserDefaults.temporary() helpers    // MARK: Helpers
+
+private let zmLog = ZMSLog(tag: "UserDefaults")
 
 private final class SuiteCleanUp {
 
@@ -47,6 +48,7 @@ private final class SuiteCleanUp {
     }
 
     deinit {
+
         // remove all values
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
 
@@ -63,7 +65,7 @@ private final class SuiteCleanUp {
                 try fileManager.removeItem(at: url)
             }
         } catch {
-            print("Could not remove temporary user defaults file: " + String(reflecting: error))
+            zmLog.warn("Could not remove temporary user defaults file: " + String(reflecting: error))
         }
     }
 }
