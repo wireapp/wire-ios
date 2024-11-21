@@ -26,4 +26,14 @@ FOUNDATION_EXPORT const unsigned char WireTestingVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <WireTesting/PublicHeader.h>
 
-
+#import <WireTesting/ZMTBaseTest.h>
+#import <WireTesting/XCTestCase+Helpers.h>
+#import <WireTesting/ZMTFailureRecorder.h>
+#import <WireTesting/ZMTAsserts.h>
+#import <WireTesting/NSData+WireTesting.h>
+#import <WireTesting/NSOperationQueue+WireTesting.h>
+#import <WireTesting/ZMTImageComparator.h>
+#import <WireTesting/NSUUID+WireTesting.h>
+#import <WireTesting/ZMMockManagedObjectContextFactory.h>
+#import <WireTesting/ZMMockEntity.h>
+#import <WireTesting/ZMMockEntity2.h>
