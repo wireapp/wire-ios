@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//#import <WireTesting/ZMTFailureRecorder.h>
+#import <WireLegacy/WireLegacy.h>
 #import <XCTest/XCTest.h>
-
-@import WireLegacy;
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
 
