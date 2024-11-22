@@ -525,7 +525,7 @@ final class ZClientViewController: UIViewController {
 
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
-            viewController.view.frame = topOverlayContainer.bounds // TODO: constraints?
+            viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
 
             if animated {
@@ -543,7 +543,7 @@ final class ZClientViewController: UIViewController {
                 )
             } else {
                 topOverlayContainer.addSubview(viewController.view)
-                setupConstraints(for: viewController.view, in: self.view)
+                setupConstraints(for: viewController.view, in: topOverlayContainer)
                 viewController.didMove(toParent: self)
                 topOverlayViewController = viewController
             }
@@ -578,8 +578,7 @@ final class ZClientViewController: UIViewController {
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
             topOverlayContainer.addSubview(viewController.view)
-            viewController.view.fitIn(view: topOverlayContainer)
-            setupConstraints(for: viewController.view, in: self.view)
+            setupConstraints(for: viewController.view, in: topOverlayContainer)
 
             viewController.didMove(toParent: self)
 
