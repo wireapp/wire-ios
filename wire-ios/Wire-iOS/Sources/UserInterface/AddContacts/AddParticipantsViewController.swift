@@ -241,7 +241,6 @@ final class AddParticipantsViewController: UIViewController {
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
-        print(viewModel.canAddUsersWithOtherDomains)
         searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         searchResultsViewController.delegate = self
 

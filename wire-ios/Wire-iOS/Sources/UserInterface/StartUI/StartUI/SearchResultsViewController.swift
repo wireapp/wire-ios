@@ -291,7 +291,7 @@ final class SearchResultsViewController: UIViewController {
             searchOptions: options,
             team: selfUser.membership?.team,
             isOtherDomainAllowed: isOtherDomainAllowed,
-            selfDomain: selfUser.domain
+            selfDomain: selfUser.domain ?? ""
         )
 
         if let task = searchDirectory?.perform(request) {

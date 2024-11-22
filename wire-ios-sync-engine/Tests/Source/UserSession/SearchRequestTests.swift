@@ -33,7 +33,7 @@ class SearchRequestTests: MessagingTest {
             query: tooLongString,
             searchOptions: [],
             isOtherDomainAllowed: true,
-            selfDomain: nil)
+            selfDomain: "anta.com")
 
         // then
         XCTAssertEqual(request.query.string, croppedString)
@@ -48,7 +48,7 @@ class SearchRequestTests: MessagingTest {
             query: query,
             searchOptions: [],
             isOtherDomainAllowed: true,
-            selfDomain: nil)
+            selfDomain: "anta.com")
 
         // then
         XCTAssertEqual(request.normalizedQuery, "abc")
@@ -88,7 +88,7 @@ class SearchRequestTests: MessagingTest {
             query: query,
             searchOptions: [],
             isOtherDomainAllowed: true,
-            selfDomain: nil)
+            selfDomain: "anta.com")
 
         // then
         XCTAssertEqual(request.query.string, expectedHandle, file: file, line: line)

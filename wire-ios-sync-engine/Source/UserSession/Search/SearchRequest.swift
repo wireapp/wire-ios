@@ -115,16 +115,11 @@ public struct SearchRequest {
         searchOptions: SearchOptions,
         team: Team? = nil,
         isOtherDomainAllowed: Bool,
-        selfDomain: String?
+        selfDomain: String
     ) {
-        var search: (query: Query, domain: String?)
-        if isOtherDomainAllowed {
-            search = Self.parseQuery(query)
-        } else {
-            search = (.fullTextSearch(query), selfDomain)
-        }
-        self.query = search.query
-        self.searchDomain = search.domain
+        let (query, searchDomain) = Self.parseQuery(query)
+        self.query = query
+        self.searchDomain = isOtherDomainAllowed ? searchDomain : selfDomain
         self.searchOptions = searchOptions
         self.team = team
     }
