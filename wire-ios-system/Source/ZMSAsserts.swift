@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 /// Reports an error and terminates the application
 public func fatal(
