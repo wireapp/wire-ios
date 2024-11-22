@@ -184,7 +184,7 @@ final class AddParticipantsViewController: UIViewController {
 
         self.viewModel = AddParticipantsViewModel(
             with: context,
-            defaultProtocol: userSession.mlsFeature.config.defaultProtocol)
+            isFederationSearchAllowedUseCase: userSession.makeIsFederationSearchAllowedUseCase())
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -371,7 +371,7 @@ final class AddParticipantsViewController: UIViewController {
             )
             viewModel = AddParticipantsViewModel(
                 with: .create(updated),
-                defaultProtocol: mlsFeature.config.defaultProtocol)
+                isFederationSearchAllowedUseCase: userSession.makeIsFederationSearchAllowedUseCase())
         }
 
         // Enable button & collection view content inset

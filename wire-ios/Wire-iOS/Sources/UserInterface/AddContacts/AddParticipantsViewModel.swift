@@ -19,17 +19,18 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
-    let defaultProtocol: Feature.MLS.Config.MessageProtocol
+    let isFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol
 
     init(
         with context: AddParticipantsViewController.Context,
-        defaultProtocol: Feature.MLS.Config.MessageProtocol
+        isFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol
     ) {
         self.context = context
-        self.defaultProtocol = defaultProtocol
+        self.isFederationSearchAllowedUseCase = isFederationSearchAllowedUseCase
     }
 
     var botCanBeAdded: Bool {
@@ -62,11 +63,7 @@ struct AddParticipantsViewModel {
     }
 
     var canAddUsersWithOtherDomains: Bool {
-        guard let filterConversation else {
-            return defaultProtocol != .proteus
-        }
-
-        return filterConversation.messageProtocol != .proteus
+        isFederationSearchAllowedUseCase.invoke(conversation: filterConversation)
     }
 
     var showsConfirmButton: Bool {

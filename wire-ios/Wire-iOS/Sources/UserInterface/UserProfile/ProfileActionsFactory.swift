@@ -177,10 +177,12 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
     }
 
     private var canCreateConversationWithOtherDomain: Bool {
-        guard !userSession.canCommunicateUsersWithOtherDomains else {
+        let canCommunicateWithUsersFromOtherDomains = userSession.makeIsFederationSearchAllowedUseCase().invoke(conversation: nil)
+        if canCommunicateWithUsersFromOtherDomains {
             return true
+        } else {
+            return viewer.domain == user.domain
         }
-        return viewer.domain == user.domain
     }
 
     private func makeActionsList(isOneOnOneReady: Bool) -> [ProfileAction] {

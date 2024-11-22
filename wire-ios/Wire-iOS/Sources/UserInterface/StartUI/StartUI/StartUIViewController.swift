@@ -66,7 +66,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var canSearchUsersWithOtherDomains: Bool {
-        userSession.canCommunicateUsersWithOtherDomains
+        userSession.makeIsFederationSearchAllowedUseCase().invoke(conversation: nil)
     }
 
     // MARK: - Init
@@ -300,14 +300,4 @@ extension StartUIViewController: UISearchResultsUpdating, UISearchBarDelegate {
         searchBar.text = ""
         performSearch()
     }
-}
-
-// MARK: - UserSession
-
-extension UserSession {
-
-    var canCommunicateUsersWithOtherDomains: Bool {
-        mlsFeature.config.defaultProtocol != .proteus
-    }
-
 }

@@ -369,6 +369,10 @@ extension ZMUserSession: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
+    public func makeIsFederationSearchAllowedUseCase() -> IsFederationSearchAllowedUseCaseProtocol {
+        IsFederationSearchAllowedUseCase(defaultProtocol: mlsFeature.config.defaultProtocol)
+    }
+
 }
 
 extension UInt64 {
