@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process conversation typing events.
 
@@ -26,15 +27,112 @@ protocol ConversationTypingEventProcessorProtocol {
     ///
     /// - Parameter event: A conversation typing event.
 
-    func processEvent(_ event: ConversationTypingEvent) async throws
+    func processEvent(_ event: ConversationTypingEvent) async
 
+}
+
+public struct TypingUsersInfo {
+    let users: Set<NSManagedObjectID>
+    let conversationID: NSManagedObjectID
 }
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
+    
+    let conversationRepository: any ConversationRepositoryProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let userRepository: any UserRepositoryProtocol
+    
+    private let typingUsersTimeout = ConversationTypingUsersTimeout()
+    
+    func processEvent(_ event: ConversationTypingEvent) async {
+        let conversationID = event.conversationID
+        let senderID = event.senderID
+        let isTyping = event.isTyping
+        
+        let user = await userRepository.fetchOrCreateUser(
+            id: senderID.uuid,
+            domain: senderID.domain
+        )
+        
+        let conversation = await conversationRepository.fetchOrCreateConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        )
+        
+        // Since we'll be manipulating managed object IDs in `ConversationTypingUsersTimeout`
+        // we need to make sure we have valid, consistent IDs for the user and conversation.
+        conversationLocalStore.obtainPermanentIDs(
+            user: user,
+            conversation: conversation
+        )
+        
+        let userObjectID = user.objectID
+        let conversationObjectID = conversation.objectID
+        
+        let wasTyping = typingUsersTimeout.contains(
+            userObjectID,
+            for: conversationObjectID
+        )
+        
+        if isTyping {
+            let timeout = ConversationTypingUsersTimeout.defaultTimeout // 60 sec
+            
+            // Tracks the typing user timeout for a given conversation
+            typingUsersTimeout.add(
+                userObjectID,
+                for: conversationObjectID,
+                withTimeout: Date(timeIntervalSinceNow: timeout)
+            )
+        }
+        
+        // Typing status changed
+        if wasTyping != isTyping {
+            if !isTyping {
+                // User is no longer typing, untracking him
+                typingUsersTimeout.remove(
+                    userObjectID,
+                    for: conversationObjectID
+                )
+            }
+            
+            let userObjectIDs = typingUsersTimeout.userIds(
+                in: conversationObjectID
+            )
+            
+            let typingUsersInfo = TypingUsersInfo(
+                users: userObjectIDs,
+                conversationID: conversationObjectID
+            )
+            
+            // Updates non timed out typing users
+            await conversationRepository.updateTypingUsers([typingUsersInfo])
+        }
+        
+        typingUsersTimeout.timerFiredCallback = timerDidFire
+        
+        typingUsersTimeout.updateExpirationIfNeeded()
+    }
+    
+    /// Called when timer from `ConversationTypingUsersTimeout` fires.
+    /// Untrack timed out typing users and updates valid (non timed out) typing users.
+    /// Callback is fired when a new timeout value is reached in `timeouts` dictionary.
 
-    func processEvent(_: ConversationTypingEvent) async throws {
-        // TODO: [WPB-10178]
-        assertionFailure("not implemented yet")
+    private func timerDidFire() async {
+        let conversationObjectIDs = typingUsersTimeout.pruneConversationsThatHaveTimoutBefore(
+            date: .now
+        )
+        
+        // Map typing users for each conversation
+        let typingUsersInfo: [TypingUsersInfo] = conversationObjectIDs.map {
+            let userObjectIDs = typingUsersTimeout.userIds(in: $0)
+            return .init(users: userObjectIDs, conversationID: $0)
+        }
+        
+        await conversationRepository.updateTypingUsers(typingUsersInfo)
+        
+        typingUsersTimeout.updateExpirationIfNeeded()
     }
 
 }
+
+

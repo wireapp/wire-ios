@@ -179,6 +179,14 @@ public protocol ConversationRepositoryProtocol {
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
+    
+    /// Updates the typing users for a given conversation.
+    /// - Parameters:
+    ///     - typingUsersInfo: A list of typing users for a given conversation.
+    
+    func updateTypingUsers(
+        _ typingUsersInfo: [TypingUsersInfo]
+    ) async
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -541,6 +549,17 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             message,
             to: conversation
         )
+    }
+    
+    public func updateTypingUsers(
+        _ typingUsersInfo: [TypingUsersInfo]
+    ) async {
+        for typingUserInfo in typingUsersInfo {
+            await conversationsLocalStore.updateTypingUsers(
+                conversationID: typingUserInfo.conversationID,
+                usersID: typingUserInfo.users
+            )
+        }
     }
 
     // MARK: - Private

@@ -21,6 +21,7 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
+import Combine
 @testable import WireAPI
 @testable import WireDomain
 
@@ -46,6 +47,8 @@ final class ConversationRepositoryTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
+    
+    private var subscription: AnyCancellable?
 
     override func setUp() async throws {
         try await super.setUp()
@@ -89,6 +92,7 @@ final class ConversationRepositoryTests: XCTestCase {
         coreDataStackHelper = nil
         modelHelper = nil
         userLocalStore = nil
+        subscription = nil
     }
 
     // MARK: - Tests
@@ -779,6 +783,43 @@ final class ConversationRepositoryTests: XCTestCase {
                 at: timestamp
             )
         }
+    }
+    
+    func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
+        
+        let (user, conversation) = try await context.perform { [self] in
+            let user = modelHelper.createUser(in: context)
+            let conversation = modelHelper.createGroupConversation(in: context)
+            
+            try context.obtainPermanentIDs(for: [user, conversation])
+            
+            return (user, conversation)
+            
+        }
+        
+        let expectation = XCTestExpectation()
+        
+        let typingUsersInfo = TypingUsersInfo(
+            users: Set([user.objectID]),
+            conversationID: conversation.objectID
+        )
+        
+        subscription = NotificationCenter.default.publisher(for: .typingNotification)
+            .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
+            .sink { typingUsers in
+                // Then
+                XCTAssertEqual(typingUsers.first?.objectID, user.objectID)
+                expectation.fulfill()
+            }
+        
+        // When
+        
+        await sut.updateTypingUsers([typingUsersInfo])
+        
+        // Then
+        
+        await fulfillment(of: [expectation], timeout: 5.0)
+        
     }
 
     private func internalTest_checkLastMessage(

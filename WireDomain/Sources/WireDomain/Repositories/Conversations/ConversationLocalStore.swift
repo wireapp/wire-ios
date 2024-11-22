@@ -291,7 +291,27 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
+    
+    /// Sends a notification using the main context informing typing users
+    /// have been updated for a given conversation.
+    /// - Parameters:
+    ///     - conversationID: The conversation managed object ID.
+    ///     - usersID: The updated typing users managed object IDs.
+    
+    func updateTypingUsers(
+        conversationID: NSManagedObjectID,
+        usersID: Set<NSManagedObjectID>
+    ) async
 
+    /// Obtain permanent stored object IDs.
+    /// - Parameters:
+    ///     - user: The user to get the permanent managed object ID for.
+    ///     - conversation: The conversation to get the permanent managed object ID for.
+    
+    func obtainPermanentIDs(
+        user: ZMUser,
+        conversation: ZMConversation
+    )
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -459,6 +479,54 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
+        }
+    }
+    
+    public func updateTypingUsers(
+        conversationID: NSManagedObjectID,
+        usersID: Set<NSManagedObjectID>
+    ) async {
+        
+        // Switching to main context
+        let uiContext = await context.perform { [context] in
+            context.zm_userInterface
+        }
+        guard let uiContext else {
+            return
+        }
+        
+        uiContext.performGroupedBlock { [weak self] in
+            if let conversation = uiContext.object(with: conversationID) as? ZMConversation {
+                
+                let users = usersID.compactMap {
+                    uiContext.object(with: $0) as? ZMUser
+                }
+                
+                uiContext.typingUsers?.update(
+                    typingUsers: Set(users),
+                    in: conversation
+                )
+                
+                self?.notifyTypingUsers(
+                    Set(users),
+                    in: conversation
+                )
+            }
+        }
+    }
+    
+    public func obtainPermanentIDs(
+        user: ZMUser,
+        conversation: ZMConversation
+    ) {
+        if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
+            do {
+                try context.obtainPermanentIDs(for: [user, conversation])
+            } catch {
+                WireLogger.eventProcessing.error(
+                    "Failed to obtain permanent object ids: \(error.localizedDescription)"
+                )
+            }
         }
     }
 
@@ -787,6 +855,20 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Private
+    
+    private func notifyTypingUsers(
+        _ typingUsers: Set<ZMUser>,
+        in conversation: ZMConversation
+    ) {
+        let typingNotificationUsersKey = "typingUsers"
+        
+        NotificationInContext(
+            name: .typingNotification,
+            context: context.notificationContext,
+            object: self,
+            userInfo: [typingNotificationUsersKey: typingUsers]
+        ).post()
+    }
 
     /// Updates or creates a conversation of type `connection` locally.
     ///

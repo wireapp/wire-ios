@@ -50,12 +50,12 @@
 		C97C01BB2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */; };
 		C97C01D72CC13E1A000683C5 /* UserLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */; };
 		C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */; };
+		C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433CF2CC26A1D009723D4 /* MLSProvider.swift */; };
 		C98433E72CCA868F009723D4 /* MessageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433E62CCA868F009723D4 /* MessageRepository.swift */; };
 		C98433E92CCA86CA009723D4 /* MessageLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433E82CCA86CA009723D4 /* MessageLocalStore.swift */; };
 		C98433EF2CCB7EE6009723D4 /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433EE2CCB7EE6009723D4 /* MessageType.swift */; };
 		C98433F12CCBC251009723D4 /* MessageRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F02CCBC251009723D4 /* MessageRepositoryTests.swift */; };
 		C98433F52CCBC290009723D4 /* MessageLocalStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */; };
-		C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433CF2CC26A1D009723D4 /* MLSProvider.swift */; };
 		C99322D22C986E3A0065E10F /* TeamRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B22C986E3A0065E10F /* TeamRepository.swift */; };
 		C99322D32C986E3A0065E10F /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */; };
 		C99322D42C986E3A0065E10F /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99322B52C986E3A0065E10F /* SelfUserProvider.swift */; };
@@ -85,6 +85,9 @@
 		C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */; };
 		C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */; };
 		C9C8FDD42C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */; };
+		C9D574D72CEF76C900012A0E /* ConversationTypingUsersTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */; };
+		C9D574D92CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D82CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift */; };
+		C9D574DD2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574DC2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
@@ -201,12 +204,12 @@
 		C97C01BA2CBE5E65000683C5 /* UserUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C97C01D62CC13E1A000683C5 /* UserLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalStore.swift; sourceTree = "<group>"; };
 		C9841A1E2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFeatureConfigRepositoryProtocol.swift; sourceTree = "<group>"; };
+		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		C98433E62CCA868F009723D4 /* MessageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepository.swift; sourceTree = "<group>"; };
 		C98433E82CCA86CA009723D4 /* MessageLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStore.swift; sourceTree = "<group>"; };
 		C98433EE2CCB7EE6009723D4 /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		C98433F02CCBC251009723D4 /* MessageRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepositoryTests.swift; sourceTree = "<group>"; };
 		C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStoreTests.swift; sourceTree = "<group>"; };
-		C98433CF2CC26A1D009723D4 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -236,6 +239,9 @@
 		C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalHoldDisableEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationTypingUsersTimeout.swift; path = ../ConversationTypingUsersTimeout.swift; sourceTree = "<group>"; };
+		C9D574D82CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9D574DC2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingUsersTimeoutTests.swift; sourceTree = "<group>"; };
 		C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigRepositoryTests.swift; sourceTree = "<group>"; };
@@ -272,7 +278,7 @@
 		EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenameEventProcessor.swift; sourceTree = "<group>"; };
-		EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
+		EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationTypingEventProcessor.swift; path = ../ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberLeaveEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessor.swift; sourceTree = "<group>"; };
@@ -482,6 +488,8 @@
 				C96B75252CDB7688003A85EB /* ConversationMemberUpdateEventProcessorTests.swift */,
 				C96B75262CDB7688003A85EB /* ConversationProtocolUpdateEventProcessorTests.swift */,
 				C96B75272CDB7688003A85EB /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
+				C9D574D82CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift */,
+				C9D574DC2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift */,
 			);
 			path = ConversationEventProcessor;
 			sourceTree = "<group>";
@@ -693,6 +701,15 @@
 			path = "Event Processing";
 			sourceTree = "<group>";
 		};
+		C9D574DA2CF084F600012A0E /* ConversationTypingEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */,
+				C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */,
+			);
+			path = ConversationTypingEventProcessor;
+			sourceTree = "<group>";
+		};
 		C9EA76AD2C98548900A7D35C /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
@@ -760,7 +777,7 @@
 				EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */,
 				EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */,
 				EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */,
-				EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */,
+				C9D574DA2CF084F600012A0E /* ConversationTypingEventProcessor */,
 			);
 			path = ConversationEventProcessor;
 			sourceTree = "<group>";
@@ -1027,6 +1044,7 @@
 				C99322DD2C986E3A0065E10F /* FeatureConfigRepositoryError.swift in Sources */,
 				C99322E72C986E3A0065E10F /* ConnectionsRepositoryError.swift in Sources */,
 				C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */,
+				C9D574D72CEF76C900012A0E /* ConversationTypingUsersTimeout.swift in Sources */,
 				EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */,
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
@@ -1117,9 +1135,11 @@
 				C96B752D2CDB7688003A85EB /* ConversationCreateEventProcessorTests.swift in Sources */,
 				C96B752E2CDB7688003A85EB /* ConversationReceiptModeUpdateEventProcessorTests.swift in Sources */,
 				C96B752F2CDB7688003A85EB /* ConversationMemberLeaveEventTests.swift in Sources */,
+				C9D574DD2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
+				C9D574D92CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				C97C01522CB01BEF000683C5 /* UserConnectionEventProcessorTests.swift in Sources */,
 				C98433F52CCBC290009723D4 /* MessageLocalStoreTests.swift in Sources */,

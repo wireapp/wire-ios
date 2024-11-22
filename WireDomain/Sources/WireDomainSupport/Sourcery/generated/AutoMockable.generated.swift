@@ -594,6 +594,36 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
+    // MARK: - updateTypingUsers
+
+    public var updateTypingUsersConversationIDUsersID_Invocations: [(conversationID: NSManagedObjectID, usersID: Set<NSManagedObjectID>)] = []
+    public var updateTypingUsersConversationIDUsersID_MockMethod: ((NSManagedObjectID, Set<NSManagedObjectID>) async -> Void)?
+
+    public func updateTypingUsers(conversationID: NSManagedObjectID, usersID: Set<NSManagedObjectID>) async {
+        updateTypingUsersConversationIDUsersID_Invocations.append((conversationID: conversationID, usersID: usersID))
+
+        guard let mock = updateTypingUsersConversationIDUsersID_MockMethod else {
+            fatalError("no mock for `updateTypingUsersConversationIDUsersID`")
+        }
+
+        await mock(conversationID, usersID)
+    }
+
+    // MARK: - obtainPermanentIDs
+
+    public var obtainPermanentIDsUserConversation_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    public var obtainPermanentIDsUserConversation_MockMethod: ((ZMUser, ZMConversation) -> Void)?
+
+    public func obtainPermanentIDs(user: ZMUser, conversation: ZMConversation) {
+        obtainPermanentIDsUserConversation_Invocations.append((user: user, conversation: conversation))
+
+        guard let mock = obtainPermanentIDsUserConversation_MockMethod else {
+            fatalError("no mock for `obtainPermanentIDsUserConversation`")
+        }
+
+        mock(user, conversation)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
@@ -843,6 +873,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         await mock(message, conversation)
+    }
+
+    // MARK: - updateTypingUsers
+
+    public var updateTypingUsers_Invocations: [[TypingUsersInfo]] = []
+    public var updateTypingUsers_MockMethod: (([TypingUsersInfo]) async -> Void)?
+
+    public func updateTypingUsers(_ typingUsersInfo: [TypingUsersInfo]) async {
+        updateTypingUsers_Invocations.append(typingUsersInfo)
+
+        guard let mock = updateTypingUsers_MockMethod else {
+            fatalError("no mock for `updateTypingUsers`")
+        }
+
+        await mock(typingUsersInfo)
     }
 
 }
