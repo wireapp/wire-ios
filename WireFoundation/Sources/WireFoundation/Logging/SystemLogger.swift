@@ -92,5 +92,5 @@ struct SystemLogger: LoggerProtocol {
     }
 }
 
-// TODO: try to delete nonisolated(unsafe)
+// TODO: [WPB-11890] try to delete nonisolated(unsafe)
 nonisolated(unsafe) private var loggers: [String: OSLog] = [:]

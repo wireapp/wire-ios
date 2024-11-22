@@ -22,8 +22,8 @@ public struct WireLogger: LoggerProtocol {
 
     // TODO: [WPB-11890] try to delete nonisolated(unsafe)
     nonisolated(unsafe) private static var provider = AggregatedLogger(loggers: [
-        SystemLogger(),
-        CocoaLumberjackLogger() // TODO: append later applicationWillFinish
+        SystemLogger()
+        //CocoaLumberjackLogger() // TODO: append later applicationWillFinish
     ])
 
     public let tag: String

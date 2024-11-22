@@ -43,6 +43,6 @@ public enum LogAttributesKey: String, Comparable {
 }
 
 public extension LogAttributes {
-    // TODO: try to delete nonisolated(unsafe)
+    // TODO: [WPB-11890] try to delete nonisolated(unsafe)
     nonisolated(unsafe) static var safePublic = [LogAttributesKey.public: true]
 }

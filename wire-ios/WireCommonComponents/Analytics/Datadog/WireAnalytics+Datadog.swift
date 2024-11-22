@@ -53,7 +53,7 @@ public extension WireAnalytics {
 }
 
 /// Wrapper class to execute a function just once, thread safe
-class OnceOnlyThreadSafeFunction {
+private final class OnceOnlyThreadSafeFunction {
     private let lock = NSLock()
     private var executed = false
     private let function: () -> Void
