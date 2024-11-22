@@ -274,6 +274,7 @@
 		54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */; };
 		55C40BCE22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */; };
 		55C40BD722B0F78500EFD8BD /* ZMUserLegalHoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */; };
+		5900584F2CF0C1E300D07D14 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5900584E2CF0C1E300D07D14 /* WireFoundation */; };
 		5904070A2C258C810009542C /* ConversationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590407092C258C810009542C /* ConversationList.swift */; };
 		590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */; };
 		591362E62B70F45C000B210C /* MLSVerificationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */; };
@@ -1900,6 +1901,7 @@
 			files = (
 				59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */,
 				591B6E512C8B09CE009F8A7B /* WireDataModel.framework in Frameworks */,
+				5900584F2CF0C1E300D07D14 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3505,7 +3507,6 @@
 				F9C9A4FD1CAD5DF10039E10C /* Products */,
 				F9C9A6701CAD779E0039E10C /* Frameworks */,
 				63709F622993E70A00577D4B /* Packages */,
-				012F3CFE2CD0505D00A9EACB /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -5190,6 +5191,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5900584E2CF0C1E300D07D14 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;

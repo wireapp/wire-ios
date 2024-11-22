@@ -679,7 +679,6 @@
 			baseConfigurationReference = 5471F8201B73E6E000460C35 /* project-debug.xcconfig */;
 			buildSettings = {
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -689,7 +688,6 @@
 			buildSettings = {
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
