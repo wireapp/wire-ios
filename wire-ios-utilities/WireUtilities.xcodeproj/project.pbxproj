@@ -62,7 +62,6 @@
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
-		590055242CF0BCC300D07D14 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590055232CF0BCC300D07D14 /* WireFoundation */; };
 		5915B9502BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */; };
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
@@ -403,7 +402,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				590055242CF0BCC300D07D14 /* WireFoundation in Frameworks */,
 				591B6E7C2C8B0A1E009F8A7B /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -900,7 +898,6 @@
 			);
 			name = "WireUtilities-Tests";
 			packageProductDependencies = (
-				590055232CF0BCC300D07D14 /* WireFoundation */,
 			);
 			productName = WireUtilitiesTests;
 			productReference = 3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */;
@@ -1552,10 +1549,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		590055232CF0BCC300D07D14 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
 		59B48C592C89CB1F00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
