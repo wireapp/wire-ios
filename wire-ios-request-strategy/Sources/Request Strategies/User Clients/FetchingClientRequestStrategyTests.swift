@@ -47,7 +47,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             object: nil
         )
 
-        BackendInfo.apiVersion = .v0
+        apiVersion = .v0
         BackendInfo.domain = "local.com"
     }
 
