@@ -425,7 +425,7 @@ final class ZClientViewController: UIViewController {
             selfProfileUIBuilder: selfProfileViewControllerBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navController = controller.wrapInNavigationController()
+        let navController = UINavigationController(rootViewController: controller)
         navController.modalPresentationStyle = .formSheet
         present(navController, animated: true)
     }
@@ -609,7 +609,7 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
-                viewController.presentTopmost(animated: animated, completion: completion)
+                viewController.presentOverAll(animated: animated, completion: completion)
             }
         )
     }

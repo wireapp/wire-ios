@@ -24,7 +24,7 @@ extension URLRequest {
 
     func mockResponse(
         statusCode: HTTPStatusCode,
-        jsonResourceName: String
+        jsonResourceName: String? = nil
     ) throws -> (Data, HTTPURLResponse) {
         guard let url else {
             throw "Unable to create mock response, request is missing url"
@@ -39,8 +39,11 @@ extension URLRequest {
             throw "Unable to create mock response"
         }
 
-        let jsonPayload = HTTPClientMock.PredefinedResponse(resourceName: jsonResourceName)
+        guard let jsonResourceName else {
+            return (Data(), response)
+        }
 
+        let jsonPayload = HTTPClientMock.PredefinedResponse(resourceName: jsonResourceName)
         return (try jsonPayload.data(), response)
     }
 
