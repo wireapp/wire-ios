@@ -40,15 +40,17 @@ struct DeepLinksView: View {
                     }
                     .disabled(urlString.isEmpty)
                 }
-                QRCodeScannerView { scannedCode in
-                    urlString = scannedCode
-                    viewModel.openLink(urlString: scannedCode)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .listStyle(InsetGroupedListStyle())
+            .frame(height: 150)
+
+            QRCodeScannerView { scannedCode in
+                urlString = scannedCode
+                viewModel.openLink(urlString: scannedCode)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
         }
-        .edgesIgnoringSafeArea(.bottom) // Optional: makes it extend to the bottom
         .alert(
             isPresented: $viewModel.isShowingAlert,
             error: viewModel.error,
