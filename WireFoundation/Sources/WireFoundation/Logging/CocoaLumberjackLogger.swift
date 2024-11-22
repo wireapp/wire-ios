@@ -20,7 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol { // TODO: move to common components
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 

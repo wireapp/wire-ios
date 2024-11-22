@@ -21,6 +21,7 @@ let package = Package(
         .target(
             name: "WireFoundation",
             dependencies: [
+                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack")
             ]
         ),
