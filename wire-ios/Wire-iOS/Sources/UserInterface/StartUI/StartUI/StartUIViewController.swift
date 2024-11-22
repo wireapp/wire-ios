@@ -65,6 +65,10 @@ final class StartUIViewController: UIViewController {
         SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
+    var canSearchUsersWithOtherDomains: Bool {
+        userSession.mlsFeature.config.defaultProtocol != .proteus
+    }
+
     // MARK: - Init
 
     private var navigationBarTitle: String? {
@@ -170,7 +174,7 @@ final class StartUIViewController: UIViewController {
 
         createConstraints()
         updateActionBar()
-        searchResults.searchContactList()
+        searchResults.searchContactList(isOtherDomainAllowed: canSearchUsersWithOtherDomains)
 
         view.accessibilityViewIsModal = true
     }
@@ -240,10 +244,10 @@ final class StartUIViewController: UIViewController {
         if groupSelector.group == .people {
             if searchString.isEmpty {
                 searchResults.mode = .list
-                searchResults.searchContactList()
+                searchResults.searchContactList(isOtherDomainAllowed: canSearchUsersWithOtherDomains)
             } else {
                 searchResults.mode = .search
-                searchResults.searchForUsers(withQuery: searchString)
+                searchResults.searchForUsers(withQuery: searchString, isOtherDomainAllowed: canSearchUsersWithOtherDomains)
             }
         } else {
             searchResults.searchForServices(withQuery: searchString)

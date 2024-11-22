@@ -22,9 +22,14 @@ import WireDesign
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
+    let defaultProtocol: Feature.MLS.Config.MessageProtocol
 
-    init(with context: AddParticipantsViewController.Context) {
+    init(
+        with context: AddParticipantsViewController.Context,
+        defaultProtocol: Feature.MLS.Config.MessageProtocol
+    ) {
         self.context = context
+        self.defaultProtocol = defaultProtocol
     }
 
     var botCanBeAdded: Bool {
@@ -54,6 +59,14 @@ struct AddParticipantsViewModel {
         case let .add(conversation) where conversation.conversationType == .group: conversation as? ZMConversation
         default: nil
         }
+    }
+
+    var canAddUsersWithOtherDomains: Bool {
+        guard let filterConversation else {
+            return defaultProtocol != .proteus
+        }
+
+        return filterConversation.messageProtocol != .proteus
     }
 
     var showsConfirmButton: Bool {

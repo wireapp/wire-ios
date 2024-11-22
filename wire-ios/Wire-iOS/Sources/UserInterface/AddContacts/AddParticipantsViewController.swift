@@ -182,7 +182,9 @@ final class AddParticipantsViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        self.viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(
+            with: context,
+            defaultProtocol: userSession.mlsFeature.config.defaultProtocol)
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -239,7 +241,8 @@ final class AddParticipantsViewController: UIViewController {
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.filterConversation?.canAddUsersWithOtherDomains ?? true)
+        print(viewModel.canAddUsersWithOtherDomains)
+        searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         searchResultsViewController.delegate = self
 
         userSelection.add(observer: self)
@@ -367,7 +370,9 @@ final class AddParticipantsViewController: UIViewController {
                 encryptionProtocol: mlsFeature.config.defaultProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(with: .create(updated))
+            viewModel = AddParticipantsViewModel(
+                with: .create(updated),
+                defaultProtocol: mlsFeature.config.defaultProtocol)
         }
 
         // Enable button & collection view content inset
@@ -452,10 +457,10 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.people, false):
             searchResultsViewController.mode = .list
-            searchResultsViewController.searchContactList()
+            searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         case (.people, true):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText, isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         }
     }
 
@@ -577,17 +582,6 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
             WireURLs.shared.searchSupport.open()
-        }
-    }
-}
-
-extension ZMConversation {
-    var canAddUsersWithOtherDomains: Bool {
-        switch messageProtocol {
-        case .proteus:
-            false
-        default:
-            true
         }
     }
 }

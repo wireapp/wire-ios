@@ -176,7 +176,6 @@ final class SearchResultsViewController: UIViewController {
     var pendingSearchTask: SearchTask?
     var isAddingParticipants: Bool
     let isFederationEnabled: Bool
-    var isOtherDomainAllowed: Bool = true
     var searchGroup: SearchGroup = .people {
         didSet {
             updateVisibleSections()
@@ -274,7 +273,11 @@ final class SearchResultsViewController: UIViewController {
         pendingSearchTask = nil
     }
 
-    private func performSearch(query: String, options: SearchOptions) {
+    private func performSearch(
+        query: String,
+        options: SearchOptions,
+        isOtherDomainAllowed: Bool
+    ) {
         let selfUser = userSession.selfUser
 
         pendingSearchTask?.cancel()
@@ -286,7 +289,9 @@ final class SearchResultsViewController: UIViewController {
         let request = SearchRequest(
             query: query.trim(),
             searchOptions: options,
-            team: selfUser.membership?.team
+            team: selfUser.membership?.team,
+            isOtherDomainAllowed: isOtherDomainAllowed,
+            selfDomain: selfUser.domain
         )
 
         if let task = searchDirectory?.perform(request) {
@@ -299,7 +304,7 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    func searchForUsers(withQuery query: String) {
+    func searchForUsers(withQuery query: String, isOtherDomainAllowed: Bool) {
         var options: SearchOptions = [
             .conversations,
             .contacts,
@@ -307,24 +312,31 @@ final class SearchResultsViewController: UIViewController {
             .directory
         ]
 
-        if isFederationEnabled { // Add flag
+        if isFederationEnabled {
             options.formUnion(.federated)
         }
 
-        performSearch(query: query, options: options)
+        performSearch(
+            query: query,
+            options: options,
+            isOtherDomainAllowed: isOtherDomainAllowed
+        )
     }
 
-    func searchForLocalUsers(withQuery query: String) {
-        performSearch(query: query, options: [.contacts, .teamMembers])
+    func searchForLocalUsers(withQuery query: String, isOtherDomainAllowed: Bool) {
+        performSearch(
+            query: query,
+            options: [.contacts, .teamMembers],
+            isOtherDomainAllowed: isOtherDomainAllowed
+        )
     }
 
     func searchForServices(withQuery query: String) {
-        performSearch(query: query, options: [.services])
+        performSearch(query: query, options: [.services], isOtherDomainAllowed: true)
     }
 
-    func searchContactList(isOtherDomainAllowed: Bool = true) {
-        self.isOtherDomainAllowed = isOtherDomainAllowed
-        searchForLocalUsers(withQuery: "")
+    func searchContactList(isOtherDomainAllowed: Bool) {
+        searchForLocalUsers(withQuery: "", isOtherDomainAllowed: isOtherDomainAllowed)
     }
 
     var isResultEmpty: Bool = true {
@@ -385,7 +397,7 @@ final class SearchResultsViewController: UIViewController {
 
     func updateSections(withSearchResult searchResult: SearchResult) {
 
-        var contacts = isOtherDomainAllowed ? searchResult.contacts : searchResult.contacts.filter { !$0.isFederated }
+        var contacts = searchResult.contacts
         var teamContacts = searchResult.teamMembers
 
         if let filteredParticpants = filterConversation?.localParticipants {
