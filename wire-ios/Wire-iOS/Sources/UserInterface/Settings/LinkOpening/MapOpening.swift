@@ -22,27 +22,28 @@ import WireSystem
 private let log = ZMSLog(tag: "link opening")
 
 enum MapsOpeningOption: Int, LinkOpeningOption {
-    case apple, google
+    case apple
+    case google
 
     typealias ApplicationOptionEnum = MapsOpeningOption
     static var settingKey: SettingKey = .mapsOpeningRawValue
     static var defaultPreference: ApplicationOptionEnum = .apple
 
     static var allOptions: [MapsOpeningOption] {
-        return [.apple, .google]
+        [.apple, .google]
     }
 
     var displayString: String {
         switch self {
-        case .apple: return L10n.Localizable.OpenLink.Maps.Option.apple
-        case .google: return L10n.Localizable.OpenLink.Maps.Option.google
+        case .apple: L10n.Localizable.OpenLink.Maps.Option.apple
+        case .google: L10n.Localizable.OpenLink.Maps.Option.google
         }
     }
 
     var isAvailable: Bool {
         switch self {
-        case .apple: return true
-        case .google: return UIApplication.shared.googleMapsInstalled
+        case .apple: true
+        case .google: UIApplication.shared.googleMapsInstalled
         }
     }
 }
@@ -67,10 +68,10 @@ extension URL {
 
 // MARK: - Private
 
-fileprivate extension UIApplication {
+private extension UIApplication {
 
     var googleMapsInstalled: Bool {
-        return canHandleScheme("comgooglemaps://")
+        canHandleScheme("comgooglemaps://")
     }
 
 }

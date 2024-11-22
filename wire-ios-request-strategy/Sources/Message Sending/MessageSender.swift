@@ -28,7 +28,7 @@ public enum MessageSendError: Error, Equatable {
     case missingProteusService
 }
 
-public typealias SendableMessage = ProteusMessage & MLSMessage
+public typealias SendableMessage = MLSMessage & ProteusMessage
 
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
@@ -41,7 +41,7 @@ public protocol MessageSenderInterface {
 
 public final class MessageSender: MessageSenderInterface {
 
-    public init (
+    public init(
         apiProvider: APIProviderInterface,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisherInterface,
@@ -157,12 +157,16 @@ public final class MessageSender: MessageSenderInterface {
             let messageInfo = try await extractor.infoForBroadcast(message: message)
 
             // 2) get the encrypted payload
-            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let payloadBuilder = ProteusMessagePayloadBuilder(
+                proteusService: proteusService,
+                useQualifiedIds: apiVersion.useQualifiedIds
+            )
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
             // 3) send it via API
             // no need to expire the broadcast message as it's only availability status no report to the user
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData)
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+                .broadcastProteusMessage(message: messageData)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -172,7 +176,10 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+        let (proteusService, conversationID) = await context.perform { [context] in (
+            context.proteusService,
+            message.conversation?.qualifiedID
+        ) }
 
         guard let proteusService else {
             throw MessageSendError.missingProteusService
@@ -196,7 +203,10 @@ public final class MessageSender: MessageSenderInterface {
             let messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
 
             // 2) get the encrypted payload
-            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let payloadBuilder = ProteusMessagePayloadBuilder(
+                proteusService: proteusService,
+                useQualifiedIds: apiVersion.useQualifiedIds
+            )
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
             // set expiration so request can be expired later
@@ -211,9 +221,11 @@ public final class MessageSender: MessageSenderInterface {
 
             // 3) send it via API
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
-                .sendProteusMessage(message: messageData,
-                                    conversationID: conversationID,
-                                    expirationDate: expirationDate)
+                .sendProteusMessage(
+                    message: messageData,
+                    conversationID: conversationID,
+                    expirationDate: expirationDate
+                )
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -222,7 +234,11 @@ public final class MessageSender: MessageSenderInterface {
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
+    private func handleProteusSuccess(
+        message: any ProteusMessage,
+        messageSendingStatus: Payload.MessageSendingStatus,
+        response: ZMTransportResponse
+    ) async {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug(
             "send message - via proteus succeeded",
@@ -239,11 +255,14 @@ public final class MessageSender: MessageSenderInterface {
         )
     }
 
-    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) async throws -> Set<QualifiedClientID> {
+    private func handleProteusFailure(
+        message: any ProteusMessage,
+        _ failure: NetworkError
+    ) async throws -> Set<QualifiedClientID> {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
 
         switch failure {
-        case .missingClients(let messageSendingStatus, _):
+        case let .missingClients(messageSendingStatus, _):
             await proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message
@@ -284,7 +303,7 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func handleFederationFailure(networkError: NetworkError, message: any SendableMessage) throws {
-        if case .invalidRequestError(let responseFailure, _) = networkError, responseFailure.code == 533 {
+        if case let .invalidRequestError(responseFailure, _) = networkError, responseFailure.code == 533 {
             switch responseFailure.data?.type {
             case .federation:
                 responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
@@ -326,9 +345,11 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
-            .sendMLSMessage(message: encryptedData,
-                            conversationID: conversationID,
-                            expirationDate: await context.perform { message.expirationDate })
+            .sendMLSMessage(
+                message: encryptedData,
+                conversationID: conversationID,
+                expirationDate: await context.perform { message.expirationDate }
+            )
 
         await context.perform {
             self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
@@ -342,11 +363,10 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         return try await message.encryptForTransport { messageData in
-            let encryptedData = try await mlsService.encrypt(
+            try await mlsService.encrypt(
                 message: messageData,
                 for: groupID
             )
-            return encryptedData
         }
     }
 }
@@ -363,7 +383,8 @@ private extension Payload.ClientListByQualifiedUserID {
                             QualifiedClientID(
                                 userID: userUuid,
                                 domain: domain,
-                                clientID: clientID)
+                                clientID: clientID
+                            )
                         }
                     )
                 }

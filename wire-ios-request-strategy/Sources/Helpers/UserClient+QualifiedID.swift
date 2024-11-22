@@ -20,7 +20,8 @@ import WireDataModel
 
 public extension UserClient {
 
-    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are missing.
+    /// An identifier build from the given properties of ``UserClient``. Returns `nil` if required properties are
+    /// missing.
     var qualifiedClientID: QualifiedClientID? {
         guard
             let clientID = remoteIdentifier,

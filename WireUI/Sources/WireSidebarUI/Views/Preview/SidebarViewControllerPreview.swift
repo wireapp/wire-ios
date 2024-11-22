@@ -22,9 +22,10 @@ import WireFoundation
 @MainActor
 func SidebarViewControllerPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
-    let sidebarViewController = SidebarViewController { accountImage, availability in
-        AnyView(MockAccountImageView(accountImage: accountImage, availability: availability))
-    }
+    let sidebarViewController = SidebarViewController(
+        accountImageView: { _, _ in MockAccountImageView() },
+        legalHoldIndicatorView: { MockLegalHoldIndicatorView() }
+    )
     sidebarViewController.accountInfo.displayName = "Firstname Lastname"
     sidebarViewController.accountInfo.username = "@username"
     sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()
@@ -39,6 +40,26 @@ func SidebarViewControllerPreview() -> UIViewController {
     splitViewController.view.backgroundColor = .init(white: 0.9, alpha: 1)
 
     return splitViewController
+}
+
+private struct MockAccountImageView: View {
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Circle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(Color.brown)
+            Circle()
+                .frame(width: 14, height: 14)
+                .foregroundStyle(Color.green)
+        }
+    }
+}
+
+private struct MockLegalHoldIndicatorView: View {
+    var body: some View {
+        Circle()
+            .fill(.red)
+    }
 }
 
 private final class EmptyViewController: UIHostingController<AnyView> {
@@ -69,6 +90,12 @@ private func PreviewTextStyleMapping() -> WireTextStyleMapping {
         switch textStyle {
         case .h2:
             .title3.bold()
+        case .h3:
+            .headline
+        case .body1:
+            .body
+        case .subline1:
+            .caption
         default:
             fatalError("not implemented for preview yet")
         }

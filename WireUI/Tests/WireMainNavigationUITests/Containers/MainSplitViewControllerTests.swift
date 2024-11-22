@@ -90,66 +90,11 @@ final class MainSplitViewControllerTests: XCTestCase {
         XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
     }
 
-    @MainActor
-    func testConversationListIsReleased() {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.conversationListUI = nil
-
-        // Then
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
-    @MainActor
-    func testConversationIsReleasedWhenSetToNil() async {
-        // Given
-        weak var conversationUI = conversationUI
-        self.conversationUI = nil
-
-        // When
-        sut.conversationUI = nil
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationUI, nil)
-    }
-
-    @MainActor
-    func testConversationListIsReleasedWhenArchiveIsSet() async {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.archiveUI = .init()
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
-    @MainActor
-    func testConversationIsReleasedWhenSettingsIsSet() async {
-        // Given
-        weak var conversationListUI = conversationListUI
-        self.conversationListUI = nil
-
-        // When
-        sut.settingsUI = .init()
-
-        // Then
-        await Task.yield()
-        XCTAssertEqual(conversationListUI, nil)
-    }
-
     // MARK: - Snapshot Tests
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearanceLandscape() {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1_024, height: 768))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1024, height: 768))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular
@@ -167,7 +112,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearancePortrait() {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1_024))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1024))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular

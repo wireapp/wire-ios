@@ -21,7 +21,7 @@ import WireDataModel
 
 final class EphemeralCountdownView: UIView {
 
-    fileprivate let destructionCountdownView: DestructionCountdownView = DestructionCountdownView()
+    fileprivate let destructionCountdownView: DestructionCountdownView = .init()
     fileprivate var timer: Timer?
     fileprivate var wasEverAnimated = false
 
@@ -96,7 +96,7 @@ final class EphemeralCountdownView: UIView {
 
         let duration = destructionDate.timeIntervalSinceNow
 
-        if !destructionCountdownView.isAnimatingProgress && duration >= 1, let progress = message?.countdownProgress {
+        if !destructionCountdownView.isAnimatingProgress, duration >= 1, let progress = message?.countdownProgress {
             if progress < 1 {
                 destructionCountdownView.startAnimating(duration: duration, currentProgress: CGFloat(progress))
                 isHidden = false

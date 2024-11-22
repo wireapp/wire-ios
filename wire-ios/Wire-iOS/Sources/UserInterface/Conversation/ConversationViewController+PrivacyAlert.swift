@@ -32,22 +32,22 @@ extension ConversationViewController {
         var localizedTitle: String {
             switch self {
             case .verifyDevices:
-                return L10n.Localizable.Meta.Degraded.verifyDevicesButton
+                L10n.Localizable.Meta.Degraded.verifyDevicesButton
             case .sendAnyway, .sendAnywayWithAction:
-                return L10n.Localizable.Meta.Degraded.sendAnywayButton
+                L10n.Localizable.Meta.Degraded.sendAnywayButton
             case .legalHoldDetails:
-                return L10n.Localizable.Meta.Legalhold.infoButton
+                L10n.Localizable.Meta.Legalhold.infoButton
             case .cancel, .cancelWithAction:
-                return L10n.Localizable.General.cancel
+                L10n.Localizable.General.cancel
             }
         }
 
         var preferredStyle: UIAlertAction.Style {
             switch self {
             case .cancel, .cancelWithAction:
-                return .cancel
+                .cancel
             default:
-                return .default
+                .default
             }
         }
     }
@@ -64,7 +64,8 @@ extension ConversationViewController {
             alertContent = legalHoldPrivacyWarningAlertContent()
         } else if conversation.securityLevel == .secureWithIgnored {
             alertContent = clientVerificationPrivacyWarningAlertContent(
-                degradedUsers: changeInfo.usersThatCausedConversationToDegrade)
+                degradedUsers: changeInfo.usersThatCausedConversationToDegrade
+            )
         } else {
             // no-op: there is no privacy warning
             return
@@ -78,7 +79,10 @@ extension ConversationViewController {
         let alert = UIAlertController(title: alertContent.title, message: alertContent.message, preferredStyle: .alert)
 
         for action in alertContent.actions {
-            let alertAction = UIAlertAction(title: action.localizedTitle, style: action.preferredStyle) { [weak self] _ in
+            let alertAction = UIAlertAction(
+                title: action.localizedTitle,
+                style: action.preferredStyle
+            ) { [weak self] _ in
                 self?.performPrivacyAction(action)
             }
 
@@ -93,8 +97,8 @@ extension ConversationViewController {
 
         let names = degradedUsers.compactMap(\.name).joined(separator: ", ")
         let title = degradedUsers.count <= 1
-                    ? DegradationReasonMessage.singular(names)
-                    : DegradationReasonMessage.plural(names)
+            ? DegradationReasonMessage.singular(names)
+            : DegradationReasonMessage.plural(names)
         let message = L10n.Localizable.Meta.Degraded.dialogMessage
 
         let actions: [PrivacyAlertAction] = [.verifyDevices, .sendAnyway, .cancel]
@@ -147,9 +151,9 @@ extension ConversationViewController {
             conversation.acknowledgePrivacyWarningAndResendMessages()
         case .cancel:
             conversation.discardPendingMessagesAfterPrivacyChanges()
-        case .sendAnywayWithAction(let closure):
+        case let .sendAnywayWithAction(closure):
             closure(true)
-        case .cancelWithAction(let closure):
+        case let .cancelWithAction(closure):
             closure(false)
         }
     }
@@ -172,7 +176,6 @@ extension ConversationViewController {
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
             profileViewController.delegate = self
-            profileViewController.viewControllerDismisser = self
             let navigationController = profileViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
@@ -184,7 +187,7 @@ extension ConversationViewController {
                 mainCoordinator: mainCoordinator,
                 selfProfileUIBuilder: selfProfileUIBuilder
             )
-            let navigationController = participantsViewController.wrapInNavigationController()
+            let navigationController = UINavigationController(rootViewController: participantsViewController)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         }

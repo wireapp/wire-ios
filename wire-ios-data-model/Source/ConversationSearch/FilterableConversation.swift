@@ -21,5 +21,7 @@ public protocol FilterableConversation {
     associatedtype Participant: FilterableConversationParticipant
 
     var name: String { get }
-    var participants: [Participant] { get }
+
+    /// All participants of the conversation except the self user.
+    var otherParticipants: [Participant] { get }
 }

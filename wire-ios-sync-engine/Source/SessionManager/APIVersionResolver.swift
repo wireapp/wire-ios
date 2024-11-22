@@ -100,8 +100,8 @@ final class APIVersionResolver {
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
         } else if isDeveloperModeEnabled,
-            let preferredAPIVersion = BackendInfo.preferredAPIVersion,
-            allBackendVersions.contains(preferredAPIVersion) {
+                  let preferredAPIVersion = BackendInfo.preferredAPIVersion,
+                  allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {
@@ -118,7 +118,7 @@ final class APIVersionResolver {
         let wasFederationEnabled = BackendInfo.isFederationEnabled
         BackendInfo.isFederationEnabled = payload.federation
 
-        if previousBackendDomain == payload.domain && !wasFederationEnabled && BackendInfo.isFederationEnabled {
+        if previousBackendDomain == payload.domain, !wasFederationEnabled, BackendInfo.isFederationEnabled {
             delegate?.apiVersionResolverDetectedFederationHasBeenEnabled()
         }
 

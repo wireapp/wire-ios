@@ -18,62 +18,75 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    public func appendSessionResetSystemMessage(user: ZMUser, client: UserClient, at timestamp: Date) {
-        appendSystemMessage(type: .sessionReset,
-                            sender: user,
-                            users: [],
-                            clients: [client],
-                            timestamp: timestamp)
+    func appendSessionResetSystemMessage(user: ZMUser, client: UserClient, at timestamp: Date) {
+        appendSystemMessage(
+            type: .sessionReset,
+            sender: user,
+            users: [],
+            clients: [client],
+            timestamp: timestamp
+        )
     }
 
-    public func appendTeamMemberRemovedSystemMessage(user: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .teamMemberLeave,
-                            sender: user,
-                            users: [user],
-                            clients: nil,
-                            timestamp: timestamp)
+    func appendTeamMemberRemovedSystemMessage(user: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .teamMemberLeave,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
     }
 
-    public func appendParticipantRemovedSystemMessage(user: ZMUser, sender: ZMUser? = nil, at timestamp: Date) {
-        appendSystemMessage(type: .participantsRemoved,
-                            sender: sender ?? user,
-                            users: [user],
-                            clients: nil,
-                            timestamp: timestamp)
+    func appendParticipantRemovedSystemMessage(user: ZMUser, sender: ZMUser? = nil, at timestamp: Date) {
+        appendSystemMessage(
+            type: .participantsRemoved,
+            sender: sender ?? user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp
+        )
     }
 
-    public func appendParticipantsRemovedSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .participantsRemoved,
-                            sender: sender,
-                            users: users,
-                            clients: nil,
-                            timestamp: timestamp)
+    func appendParticipantsRemovedSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .participantsRemoved,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
     }
 
-    public func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .failedToAddParticipants,
-                            sender: sender,
-                            users: users,
-                            clients: nil,
-                            timestamp: timestamp.nextNearestTimestamp)
+    func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .failedToAddParticipants,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp.nextNearestTimestamp
+        )
     }
 
     @objc(appendNewConversationSystemMessageAtTimestamp:users:)
-    public func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
-        let systemMessage = appendSystemMessage(type: .newConversation,
-                                                sender: creator,
-                                                users: users,
-                                                clients: nil,
-                                                timestamp: timestamp)
+    func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
+        let systemMessage = appendSystemMessage(
+            type: .newConversation,
+            sender: creator,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
 
         systemMessage.text = userDefinedName
 
         // Fill out team specific properties if the conversation was created in the self user team
-        if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
+        if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team,
+           team == selfUserTeam {
 
-            let members = selfUserTeam.members.compactMap { $0.user }
+            let members = selfUserTeam.members.compactMap(\.user)
             let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
 
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
@@ -85,17 +98,19 @@ extension ZMConversation {
         }
     }
 
-    public func appendMessageTimerUpdateSystemMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) {
-        appendSystemMessage(type: .messageTimerUpdate,
-                            sender: user,
-                            users: [user],
-                            clients: nil,
-                            timestamp: timestamp,
-                            messageTimer: timer)
+    func appendMessageTimerUpdateSystemMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) {
+        appendSystemMessage(
+            type: .messageTimerUpdate,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: timestamp,
+            messageTimer: timer
+        )
     }
 
     @objc(appendNewPotentialGapSystemMessage:inContext:)
-    static public func appendNewPotentialGapSystemMessage(at timestamp: Date?, inContext moc: NSManagedObjectContext) {
+    static func appendNewPotentialGapSystemMessage(at timestamp: Date?, inContext moc: NSManagedObjectContext) {
         let offset = 0.1
         var lastMessageTimestamp = timestamp
         guard let conversations = try! moc.fetch(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
@@ -108,53 +123,66 @@ extension ZMConversation {
                 lastMessageTimestamp = conversation.lastModifiedDate?.addingTimeInterval(offset) ?? Date()
             }
             if let timestamp = lastMessageTimestamp {
-                conversation.appendNewPotentialGapSystemMessage(users: conversation.localParticipants, timestamp: timestamp)
+                conversation.appendNewPotentialGapSystemMessage(
+                    users: conversation.localParticipants,
+                    timestamp: timestamp
+                )
             }
         }
     }
 
-    public func appendParticipantsRemovedAnonymouslySystemMessage(users: Set<ZMUser>,
-                                                                  sender: ZMUser,
-                                                                  removedReason: ZMParticipantsRemovedReason,
-                                                                  at timestamp: Date) {
-        appendSystemMessage(type: .participantsRemoved,
-                            sender: sender,
-                            users: users,
-                            clients: nil,
-                            timestamp: timestamp,
-                            removedReason: removedReason)
+    func appendParticipantsRemovedAnonymouslySystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        removedReason: ZMParticipantsRemovedReason,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .participantsRemoved,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp,
+            removedReason: removedReason
+        )
     }
 
-    public func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .domainsStoppedFederating,
-                            sender: sender,
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp,
-                            domains: domains)
+    func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .domainsStoppedFederating,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp,
+            domains: domains
+        )
     }
 
     // MARK: - Conversation verification status
 
-    public func appendConversationVerifiedSystemMessage(sender: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .conversationIsVerified,
-                            sender: sender,
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp)
+    func appendConversationVerifiedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .conversationIsVerified,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
     }
 
-    public func appendConversationDegradedSystemMessage(sender: ZMUser, at timestamp: Date) {
-        appendSystemMessage(type: .conversationIsDegraded,
-                            sender: sender,
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp)
+    func appendConversationDegradedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(
+            type: .conversationIsDegraded,
+            sender: sender,
+            users: nil,
+            clients: nil,
+            timestamp: timestamp
+        )
     }
 
     // MARK: - MLS Migration
 
-    public func appendMLSMigrationFinalizedSystemMessage(
+    func appendMLSMigrationFinalizedSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {
@@ -167,7 +195,7 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationJoinAfterwardsSystemMessage(
+    func appendMLSMigrationJoinAfterwardsSystemMessage(
         users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
@@ -181,7 +209,7 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationOngoingCallSystemMessage(
+    func appendMLSMigrationOngoingCallSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {
@@ -194,7 +222,7 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationStartedSystemMessage(
+    func appendMLSMigrationStartedSystemMessage(
         sender: ZMUser,
         at timestamp: Date
     ) {
@@ -207,7 +235,7 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationUpdateVersionSystemMessage(
+    func appendMLSMigrationUpdateVersionSystemMessage(
         users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
@@ -221,14 +249,14 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser, at timestamp: Date) {
+    func appendMLSMigrationPotentialGapSystemMessage(sender: ZMUser, at timestamp: Date) {
         guard let context = managedObjectContext else {
             return
         }
 
         let previousLastMessage = lastMessage
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsMigrationPotentialGap,
             sender: sender,
             users: nil,
@@ -236,20 +264,22 @@ extension ZMConversation {
             timestamp: timestamp
         )
 
-        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
-           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage,
+           previousLastMessage.systemMessageType == .mlsMigrationPotentialGap,
+           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp,
+           previousLastMessageTimestamp <= timestamp {
             context.delete(previousLastMessage)
         }
 
     }
 
-    public func appendMLSMigrationMLSNotSupportedForSelfUser(
+    func appendMLSMigrationMLSNotSupportedForSelfUser(
         user: ZMUser
     ) {
 
-        guard let context = self.managedObjectContext else { return }
+        guard let context = managedObjectContext else { return }
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsNotSupportedSelfUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
@@ -258,13 +288,13 @@ extension ZMConversation {
         )
     }
 
-    public func appendMLSMigrationMLSNotSupportedForOtherUser(
+    func appendMLSMigrationMLSNotSupportedForOtherUser(
         user: ZMUser
     ) {
 
-        guard let context = self.managedObjectContext else { return }
+        guard let context = managedObjectContext else { return }
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsNotSupportedOtherUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),

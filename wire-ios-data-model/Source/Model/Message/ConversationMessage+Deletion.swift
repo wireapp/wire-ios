@@ -35,10 +35,11 @@ extension ZMConversation {
     }
 }
 
-extension ZMMessage {
+public extension ZMMessage {
 
     // NOTE: This is a free function meant to be called from Obj-C because you can't call protocol extension from it
-    @objc public static func hideMessage(_ message: ZMConversationMessage) {
+    @objc
+    static func hideMessage(_ message: ZMConversationMessage) {
         // when deleting ephemeral, we must delete for everyone (only self & sender will receive delete message)
         // b/c deleting locally will void the destruction timer completion.
         guard !message.isEphemeral else { deleteForEveryone(message); return }
@@ -46,7 +47,8 @@ extension ZMMessage {
         castedMessage.hideForSelfUser()
     }
 
-    @objc public func hideForSelfUser() {
+    @objc
+    func hideForSelfUser() {
         guard !isZombieObject else { return }
 
         do {
@@ -61,14 +63,16 @@ extension ZMMessage {
         managedObjectContext?.delete(self)
     }
 
-    @discardableResult @objc public static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
+    @discardableResult @objc
+    static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
         return castedMessage.deleteForEveryone()
     }
 
-    @discardableResult @objc func deleteForEveryone() -> ZMClientMessage? {
+    @discardableResult @objc
+    internal func deleteForEveryone() -> ZMClientMessage? {
         guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else { return nil }
-        guard let conversation, let messageNonce = nonce else { return nil}
+        guard let conversation, let messageNonce = nonce else { return nil }
 
         do {
             let genericMessage = GenericMessage(content: MessageDelete(messageId: messageNonce))
@@ -82,8 +86,8 @@ extension ZMMessage {
         }
     }
 
-    @objc var isEditableMessage: Bool {
-        return false
+    @objc internal var isEditableMessage: Bool {
+        false
     }
 }
 
@@ -93,7 +97,7 @@ extension ZMClientMessage {
             let genericMessage = underlyingMessage,
             let sender, sender.isSelfUser,
             let content = genericMessage.content else {
-                return false
+            return false
         }
         switch content {
         case .edited:

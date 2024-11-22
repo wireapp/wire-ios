@@ -34,8 +34,8 @@ class ProxiedRequestsStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.mockRequestCancellation = MockRequestCancellation()
-        self.sut = ProxiedRequestsStatus(requestCancellation: mockRequestCancellation)
+        mockRequestCancellation = MockRequestCancellation()
+        sut = ProxiedRequestsStatus(requestCancellation: mockRequestCancellation)
     }
 
     func testThatRequestIsAddedToPendingRequest() {
@@ -43,10 +43,10 @@ class ProxiedRequestsStatusTests: MessagingTest {
         let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .get, callback: nil)
 
         // when
-        self.sut.add(request: request)
+        sut.add(request: request)
 
         // then
-        let pendingRequest = self.sut.pendingRequests.first
+        let pendingRequest = sut.pendingRequests.first
         XCTAssertEqual(pendingRequest, request)
     }
 

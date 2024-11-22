@@ -237,7 +237,9 @@ public final class UserRepository: UserRepositoryProtocol {
     public func updateUser(
         from event: UserUpdateEvent
     ) async {
-        await userLocalStore.updateUser(from: event)
+        await userLocalStore.updateUser(
+            from: event
+        )
     }
 
     public func removePushToken() {
@@ -269,14 +271,14 @@ public final class UserRepository: UserRepositoryProtocol {
 
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
-        case .areReadReceiptsEnabled(let isEnabled):
+        case let .areReadReceiptsEnabled(isEnabled):
 
             await userLocalStore.updateSelfUserReadReceipts(
                 isReadReceiptsEnabled: isEnabled,
                 isReadReceiptsEnabledChangedRemotely: true
             )
 
-        case .conversationLabels(let conversationLabels):
+        case let .conversationLabels(conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
 
         default:

@@ -19,23 +19,23 @@
 import Foundation
 import WireDataModel
 
-extension UserChangeInfo {
+public extension UserChangeInfo {
 
     // MARK: - Registering an observer for a user
 
     /// Adds an observer for a user conforming to UserType. You must hold on to the token until you want to stop
     /// observing.
     ///
-    public static func add(observer: UserObserving, for user: UserType, in userSession: ZMUserSession) -> NSObjectProtocol? {
-        return add(observer: observer, for: user, in: userSession.managedObjectContext)
+    static func add(observer: UserObserving, for user: UserType, in userSession: ZMUserSession) -> NSObjectProtocol? {
+        add(observer: observer, for: user, in: userSession.managedObjectContext)
     }
 
     // MARK: - Registering UserObservers
 
     /// Adds an observer for changes in all ZMUsers. You must hold on to the token until you want to stop observing.
     ///
-    public static func add(userObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
-        return add(userObserver: observer, in: userSession.managedObjectContext)
+    static func add(userObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
+        add(userObserver: observer, in: userSession.managedObjectContext)
     }
 
     // MARK: - Registering SearchUserObservers
@@ -43,8 +43,8 @@ extension UserChangeInfo {
     /// Adds an observer for changes in all ZMSearchUsers. You must hold on to the token until you want to stop
     /// observing.
     ///
-    public static func add(searchUserObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
-        return add(searchUserObserver: observer, in: userSession.managedObjectContext)
+    static func add(searchUserObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
+        add(searchUserObserver: observer, in: userSession.managedObjectContext)
     }
 
 }

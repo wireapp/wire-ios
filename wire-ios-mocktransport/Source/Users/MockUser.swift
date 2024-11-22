@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockUser: NSManagedObject {
+@objcMembers
+public class MockUser: NSManagedObject {
 
     public enum LegalHoldState: Equatable {
         case enabled
@@ -64,24 +65,25 @@ import Foundation
     @NSManaged public var participantRoles: Set<MockParticipantRole>
 
     public var userClients: Set<MockUserClient> {
-        return clients as! Set<MockUserClient>
+        clients as! Set<MockUserClient>
     }
 
-    override public func awakeFromInsert() {
+    public override func awakeFromInsert() {
         if accentID == 0 {
             accentID = 2
         }
     }
 }
 
-extension MockUser {
-    @objc public static var sortedFetchRequest: NSFetchRequest<MockUser> {
+public extension MockUser {
+    @objc static var sortedFetchRequest: NSFetchRequest<MockUser> {
         let request = NSFetchRequest<MockUser>(entityName: "User")
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(MockUser.identifier), ascending: true)]
         return request
     }
 
-    @objc public static func sortedFetchRequest(withPredicate predicate: NSPredicate) -> NSFetchRequest<MockUser> {
+    @objc
+    static func sortedFetchRequest(withPredicate predicate: NSPredicate) -> NSFetchRequest<MockUser> {
         let request = sortedFetchRequest
         request.predicate = predicate
         return request
@@ -90,13 +92,12 @@ extension MockUser {
 
 // MARK: - Rich Profile
 
-extension MockUser {
-    public func appendRichInfo(type: String, value: String) {
-        let updatedValues: NSMutableArray
-        if let values = self.richProfile {
-            updatedValues = NSMutableArray(array: values)
+public extension MockUser {
+    func appendRichInfo(type: String, value: String) {
+        let updatedValues = if let values = richProfile {
+            NSMutableArray(array: values)
         } else {
-            updatedValues = NSMutableArray()
+            NSMutableArray()
         }
         let value = ["type": type, "value": value]
         updatedValues.add(value)
@@ -106,32 +107,34 @@ extension MockUser {
 
 // MARK: - Legal Hold
 
-extension MockUser {
+public extension MockUser {
 
-    public var legalHoldState: LegalHoldState {
+    var legalHoldState: LegalHoldState {
         if userClients.any(\.isLegalHoldDevice) {
-            return .enabled
+            .enabled
         } else if let pendingDevice = pendingLegalHoldClient {
-            return .pending(pendingDevice)
+            .pending(pendingDevice)
         } else {
-            return .disabled
+            .disabled
         }
     }
 
 }
 
 // MARK: - Broadcasting
-extension MockUser {
 
-    @objc public var connectionsAndTeamMembers: Set<MockUser> {
+public extension MockUser {
+
+    @objc var connectionsAndTeamMembers: Set<MockUser> {
 
         let acceptedUsers: (Any) -> MockUser? = { connection in
-            guard let connection = connection as? MockConnection, MockConnection.status(from: connection.status) == .accepted else { return nil }
+            guard let connection = connection as? MockConnection,
+                  MockConnection.status(from: connection.status) == .accepted else { return nil }
             return connection.to == self ? connection.from : connection.to
         }
 
-        let connectedToUsers: [MockUser] = self.connectionsTo.compactMap(acceptedUsers)
-        let connectedFromUsers: [MockUser] = self.connectionsFrom.compactMap(acceptedUsers)
+        let connectedToUsers: [MockUser] = connectionsTo.compactMap(acceptedUsers)
+        let connectedFromUsers: [MockUser] = connectionsFrom.compactMap(acceptedUsers)
 
         let teamMembers = currentTeamMembers ?? []
 
@@ -145,31 +148,32 @@ extension MockUser {
     }
 
     // Nil if user is not part of a team
-    public var currentTeamMembers: [MockUser]? {
-        return self.memberships?.first?.team.members.compactMap({ $0.user })
+    var currentTeamMembers: [MockUser]? {
+        memberships?.first?.team.members.compactMap(\.user)
     }
 
 }
 
 // MARK: - Images
-extension MockUser {
-    @objc public var mediumImageIdentifier: String? {
-        return mediumImage?.identifier
+
+public extension MockUser {
+    @objc var mediumImageIdentifier: String? {
+        mediumImage?.identifier
     }
 
-    @objc public var smallProfileImageIdentifier: String? {
-        return smallProfileImage?.identifier
+    @objc var smallProfileImageIdentifier: String? {
+        smallProfileImage?.identifier
     }
 
-    @objc public var smallProfileImage: MockPicture? {
-        return picture(withTag: "smallProfile")
+    @objc var smallProfileImage: MockPicture? {
+        picture(withTag: "smallProfile")
     }
 
-    @objc public var mediumImage: MockPicture? {
-        return picture(withTag: "medium")
+    @objc var mediumImage: MockPicture? {
+        picture(withTag: "medium")
     }
 
-    fileprivate func picture(withTag tag: String) -> MockPicture? {
+    private func picture(withTag tag: String) -> MockPicture? {
         for picture in pictures {
             if let mockPicture = picture as? MockPicture, mockPicture.info["tag"] as? String == tag {
                 return mockPicture
@@ -178,17 +182,19 @@ extension MockUser {
         return nil
     }
 
-    @objc public func removeLegacyPictures() {
+    @objc
+    func removeLegacyPictures() {
         [smallProfileImage, mediumImage].compactMap { $0 }.forEach(managedObjectContext!.delete)
     }
 
 }
 
 // MARK: - Transport data
+
 extension MockUser {
 
     @objc public var selfUserTransportData: ZMTransportData {
-        return selfUserData as ZMTransportData
+        selfUserData as ZMTransportData
     }
 
     var selfUserData: [String: Any?] {
@@ -203,14 +209,14 @@ extension MockUser {
     }
 
     @objc public var transportData: ZMTransportData {
-        return data as ZMTransportData
+        data as ZMTransportData
     }
 
     var data: [String: Any?] {
-        precondition(self.accentID != 0, "Accent ID is not set")
+        precondition(accentID != 0, "Accent ID is not set")
 
         if isAccountDeleted {
-            let payload: [String: Any?] = [
+            return [
                 "accent_id": 0,
                 "name": "default",
                 "id": identifier,
@@ -218,8 +224,6 @@ extension MockUser {
                 "picture": [],
                 "assets": []
             ]
-
-            return payload
         } else {
             let pictureData = pictures.compactMap { ($0 as? MockPicture)?.transportData }
 
@@ -235,13 +239,13 @@ extension MockUser {
                 ]
             ]
 
-            if let providerIdentifier = self.providerIdentifier,
-                let serviceIdentifier = self.serviceIdentifier {
+            if let providerIdentifier,
+               let serviceIdentifier {
                 payload["service"] = ["provider": providerIdentifier,
                                       "id": serviceIdentifier]
             }
 
-            if let team = self.memberships?.first?.team {
+            if let team = memberships?.first?.team {
                 payload["team"] = team.identifier
             }
 
@@ -257,17 +261,17 @@ extension MockUser {
     }
 
     var assetData: [[String: Any]]? {
-        guard let previewId = previewProfileAssetIdentifier, let completeId = completeProfileAssetIdentifier else { return nil }
+        guard let previewId = previewProfileAssetIdentifier,
+              let completeId = completeProfileAssetIdentifier else { return nil }
         return [
             ["size": "preview", "type": "image", "key": previewId],
             ["size": "complete", "type": "image", "key": completeId]
         ]
     }
 
-    @objc
-    public var mockPushEventForChangedValues: MockPushEvent? {
+    @objc public var mockPushEventForChangedValues: MockPushEvent? {
 
-        let changedValues = self.changedValues()
+        let changedValues = changedValues()
 
         if changedValues.keys.contains(#keyPath(MockUser.isAccountDeleted)) {
             let payload = ["type": "user.delete", "id": identifier, "time": Date().transportString()] as ZMTransportData
@@ -280,10 +284,13 @@ extension MockUser {
         return nil
     }
 
-    fileprivate var userPayloadForChangedValues: [String: Any]? {
+    private var userPayloadForChangedValues: [String: Any]? {
         var payload = [String: Any]()
         let regularProperties: Set = [#keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone)]
-        let assetIds: Set = [#keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier)]
+        let assetIds: Set = [
+            #keyPath(MockUser.previewProfileAssetIdentifier),
+            #keyPath(MockUser.completeProfileAssetIdentifier)
+        ]
         for (changedKey, value) in changedValues() {
             if regularProperties.contains(changedKey) {
                 payload[changedKey] = value
@@ -304,9 +311,11 @@ extension MockUser {
 }
 
 // MARK: - Participant Roles
-extension MockUser {
 
-    @objc public func role(in conversation: MockConversation) -> MockRole? {
-        return participantRoles.first(where: { $0.conversation == conversation })?.role
+public extension MockUser {
+
+    @objc
+    func role(in conversation: MockConversation) -> MockRole? {
+        participantRoles.first(where: { $0.conversation == conversation })?.role
     }
 }

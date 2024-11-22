@@ -22,8 +22,7 @@ public extension NSManagedObjectContext {
 
     private static let ServerTimeDeltaKey = "ServerTimeDeltaKey"
 
-    @objc
-    var serverTimeDelta: TimeInterval {
+    @objc var serverTimeDelta: TimeInterval {
 
         get {
             precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")

@@ -38,7 +38,7 @@ final class OfflineBar: UIView {
     }
 
     override init(frame: CGRect) {
-        offlineLabel = UILabel()
+        self.offlineLabel = UILabel()
 
         super.init(frame: frame)
         backgroundColor = UIColor(rgb: 0xFEBF02, alpha: 1)
@@ -64,12 +64,12 @@ final class OfflineBar: UIView {
     private func createConstraints() {
         offlineLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          offlineLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-          offlineLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            offlineLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            offlineLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             offlineLabel.leftAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leftAnchor),
             offlineLabel.rightAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.rightAnchor),
 
-          heightConstraint
+            heightConstraint
         ])
     }
 

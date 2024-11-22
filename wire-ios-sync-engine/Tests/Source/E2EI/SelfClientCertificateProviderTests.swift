@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import XCTest
 
 class SelfClientCertificateProviderTests: MessagingTest {
 
@@ -35,7 +35,8 @@ class SelfClientCertificateProviderTests: MessagingTest {
         mockGetE2eIdentityCertificatesUseCase = MockGetE2eIdentityCertificatesUseCaseProtocol()
         sut = SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: mockGetE2eIdentityCertificatesUseCase,
-            context: context)
+            context: context
+        )
     }
 
     override func tearDown() {
@@ -71,7 +72,7 @@ class SelfClientCertificateProviderTests: MessagingTest {
     func testResultSelfClientDoesNotHaveCertificate() async throws {
         // Given
         mockGetE2eIdentityCertificatesUseCase.invokeMlsGroupIdClientIds_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // When

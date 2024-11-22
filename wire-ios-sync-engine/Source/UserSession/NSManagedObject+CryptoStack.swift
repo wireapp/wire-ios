@@ -19,10 +19,10 @@
 import Foundation
 import WireDataModel
 
-extension NSManagedObjectContext {
+public extension NSManagedObjectContext {
 
     @objc
-    public func tearDownCryptoStack() {
+    func tearDownCryptoStack() {
         proteusProvider.perform(
             withProteusService: { _ in },
             withKeyStore: { keyStore in keyStore.deleteAndCreateNewBox() }

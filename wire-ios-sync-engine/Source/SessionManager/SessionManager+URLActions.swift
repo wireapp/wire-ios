@@ -30,14 +30,14 @@ protocol URLActionProcessor {
 
 }
 
-extension SessionManager {
+public extension SessionManager {
 
     /// React to the application being opened via a URL
     ///
     /// - parameter url: URL the application was launched with
     /// - parameter options: options associated with the URL
     @discardableResult
-    public func openURL(_ url: URL) throws -> Bool {
+    func openURL(_ url: URL) throws -> Bool {
         guard let action = try URLAction(url: url) else { return false }
 
         guard action.requiresAuthentication else {
@@ -63,14 +63,14 @@ extension SessionManager {
         return true
     }
 
-    func process(urlAction action: URLAction, on processor: URLActionProcessor) {
+    internal func process(urlAction action: URLAction, on processor: URLActionProcessor) {
         presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] shouldPerformAction in
             guard shouldPerformAction, let self else { return }
             processor.process(urlAction: action, delegate: presentationDelegate)
         })
     }
 
-    public func processPendingURLActionRequiresAuthentication() {
+    func processPendingURLActionRequiresAuthentication() {
         if let action = pendingURLAction, action.requiresAuthentication,
            let userSession = activeUserSession {
             process(urlAction: action, on: userSession)
@@ -78,14 +78,14 @@ extension SessionManager {
         }
     }
 
-    public func processPendingURLActionDoesNotRequireAuthentication() {
+    func processPendingURLActionDoesNotRequireAuthentication() {
         if let action = pendingURLAction, !action.requiresAuthentication {
             process(urlAction: action, on: activeUnauthenticatedSession)
             pendingURLAction = nil
         }
     }
 
-    var canProcessUrlAction: Bool {
+    internal var canProcessUrlAction: Bool {
         guard let delegate else {
             return false
         }

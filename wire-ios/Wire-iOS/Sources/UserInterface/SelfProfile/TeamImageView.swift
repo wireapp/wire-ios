@@ -26,7 +26,7 @@ final class TeamImageView: UIImageView {
         case big
     }
 
-    // TODO [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
+    // TODO: [WPB-6770]: Maybe this type could eventually be merged with `AvatarImageView.Avatar`
     enum Content {
         case teamImage(Data)
         case teamName(String)
@@ -74,17 +74,17 @@ final class TeamImageView: UIImageView {
         super.init(frame: .zero)
 
         initialLabel.textAlignment = .center
-        self.addSubview(self.initialLabel)
+        addSubview(initialLabel)
         self.accessibilityElements = [initialLabel]
 
         initialLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          initialLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-          initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            initialLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
 
-        self.updateImage()
+        updateImage()
 
         updateRoundCorner()
 
@@ -102,17 +102,17 @@ final class TeamImageView: UIImageView {
         super.layoutSubviews()
 
         if !bounds.equalTo(lastLayoutBounds) {
-            lastLayoutBounds = self.bounds
+            lastLayoutBounds = bounds
             updateRoundCorner()
         }
     }
 
     private func updateImage() {
         switch content {
-        case .teamImage(let data):
+        case let .teamImage(data):
             image = UIImage(data: data)
             initialLabel.text = ""
-        case .teamName(let name):
+        case let .teamName(name):
             image = nil
             initialLabel.text = name.first.map(String.init)
         }

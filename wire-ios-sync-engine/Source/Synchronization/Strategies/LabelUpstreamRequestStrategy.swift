@@ -18,30 +18,36 @@
 
 import Foundation
 
-public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMSingleRequestTranscoder {
+public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTracker,
+    ZMContextChangeTrackerSource,
+    ZMSingleRequestTranscoder {
 
     fileprivate let jsonEncoder = JSONEncoder()
     fileprivate var upstreamSync: ZMSingleRequestSync!
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = .allowsRequestsWhileOnline
         self.upstreamSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamSync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        upstreamSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTracker, ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        guard let predicateForObjectsThatNeedToBeUpdatedUpstream = Label.predicateForObjectsThatNeedToBeUpdatedUpstream() else {
+        guard let predicateForObjectsThatNeedToBeUpdatedUpstream = Label
+            .predicateForObjectsThatNeedToBeUpdatedUpstream() else {
             fatal("predicateForObjectsThatNeedToBeUpdatedUpstream not defined for Label entity")
         }
 
@@ -55,22 +61,23 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let labels = object.compactMap({ $0 as? Label })
+        let labels = object.compactMap { $0 as? Label }
 
-        guard !labels.isEmpty, labels.any({ Label.predicateForObjectsThatNeedToBeUpdatedUpstream()!.evaluate(with: $0) }) else { return }
+        guard !labels.isEmpty,
+              labels.any({ Label.predicateForObjectsThatNeedToBeUpdatedUpstream()!.evaluate(with: $0) }) else { return }
 
         upstreamSync.readyForNextRequestIfNotBusy()
     }
 
-// MARK: - ZMSingleRequestTranscoder
+    // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
         let labels = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        let labelsToUpload = labels.filter({ !$0.markedForDeletion })
-        let updatedKeys = labels.map({ return ($0, $0.modifiedKeys) })
+        let labelsToUpload = labels.filter { !$0.markedForDeletion }
+        let updatedKeys = labels.map { ($0, $0.modifiedKeys) }
 
-        let labelPayload = LabelPayload(labels: labelsToUpload.compactMap({ LabelUpdate($0) }))
+        let labelPayload = LabelPayload(labels: labelsToUpload.compactMap { LabelUpdate($0) })
         let transportPayload: Any
         do {
             let data = try jsonEncoder.encode(labelPayload)
@@ -79,7 +86,12 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
             fatal("Couldn't encode label update: \(error)")
         }
 
-        let request = ZMTransportRequest(path: "/properties/labels", method: .put, payload: transportPayload as? ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/properties/labels",
+            method: .put,
+            payload: transportPayload as? ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             self?.didReceive(response, updatedKeys: updatedKeys)
         }))
@@ -104,7 +116,8 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        if let labelsWithModifications = try? managedObjectContext.count(for: fetchRequestForTrackedObjects()!), labelsWithModifications > 0 {
+        if let labelsWithModifications = try? managedObjectContext.count(for: fetchRequestForTrackedObjects()!),
+           labelsWithModifications > 0 {
             upstreamSync.readyForNextRequestIfNotBusy()
         }
     }

@@ -23,7 +23,7 @@ import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
-        guard let imageData = self.pngData() else {
+        guard let imageData = pngData() else {
             return nil
         }
         return imageData.isJPEG ? imageData : UIImage(data: imageData)?.jpegData(compressionQuality: 1.0)
@@ -33,26 +33,31 @@ extension UIImage {
 class ImagePickerManager: NSObject {
 
     // MARK: - Properties
+
     private weak var viewController: UIViewController?
     private var sourceType: UIImagePickerController.SourceType?
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
-    func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-                         completion: @escaping (UIImage) -> Void) -> UIAlertController {
+
+    func showActionSheet(
+        on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
+        completion: @escaping (UIImage) -> Void
+    ) -> UIAlertController {
         self.completion = completion
         self.viewController = viewController
 
-        let actionSheet = imagePickerAlert()
-        return actionSheet
+        return imagePickerAlert()
     }
 
     private func imagePickerAlert() -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
-        let actionSheet = UIAlertController(title: Alert.title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: Alert.title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
@@ -79,8 +84,8 @@ class ImagePickerManager: NSObject {
     private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType),
               let viewController else {
-                  return
-              }
+            return
+        }
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -123,9 +128,12 @@ class ImagePickerManager: NSObject {
     }
 }
 
- extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
 
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
@@ -148,9 +156,11 @@ class ImagePickerManager: NSObject {
                 picker.dismiss(animated: true)
             }
 
-            let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                             onConfirm: onConfirm,
-                                                             onCancel: onCancel)
+            let context = ConfirmAssetViewController.Context(
+                asset: .image(mediaAsset: image),
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
 
             let confirmImageViewController = ConfirmAssetViewController(context: context)
             confirmImageViewController.modalPresentationStyle = .fullScreen
@@ -161,6 +171,7 @@ class ImagePickerManager: NSObject {
         case .camera:
             picker.dismiss(animated: true)
             completion?(image)
+
         @unknown default:
             picker.dismiss(animated: true)
             completion?(image)

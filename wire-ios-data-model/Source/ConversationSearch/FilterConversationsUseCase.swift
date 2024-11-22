@@ -23,7 +23,7 @@ import WireUtilities
 ///
 /// The search text is compared to the name of conversations as well as the names of the conversation's participants.
 public struct FilterConversationsUseCase<ConversationContainer>: FilterConversationsUseCaseProtocol
-where ConversationContainer: MutableConversationContainer {
+    where ConversationContainer: MutableConversationContainer {
 
     private let conversationContainers: [ConversationContainer]
 
@@ -46,8 +46,8 @@ where ConversationContainer: MutableConversationContainer {
         // Empty containers (conversation groups) will be kept in the result.
         var containers = conversationContainers
         for containerIndex in containers.indices {
-        conversationLoop:
-            for conversationIndex in containers[containerIndex].conversations.indices.reversed() {
+            conversationLoop:
+                for conversationIndex in containers[containerIndex].conversations.indices.reversed() {
 
                 let conversation = containers[containerIndex].conversations[conversationIndex]
 
@@ -58,7 +58,7 @@ where ConversationContainer: MutableConversationContainer {
                 }
 
                 // don't remove the conversation from the results if any participant's name matches
-                for participant in conversation.participants {
+                for participant in conversation.otherParticipants {
                     let participantName = participant.name.normalizedForSearch() as String
                     if participantName.lowercased().contains(query) {
                         continue conversationLoop

@@ -28,43 +28,48 @@ import WireUtilities
 /// use the object as the implicit context because when registering for `nil`
 /// we would get all notifications, even from other contexts.
 
-@objcMembers public class NotificationInContext: NSObject {
+@objcMembers
+public class NotificationInContext: NSObject {
 
     static let objectInNotificationKey = "objectInNotification"
 
     /// Name of the notification
     public var name: Notification.Name {
-        return notification.name
+        notification.name
     }
 
     /// The object of the notification
     public var object: AnyObject? {
-        return self.userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
+        userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
     }
 
     /// The context in which the notification is valid
     public var context: NotificationContext {
-        return notification.object! as! NotificationContext
+        notification.object! as! NotificationContext
     }
 
     public var userInfo: [AnyHashable: Any] {
-        return notification.userInfo ?? [:]
+        notification.userInfo ?? [:]
     }
 
     /// Internal notification
     private let notification: Notification
 
-    public init(name: Notification.Name,
-                context: NotificationContext,
-                object: AnyObject? = nil,
-                userInfo: [String: Any]? = nil) {
+    public init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         if let object {
             userInfo[NotificationInContext.objectInNotificationKey] = object
         }
-        self.notification = Notification(name: name,
-                                         object: context,
-                                         userInfo: userInfo)
+        self.notification = Notification(
+            name: name,
+            object: context,
+            userInfo: userInfo
+        )
     }
 
     private init(notification: Notification) {
@@ -73,7 +78,7 @@ import WireUtilities
 
     /// Post notification in default notification center
     public func post() {
-        NotificationCenter.default.post(self.notification)
+        NotificationCenter.default.post(notification)
     }
 
     /// Register for observer
@@ -82,8 +87,9 @@ import WireUtilities
         context: NotificationContext,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
-        return addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
+        using: @escaping (NotificationInContext) -> Void
+    ) -> SelfUnregisteringNotificationCenterToken {
+        addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
     }
 
     public static func addUnboundedObserver(
@@ -91,10 +97,13 @@ import WireUtilities
         context: NotificationContext?,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
-        return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
-                                                                                               object: context,
-                                                                                               queue: queue) { note in
+        using: @escaping (NotificationInContext) -> Void
+    ) -> SelfUnregisteringNotificationCenterToken {
+        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(
+            forName: name,
+            object: context,
+            queue: queue
+        ) { note in
             let notificationInContext = NotificationInContext(notification: note)
             guard object == nil || object! === notificationInContext.object else { return }
             using(notificationInContext)
@@ -102,18 +111,20 @@ import WireUtilities
     }
 }
 
-extension NotificationInContext {
+public extension NotificationInContext {
 
     private enum UserInfoKeys: String {
         case changedKeys
         case changeInfo
     }
 
-    convenience public init(name: Notification.Name,
-                            context: NotificationContext,
-                            object: AnyObject? = nil,
-                            changeInfo: ObjectChangeInfo,
-                            userInfo: [String: Any]? = nil) {
+    convenience init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        changeInfo: ObjectChangeInfo,
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changeInfo.rawValue] = changeInfo
 
@@ -121,14 +132,17 @@ extension NotificationInContext {
             name: name,
             context: context,
             object: object,
-            userInfo: userInfo)
+            userInfo: userInfo
+        )
     }
 
-    convenience public init(name: Notification.Name,
-                            context: NotificationContext,
-                            object: AnyObject? = nil,
-                            changedKeys: [String],
-                            userInfo: [String: Any]? = nil) {
+    convenience init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        changedKeys: [String],
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changedKeys.rawValue] = changedKeys
 
@@ -136,14 +150,15 @@ extension NotificationInContext {
             name: name,
             context: context,
             object: object,
-            userInfo: userInfo)
+            userInfo: userInfo
+        )
     }
 
-    public var changeInfo: ObjectChangeInfo? {
-        return self.userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
+    var changeInfo: ObjectChangeInfo? {
+        userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
     }
 
-    public var changedKeys: [String]? {
-        return self.userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
+    var changedKeys: [String]? {
+        userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
     }
 }

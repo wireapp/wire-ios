@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class MetaStreamContainerTests: XCTestCase {
 
@@ -161,7 +161,13 @@ class MetaStreamContainerTests: XCTestCase {
 
     // MARK: - Helper
 
-    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, file: StaticString = #file, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(
+        _ html: String,
+        expectedHead: String,
+        encoding: String.Encoding = .utf8,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         // when
         sut.addData(html.data(using: encoding)!)
 
@@ -171,7 +177,12 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(head, expectedHead, "Should have expected head", file: file, line: line)
     }
 
-    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, encoding: String.Encoding = .utf8, line: UInt = #line) {
+    func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(
+        _ head: String,
+        shouldUpdate: Bool = true,
+        encoding: String.Encoding = .utf8,
+        line: UInt = #line
+    ) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Head".data(using: encoding)!
@@ -194,7 +205,11 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(sut.reachedEndOfHead, shouldUpdate, line: line)
     }
 
-    func assertThatItAppendsBytes(file: StaticString = #file, line: UInt = #line, encoding: String.Encoding = .utf8) {
+    func assertThatItAppendsBytes(
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        encoding: String.Encoding = .utf8
+    ) {
         // given
         let first = "First".data(using: encoding)!
         let second = "Second".data(using: encoding)!
