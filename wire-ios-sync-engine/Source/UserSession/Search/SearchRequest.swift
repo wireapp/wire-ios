@@ -121,7 +121,7 @@ public struct SearchRequest {
         if isOtherDomainAllowed {
             search = Self.parseQuery(query)
         } else {
-            search = (.fullTextSearch(query) ,selfDomain)
+            search = (.fullTextSearch(query), selfDomain)
         }
         self.query = search.query
         self.searchDomain = search.domain

@@ -460,7 +460,9 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         case (.people, true):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText, isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
+            searchResultsViewController.searchForLocalUsers(
+                withQuery: searchHeaderViewController.tokenField.filterText,
+                isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
         }
     }
 
