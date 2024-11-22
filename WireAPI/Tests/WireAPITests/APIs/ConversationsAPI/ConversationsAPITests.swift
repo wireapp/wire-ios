@@ -539,7 +539,7 @@ final class ConversationsAPITests: XCTestCase {
             for sut in suts {
                 taskGroup.addTask {
                     // Then
-                    await self.XCTAssertThrowsError(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
+                    await self.XCTAssertThrowsErrorAsync(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
                         // When
                         try await sut.getMLSOneToOneConversation(
                             userID: Scaffolding.userID,
@@ -565,7 +565,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.mlsNotEnabled) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.mlsNotEnabled) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
@@ -586,7 +586,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.usersNotConnected) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.usersNotConnected) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
@@ -607,7 +607,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.userAndDomainShouldNotBeEmpty) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.userAndDomainShouldNotBeEmpty) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: "",

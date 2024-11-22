@@ -18,12 +18,9 @@
 
 import Foundation
 
-/// Errors originating from `APIService`.
+enum HTTPCookieCodecError: Error {
 
-public enum APIServiceError: Error {
-
-    /// An access token is required but none is available.
-
-    case missingAccessToken
+    case invalidCookies
+    case invalidCookieData(reason: String)
 
 }

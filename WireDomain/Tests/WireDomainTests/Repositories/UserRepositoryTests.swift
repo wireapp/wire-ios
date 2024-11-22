@@ -400,7 +400,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
+        await XCTAssertThrowsErrorAsync(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
 
             // When
 
