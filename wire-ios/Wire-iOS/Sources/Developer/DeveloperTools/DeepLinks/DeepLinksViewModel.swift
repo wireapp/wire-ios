@@ -57,7 +57,6 @@ final class DeepLinksViewModel: ObservableObject {
 
     func openLink(urlString: String) {
         guard
-            
             let url = URL(string: urlString.trim()),
             (try? URLAction(url: url)) != nil
         else {

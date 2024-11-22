@@ -20,10 +20,10 @@
 import AVFoundation
 import UIKit
 
-class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
-    
-    var captureSession: AVCaptureSession!
-    var previewLayer: AVCaptureVideoPreviewLayer!
+final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+
+    private var captureSession: AVCaptureSession!
+    private var previewLayer: AVCaptureVideoPreviewLayer!
     var onQRCodeScanned: ((String) -> Void)?
     
     override func viewDidLoad() {
@@ -32,7 +32,6 @@ class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         captureSession = AVCaptureSession()
         
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
-            print("Your device doesn't support camera input")
             return
         }
 
@@ -71,8 +70,11 @@ class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObje
         captureSession.startRunning()
     }
 
-    func failed() {
-        let alertController = UIAlertController(title: "Scanning not supported", message: "Your device doesn't support QR code scanning.", preferredStyle: .alert)
+    private func failed() {
+        let alertController = UIAlertController(
+            title: "Scanning not supported",
+            message: "Your device doesn't support QR code scanning.",
+            preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         present(alertController, animated: true)
         captureSession = nil
