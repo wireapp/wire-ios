@@ -136,7 +136,7 @@ final class ConversationCreationController: UIViewController {
         guard let collectionView = collectionViewController.collectionView else { return }
         updateSections()
 
-        // ignoring the conversation name so we don't loose the info while testing.
+        // ignoring the conversation name so we don't loose the info while testing
         let excludedSectionIndex = collectionViewController.sections.startIndex
         let endIndex = collectionView.numberOfSections
         let sectionsToReload = IndexSet(integersIn: (excludedSectionIndex + 1)..<endIndex)
