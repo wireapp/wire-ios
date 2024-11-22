@@ -57,11 +57,10 @@ struct DeepLinksView: View {
     }
 }
 
-
 struct QRCodeScannerView: UIViewControllerRepresentable {
-    
+
     var onQRCodeScanned: (String) -> Void
-    
+
     func makeUIViewController(context: Context) -> QRCodeScannerViewController {
         let viewController = QRCodeScannerViewController()
         viewController.onQRCodeScanned = onQRCodeScanned

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import AVFoundation
 import UIKit
 
@@ -25,12 +24,12 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
     private var captureSession: AVCaptureSession!
     private var previewLayer: AVCaptureVideoPreviewLayer!
     var onQRCodeScanned: ((String) -> Void)?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         captureSession = AVCaptureSession()
-        
+
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
             return
         }
@@ -43,7 +42,7 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
             return
         }
 
-        if (captureSession.canAddInput(videoInput)) {
+        if captureSession.canAddInput(videoInput) {
             captureSession.addInput(videoInput)
         } else {
             failed()
@@ -52,7 +51,7 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
 
         let metadataOutput = AVCaptureMetadataOutput()
 
-        if (captureSession.canAddOutput(metadataOutput)) {
+        if captureSession.canAddOutput(metadataOutput) {
             captureSession.addOutput(metadataOutput)
 
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
@@ -94,7 +93,7 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
-            
+
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             onQRCodeScanned?(stringValue)
         }
