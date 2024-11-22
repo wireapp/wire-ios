@@ -52,12 +52,12 @@ final class TextSearchResultFooter: UIView {
 
         [nameLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-          nameLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: -4),
-          dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-          nameLabel.topAnchor.constraint(equalTo: topAnchor),
-          nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-          dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
+            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: -4),
+            dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
         ])
     }
 

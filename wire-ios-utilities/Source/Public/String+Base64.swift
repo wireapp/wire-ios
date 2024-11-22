@@ -21,27 +21,27 @@ import Foundation
 public extension String {
 
     var utf8Data: Data? {
-        return data(using: .utf8)
+        data(using: .utf8)
     }
 
     var base64EncodedData: Data? {
-        return utf8Data?.base64EncodedData()
+        utf8Data?.base64EncodedData()
     }
 
     var base64EncodedBytes: [Byte]? {
-        return base64EncodedData?.bytes
+        base64EncodedData?.bytes
     }
 
     var base64EncodedString: String? {
-        return utf8Data?.base64EncodedString()
+        utf8Data?.base64EncodedString()
     }
 
     var base64DecodedData: Data? {
-        return Data(base64Encoded: self)
+        Data(base64Encoded: self)
     }
 
     var base64DecodedBytes: [Byte]? {
-        return base64DecodedData?.bytes
+        base64DecodedData?.bytes
     }
 
 }

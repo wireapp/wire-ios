@@ -19,16 +19,14 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handles the notification informing that the client has been registered after the client signed in.
- */
+/// Handles the notification informing that the client has been registered after the client signed in.
 
 final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
+        [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
 
 }

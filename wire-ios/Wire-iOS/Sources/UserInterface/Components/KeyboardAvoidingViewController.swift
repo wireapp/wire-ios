@@ -32,10 +32,12 @@ class KeyboardAvoidingViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange),
-                                               name: UIWindow.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange),
+            name: UIWindow.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -44,28 +46,28 @@ class KeyboardAvoidingViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return viewController.shouldAutorotate
+        viewController.shouldAutorotate
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return viewController.supportedInterfaceOrientations
+        viewController.supportedInterfaceOrientations
     }
 
     override var navigationItem: UINavigationItem {
-        return viewController.navigationItem
+        viewController.navigationItem
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return viewController
+        viewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return viewController
+        viewController
     }
 
     override var title: String? {
         get {
-            return viewController.title
+            viewController.title
         }
         set {
             viewController.title = newValue
@@ -94,7 +96,10 @@ class KeyboardAvoidingViewController: UIViewController {
         topEdgeConstraint = viewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         topEdgeConstraint?.isActive = true
 
-        bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
+        bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+            constant: 0
+        )
 
         bottomEdgeConstraint?.isActive = true
     }
@@ -113,17 +118,19 @@ class KeyboardAvoidingViewController: UIViewController {
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
         else { return }
 
-        let keyboardFrameInView = UIView.keyboardFrame(in: self.view, forKeyboardNotification: notification)
+        let keyboardFrameInView = UIView.keyboardFrame(in: view, forKeyboardNotification: notification)
         var bottomOffset: CGFloat
 
-        // The keyboard frame includes the safe area so we need to substract it since the bottomEdgeConstraint is attached to the safe area.
+        // The keyboard frame includes the safe area so we need to substract it since the bottomEdgeConstraint is
+        // attached to the safe area.
         bottomOffset = -keyboardFrameInView.intersection(view.safeAreaLayoutGuide.layoutFrame).height
 
         // When the keyboard is visible &
-        // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the bottomOffset should be reduced.
+        // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the
+        // bottomOffset should be reduced.
         if !keyboardFrameInView.origin.y.isInfinite,
-            modalPresentationStyle == .formSheet,
-            let frame = presentationController?.frameOfPresentedViewInContainerView {
+           modalPresentationStyle == .formSheet,
+           let frame = presentationController?.frameOfPresentedViewInContainerView {
             // swiftlint:disable:next todo_requires_jira_link
             // TODO: no need to add when no keyboard
             bottomOffset += frame.minY

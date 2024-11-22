@@ -17,5 +17,7 @@
 //
 
 public enum Availability: CaseIterable {
-    case available, busy, away
+    case available
+    case busy
+    case away
 }

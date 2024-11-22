@@ -55,7 +55,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembersRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2_000)
+            _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
         }
     }
 
@@ -102,7 +102,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -114,7 +114,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -153,7 +153,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.selfUserIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
@@ -165,7 +165,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
@@ -183,7 +183,7 @@ final class TeamsAPITests: XCTestCase {
         // When
         let result = try await sut.getTeamMembers(
             for: Team.ID(),
-            maxResults: 2_000
+            maxResults: 2000
         )
 
         // Then
@@ -192,7 +192,10 @@ final class TeamsAPITests: XCTestCase {
             [
                 TeamMember(
                     userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
-                    creationDate: try XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2024-05-14T08:55:04.779Z")),
+                    creationDate: try XCTUnwrap(
+                        ISO8601DateFormatter.fractionalInternetDateTime
+                            .date(from: "2024-05-14T08:55:04.779Z")
+                    ),
                     creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
                     legalholdStatus: .pending,
                     permissions: TeamMemberPermissions(
@@ -210,11 +213,11 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidQueryParmeter) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidQueryParmeter) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -225,11 +228,11 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.selfUserIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -240,11 +243,11 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -278,7 +281,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
             // When
             try await sut.getLegalholdStatus(
                 for: Team.ID(),
@@ -293,7 +296,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamMemberNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamMemberNotFound) {
             // When
             try await sut.getLegalholdStatus(
                 for: Team.ID(),
@@ -339,7 +342,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -351,7 +354,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
             // When
             try await sut.getTeamRoles(for: Team.ID())
         }
@@ -363,11 +366,11 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
             // When
             try await sut.getTeamMembers(
                 for: Team.ID(),
-                maxResults: 2_000
+                maxResults: 2000
             )
         }
     }
@@ -378,7 +381,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
             // When
             try await sut.getLegalholdStatus(
                 for: Team.ID(),
@@ -395,7 +398,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV5(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidTeamID) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
             // When
             try await sut.getTeam(for: Team.ID())
         }
@@ -407,7 +410,7 @@ final class TeamsAPITests: XCTestCase {
         let sut = TeamsAPIV5(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(TeamsAPIError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
             // When
             try await sut.getLegalholdStatus(
                 for: Team.ID(),

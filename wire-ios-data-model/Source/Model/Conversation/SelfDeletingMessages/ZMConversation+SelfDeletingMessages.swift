@@ -16,41 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    @NSManaged var localMessageDestructionTimeout: TimeInterval
-    @NSManaged var syncedMessageDestructionTimeout: TimeInterval
+    @NSManaged internal var localMessageDestructionTimeout: TimeInterval
+    @NSManaged internal var syncedMessageDestructionTimeout: TimeInterval
 
     /// Whether a group conversation timeout value exists.
 
-    public var hasSyncedMessageDestructionTimeout: Bool {
-        return messageDestructionTimeoutValue(for: .groupConversation) != .none
+    var hasSyncedMessageDestructionTimeout: Bool {
+        messageDestructionTimeoutValue(for: .groupConversation) != .none
     }
 
     /// Whether a personal timeout value exists for the self user.
 
-    public var hasLocalMessageDestructionTimeout: Bool {
-        return messageDestructionTimeoutValue(for: .selfUser) != .none
+    var hasLocalMessageDestructionTimeout: Bool {
+        messageDestructionTimeoutValue(for: .selfUser) != .none
     }
 
     /// The timeout value actively used with new messages.
 
-    public var activeMessageDestructionTimeoutValue: MessageDestructionTimeoutValue? {
+    var activeMessageDestructionTimeoutValue: MessageDestructionTimeoutValue? {
         guard let type = activeMessageDestructionTimeoutType else { return nil }
         return messageDestructionTimeoutValue(for: type)
     }
 
     /// The type of timeout used with new messages.
 
-    public var activeMessageDestructionTimeoutType: MessageDestructionTimeoutType? {
+    var activeMessageDestructionTimeoutType: MessageDestructionTimeoutType? {
         if hasForcedMessageDestructionTimeout {
-            return .team
+            .team
         } else if hasSyncedMessageDestructionTimeout {
-            return .groupConversation
+            .groupConversation
         } else if hasLocalMessageDestructionTimeout {
-            return .selfUser
+            .selfUser
         } else {
-            return nil
+            nil
         }
     }
 
@@ -58,14 +58,14 @@ extension ZMConversation {
     ///
     /// This is not necessarily the timeout used when appending new messages. See `activeTimeoutValue`.
 
-    public func messageDestructionTimeoutValue(for type: MessageDestructionTimeoutType) -> MessageDestructionTimeoutValue {
+    func messageDestructionTimeoutValue(for type: MessageDestructionTimeoutType) -> MessageDestructionTimeoutValue {
         switch type {
         case .team:
-            return .init(rawValue: teamMessageDestructionTimeout)
+            .init(rawValue: teamMessageDestructionTimeout)
         case .groupConversation:
-            return .init(rawValue: syncedMessageDestructionTimeout)
+            .init(rawValue: syncedMessageDestructionTimeout)
         case .selfUser:
-            return .init(rawValue: localMessageDestructionTimeout)
+            .init(rawValue: localMessageDestructionTimeout)
         }
     }
 
@@ -74,7 +74,10 @@ extension ZMConversation {
     /// Note: setting a timeout for the `team` type has no effect since this is controlled by the
     /// `Feature.SelfDeletingMessages` feature config.
 
-    public func setMessageDestructionTimeoutValue(_ value: MessageDestructionTimeoutValue, for type: MessageDestructionTimeoutType) {
+    func setMessageDestructionTimeoutValue(
+        _ value: MessageDestructionTimeoutValue,
+        for type: MessageDestructionTimeoutType
+    ) {
         switch type {
         case .team:
             break
@@ -85,7 +88,7 @@ extension ZMConversation {
         }
     }
 
-    public func appendMessageTimerUpdateMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) {
+    func appendMessageTimerUpdateMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) {
         appendSystemMessage(
             type: .messageTimerUpdate,
             sender: user,
@@ -95,7 +98,7 @@ extension ZMConversation {
             messageTimer: timer
         )
 
-        if isArchived && mutedMessageTypes == .none {
+        if isArchived, mutedMessageTypes == .none {
             isArchived = false
         }
 
@@ -130,15 +133,15 @@ extension ZMConversation {
 private extension Feature.SelfDeletingMessages {
 
     var isForcedOff: Bool {
-        return status == .disabled
+        status == .disabled
     }
 
     var isForcedOn: Bool {
-        return config.enforcedTimeoutSeconds > 0
+        config.enforcedTimeoutSeconds > 0
     }
 
     var timeoutValue: MessageDestructionTimeoutValue {
-        return .init(rawValue: Double(config.enforcedTimeoutSeconds))
+        .init(rawValue: Double(config.enforcedTimeoutSeconds))
     }
 
 }

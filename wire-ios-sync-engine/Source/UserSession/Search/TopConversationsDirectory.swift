@@ -21,7 +21,8 @@ import WireDataModel
 
 /// Directory of various conversation lists
 /// This object is expected to be used on the UI context only
-@objcMembers public class TopConversationsDirectory: NSObject {
+@objcMembers
+public class TopConversationsDirectory: NSObject {
 
     fileprivate let uiMOC: NSManagedObjectContext
     fileprivate let syncMOC: NSManagedObjectContext
@@ -32,29 +33,32 @@ import WireDataModel
     fileprivate var topConversationsCache: [ZMConversation] = []
 
     public init(managedObjectContext: NSManagedObjectContext) {
-        uiMOC = managedObjectContext
-        syncMOC = managedObjectContext.zm_sync
+        self.uiMOC = managedObjectContext
+        self.syncMOC = managedObjectContext.zm_sync
         super.init()
-        self.loadList()
+        loadList()
     }
 }
 
 // MARK: - Top conversation
+
 private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
-@objc extension TopConversationsDirectory {
+@objc
+extension TopConversationsDirectory {
 
     public func refreshTopConversations() {
         syncMOC.performGroupedBlock {
             let conversations = self.fetchOneOnOneConversations()
-            let countByConversation: [ZMConversation: Int] = conversations.reduce(into: .init()) { partialResult, item in
-                partialResult[item] = item.lastMonthMessageCount()
-            }
+            let countByConversation: [ZMConversation: Int] = conversations
+                .reduce(into: .init()) { partialResult, item in
+                    partialResult[item] = item.lastMonthMessageCount()
+                }
             let identifiers = countByConversation
                 .filter { _, value in value > 0 }
                 .sorted { $0.1 > $1.1 }
                 .prefix(TopConversationsDirectory.topConversationSize)
-                .compactMap { $0.0.objectID }
+                .compactMap(\.0.objectID)
             self.updateUIList(with: identifiers)
         }
     }
@@ -76,30 +80,34 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
     /// Top conversations
     public var topConversations: [ZMConversation] {
-        return self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
+        topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
     }
 
     /// Persist list of conversations to persistent store
     private func persistList() {
-        let valueToSave = self.topConversations.map { $0.objectID.uriRepresentation().absoluteString }
-        self.uiMOC.setPersistentStoreMetadata(array: valueToSave, key: topConversationsObjectIDKey)
+        let valueToSave = topConversations.map { $0.objectID.uriRepresentation().absoluteString }
+        uiMOC.setPersistentStoreMetadata(array: valueToSave, key: topConversationsObjectIDKey)
         TopConversationsDirectoryNotification().post(in: uiMOC.notificationContext)
     }
 
     /// Load list from persistent store
-    fileprivate func loadList() {
-        guard let ids = self.uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
+    private func loadList() {
+        guard let ids = uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
             return
         }
-        let managedObjectIDs = ids.compactMap(URL.init).compactMap { self.uiMOC.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: $0) }
-        self.topConversationsCache = managedObjectIDs.compactMap { self.uiMOC.object(with: $0) as? ZMConversation }
+        let managedObjectIDs = ids.compactMap(URL.init)
+            .compactMap { self.uiMOC.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: $0) }
+        topConversationsCache = managedObjectIDs.compactMap { self.uiMOC.object(with: $0) as? ZMConversation }
     }
 }
 
 // MARK: – Observation
-@objc public protocol TopConversationsDirectoryObserver {
 
-    @objc func topConversationsDidChange()
+@objc
+public protocol TopConversationsDirectoryObserver {
+
+    @objc
+    func topConversationsDidChange()
 
 }
 
@@ -108,21 +116,33 @@ struct TopConversationsDirectoryNotification: SelfPostingNotification {
     static let notificationName = NSNotification.Name(rawValue: "TopConversationsDirectoryNotification")
 }
 
-extension TopConversationsDirectory {
+public extension TopConversationsDirectory {
 
-    @objc(addObserver:) public func add(observer: TopConversationsDirectoryObserver) -> Any {
-        return NotificationInContext.addObserver(name: TopConversationsDirectoryNotification.notificationName, context: uiMOC.notificationContext) { [weak observer] _ in
+    @objc(addObserver:)
+    func add(observer: TopConversationsDirectoryObserver) -> Any {
+        NotificationInContext.addObserver(
+            name: TopConversationsDirectoryNotification.notificationName,
+            context: uiMOC.notificationContext
+        ) { [weak observer] _ in
             observer?.topConversationsDidChange()
         }
     }
 
 }
 
-fileprivate extension ZMConversation {
+private extension ZMConversation {
 
     static var predicateForActiveOneOnOneConversations: NSPredicate {
-        let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
-        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)
+        let oneOnOnePredicate = NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.conversationType),
+            ZMConversationType.oneOnOne.rawValue
+        )
+        let acceptedPredicate = NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.oneOnOneUser.connection.status),
+            ZMConnectionStatus.accepted.rawValue
+        )
         return NSCompoundPredicate(andPredicateWithSubpredicates: [oneOnOnePredicate, acceptedPredicate])
     }
 

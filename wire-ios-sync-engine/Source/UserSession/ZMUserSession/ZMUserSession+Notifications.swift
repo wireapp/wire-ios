@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension ZMUserSession {
-    public var notificationContext: any NotificationContext {
+public extension ZMUserSession {
+    var notificationContext: any NotificationContext {
         // Workaround to replace the core data dependency in future!
         coreDataStack.viewContext.persistentStoreCoordinator!
     }

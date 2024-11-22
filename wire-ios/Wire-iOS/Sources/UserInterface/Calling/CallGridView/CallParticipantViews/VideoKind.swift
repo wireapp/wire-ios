@@ -40,6 +40,6 @@ enum VideoKind {
     }
 
     var shouldFill: Bool {
-        return self == .camera
+        self == .camera
     }
 }

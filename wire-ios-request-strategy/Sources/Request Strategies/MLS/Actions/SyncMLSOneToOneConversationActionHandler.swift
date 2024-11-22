@@ -86,7 +86,8 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                 }
                 updateOrCreateConversation(
                     action: action,
-                    payload: payload)
+                    payload: payload
+                )
 
             case .v6:
                 guard
@@ -100,7 +101,8 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                 updateOrCreateConversation(
                     action: action,
                     payload: payload,
-                    publicKeys: publicKeys)
+                    publicKeys: publicKeys
+                )
             }
 
         case (400, "mls-not-enabled"):
@@ -211,12 +213,16 @@ private extension Payload.ExternalSenderKeys {
             .flatMap(\.base64DecodedBytes)
             .map(\.data)
 
-        return BackendMLSPublicKeys(removal:
-                .init(ed25519: ed25519RemovalKey,
-                      ed448: ed448RemovalKey,
-                      p256: p256RemovalKey,
-                      p384: p384RemovalKey,
-                      p521: p521RemovalKey))
+        return BackendMLSPublicKeys(
+            removal:
+            .init(
+                ed25519: ed25519RemovalKey,
+                ed448: ed448RemovalKey,
+                p256: p256RemovalKey,
+                p384: p384RemovalKey,
+                p521: p521RemovalKey
+            )
+        )
     }
 
 }

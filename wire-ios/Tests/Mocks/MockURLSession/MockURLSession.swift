@@ -28,16 +28,15 @@ enum MockURLSessionError: Error {
     case noNetwork
 }
 
-/**
- * An object that provides the behavior of a URL session for testing purposes.
- *
- * You provide responses for given URLs by calling `scheduleResponseForURL`.
- */
+/// An object that provides the behavior of a URL session for testing purposes.
+///
+/// You provide responses for given URLs by calling `scheduleResponseForURL`.
 
 class MockURLSession: DataTaskSession {
 
     enum SessionError: Swift.Error {
-        case noRequest, noScheduledResponse
+        case noRequest
+        case noScheduledResponse
     }
 
     // MARK: - State
@@ -92,10 +91,10 @@ class MockURLSession: DataTaskSession {
         }
 
         switch scheduledResponse {
-        case .success(let data, let response):
+        case let .success(data, response):
             respondToTask(mockTask, with: data, response: response)
 
-        case .error(let error):
+        case let .error(error):
             failTask(mockTask, with: error)
         }
 
@@ -113,8 +112,13 @@ class MockURLSession: DataTaskSession {
             }
 
             if let cache = self.cache {
-                self.startCaching(data: data, for: response, task: task, in: cache,
-                                  completionHandler: cachingCompletionHandler)
+                self.startCaching(
+                    data: data,
+                    for: response,
+                    task: task,
+                    in: cache,
+                    completionHandler: cachingCompletionHandler
+                )
             } else {
                 cachingCompletionHandler()
             }
@@ -123,12 +127,18 @@ class MockURLSession: DataTaskSession {
 
     }
 
-    private func startCaching(data: Data, for response: URLResponse, task: DataTask, in cache: URLCache, completionHandler: @escaping () -> Void) {
+    private func startCaching(
+        data: Data,
+        for response: URLResponse,
+        task: DataTask,
+        in cache: URLCache,
+        completionHandler: @escaping () -> Void
+    ) {
 
         guard let httpResponse = response as? HTTPURLResponse,
-            (200 ..< 300).contains(httpResponse.statusCode) else {
-                completionHandler()
-                return
+              (200 ..< 300).contains(httpResponse.statusCode) else {
+            completionHandler()
+            return
         }
 
         guard httpResponse.allHeaderFields.keys.contains("Cache-Control") else {

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class LabelUpstreamRequestStrategyTests: MessagingTest {
 
@@ -57,7 +57,12 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
     func testThatItGeneratesRequestForUpdatingLabels() throws {
         let conversation1Id = try XCTUnwrap(syncMOC.performAndWait { conversation1.remoteIdentifier })
 
-        let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [conversation1Id])
+        let labelUpdate = WireSyncEngine.LabelUpdate(
+            id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!,
+            type: 1,
+            name: nil,
+            conversations: [conversation1Id]
+        )
         let expectedPayload = WireSyncEngine.LabelPayload(labels: [labelUpdate])
 
         syncMOC.performGroupedAndWait {
@@ -79,13 +84,23 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesntUploadLabelsMarkedForDeletion() {
-        let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [])
+        let labelUpdate = WireSyncEngine.LabelUpdate(
+            id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!,
+            type: 1,
+            name: nil,
+            conversations: []
+        )
         let expectedPayload = WireSyncEngine.LabelPayload(labels: [labelUpdate])
 
         syncMOC.performGroupedAndWait {
             // given
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: self.syncMOC, created: &created)!
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: UUID(),
+                create: true,
+                in: self.syncMOC,
+                created: &created
+            )!
             label.conversations = Set([self.conversation1])
             label.markForDeletion()
             label.modifiedKeys = Set(["conversations", "markedForDeletion"])
@@ -149,7 +164,12 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
             label2.modifiedKeys = Set(["name"])
             self.syncMOC.saveOrRollback()
             self.sut.objectsDidChange(Set([label2]))
-            request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -172,7 +192,12 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         // when
         syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
-            request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -196,7 +221,12 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         // when
         syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
-            request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

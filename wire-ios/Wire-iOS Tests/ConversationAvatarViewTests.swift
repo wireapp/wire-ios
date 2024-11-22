@@ -153,7 +153,8 @@ final class ConversationAvatarViewTests: XCTestCase {
     func testThatItRendersManyUsers() {
         // GIVEN
         let conversation = MockStableRandomParticipantsConversation()
-        conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
+        conversation.stableRandomParticipants = MockUserType.usernames
+            .map { MockUserType.createConnectedUser(name: $0) }
 
         (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
         (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
@@ -172,7 +173,7 @@ final class ConversationAvatarViewTests: XCTestCase {
 
 // MARK: - Helper method
 
-fileprivate extension UIView {
+private extension UIView {
 
     func prepareForSnapshots() -> UIView {
         let container = UIView()

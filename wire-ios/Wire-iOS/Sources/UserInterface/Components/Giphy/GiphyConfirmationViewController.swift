@@ -24,7 +24,10 @@ import Ziphy
 
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
 
-    func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data)
+    func giphyConfirmationViewController(
+        _ giphyConfirmationViewController: GiphyConfirmationViewController,
+        didConfirmImageData imageData: Data
+    )
 
 }
 
@@ -33,8 +36,16 @@ final class GiphyConfirmationViewController: UIViewController {
     typealias Giphy = L10n.Localizable.Giphy
 
     private let imagePreview = FLAnimatedImageView()
-    private let acceptButton = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-    private let cancelButton = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let cancelButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     private let buttonContainer = UIView()
     weak var delegate: GiphyConfirmationViewControllerDelegate?
     private let searchResultController: ZiphySearchResultsController?
@@ -47,9 +58,11 @@ final class GiphyConfirmationViewController: UIViewController {
     ///   - ziph: provide nil for testing only
     ///   - previewImage: image for preview
     ///   - searchResultController: provide nil for testing only
-    init(withZiph ziph: Ziph?,
-         previewImage: FLAnimatedImage?,
-         searchResultController: ZiphySearchResultsController?) {
+    init(
+        withZiph ziph: Ziph?,
+        previewImage: FLAnimatedImage?,
+        searchResultController: ZiphySearchResultsController?
+    ) {
         self.ziph = ziph
         self.searchResultController = searchResultController
 

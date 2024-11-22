@@ -50,12 +50,18 @@ final class ConversationRenamedSystemMessageCellDescription: ConversationMessage
         let senderText = message.senderName
         let titleString = "content.system.renamed_conv.title".localized(pov: sender.pov, args: senderText)
 
-        let title = NSAttributedString(string: titleString, attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault])
+        let title = NSAttributedString(
+            string: titleString,
+            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
+        )
 
-        let conversationName = NSAttributedString(string: newName, attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: LabelColors.textDefault])
-        configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
-        actionController = nil
-        accessibilityLabel = "\(titleString), \(newName)"
+        let conversationName = NSAttributedString(
+            string: newName,
+            attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: LabelColors.textDefault]
+        )
+        self.configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
+        self.actionController = nil
+        self.accessibilityLabel = "\(titleString), \(newName)"
     }
 
 }

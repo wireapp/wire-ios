@@ -58,11 +58,11 @@ final class StartUIViewController: UIViewController {
     let backgroundColor = SemanticColors.View.backgroundDefault
 
     var searchResults: SearchResultsViewController {
-        return self.searchResultsViewController
+        searchResultsViewController
     }
 
     var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     // MARK: - Init
@@ -100,7 +100,7 @@ final class StartUIViewController: UIViewController {
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
-        profilePresenter = .init(
+        self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
         )
@@ -135,8 +135,8 @@ final class StartUIViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        _ = self.searchController.searchBar.resignFirstResponder()
-        self.navigationController?.dismiss(animated: true)
+        _ = searchController.searchBar.resignFirstResponder()
+        navigationController?.dismiss(animated: true)
         return true
     }
 
@@ -188,7 +188,7 @@ final class StartUIViewController: UIViewController {
         groupSelector.translatesAutoresizingMaskIntoConstraints = false
         groupSelector.backgroundColor = backgroundColor
         groupSelector.onGroupSelected = { [weak self] group in
-            if .services == group {
+            if group == .services {
                 self?.searchController.searchBar.text = ""
             }
             self?.searchResults.searchGroup = group
@@ -199,7 +199,8 @@ final class StartUIViewController: UIViewController {
     // MARK: - Setup constraints
 
     private func createConstraints() {
-        [groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+        [groupSelector, searchResultsViewController.view]
+            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         if showsGroupSelector {
             NSLayoutConstraint.activate([
@@ -247,8 +248,10 @@ final class StartUIViewController: UIViewController {
         } else {
             searchResults.searchForServices(withQuery: searchString)
         }
-        emptyResultView.updateStatus(searchingForServices: groupSelector.group == .services,
-                                     hasFilter: !searchString.isEmpty)
+        emptyResultView.updateStatus(
+            searchingForServices: groupSelector.group == .services,
+            hasFilter: !searchString.isEmpty
+        )
     }
 
     // MARK: - Action bar

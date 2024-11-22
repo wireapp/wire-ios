@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMAssetClientMessage {
-    override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
+    open override func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
         guard let message = GenericMessage(from: updateEvent) else { return }
 
         do {
@@ -39,7 +39,7 @@ extension ZMAssetClientMessage {
         }
 
         switch status {
-        case .uploaded(let data) where data.hasAssetID:
+        case let .uploaded(data) where data.hasAssetID:
             updateTransferState(.uploaded, synchronize: false)
         case .notUploaded where transferState != .uploaded:
             switch assetData.notUploaded {

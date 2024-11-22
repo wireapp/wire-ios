@@ -23,33 +23,37 @@ private let log = ZMSLog(tag: "link opening")
 
 enum BrowserOpeningOption: Int, LinkOpeningOption {
 
-    case safari, chrome, firefox, snowhaze, brave
+    case safari
+    case chrome
+    case firefox
+    case snowhaze
+    case brave
 
     typealias ApplicationOptionEnum = BrowserOpeningOption
     static var settingKey: SettingKey = .browserOpeningRawValue
     static var defaultPreference: ApplicationOptionEnum = .safari
 
     static var allOptions: [BrowserOpeningOption] {
-        return [.safari, .chrome, .firefox, .snowhaze, .brave]
+        [.safari, .chrome, .firefox, .snowhaze, .brave]
     }
 
     var displayString: String {
         switch self {
-        case .safari:   return L10n.Localizable.OpenLink.Browser.Option.safari
-        case .chrome:   return L10n.Localizable.OpenLink.Browser.Option.chrome
-        case .firefox:  return L10n.Localizable.OpenLink.Browser.Option.firefox
-        case .snowhaze: return L10n.Localizable.OpenLink.Browser.Option.snowhaze
-        case .brave:    return L10n.Localizable.OpenLink.Browser.Option.brave
+        case .safari:   L10n.Localizable.OpenLink.Browser.Option.safari
+        case .chrome:   L10n.Localizable.OpenLink.Browser.Option.chrome
+        case .firefox:  L10n.Localizable.OpenLink.Browser.Option.firefox
+        case .snowhaze: L10n.Localizable.OpenLink.Browser.Option.snowhaze
+        case .brave:    L10n.Localizable.OpenLink.Browser.Option.brave
         }
     }
 
     var isAvailable: Bool {
         switch self {
-        case .safari: return true
-        case .chrome: return UIApplication.shared.chromeInstalled
-        case .firefox: return UIApplication.shared.firefoxInstalled
-        case .snowhaze: return UIApplication.shared.snowhazeInstalled
-        case .brave: return UIApplication.shared.braveInstalled
+        case .safari: true
+        case .chrome: UIApplication.shared.chromeInstalled
+        case .firefox: UIApplication.shared.firefoxInstalled
+        case .snowhaze: UIApplication.shared.snowhazeInstalled
+        case .brave: UIApplication.shared.braveInstalled
         }
     }
 }
@@ -89,22 +93,22 @@ extension URL {
 
 // MARK: - Private
 
-fileprivate extension UIApplication {
+private extension UIApplication {
 
     var chromeInstalled: Bool {
-        return canHandleScheme("googlechrome://")
+        canHandleScheme("googlechrome://")
     }
 
     var firefoxInstalled: Bool {
-        return canHandleScheme("firefox://")
+        canHandleScheme("firefox://")
     }
 
     var snowhazeInstalled: Bool {
-        return canHandleScheme("shtps://")
+        canHandleScheme("shtps://")
     }
 
     var braveInstalled: Bool {
-        return canHandleScheme("brave://")
+        canHandleScheme("brave://")
     }
 
 }
@@ -122,11 +126,11 @@ extension URL {
     }
 
     var percentEncodingString: String {
-        return absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
+        absoluteString.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
     }
 
     var firefoxURL: URL? {
-        return URL(string: "firefox://open-url?url=\(percentEncodingString)")
+        URL(string: "firefox://open-url?url=\(percentEncodingString)")
     }
 
     var snowhazeURL: URL? {
@@ -142,6 +146,6 @@ extension URL {
 
     var braveURL: URL? {
         // Reference: https://github.com/brave/ios-open-thirdparty-browser/blob/master/OpenInThirdPartyBrowser/OpenInThirdPartyBrowserControllerSwift.swift
-        return URL(string: "brave://open-url?url=\(percentEncodingString)")
+        URL(string: "brave://open-url?url=\(percentEncodingString)")
     }
 }

@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct PrimaryKeyGenerator {
+enum PrimaryKeyGenerator {
 
     static func generateKey(for object: NSManagedObject, entityName: String) -> String {
 

@@ -64,7 +64,10 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
         // Given
         let navigationViewController = UINavigationController()
-        navigationViewController.setViewControllers([ViewController(.portraitUpsideDown), ViewController(.landscape)], animated: false)
+        navigationViewController.setViewControllers(
+            [ViewController(.portraitUpsideDown), ViewController(.landscape)],
+            animated: false
+        )
 
         // When
         let result = sut.navigationControllerSupportedInterfaceOrientations(navigationViewController)
@@ -129,6 +132,7 @@ private final class ViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }

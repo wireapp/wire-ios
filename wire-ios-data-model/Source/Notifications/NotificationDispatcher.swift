@@ -26,7 +26,8 @@ import Foundation
 /// Changes are only observed on the main UI managed object context and are triggered by automatically by
 /// Core Data notifications or manually for non Core Data changes.
 
-@objcMembers public class NotificationDispatcher: NSObject, TearDownCapable {
+@objcMembers
+public class NotificationDispatcher: NSObject, TearDownCapable {
 
     static var log = ZMSLog(tag: "notifications")
 
@@ -93,7 +94,7 @@ import Foundation
     }
 
     private var searchUserObserverCenter: SearchUserObserverCenter {
-        return managedObjectContext.searchUserObserverCenter
+        managedObjectContext.searchUserObserverCenter
     }
 
     private var changeDetector: ChangeDetector
@@ -112,7 +113,7 @@ import Foundation
 
         self.managedObjectContext = managedObjectContext
 
-        changeDetectorBuilder = { operationMode in
+        self.changeDetectorBuilder = { operationMode in
             switch operationMode {
             case .normal:
                 let classIdentifiers = [
@@ -142,8 +143,8 @@ import Foundation
             }
         }
 
-        operationMode = .normal
-        changeDetector = changeDetectorBuilder(operationMode)
+        self.operationMode = .normal
+        self.changeDetector = changeDetectorBuilder(operationMode)
 
         super.init()
 
@@ -261,7 +262,11 @@ import Foundation
 
     /// This can safely be called from any thread as it will switch to uiContext internally.
 
-    public static func notifyNonCoreDataChanges(objectID: NSManagedObjectID, changedKeys: [String], uiContext: NSManagedObjectContext) {
+    public static func notifyNonCoreDataChanges(
+        objectID: NSManagedObjectID,
+        changedKeys: [String],
+        uiContext: NSManagedObjectContext
+    ) {
         uiContext.performGroupedBlock {
             guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }
 
@@ -299,7 +304,10 @@ import Foundation
             managedObjectContext.conversationListObserverCenter
         }
 
-        managedObjectContext.conversationListObserverCenter.folderChanges(inserted: insertedLabels, deleted: deletedLabels)
+        managedObjectContext.conversationListObserverCenter.folderChanges(
+            inserted: insertedLabels,
+            deleted: deletedLabels
+        )
 
         let insertedConversations = modifiedObjects.inserted.compactMap { $0 as? ZMConversation }
         let deletedConversations = modifiedObjects.deleted.compactMap { $0 as? ZMConversation }
@@ -321,7 +329,7 @@ import Foundation
 
         let newUnreads = insertedObjects.lazy
             .compactMap { $0 as? ZMMessage }
-            .filter { $0.isUnreadMessage }
+            .filter(\.isUnreadMessage)
 
         let newUnreadMessages = newUnreads
             .filter { $0.knockMessageData == nil }
@@ -342,13 +350,13 @@ import Foundation
     }
 
     private var shouldFireNotifications: Bool {
-        return operationMode != .economical
+        operationMode != .economical
     }
 
     private func fireAllNotifications() {
         let detectedChanges = changeDetector.consumeChanges()
         var changesByClass = [ClassIdentifier: [ObjectChangeInfo]]()
-        let unreadMessages = self.unreadMessages
+        let unreadMessages = unreadMessages
         self.unreadMessages = UnreadMessages()
 
         detectedChanges.forEach { changeInfo in
@@ -404,7 +412,7 @@ import Foundation
 private extension LazySequenceProtocol {
 
     func collect() -> [Element] {
-        return Array(self)
+        Array(self)
     }
 
 }

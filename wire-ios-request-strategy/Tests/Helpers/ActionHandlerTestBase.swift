@@ -118,7 +118,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
@@ -129,7 +129,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expect(action: &action, toPassValidation: validation)
 
         // When
-        let response = self.response(
+        let response = response(
             status: status,
             payload: payload,
             label: label,
@@ -156,7 +156,7 @@ extension ActionHandlerTestBase {
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
-        return try test_itGeneratesARequest(
+        try test_itGeneratesARequest(
             for: action,
             expectedPath: expectedPath,
             expectedPayload: DefaultEquatable?.none,
@@ -171,11 +171,11 @@ extension ActionHandlerTestBase {
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
-        guard let action = self.action else {
+        guard let action else {
             return XCTFail("action must be set in child class' setup")
         }
 
@@ -196,7 +196,7 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) -> Action.Result? {
         var result: Action.Result?
@@ -208,7 +208,7 @@ extension ActionHandlerTestBase {
             file: file,
             line: line
         ) {
-            guard case .success(let res) = $0 else { return false }
+            guard case let .success(res) = $0 else { return false }
             result = res
             return true
         }
@@ -227,7 +227,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         expectedError: Action.Failure
     ) {
         test_itDoesntGenerateARequest(action: action, apiVersion: apiVersion, validation: {
-            guard case .failure(let error) = $0 else { return false}
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         })
     }
@@ -245,7 +245,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
             file: file,
             line: line
         ) {
-            guard case .failure(let error) = $0 else { return false }
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         }
     }
@@ -257,7 +257,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         expectedError: Action.Failure
     ) {
         test_itHandlesResponse(status: status, label: label, apiVersion: apiVersion) {
-            guard case .failure(let error) = $0 else { return false }
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         }
     }
@@ -276,7 +276,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         let label: String?
 
         static func failure(status: Int, error: Action.Failure, label: String? = nil) -> Self {
-            return .init(status: status, error: error, label: label)
+            .init(status: status, error: error, label: label)
         }
     }
 }
@@ -285,7 +285,7 @@ extension ActionHandlerTestBase {
 
     // MARK: Payload Encoding
 
-    func transportData<Payload: Encodable>(for payload: Payload?) -> ZMTransportData? {
+    func transportData(for payload: (some Encodable)?) -> ZMTransportData? {
         let data = try! JSONEncoder.defaultEncoder.encode(payload)
         return String(bytes: data, encoding: .utf8) as ZMTransportData?
     }
@@ -299,7 +299,7 @@ extension ActionHandlerTestBase {
         action: inout Action,
         toPassValidation validateResult: @escaping ValidationBlock
     ) {
-        let expectation = self.customExpectation(description: "didPassValidation")
+        let expectation = customExpectation(description: "didPassValidation")
 
         action.onResult { result in
             guard validateResult(result) else { return }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
 
@@ -48,7 +48,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = nil
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -67,7 +67,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -90,7 +90,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -115,7 +115,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -131,7 +131,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
         let otherUsers = [otherUser1, otherUser2, otherUser3]
 
-        let classifiedDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = otherUsers.compactMap(\.domain)
 
         syncMOC.performAndWait {
             storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
@@ -139,7 +139,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -148,7 +148,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
-    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil(
+    ) {
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {
@@ -162,7 +163,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -174,7 +175,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -201,7 +202,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         BackendInfo.isFederationEnabled = false
         BackendInfo.domain = localDomain
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         syncMOC.performAndWait {
@@ -210,7 +211,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -228,7 +229,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -240,7 +241,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -256,7 +257,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -268,7 +269,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: "not.Classified.Domain")
@@ -285,7 +286,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -297,7 +298,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: otherDomain)

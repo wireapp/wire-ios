@@ -37,6 +37,7 @@ protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
 final class EphemeralKeyboardViewController: UIViewController {
 
     // MARK: - Properties
+
     weak var delegate: EphemeralKeyboardViewControllerDelegate?
 
     private let timeouts = MessageDestructionTimeoutValue.all
@@ -55,6 +56,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     private let picker = PickerView()
 
     // MARK: - Initialization
+
     /// Allow conversation argument is nil for testing
     ///
     /// - Parameter conversation: nil for testing only
@@ -69,6 +71,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Override methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -87,6 +90,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Setup views and constraints
+
     private func setupViews() {
         picker.delegate = self
         picker.dataSource = self
@@ -116,6 +120,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Methods
+
     func dismissKeyboardIfNeeded() {
         delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }
@@ -127,15 +132,15 @@ final class EphemeralKeyboardViewController: UIViewController {
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-        return 35
+        35
     }
 
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        1
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return timeouts.count
+        timeouts.count
     }
 
     func pickerView(

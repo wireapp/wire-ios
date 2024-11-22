@@ -25,7 +25,8 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     var isOn = false {
         didSet {
-            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails.GuestOptionsCell.disabled
+            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails
+                .GuestOptionsCell.disabled
             status = key
         }
     }
@@ -47,8 +48,8 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 

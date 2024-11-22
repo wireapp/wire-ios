@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class MessageLocalStoreTests: XCTestCase {
 
@@ -64,29 +64,24 @@ final class MessageLocalStoreTests: XCTestCase {
             modelHelper.createUser(id: Scaffolding.userID, in: context)
         }
 
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for messageType in Scaffolding.allMessageTypes {
-                taskGroup.addTask { [self] in
+        for messageType in Scaffolding.allMessageTypes {
+            let conversation = await makeConversation(creator: user)
+            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
 
-                    let conversation = await makeConversation(creator: user)
-                    conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+            // When
 
-                    // When
+            await sut.addSystemMessageToConversation(
+                messageType: messageType,
+                conversationID: UUID(),
+                conversationDomain: Scaffolding.domain1
+            )
 
-                    await sut.addSystemMessageToConversation(
-                        messageType: messageType,
-                        conversationID: UUID(),
-                        conversationDomain: Scaffolding.domain1
-                    )
+            // Then
 
-                    // Then
-
-                    await internalTest_assertConversationLastMessages(
-                        messageType: messageType,
-                        conversation: conversation
-                    )
-                }
-            }
+            await internalTest_assertConversationLastMessages(
+                messageType: messageType,
+                conversation: conversation
+            )
         }
     }
 
@@ -108,15 +103,13 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     private func makeConversation(creator: ZMUser) async -> ZMConversation {
-        let conversation = await context.perform { [self] in
+        await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
             conversation.creator = creator
             conversation.hasReadReceiptsEnabled = true
 
             return conversation
         }
-
-        return conversation
     }
 
     private func expectedResults(
@@ -166,7 +159,11 @@ final class MessageLocalStoreTests: XCTestCase {
             .teamMemberRemoved(member: (id: userID, domain: domain1), date: date),
             .receiptModeIsOn(date: date),
             .newConversationCreated(date: date),
-            .participantRemoved(participant: (id: userID, domain: domain1), sender: (id: otherUserID, domain: domain1), date: date),
+            .participantRemoved(
+                participant: (id: userID, domain: domain1),
+                sender: (id: otherUserID, domain: domain1),
+                date: date
+            ),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date)
         ]
     }

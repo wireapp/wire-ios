@@ -20,68 +20,68 @@ import Foundation
 
 public extension WireProtos.Asset {
     init(_ metadata: ZMFileMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = WireProtos.Asset.with {
+            $0.original = WireProtos.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-            })
-        })
+            }
+        }
     }
 
     init(_ metadata: ZMAudioMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = WireProtos.Asset.with {
+            $0.original = WireProtos.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-                $0.audio = WireProtos.Asset.AudioMetaData.with({
+                $0.audio = WireProtos.Asset.AudioMetaData.with {
                     let loudnessArray = metadata.normalizedLoudness.map { UInt8(roundf($0 * 255)) }
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
                     $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
-                })
+                }
 
-            })
-        })
+            }
+        }
     }
 
     init(_ metadata: ZMVideoMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = WireProtos.Asset.with {
+            $0.original = WireProtos.Asset.Original.with {
                 $0.size = metadata.size
                 $0.mimeType = metadata.mimeType
                 $0.name = metadata.filename
-                $0.video = WireProtos.Asset.VideoMetaData.with({
+                $0.video = WireProtos.Asset.VideoMetaData.with {
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
                     $0.width = Int32(metadata.dimensions.width)
                     $0.height = Int32(metadata.dimensions.height)
-                })
-            })
-        })
+                }
+            }
+        }
     }
 
     init(imageSize: CGSize, mimeType: String, size: UInt64) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
+        self = WireProtos.Asset.with {
+            $0.original = WireProtos.Asset.Original.with {
                 $0.size = size
                 $0.mimeType = mimeType
-                $0.image = WireProtos.Asset.ImageMetaData.with({
+                $0.image = WireProtos.Asset.ImageMetaData.with {
                     $0.width = Int32(imageSize.width)
                     $0.height = Int32(imageSize.height)
-                })
-            })
-        })
+                }
+            }
+        }
     }
 
     init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
-        self = WireProtos.Asset.with({
+        self = WireProtos.Asset.with {
             if let original {
                 $0.original = original
             }
             if let preview {
                 $0.preview = preview
             }
-        })
+        }
     }
 
     init(withUploadedOTRKey otrKey: Data, sha256: Data) {
@@ -126,7 +126,13 @@ public extension WireProtos.Asset.Original {
         }
     }
 
-    init(withSize size: UInt64, mimeType: String, name: String?, audioDurationInMillis: UInt, normalizedLoudness: [Float]) {
+    init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        audioDurationInMillis: UInt,
+        normalizedLoudness: [Float]
+    ) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -145,14 +151,14 @@ public extension WireProtos.Asset.Original {
     var normalizedLoudnessLevels: [Float] {
 
         guard audio.hasNormalizedLoudness else { return [] }
-        guard audio.normalizedLoudness.count > 0 else { return [] }
+        guard !audio.normalizedLoudness.isEmpty else { return [] }
 
         let data = audio.normalizedLoudness
-        let offsets = 0..<data.count
+        let offsets = 0 ..< data.count
         return offsets
             .map { offset -> UInt8 in
                 var number: UInt8 = 0
-                data.copyBytes(to: &number, from: (0 + offset)..<(MemoryLayout<UInt8>.size + offset))
+                data.copyBytes(to: &number, from: (0 + offset) ..< (MemoryLayout<UInt8>.size + offset))
                 return number
             }
             .map {
@@ -163,15 +169,20 @@ public extension WireProtos.Asset.Original {
 
 public extension WireProtos.Asset.Preview {
 
-    init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
-        self = WireProtos.Asset.Preview.with({
+    init(
+        size: UInt64,
+        mimeType: String,
+        remoteData: WireProtos.Asset.RemoteData?,
+        imageMetadata: WireProtos.Asset.ImageMetaData
+    ) {
+        self = WireProtos.Asset.Preview.with {
             $0.size = size
             $0.mimeType = mimeType
             $0.image = imageMetadata
             if let remoteData {
                 $0.remote = remoteData
             }
-        })
+        }
     }
 }
 
@@ -185,7 +196,13 @@ public extension WireProtos.Asset.ImageMetaData {
 }
 
 public extension WireProtos.Asset.RemoteData {
-    init(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil, assetDomain: String? = nil) {
+    init(
+        withOTRKey otrKey: Data,
+        sha256: Data,
+        assetId: String? = nil,
+        assetToken: String? = nil,
+        assetDomain: String? = nil
+    ) {
         self = WireProtos.Asset.RemoteData.with {
             $0.otrKey = otrKey
             $0.sha256 = sha256
@@ -206,7 +223,11 @@ public extension WireProtos.Asset.RemoteData {
 
 extension GenericMessage {
     mutating func updateAssetOriginal(withImageProperties imageProperties: ZMIImageProperties) {
-        let asset = WireProtos.Asset(imageSize: imageProperties.size, mimeType: imageProperties.mimeType, size: UInt64(imageProperties.length))
+        let asset = WireProtos.Asset(
+            imageSize: imageProperties.size,
+            mimeType: imageProperties.mimeType,
+            size: UInt64(imageProperties.length)
+        )
         update(asset: asset)
     }
 
@@ -220,8 +241,16 @@ extension GenericMessage {
     }
 
     mutating func updateAssetPreview(withImageProperties imageProperties: ZMIImageProperties) {
-        let imageMetaData = WireProtos.Asset.ImageMetaData(width: Int32(imageProperties.size.width), height: Int32(imageProperties.size.height))
-        let preview = WireProtos.Asset.Preview(size: UInt64(imageProperties.length), mimeType: imageProperties.mimeType, remoteData: nil, imageMetadata: imageMetaData)
+        let imageMetaData = WireProtos.Asset.ImageMetaData(
+            width: Int32(imageProperties.size.width),
+            height: Int32(imageProperties.size.height)
+        )
+        let preview = WireProtos.Asset.Preview(
+            size: UInt64(imageProperties.length),
+            mimeType: imageProperties.mimeType,
+            remoteData: nil,
+            imageMetadata: imageMetaData
+        )
         let asset = WireProtos.Asset(original: nil, preview: preview)
         update(asset: asset)
     }

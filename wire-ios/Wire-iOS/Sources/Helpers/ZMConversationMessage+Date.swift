@@ -22,7 +22,7 @@ import WireDataModel
 extension ZMConversationMessage {
 
     func formattedOriginalReceivedDate() -> String? {
-        guard let timestamp = self.serverTimestamp else {
+        guard let timestamp = serverTimestamp else {
             return nil
         }
 
@@ -39,23 +39,23 @@ extension ZMConversationMessage {
     }
 
     func formattedReceivedDate() -> String? {
-        return serverTimestamp.map(formattedDate)
+        serverTimestamp.map(formattedDate)
     }
 
     func formattedEditedDate() -> String? {
-        return updatedAt.map(formattedDate)
+        updatedAt.map(formattedDate)
     }
 
     func formattedDate(_ date: Date) -> String {
         if Calendar.current.isDateInToday(date) {
-            return Message.shortTimeFormatter.string(from: date)
+            Message.shortTimeFormatter.string(from: date)
         } else {
-            return Message.shortDateTimeFormatter.string(from: date)
+            Message.shortDateTimeFormatter.string(from: date)
         }
     }
 
     func formattedAccessibleMessageDetails() -> String? {
-        guard let serverTimestamp = self.serverTimestamp else {
+        guard let serverTimestamp else {
             return nil
         }
         let formattedTimestamp = Message.spellOutDateTimeFormatter.string(from: serverTimestamp)
@@ -63,7 +63,7 @@ extension ZMConversationMessage {
 
         var accessibleMessageDetails = sendDate
 
-        if let editTimestamp = self.updatedAt {
+        if let editTimestamp = updatedAt {
             let formattedEditTimestamp = Message.spellOutDateTimeFormatter.string(from: editTimestamp)
             let editDate = L10n.Localizable.MessageDetails.subtitleEditDate(formattedEditTimestamp)
 

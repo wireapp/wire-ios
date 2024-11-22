@@ -42,8 +42,8 @@ extension AppLockModule.View {
 
         var showReauth: Bool = false {
             didSet {
-                self.messageLabel.isHidden = !showReauth
-                self.actionButton.isHidden = !showReauth
+                messageLabel.isHidden = !showReauth
+                actionButton.isHidden = !showReauth
             }
         }
 
@@ -53,15 +53,19 @@ extension AppLockModule.View {
 
         private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
 
-        private let actionButton = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        private let actionButton = ZMButton(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .mediumSemiboldFont
+        )
 
         private var contentWidthConstraint: NSLayoutConstraint!
         private var contentCenterConstraint: NSLayoutConstraint!
         private var contentLeadingConstraint: NSLayoutConstraint!
         private var contentTrailingConstraint: NSLayoutConstraint!
 
-        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-            return traitEnvironment.traitCollection.horizontalSizeClass
+        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+            traitEnvironment.traitCollection.horizontalSizeClass
         }
 
         // MARK: - Life cycle
@@ -99,7 +103,7 @@ extension AppLockModule.View {
         // MARK: - Helpers
 
         private func createConstraints(shieldView: UIView) {
-            self.translatesAutoresizingMaskIntoConstraints = false
+            translatesAutoresizingMaskIntoConstraints = false
             shieldView.translatesAutoresizingMaskIntoConstraints = false
             shieldViewContainer.translatesAutoresizingMaskIntoConstraints = false
             blurView.translatesAutoresizingMaskIntoConstraints = false
@@ -144,10 +148,20 @@ extension AppLockModule.View {
 
                 // authenticateButton
                 actionButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight),
-                actionButton.leadingAnchor.constraint(equalTo: contentContainerView.leadingAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
+                actionButton.leadingAnchor.constraint(
+                    equalTo: contentContainerView.leadingAnchor,
+                    constant: CGFloat.PasscodeUnlock.buttonPadding
+                ),
                 actionButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 24),
-                actionButton.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding),
-                actionButton.bottomAnchor.constraint(equalTo: contentContainerView.safeAreaLayoutGuide.bottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
+                actionButton.trailingAnchor.constraint(
+                    equalTo: contentContainerView.trailingAnchor,
+                    constant: -CGFloat.PasscodeUnlock.buttonPadding
+                ),
+                actionButton.bottomAnchor.constraint(
+                    equalTo: contentContainerView.safeAreaLayoutGuide.bottomAnchor,
+                    constant: -CGFloat.PasscodeUnlock.buttonPadding
+                )
+            ])
         }
 
         override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -164,7 +178,8 @@ extension AppLockModule.View {
 
         // MARK: - Actions
 
-        @objc func onButtonPressed(_ sender: AnyObject!) {
+        @objc
+        func onButtonPressed(_ sender: AnyObject!) {
             actionRequested?()
         }
     }

@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * The aspect ratio of the video view.
- */
+/// The aspect ratio of the video view.
 
 enum PreviewDisplayMode {
     case video
@@ -30,7 +28,7 @@ enum PreviewDisplayMode {
 
     /// The size of the preview, in points.
     static var size: CGSize {
-        return CGSize(width: 70, height: 70)
+        CGSize(width: 70, height: 70)
     }
 
     /// The maximum size of a preview, adjusted for the device scale.
@@ -40,9 +38,7 @@ enum PreviewDisplayMode {
     }
 }
 
-/**
- * An image view used to preview the content of a post.
- */
+/// An image view used to preview the content of a post.
 
 final class PreviewImageView: UIImageView {
 
@@ -123,7 +119,7 @@ final class PreviewImageView: UIImageView {
             contentMode = .scaleAspectFill
         case .placeholder?:
             contentMode = .center
-        case .mixed(_, let mainMode)?:
+        case let .mixed(_, mainMode)?:
             updateContentMode(for: mainMode)
         }
     }
@@ -133,7 +129,7 @@ final class PreviewImageView: UIImageView {
         case .placeholder?, .link?:
             layer.borderColor = UIColor.gray.cgColor
             layer.borderWidth = UIScreen.hairline
-        case .mixed(_, let mainMode)?:
+        case let .mixed(_, mainMode)?:
             updateBorders(for: mainMode)
         default:
             layer.borderColor = nil
@@ -147,7 +143,7 @@ final class PreviewImageView: UIImageView {
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = false
             countLabel.isHidden = true
-        case .mixed(let count, _)?:
+        case let .mixed(count, _)?:
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = true
             countLabel.isHidden = false
@@ -160,6 +156,6 @@ final class PreviewImageView: UIImageView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return PreviewDisplayMode.size
+        PreviewDisplayMode.size
     }
 }

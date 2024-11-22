@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
 
@@ -47,7 +47,7 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     }
 
     var userInfoKeys: Set<String> {
-        return [
+        [
             #keyPath(ParticipantRoleChangeInfo.roleChanged)
         ]
     }
@@ -57,37 +57,51 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         modifier: (ParticipantRole) -> Void,
         expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // given
         uiMOC.saveOrRollback()
 
-        self.token = ParticipantRoleChangeInfo.add(observer: observer, for: participantRole, managedObjectContext: self.uiMOC)
+        token = ParticipantRoleChangeInfo.add(observer: observer, for: participantRole, managedObjectContext: uiMOC)
 
         // when
         modifier(participantRole)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = observer.notifications.count
         if !expectedChangedFields.isEmpty {
-            XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                1,
+                "Observer expected 1 notification, but received \(changeCount).",
+                file: file,
+                line: line
+            )
         } else {
-            XCTAssertEqual(changeCount, 0, "Observer was notified, but DID NOT expect a notification", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                0,
+                "Observer was notified, but DID NOT expect a notification",
+                file: file,
+                line: line
+            )
         }
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should not have changed further once")
 
         guard let changes = observer.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
-                                             expectedChangedFields: expectedChangedFields,
-                                             file: file,
-                                             line: line)
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: userInfoKeys,
+            expectedChangedFields: expectedChangedFields,
+            file: file,
+            line: line
+        )
     }
 }

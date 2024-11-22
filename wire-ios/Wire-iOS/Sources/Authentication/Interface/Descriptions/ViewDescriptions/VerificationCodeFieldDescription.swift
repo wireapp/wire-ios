@@ -31,7 +31,7 @@ private final class ResponderContainer<Child: UIView>: UIView {
     init(responder: Child) {
         self.responder = responder
         super.init(frame: .zero)
-        self.addSubview(self.responder)
+        addSubview(self.responder)
     }
 
     @available(*, unavailable)
@@ -40,15 +40,15 @@ private final class ResponderContainer<Child: UIView>: UIView {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return self.responder.canBecomeFirstResponder
+        responder.canBecomeFirstResponder
     }
 
     override func becomeFirstResponder() -> Bool {
-        return self.responder.becomeFirstResponder()
+        responder.becomeFirstResponder()
     }
 
     override func resignFirstResponder() -> Bool {
-        return self.responder.resignFirstResponder()
+        responder.resignFirstResponder()
     }
 }
 
@@ -56,7 +56,7 @@ extension ResponderContainer: TextContainer where Child: TextContainer {
 
     var text: String? {
         get {
-            return responder.text
+            responder.text
         }
         set {
             responder.text = newValue
@@ -97,14 +97,14 @@ extension VerificationCodeFieldDescription: ViewDescriptor {
 extension VerificationCodeFieldDescription: CharacterInputFieldDelegate {
 
     func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool {
-        return acceptsInput && inputField.text != nil
+        acceptsInput && inputField.text != nil
     }
 
     func didChangeText(_ inputField: CharacterInputField, to: String) {
-        self.valueValidated?(.none)
+        valueValidated?(.none)
     }
 
     func didFillInput(inputField: CharacterInputField, text: String) {
-        self.valueSubmitted?(text)
+        valueSubmitted?(text)
     }
 }

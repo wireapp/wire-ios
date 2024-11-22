@@ -18,7 +18,13 @@
 
 /// A sub screen of the settings.
 public enum MainSettingsTopLevelMenuItem {
-    case account, devices, options, advanced, support, about, developerOptions
+    case account
+    case devices
+    case options
+    case advanced
+    case support
+    case about
+    case developerOptions
 }
 
 extension MainSettingsTopLevelMenuItem: MainSettingsTopLevelMenuItemRepresentable {

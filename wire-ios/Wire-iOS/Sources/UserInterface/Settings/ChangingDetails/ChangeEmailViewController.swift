@@ -151,11 +151,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     // MARK: - SettingsBaseTableViewController
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -200,7 +200,8 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
 // MARK: - TextFieldValidationDelegate
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
-    @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
+    @objc
+    func emailTextFieldEditingChanged(sender: ValidatedTextField) {
         let newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
         viewModel.updateNewEmail(newEmail)
         sender.validateInput()

@@ -18,19 +18,19 @@
 
 import Foundation
 
-extension UserClient {
+public extension UserClient {
 
     // MARK: - Keys
 
-    public static let mlsPublicKeysKey = "mlsPublicKeys"
-    public static let needsToUploadMLSPublicKeysKey = "needsToUploadMLSPublicKeys"
+    static let mlsPublicKeysKey = "mlsPublicKeys"
+    static let needsToUploadMLSPublicKeysKey = "needsToUploadMLSPublicKeys"
 
     // MARK: - Properties
 
     /// Whether the client's mls public keys need to be uploaded to
     /// the server.
 
-    @NSManaged public var needsToUploadMLSPublicKeys: Bool
+    @NSManaged var needsToUploadMLSPublicKeys: Bool
 
     // Private storage of `mlsPublicKeys`.
 
@@ -38,7 +38,7 @@ extension UserClient {
 
     /// The mls public keys for the self client.
 
-    public var mlsPublicKeys: MLSPublicKeys {
+    var mlsPublicKeys: MLSPublicKeys {
         get {
             willAccessValue(forKey: Self.mlsPublicKeysKey)
             let result = decodedMLSPublicKeys(from: primitiveMlsPublicKeys)
@@ -56,9 +56,8 @@ extension UserClient {
         }
     }
 
-    @objc
-    public var hasRegisteredMLSClient: Bool {
-        return !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
+    @objc var hasRegisteredMLSClient: Bool {
+        !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
     }
 
     // MARK: MLSPublicKeys
@@ -85,7 +84,7 @@ extension UserClient {
     ///
     /// Only do this when when the self client has been deleted/reset.
 
-    public func clearMLSPublicKeys() {
+    func clearMLSPublicKeys() {
         willChangeValue(forKey: Self.mlsPublicKeysKey)
         primitiveMlsPublicKeys = nil
         didChangeValue(forKey: Self.mlsPublicKeysKey)
@@ -93,9 +92,9 @@ extension UserClient {
 
 }
 
-extension UserClient {
+public extension UserClient {
 
-    public struct MLSPublicKeys: Codable, Equatable {
+    struct MLSPublicKeys: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case ed25519
@@ -111,11 +110,12 @@ extension UserClient {
         public internal(set) var p384: String?
         public internal(set) var p521: String?
 
-        public init(ed25519: String? = nil,
-                    ed448: String? = nil,
-                    p256: String? = nil,
-                    p384: String? = nil,
-                    p521: String? = nil
+        public init(
+            ed25519: String? = nil,
+            ed448: String? = nil,
+            p256: String? = nil,
+            p384: String? = nil,
+            p521: String? = nil
         ) {
             self.ed25519 = ed25519
             self.ed448 = ed448
@@ -125,11 +125,11 @@ extension UserClient {
         }
 
         public var isEmpty: Bool {
-            return allKeys.isEmpty
+            allKeys.isEmpty
         }
 
         public var allKeys: [String] {
-            [ed25519, ed448, p256, p384, p521].compactMap({ $0 })
+            [ed25519, ed448, p256, p384, p521].compactMap { $0 }
         }
 
     }
