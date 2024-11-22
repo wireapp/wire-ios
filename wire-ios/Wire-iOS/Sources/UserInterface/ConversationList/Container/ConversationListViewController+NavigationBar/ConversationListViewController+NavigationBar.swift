@@ -54,6 +54,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
         if mainSplitViewState == .collapsed {
             setupLeftNavigationBarButtonItems()
