@@ -30,7 +30,7 @@ struct FolderPickerViewControllerBuilder {
     }
 
     @MainActor
-    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator, showCloseButton: Bool) -> UIViewController {
         let folders: [FolderPickerOption] = conversationDirectory.allFolders.compactMap {
             guard let id = $0.remoteIdentifier, let title = $0.name else { return nil }
 
@@ -54,7 +54,7 @@ struct FolderPickerViewControllerBuilder {
 
         let navigationStack = NavigationStack {
             FolderPicker(
-                showCloseButton: false,
+                showCloseButton: showCloseButton,
                 options: folders,
                 helpLink: WireURLs.shared.howToAddConversationToCustomFolder,
                 selected: selected
