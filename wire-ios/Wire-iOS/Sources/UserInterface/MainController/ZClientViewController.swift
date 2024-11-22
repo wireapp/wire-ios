@@ -266,14 +266,7 @@ final class ZClientViewController: UIViewController {
         super.viewDidAppear(animated)
 
         firstTimeRequestToEnableAnalytics()
-
-        // in expanded layout we want to see the same background color of the
-        // sidebar also for the status bar
-        if mainSplitViewController.isCollapsed {
-            view.backgroundColor = ColorTheme.Backgrounds.surface
-        } else {
-            view.backgroundColor = SidebarViewDesign().backgroundColor
-        }
+        view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 
     private func firstTimeRequestToEnableAnalytics() {
@@ -523,7 +516,7 @@ final class ZClientViewController: UIViewController {
 
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
-            viewController.view.frame = topOverlayContainer.bounds
+            viewController.view.frame = topOverlayContainer.bounds // TODO: constraints?
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
 
             if animated {
@@ -541,14 +534,18 @@ final class ZClientViewController: UIViewController {
                 )
             } else {
                 topOverlayContainer.addSubview(viewController.view)
-                viewController.view.fitIn(view: topOverlayContainer)
+                NSLayoutConstraint.activate([
+                    viewController.view.leadingAnchor.constraint(equalTo: topOverlayContainer.leadingAnchor),
+                    viewController.view.topAnchor.constraint(equalTo: topOverlayContainer.safeAreaLayoutGuide.topAnchor),
+                    topOverlayContainer.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                    topOverlayContainer.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+                ])
                 viewController.didMove(toParent: self)
                 topOverlayViewController = viewController
             }
         } else if let previousViewController = topOverlayViewController {
             if animated {
                 let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
-
                 UIView.animate(
                     withDuration: 0.35,
                     delay: 0,
@@ -578,6 +575,12 @@ final class ZClientViewController: UIViewController {
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
             topOverlayContainer.addSubview(viewController.view)
             viewController.view.fitIn(view: topOverlayContainer)
+            NSLayoutConstraint.activate([
+                viewController.view.leadingAnchor.constraint(equalTo: topOverlayContainer.leadingAnchor),
+                viewController.view.topAnchor.constraint(equalTo: topOverlayContainer.safeAreaLayoutGuide.topAnchor),
+                topOverlayContainer.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+                topOverlayContainer.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+            ])
 
             viewController.didMove(toParent: self)
 
@@ -621,7 +624,7 @@ final class ZClientViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mainSplitViewController.view.topAnchor.constraint(equalTo: topOverlayContainer.bottomAnchor),
             mainSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -636,12 +639,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-
-        if mainSplitViewController.isCollapsed {
-            view.backgroundColor = ColorTheme.Backgrounds.surface
-        } else {
-            view.backgroundColor = SidebarViewDesign().backgroundColor
-        }
+        view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 
     /// Open the user client list screen
