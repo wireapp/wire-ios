@@ -514,6 +514,15 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
+        func setupConstraints(for view: UIView, in superview: UIView) {
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: superview.leadingAnchor),
+                view.topAnchor.constraint(equalTo: superview.safeAreaLayoutGuide.topAnchor),
+                superview.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                superview.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+        }
+
         if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds // TODO: constraints?
@@ -525,7 +534,7 @@ final class ZClientViewController: UIViewController {
                     to: viewController,
                     duration: 0.5,
                     options: .transitionCrossDissolve,
-                    animations: { viewController.view.fitIn(view: self.view) },
+                    animations: { setupConstraints(for: viewController.view, in: self.view) },
                     completion: { _ in
                         viewController.didMove(toParent: self)
                         previousViewController.removeFromParent()
@@ -534,12 +543,7 @@ final class ZClientViewController: UIViewController {
                 )
             } else {
                 topOverlayContainer.addSubview(viewController.view)
-                NSLayoutConstraint.activate([
-                    viewController.view.leadingAnchor.constraint(equalTo: topOverlayContainer.leadingAnchor),
-                    viewController.view.topAnchor.constraint(equalTo: topOverlayContainer.safeAreaLayoutGuide.topAnchor),
-                    topOverlayContainer.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                    topOverlayContainer.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-                ])
+                setupConstraints(for: viewController.view, in: self.view)
                 viewController.didMove(toParent: self)
                 topOverlayViewController = viewController
             }
@@ -575,12 +579,7 @@ final class ZClientViewController: UIViewController {
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
             topOverlayContainer.addSubview(viewController.view)
             viewController.view.fitIn(view: topOverlayContainer)
-            NSLayoutConstraint.activate([
-                viewController.view.leadingAnchor.constraint(equalTo: topOverlayContainer.leadingAnchor),
-                viewController.view.topAnchor.constraint(equalTo: topOverlayContainer.safeAreaLayoutGuide.topAnchor),
-                topOverlayContainer.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
-                topOverlayContainer.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
-            ])
+            setupConstraints(for: viewController.view, in: self.view)
 
             viewController.didMove(toParent: self)
 
