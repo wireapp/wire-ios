@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireSystem
 
 class ZMLogTests: XCTestCase {
