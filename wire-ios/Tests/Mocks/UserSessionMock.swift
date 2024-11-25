@@ -341,6 +341,10 @@ final class UserSessionMock: UserSession {
         CreateConversationFolderUseCase(context: syncContext)
     }
 
+    func makeIsFederationSearchAllowedUseCase() -> IsFederationSearchAllowedUseCaseProtocol {
+        IsFederationSearchAllowedUseCase(syncContext: syncContext, defaultProtocol: .mls)
+    }
+
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
 
     var mlsFeature: Feature.MLS = .init(

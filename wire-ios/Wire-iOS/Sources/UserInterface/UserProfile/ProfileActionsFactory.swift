@@ -177,7 +177,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
     }
 
     private var canCreateConversationWithOtherDomain: Bool {
-        let canCommunicateWithUsersFromOtherDomains = userSession.makeIsFederationSearchAllowedUseCase().invoke(conversation: nil)
+        let canCommunicateWithUsersFromOtherDomains = userSession.makeIsFederationSearchAllowedUseCase().invoke(conversationProtocol: nil)
         if canCommunicateWithUsersFromOtherDomains {
             return true
         } else {

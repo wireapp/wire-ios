@@ -63,7 +63,7 @@ struct AddParticipantsViewModel {
     }
 
     var canAddUsersWithOtherDomains: Bool {
-        isFederationSearchAllowedUseCase.invoke(conversation: filterConversation)
+        isFederationSearchAllowedUseCase.invoke(conversationProtocol: filterConversation?.messageProtocol)
     }
 
     var showsConfirmButton: Bool {

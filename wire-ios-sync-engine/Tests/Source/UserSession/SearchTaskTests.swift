@@ -413,7 +413,6 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-
     func testThatItFindsUsersWithOtherDomainsIfItIsAllowed() {
         // given
         let resultArrived = customExpectation(description: "received result")

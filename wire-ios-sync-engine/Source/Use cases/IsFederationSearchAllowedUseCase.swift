@@ -20,23 +20,31 @@ import Foundation
 
 public protocol IsFederationSearchAllowedUseCaseProtocol {
 
-    func invoke(conversation: ZMConversation?) -> Bool
+    /// It returns a bool value that indicates whether federated users can be added to the conversation.
+    /// If the conversationProtocol parameter is nil, it indicates whether the selfUser can search for federated users.
+    /// - Parameter conversationProtocol: conversationProtocol of the conversation where federated users can be added.
+    /// - Returns: can self user communicate with federated users
+    func invoke(conversationProtocol: MessageProtocol?) -> Bool
 }
 
 public struct IsFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol {
 
+    private let syncContext: NSManagedObjectContext
     private let defaultProtocol: Feature.MLS.Config.MessageProtocol
 
-    public init(defaultProtocol: Feature.MLS.Config.MessageProtocol) {
-        self.defaultProtocol = defaultProtocol
-    }
+    public init(
+        syncContext: NSManagedObjectContext,
+        defaultProtocol: Feature.MLS.Config.MessageProtocol) {
+            self.syncContext = syncContext
+            self.defaultProtocol = defaultProtocol
+        }
 
-    public func invoke(conversation: ZMConversation?) -> Bool {
-        guard let conversation else {
+    public func invoke(conversationProtocol: MessageProtocol?) -> Bool {
+        guard let conversationProtocol else {
             return defaultProtocol != .proteus
         }
 
-        return conversation.messageProtocol != .proteus
+        return conversationProtocol != .proteus
     }
 
 }

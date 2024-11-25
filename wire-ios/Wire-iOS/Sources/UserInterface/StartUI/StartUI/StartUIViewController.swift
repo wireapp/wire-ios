@@ -66,7 +66,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var canSearchUsersWithOtherDomains: Bool {
-        userSession.makeIsFederationSearchAllowedUseCase().invoke(conversation: nil)
+        userSession.makeIsFederationSearchAllowedUseCase().invoke(conversationProtocol: nil)
     }
 
     // MARK: - Init
