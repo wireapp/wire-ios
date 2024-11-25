@@ -23,16 +23,10 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 public protocol OneOnOneResolverProtocol {
-    func invoke() async throws
+    func resolveAllOneOnOneConversations() async throws
 }
 
 struct OneOnOneResolver: OneOnOneResolverProtocol {
-
-    /// The target to resolve 1:1 conversation for.
-    enum Target {
-        case user(id: WireAPI.QualifiedID)
-        case allUsers
-    }
 
     private enum Error: Swift.Error {
         case failedToActivateConversation
@@ -43,11 +37,9 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let target: Target
     private let userRepository: any UserRepositoryProtocol
     private let conversationsRepository: any ConversationRepositoryProtocol
-    private let mlsService: any MLSServiceInterface
-    private let isMLSEnabled: Bool
+    private let mlsProvider: MLSProvider
 
     // MARK: - Object lifecycle
 
@@ -55,50 +47,50 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         context: NSManagedObjectContext,
         userRepository: any UserRepositoryProtocol,
         conversationsRepository: any ConversationRepositoryProtocol,
-        mlsService: any MLSServiceInterface,
-        isMLSEnabled: Bool,
-        target: Target
+        mlsProvider: MLSProvider
     ) {
         self.context = context
         self.userRepository = userRepository
         self.conversationsRepository = conversationsRepository
-        self.mlsService = mlsService
-        self.isMLSEnabled = isMLSEnabled
-        self.target = target
+        self.mlsProvider = mlsProvider
     }
 
-    // MARK: - Public
+    func resolveAllOneOnOneConversations() async throws {
+        let usersIDs = try await userRepository.fetchAllUserIDsWithOneOnOneConversation()
 
-    public func invoke() async throws {
-        switch target {
-        case let .user(id):
-            try await resolveOneOnOneConversation(with: id.toDomainModel())
-        case .allUsers:
-            // TODO: [WPB-10727] resolve all users 1:1 conversations
-            break
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await resolveOneOnOneConversation(with: userID)
+                    } catch {
+                        /// skip conversation migration for this user
+                        WireLogger.conversation.error(
+                            "resolve 1-1 conversation with userID \(userID) failed!"
+                        )
+                    }
+                }
+            }
         }
     }
-
-    // MARK: - Private
 
     private func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userRepository.fetchUser(
-            id: userID.uuid,
-            domain: userID.domain
+            id: userID.uuid, domain: userID.domain
         )
 
         let selfUser = await userRepository.fetchSelfUser()
         let commonProtocol = await getCommonProtocol(between: selfUser, and: user)
 
-        if isMLSEnabled, commonProtocol == .mls {
+        if mlsProvider.isMLSEnabled, commonProtocol == .mls {
             try await resolveMLSConversation(
                 for: user
             )
         }
 
-        if isMLSEnabled, commonProtocol == nil {
+        if mlsProvider.isMLSEnabled, commonProtocol == nil {
             await resolveNoCommonProtocolConversation(
                 between: selfUser,
                 and: user
@@ -130,27 +122,27 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         )
 
         /// Then, fetch the synced MLS conversation.
-        let mlsConversation = await conversationsRepository.fetchMLSConversation(
-            groupID: mlsGroupID
-        )
+        let mlsConversation = await conversationsRepository.fetchMLSConversation(groupID: mlsGroupID)
 
-        let localMLSGroupID = await context.perform {
+        let groupID = await context.perform {
             mlsConversation?.mlsGroupID
         }
 
-        guard let mlsConversation, let localMLSGroupID else {
+        guard let mlsConversation, let groupID else {
             throw Error.failedToFetchConversation
         }
 
+        let mlsService = mlsProvider.service
+
         /// If conversation already exists, there is no need to perform a migration.
         let needsMLSMigration = try await mlsService.conversationExists(
-            groupID: localMLSGroupID
+            groupID: groupID
         ) == false
 
         if needsMLSMigration {
             await migrateToMLS(
                 mlsConversation: mlsConversation,
-                mlsGroupID: localMLSGroupID,
+                mlsGroupID: groupID,
                 user: user,
                 userID: userID
             )
@@ -197,6 +189,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         groupID: MLSGroupID,
         userID: WireDataModel.QualifiedID
     ) async throws {
+        let mlsService = mlsProvider.service
+
         let epoch = await context.perform {
             mlsConversation.epoch
         }
@@ -253,19 +247,15 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     private func resolveProteusConversation(
         for user: ZMUser
     ) async {
-        WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
-
-        let conversation = await context.perform {
-            user.oneOnOneConversation
-        }
-
-        guard let conversation else {
-            return WireLogger.conversation.warn(
-                "Failed to resolve Proteus conversation: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
-            )
-        }
-
         await context.perform {
+            WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
+
+            guard let conversation = user.oneOnOneConversation else {
+                return WireLogger.conversation.warn(
+                    "Failed to resolve Proteus conversation: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
+                )
+            }
+
             conversation.isForcedReadOnly = false
         }
     }
@@ -281,24 +271,16 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         between selfUser: ZMUser,
         and user: ZMUser
     ) async {
-        WireLogger.conversation.debug("No common protocols found")
+        await context.perform {
+            WireLogger.conversation.debug("No common protocols found")
 
-        let conversation = await context.perform {
-            user.oneOnOneConversation
-        }
+            guard let conversation = user.oneOnOneConversation else {
+                return WireLogger.conversation.warn(
+                    "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
+                )
+            }
 
-        guard let conversation else {
-            return WireLogger.conversation.warn(
-                "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
-            )
-        }
-
-        let isForcedReadOnly = await context.perform {
-            conversation.isForcedReadOnly
-        }
-
-        if !isForcedReadOnly {
-            await context.perform {
+            if !conversation.isForcedReadOnly {
                 if !selfUser.supportedProtocols.contains(.mls) {
                     conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
                 } else if !user.supportedProtocols.contains(.mls) {
@@ -314,22 +296,20 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         between selfUser: ZMUser,
         and otherUser: ZMUser
     ) async -> ConversationMessageProtocol? {
-        let selfUserProtocols = await context.perform {
-            selfUser.supportedProtocols
-        }
+        await context.perform {
+            let selfUserProtocols = selfUser.supportedProtocols
+            let otherUserProtocols = otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser
+                .supportedProtocols /// default to Proteus if empty.
 
-        let otherUserProtocols = await context.perform {
-            otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser.supportedProtocols
-        }
+            let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 
-        let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
-
-        if commonProtocols.contains(.mls) {
-            return .mls
-        } else if commonProtocols.contains(.proteus) {
-            return .proteus
-        } else {
-            return nil
+            if commonProtocols.contains(.mls) {
+                return .mls
+            } else if commonProtocols.contains(.proteus) {
+                return .proteus
+            } else {
+                return nil
+            }
         }
     }
 }
