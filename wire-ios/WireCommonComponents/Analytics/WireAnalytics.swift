@@ -16,5 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSystem
+
 /// Namespace for analytics tools.
-public enum WireAnalytics {}
+public enum WireAnalytics {
+
+    private static var isSetUp = false
+
+    public static func setup() {
+        guard !isSetUp else {
+            assertionFailure("WireAnalytics.setup() called more than once")
+            return
+        }
+
+        WireAnalytics.Datadog.shared.enable()
+
+        WireLogger.initialize(
+            loggers: [
+                SystemLogger(),
+                CocoaLumberjackLogger(),
+                WireAnalytics.Datadog.shared
+            ]
+        )
+
+        // pass tags to Datadog through WireLogger
+        WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
+    }
+}
