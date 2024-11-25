@@ -58,6 +58,10 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         _ viewModel: ConversationListViewController
             .ViewModel
     )
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    )
 }
 
 extension ConversationListViewController {
