@@ -23,7 +23,7 @@ import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "StartUIViewController") //
+private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController {
 
