@@ -599,9 +599,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 taskGroup.addTask { [self] in
                     do {
                         try await teamRepository.deleteMembership(
-                            for: userID.uuid,
+                            userID: userID.uuid,
                             domain: userID.domain,
-                            at: time
+                            date: time
                         )
                     } catch {
                         WireLogger.eventProcessing.error(
