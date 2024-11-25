@@ -18,7 +18,7 @@
 
 public typealias LogAttributes = [LogAttributesKey: any Encodable]
 
-public enum LogAttributesKey: String, Comparable {
+public enum LogAttributesKey: String, Comparable, Sendable {
 
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"
@@ -43,5 +43,5 @@ public enum LogAttributesKey: String, Comparable {
 }
 
 public extension LogAttributes {
-    static var safePublic = [LogAttributesKey.public: true]
+    static let safePublic = [LogAttributesKey.public: true]
 }
