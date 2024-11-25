@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where a proteus message was received in a conversation.
 
-public struct ConversationProteusMessageAddEvent: Equatable, Codable {
+public struct ConversationProteusMessageAddEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

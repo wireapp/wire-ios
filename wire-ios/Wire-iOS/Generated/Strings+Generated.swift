@@ -2420,10 +2420,6 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
         }
         internal enum Options {
-          /// Guests: %@, Services: %@, Read receipts: %@
-          internal static func subtitle(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
-            return L10n.tr("Localizable", "conversation.create.options.subtitle", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Guests: %@, Services: %@, Read receipts: %@")
-          }
           /// CONVERSATION OPTIONS
           internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "CONVERSATION OPTIONS")
         }
