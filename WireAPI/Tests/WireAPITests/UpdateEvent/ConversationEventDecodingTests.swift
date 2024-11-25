@@ -486,7 +486,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let receiptModeUpdateEvent = ConversationReceiptModeUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            newRecieptMode: 1
+            newReceiptMode: 1
         )
 
         static let renameEvent = ConversationRenameEvent(
