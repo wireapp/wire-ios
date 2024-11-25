@@ -19,6 +19,7 @@
 import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
+import WireFoundation
 import WireSyncEngine
 
 extension UIImage {
@@ -36,6 +37,7 @@ class ImagePickerManager: NSObject {
 
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+    private let device = DeviceWrapper(device: .current)
 
     // MARK: - Methods
 
@@ -65,11 +67,13 @@ class ImagePickerManager: NSObject {
             let galleryAction = UIAlertAction(title: Alert.choosePicture, style: .default) { [weak self] _ in
                 guard let self, let viewController else { return }
 
-                getImage(
-                    fromSourceType: .photoLibrary,
-                    viewController: viewController,
-                    popoverConfiguration: popoverConfiguration
-                )
+                Task { @MainActor in
+                    self.getImage(
+                        fromSourceType: .photoLibrary,
+                        viewController: viewController,
+                        popoverConfiguration: popoverConfiguration
+                    )
+                }
             }
             actionSheet.addAction(galleryAction)
         }
@@ -78,11 +82,13 @@ class ImagePickerManager: NSObject {
         let cameraAction = UIAlertAction(title: Alert.takePicture, style: .default) { [weak self] _ in
             guard let self, let viewController else { return }
 
-            getImage(
-                fromSourceType: .camera,
-                viewController: viewController,
-                popoverConfiguration: popoverConfiguration
-            )
+            Task { @MainActor in
+                self.getImage(
+                    fromSourceType: .photoLibrary,
+                    viewController: viewController,
+                    popoverConfiguration: popoverConfiguration
+                )
+            }
         }
         actionSheet.addAction(cameraAction)
 
@@ -92,6 +98,7 @@ class ImagePickerManager: NSObject {
         return actionSheet
     }
 
+    @MainActor
     private func getImage(
         fromSourceType sourceType: UIImagePickerController.SourceType,
         viewController: UIViewController,
@@ -113,7 +120,7 @@ class ImagePickerManager: NSObject {
             imagePickerController.cameraDevice = .front
             imagePickerController.modalTransitionStyle = .coverVertical
         case .photoLibrary, .savedPhotosAlbum:
-            if viewController.isIPad() {
+            if device.userInterfaceIdiom == .pad {
                 // UIKit will crash if the photo library is not presented using a popoverPresentationController on iPad
                 // https://developer.apple.com/documentation/uikit/uiimagepickercontroller
                 imagePickerController.modalPresentationStyle = .popover
