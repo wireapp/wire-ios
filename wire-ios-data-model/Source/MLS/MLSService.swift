@@ -1064,7 +1064,6 @@ public final class MLSService: MLSServiceInterface {
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
             userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
-
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
                 return
@@ -1077,7 +1076,6 @@ public final class MLSService: MLSServiceInterface {
                 keyPackages: keyPackages,
                 context: context.notificationContext
             )
-
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
