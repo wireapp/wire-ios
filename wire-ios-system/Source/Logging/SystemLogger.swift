@@ -78,7 +78,7 @@ struct SystemLogger: LoggerProtocol {
 
         var logger = OSLog.default
         if let tag = mergedAttributes[.tag] as? String {
-            logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
+            logger = OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
         let message = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
@@ -90,5 +90,3 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 }
-
-private var loggers: [String: OSLog] = [:]
