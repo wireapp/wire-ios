@@ -35,6 +35,10 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
     ) {
         showActionMenu(for: conversation, from: sourceView)
     }
+
+    func conversationListContentControllerDidReload(_ controller: ConversationListContentController) {
+        viewController?.conversationListViewControllerViewModelDidReloadContent(self)
+    }
 }
 
 extension ConversationListViewController.ViewModel {
