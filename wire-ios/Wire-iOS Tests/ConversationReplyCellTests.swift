@@ -510,7 +510,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     private func verifyAccessibilityIdentifiers(
         _ cell: ConversationReplyCell,
         _ message: ZMConversationMessage?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let contentView = cell.contentView

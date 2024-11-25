@@ -108,7 +108,7 @@ final class ShareViewControllerTests: XCTestCase {
     }
 
     private func verifyLocation(
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -127,7 +127,7 @@ final class ShareViewControllerTests: XCTestCase {
     }
 
     private func verifyImage(
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -172,7 +172,7 @@ final class ShareViewControllerTests: XCTestCase {
     /// create a SUT with a group conversation and a one-to-one conversation and verify snapshot
     private func makeTestForShareViewController(
         message: MockShareableMessage,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {

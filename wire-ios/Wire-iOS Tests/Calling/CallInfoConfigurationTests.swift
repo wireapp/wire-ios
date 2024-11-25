@@ -55,7 +55,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     func assertEquals(
         _ lhsConfig: CallInfoViewControllerInput,
         _ rhsConfig: CallInfoViewControllerInput,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertTrue(

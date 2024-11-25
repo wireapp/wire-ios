@@ -290,7 +290,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         allowServices: Bool,
         expectedAccessModes: Set<String>,
         expectedAccessRoles: Set<ConversationAccessRoleV2>,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         // WHEN

@@ -38,14 +38,3 @@ extension ConversationActionController {
         }
     }
 }
-
-extension ConversationActionController: FolderPickerViewControllerDelegate {
-
-    func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
-
-        userSession.enqueue {
-            conversation.moveToFolder(folder)
-        }
-    }
-
-}

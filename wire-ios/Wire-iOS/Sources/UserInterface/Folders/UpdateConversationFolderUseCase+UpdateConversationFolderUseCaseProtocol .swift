@@ -16,8 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireDataModel
+import WireMoveToFolderUI
+import WireSyncEngine
 
-protocol ViewControllerDismisser: AnyObject {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?)
+extension UpdateConversationFolderUseCase: @retroactive UpdateConversationFolderUseCaseProtocol {
+
+    public func invoke(folder: WireMoveToFolderUI.Folder, conversation: WireMoveToFolderUI.Conversation) async throws {
+        guard let folderID = folder.identifier else { return }
+        try await invoke(conversationID: conversation.identifier, folderID: folderID)
+    }
 }

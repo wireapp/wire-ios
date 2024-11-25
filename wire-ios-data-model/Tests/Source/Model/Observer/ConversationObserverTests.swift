@@ -26,7 +26,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         modifier: (ZMConversation, ConversationObserver) -> Void,
         expectedChangedField: String?,
         expectedChangedKeys: Set<String>,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 
@@ -71,7 +71,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         modifier: (ZMConversation, ConversationObserver) -> Void,
         expectedChangedFields: Set<String>,
         expectedChangedKeys: Set<String>,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
 

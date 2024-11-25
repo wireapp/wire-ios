@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -9,7 +9,6 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireUtilitiesPackage", targets: ["WireUtilitiesPackage"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
@@ -30,30 +29,21 @@ let package = Package(
         ),
 
         .target(
-            name: "WireUtilitiesPackage",
-            path: "./Sources/WireUtilities"
-        ),
-        .testTarget(
-            name: "WireUtilitiesPackageTests",
-            dependencies: ["WireUtilitiesPackage"],
-            path: "./Tests/WireUtilitiesTests"
-        ),
-
-        .target(
             name: "WireTestingPackage",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
 
 for target in package.targets {
     guard target.type != .plugin else { continue }
-    target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("FullTypedThrows"),
+        .enableUpcomingFeature("ExistentialAny")
     ]
 }

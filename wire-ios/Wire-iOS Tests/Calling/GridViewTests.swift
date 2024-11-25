@@ -99,7 +99,7 @@ final class GridViewTests: XCTestCase {
     private func testGrid(
         withAmount amount: Int,
         maxItemsPerPage: Int = 8,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
