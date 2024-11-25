@@ -114,8 +114,8 @@ final class ConversationViewController: UIViewController {
         default:
             break
         }
-
-        return viewController?.wrapInNavigationController()
+        guard let viewController else { return nil }
+        return UINavigationController(rootViewController: viewController)
     }
 
     required init(
@@ -713,7 +713,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         let navigationController = KeyboardAvoidingViewController(viewController: collectionController!)
             .wrapInNavigationController()
 
-        ZClientViewController.shared?.present(navigationController, animated: true)
+        navigationController.presentOverAll(animated: true)
     }
 
 }

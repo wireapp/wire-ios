@@ -445,7 +445,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             guard let self, let mainCoordinator else { return }
 
             Task { @MainActor [folderPickerViewControllerBuilder] in
-                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                let viewController = folderPickerViewControllerBuilder.build(
+                    mainCoordinator: mainCoordinator,
+                    showCloseButton: true
+                )
                 if let sheet = viewController.sheetPresentationController {
                     sheet.detents = [.medium(), .large()]
                     sheet.prefersGrabberVisible = true
