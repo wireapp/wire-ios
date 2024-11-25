@@ -22,15 +22,12 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-public import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-public import UIKit
-#elseif os(OSX)
-public import AppKit
-#endif
+{% for import in argument.autoMockablePublicImports %}
+public import {{ import }}
+{% endfor %}
 
 {% for import in argument.autoMockableImports %}
-public import {{ import }}
+import {{ import }}
 {% endfor %}
 
 {% for import in argument.autoMockableTestableImports %}
