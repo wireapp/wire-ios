@@ -298,7 +298,8 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     ) async -> ConversationMessageProtocol? {
         await context.perform {
             let selfUserProtocols = selfUser.supportedProtocols
-            let otherUserProtocols = otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
+            let otherUserProtocols = otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser
+                .supportedProtocols /// default to Proteus if empty.
 
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 

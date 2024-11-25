@@ -384,7 +384,7 @@ final class TeamRepositoryTests: XCTestCase {
             prekey: prekey
         )
 
-        static let prekey = LegalholdPrekey(id: 2_330, base64EncodedKey: "foo")
+        static let prekey = LegalholdPrekey(id: 2330, base64EncodedKey: "foo")
     }
 }
 

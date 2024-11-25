@@ -21,9 +21,9 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
-import XCTest
 
 final class SyncManagerTests: XCTestCase {
 
@@ -432,7 +432,7 @@ final class SyncManagerTests: XCTestCase {
             let syncError = try XCTUnwrap(error as? SyncManager.Failure)
 
             switch syncError {
-            case .failedToPerformSlowSync(let error):
+            case let .failedToPerformSlowSync(error):
                 XCTAssertTrue(error is UserRepositoryError)
             }
         }

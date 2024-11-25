@@ -525,9 +525,9 @@ final class UserRepositoryTests: XCTestCase {
         static let userPropertyKey = UserProperty.Key.wireReceiptMode
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+        static let base64encodedString =
+            "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
         static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
-
 
         static let conversationLabel1 = ConversationLabel(
             id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,

@@ -25,8 +25,6 @@ import WireDomainSupport
 import XCTest
 @testable import WireDomain
 
-@testable import WireDomain
-
 final class OneOnOneResolverTests: XCTestCase {
     var sut: WireDomain.OneOnOneResolver!
 
@@ -321,7 +319,8 @@ final class OneOnOneResolverTests: XCTestCase {
     ) {
         userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
-        userRepository.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
+        userRepository
+            .fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
         conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID
             .uuidString
