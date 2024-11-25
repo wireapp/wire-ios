@@ -41,7 +41,7 @@ public extension WireAnalytics {
             enableOnlyOnce.execute()
         }
 
-        static var enableOnlyOnce = OnceOnlyThreadSafeFunction {
+        /*private*/ static /*let*/ var enableOnlyOnce = OnceOnlyThreadSafeFunction {
             shared.enable()
             WireLogger.addLogger(shared)
 
@@ -53,12 +53,12 @@ public extension WireAnalytics {
 }
 
 /// Wrapper class to execute a function just once, thread safe
-final class OnceOnlyThreadSafeFunction {
+/*private*/ final class OnceOnlyThreadSafeFunction {
     private let lock = NSLock()
     private var executed = false
     private let function: () -> Void
 
-    fileprivate init(_ function: @escaping () -> Void) {
+    /*fileprivate*/ init(_ function: @escaping () -> Void) {
         self.function = function
     }
 
