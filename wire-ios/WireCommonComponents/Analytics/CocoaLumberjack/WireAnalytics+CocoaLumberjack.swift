@@ -16,28 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@testable import WireCommonComponents
-
-class WireAnalytics_DatadogTests: XCTestCase {
-
-    func test_enable_isExecutedOnlyOnce() {
-        // GIVEN
-        var count = 0
-        WireAnalytics.Datadog.enableOnlyOnce = .init {
-            count += 1
-        }
-        let concurrentQueue = DispatchQueue(label: "test", attributes: .concurrent)
-
-        // WHEN
-        for i in 1 ... 1000 {
-            concurrentQueue.async {
-                WireAnalytics.Datadog.enable()
-            }
-        }
-
-        // THEN
-        XCTAssertEqual(count, 1)
-    }
-}
+// TODO: implement
