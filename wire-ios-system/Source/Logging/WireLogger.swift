@@ -16,12 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogger: LoggerProtocol {
+public struct WireLogger: LoggerProtocol, Sendable {
 
-    private static var provider = AggregatedLogger(loggers: [
-        SystemLogger(),
-        CocoaLumberjackLogger()
-    ])
+    public static func initialize(loggers: [any LoggerProtocol]) {
+        guard provider == nil else {
+            assertionFailure("WireLogger.initialize called more than once")
+            return
+        }
+
+        provider = AggregatedLogger(loggers: loggers)
+    }
+
+    private static nonisolated(unsafe) var provider: (any LoggerProtocol)!
 
     public let tag: String
 
@@ -91,9 +97,5 @@ public struct WireLogger: LoggerProtocol {
 
     public static var logFiles: [URL] {
         provider.logFiles
-    }
-
-    public static func addLogger(_ logger: any LoggerProtocol) {
-        provider.addLogger(logger)
     }
 }

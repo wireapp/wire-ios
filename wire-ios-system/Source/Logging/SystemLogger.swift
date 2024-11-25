@@ -23,11 +23,11 @@ public protocol FileLoggerDestination {
     var log: URL? { get }
 }
 
-struct SystemLogger: LoggerProtocol {
+public struct SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
 
-    var logFiles: [URL] {
+    public var logFiles: [URL] {
         []
     }
 
@@ -42,31 +42,33 @@ struct SystemLogger: LoggerProtocol {
         }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public init() {}
+
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .debug)
     }
 
-    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .info)
     }
 
-    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .default)
     }
 
-    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .error)
     }
 
-    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
-    func addTag(_ key: LogAttributesKey, value: String?) {
+    public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing, as it's only available on datadog
     }
 

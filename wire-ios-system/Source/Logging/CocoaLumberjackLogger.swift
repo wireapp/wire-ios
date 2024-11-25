@@ -20,42 +20,42 @@ import CocoaLumberjackSwift
 import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+public final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 
-    init() {
+    public init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
     }
 
-    var logFiles: [URL] {
+    public var logFiles: [URL] {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
