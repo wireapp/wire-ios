@@ -113,8 +113,12 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func conversationListViewControllerViewModelDidReloadContent(
+<<<<<<< HEAD
         _ viewModel: ConversationListViewController
             .ViewModel
+=======
+        _ viewModel: ConversationListViewController.ViewModel
+>>>>>>> af3ecdc015 (fix: Applied filter view height - WPB-14421 (#2188))
     ) {
         // no - op
     }
