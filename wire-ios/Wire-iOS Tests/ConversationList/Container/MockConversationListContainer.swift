@@ -111,4 +111,11 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     ) {
         // no-op
     }
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController
+            .ViewModel
+    ) {
+        // no - op
+    }
 }

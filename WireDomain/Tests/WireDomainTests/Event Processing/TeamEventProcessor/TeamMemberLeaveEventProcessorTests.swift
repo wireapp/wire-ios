@@ -45,7 +45,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_Team_Membership_Repo_Method() async throws {
         // Mock
 
-        teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in }
+        teamRepository.deleteMembershipUserIDDomainDate_MockMethod = { _, _, _ in }
 
         // When
 
@@ -53,7 +53,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.deleteMembershipUserIDDomainDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {

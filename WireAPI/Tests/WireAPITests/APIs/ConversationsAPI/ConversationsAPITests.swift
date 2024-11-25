@@ -63,21 +63,6 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
-    func testGetConversationIdentifiers() async throws {
-        // given
-        let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
-
-        // when
-        // then
-        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
-            let pager = try await sut.getConversationIdentifiers()
-
-            for try await _ in pager {
-                // trigger fetching data
-            }
-        }
-    }
-
     func testGetMLSOneToOneConversationRequest() async throws {
         // Given
 
@@ -91,6 +76,21 @@ final class ConversationsAPITests: XCTestCase {
                 userID: Scaffolding.userID,
                 in: Scaffolding.domain
             )
+        }
+    }
+
+    func testGetConversationIdentifiers() async throws {
+        // given
+        let apiVersions = Set(APIVersion.allCases).subtracting([.v0])
+
+        // when
+        // then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            let pager = try await sut.getConversationIdentifiers()
+
+            for try await _ in pager {
+                // trigger fetching data
+            }
         }
     }
 

@@ -20,7 +20,7 @@ import Foundation
 
 /// The managing system of the self user identity
 
-public enum ManagingSystem {
+public enum ManagingSystem: String, Sendable {
 
     /// User identity is managed with Wire
 
