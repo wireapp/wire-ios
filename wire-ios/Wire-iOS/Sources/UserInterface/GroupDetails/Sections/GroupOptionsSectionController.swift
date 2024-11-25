@@ -42,7 +42,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             switch self {
             case .notifications: user.canModifyNotificationSettings(in: conversation)
             case .guests:        user.canModifyAccessControlSettings(in: conversation)
-            case .services:      user.canModifyAccessControlSettings(in: conversation)
+            case .services:      user.canModifyAccessControlSettings(in: conversation) && conversation.botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }
