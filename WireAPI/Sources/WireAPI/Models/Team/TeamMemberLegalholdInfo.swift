@@ -16,28 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public typealias LegalholdPrekey = Prekey
 
-/// An event where the message timer of a conversation was updated.
+/// The team member legal hold.
+public struct TeamMemberLegalholdInfo: Equatable, Sendable {
 
-public struct ConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable {
+    /// The legal hold status
 
-    /// The id of the conversation.
+    public let status: LegalholdStatus
 
-    public let conversationID: ConversationID
+    /// The legal hold prekey
 
-    /// The id of the user who updated the message timer.
+    public let prekey: LegalholdPrekey
 
-    public let senderID: UserID
-
-    /// When the message timer was changed.
-
-    public let timestamp: Date
-
-    /// The new timer.
-    ///
-    /// A `nil` value means the timer is off.
-
-    public let newTimer: Int64?
-
+    public init(
+        status: LegalholdStatus,
+        prekey: LegalholdPrekey
+    ) {
+        self.status = status
+        self.prekey = prekey
+    }
 }

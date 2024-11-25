@@ -35,6 +35,6 @@ public struct ConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
     /// A value of `1` indicates read reciepts are enabled
     /// and any other value indicates receipts are disabled.
 
-    public let newRecieptMode: Int
+    public let newReceiptMode: Int
 
 }

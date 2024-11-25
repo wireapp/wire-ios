@@ -586,17 +586,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func fetchMLSConversation(
-        groupID: WireDataModel.MLSGroupID
-    ) async -> ZMConversation? {
-        await context.perform { [context] in
-            ZMConversation.fetch(
-                with: groupID,
-                in: context
-            )
-        }
-    }
-
     public func isConversationArchived(
         _ conversation: ZMConversation
     ) async -> Bool {
@@ -700,6 +689,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
+        }
+    }
+
+    public func fetchMLSConversation(
+        groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: groupID,
+                in: context
+            )
         }
     }
 

@@ -237,15 +237,15 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchSelfLegalholdStatus() async throws {
+    func testFetchSelfLegalholdInfo() async throws {
         // Mock
-        teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
+        teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
 
         // When
-        let result = try await sut.fetchSelfLegalholdStatus()
+        let result = try await sut.fetchSelfLegalholdInfo()
 
         // Then
-        XCTAssertEqual(result, .pending)
+        XCTAssertEqual(result, Scaffolding.teamMemberLegalhold)
     }
 
     func testDeleteTeamMembership_It_Deletes_Member_From_Team() async throws {
@@ -273,9 +273,9 @@ final class TeamRepositoryTests: XCTestCase {
         // When
 
         try await sut.deleteMembership(
-            for: Scaffolding.userID,
+            userID: Scaffolding.userID,
             domain: nil,
-            at: Scaffolding.date(from: Scaffolding.time)
+            date: Scaffolding.date(from: Scaffolding.time)
         )
 
         // Then
@@ -378,6 +378,13 @@ final class TeamRepositoryTests: XCTestCase {
         static let member2CreatorID = UUID()
         static let member2legalholdStatus = LegalholdStatus.pending
         static let member2Permissions = Permissions.member.rawValue
+
+        static let teamMemberLegalhold = TeamMemberLegalholdInfo(
+            status: .pending,
+            prekey: prekey
+        )
+
+        static let prekey = LegalholdPrekey(id: 2330, base64EncodedKey: "foo")
     }
 }
 
