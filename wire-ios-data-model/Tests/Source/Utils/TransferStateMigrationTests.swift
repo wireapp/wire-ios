@@ -16,19 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class TransferStateMigrationTests: DiskDatabaseTest {
 
     override func setUp() {
         super.setUp()
 
-        // Batch update doesn't inform the MOC of any changes so we disable caching in order to fetch directly from the store
+        // Batch update doesn't inform the MOC of any changes so we disable caching in order to fetch directly from the
+        // store
         moc.stalenessInterval = 0.0
     }
 
-    func verifyThatLegacyTransferStateIsMigrated(_ rawLegacyTranferState: Int, expectedTranferState: AssetTransferState, line: UInt = #line) throws {
+    func verifyThatLegacyTransferStateIsMigrated(
+        _ rawLegacyTranferState: Int,
+        expectedTranferState: AssetTransferState,
+        line: UInt = #line
+    ) throws {
         // Given
         let conversation = createConversation()
         let assetMessage = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
@@ -36,27 +41,34 @@ class TransferStateMigrationTests: DiskDatabaseTest {
         moc.willChangeValue(forKey: #keyPath(ZMAssetClientMessage.transferState))
         assetMessage.setPrimitiveValue(rawLegacyTranferState, forKey: #keyPath(ZMAssetClientMessage.transferState))
         moc.didChangeValue(forKey: #keyPath(ZMAssetClientMessage.transferState))
-        try self.moc.save()
+        try moc.save()
 
         // When
         WireDataModel.TransferStateMigration.migrateLegacyTransferState(in: moc)
 
         // Then
         moc.refresh(assetMessage, mergeChanges: false)
-        XCTAssertEqual(assetMessage.transferState, expectedTranferState, "\(assetMessage.transferState.rawValue) is not equal to \(expectedTranferState.rawValue)", line: line)
+        XCTAssertEqual(
+            assetMessage.transferState,
+            expectedTranferState,
+            "\(assetMessage.transferState.rawValue) is not equal to \(expectedTranferState.rawValue)",
+            line: line
+        )
         moc.delete(assetMessage)
         try moc.save()
     }
 
     func testThatItMigratesTheLegacyTransferState() throws {
         let expectedMapping: [(WireDataModel.TransferStateMigration.LegacyTransferState, AssetTransferState)] =
-            [(.uploading, .uploading),
-             (.uploaded, .uploaded),
-             (.cancelledUpload, .uploadingCancelled),
-             (.downloaded, .uploaded),
-             (.downloading, .uploaded),
-             (.failedDownloaded, .uploaded),
-             (.failedUpload, .uploadingFailed)]
+            [
+                (.uploading, .uploading),
+                (.uploaded, .uploaded),
+                (.cancelledUpload, .uploadingCancelled),
+                (.downloaded, .uploaded),
+                (.downloading, .uploaded),
+                (.failedDownloaded, .uploaded),
+                (.failedUpload, .uploadingFailed)
+            ]
 
         for (legacy, migrated) in expectedMapping {
             try verifyThatLegacyTransferStateIsMigrated(legacy.rawValue, expectedTranferState: migrated)

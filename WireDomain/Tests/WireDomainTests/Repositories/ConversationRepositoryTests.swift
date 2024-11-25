@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationRepositoryTests: XCTestCase {
 
@@ -95,7 +95,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
     func testPullConversations_Found_And_Failed_Conversations_Are_Stored_Locally() async throws {
         // Given
-        let uuids = Scaffolding.conversationList.found.compactMap(\.id) + Scaffolding.conversationList.failed.map(\.uuid)
+        let uuids = Scaffolding.conversationList.found.compactMap(\.id) + Scaffolding.conversationList.failed
+            .map(\.uuid)
 
         await context.perform { [context] in
             // There are no conversations in the database.
@@ -169,7 +170,8 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testPullConversations_Failed_Conversations_Needs_To_Be_Updated_From_Backend_And_Pending_MetataRefresh_Are_True() async throws {
+    func testPullConversations_Failed_Conversations_Needs_To_Be_Updated_From_Backend_And_Pending_MetataRefresh_Are_True(
+    ) async throws {
         // Given
         let failedUuids = Scaffolding.conversationList.failed.map(\.uuid)
 
@@ -267,7 +269,8 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testRemoveParticipantFromConversation_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave() async throws {
+    func testRemoveParticipantFromConversation_It_Appends_A_System_Message_To_All_Team_Conversations_When_A_Member_Leave(
+    ) async throws {
         // Mock
 
         let user = try await context.perform { [self] in
@@ -319,11 +322,20 @@ final class ConversationRepositoryTests: XCTestCase {
             let user = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context), "No User")
             XCTAssertNotNil(Team.fetch(with: Scaffolding.teamID, in: context))
 
-            let teamConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.teamConversationID, in: context), "No Team Conversation")
+            let teamConversation = try XCTUnwrap(
+                ZMConversation.fetch(with: Scaffolding.teamConversationID, in: context),
+                "No Team Conversation"
+            )
 
-            let teamAnotherConversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.anotherTeamConversationID, in: context), "No Team Conversation")
+            let teamAnotherConversation = try XCTUnwrap(
+                ZMConversation.fetch(with: Scaffolding.anotherTeamConversationID, in: context),
+                "No Team Conversation"
+            )
 
-            let conversation = try XCTUnwrap(ZMConversation.fetch(with: Scaffolding.conversationID, in: context), "No Conversation")
+            let conversation = try XCTUnwrap(
+                ZMConversation.fetch(with: Scaffolding.conversationID, in: context),
+                "No Conversation"
+            )
 
             try internalTest_checkLastMessage(
                 in: teamConversation,
@@ -338,7 +350,11 @@ final class ConversationRepositoryTests: XCTestCase {
             )
 
             let lastMessage = try XCTUnwrap(conversation.lastMessage as? ZMSystemMessage)
-            XCTAssertNotEqual(lastMessage.systemMessageType, .teamMemberLeave, "Should not append leave message to regular conversation")
+            XCTAssertNotEqual(
+                lastMessage.systemMessageType,
+                .teamMemberLeave,
+                "Should not append leave message to regular conversation"
+            )
         }
     }
 
@@ -706,9 +722,11 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         try await sut.addParticipants(
-            [(Scaffolding.otherUserID,
-              Scaffolding.domain,
-              ZMConversation.defaultMemberRoleName)],
+            [(
+                Scaffolding.otherUserID,
+                Scaffolding.domain,
+                ZMConversation.defaultMemberRoleName
+            )],
             sender: (Scaffolding.userID, Scaffolding.domain),
             date: .distantPast,
             conversationID: Scaffolding.conversationID,
@@ -804,19 +822,23 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         static let conversationList = ConversationList(
-            found: [conversationSelfType,
-                    conversationGroupType,
-                    conversationConnectionType,
-                    conversationOneOnOneType],
+            found: [
+                conversationSelfType,
+                conversationGroupType,
+                conversationConnectionType,
+                conversationOneOnOneType
+            ],
             notFound: [conversationNotFound],
             failed: [conversationFailed]
         )
 
         static let conversationListError = ConversationList(
-            found: [conversationSelfTypeMissingId,
-                    conversationGroupType,
-                    conversationConnectionType,
-                    conversationOneOnOneType],
+            found: [
+                conversationSelfTypeMissingId,
+                conversationGroupType,
+                conversationConnectionType,
+                conversationOneOnOneType
+            ],
             notFound: [conversationNotFound],
             failed: [conversationFailed]
         )
@@ -931,7 +953,8 @@ final class ConversationRepositoryTests: XCTestCase {
             lastEventTime: nil
         )
 
-        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+        static let base64EncodedString =
+            "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         static let conversationNotFound = WireAPI.QualifiedID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4aa")!,

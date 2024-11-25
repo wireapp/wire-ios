@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class UserRepositoryTests: XCTestCase {
 
@@ -87,7 +87,11 @@ final class UserRepositoryTests: XCTestCase {
         // Given
         await context.perform { [context] in
             // There is no user in the database.
-            XCTAssertNil(ZMUser.fetch(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context))
+            XCTAssertNil(ZMUser.fetch(
+                with: Scaffolding.user1.id.uuid,
+                domain: Scaffolding.user1.id.domain,
+                in: context
+            ))
         }
 
         // Mock
@@ -314,7 +318,9 @@ final class UserRepositoryTests: XCTestCase {
         }
 
         // Mock
-        conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in }
+        conversationsRepository
+            .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
+            }
 
         // When
 
@@ -326,7 +332,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsRepository
+                .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count,
+            1
+        )
 
         await context.perform {
             XCTAssertEqual(user.isAccountDeleted, true)
@@ -385,11 +395,12 @@ final class UserRepositoryTests: XCTestCase {
     func testUpdateUserProperty_It_Throws_Error() async throws {
         // Mock
 
-        conversationLabelsRepository.updateConversationLabels_MockError = ConversationLabelsRepositoryError.failedToDeleteStoredLabels
+        conversationLabelsRepository.updateConversationLabels_MockError = ConversationLabelsRepositoryError
+            .failedToDeleteStoredLabels
 
         // Then
 
-        await XCTAssertThrowsError(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
+        await XCTAssertThrowsErrorAsync(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
 
             // When
 
@@ -516,6 +527,7 @@ final class UserRepositoryTests: XCTestCase {
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
         static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
+
 
         static let conversationLabel1 = ConversationLabel(
             id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,

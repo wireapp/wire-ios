@@ -49,11 +49,15 @@ public struct SidebarAccountInfo {
     }
 
     public enum Availability: CaseIterable {
-        case available, busy, away
+        case available
+        case busy
+        case away
     }
 
     public enum AccountImageSource: Equatable, Sendable {
-        case image(UIImage), text(_ initials: String)
+        case image(UIImage)
+        case text(_ initials: String)
+
         public init() { self = .text("") }
     }
 }

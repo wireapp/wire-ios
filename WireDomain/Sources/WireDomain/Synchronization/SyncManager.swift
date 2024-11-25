@@ -189,7 +189,7 @@ final class SyncManager: SyncManagerProtocol {
 
     private var ongoingTask: Task<Void, Swift.Error>? {
         switch syncState {
-        case .quickSync(let task):
+        case let .quickSync(task):
             task
         default:
             nil

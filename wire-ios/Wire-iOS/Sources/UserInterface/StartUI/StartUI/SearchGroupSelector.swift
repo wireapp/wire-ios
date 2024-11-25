@@ -37,11 +37,11 @@ final class SearchGroupSelector: UIView {
     // MARK: - Init
 
     init() {
-        groups = SearchGroup.all
+        self.groups = SearchGroup.all
 
-        let groupItems: [String] = groups.map { $0.name }
+        let groupItems: [String] = groups.map(\.name)
 
-        segmentedControl = UISegmentedControl(items: groupItems)
+        self.segmentedControl = UISegmentedControl(items: groupItems)
         super.init(frame: .zero)
 
         configureViews()

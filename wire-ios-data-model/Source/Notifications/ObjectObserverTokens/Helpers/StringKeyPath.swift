@@ -24,7 +24,7 @@ public final class StringKeyPath: Hashable {
     public let rawValue: String
     public let count: Int
 
-    static private var KeyPathCache: [String: StringKeyPath] = [:]
+    private static var KeyPathCache: [String: StringKeyPath] = [:]
 
     public static func keyPathForString(_ string: String) -> StringKeyPath {
 
@@ -38,8 +38,8 @@ public final class StringKeyPath: Hashable {
     }
 
     private init(_ s: String) {
-        rawValue = s
-        count = rawValue.filter {
+        self.rawValue = s
+        self.count = rawValue.filter {
             $0 == "."
         }.count + 1
     }
@@ -49,10 +49,11 @@ public final class StringKeyPath: Hashable {
     }
 
     public var isPath: Bool {
-        return 1 < count
+        count > 1
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
+        // swiftformat:disable:next isEmpty
         if self.count > 0 {
             if let i = self.rawValue.firstIndex(of: ".") {
                 let head = self.rawValue[..<i]
@@ -70,18 +71,19 @@ public final class StringKeyPath: Hashable {
     }()
 }
 
-extension StringKeyPath: Equatable {
-}
+extension StringKeyPath: Equatable {}
+
 public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
-    return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
+    (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }
 
 extension StringKeyPath: CustomDebugStringConvertible {
     public var description: String {
-        return rawValue
+        rawValue
     }
+
     public var debugDescription: String {
-        return rawValue
+        rawValue
     }
 }

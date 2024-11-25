@@ -24,10 +24,10 @@ extension WireDataModel.AccountImageSource {
 
     func mapToAccountImageSource() -> WireAccountImageUI.AccountImageSource {
         switch self {
-        case .image(let image):
-                .image(image)
-        case .text(let text):
-                .text(text)
+        case let .image(image):
+            .image(image)
+        case let .text(text):
+            .text(text)
         }
     }
 }
@@ -36,10 +36,10 @@ extension WireDataModel.AccountImageSource {
 
     func mapToAccountImageSource() -> WireSidebarUI.SidebarAccountInfo.AccountImageSource {
         switch self {
-        case .image(let image):
-                .image(image)
-        case .text(let text):
-                .text(text)
+        case let .image(image):
+            .image(image)
+        case let .text(text):
+            .text(text)
         }
     }
 }
@@ -48,10 +48,10 @@ extension WireSidebarUI.SidebarAccountInfo.AccountImageSource {
 
     func mapToAccountImageSource() -> WireAccountImageUI.AccountImageSource {
         switch self {
-        case .image(let image):
-                .image(image)
-        case .text(let text):
-                .text(text)
+        case let .image(image):
+            .image(image)
+        case let .text(text):
+            .text(text)
         }
     }
 }

@@ -57,20 +57,20 @@ final class AudioEffectCell: UICollectionViewCell {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          iconView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          iconView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          iconView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          iconView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            iconView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            iconView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            iconView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            iconView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
 
-          borderRightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          borderRightView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          borderRightView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0.5),
-          borderRightView.widthAnchor.constraint(equalToConstant: .hairline),
+            borderRightView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            borderRightView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            borderRightView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 0.5),
+            borderRightView.widthAnchor.constraint(equalToConstant: .hairline),
 
-          borderBottomView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          borderBottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0.5),
-          borderBottomView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          borderBottomView.heightAnchor.constraint(equalToConstant: .hairline)
+            borderBottomView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            borderBottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0.5),
+            borderBottomView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            borderBottomView.heightAnchor.constraint(equalToConstant: .hairline)
         ])
 
         updateForSelectedState()

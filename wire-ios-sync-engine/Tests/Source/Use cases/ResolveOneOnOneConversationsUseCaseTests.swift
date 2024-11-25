@@ -17,9 +17,9 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
 
@@ -32,7 +32,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp

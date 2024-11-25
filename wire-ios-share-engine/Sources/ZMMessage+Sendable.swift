@@ -22,7 +22,7 @@ import WireDataModel
 private extension ZMMessage {
 
     var reportsProgress: Bool {
-        return fileMessageData != nil || imageMessageData != nil
+        fileMessageData != nil || imageMessageData != nil
     }
 
 }
@@ -33,7 +33,7 @@ extension ZMMessage: Sendable {
         guard let message = self as? ZMOTRMessage else {
             return false
         }
-        return self.deliveryState == .failedToSend && message.causedSecurityLevelDegradation
+        return deliveryState == .failedToSend && message.causedSecurityLevelDegradation
     }
 
     public var isSent: Bool {
@@ -56,15 +56,16 @@ extension ZMMessage: Sendable {
 
     public func cancel() {
 
-        if let asset = self.fileMessageData {
+        if let asset = fileMessageData {
             asset.cancelTransfer()
             return
         }
 
-        let attributes: LogAttributes = [.nonce: nonce?.safeForLoggingDescription ?? "<nil>"].merging(.safePublic, uniquingKeysWith: { _, new in new })
+        let attributes: LogAttributes = [.nonce: nonce?.safeForLoggingDescription ?? "<nil>"]
+            .merging(.safePublic, uniquingKeysWith: { _, new in new })
 
         WireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
-        self.expire(withReason: .cancelled)
+        expire(withReason: .cancelled)
     }
 
 }

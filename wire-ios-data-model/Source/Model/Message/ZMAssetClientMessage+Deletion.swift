@@ -31,7 +31,7 @@ extension ZMAssetClientMessage {
         managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
 
         if let url = temporaryDirectoryURL,
-            FileManager.default.fileExists(atPath: url.path) {
+           FileManager.default.fileExists(atPath: url.path) {
             try? FileManager.default.removeItem(at: url)
         }
 
@@ -45,7 +45,7 @@ extension ZMAssetClientMessage {
         preprocessedSize = CGSize.zero
     }
 
-    override public func removeClearingSender(_ clearingSender: Bool) {
+    public override func removeClearingSender(_ clearingSender: Bool) {
         if !clearingSender {
             markRemoteAssetToBeDeleted()
         }

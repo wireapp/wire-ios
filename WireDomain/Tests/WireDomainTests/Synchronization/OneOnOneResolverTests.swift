@@ -23,6 +23,7 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 @testable import WireDomain
 
@@ -322,7 +323,8 @@ final class OneOnOneResolverTests: XCTestCase {
         userRepository.fetchSelfUser_MockValue = selfUser
         userRepository.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.receiverQualifiedID.toDomainModel()]
 
-        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID.uuidString
+        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID
+            .uuidString
         conversationsRepository.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
@@ -356,7 +358,8 @@ final class OneOnOneResolverTests: XCTestCase {
             domain: "domain.com"
         )
 
-        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+        static let base64EncodedString =
+            "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
         static let ciphersuite = WireDataModel.MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 

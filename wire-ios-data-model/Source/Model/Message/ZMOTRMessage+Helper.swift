@@ -18,11 +18,11 @@
 
 import Foundation
 
-extension ZMOTRMessage {
-    public var dataSetDebugInformation: String {
+public extension ZMOTRMessage {
+    var dataSetDebugInformation: String {
         let debugDescription = dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage.debugDescription }
             .joined(separator: "\n")
-        return String.init(format: "<%@>: %@", NSStringFromClass(ZMGenericMessageData.self), debugDescription)
+        return String(format: "<%@>: %@", NSStringFromClass(ZMGenericMessageData.self), debugDescription)
     }
 }

@@ -23,8 +23,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireFoundation"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(name: "WireAccountImageUI", dependencies: ["WireFoundation"]),
@@ -46,7 +46,7 @@ let package = Package(
             name: "WireMoveToFolderUISupport",
             dependencies: ["WireMoveToFolderUI"],
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(name: "WireMoveToFolderUITests", dependencies: ["WireMoveToFolderUI", "WireMoveToFolderUISupport"]),
@@ -57,7 +57,11 @@ let package = Package(
         .target(name: "WireSettingsUI"),
         .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI"]),
 
-        .target(name: "WireSidebarUI", dependencies: ["WireFoundation"]),
+        .target(
+            name: "WireSidebarUI",
+            dependencies: ["WireFoundation"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
         .testTarget(name: "WireSidebarUITests", dependencies: ["WireSidebarUI"])
     ]
 )

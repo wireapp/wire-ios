@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct TransferApplockKeychain {
+enum TransferApplockKeychain {
 
     static func migrateKeychainItems(in moc: NSManagedObjectContext) {
         migrateIsAppLockActiveState(in: moc)
@@ -32,7 +32,7 @@ struct TransferApplockKeychain {
 
         guard
             let data = ZMKeychain.data(forAccount: "lockApp"),
-            data.count != 0
+            !data.isEmpty
         else {
             selfUser.isAppLockActive = false
             return
@@ -65,11 +65,11 @@ struct TransferApplockKeychain {
 private extension Bundle {
 
     var sharedContainerURL: URL? {
-        return appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        appGroupIdentifier.map(FileManager.sharedContainerDirectory)
     }
 
     var appGroupIdentifier: String? {
-        return bundleIdentifier.map { "group." + $0 }
+        bundleIdentifier.map { "group." + $0 }
     }
 
 }

@@ -293,7 +293,7 @@ public class TeamRepository: TeamRepositoryProtocol {
         do {
             return try await teamsAPI.getTeamMembers(
                 for: selfTeamID,
-                maxResults: 2_000
+                maxResults: 2000
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)

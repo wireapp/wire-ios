@@ -29,18 +29,18 @@ enum UserTypeIconStyle: String, IconImageStyle {
     var icon: StyleKitIcon? {
         switch self {
         case .guest:
-            return .guest
+            .guest
         case .external:
-            return .externalPartner
+            .externalPartner
         case .member:
-            return .none
+            .none
         case .federated:
-            return .federated
+            .federated
         }
     }
 
     var accessibilitySuffix: String {
-        return rawValue
+        rawValue
     }
 
     var accessibilityLabel: String {
@@ -74,8 +74,8 @@ extension UserTypeIconStyle {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
             self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser
-            ? .member
-            : .guest
+                ? .member
+                : .guest
         }
     }
 }

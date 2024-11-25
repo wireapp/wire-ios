@@ -18,7 +18,7 @@
 
 import WireSyncEngine
 
-typealias UserSessionInterface = UserSessionSwiftInterface & UserSessionAppLockInterface
+typealias UserSessionInterface = UserSessionAppLockInterface & UserSessionSwiftInterface
 
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: delete
