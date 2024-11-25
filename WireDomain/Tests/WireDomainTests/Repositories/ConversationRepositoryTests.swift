@@ -629,7 +629,7 @@ final class ConversationRepositoryTests: XCTestCase {
         userRepository.fetchUserIdDomain_MockValue = senderUser
         userRepository.isSelfUserIdDomain_MockValue = true
         mlsService.wipeGroup_MockMethod = { _ in }
-        teamRepository.deleteMembershipForDomainAt_MockMethod = { _, _, _ in }
+        teamRepository.deleteMembershipUserIDDomainDate_MockMethod = { _, _, _ in }
 
         // When
 
@@ -647,7 +647,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userRepository.isSelfUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.deleteMembershipForDomainAt_Invocations.count, 1)
+        XCTAssertEqual(teamRepository.deleteMembershipUserIDDomainDate_Invocations.count, 1)
 
         let newParticipants = await context.perform {
             conversation.localParticipants
@@ -816,6 +816,7 @@ final class ConversationRepositoryTests: XCTestCase {
         static let teamConversationID = UUID()
         static let anotherTeamConversationID = UUID()
         static let conversationID = UUID()
+        static let domain = "domain.com"
 
         static func date(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
@@ -967,8 +968,6 @@ final class ConversationRepositoryTests: XCTestCase {
         )
 
         static let selfUserId = UUID()
-
-        static let domain = "domain.com"
     }
 
 }

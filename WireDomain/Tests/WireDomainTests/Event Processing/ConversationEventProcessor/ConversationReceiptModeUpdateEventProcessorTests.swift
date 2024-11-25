@@ -105,7 +105,7 @@ final class ConversationReceiptModeUpdateEventProcessorTests: XCTestCase {
         static let event = ConversationReceiptModeUpdateEvent(
             conversationID: ConversationID(uuid: id, domain: domain),
             senderID: UserID(uuid: id, domain: domain),
-            newRecieptMode: 1
+            newReceiptMode: 1
         )
     }
 }

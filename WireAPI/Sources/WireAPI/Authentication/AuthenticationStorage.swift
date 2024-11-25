@@ -16,6 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
-// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
-// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
+import Foundation
+
+/// Storage for authentication primitives.
+
+public protocol AuthenticationStorage {
+
+    /// Store an access token.
+    ///
+    /// - Parameter accessToken: The token to store.
+
+    func storeAccessToken(_ accessToken: AccessToken) async
+
+    /// Fetch a stored access token.
+    ///
+    /// - Returns: The stored access token.
+
+    func fetchAccessToken() async -> AccessToken?
+
+    /// Store cookies.
+    ///
+    /// - Parameter cookies: The cookies to store.
+
+    func storeCookies(_ cookies: [HTTPCookie]) async throws
+
+    /// Fetch stored cookies.
+    ///
+    /// - Returns: The stored cookies.
+
+    func fetchCookies() async throws -> [HTTPCookie]
+
+}

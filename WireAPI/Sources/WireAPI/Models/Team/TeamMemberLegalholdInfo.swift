@@ -16,14 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public typealias LegalholdPrekey = Prekey
 
-/// Errors originating from `APIService`.
+/// The team member legal hold.
+public struct TeamMemberLegalholdInfo: Equatable, Sendable {
 
-public enum APIServiceError: Error {
+    /// The legal hold status
 
-    /// An access token is required but none is available.
+    public let status: LegalholdStatus
 
-    case missingAccessToken
+    /// The legal hold prekey
 
+    public let prekey: LegalholdPrekey
+
+    public init(
+        status: LegalholdStatus,
+        prekey: LegalholdPrekey
+    ) {
+        self.status = status
+        self.prekey = prekey
+    }
 }
