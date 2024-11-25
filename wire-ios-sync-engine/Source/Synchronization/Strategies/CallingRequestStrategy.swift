@@ -165,7 +165,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         switch sync {
         case callConfigRequestSync:
-            zmLog.debug("Received call config response for \(self): \(response)")
+            zmLog.debug("Received call config response for \(String(describing: self)): \(response)")
             if response.httpStatus == 200 {
                 var payloadAsString: String?
                 if let payload = response.payload, let data = try? JSONSerialization.data(
@@ -206,6 +206,20 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         default:
             break
         }
+    }
+
+TODO: fix
+    private func logMessage(
+        for conversationChanges: [ConversationChangeInfo],
+        listChanges: ConversationListChangeInfo?
+    ) -> String {
+        var message =
+            "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
+        message.append(conversationChanges.map(\.customDebugDescription).joined(separator: "\n"))
+
+        guard let changeInfo = listChanges else { return message }
+        message.append("\n ConversationListChangeInfo: \(changeInfo.description)")
+        return message
     }
 
     // MARK: - Context Change Tracker
