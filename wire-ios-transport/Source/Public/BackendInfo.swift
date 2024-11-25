@@ -27,6 +27,7 @@ public enum BackendInfo {
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
         case isMLSEnabled = "isMLSEnabled"
+
     }
 
     /// The `UserDefaults` used to store backend configuration info.
