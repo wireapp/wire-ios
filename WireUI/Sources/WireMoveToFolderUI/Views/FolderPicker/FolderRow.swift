@@ -38,7 +38,6 @@ struct FolderRow: View {
                 }
             }
         }
-        .buttonStyle(.plain)
         .accessibilityIdentifier("row.folder.\(folder.identifier?.uuidString ?? "")")
         .accessibilityLabel(folder.name)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
