@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
-@testable import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
+@testable import WireDataModel
+@testable import WireDomain
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
@@ -222,7 +222,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
     }
 
-    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed(
+    ) async throws {
         // Given
 
         _ = await context.perform { [context] in
@@ -263,7 +264,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let labelNames = results.compactMap(\.name)
 
             let expected = [
-                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.favoriteConversationLabel1.name!,
+                /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
                 Scaffolding.conversationLabel3.name!
             ]
@@ -313,7 +315,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
     }
 
-    func testUpdateConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+    func testUpdateConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed(
+    ) async throws {
         // Given
 
         _ = await context.perform { [context] in
@@ -350,7 +353,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let labelNames = results.compactMap(\.name)
 
             let expected = [
-                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.favoriteConversationLabel1.name!,
+                /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
                 Scaffolding.conversationLabel3.name!
             ]

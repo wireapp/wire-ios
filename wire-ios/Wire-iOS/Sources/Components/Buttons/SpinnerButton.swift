@@ -22,7 +22,7 @@ import WireReusableUIComponents
 
 extension UIColor {
     enum AlarmButton {
-        static let alarmRed = UIColor(rgb: 0xfb0807)
+        static let alarmRed = UIColor(rgb: 0xFB0807)
     }
 }
 
@@ -33,7 +33,8 @@ final class SpinnerButton: LegacyButton {
         let spinner = Spinner()
 
         // the spinner covers the text with alpha BG
-        spinner.backgroundColor = UIColor.from(scheme: .contentBackground).withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
+        spinner.backgroundColor = UIColor.from(scheme: .contentBackground)
+            .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
         spinner.color = UIColor.AlarmButton.alarmRed
         spinner.iconSize = CGFloat.SpinnerButton.iconSize
 
@@ -45,7 +46,8 @@ final class SpinnerButton: LegacyButton {
             spinner.trailingAnchor.constraint(equalTo: trailingAnchor),
             spinner.widthAnchor.constraint(equalToConstant: 48),
             spinner.topAnchor.constraint(equalTo: topAnchor),
-            spinner.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            spinner.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
 
         return spinner
     }()
@@ -78,8 +80,15 @@ final class SpinnerButton: LegacyButton {
         titleLabel.numberOfLines = 0
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: CGFloat.SpinnerButton.contentInset),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: CGFloat.SpinnerButton.contentInset)])
+            titleLabel.topAnchor.constraint(
+                greaterThanOrEqualTo: topAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            ),
+            titleLabel.leadingAnchor.constraint(
+                greaterThanOrEqualTo: leadingAnchor,
+                constant: CGFloat.SpinnerButton.contentInset
+            )
+        ])
     }
 
     /// custom full style with accent color for disabled state.
@@ -104,12 +113,11 @@ final class SpinnerButton: LegacyButton {
 
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
         states.forEach {
-            let color: UIColor
-            switch variant {
+            let color: UIColor = switch variant {
             case .dark:
-                color = .white
+                .white
             case .light:
-                color = UIColor.AlarmButton.alarmRed
+                UIColor.AlarmButton.alarmRed
             }
 
             setTitleColor(color, for: $0)
@@ -118,7 +126,8 @@ final class SpinnerButton: LegacyButton {
     }
 
     // MARK: - factory method
+
     static func alarmButton() -> SpinnerButton {
-        return SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
+        SpinnerButton(legacyStyle: .empty, cornerRadius: 6, fontSpec: .smallSemiboldFont)
     }
 }

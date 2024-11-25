@@ -79,13 +79,15 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Whether the message expects read confirmations.
     var needsReadConfirmation: Bool { get }
 
-    /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
+    /// The textMessageData of the message which also contains potential link previews. If the message has no text, it
+    /// will be nil
     var textMessageData: TextMessageData? { get }
 
     /// The image data associated with the message. If the message has no image, it will be nil
     var imageMessageData: ZMImageMessageData? { get }
 
-    /// The system message data associated with the message. If the message is not a system message data associated, it will be nil
+    /// The system message data associated with the message. If the message is not a system message data associated, it
+    /// will be nil
     var systemMessageData: ZMSystemMessageData? { get }
 
     /// The knock message data associated with the message. If the message is not a knock, it will be nil
@@ -113,7 +115,8 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var updatedAt: Date? { get }
 
     /// Starts the "self destruction" timer if all conditions are met
-    /// It checks internally if the message is ephemeral, if sender is the other user and if there is already an existing timer
+    /// It checks internally if the message is ephemeral, if sender is the other user and if there is already an
+    /// existing timer
     /// Returns YES if a timer was started by the message call
     func startSelfDestructionIfNeeded() -> Bool
 
@@ -125,14 +128,17 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Override this method in subclasses if needed
     var deletionTimeout: TimeInterval { get }
 
-    /// Returns true if the message is an ephemeral message that was sent by the selfUser and the obfuscation timer already fired
-    /// At this point the genericMessage content is already cleared. You should receive a notification that the content was cleared
+    /// Returns true if the message is an ephemeral message that was sent by the selfUser and the obfuscation timer
+    /// already fired
+    /// At this point the genericMessage content is already cleared. You should receive a notification that the content
+    /// was cleared
     var isObfuscated: Bool { get }
 
     /// Returns the date when a ephemeral message will be destructed or `nil` if th message is not ephemeral
     var destructionDate: Date? { get }
 
-    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the
+    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session
+    /// (since the
     /// app was restarted)
     var causedSecurityLevelDegradation: Bool { get }
 
@@ -187,33 +193,34 @@ public extension ZMConversationMessage {
     }
 }
 
-public extension Equatable where Self: ZMConversationMessage { }
+public extension Equatable where Self: ZMConversationMessage {}
 
 public func == (lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
-    return lhs.isEqual(rhs)
+    lhs.isEqual(rhs)
 }
 
 public func == (lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool {
     switch (lhs, rhs) {
     case (nil, nil):
-        return true
+        true
     case (_, nil):
-        return false
+        false
     case (nil, _):
-        return false
+        false
     case (_, _):
-        return lhs!.isEqual(rhs!)
+        lhs!.isEqual(rhs!)
     }
 }
 
 // MARK: - Conversation managed properties
-extension ZMMessage {
 
-    @NSManaged public var visibleInConversation: ZMConversation?
-    @NSManaged public var hiddenInConversation: ZMConversation?
+public extension ZMMessage {
 
-    public var conversation: ZMConversation? {
-        return self.visibleInConversation ?? self.hiddenInConversation
+    @NSManaged var visibleInConversation: ZMConversation?
+    @NSManaged var hiddenInConversation: ZMConversation?
+
+    var conversation: ZMConversation? {
+        visibleInConversation ?? hiddenInConversation
     }
 }
 
@@ -221,11 +228,11 @@ extension ZMMessage {
 
 extension ZMMessage: ZMConversationMessage {
     public var conversationLike: ConversationLike? {
-        return conversation
+        conversation
     }
 
     public var senderUser: UserType? {
-        return sender
+        sender
     }
 
     @NSManaged public var linkAttachments: [LinkAttachment]?
@@ -239,43 +246,47 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var objectIdentifier: String {
-        return nonpersistedObjectIdentifer
+        nonpersistedObjectIdentifer
     }
 
     public var causedSecurityLevelDegradation: Bool {
-        return false
+        false
     }
 
     public var canBeMarkedUnread: Bool {
-        guard self.isNormal,
-              self.serverTimestamp != nil,
-              self.conversation != nil,
-              let sender = self.sender,
+        guard isNormal,
+              serverTimestamp != nil,
+              conversation != nil,
+              let sender,
               !sender.isSelfUser else {
-                  return false
-              }
+            return false
+        }
 
         return true
     }
 
     public func markAsUnread() {
         guard canBeMarkedUnread,
-              let serverTimestamp = self.serverTimestamp,
-              let conversation = self.conversation,
-              let managedObjectContext = self.managedObjectContext,
+              let serverTimestamp,
+              let conversation,
+              let managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
 
-                  zmLog.error("Cannot mark as unread message outside of the conversation.")
-                  return
-              }
+            zmLog.error("Cannot mark as unread message outside of the conversation.")
+            return
+        }
         let conversationID = conversation.objectID
 
         conversation.lastReadServerTimeStamp = Date(timeInterval: -0.01, since: serverTimestamp)
         managedObjectContext.saveOrRollback()
 
         syncContext.performGroupedBlock {
-            guard let syncObject = try? syncContext.existingObject(with: conversationID), let syncConversation = syncObject as? ZMConversation else {
-                zmLog.error("Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched.")
+            guard let syncObject = try? syncContext.existingObject(with: conversationID),
+                  let syncConversation = syncObject as? ZMConversation else {
+                zmLog
+                    .error(
+                        "Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched."
+                    )
                 return
             }
 
@@ -285,13 +296,13 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var isSilenced: Bool {
-        return conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
+        conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
     }
 
     public var isRestricted: Bool {
         guard
-            self.isFile || self.isImage,
-            let managedObjectContext = self.managedObjectContext
+            isFile || isImage,
+            let managedObjectContext
         else { return false }
 
         let featureRepository = FeatureRepository(context: managedObjectContext)
@@ -302,46 +313,46 @@ extension ZMMessage: ZMConversationMessage {
 
 }
 
-extension ZMMessage {
+public extension ZMMessage {
 
-    @NSManaged public var sender: ZMUser?
-    @NSManaged public var serverTimestamp: Date?
+    @NSManaged var sender: ZMUser?
+    @NSManaged var serverTimestamp: Date?
 
-    @objc public var textMessageData: TextMessageData? {
-        return nil
+    @objc var textMessageData: TextMessageData? {
+        nil
     }
 
-    @objc public var imageMessageData: ZMImageMessageData? {
-        return nil
+    @objc var imageMessageData: ZMImageMessageData? {
+        nil
     }
 
-    @objc public var knockMessageData: ZMKnockMessageData? {
-        return nil
+    @objc var knockMessageData: ZMKnockMessageData? {
+        nil
     }
 
-    @objc public var systemMessageData: ZMSystemMessageData? {
-        return nil
+    @objc var systemMessageData: ZMSystemMessageData? {
+        nil
     }
 
-    @objc public var fileMessageData: ZMFileMessageData? {
-        return nil
+    @objc var fileMessageData: ZMFileMessageData? {
+        nil
     }
 
-    @objc public var locationMessageData: LocationMessageData? {
-        return nil
+    @objc var locationMessageData: LocationMessageData? {
+        nil
     }
 
-    @objc public var isSent: Bool {
-        return true
+    @objc var isSent: Bool {
+        true
     }
 
-    @objc public var deliveryState: ZMDeliveryState {
-        return .delivered
+    @objc var deliveryState: ZMDeliveryState {
+        .delivered
     }
 
-    @objc public var reactionData: Set<ReactionData> {
+    @objc var reactionData: Set<ReactionData> {
         var result = Set<ReactionData>()
-        for reaction in reactions where reaction.users.count > 0 {
+        for reaction in reactions where !reaction.users.isEmpty {
             result.insert(
                 ReactionData(
                     reactionString: reaction.unicodeValue!,
@@ -353,49 +364,52 @@ extension ZMMessage {
         return result
     }
 
-    @objc public var usersReaction: [String: [UserType]] {
-        return Array(reactionData)
+    @objc var usersReaction: [String: [UserType]] {
+        Array(reactionData)
             .partition(by: \.reactionString)
-            .mapValues { $0.flatMap { $0.users } }
+            .mapValues { $0.flatMap(\.users) }
     }
 
-    @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
-        return self.reactionData.sorted {
-            return $0.creationDate < $1.creationDate
+    @objc
+    func reactionsSortedByCreationDate() -> [ReactionData] {
+        reactionData.sorted {
+            $0.creationDate < $1.creationDate
         }
     }
 
-    @objc public var canBeDeleted: Bool {
-        return deliveryState != .pending
+    @objc var canBeDeleted: Bool {
+        deliveryState != .pending
     }
 
-    @objc public var hasBeenDeleted: Bool {
-        return isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
+    @objc var hasBeenDeleted: Bool {
+        isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
     }
 
-    @objc public var updatedAt: Date? {
-        return nil
+    @objc var updatedAt: Date? {
+        nil
     }
 
-    @objc public func startSelfDestructionIfNeeded() -> Bool {
-        if !isZombieObject && isEphemeral, let sender, !sender.isSelfUser {
+    @objc
+    func startSelfDestructionIfNeeded() -> Bool {
+        if !isZombieObject, isEphemeral, let sender, !sender.isSelfUser {
             return startDestructionIfNeeded()
         }
         return false
     }
 
-    @objc public var isEphemeral: Bool {
-        return false
+    @objc var isEphemeral: Bool {
+        false
     }
 
-    @objc public var deletionTimeout: TimeInterval {
-        return -1
+    @objc var deletionTimeout: TimeInterval {
+        -1
     }
 }
 
 // MARK: - Message send failure properties
-extension ZMMessage {
 
-    @NSManaged public var failedToSendRecipients: Set<ZMUser>?
+public extension ZMMessage {
+
+    @NSManaged var failedToSendRecipients: Set<ZMUser>?
 
 }

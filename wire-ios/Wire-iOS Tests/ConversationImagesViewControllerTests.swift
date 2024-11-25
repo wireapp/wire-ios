@@ -42,10 +42,16 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     private var sut: ConversationImagesViewController! = nil
     private var navigatorController: UINavigationController! = nil
     private var userSession: UserSessionMock!
+    private var mockMainCoordinator: AnyMainCoordinator!
 
     override var needsCaches: Bool { true }
 
     // MARK: - setUp
+
+    @MainActor
+    override func setUp() async throws {
+        mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
+    }
 
     override func setUp() {
         super.setUp()
@@ -54,10 +60,10 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
 
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let initialMessage = try! otherUserConversation.appendImage(from: image.imageData!)
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
-        let collection = MockCollection(messages: [ imagesCategoryMatch: [initialMessage] ])
+        let collection = MockCollection(messages: [imagesCategoryMatch: [initialMessage]])
         let delegate = AssetCollectionMulticastDelegate()
 
         let assetWrapper = AssetCollectionWrapper(
@@ -72,7 +78,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             initialMessage: initialMessage,
             inverse: true,
             userSession: userSession,
-            mainCoordinator: .mock
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol()
         )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
@@ -85,6 +92,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -105,7 +113,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCorrectToolbarForImage_Ephemeral() {
         // GIVEN & WHEN
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.isEphemeral = true
         sut.currentMessage = message
@@ -125,7 +133,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     func testThatToolBarIsUpdateAfterScollToAnEphemeralImage() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.isEphemeral = false
         sut.currentMessage = message
@@ -136,13 +144,25 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // THEN
         XCTAssertEqual(
             sut.buttonsBar.buttons.map(\.accessibilityLabel),
-            ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
+            [
+                "Sketch over picture",
+                "Sketch emoji over picture",
+                "Copy picture",
+                "Save picture",
+                "Reveal in conversation",
+                "Delete picture"
+            ]
         )
-        print(sut.buttonsBar.buttons.map { $0.accessibilityLabel })
+        print(sut.buttonsBar.buttons.map(\.accessibilityLabel))
 
         // WHEN
         message.isEphemeral = true
-        sut.pageViewController(UIPageViewController(), didFinishAnimating: true, previousViewControllers: [], transitionCompleted: true)
+        sut.pageViewController(
+            UIPageViewController(),
+            didFinishAnimating: true,
+            previousViewControllers: [],
+            transitionCompleted: true
+        )
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)

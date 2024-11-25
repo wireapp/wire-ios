@@ -22,7 +22,7 @@ import UserNotifications
 @objc(ZMUserNotificationCenterMock)
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
-    weak public var delegate: UNUserNotificationCenterDelegate?
+    public weak var delegate: UNUserNotificationCenterDelegate?
 
     /// Identifiers of scheduled notification requests.
     @objc public var scheduledRequests = [UNNotificationRequest]()
@@ -55,7 +55,10 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
     }
 
     @available(*, noasync)
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+    public func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    ) {
         requestedAuthorizationOptions.insert(options)
         completionHandler(true, nil)
     }
@@ -65,7 +68,10 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
     }
 
     @available(*, noasync)
-    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
+    public func add(
+        _ request: UNNotificationRequest,
+        withCompletionHandler completionHandler: (((any Error)?) -> Void)?
+    ) {
         scheduledRequests.append(request)
     }
 

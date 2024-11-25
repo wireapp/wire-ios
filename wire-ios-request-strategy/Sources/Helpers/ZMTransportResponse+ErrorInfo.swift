@@ -21,7 +21,7 @@ import Foundation
 public extension ZMTransportResponse {
 
     var errorInfo: (status: Int, label: String, message: String) {
-        let payload = self.payload?.asDictionary()
+        let payload = payload?.asDictionary()
         let label = payload?["label"] as? String
         let message = payload?["message"] as? String
         return (httpStatus, label ?? "?", message ?? "?")

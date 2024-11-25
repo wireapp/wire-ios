@@ -29,7 +29,11 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     var downloadLinkPreviewsCallCount: Int = 0
     var excludedRanges: [NSRange] = []
 
-    func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
+    func downloadLinkPreviews(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkMetadata]) -> Void
+    ) {
         downloadLinkPreviewsCallCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -56,7 +60,12 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func createMessage(text: String = "text message 123", mentions: [Mention] = [], state: ZMLinkPreviewState = .waitingToBeProcessed, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(
+        text: String = "text message 123",
+        mentions: [Mention] = [],
+        state: ZMLinkPreviewState = .waitingToBeProcessed,
+        isEphemeral: Bool = false
+    ) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -67,8 +76,12 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
         return message
     }
 
-    func assertThatItProcessesMessageWithLinkPreviewState(_ state: ZMLinkPreviewState, shouldProcess: Bool = false, line: UInt = #line) {
-        self.syncMOC.performGroupedAndWait {
+    func assertThatItProcessesMessageWithLinkPreviewState(
+        _ state: ZMLinkPreviewState,
+        shouldProcess: Bool = false,
+        line: UInt = #line
+    ) {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = self.createMessage(state: state)
 
@@ -76,10 +89,15 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             let callCount: Int = shouldProcess ? 1 : 0
-            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, callCount, "Failure processing state \(state.rawValue)", line: line)
+            XCTAssertEqual(
+                self.mockDetector.downloadLinkPreviewsCallCount,
+                callCount,
+                "Failure processing state \(state.rawValue)",
+                line: line
+            )
         }
     }
 }
@@ -95,10 +113,15 @@ extension LinkPreviewPreprocessorTests {
     func testThatItStoresTheOriginalImageDataInTheCacheAndSetsTheStateToDownloadedWhenItReceivesAPreviewWithImage() {
         var message: ZMClientMessage!
         var preview: LinkMetadata!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -108,7 +131,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
@@ -122,18 +145,23 @@ extension LinkPreviewPreprocessorTests {
     func testThatItSetsTheStateToUploadedWhenItReceivesAPreviewWithoutImage() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let URL = "http://www.example.com"
-            self.mockDetector.nextResult = [LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
+            self.mockDetector.nextResult = [LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )]
             message = self.createMessage()
 
             // WHEN
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
@@ -146,7 +174,7 @@ extension LinkPreviewPreprocessorTests {
 
     func testThatItSetsTheStateToDoneIfNoPreviewsAreReturned() {
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             message = self.createMessage()
@@ -155,7 +183,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
@@ -165,7 +193,7 @@ extension LinkPreviewPreprocessorTests {
     func testThatItSetsTheStateToDoneIfTheMessageDoesNotHaveTextMessageData() {
         var message: ZMClientMessage!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -181,7 +209,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
         }
@@ -191,7 +219,10 @@ extension LinkPreviewPreprocessorTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let text = "@john - www.sunet.se hello"
-            let message = self.createMessage(text: text, mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)])
+            let message = self.createMessage(
+                text: text,
+                mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)]
+            )
 
             // WHEN
             self.sut.processMessage(message)
@@ -231,16 +262,22 @@ extension LinkPreviewPreprocessorTests {
 }
 
 // MARK: - Ephemeral
+
 extension LinkPreviewPreprocessorTests {
 
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral() {
         var message: ZMClientMessage!
         var preview: LinkMetadata!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -251,7 +288,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
@@ -267,11 +304,16 @@ extension LinkPreviewPreprocessorTests {
 
     func testThatItDoesNotUpdateMessageWhenMessageHasBeenObfuscatedAndSetsPreviewStateToDone() {
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
 
             // GIVEN
             let URL = "http://www.example.com"
-            let preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            let preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -283,7 +325,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.objectsDidChange([message])
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
             if case .ephemeral? = genericMessage.content {

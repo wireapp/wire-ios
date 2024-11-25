@@ -255,6 +255,24 @@ public protocol UserSession: AnyObject {
 
     func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
+    func makeAppendTextMessageUseCase() -> any AppendTextMessageUseCaseProtocol
+
+    func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol
+
+    func makeAppendKnockMessageUseCase() -> any AppendKnockMessageUseCaseProtocol
+
+    func makeAppendLocationMessageUseCase() -> any AppendLocationMessagekUseCaseProtocol
+
+    func makeAppendFileMessageUseCase() -> any AppendFileMessageUseCaseProtocol
+
+    func makeToggleMessageReactionUseCase() -> any ToggleMessageReactionUseCaseProtocol
+
+    func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol
+
+    func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase
+
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
+
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?

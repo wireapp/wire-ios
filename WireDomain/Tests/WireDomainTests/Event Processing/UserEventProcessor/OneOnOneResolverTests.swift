@@ -19,9 +19,9 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class OneOnOneResolverTests: XCTestCase {
 
@@ -344,11 +344,12 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsOneOnOneConversation: ZMConversation,
         mlsConversationExists: Bool = false
     ) {
-        userRepository.fetchUserWithDomain_MockValue = user
+        userRepository.fetchUserIdDomain_MockValue = user
         userRepository.fetchSelfUser_MockValue = selfUser
 
-        conversationsRepository.pullMLSOneToOneConversationUserIDDomain_MockValue = Scaffolding.conversationID.uuidString
-        conversationsRepository.fetchMLSConversationWith_MockValue = mlsOneOnOneConversation
+        conversationsRepository.pullMLSOneToOneConversationUserIDUserDomain_MockValue = Scaffolding.conversationID
+            .uuidString
+        conversationsRepository.fetchMLSConversationGroupID_MockValue = mlsOneOnOneConversation
 
         mlsService.establishGroupForWithRemovalKeys_MockValue = Scaffolding.ciphersuite
         mlsService.conversationExistsGroupID_MockValue = mlsConversationExists
@@ -363,9 +364,11 @@ final class OneOnOneResolverTests: XCTestCase {
         )
         static let conversationID = UUID()
 
-        static let base64EncodedString = "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+        static let base64EncodedString =
+            "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
 
-        nonisolated(unsafe) static let ciphersuite = WireDataModel.MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        nonisolated(unsafe) static let ciphersuite = WireDataModel.MLSCipherSuite
+            .MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
         nonisolated(unsafe) static let mlsGroupID = WireDataModel.MLSGroupID(
             base64Encoded: base64EncodedString

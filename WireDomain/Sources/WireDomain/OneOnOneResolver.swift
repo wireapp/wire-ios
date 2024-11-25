@@ -71,7 +71,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
 
     public func invoke() async throws {
         switch target {
-        case .user(let id):
+        case let .user(id):
             try await resolveOneOnOneConversation(with: id.toDomainModel())
         case .allUsers:
             // TODO: [WPB-10727] resolve all users 1:1 conversations
@@ -85,7 +85,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userRepository.fetchUser(
-            with: userID.uuid,
+            id: userID.uuid,
             domain: userID.domain
         )
 
@@ -126,11 +126,13 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         /// Sync the user MLS conversation from backend.
         let mlsGroupID = try await conversationsRepository.pullMLSOneToOneConversation(
             userID: userID.uuid.uuidString,
-            domain: userID.domain
+            userDomain: userID.domain
         )
 
         /// Then, fetch the synced MLS conversation.
-        let mlsConversation = await conversationsRepository.fetchMLSConversation(with: mlsGroupID)
+        let mlsConversation = await conversationsRepository.fetchMLSConversation(
+            groupID: mlsGroupID
+        )
 
         let localMLSGroupID = await context.perform {
             mlsConversation?.mlsGroupID

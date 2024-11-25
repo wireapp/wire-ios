@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension XCTestCase {
+public extension XCTestCase {
 
-    public func waitForGroupsToBeEmpty(_ groups: [DispatchGroup], timeout: TimeInterval = 5) -> Bool {
+    func waitForGroupsToBeEmpty(_ groups: [DispatchGroup], timeout: TimeInterval = 5) -> Bool {
 
         let timeoutDate = Date(timeIntervalSinceNow: timeout)
         var groupCounter = groups.count
@@ -31,7 +31,7 @@ extension XCTestCase {
             })
         }
 
-        while groupCounter > 0 && timeoutDate.timeIntervalSinceNow > 0 {
+        while groupCounter > 0, timeoutDate.timeIntervalSinceNow > 0 {
             if !RunLoop.current.run(mode: .default, before: Date(timeIntervalSinceNow: 0.002)) {
                 Thread.sleep(forTimeInterval: 0.002)
             }
@@ -40,20 +40,20 @@ extension XCTestCase {
         return groupCounter == 0
     }
 
-    public func createTempFolder() -> URL {
+    func createTempFolder() -> URL {
         let url = URL(fileURLWithPath: [NSTemporaryDirectory(), UUID().uuidString].joined(separator: "/"))
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         return url
     }
 
-    public typealias AsyncThrowingBlock = () async throws -> Void
-    public typealias ThrowingBlock = () throws -> Void
-    public typealias EquatableError = Error & Equatable
+    typealias AsyncThrowingBlock = () async throws -> Void
+    typealias ThrowingBlock = () throws -> Void
+    typealias EquatableError = Equatable & Error
 
-    public func assertItThrows<T: EquatableError>(
-        error expectedError: T,
+    func assertItThrows(
+        error expectedError: some EquatableError,
         block: AsyncThrowingBlock,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
         do {
@@ -73,10 +73,10 @@ extension XCTestCase {
         }
     }
 
-    public func assertItThrows<T: EquatableError>(
-        error expectedError: T,
+    func assertItThrows(
+        error expectedError: some EquatableError,
         block: ThrowingBlock,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertThrowsError(try block(), file: file, line: line) { error in
@@ -89,10 +89,10 @@ extension XCTestCase {
         }
     }
 
-    public func assertError<T: EquatableError>(
+    func assertError<T: EquatableError>(
         _ error: Error,
         equals expectedError: T,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard let error = error as? T else {
@@ -111,14 +111,14 @@ extension XCTestCase {
         )
     }
 
-    public func assertMethodCompletesWithError<Success, Error: EquatableError>(
+    func assertMethodCompletesWithError<Success, Error: EquatableError>(
         _ expectedError: Error,
         method: (@escaping (Result<Success, Error>) -> Void) -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         assertMethodCompletesWithValidation(method: method) { result in
-            guard case .failure(let error) = result else {
+            guard case let .failure(error) = result else {
                 return XCTFail("expected failure", file: file, line: line)
             }
 
@@ -131,9 +131,9 @@ extension XCTestCase {
         }
     }
 
-    public func assertMethodCompletesWithSuccess<Success, Error: EquatableError>(
+    func assertMethodCompletesWithSuccess<Success, Error: EquatableError>(
         method: (@escaping (Result<Success, Error>) -> Void) -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         assertMethodCompletesWithValidation(method: method, validation: { result in
@@ -143,7 +143,7 @@ extension XCTestCase {
         })
     }
 
-    public func assertMethodCompletesWithValidation<Success, Error: EquatableError>(
+    func assertMethodCompletesWithValidation<Success, Error: EquatableError>(
         method: (@escaping (Result<Success, Error>) -> Void) -> Void,
         validation: @escaping (Result<Success, Error>) -> Void
     ) {
@@ -159,30 +159,32 @@ extension XCTestCase {
         wait(for: [expectation], timeout: 0.5)
     }
 
-    public func assertSuccess<Value, Failure>(
-        result: Result<Value, Failure>,
+    func assertSuccess<Failure>(
+        result: Result<some Any, Failure>,
         message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) " },
         file: StaticString = #filePath,
-        line: UInt = #line) {
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                XCTFail(message(error), file: file, line: line)
-            }
+        line: UInt = #line
+    ) {
+        switch result {
+        case .success:
+            break
+        case let .failure(error):
+            XCTFail(message(error), file: file, line: line)
         }
+    }
 
-    public func assertFailure<Value, Failure: Equatable>(
-        result: Result<Value, Failure>,
+    func assertFailure<Failure: Equatable>(
+        result: Result<some Any, Failure>,
         expectedFailure: Failure,
         file: StaticString = #filePath,
-        line: UInt = #line) {
-            switch result {
-            case .success:
-                XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
-            case .failure(let failure):
-                XCTAssertEqual(expectedFailure, failure, file: file, line: line)
-            }
+        line: UInt = #line
+    ) {
+        switch result {
+        case .success:
+            XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
+        case let .failure(failure):
+            XCTAssertEqual(expectedFailure, failure, file: file, line: line)
         }
+    }
 
 }

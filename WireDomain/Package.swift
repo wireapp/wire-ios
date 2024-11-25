@@ -12,7 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../SourceryPlugin"),
+        .package(path: "../WirePlugins"),
         .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
@@ -27,7 +27,7 @@ let package = Package(
             dependencies: ["WireDomainPkg"],
             path: "./Sources/PackageSupport",
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(

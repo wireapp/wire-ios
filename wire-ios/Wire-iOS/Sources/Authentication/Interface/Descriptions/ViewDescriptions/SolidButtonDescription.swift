@@ -19,9 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-/**
- * A view that displays a solid button.
- */
+/// A view that displays a solid button.
 
 final class SolidButtonDescription: ValueSubmission {
     let title: String
@@ -48,7 +46,7 @@ extension SolidButtonDescription: ViewDescriptor {
         button.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title, for: .normal)
-        button.accessibilityIdentifier = self.accessibilityIdentifier
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(SolidButtonDescription.buttonTapped(_:)), for: .touchUpInside)
 
         let buttonContainer = UIView()
@@ -66,7 +64,8 @@ extension SolidButtonDescription: ViewDescriptor {
         return buttonContainer
     }
 
-    @objc dynamic func buttonTapped(_ sender: UIButton) {
+    @objc
+    dynamic func buttonTapped(_ sender: UIButton) {
         valueSubmitted?(())
     }
 }

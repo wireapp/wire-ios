@@ -33,12 +33,10 @@ protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
     func synchronize(key: String, for object: Object, completion: @escaping () -> Void)
 }
 
-/**
- ModifiedKeyObjectSync synchronizes an object when a given property has been modified on
- the object.
-
- This only works for core data entities which inherit from `ZMManagedObject`.
- */
+/// ModifiedKeyObjectSync synchronizes an object when a given property has been modified on
+/// the object.
+///
+/// This only works for core data entities which inherit from `ZMManagedObject`.
 class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
 
     let trackedKey: String
@@ -51,29 +49,31 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
     ///   - trackedKey: Key / property which should synchchronized when modified.
     ///   - modifiedPredicate: Predicate which determine if an object has been modified or not. If omitted
     ///                        an object is considered modified in all cases when the tracked key has been changed.
-    init(trackedKey: String,
-         modifiedPredicate: NSPredicate? = nil) {
+    init(
+        trackedKey: String,
+        modifiedPredicate: NSPredicate? = nil
+    ) {
         self.trackedKey = trackedKey
         self.modifiedPredicate = modifiedPredicate
     }
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
-        let modifiedObjects = trackedObjects.filter({ modifiedPredicate?.evaluate(with: $0) ?? true })
+        let trackedObjects = objects.compactMap { $0 as? Transcoder.Object }
+        let modifiedObjects = trackedObjects.filter { modifiedPredicate?.evaluate(with: $0) ?? true }
 
         addModifiedObjects(modifiedObjects)
     }
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         if let modifiedPredicate {
-            return Transcoder.Object.sortedFetchRequest(with: modifiedPredicate)
+            Transcoder.Object.sortedFetchRequest(with: modifiedPredicate)
         } else {
-            return Transcoder.Object.sortedFetchRequest()
+            Transcoder.Object.sortedFetchRequest()
         }
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
+        let trackedObjects = objects.compactMap { $0 as? Transcoder.Object }
 
         addModifiedObjects(trackedObjects)
     }

@@ -22,13 +22,15 @@ extension ZMUpdateEvent {
 
     // MARK: MLS Message Events
 
-    /// Creates a new instance of `ZMUpdateEvent` replacing the encrypted event data with the decrypted data passed as parameter
-    /// - Parameter decryptedData: data representing the decrypted value of the update event data. Must have been decrypted with core crypto
+    /// Creates a new instance of `ZMUpdateEvent` replacing the encrypted event data with the decrypted data passed as
+    /// parameter
+    /// - Parameter decryptedData: data representing the decrypted value of the update event data. Must have been
+    /// decrypted with core crypto
     /// - Returns: a version of `self` with a payload containing the decrypted data
     func decryptedMLSEvent(decryptedData: Data, senderClientID: String?) -> ZMUpdateEvent? {
         assert(type == .conversationMLSMessageAdd, "decrypting wrong type of event")
 
-        guard var payload = self.payload as? [String: Any] else {
+        guard var payload = payload as? [String: Any] else {
             return nil
         }
 
@@ -48,17 +50,17 @@ extension ZMUpdateEvent {
     /// in its payload and wrapping the payload in a new updateEvent
     func decryptedEvent(decryptedData: Data) -> ZMUpdateEvent? {
         guard
-            var payload = self.payload as? [String: Any],
+            var payload = payload as? [String: Any],
             var eventData = payload["data"] as? [String: Any]
         else {
             return nil
         }
 
-        if self.type == .conversationOtrMessageAdd, let wrappedData = eventData["data"] as? String {
+        if type == .conversationOtrMessageAdd, let wrappedData = eventData["data"] as? String {
             payload["external"] = wrappedData
         }
 
-        eventData[self.plaintextPayloadKey] = decryptedData.base64String()
+        eventData[plaintextPayloadKey] = decryptedData.base64String()
         payload["data"] = eventData
 
         return decryptedEvent(payload: payload)
@@ -66,11 +68,11 @@ extension ZMUpdateEvent {
 
     /// Payload dictionary key that holds the plaintext (protobuf) data
     private var plaintextPayloadKey: String {
-        switch self.type {
+        switch type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
-            return "text"
+            "text"
         case .conversationOtrAssetAdd:
-            return "info"
+            "info"
         default:
             fatal("Decrypting wrong type of event")
         }
@@ -79,9 +81,14 @@ extension ZMUpdateEvent {
     // MARK: - Helpers
 
     private func decryptedEvent(payload: [String: Any]) -> ZMUpdateEvent? {
-        let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: uuid, transient: false, source: source)
+        let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
+            fromEventStreamPayload: payload as NSDictionary,
+            uuid: uuid,
+            transient: false,
+            source: source
+        )
 
-        if !self.debugInformation.isEmpty {
+        if !debugInformation.isEmpty {
             decryptedEvent?.appendDebugInformation(debugInformation)
         }
 

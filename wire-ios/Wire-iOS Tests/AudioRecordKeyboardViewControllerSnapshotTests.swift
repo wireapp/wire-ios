@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
@@ -31,9 +31,9 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.mockUserSession = UserSessionMock()
-        self.mockAudioRecorder = MockAudioRecorder()
-        self.sut = AudioRecordKeyboardViewController(
+        mockUserSession = UserSessionMock()
+        mockAudioRecorder = MockAudioRecorder()
+        sut = AudioRecordKeyboardViewController(
             audioRecorder: mockAudioRecorder,
             userSession: mockUserSession
         )

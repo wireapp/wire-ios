@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class ConversationTests_Join: ConversationTestsBase {
 
@@ -28,24 +28,29 @@ class ConversationTests_Join: ConversationTestsBase {
         XCTAssert(login())
 
         // Convert MockUser -> ZMUser
-        let selfUser_zmUser = user(for: self.selfUser)!
+        let selfUser_zmUser = user(for: selfUser)!
 
         // WHEN
         // Key value doesn't affect the test result
-        ZMConversation.join(key: "test-key",
-                            code: "test-code",
-                            transportSession: userSession!.transportSession,
-                            eventProcessor: userSession!.updateEventProcessor!,
-                            contextProvider: userSession!.coreDataStack,
-                            completion: { result in
-                                // THEN
-                                if case .success(let conversation) = result {
-                                    XCTAssertNotNil(conversation)
-                                    XCTAssertTrue(conversation.localParticipants.map(\.remoteIdentifier).contains(selfUser_zmUser.remoteIdentifier))
-                                } else {
-                                    XCTFail()
-                                }
-                            })
+        ZMConversation.join(
+            key: "test-key",
+            code: "test-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack,
+            completion: { result in
+                // THEN
+                if case let .success(conversation) = result {
+                    XCTAssertNotNil(conversation)
+                    XCTAssertTrue(
+                        conversation.localParticipants.map(\.remoteIdentifier)
+                            .contains(selfUser_zmUser.remoteIdentifier)
+                    )
+                } else {
+                    XCTFail()
+                }
+            }
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -56,20 +61,22 @@ class ConversationTests_Join: ConversationTestsBase {
         // WHEN
         let conversationJoiningFailed = expectation(description: "Failed to join the conversation")
         // Key value doesn't affect the test result
-        ZMConversation.join(key: "test-key",
-                            code: "wrong-code",
-                            transportSession: userSession!.transportSession,
-                            eventProcessor: userSession!.updateEventProcessor!,
-                            contextProvider: userSession!.coreDataStack,
-                            completion: { result in
-                                // THEN
-                                if case .failure(let error) = result {
-                                    XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.invalidCode)
-                                    conversationJoiningFailed.fulfill()
-                                } else {
-                                    XCTFail()
-                                }
-                            })
+        ZMConversation.join(
+            key: "test-key",
+            code: "wrong-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack,
+            completion: { result in
+                // THEN
+                if case let .failure(error) = result {
+                    XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.invalidCode)
+                    conversationJoiningFailed.fulfill()
+                } else {
+                    XCTFail()
+                }
+            }
+        )
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5, handler: nil))
     }
 
@@ -80,20 +87,22 @@ class ConversationTests_Join: ConversationTestsBase {
         // WHEN
         let userIsParticipant = expectation(description: "The user was already a participant in the conversation")
         // Key value doesn't affect the test result
-        ZMConversation.join(key: "test-key",
-                            code: "existing-conversation-code",
-                            transportSession: userSession!.transportSession,
-                            eventProcessor: userSession!.updateEventProcessor!,
-                            contextProvider: userSession!.coreDataStack,
-                            completion: { result  in
-                                // THEN
-                                if case .failure(let error) = result {
-                                    XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.unknown)
-                                    userIsParticipant.fulfill()
-                                } else {
-                                    XCTFail()
-                                }
-                            })
+        ZMConversation.join(
+            key: "test-key",
+            code: "existing-conversation-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack,
+            completion: { result  in
+                // THEN
+                if case let .failure(error) = result {
+                    XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.unknown)
+                    userIsParticipant.fulfill()
+                } else {
+                    XCTFail()
+                }
+            }
+        )
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
@@ -106,13 +115,15 @@ class ConversationTests_Join: ConversationTestsBase {
 
         // WHEN
         // Key value doesn't affect the test result
-        ZMConversation.fetchIdAndName(key: "test-key",
-                                      code: "existing-conversation-code",
-                                      transportSession: userSession!.transportSession,
-                                      eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { result in
+        ZMConversation.fetchIdAndName(
+            key: "test-key",
+            code: "existing-conversation-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack
+        ) { result in
             // THEN
-            if case .success((let conversationID, let conversationName)) = result {
+            if case let .success((conversationID, conversationName)) = result {
                 XCTAssertNotNil(conversationID)
                 XCTAssertNotNil(conversationName)
                 let conversation = ZMConversation.fetch(with: conversationID, in: viewContext)
@@ -131,13 +142,15 @@ class ConversationTests_Join: ConversationTestsBase {
 
         // WHEN
         // Key value doesn't affect the test result
-        ZMConversation.fetchIdAndName(key: "test-key",
-                                      code: "test-code",
-                                      transportSession: userSession!.transportSession,
-                                      eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { result in
+        ZMConversation.fetchIdAndName(
+            key: "test-key",
+            code: "test-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack
+        ) { result in
             // THEN
-            if case .success((let conversationID, let conversationName)) = result {
+            if case let .success((conversationID, conversationName)) = result {
                 XCTAssertNotNil(conversationID)
                 XCTAssertNotNil(conversationName)
                 let conversation = ZMConversation.fetch(with: conversationID, in: viewContext)
@@ -156,13 +169,15 @@ class ConversationTests_Join: ConversationTestsBase {
         // WHEN
         let conversationFetchingFailed = expectation(description: "Failed to fetch the conversation")
         // Key value doesn't affect the test result
-        ZMConversation.fetchIdAndName(key: "test-key",
-                                      code: "wrong-code",
-                                      transportSession: userSession!.transportSession,
-                                      eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { result in
+        ZMConversation.fetchIdAndName(
+            key: "test-key",
+            code: "wrong-code",
+            transportSession: userSession!.transportSession,
+            eventProcessor: userSession!.updateEventProcessor!,
+            contextProvider: userSession!.coreDataStack
+        ) { result in
             // THEN
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 XCTAssertEqual(error as! ConversationFetchError, ConversationFetchError.invalidCode)
                 conversationFetchingFailed.fulfill()
             } else {

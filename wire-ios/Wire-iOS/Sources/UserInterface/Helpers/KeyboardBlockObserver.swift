@@ -22,7 +22,9 @@ final class KeyboardBlockObserver: NSObject {
 
     struct ChangeInfo {
         enum Kind {
-            case show, hide, change
+            case show
+            case hide
+            case change
         }
 
         let frame: CGRect
@@ -33,24 +35,27 @@ final class KeyboardBlockObserver: NSObject {
         init?(_ note: Notification, kind: Kind) {
             guard let info = note.userInfo else { return nil }
             guard let endFrameValue = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-                let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return nil }
-            frame = endFrameValue
-            animationDuration = duration
+                  let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+            else { return nil }
+            self.frame = endFrameValue
+            self.animationDuration = duration
             self.kind = kind
 
             if let beginFrameValue = (info[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
                 // Keyboard is collapsed if init height is 0 or its is out of the screen bound
                 if endFrameValue.height == 0 ||
                     endFrameValue.minY >= UIScreen.main.bounds.maxY ||
-                    (endFrameValue == beginFrameValue &&
-                     beginFrameValue.maxY > UIScreen.main.bounds.maxY &&
-                     beginFrameValue.origin.y == UIScreen.main.bounds.maxY) {
-                    isKeyboardCollapsed = true
+                    (
+                        endFrameValue == beginFrameValue &&
+                            beginFrameValue.maxY > UIScreen.main.bounds.maxY &&
+                            beginFrameValue.origin.y == UIScreen.main.bounds.maxY
+                    ) {
+                    self.isKeyboardCollapsed = true
                 } else {
-                    isKeyboardCollapsed = beginFrameValue.height > endFrameValue.height && kind == .hide
+                    self.isKeyboardCollapsed = beginFrameValue.height > endFrameValue.height && kind == .hide
                 }
             } else {
-                isKeyboardCollapsed = nil
+                self.isKeyboardCollapsed = nil
             }
         }
     }
@@ -68,20 +73,38 @@ final class KeyboardBlockObserver: NSObject {
     private func registerKeyboardObservers() {
         let center = NotificationCenter.default
 
-        center.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        center.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        center.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        center.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        center.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+        center.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
-    @objc private func keyboardWillShow(_ note: Notification) {
+    @objc
+    private func keyboardWillShow(_ note: Notification) {
         ChangeInfo(note, kind: .show).map(changeBlock)
     }
 
-    @objc private func keyboardWillHide(_ note: Notification) {
+    @objc
+    private func keyboardWillHide(_ note: Notification) {
         ChangeInfo(note, kind: .hide).map(changeBlock)
     }
 
-    @objc private func keyboardWillChangeFrame(_ note: Notification) {
+    @objc
+    private func keyboardWillChangeFrame(_ note: Notification) {
         ChangeInfo(note, kind: .change).map(changeBlock)
     }
 }

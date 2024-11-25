@@ -73,7 +73,12 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
 
         // When
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -90,7 +95,12 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request created") }
 
         // When
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -116,14 +126,13 @@ extension AssetDeletionRequestStrategyTests {
         let request = sut.nextRequest(for: apiVersion)
 
         // Then
-        let expectedPath: String
-        switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
-            expectedPath = "/assets/v3/\(identifier)"
+            "/assets/v3/\(identifier)"
         case .v1:
-            expectedPath = "/v1/assets/v3/\(identifier)"
+            "/v1/assets/v3/\(identifier)"
         case .v2, .v3, .v4, .v5, .v6:
-            expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
+            "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.method, .delete)
@@ -141,7 +150,7 @@ private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
     var failedToDeleteIdentifiers = [String]()
 
     func nextIdentifierToDelete() -> String? {
-        return nextIdentifier
+        nextIdentifier
     }
 
     func didDelete(identifier: String) {

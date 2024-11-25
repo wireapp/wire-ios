@@ -29,17 +29,19 @@ extension ConversationViewController {
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self,
             userSession: userSession,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            selfProfileUIBuilder: selfProfileUIBuilder
         )
     }
 }
 
 extension ConversationViewController: ProfileViewControllerDelegate {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        dismiss(animated: true) {
-            self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+        Task {
+            // TODO: [WPB-11956] what if the conversation exists but is archived? will it work?
+            await mainCoordinator.showConversationList(conversationFilter: .none)
+            await mainCoordinator.showConversation(conversation: conversation, message: nil)
         }
     }
 }

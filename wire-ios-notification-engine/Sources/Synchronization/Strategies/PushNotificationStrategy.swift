@@ -21,7 +21,10 @@ import WireRequestStrategy
 
 protocol PushNotificationStrategyDelegate: AnyObject {
 
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async throws
+    func pushNotificationStrategy(
+        _ strategy: PushNotificationStrategy,
+        didFetchEvents events: [ZMUpdateEvent]
+    ) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 
 }
@@ -42,7 +45,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
         syncContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         pushNotificationStatus: PushNotificationStatus,
-        notificationsTracker: NotificationsTracker?,
         lastEventIDRepository: LastEventIDRepositoryInterface
     ) {
         super.init(
@@ -50,9 +52,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
             applicationStatus: applicationStatus
         )
 
-        sync = NotificationStreamSync(
+        self.sync = NotificationStreamSync(
             moc: syncContext,
-            notificationsTracker: notificationsTracker,
             eventIDRespository: lastEventIDRepository,
             delegate: self
         )
@@ -63,11 +64,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     // MARK: - Methods
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return nextRequest(for: apiVersion)
+        nextRequest(for: apiVersion)
     }
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard isFetchingStreamForAPNS && !isProcessingNotifications else { return nil }
+        guard isFetchingStreamForAPNS, !isProcessingNotifications else { return nil }
         let request = sync.nextRequest(for: apiVersion)
 
         if request != nil {
@@ -78,7 +79,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     }
 
     public var isFetchingStreamForAPNS: Bool {
-        return self.pushNotificationStatus.hasEventsToFetch
+        pushNotificationStatus.hasEventsToFetch
     }
 
 }
@@ -96,7 +97,10 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         let latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         for event in events {
-            event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
+            event
+                .appendDebugInformation(
+                    "From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload"
+                )
             WireLogger.updateEvent.info("received event", attributes: event.logAttributes)
         }
 
@@ -105,7 +109,11 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 try await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
                 await managedObjectContext.perform {
                     self.isProcessingNotifications = false
-                    self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+                    self.pushNotificationStatus.didFetch(
+                        eventIds: eventIds,
+                        lastEventId: latestEventId,
+                        finished: !hasMoreToFetch
+                    )
                     RequestAvailableNotification.notifyNewRequestsAvailable(nil)
                 }
 

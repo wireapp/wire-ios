@@ -21,7 +21,7 @@ import UIKit
 final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -57,9 +57,15 @@ final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimate
             contentView.transform = .identity
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: .systemPresentationCurve, animations: animations) { finished in
-            transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
-        }
+        UIView
+            .animate(
+                withDuration: duration,
+                delay: 0,
+                options: .systemPresentationCurve,
+                animations: animations
+            ) { finished in
+                transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
+            }
 
     }
 

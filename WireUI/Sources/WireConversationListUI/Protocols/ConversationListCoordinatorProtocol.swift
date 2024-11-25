@@ -21,7 +21,5 @@ public protocol ConversationListCoordinatorProtocol: AnyObject {
     associatedtype ConversationMessageModel
 
     @MainActor
-    func showConversation(conversation: ConversationModel) async
-    @MainActor
-    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel) async
+    func showConversation(conversation: ConversationModel, scrolledTo message: ConversationMessageModel?) async
 }

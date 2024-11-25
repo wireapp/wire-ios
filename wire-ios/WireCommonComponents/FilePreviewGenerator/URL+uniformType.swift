@@ -19,9 +19,9 @@
 import Foundation
 import UniformTypeIdentifiers
 
-extension URL {
+public extension URL {
 
-    public var uniformType: UTType? {
+    var uniformType: UTType? {
         UTType(tag: pathExtension, tagClass: .filenameExtension, conformingTo: nil)
     }
 }

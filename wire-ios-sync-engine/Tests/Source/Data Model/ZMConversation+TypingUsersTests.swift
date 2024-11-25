@@ -27,18 +27,20 @@ class ZMConversation_TypingUsersTests: MessagingTest {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // Then
-        let expectation = self.customExpectation(description: "Notification")
+        let expectation = customExpectation(description: "Notification")
         let assertion: (NotificationInContext) -> Void = { notification in
             XCTAssertEqual(notification.object as? ZMConversation, conversation)
             XCTAssertEqual(notification.userInfo["isTyping"] as? Bool, true)
             expectation.fulfill()
         }
 
-        token = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
-                                                      context: uiMOC.notificationContext,
-                                                      object: nil,
-                                                      queue: nil,
-                                                      using: assertion)
+        token = NotificationInContext.addObserver(
+            name: ZMConversation.typingChangeNotificationName,
+            context: uiMOC.notificationContext,
+            object: nil,
+            queue: nil,
+            using: assertion
+        )
         // When
         conversation.setIsTyping(true)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

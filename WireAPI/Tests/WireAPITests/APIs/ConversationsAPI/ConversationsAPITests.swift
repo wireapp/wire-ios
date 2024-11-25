@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
 
@@ -98,7 +98,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            )
         ]
 
         // when
@@ -119,7 +122,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            )
         ]
 
         let expectedIDs: [UUID] = [
@@ -165,7 +171,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            )
         ]
 
         // when
@@ -186,7 +195,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = [
-            try HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            try HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            )
         ]
 
         let expectedIDs: [QualifiedID] = [
@@ -527,7 +539,7 @@ final class ConversationsAPITests: XCTestCase {
             for sut in suts {
                 taskGroup.addTask {
                     // Then
-                    await self.XCTAssertThrowsError(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
+                    await self.XCTAssertThrowsErrorAsync(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
                         // When
                         try await sut.getMLSOneToOneConversation(
                             userID: Scaffolding.userID,
@@ -553,7 +565,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.mlsNotEnabled) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.mlsNotEnabled) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
@@ -574,7 +586,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.usersNotConnected) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.usersNotConnected) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: Scaffolding.userID,
@@ -595,7 +607,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationsAPIError.userAndDomainShouldNotBeEmpty) {
+        await XCTAssertThrowsErrorAsync(ConversationsAPIError.userAndDomainShouldNotBeEmpty) {
             // When
             try await sut.getMLSOneToOneConversation(
                 userID: "",

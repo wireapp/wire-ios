@@ -30,7 +30,8 @@ private enum InputBarRowConstants {
     static let iconSize = StyleKitIcon.Size.tiny.rawValue
 
     static func minimumButtonWidth(forWidth width: CGFloat) -> CGFloat {
-        return width <= CGFloat.iPhone4Inch.width ? InputBarRowConstants.minimumButtonWidthIPhone5 : InputBarRowConstants.minimumButtonWidth
+        width <= CGFloat.iPhone4Inch.width ? InputBarRowConstants.minimumButtonWidthIPhone5 : InputBarRowConstants
+            .minimumButtonWidth
     }
 }
 
@@ -67,8 +68,10 @@ final class InputBarButtonsView: UIView {
     private(set) var multilineLayout: Bool = false
     private(set) var currentRow: RowIndex = 0
 
-    private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor)
-    private lazy var buttonRowHeight: NSLayoutConstraint = buttonInnerContainer.heightAnchor.constraint(equalToConstant: 0)
+    private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor
+        .constraint(equalTo: buttonInnerContainer.topAnchor)
+    private lazy var buttonRowHeight: NSLayoutConstraint = buttonInnerContainer.heightAnchor
+        .constraint(equalToConstant: 0)
     private var lastLayoutWidth: CGFloat = 0
 
     let expandRowButton = IconButton()
@@ -77,6 +80,7 @@ final class InputBarButtonsView: UIView {
             layoutAndConstrainButtonRows()
         }
     }
+
     private let buttonInnerContainer = UIView()
     private let buttonOuterContainer = UIView()
 
@@ -120,7 +124,7 @@ final class InputBarButtonsView: UIView {
         buttonOuterContainer.clipsToBounds = true
         addSubview(buttonOuterContainer)
         addSubview(expandRowButton)
-        self.backgroundColor = SemanticColors.SearchBar.backgroundInputView
+        backgroundColor = SemanticColors.SearchBar.backgroundInputView
     }
 
     private func createConstraints() {
@@ -172,8 +176,8 @@ final class InputBarButtonsView: UIView {
 
             buttons.forEach {
                 $0.isAccessibilityElement = currentRow == 0
-                ? firstRowButtons.contains($0)
-                : secondRowButtons.contains($0)
+                    ? firstRowButtons.contains($0)
+                    : secondRowButtons.contains($0)
             }
         }
     }
@@ -181,14 +185,14 @@ final class InputBarButtonsView: UIView {
     private var customButtonCount: Int {
         let minButtonWidth: CGFloat = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
         let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons: Int = Int(ratio)
+        let numberOfButtons = Int(ratio)
         return numberOfButtons >= 1 ? numberOfButtons - 1 : 0
     }
 
     // MARK: - Button Layout
 
     private var buttonMargin: CGFloat {
-        return conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     private func layoutAndConstrainButtonRows() {
@@ -202,7 +206,8 @@ final class InputBarButtonsView: UIView {
         setupButtonContainer()
 
         let (firstRow, secondRow, isMultilineLayout) = determineButtonLayout()
-        buttonRowHeight.constant = isMultilineLayout ? InputBarRowConstants.buttonsBarHeight * 2 : InputBarRowConstants.buttonsBarHeight
+        buttonRowHeight.constant = isMultilineLayout ? InputBarRowConstants.buttonsBarHeight * 2 : InputBarRowConstants
+            .buttonsBarHeight
         expandRowButton.isHidden = !isMultilineLayout
 
         roundButtons(firstRow: firstRow, secondRow: secondRow)

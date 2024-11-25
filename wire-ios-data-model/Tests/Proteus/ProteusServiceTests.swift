@@ -93,7 +93,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
@@ -150,7 +150,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in
@@ -158,7 +158,10 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        await assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
+        await assertItThrows(
+            error: ProteusService.DecryptionError
+                .failedToEstablishSessionFromMessage(.duplicateMessage)
+        ) {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,

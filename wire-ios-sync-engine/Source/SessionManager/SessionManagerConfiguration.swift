@@ -26,7 +26,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 
     // MARK: - Properties
 
-    /// If set to true then the session manager will delete account data instead of just asking the user to re-authenticate when the cookie or client gets invalidated.
+    /// If set to true then the session manager will delete account data instead of just asking the user to
+    /// re-authenticate when the cookie or client gets invalidated.
     ///
     /// The default value of this property is `false`.
     public var wipeOnCookieInvalid: Bool
@@ -63,7 +64,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     /// The default value of this property is `nil`, i.e. threshold is ignored
     public var failedPasswordThresholdBeforeWipe: Int?
 
-    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all sessions.
+    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all
+    /// sessions.
     ///
     /// The default value of this property is `false`
     public var encryptionAtRestEnabledByDefault: Bool
@@ -99,23 +101,35 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         self.legacyAppLockConfig = legacyAppLockConfig
     }
 
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
-        blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
-        blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
-        wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
-        messageRetentionInterval = try container.decodeIfPresent(TimeInterval.self, forKey: .messageRetentionInterval)
-        authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
-        failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(Int.self, forKey: .failedPasswordThresholdBeforeWipe)
-        encryptionAtRestEnabledByDefault = try container.decode(Bool.self, forKey: .encryptionAtRestEnabledByDefault)
-        legacyAppLockConfig = try container.decodeIfPresent(AppLockController.LegacyConfig.self, forKey: .legacyAppLockConfig)
+        self.wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
+        self.blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
+        self.blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
+        self.wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
+        self.messageRetentionInterval = try container.decodeIfPresent(
+            TimeInterval.self,
+            forKey: .messageRetentionInterval
+        )
+        self.authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
+        self.failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
+            Int.self,
+            forKey: .failedPasswordThresholdBeforeWipe
+        )
+        self.encryptionAtRestEnabledByDefault = try container.decode(
+            Bool.self,
+            forKey: .encryptionAtRestEnabledByDefault
+        )
+        self.legacyAppLockConfig = try container.decodeIfPresent(
+            AppLockController.LegacyConfig.self,
+            forKey: .legacyAppLockConfig
+        )
     }
 
     // MARK: - Methods
 
     public func copy(with zone: NSZone? = nil) -> Any {
-        let copy = SessionManagerConfiguration(
+        SessionManagerConfiguration(
             wipeOnCookieInvalid: wipeOnCookieInvalid,
             blacklistDownloadInterval: blacklistDownloadInterval,
             blockOnJailbreakOrRoot: blockOnJailbreakOrRoot,
@@ -126,12 +140,10 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
             encryptionAtRestIsEnabledByDefault: encryptionAtRestEnabledByDefault,
             legacyAppLockConfig: legacyAppLockConfig
         )
-
-        return copy
     }
 
     public static var defaultConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration()
+        SessionManagerConfiguration()
     }
 
     public static func load(from URL: URL) -> SessionManagerConfiguration? {

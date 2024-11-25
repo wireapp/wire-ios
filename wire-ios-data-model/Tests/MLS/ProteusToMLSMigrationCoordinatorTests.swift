@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
@@ -101,7 +101,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
-        mockMLSService.conversationExistsGroupID_MockMethod = { _ in return true }
+        mockMLSService.conversationExistsGroupID_MockMethod = { _ in true }
 
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
@@ -360,7 +360,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
-    func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
+    func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached(
+    ) async throws {
         // GIVEN
         mockStorage.underlyingMigrationStatus = .started
 
@@ -413,7 +414,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         groupID: MLSGroupID = .random()
     ) async -> (ZMUser, ZMConversation) {
 
-        return await syncMOC.perform {
+        await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.teamIdentifier = UUID()
 
@@ -442,7 +443,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         switch status {
         case .canStart:
             setMigrationReadiness(to: true)
-        case .cannotStart(reason: let reason):
+        case let .cannotStart(reason: reason):
             setMockValues(
                 isAPIV5Supported: reason != .unsupportedAPIVersion,
                 isClientSupportingMLS: reason != .clientDoesntSupportMLS,
@@ -493,7 +494,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             mockActionsProvider.fetchBackendPublicKeysIn_MockError = nil
         } else {
             mockActionsProvider.fetchBackendPublicKeysIn_MockValue = nil
-            mockActionsProvider.fetchBackendPublicKeysIn_MockError = FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled
+            mockActionsProvider.fetchBackendPublicKeysIn_MockError = FetchBackendMLSPublicKeysAction.Failure
+                .mlsNotEnabled
         }
 
         // Set MLS feature

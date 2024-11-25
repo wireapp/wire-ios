@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A pending legal hold client.
- */
+/// A pending legal hold client.
 
 public class MockPendingLegalHoldClient: NSManagedObject {
 
@@ -38,11 +36,11 @@ public class MockPendingLegalHoldClient: NSManagedObject {
 
 }
 
-extension MockUser {
+public extension MockUser {
 
     /// Requests a legal hold for the user.
-    public func requestLegalHold() -> Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+    func requestLegalHold() -> Bool {
+        guard let managedObjectContext else {
             return false
         }
 
@@ -50,7 +48,10 @@ extension MockUser {
             return false
         }
 
-        let pendingClient = NSEntityDescription.insertNewObject(forEntityName: "PendingLegalHoldClient", into: managedObjectContext) as! MockPendingLegalHoldClient
+        let pendingClient = NSEntityDescription.insertNewObject(
+            forEntityName: "PendingLegalHoldClient",
+            into: managedObjectContext
+        ) as! MockPendingLegalHoldClient
 
         pendingClient.user = self
 
@@ -72,10 +73,16 @@ extension MockUser {
             return false
         }
 
-        let mockPrekey = MockPreKey.insertNewKeys(withPayload: prekeys.map { $0["prekey"] as! String }, context: managedObjectContext)
+        let mockPrekey = MockPreKey.insertNewKeys(
+            withPayload: prekeys.map { $0["prekey"] as! String },
+            context: managedObjectContext
+        )
         pendingClient.prekeys = Set(mockPrekey)
 
-        let mockLastPrekey = NSEntityDescription.insertNewObject(forEntityName: "PreKey", into: managedObjectContext) as! MockPreKey
+        let mockLastPrekey = NSEntityDescription.insertNewObject(
+            forEntityName: "PreKey",
+            into: managedObjectContext
+        ) as! MockPreKey
         mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
         mockLastPrekey.value = lastPrekey
 
@@ -84,7 +91,7 @@ extension MockUser {
     }
 
     /// Accepts the legal hold for the user.
-    public func acceptLegalHold(with pendingClient: MockPendingLegalHoldClient) -> Bool {
+    func acceptLegalHold(with pendingClient: MockPendingLegalHoldClient) -> Bool {
         guard pendingClient == pendingLegalHoldClient else {
             return false
         }
@@ -93,7 +100,10 @@ extension MockUser {
             return false
         }
 
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: managedObjectContext) as! MockUserClient
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: managedObjectContext
+        ) as! MockUserClient
 
         newClient.user = self
         newClient.identifier = pendingClient.identifier

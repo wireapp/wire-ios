@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class SelfUserParticipantMigrationTests: DiskDatabaseTest {
 
@@ -30,7 +30,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         conversation.willAccessValue(forKey: oldKey)
         conversation.setPrimitiveValue(NSNumber(value: true), forKey: oldKey)
         conversation.didAccessValue(forKey: oldKey)
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // When
         WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
@@ -46,7 +46,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         // Given
         let oldKey = "isSelfAnActiveMember"
         let team = createTeam()
-        let selfUser = ZMUser.selfUser(in: self.moc)
+        let selfUser = ZMUser.selfUser(in: moc)
         _ = createMembership(user: selfUser, team: team)
         let conversation1 = createConversation()
         let conversation2 = createConversation()
@@ -58,7 +58,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
             conversation.didAccessValue(forKey: oldKey)
         }
 
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // When
         WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)

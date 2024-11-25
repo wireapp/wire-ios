@@ -40,13 +40,13 @@ class AvatarImageView: UIView {
 
     /// The font to use of the initials label.
     var initialsFont: UIFont {
-        get { return initialsLabel.font }
+        get { initialsLabel.font }
         set { initialsLabel.font = newValue }
     }
 
     /// The color to use for the initials label.
     var initialsColor: UIColor {
-        get { return initialsLabel.textColor }
+        get { initialsLabel.textColor }
         set { initialsLabel.textColor = newValue }
     }
 
@@ -145,13 +145,13 @@ class AvatarImageView: UIView {
             imageView.isHidden = true
             initialsLabel.isHidden = true
 
-        case .image(let image):
+        case let .image(image):
             imageView.image = image
             initialsLabel.text = nil
             imageView.isHidden = false
             initialsLabel.isHidden = true
 
-        case .text(let text):
+        case let .text(text):
             imageView.image = nil
             initialsLabel.text = text
             imageView.isHidden = true
@@ -190,6 +190,8 @@ class AvatarImageView: UIView {
 
     /// The different shapes of avatars.
     enum Shape {
-        case rectangle, circle, relative
+        case rectangle
+        case circle
+        case relative
     }
 }

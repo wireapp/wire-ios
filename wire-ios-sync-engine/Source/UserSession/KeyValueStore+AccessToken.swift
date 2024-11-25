@@ -21,20 +21,21 @@ import Foundation
 private let lastAccessTokenKey = "ZMLastAccessToken"
 private let lastAccessTokenTypeKey = "ZMLastAccessTokenType"
 
-@objc extension NSManagedObjectContext {
+@objc
+public extension NSManagedObjectContext {
 
-    public var accessToken: AccessToken? {
+    var accessToken: AccessToken? {
         get {
-            guard let token = self.persistentStoreMetadata(forKey: lastAccessTokenKey) as? String,
-                let type = self.persistentStoreMetadata(forKey: lastAccessTokenTypeKey) as? String else {
-                    return nil
+            guard let token = persistentStoreMetadata(forKey: lastAccessTokenKey) as? String,
+                  let type = persistentStoreMetadata(forKey: lastAccessTokenTypeKey) as? String else {
+                return nil
             }
             return AccessToken(token: token, type: type, expiresInSeconds: 0)
         }
 
         set {
-            self.setPersistentStoreMetadata(newValue?.token, key: lastAccessTokenKey)
-            self.setPersistentStoreMetadata(newValue?.type, key: lastAccessTokenTypeKey)
+            setPersistentStoreMetadata(newValue?.token, key: lastAccessTokenKey)
+            setPersistentStoreMetadata(newValue?.type, key: lastAccessTokenTypeKey)
         }
     }
 }

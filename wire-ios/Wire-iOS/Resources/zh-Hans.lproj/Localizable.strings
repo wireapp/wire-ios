@@ -37,11 +37,10 @@
 "general.on" = "开启";
 "general.loading" = "载入中...";
 "general.paste" = "粘贴";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
-
-"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = "(你)";
@@ -51,7 +50,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "通过您的名字或用户名搜索";
 "peoplepicker.header.top_people" = "常联系的人";
-"peoplepicker.button.create_conversation" = "创建群聊\n";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "添加参与者";
 "peoplepicker.header.conversations" = "群组";
 "peoplepicker.header.team_conversations" = "%@ 组";
@@ -61,8 +60,8 @@
 "peoplepicker.header.directory" = "添加好友";
 "peoplepicker.header.federation" = "与其他域连接";
 
-"peoplepicker.group.title.singular" = "添加参与者";
-"peoplepicker.group.title.plural" = "添加参与者(%d)";
+"peoplepicker.group.title.singular" = "Select Participants";
+"peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "跳过";
 "peoplepicker.group.done" = "完成";
 "peoplepicker.group.create" = "创建";
@@ -102,8 +101,6 @@
 "peoplepicker.invite_more_people" = "邀请更多人";
 "peoplepicker.invite_team_members" = "邀请好友使用Wire";
 "peoplepicker.quick-action.open-conversation" = "开启";
-"peoplepicker.quick-action.create-conversation" = "创建群聊\n";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "管理服务";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +124,23 @@
 "conversation_list.empty.all_archived.message" = "全部都已存档";
 "conversation_list.empty.no_contacts.message" = "开始对话或\n创建群组。";
 
+// Conversation List - Search Bar
+
+"conversation_list.search_bar.placeholder" = "Search conversations";
+"conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
+"conversation_list.search_bar.groupsPlaceholder" = "Search groups";
+"conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
+
+
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "收藏夾";
+"conversation_list.filter.groups.title" = "群组";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Folders";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "移除";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "加入";
@@ -134,6 +148,22 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "点击激活";
 "conversation_list.header.self_team.accessibility_value.active" = "立即激活";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新消息。";
+
+// Conversation List - Empty states
+"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
+"conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
+"conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
+"conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
+"conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
@@ -300,10 +330,10 @@
 "conversation.input_bar.message_too_long.message" = "您可以发送最长 %d 字符的信息。";
 
 "conversation.create.group_name.title" = "创建群聊";
-"conversation.create.group_name.placeholder" = "群组名称";
+"conversation.create.group_name.label" = "Group name";
 "conversation.create.guidance.empty" = "至少1个字符";
 "conversation.create.guidance.toolong" = "超出字符限制";
-"conversation.create.options.title" = "对话选项";
+"conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "允许访客";
 "conversation.create.guests.subtitle" = "开放这个对话与团队以外的访客。";
@@ -1032,8 +1062,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// Options menu contents
+// QRCode
 
+"qrcode.title" = "Share Profile";
+"qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
+"qrcode.share_profile_link.button.title" = "Share Profile Link";
+"qrcode.share_qrcode.button.title" = "Share QR Code";
+
+// Options menu contents
 "self.settings" = "设置";
 "self.profile" = "用户信息";
 "self.account" = "帐户";
@@ -1151,6 +1187,15 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
+
+"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
+"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
+
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Wire Group. It includes, for example, when you use a feature, your app version, device type, or your operating system. This data will be deleted at the latest after 365 days. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "拒绝";
+"self.settings.privacy_analytics.alert.button.privacyPolicy" = "隐私政策";
 
 // Change Username
 
