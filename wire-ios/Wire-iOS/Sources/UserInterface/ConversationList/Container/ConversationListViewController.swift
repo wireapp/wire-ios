@@ -106,7 +106,8 @@ final class ConversationListViewController: UIViewController {
     weak var accountImageView: AccountImageView?
 
     let networkStatusViewController = NetworkStatusViewController()
-    private var emptyPlaceholderView: EmptyPlaceholderView!
+    private var emptyPlaceholderView: EmptyPlaceholderContainerView!
+
     var mainSplitViewState: MainSplitViewState = .expanded {
         didSet {
             setupTitleView()
@@ -331,6 +332,10 @@ final class ConversationListViewController: UIViewController {
         filterContainerStackView.addArrangedSubview(filterLabel)
         filterContainerStackView.addArrangedSubview(removeButton)
 
+        NSLayoutConstraint.activate([
+            filterContainerView.heightAnchor.constraint(equalTo: filterLabel.heightAnchor, constant: 16)
+        ])
+
         // Initially hide the filter container view
         filterContainerView.isHidden = true
     }
@@ -354,19 +359,26 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-        let connectWithPeopleAction = UIAction { [weak self] _ in
+        let connectWithPeopleAction: () -> Void = { [weak self] in
             self?.presentConnectUI()
         }
-        emptyPlaceholderView = EmptyPlaceholderView(
+        let createConversation: () -> Void = { [weak self] in
+            self?.presentCreateConversationUI()
+        }
+        emptyPlaceholderView = EmptyPlaceholderContainerView(
             content: emptyPlaceholderForSelectedFilter,
-            connectWithPeopleAction: connectWithPeopleAction
+            connectWithPeopleAction: connectWithPeopleAction,
+            newConversationAction: createConversation
+
         )
         contentContainer.addSubview(emptyPlaceholderView)
     }
 
     func configureEmptyPlaceholder() {
-        emptyPlaceholderView.configure(with: emptyPlaceholderForSelectedFilter)
+        emptyPlaceholderView.placeholderView.configure(with: emptyPlaceholderForSelectedFilter)
+
         emptyPlaceholderView.isHidden = !isEmptyPlaceholderVisible
+        emptyPlaceholderView.hideSearchResult(listContentController.listViewModel.appliedSearchText.isEmpty)
     }
 
     private func setupNetworkStatusBar() {
@@ -519,6 +531,7 @@ final class ConversationListViewController: UIViewController {
             .trimmingCharacters(in: .whitespaces)
             .lowercased() ?? ""
         listContentController.listViewModel.appliedSearchText = searchText
+        configureEmptyPlaceholder()
     }
 
     // MARK: - Selection Management

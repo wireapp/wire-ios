@@ -34,7 +34,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             user: user,
             viewer: selfUser,
             conversation: conversation,
-            viewControllerDismisser: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -122,7 +121,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             selfProfileUIBuilder: selfProfileUIBuilder,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
+        let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }

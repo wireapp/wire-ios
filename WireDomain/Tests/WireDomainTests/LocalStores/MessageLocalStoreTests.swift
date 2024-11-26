@@ -74,7 +74,6 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
 
         for messageType in Scaffolding.allMessageTypes {
-
             let conversation = await makeConversation(creator: user)
             conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
 

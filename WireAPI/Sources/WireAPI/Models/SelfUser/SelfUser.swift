@@ -20,7 +20,7 @@ import Foundation
 
 /// User profile for self
 
-public struct SelfUser: Equatable {
+public struct SelfUser: Equatable, Sendable {
 
     /// The unique id of the self user
 

@@ -54,6 +54,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
         if mainSplitViewState == .collapsed {
             setupLeftNavigationBarButtonItems()
@@ -344,7 +348,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     @objc
-    private func presentCreateConversationUI() {
+    func presentCreateConversationUI() {
         Task {
             let createConversationUI = UINavigationController(
                 rootViewController: createGroupConversationUIBuilder
@@ -445,7 +449,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             guard let self, let mainCoordinator else { return }
 
             Task { @MainActor [folderPickerViewControllerBuilder] in
-                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                let viewController = folderPickerViewControllerBuilder.build(
+                    mainCoordinator: mainCoordinator,
+                    showCloseButton: true
+                )
                 if let sheet = viewController.sheetPresentationController {
                     sheet.detents = [.medium(), .large()]
                     sheet.prefersGrabberVisible = true

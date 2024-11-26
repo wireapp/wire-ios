@@ -20,7 +20,7 @@ import Foundation
 
 /// An event concerning conversations.
 
-public enum ConversationEvent: Equatable, Codable {
+public enum ConversationEvent: Equatable, Codable, Sendable {
 
     /// A conversation's access settings were updated.
 

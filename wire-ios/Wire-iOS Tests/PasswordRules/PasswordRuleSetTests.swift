@@ -81,7 +81,7 @@ class PasswordRuleSetTests: XCTestCase {
     func checkPassword(
         _ password: String,
         expectedResult: PasswordValidationResult,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         XCTAssertEqual(defaultRuleSet.validatePassword(password), expectedResult, file: file, line: line)

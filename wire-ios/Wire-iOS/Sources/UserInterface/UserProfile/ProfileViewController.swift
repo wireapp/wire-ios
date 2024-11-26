@@ -45,7 +45,6 @@ extension ZMConversationType {
 
 final class ProfileViewController: UIViewController {
 
-    weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
     private let viewModel: ProfileViewControllerViewModeling
@@ -66,7 +65,6 @@ final class ProfileViewController: UIViewController {
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
-        viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: some SelfProfileViewControllerBuilderProtocol
@@ -101,7 +99,6 @@ final class ProfileViewController: UIViewController {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
 
-        self.viewControllerDismisser = viewControllerDismisser
     }
 
     required init(
@@ -144,7 +141,8 @@ final class ProfileViewController: UIViewController {
 
         let controller = ConversationCreationController(
             preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mlsFeature: viewModel.userSession.makeGetMLSFeatureUseCase().invoke()
         )
         controller.delegate = self
 
@@ -291,12 +289,6 @@ final class ProfileViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         self.incomingRequestFooterBottomConstraint = incomingRequestFooterBottomConstraint
-    }
-}
-
-extension ProfileViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -610,7 +602,7 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         if let navigationController, navigationController.viewControllers.first != self {
             navigationController.popViewController(animated: true)
         } else {
-            dismiss(animated: true, completion: nil)
+            presentingViewController?.dismiss(animated: true, completion: nil)
         }
     }
 

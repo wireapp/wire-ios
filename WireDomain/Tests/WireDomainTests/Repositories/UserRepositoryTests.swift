@@ -400,7 +400,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
+        await XCTAssertThrowsErrorAsync(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
 
             // When
 
@@ -469,6 +469,53 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(isNotSelfUser, false)
     }
 
+    func testPullSelfUser() async throws {
+        // Mock
+        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
+
+        // When
+
+        try await sut.pullSelfUser()
+
+        // Then
+
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            XCTAssertEqual(selfUser.remoteIdentifier, Scaffolding.selfUser.id)
+            XCTAssertEqual(selfUser.name, Scaffolding.selfUser.name)
+            XCTAssertEqual(selfUser.handle, Scaffolding.selfUser.handle)
+            XCTAssertEqual(selfUser.managedBy, "wire")
+            XCTAssertEqual(selfUser.emailAddress, Scaffolding.selfUser.email)
+            XCTAssertEqual(selfUser.supportedProtocols, [.mls])
+        }
+    }
+
+    func testFetchAllUserIdsWithOneOnOneConversation() async throws {
+        // Given
+
+        let user = await context.perform { [self] in
+            let user = modelHelper.createUser(
+                qualifiedID: Scaffolding.qualifiedID.toDomainModel(),
+                in: context
+            )
+
+            modelHelper.createOneOnOne(
+                with: user,
+                in: context
+            )
+
+            return user
+        }
+
+        // When
+
+        let userIds = try await sut.fetchAllUserIDsWithOneOnOneConversation()
+
+        // Then
+
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
+    }
+
     private enum Scaffolding {
         static let selfUserID = UUID()
         static let userID = UUID()
@@ -480,6 +527,7 @@ final class UserRepositoryTests: XCTestCase {
         static let lastPrekeyId = 65_535
         static let base64encodedString =
             "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+        static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
 
         static let conversationLabel1 = ConversationLabel(
             id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
@@ -526,6 +574,24 @@ final class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
 
+        static let selfUser = SelfUser(
+            id: qualifiedID.uuid,
+            qualifiedID: qualifiedID,
+            ssoID: nil,
+            name: "username",
+            handle: "username",
+            teamID: UUID(),
+            phone: "",
+            accentID: 1,
+            managedBy: .wire,
+            assets: [],
+            deleted: false,
+            email: "username@wire.com",
+            expiresAt: .now,
+            service: nil,
+            supportedProtocols: [.mls]
+        )
+
         static let event = UserUpdateEvent(
             userID: userID,
             accentColorID: nil,
@@ -547,7 +613,6 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let defaultsTestSuiteName = UUID().uuidString
-
     }
 
 }

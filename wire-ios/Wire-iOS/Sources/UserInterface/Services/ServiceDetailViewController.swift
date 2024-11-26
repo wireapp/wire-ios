@@ -20,11 +20,18 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-extension ConversationLike where Self: SwiftConversationLike {
+extension MessageProtocol {
+    var supportsBots: Bool {
+        !isOne(of: .mls, .mixed)
+    }
+}
+
+extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
         conversationType != .oneOnOne &&
-            teamType != nil &&
-            allowServices
+        teamType != nil &&
+        allowServices &&
+        messageProtocol.supportsBots
     }
 }
 
@@ -63,7 +70,6 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     let completion: Completion?
-    weak var viewControllerDismisser: ViewControllerDismisser?
 
     private let detailView: ServiceDetailView
     private let actionButton: ZMButton
@@ -216,8 +222,7 @@ final class ServiceDetailViewController: UIViewController {
                 presentRemoveDialogue(
                     for: serviceUser,
                     from: conversation,
-                    sender: sender,
-                    dismisser: viewControllerDismisser
+                    sender: sender
                 )
 
             case .openConversation:
