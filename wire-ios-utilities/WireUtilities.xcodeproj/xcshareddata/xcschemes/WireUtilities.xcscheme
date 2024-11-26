@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD371B1F3EA300232589"
-               BuildableName = ".framework"
+               BuildableName = "WireUtilities.framework"
                BlueprintName = "WireUtilities"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
-            BuildableName = ".framework"
+            BuildableName = "WireUtilities.framework"
             BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
@@ -85,7 +85,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
-            BuildableName = ".framework"
+            BuildableName = "WireUtilities.framework"
             BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
@@ -113,7 +113,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
-            BuildableName = ".framework"
+            BuildableName = "WireUtilities.framework"
             BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
