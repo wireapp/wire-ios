@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1240"
+   LastUpgradeVersion = "1610"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -21,6 +21,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireDomainPackageSupport"
+               BuildableName = "WireDomainPackageSupport"
+               BlueprintName = "WireDomainPackageSupport"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -30,7 +44,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireDomainPackage.xctestplan"
+            reference = "container:Project/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -39,9 +53,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDomainPackageTests"
-               BuildableName = "WireDomainPackageTests"
-               BlueprintName = "WireDomainPackageTests"
+               BlueprintIdentifier = "WireDomainPkgTests"
+               BuildableName = "WireDomainPkgTests"
+               BlueprintName = "WireDomainPkgTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
