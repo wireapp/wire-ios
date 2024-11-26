@@ -370,7 +370,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeIsFederationSearchAllowedUseCase() -> IsFederationSearchAllowedUseCaseProtocol {
-        IsFederationSearchAllowedUseCase(syncContext: syncContext, defaultProtocol: mlsFeature.config.defaultProtocol)
+        IsFederationSearchAllowedUseCase(defaultProtocol: mlsFeature.config.defaultProtocol)
     }
 
 }

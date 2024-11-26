@@ -29,13 +29,10 @@ public protocol IsFederationSearchAllowedUseCaseProtocol {
 
 public struct IsFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol {
 
-    private let syncContext: NSManagedObjectContext
     private let defaultProtocol: Feature.MLS.Config.MessageProtocol
 
     public init(
-        syncContext: NSManagedObjectContext,
         defaultProtocol: Feature.MLS.Config.MessageProtocol) {
-            self.syncContext = syncContext
             self.defaultProtocol = defaultProtocol
         }
 

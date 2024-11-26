@@ -34,16 +34,16 @@ final class IsFederationSearchAllowedUseCaseTests: XCTestCase {
     }
 
     // MARK: - setUp
-    
+
     override func setUp() async throws {
         try await super.setUp()
 
         stack = try await coreDataStackHelper.createStack()
-        sut = IsFederationSearchAllowedUseCase(syncContext: syncContext, defaultProtocol: .mls)
+        sut = IsFederationSearchAllowedUseCase(defaultProtocol: .mls)
     }
-    
+
     // MARK: - tearDown
-    
+
     override func tearDown() async throws {
         stack = nil
         sut = nil
@@ -96,7 +96,7 @@ final class IsFederationSearchAllowedUseCaseTests: XCTestCase {
 
     func testThatItCanNotSearchForFederatedUsersIfDefaultProtocolIsProteus() {
         // GIVEN
-        sut = IsFederationSearchAllowedUseCase(syncContext: syncContext, defaultProtocol: .proteus)
+        sut = IsFederationSearchAllowedUseCase(defaultProtocol: .proteus)
 
         // WHEN
         let canSearchFederatedUsers = sut.invoke(conversationProtocol: nil)
