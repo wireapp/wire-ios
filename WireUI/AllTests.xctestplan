@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "27D05700-4570-401A-91C4-64262E32CF13",
+      "id" : "F53C527D-E732-453A-9EFC-0D235CF0A426",
       "name" : "Configuration 1",
       "options" : {
 
@@ -17,43 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireConversationListUITests",
-        "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireAccountImageUITests",
-        "name" : "WireAccountImageUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireMoveToFolderUITests",
-        "name" : "WireMoveToFolderUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "WireSidebarUITests",
         "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSettingsUITests",
-        "name" : "WireSettingsUITests"
       }
     },
     {
@@ -66,8 +31,43 @@
     {
       "target" : {
         "containerPath" : "container:",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
         "identifier" : "WireMainNavigationUITests",
         "name" : "WireMainNavigationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireConversationListUITests",
+        "name" : "WireConversationListUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
       }
     }
   ],
