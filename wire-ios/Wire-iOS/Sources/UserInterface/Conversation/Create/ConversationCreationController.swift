@@ -123,10 +123,10 @@ final class ConversationCreationController: UIViewController {
             self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
                 guard let self else { return }
 
-                self.values.encryptionProtocol = encryptionProtocol
-                self.updateOptions()
+                values.encryptionProtocol = encryptionProtocol
+                updateOptions()
 
-                self.reloadOptionsSections()
+                reloadOptionsSections()
             }
         }
         return section
@@ -139,7 +139,7 @@ final class ConversationCreationController: UIViewController {
         // ignoring the conversation name so we don't loose the info while testing
         let excludedSectionIndex = collectionViewController.sections.startIndex
         let endIndex = collectionView.numberOfSections
-        let sectionsToReload = IndexSet(integersIn: (excludedSectionIndex + 1)..<endIndex)
+        let sectionsToReload = IndexSet(integersIn: (excludedSectionIndex + 1) ..< endIndex)
 
         collectionView.performBatchUpdates {
             collectionView.reloadSections(sectionsToReload)
@@ -504,11 +504,11 @@ extension Feature.MLS.Config.MessageProtocol {
     var toMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
         case .mls:
-            return .mls
+            .mls
         case .mixed:
-            return .mixed
+            .mixed
         }
     }
 }
