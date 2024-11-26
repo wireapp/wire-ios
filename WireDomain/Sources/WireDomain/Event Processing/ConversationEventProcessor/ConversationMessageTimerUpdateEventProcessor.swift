@@ -44,12 +44,12 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
         let timestamp = event.timestamp
 
         let sender = await userRepository.fetchOrCreateUser(
-            with: userID.uuid,
+            id: userID.uuid,
             domain: userID.domain
         )
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 
