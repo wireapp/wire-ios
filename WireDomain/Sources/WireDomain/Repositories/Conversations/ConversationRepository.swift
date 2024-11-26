@@ -179,6 +179,14 @@ public protocol ConversationRepositoryProtocol {
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
+    
+    /// Fetches the guest link for a given conversation.
+    /// - parameter conversationID: The conversation id.
+    /// - returns: The guest link.
+
+    func fetchConversationGuestLink(
+        conversationID: String
+    ) async throws -> String
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -216,6 +224,21 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Public
+    
+    public func fetchConversationGuestLink(
+        conversationID: String
+    ) async throws -> String {
+        
+        do {
+            return try await conversationsAPI.getConversationGuestLink(
+                conversationID: conversationID
+            )
+            
+        } catch let error {
+            throw ConversationRepositoryError.failedToFetchGuestLink(error)
+        }
+        
+    }
 
     public func pullConversation(id: UUID, domain: String) async throws {
         let qualifiedID = WireAPI.QualifiedID(uuid: id, domain: domain)

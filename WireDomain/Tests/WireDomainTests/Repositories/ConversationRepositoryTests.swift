@@ -780,6 +780,44 @@ final class ConversationRepositoryTests: XCTestCase {
             )
         }
     }
+    
+    func testFetchConversationGuestLink_It_Invokes_Conversation_API_Method() async throws {
+    
+        // Mock
+        
+        conversationsAPI.getConversationGuestLinkConversationID_MockValue = Scaffolding.guestLink
+        
+        // When
+        
+        let guestLink = try await sut.fetchConversationGuestLink(
+            conversationID: Scaffolding.conversationID.uuidString
+        )
+        
+        // Then
+        
+        XCTAssertEqual(conversationsAPI.getConversationGuestLinkConversationID_Invocations.count, 1)
+        XCTAssertEqual(guestLink, Scaffolding.guestLink)
+        
+    }
+    
+    func testFetchConversationGuestLink_It_Throws_Error() async throws {
+        
+        // Mock
+        
+        enum MockAPIError: Error {
+            case error
+        }
+        
+        conversationsAPI.getConversationGuestLinkConversationID_MockError = MockAPIError.error
+        
+        // Then
+        await XCTAssertThrowsErrorAsync {
+            // When
+            try await sut.fetchConversationGuestLink(
+                conversationID: Scaffolding.conversationID.uuidString
+            )
+        }
+    }
 
     private func internalTest_checkLastMessage(
         in conversation: ZMConversation,
@@ -816,6 +854,7 @@ final class ConversationRepositoryTests: XCTestCase {
         static let anotherTeamConversationID = UUID()
         static let conversationID = UUID()
         static let domain = "domain.com"
+        static let guestLink = "https://www.example.com"
 
         static func date(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
