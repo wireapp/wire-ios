@@ -21,13 +21,12 @@ import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {
 
-    func selectProfileImage() -> UIAlertController {
-        showActionSheet { image in
-            guard let jpegData = image.jpegData else {
-                return
-            }
-            ZMUserSession.shared()?.enqueue {
-                ZMUserSession.shared()?.userProfileImage.updateImage(imageData: jpegData)
+    func selectProfileImage(popoverConfiguration: PopoverPresentationControllerConfiguration) -> UIAlertController {
+        showActionSheet(popoverConfiguration: popoverConfiguration) { image in
+            guard let jpegData = image.jpegData, let session = ZMUserSession.shared() else { return }
+
+            session.enqueue {
+                session.userProfileImage.updateImage(imageData: jpegData)
             }
         }
     }
