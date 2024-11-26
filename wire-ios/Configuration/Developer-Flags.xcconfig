@@ -17,5 +17,3 @@
 //
 
 PROTEUS_BY_CORECRYPTO_ENABLED=1
-// Shows the toggle to choose MLS as messaging protocol when creating a group
-CREATE_MLS_GROUP_ENABLED=0

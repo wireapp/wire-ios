@@ -104,13 +104,15 @@ public protocol ConversationLocalStoreProtocol {
     /// Removes a given user from all group conversations.
     ///
     /// - parameters:
-    ///     - user: The user to remove from the conversations.
+    ///     - participantID: The ID of the participant to remove.
+    ///     - participantDomain: The domain of the participant.
     ///     - date: The date the user was removed from the conversations.
 
     func removeParticipantFromAllGroupConversations(
-        user: ZMUser,
+        participantID: UUID,
+        participantDomain: String?,
         date: Date
-    ) async
+    ) async throws
 
     /// Adds a participant or updates its role in a conversation.
     ///
@@ -133,13 +135,13 @@ public protocol ConversationLocalStoreProtocol {
     ///     - newParticipants: The id, domain and role of the new participant.
     ///     - sender: The user who added the participants.
     ///     - date: The date the participants were added.
-    ///     - conversation: The conversation to add the participants
+    ///     - conversation: The conversation to add the participants to.
 
     func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
         atDate date: Date,
-        to conversation: ZMConversation
+        conversation: (id: UUID, domain: String)
     ) async throws
 
     /// Updates the member muted and archived status.
@@ -174,42 +176,6 @@ public protocol ConversationLocalStoreProtocol {
     func messageProtocol(
         for conversation: ZMConversation
     ) async -> WireDataModel.MessageProtocol
-
-    /// Adds a system message to a given conversation.
-    /// - parameters:
-    ///     - message: The system message to add.
-    ///     - conversation: The conversation to add the system message to.
-
-    func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async
-
-    /// Retrieves conversation muted message types
-    /// - parameter conversation: The conversation to get the muted message types for.
-    /// - returns: The muted message types.
-
-    func conversationMutedMessageTypes(
-        _ conversation: ZMConversation
-    ) async -> MutedMessageTypes
-
-    /// Stores a flag indicating whether a conversation is archived.
-    /// - parameters:
-    ///     - isArchived: Indicates whether the conversation is archived.
-    ///     - conversation: The conversation to set the `isArchived` flag for.
-
-    func storeConversation(
-        isArchived: Bool,
-        for conversation: ZMConversation
-    ) async
-
-    /// Indicates whether a conversation is archived.
-    /// - parameter conversation: The conversation to check the `isArchived` flag for.
-    /// - returns: A flag indicating whether the conversation is archived.
-
-    func isConversationArchived(
-        _ conversation: ZMConversation
-    ) async -> Bool
 
     /// Stores a flag indicating whether a conversation has read receipts enabled.
     /// - parameters:
@@ -293,6 +259,24 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async -> MLSGroupID?
 
+    /// Fetches the current conversation name
+    /// - parameter conversation: The conversation to fetch the name for.
+    /// - returns: The conversation name
+
+    func conversationName(
+        conversation: ZMConversation
+    ) async -> String?
+
+    /// Updates the conversation name.
+    /// - Parameters:
+    ///     - newName: The new name for the conversation.
+    ///     - conversation: The conversation to update the name for.
+
+    func storeConversation(
+        newName: String,
+        conversation: ZMConversation
+    ) async
+
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
@@ -309,17 +293,20 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
     let userLocalStore: any UserLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         mlsService: MLSServiceInterface,
-        userLocalStore: any UserLocalStoreProtocol
+        userLocalStore: any UserLocalStoreProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.context = context
         self.mlsService = mlsService
         self.userLocalStore = userLocalStore
+        self.messageLocalStore = messageLocalStore
     }
 
     // MARK: - Public
@@ -399,9 +386,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
         atDate date: Date,
-        to conversation: ZMConversation
+        conversation: (id: UUID, domain: String)
     ) async throws {
         typealias UserAndRole = (user: ZMUser, role: Role?)
+
+        let localConversation = await fetchConversation(
+            id: conversation.id,
+            domain: conversation.domain
+        )
+
+        guard let localConversation else {
+            return WireLogger.eventProcessing.error(
+                "Member join update missing conversation, aborting... ",
+                attributes: [
+                    .conversationId: conversation.id.safeForLoggingDescription
+                ]
+            )
+        }
 
         let usersAndRoles = await withTaskGroup(of: UserAndRole?.self) { taskGroup in
             for newParticipant in participants {
@@ -414,7 +415,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     if let participantRole = newParticipant.role {
                         let role = await fetchOrCreateRole(
                             participantRole,
-                            in: conversation
+                            in: localConversation
                         )
 
                         return (user, role)
@@ -435,60 +436,29 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         let users = Set(usersAndRoles.map(\.user))
         let existingUsers = await localParticipants(
-            in: conversation
+            in: localConversation
         )
         let newUsers = users.subtracting(existingUsers)
 
-        if !newUsers.isEmpty, await isGroupConversation(conversation) {
-            let sender = try await userLocalStore.fetchUser(
-                id: sender.id,
-                domain: sender.domain
-            )
+        if !newUsers.isEmpty, await isGroupConversation(localConversation) {
 
-            let systemMessage = SystemMessage(
-                type: .participantsAdded,
+            let systemMessageType: MessageType = .participantsAdded(
+                participants: participants.map { ($0.id, $0.domain) },
                 sender: sender,
-                users: newUsers,
-                clients: nil,
-                timestamp: date
+                date: date
             )
 
-            await addSystemMessage(systemMessage, to: conversation)
+            await messageLocalStore.addSystemMessageToConversation(
+                messageType: systemMessageType,
+                conversationID: conversation.id,
+                conversationDomain: conversation.domain
+            )
         }
 
         await context.perform {
-            conversation.addParticipantsAndUpdateConversationState(
+            localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
-        }
-    }
-
-    public func addSystemMessage(
-        _ message: SystemMessage,
-        to conversation: ZMConversation
-    ) async {
-        await context.perform { [context] in
-            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
-            systemMessage.systemMessageType = message.type
-            systemMessage.sender = message.sender
-            systemMessage.users = message.users ?? Set()
-            systemMessage.addedUsers = message.addedUsers
-            systemMessage.clients = message.clients ?? Set()
-            systemMessage.serverTimestamp = message.timestamp
-
-            if let duration = message.duration {
-                systemMessage.duration = duration
-            }
-
-            if let messageTimer = message.messageTimer {
-                systemMessage.messageTimer = NSNumber(value: messageTimer)
-            }
-
-            systemMessage.relevantForConversationStatus = message.relevantForStatus
-            systemMessage.participantsRemovedReason = message.removedReason
-            systemMessage.domains = message.domains
-
-            conversation.append(systemMessage)
         }
     }
 
@@ -589,6 +559,17 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchMLSConversation(
+        groupID: WireDataModel.MLSGroupID
+    ) async -> ZMConversation? {
+        await context.perform { [context] in
+            ZMConversation.fetch(
+                with: groupID,
+                in: context
+            )
+        }
+    }
+
     public func isConversationArchived(
         _ conversation: ZMConversation
     ) async -> Bool {
@@ -602,15 +583,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> MutedMessageTypes {
         await context.perform {
             conversation.mutedMessageTypes
-        }
-    }
-
-    public func storeConversation(
-        isArchived: Bool,
-        for conversation: ZMConversation
-    ) async {
-        await context.perform {
-            conversation.isArchived = isArchived
         }
     }
 
@@ -640,9 +612,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func removeParticipantFromAllGroupConversations(
-        user: ZMUser,
+        participantID: UUID,
+        participantDomain: String?,
         date: Date
-    ) async {
+    ) async throws {
+
+        let user = try await userLocalStore.fetchUser(
+            id: participantID,
+            domain: participantDomain
+        )
+
         let allGroupConversations = await context.perform {
             // swiftformat:disable:next redundantProperty
             let allGroupConversations: [ZMConversation] = user.participantRoles.compactMap {
@@ -657,33 +636,42 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
 
         for conversation in allGroupConversations {
-            let (userTeam, isTeamMember) = await context.perform {
-                (user.team, user.isTeamMember)
+            let (userTeam, isTeamMember, conversationTeam, conversationID, conversationDomain) = await context.perform {
+                (
+                    user.team,
+                    user.isTeamMember,
+                    conversation.team,
+                    conversation.remoteIdentifier as UUID,
+                    conversation.domain
+                )
             }
 
-            let teamConversation = await context.perform {
-                conversation.team
-            }
+            if isTeamMember, conversationTeam == userTeam {
 
-            if isTeamMember, teamConversation == userTeam {
-                let systemMessage = SystemMessage(
-                    type: .teamMemberLeave,
-                    sender: user,
-                    users: [user],
-                    timestamp: date
+                let systemMessageType: MessageType = .teamMemberRemoved(
+                    member: (participantID, participantDomain),
+                    date: date
                 )
 
-                await addSystemMessage(systemMessage, to: conversation)
+                await messageLocalStore.addSystemMessageToConversation(
+                    messageType: systemMessageType,
+                    conversationID: conversationID,
+                    conversationDomain: conversationDomain
+                )
 
             } else {
-                let systemMessage = SystemMessage(
-                    type: .participantsRemoved,
-                    sender: user,
-                    users: [user],
-                    timestamp: date
+
+                let systemMessageType: MessageType = .participantsRemoved(
+                    participants: [(participantID, participantDomain)],
+                    sender: (participantID, participantDomain),
+                    date: date
                 )
 
-                await addSystemMessage(systemMessage, to: conversation)
+                await messageLocalStore.addSystemMessageToConversation(
+                    messageType: systemMessageType,
+                    conversationID: conversationID,
+                    conversationDomain: conversationDomain
+                )
             }
 
             await context.perform {
@@ -692,17 +680,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                     initiatingUser: user
                 )
             }
-        }
-    }
-
-    public func fetchMLSConversation(
-        groupID: WireDataModel.MLSGroupID
-    ) async -> ZMConversation? {
-        await context.perform { [context] in
-            ZMConversation.fetch(
-                with: groupID,
-                in: context
-            )
         }
     }
 
@@ -786,6 +763,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> Set<ZMUser> {
         await context.perform {
             conversation.localParticipants
+        }
+    }
+
+    public func conversationName(
+        conversation: ZMConversation
+    ) async -> String? {
+        await context.perform {
+            conversation.userDefinedName
+        }
+    }
+
+    public func storeConversation(
+        newName: String,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.userDefinedName = newName
         }
     }
 

@@ -81,7 +81,7 @@ public enum DeveloperFlag: String, CaseIterable {
     var bundleKey: String? {
         switch self {
         case .showCreateMLSGroupToggle:
-            "CreateMLSGroupEnabled"
+            nil
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:

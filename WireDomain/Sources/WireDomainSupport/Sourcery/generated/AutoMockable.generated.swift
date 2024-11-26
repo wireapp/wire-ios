@@ -304,17 +304,22 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - removeParticipantFromAllGroupConversations
 
-    public var removeParticipantFromAllGroupConversationsUserDate_Invocations: [(user: ZMUser, date: Date)] = []
-    public var removeParticipantFromAllGroupConversationsUserDate_MockMethod: ((ZMUser, Date) async -> Void)?
+    public var removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_Invocations: [(participantID: UUID, participantDomain: String?, date: Date)] = []
+    public var removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_MockError: Error?
+    public var removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_MockMethod: ((UUID, String?, Date) async throws -> Void)?
 
-    public func removeParticipantFromAllGroupConversations(user: ZMUser, date: Date) async {
-        removeParticipantFromAllGroupConversationsUserDate_Invocations.append((user: user, date: date))
+    public func removeParticipantFromAllGroupConversations(participantID: UUID, participantDomain: String?, date: Date) async throws {
+        removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_Invocations.append((participantID: participantID, participantDomain: participantDomain, date: date))
 
-        guard let mock = removeParticipantFromAllGroupConversationsUserDate_MockMethod else {
-            fatalError("no mock for `removeParticipantFromAllGroupConversationsUserDate`")
+        if let error = removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_MockError {
+            throw error
         }
 
-        await mock(user, date)
+        guard let mock = removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate_MockMethod else {
+            fatalError("no mock for `removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainDate`")
+        }
+
+        try await mock(participantID, participantDomain, date)
     }
 
     // MARK: - addOrUpdateParticipant
@@ -334,19 +339,19 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - addParticipants
 
-    public var addParticipantsAddedByAtDateTo_Invocations: [(participants: [(id: UUID, domain: String?, role: String?)], sender: (id: UUID, domain: String?), date: Date, conversation: ZMConversation)] = []
-    public var addParticipantsAddedByAtDateTo_MockError: Error?
-    public var addParticipantsAddedByAtDateTo_MockMethod: (([(id: UUID, domain: String?, role: String?)], (id: UUID, domain: String?), Date, ZMConversation) async throws -> Void)?
+    public var addParticipantsAddedByAtDateConversation_Invocations: [(participants: [(id: UUID, domain: String?, role: String?)], sender: (id: UUID, domain: String?), date: Date, conversation: (id: UUID, domain: String))] = []
+    public var addParticipantsAddedByAtDateConversation_MockError: Error?
+    public var addParticipantsAddedByAtDateConversation_MockMethod: (([(id: UUID, domain: String?, role: String?)], (id: UUID, domain: String?), Date, (id: UUID, domain: String)) async throws -> Void)?
 
-    public func addParticipants(_ participants: [(id: UUID, domain: String?, role: String?)], addedBy sender: (id: UUID, domain: String?), atDate date: Date, to conversation: ZMConversation) async throws {
-        addParticipantsAddedByAtDateTo_Invocations.append((participants: participants, sender: sender, date: date, conversation: conversation))
+    public func addParticipants(_ participants: [(id: UUID, domain: String?, role: String?)], addedBy sender: (id: UUID, domain: String?), atDate date: Date, conversation: (id: UUID, domain: String)) async throws {
+        addParticipantsAddedByAtDateConversation_Invocations.append((participants: participants, sender: sender, date: date, conversation: conversation))
 
-        if let error = addParticipantsAddedByAtDateTo_MockError {
+        if let error = addParticipantsAddedByAtDateConversation_MockError {
             throw error
         }
 
-        guard let mock = addParticipantsAddedByAtDateTo_MockMethod else {
-            fatalError("no mock for `addParticipantsAddedByAtDateTo`")
+        guard let mock = addParticipantsAddedByAtDateConversation_MockMethod else {
+            fatalError("no mock for `addParticipantsAddedByAtDateConversation`")
         }
 
         try await mock(participants, sender, date, conversation)
@@ -397,72 +402,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `messageProtocolFor`")
-        }
-    }
-
-    // MARK: - addSystemMessage
-
-    public var addSystemMessageTo_Invocations: [(message: SystemMessage, conversation: ZMConversation)] = []
-    public var addSystemMessageTo_MockMethod: ((SystemMessage, ZMConversation) async -> Void)?
-
-    public func addSystemMessage(_ message: SystemMessage, to conversation: ZMConversation) async {
-        addSystemMessageTo_Invocations.append((message: message, conversation: conversation))
-
-        guard let mock = addSystemMessageTo_MockMethod else {
-            fatalError("no mock for `addSystemMessageTo`")
-        }
-
-        await mock(message, conversation)
-    }
-
-    // MARK: - conversationMutedMessageTypes
-
-    public var conversationMutedMessageTypes_Invocations: [ZMConversation] = []
-    public var conversationMutedMessageTypes_MockMethod: ((ZMConversation) async -> MutedMessageTypes)?
-    public var conversationMutedMessageTypes_MockValue: MutedMessageTypes?
-
-    public func conversationMutedMessageTypes(_ conversation: ZMConversation) async -> MutedMessageTypes {
-        conversationMutedMessageTypes_Invocations.append(conversation)
-
-        if let mock = conversationMutedMessageTypes_MockMethod {
-            return await mock(conversation)
-        } else if let mock = conversationMutedMessageTypes_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `conversationMutedMessageTypes`")
-        }
-    }
-
-    // MARK: - storeConversation
-
-    public var storeConversationIsArchivedFor_Invocations: [(isArchived: Bool, conversation: ZMConversation)] = []
-    public var storeConversationIsArchivedFor_MockMethod: ((Bool, ZMConversation) async -> Void)?
-
-    public func storeConversation(isArchived: Bool, for conversation: ZMConversation) async {
-        storeConversationIsArchivedFor_Invocations.append((isArchived: isArchived, conversation: conversation))
-
-        guard let mock = storeConversationIsArchivedFor_MockMethod else {
-            fatalError("no mock for `storeConversationIsArchivedFor`")
-        }
-
-        await mock(isArchived, conversation)
-    }
-
-    // MARK: - isConversationArchived
-
-    public var isConversationArchived_Invocations: [ZMConversation] = []
-    public var isConversationArchived_MockMethod: ((ZMConversation) async -> Bool)?
-    public var isConversationArchived_MockValue: Bool?
-
-    public func isConversationArchived(_ conversation: ZMConversation) async -> Bool {
-        isConversationArchived_Invocations.append(conversation)
-
-        if let mock = isConversationArchived_MockMethod {
-            return await mock(conversation)
-        } else if let mock = isConversationArchived_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isConversationArchived`")
         }
     }
 
@@ -614,6 +553,39 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         } else {
             fatalError("no mock for `mlsGroupIDFor`")
         }
+    }
+
+    // MARK: - conversationName
+
+    public var conversationNameConversation_Invocations: [ZMConversation] = []
+    public var conversationNameConversation_MockMethod: ((ZMConversation) async -> String?)?
+    public var conversationNameConversation_MockValue: String??
+
+    public func conversationName(conversation: ZMConversation) async -> String? {
+        conversationNameConversation_Invocations.append(conversation)
+
+        if let mock = conversationNameConversation_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationNameConversation_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationNameConversation`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationNewNameConversation_Invocations: [(newName: String, conversation: ZMConversation)] = []
+    public var storeConversationNewNameConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+
+    public func storeConversation(newName: String, conversation: ZMConversation) async {
+        storeConversationNewNameConversation_Invocations.append((newName: newName, conversation: conversation))
+
+        guard let mock = storeConversationNewNameConversation_MockMethod else {
+            fatalError("no mock for `storeConversationNewNameConversation`")
+        }
+
+        await mock(newName, conversation)
     }
 
 }
@@ -852,19 +824,19 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         try await mock(userIDs, conversation, sender, date, reason)
     }
 
-    // MARK: - addSystemMessage
+    // MARK: - updateConversationName
 
-    public var addSystemMessageTo_Invocations: [(message: SystemMessage, conversation: ZMConversation)] = []
-    public var addSystemMessageTo_MockMethod: ((SystemMessage, ZMConversation) async -> Void)?
+    public var updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_Invocations: [(newName: String, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String?, date: Date)] = []
+    public var updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod: ((String, UUID, String?, UUID, String?, Date) async -> Void)?
 
-    public func addSystemMessage(_ message: SystemMessage, to conversation: ZMConversation) async {
-        addSystemMessageTo_Invocations.append((message: message, conversation: conversation))
+    public func updateConversationName(newName: String, conversationID: UUID, conversationDomain: String?, senderID: UUID, senderDomain: String?, date: Date) async {
+        updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_Invocations.append((newName: newName, conversationID: conversationID, conversationDomain: conversationDomain, senderID: senderID, senderDomain: senderDomain, date: date))
 
-        guard let mock = addSystemMessageTo_MockMethod else {
-            fatalError("no mock for `addSystemMessageTo`")
+        guard let mock = updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate_MockMethod else {
+            fatalError("no mock for `updateConversationNameNewNameConversationIDConversationDomainSenderIDSenderDomainDate`")
         }
 
-        await mock(message, conversation)
+        await mock(newName, conversationID, conversationDomain, senderID, senderDomain, date)
     }
 
 }
@@ -1556,6 +1528,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchOrCreateUserIdDomain`")
+        }
+    }
+
+    // MARK: - fetchOrCreateUsers
+
+    public var fetchOrCreateUsersUserIDs_Invocations: [[(id: UUID, domain: String?)]] = []
+    public var fetchOrCreateUsersUserIDs_MockMethod: (([(id: UUID, domain: String?)]) async -> Set<ZMUser>)?
+    public var fetchOrCreateUsersUserIDs_MockValue: Set<ZMUser>?
+
+    public func fetchOrCreateUsers(userIDs: [(id: UUID, domain: String?)]) async -> Set<ZMUser> {
+        fetchOrCreateUsersUserIDs_Invocations.append(userIDs)
+
+        if let mock = fetchOrCreateUsersUserIDs_MockMethod {
+            return await mock(userIDs)
+        } else if let mock = fetchOrCreateUsersUserIDs_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUsersUserIDs`")
         }
     }
 
