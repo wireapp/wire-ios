@@ -70,50 +70,48 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
     // MARK: - Request
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard isSlowSyncing, slowSyncTask == nil else {
-            return nil
-        }
+        if isSlowSyncing, slowSyncTask == nil {
+            slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
+                guard let self, !Task.isCancelled else { return }
 
-        slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
-            guard let self, !Task.isCancelled else { return }
+                WireLogger.mls.info("slow sync start fetch backend MLS public keys!")
 
-            WireLogger.mls.info("slow sync start fetch backend MLS public keys!")
+                let mlsFeature = await FeatureRepository(context: managedObjectContext).fetchMLS()
+                guard mlsFeature.isEnabled else {
+                    WireLogger.mls.info("slow sync can't fetch backend MLS public keys, MlS feature flag is disabled!")
 
-            let mlsFeature = await FeatureRepository(context: managedObjectContext).fetchMLS()
-            guard mlsFeature.isEnabled else {
-                WireLogger.mls.info("slow sync can't fetch backend MLS public keys, MlS feature flag is disabled!")
-
-                await managedObjectContext.perform {
-                    syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+                    await managedObjectContext.perform {
+                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+                    }
+                    return
                 }
-                return
+
+                do {
+                    // perform action notifies the registered action handler `FetchBackendMLSPublicKeysActionHandler`.
+                    // the action stay pending until in the operation loop creates and executes the next request.
+                    // Here the task waits for the result and then continues to report to syncStatus.
+
+                    var action = FetchBackendMLSPublicKeysAction()
+                    let backendPublicKeys = try await action.perform(in: managedObjectContext.notificationContext)
+                    let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                    BackendInfo.isMLSEnabled = hasValidKeys
+
+                    WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
+
+                    await managedObjectContext.perform {
+                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
+                    }
+                } catch {
+                    WireLogger.mls.error("slow sync failed fetch backend MLS public keys!")
+
+                    BackendInfo.isMLSEnabled = false
+                    await managedObjectContext.perform {
+                        syncStatus.failCurrentSyncPhase(phase: syncPhase)
+                    }
+                }
+
+                self.slowSyncTask = nil
             }
-
-            do {
-                // perform action notifies the registered action handler `FetchBackendMLSPublicKeysActionHandler`.
-                // the action stay pending until in the operation loop creates and executes the next request.
-                // Here the task waits for the result and then continues to report to syncStatus.
-
-                var action = FetchBackendMLSPublicKeysAction()
-                let backendPublicKeys = try await action.perform(in: managedObjectContext.notificationContext)
-                let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
-                BackendInfo.isMLSEnabled = hasValidKeys
-
-                WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
-
-                await managedObjectContext.perform {
-                    syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-                }
-            } catch {
-                WireLogger.mls.error("slow sync failed fetch backend MLS public keys!")
-
-                BackendInfo.isMLSEnabled = false
-                await managedObjectContext.perform {
-                    syncStatus.failCurrentSyncPhase(phase: syncPhase)
-                }
-            }
-
-            self.slowSyncTask = nil
         }
 
         return actionSync.nextRequest(for: apiVersion)

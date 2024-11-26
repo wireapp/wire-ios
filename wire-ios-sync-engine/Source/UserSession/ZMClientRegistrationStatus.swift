@@ -455,6 +455,20 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
     }
 
+    private func fetchFetchBackendMLSPublicKeys() {
+        var action = FetchBackendMLSPublicKeysAction()
+        action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
+            switch result {
+            case .success(let backendPublicKeys):
+                let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
+                BackendInfo.isMLSEnabled = hasValidKeys
+                self?.didFetchBackendMLSPublicKeys()
+            case .failure:
+                self?.fetchFetchBackendMLSPublicKeys()
+            }
+        }
+    }
+
     @objc
     public func didDeleteClient() {
         WireLogger.userClient.info("client was deleted. will prepare for registration")
@@ -604,6 +618,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didFetchFeatureConfigs() {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
+        if isMLSEnabled {
+            fetchFetchBackendMLSPublicKeys()
+        } else {
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+
+    public func didFetchBackendMLSPublicKeys() {
+        WireLogger.userClient.info("did fetch backend MLS public keys")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -646,6 +669,10 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc public var needsToEnrollE2EI: Bool {
         FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+    }
+
+    private var isMLSEnabled: Bool {
+        FeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
     }
 
     @objc(needsToRegisterMLSClientInContext:)

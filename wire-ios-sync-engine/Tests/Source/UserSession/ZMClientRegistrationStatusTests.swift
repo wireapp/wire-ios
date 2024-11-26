@@ -787,6 +787,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     private func enableMLS() {
         FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         BackendInfo.apiVersion = .v5
+        BackendInfo.isMLSEnabled = true
     }
 
     @objc
