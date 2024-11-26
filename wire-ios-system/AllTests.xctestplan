@@ -1,8 +1,8 @@
 {
   "configurations" : [
     {
-      "id" : "6C4E1D90-FC64-48FC-AFD3-431F1E6C84AD",
-      "name" : "Test Scheme Action",
+      "id" : "828E0537-BD72-4A5E-85DC-229F6E68381E",
+      "name" : "Configuration 1",
       "options" : {
 
       }
@@ -16,9 +16,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireMoveToFolderUITests",
-        "name" : "WireMoveToFolderUITests"
+        "containerPath" : "container:WireSystem.xcodeproj",
+        "identifier" : "54A3272B1B99A3190004EB95",
+        "name" : "WireSystem Tests"
       }
     }
   ],

@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SwiftGenPlugin"
-               BuildableName = "SwiftGenPlugin"
-               BlueprintName = "SwiftGenPlugin"
+               BlueprintIdentifier = "SourceryPlugin"
+               BuildableName = "SourceryPlugin"
+               BlueprintName = "SourceryPlugin"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,9 +29,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SourceryPlugin"
-               BuildableName = "SourceryPlugin"
-               BlueprintName = "SourceryPlugin"
+               BlueprintIdentifier = "SwiftGenPlugin"
+               BuildableName = "SwiftGenPlugin"
+               BlueprintName = "SwiftGenPlugin"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -41,13 +41,8 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <TestPlans>
-         <TestPlanReference
-            reference = "container:Project/AllTests.xctestplan"
-            default = "YES">
-         </TestPlanReference>
-      </TestPlans>
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -69,9 +64,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SwiftGenPlugin"
-            BuildableName = "SwiftGenPlugin"
-            BlueprintName = "SwiftGenPlugin"
+            BlueprintIdentifier = "SourceryPlugin"
+            BuildableName = "SourceryPlugin"
+            BlueprintName = "SourceryPlugin"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

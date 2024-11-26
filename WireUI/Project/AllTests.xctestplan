@@ -1,8 +1,8 @@
 {
   "configurations" : [
     {
-      "id" : "6F51967A-7ACF-414E-91E0-8077734A0817",
-      "name" : "Test Scheme Action",
+      "id" : "27D05700-4570-401A-91C4-64262E32CF13",
+      "name" : "Configuration 1",
       "options" : {
 
       }
@@ -17,22 +17,15 @@
     {
       "target" : {
         "containerPath" : "container:",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
         "identifier" : "WireConversationListUITests",
         "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSidebarUITests",
-        "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireMoveToFolderUITests",
-        "name" : "WireMoveToFolderUITests"
       }
     },
     {
@@ -45,15 +38,15 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireMainNavigationUITests",
-        "name" : "WireMainNavigationUITests"
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
       }
     },
     {
@@ -68,6 +61,13 @@
         "containerPath" : "container:",
         "identifier" : "WireDesignTests",
         "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireMainNavigationUITests",
+        "name" : "WireMainNavigationUITests"
       }
     }
   ],
