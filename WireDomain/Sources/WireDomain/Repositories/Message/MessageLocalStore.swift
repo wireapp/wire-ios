@@ -153,7 +153,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 return []
             }
 
-            let newUsers = await fetchUsers(userIDs: participants)
+            let newUsers = await userLocalStore.fetchOrCreateUsers(
+                userIDs: participants
+            )
 
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
@@ -437,30 +439,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             for message in messages {
                 conversation.append(message)
             }
-        }
-    }
-
-    private func fetchUsers(
-        userIDs: [(id: UUID, domain: String?)]
-    ) async -> Set<ZMUser> {
-        await withTaskGroup(of: ZMUser.self) { taskGroup in
-            for userID in userIDs {
-                taskGroup.addTask { [self] in
-                    await userLocalStore.fetchOrCreateUser(
-                        id: userID.id,
-                        domain: userID.domain
-                    )
-                }
-
-            }
-
-            var users = Set<ZMUser>()
-
-            for await user in taskGroup {
-                users.insert(user)
-            }
-
-            return users
         }
     }
 

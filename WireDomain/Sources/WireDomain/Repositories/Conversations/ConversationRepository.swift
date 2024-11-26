@@ -597,12 +597,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         reason: ConversationMemberLeaveReason
     ) async {
         var systemMessageType: MessageType = switch reason {
-        case .userDeleted, .left:
+        case .userDeleted, .userLeft:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
                 date: date
             )
-        case .removed:
+        case .userRemoved:
             .participantsRemoved(
                 participants: removedUsers.map { ($0.uuid, $0.domain) },
                 sender: (senderID, senderDomain),

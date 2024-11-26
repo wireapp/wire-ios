@@ -1460,6 +1460,24 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
+    // MARK: - fetchOrCreateUsers
+
+    public var fetchOrCreateUsersUserIDs_Invocations: [[(id: UUID, domain: String?)]] = []
+    public var fetchOrCreateUsersUserIDs_MockMethod: (([(id: UUID, domain: String?)]) async -> Set<ZMUser>)?
+    public var fetchOrCreateUsersUserIDs_MockValue: Set<ZMUser>?
+
+    public func fetchOrCreateUsers(userIDs: [(id: UUID, domain: String?)]) async -> Set<ZMUser> {
+        fetchOrCreateUsersUserIDs_Invocations.append(userIDs)
+
+        if let mock = fetchOrCreateUsersUserIDs_MockMethod {
+            return await mock(userIDs)
+        } else if let mock = fetchOrCreateUsersUserIDs_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUsersUserIDs`")
+        }
+    }
+
     // MARK: - deletePushToken
 
     public var deletePushToken_Invocations: [Void] = []

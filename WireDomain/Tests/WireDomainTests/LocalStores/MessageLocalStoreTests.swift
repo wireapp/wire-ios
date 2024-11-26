@@ -71,6 +71,7 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
         userLocalStore.fetchUserIdDomain_MockValue = user
         userLocalStore.fetchSelfUser_MockValue = user
+        userLocalStore.fetchOrCreateUsersUserIDs_MockValue = Set([user])
 
         for messageType in Scaffolding.allMessageTypes {
 
