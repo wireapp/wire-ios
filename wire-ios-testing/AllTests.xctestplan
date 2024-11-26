@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "69269992-F111-4E4D-A2D9-910468CC048A",
+      "id" : "90D290FF-BFDB-47A7-86A4-EB80D37A0CF4",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,12 +9,9 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WireTesting.xcodeproj",
-      "identifier" : "096AD7BA1B68D41D00E007A8",
-      "name" : "WireTesting"
-    }
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

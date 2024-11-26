@@ -218,7 +218,7 @@
 		01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLogTests.swift; sourceTree = "<group>"; };
 		01D97B0F294CB921001A04BD /* RequestLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestLog.swift; sourceTree = "<group>"; };
 		01D97B11294CB98F001A04BD /* ResponseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseLog.swift; sourceTree = "<group>"; };
-		01E8EC462BB7D5FE002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
+		01E8EC462BB7D5FE002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0928E2041BA023A30057232E /* NSData_MultipartTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSData_MultipartTests.m; sourceTree = "<group>"; };
 		0958401E1B9591F1004555F9 /* NSData+Multipart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Multipart.m"; sourceTree = "<group>"; };
 		095840211B959200004555F9 /* NSData+Multipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Multipart.h"; sourceTree = "<group>"; };
@@ -323,6 +323,7 @@
 		54CAD7081BB54097006FF8E9 /* ZMTLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMTLogging.h; sourceTree = "<group>"; };
 		54EA3E6B1BEA65B80071592B /* Fakes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fakes.h; sourceTree = "<group>"; };
 		54EA3E6C1BEA65B80071592B /* Fakes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fakes.m; sourceTree = "<group>"; };
+		5905C8F42CF64001005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEventTypeTests.swift; sourceTree = "<group>"; };
 		59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TransportCoding.swift"; sourceTree = "<group>"; };
 		59FFFB772B74E17C008F0E1B /* TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportCoding.swift; sourceTree = "<group>"; };
@@ -483,6 +484,7 @@
 				09A218671B790D330076547A /* WireTransport-tests-host */,
 				CB79AC562C6CFD44003CF5F4 /* WireTransportSupport */,
 				3E88BDE01B1F44FB00232589 /* Frameworks */,
+				5905C8F42CF64001005DB864 /* AllTests.xctestplan */,
 				3E88BCA81B1F35DF00232589 /* Products */,
 			);
 			indentWidth = 4;

@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "64B3175E-2A10-4F32-95C4-986259860F2E",
+      "id" : "37260901-6711-4495-BF17-09C709CE3A4F",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,11 +9,9 @@
     }
   ],
   "defaultOptions" : {
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WireShareEngine.xcodeproj",
-      "identifier" : "5470D3E71D76E1B000FDE440",
-      "name" : "WireShareEngine"
-    }
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

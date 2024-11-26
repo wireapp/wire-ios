@@ -52,7 +52,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC3C2BB7D36D002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,8 +66,8 @@
 		5470D4121D76E2A400FDE440 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5470D4151D76E2A400FDE440 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5905C9722CF641E6005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CB79791C2C748580006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
@@ -130,13 +129,13 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC952BD159A900F7853F /* WireShareEngine.docc */,
-				5470D42B1D770CEE00FDE440 /* LICENSE */,
 				5470D42C1D770CEE00FDE440 /* README.md */,
 				F1DABF961E9B8B6100AD2324 /* Sources */,
 				5470D3F61D76E1B000FDE440 /* WireShareEngineTests */,
 				5470D4021D76E2A400FDE440 /* Resources */,
 				5470D3E91D76E1B000FDE440 /* Products */,
 				5470D4331D77165E00FDE440 /* Frameworks */,
+				5905C9722CF641E6005DB864 /* AllTests.xctestplan */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -164,7 +163,6 @@
 				166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
-				01E8EC3C2BB7D36D002A5A91 /* AllTests.xctestplan */,
 				CB79791C2C748580006FBA58 /* TestSetup.swift */,
 			);
 			path = WireShareEngineTests;
