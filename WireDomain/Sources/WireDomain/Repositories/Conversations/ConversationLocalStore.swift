@@ -54,7 +54,8 @@ public protocol ConversationLocalStoreProtocol {
     ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
-    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
+    /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from
+    /// backend.
     /// - Parameter conversationID: The conversation ID.
     /// - Parameter conversationDomain: The conversation domain.
 

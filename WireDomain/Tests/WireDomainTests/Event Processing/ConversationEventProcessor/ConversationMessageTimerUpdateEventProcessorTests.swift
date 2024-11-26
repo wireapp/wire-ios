@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
 
@@ -76,16 +76,15 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async {
         // Mock
 
-        let (conversation) = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(in: context)
-
-            return (conversation)
+        let conversation = await context.perform { [self] in
+            return modelHelper.createGroupConversation(in: context)
         }
 
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMessageDestructionTimeout_MockValue = .fiveMinutes
         conversationLocalStore.storeConversationTimeoutValueFor_MockMethod = { _, _ in }
-        messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        messageRepository
+            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -96,7 +95,10 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.conversationMessageDestructionTimeout_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationTimeoutValueFor_Invocations.count, 1)
-        XCTAssertEqual(messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {

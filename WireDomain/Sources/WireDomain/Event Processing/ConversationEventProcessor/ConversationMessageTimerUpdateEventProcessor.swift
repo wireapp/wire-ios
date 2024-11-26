@@ -49,18 +49,18 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
             domain: conversationID.domain
         )
 
-        let timeoutValue = timer / 1_000
+        let timeoutValue = timer / 1000
         let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
         let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
 
         if currentTimeout != timeout {
-            
+
             let messageType: MessageType = .messageTimerUpdate(
                 sender: (userID.uuid, userID.domain),
                 date: timestamp,
                 timeoutValue: timeoutValue
             )
-            
+
             await messageRepository.addMessageToConversation(
                 messageType: messageType,
                 conversationID: conversationID.uuid,

@@ -68,7 +68,7 @@ public enum MessageType: Sendable {
     case receiptModeIsOn(
         date: Date
     )
-    
+
     case messageTimerUpdate(
         sender: (id: UUID, domain: String?),
         date: Date,
