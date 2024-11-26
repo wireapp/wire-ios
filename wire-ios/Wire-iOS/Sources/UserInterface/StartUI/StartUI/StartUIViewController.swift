@@ -63,8 +63,8 @@ final class StartUIViewController: UIViewController {
 
     var showsGroupSelector: Bool {
         SearchGroup.all.count > 1 &&
-        userSession.selfUser.canSeeServices &&
-        userSession.mlsFeature.config.defaultProtocol != .mls
+            userSession.selfUser.canSeeServices &&
+            userSession.mlsFeature.config.defaultProtocol != .mls
     }
 
     // MARK: - Init

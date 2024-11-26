@@ -52,6 +52,16 @@ public protocol UserLocalStoreProtocol {
         domain: String?
     ) async -> ZMUser
 
+    /// Fetches or creates users locally.
+    ///
+    /// - parameters:
+    ///     - userIDs: The users id to fetch or create locally.
+    /// - returns: A list of users fetched or created locally.
+
+    func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser>
+
     /// Removes user push token from storage.
 
     func deletePushToken()
@@ -295,6 +305,25 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 return (newClient, true)
             }
         }
+    }
+
+    public func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser> {
+
+        await context.perform { [context] in
+
+            let users = userIDs.map {
+                ZMUser.fetchOrCreate(
+                    with: $0.id,
+                    domain: $0.domain,
+                    in: context
+                )
+            }
+
+            return Set(users)
+        }
+
     }
 
     public func cancelSelfUserLegalholdRequest() async {
