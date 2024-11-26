@@ -87,7 +87,7 @@ public enum DeveloperFlag: String, CaseIterable {
         case .enableMLSSupport:
             "MLSEnabled"
         case .showCreateMLSGroupToggle:
-            "CreateMLSGroupEnabled"
+            nil
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:

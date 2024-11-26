@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 /// A simple wrapper around the Keychain api.
 
 public struct Keychain: KeychainProtocol {
+
+    /// Create a new `Keychain` instance.
+
+    public init() {}
 
     /// Add one or more items to a keychain.
     ///
