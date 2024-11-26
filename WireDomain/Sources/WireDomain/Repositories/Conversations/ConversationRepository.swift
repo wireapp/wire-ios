@@ -186,7 +186,7 @@ public protocol ConversationRepositoryProtocol {
 
     func fetchConversationGuestLink(
         conversationID: String
-    ) async throws -> String
+    ) async throws -> String?
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -227,7 +227,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func fetchConversationGuestLink(
         conversationID: String
-    ) async throws -> String {
+    ) async throws -> String? {
 
         do {
             return try await conversationsAPI.getConversationGuestLink(

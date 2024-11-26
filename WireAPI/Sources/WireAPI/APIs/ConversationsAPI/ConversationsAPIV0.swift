@@ -121,7 +121,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     func getConversationGuestLink(
         conversationID: String
-    ) async throws -> String {
+    ) async throws -> String? {
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
 
         guard let url = components?.url else {
@@ -279,9 +279,9 @@ struct ConversationCodeV0: Decodable, ToAPIModelConvertible {
 
     let code: String
     let key: String
-    let uri: String
+    let uri: String?
 
-    func toAPIModel() -> String {
+    func toAPIModel() -> String? {
         uri
     }
 }

@@ -871,10 +871,10 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     public var fetchConversationGuestLinkConversationID_Invocations: [String] = []
     public var fetchConversationGuestLinkConversationID_MockError: Error?
-    public var fetchConversationGuestLinkConversationID_MockMethod: ((String) async throws -> String)?
-    public var fetchConversationGuestLinkConversationID_MockValue: String?
+    public var fetchConversationGuestLinkConversationID_MockMethod: ((String) async throws -> String?)?
+    public var fetchConversationGuestLinkConversationID_MockValue: String??
 
-    public func fetchConversationGuestLink(conversationID: String) async throws -> String {
+    public func fetchConversationGuestLink(conversationID: String) async throws -> String? {
         fetchConversationGuestLinkConversationID_Invocations.append(conversationID)
 
         if let error = fetchConversationGuestLinkConversationID_MockError {

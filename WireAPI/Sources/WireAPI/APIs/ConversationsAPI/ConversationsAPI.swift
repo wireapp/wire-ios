@@ -47,6 +47,6 @@ public protocol ConversationsAPI {
 
     func getConversationGuestLink(
         conversationID: String
-    ) async throws -> String
+    ) async throws -> String?
 
 }

@@ -23,7 +23,7 @@ class ConversationsAPIV4: ConversationsAPIV3 {
 
     override func getConversationGuestLink(
         conversationID: String
-    ) async throws -> String {
+    ) async throws -> String? {
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/\(conversationID)/code")
 
         guard let url = components?.url else {
@@ -64,7 +64,7 @@ struct ConversationCodeV4: Decodable, ToAPIModelConvertible {
     let code: String
     let hasPassword: Bool // Introduced in v4
     let key: String
-    let uri: String
+    let uri: String?
 
     enum CodingKeys: String, CodingKey {
         case code
@@ -73,7 +73,7 @@ struct ConversationCodeV4: Decodable, ToAPIModelConvertible {
         case uri
     }
 
-    func toAPIModel() -> String {
+    func toAPIModel() -> String? {
         uri
     }
 }
