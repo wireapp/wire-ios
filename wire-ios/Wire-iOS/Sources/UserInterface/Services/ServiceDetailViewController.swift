@@ -29,9 +29,9 @@ extension MessageProtocol {
 extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
         conversationType != .oneOnOne &&
-        teamType != nil &&
-        allowServices &&
-        messageProtocol.supportsBots
+            teamType != nil &&
+            allowServices &&
+            messageProtocol.supportsBots
     }
 }
 

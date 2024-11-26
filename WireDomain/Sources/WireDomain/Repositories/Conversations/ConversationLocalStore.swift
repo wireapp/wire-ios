@@ -566,7 +566,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func isConversationArchived(
         _ conversation: ZMConversation
     ) async -> Bool {

@@ -553,7 +553,6 @@ final class ConversationRepositoryTests: XCTestCase {
             .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         teamRepository.deleteMembershipUserIDDomainDate_MockMethod = { _, _, _ in }
 
-
         // When
 
         try await sut.removeMembers(
