@@ -45,29 +45,33 @@ public struct WireLoggerTag: RawRepresentable {
 //    }
 //}
 
-struct MyStruct {
-    let id: Int
-    let name: String
+public struct MyStruct {
+    public let id: Int
+    public let name: String
+    public init(id: Int, name: String) {
+        self.id = id
+        self.name = name
+    }
 }
 
 // MARK: -
 
-struct MyStringInterpolation: StringInterpolationProtocol {
+public struct WireLogInterpolation: StringInterpolationProtocol {
     // Buffer to store the interpolated string content
     private var output: String = ""
 
     // Required initializer
-    init(literalCapacity: Int, interpolationCount: Int) {
+    public init(literalCapacity: Int, interpolationCount: Int) {
         output.reserveCapacity(literalCapacity + interpolationCount * 20)
     }
 
     // Required method for appending literal strings
-    mutating func appendLiteral(_ literal: String) {
+    public mutating func appendLiteral(_ literal: String) {
         output.append(literal)
     }
 
     // Custom interpolation method for `MyStruct`
-    mutating func appendInterpolation(_ value: MyStruct) {
+    public mutating func appendInterpolation(_ value: MyStruct) {
         output.append("MyStruct(id: \(value.id), name: \(value.name))")
     }
 
@@ -79,14 +83,14 @@ struct MyStringInterpolation: StringInterpolationProtocol {
 
 // MARK: -
 
-struct MyString: ExpressibleByStringInterpolation {
+public struct WireLogMessage: ExpressibleByStringInterpolation {
     let valuee: String
 
-    init(stringLiteral value: String) {
+    public init(stringLiteral value: String) {
         self.valuee = value
     }
 
-    init(stringInterpolation: MyStringInterpolation) {
+    public init(stringInterpolation: WireLogInterpolation) {
         self.valuee = stringInterpolation.outputString()
     }
 }
@@ -97,7 +101,7 @@ func something() {
     let myStruct = MyStruct(id: 42, name: "Alice")
     let anotherStruct = MyStruct(id: 7, name: "Bob")
 
-    let myString: MyString = "This is \(myStruct), and here is \(anotherStruct)."
+    let myString: WireLogMessage = "This is \(myStruct), and here is \(anotherStruct)."
     print(myString.valuee)
     // Output: This is MyStruct(id: 42, name: Alice), and here is MyStruct(id: 7, name: Bob).
 }

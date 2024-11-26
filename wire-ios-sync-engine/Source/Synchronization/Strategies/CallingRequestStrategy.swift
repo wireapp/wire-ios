@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireDataModel
 import WireRequestStrategy
+import WireLogging
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
@@ -683,5 +684,14 @@ private extension Calling {
 private extension AVSIdentifier {
     func toQualifiedId() -> QualifiedID {
         QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
+    }
+}
+
+extension WireLogInterpolation {
+
+    mutating func appendInterpolation(_ singleRequestSync: ZMSingleRequestSync) {
+        //output.append("MyStruct(id: \(value.id), name: \(value.name))")
+
+        appendLiteral("abcd \(3)")
     }
 }
