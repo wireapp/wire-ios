@@ -87,7 +87,6 @@
 
 /* Begin PBXFileReference section */
 		01E8EC472BB7D63C002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
-		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5905C9F22CF6449F005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		5E2BEC51214BA4A600E65B53 /* WireLinkPreviewTestsHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireLinkPreviewTestsHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -284,7 +283,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */,
-				54BD49F91D41FDE5006E29D1 /* README.md */,
 				BF3DD26D1D25445600D51DED /* Resources */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
 				BFF057981D25434E004A2C29 /* WireLinkPreviewTests */,

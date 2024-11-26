@@ -66,7 +66,6 @@
 		5470D4121D76E2A400FDE440 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5470D4151D76E2A400FDE440 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5905C9722CF641E6005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CB79791C2C748580006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -129,7 +128,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC952BD159A900F7853F /* WireShareEngine.docc */,
-				5470D42C1D770CEE00FDE440 /* README.md */,
 				F1DABF961E9B8B6100AD2324 /* Sources */,
 				5470D3F61D76E1B000FDE440 /* WireShareEngineTests */,
 				5470D4021D76E2A400FDE440 /* Resources */,
