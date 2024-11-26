@@ -200,7 +200,6 @@
 
 /* Begin PBXFileReference section */
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
-		01E8EC482BB7D6C4002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = AllTests.xctestplan; path = Resources/AllTests.xctestplan; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
 		06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Units.swift"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
@@ -264,9 +263,10 @@
 		54CA31241B74F36B00B820C0 /* ZMFunctional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMFunctional.h; sourceTree = "<group>"; };
 		54CA31271B74F36B00B820C0 /* ZMTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTimer.h; sourceTree = "<group>"; };
 		54CA31281B74F36B00B820C0 /* WireUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireUtilities.h; sourceTree = "<group>"; };
-		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
-		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
+		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = android_image.encrypted; sourceTree = "<group>"; };
+		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
+		5905C8F32CF63F90005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativelySupportedUserDefaultsKey.swift; sourceTree = "<group>"; };
 		5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+NativelySupportedKey.swift"; sourceTree = "<group>"; };
 		5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
@@ -469,6 +469,7 @@
 				3E88BD7C1B1F3F6700232589 /* Resources */,
 				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
+				5905C8F32CF63F90005DB864 /* AllTests.xctestplan */,
 				3E88BD391B1F3EA300232589 /* Products */,
 			);
 			indentWidth = 4;
@@ -538,7 +539,6 @@
 				F9D381A21B70B91000E6E4EB /* WireUtilities-Tests.pch */,
 				F9D381D81B70DF8400E6E4EB /* WireUtilities-ios-tests-Bridging-Header.h */,
 				F9D3819B1B70B8A700E6E4EB /* Source */,
-				01E8EC482BB7D6C4002A5A91 /* AllTests.xctestplan */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

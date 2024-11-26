@@ -48,7 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC3A2BB7D2B2002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
+		01E8EC3A2BB7D2B2002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		54FB26591D4669A6005574BF /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-ios.xcconfig"; sourceTree = "<group>"; };
 		54FB265B1D4669A6005574BF /* ziphy-osx.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ziphy-osx.xcconfig"; sourceTree = "<group>"; };
@@ -65,6 +65,7 @@
 		54FB26881D4669D0005574BF /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54FB268A1D4669D0005574BF /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		54FB268C1D4669D0005574BF /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		5905C8F22CF63F2A005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		5E107A9A20F358C000EB9DE7 /* mock_search_end.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mock_search_end.json; sourceTree = "<group>"; };
 		5EBC343220EE0F5D00AFB6DF /* ZiphyImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZiphyImageType.swift; sourceTree = "<group>"; };
 		5EF4A6DA20F3A9B800A9EF22 /* MockPaginatedRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPaginatedRequester.swift; sourceTree = "<group>"; };
@@ -219,6 +220,7 @@
 				54FB26571D4669A6005574BF /* Resources */,
 				DBF3805B1B15C0B800369FB7 /* Sources */,
 				DBF380681B15C0B800369FB7 /* ZiphyTests */,
+				5905C8F22CF63F2A005DB864 /* AllTests.xctestplan */,
 				DBF3805A1B15C0B800369FB7 /* Products */,
 			);
 			indentWidth = 4;

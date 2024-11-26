@@ -15,24 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDomainPackage"
-               BuildableName = "WireDomainPackage"
-               BlueprintName = "WireDomainPackage"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDomainPackageSupport"
-               BuildableName = "WireDomainPackageSupport"
-               BlueprintName = "WireDomainPackageSupport"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
+               BuildableName = "WireDomain.framework"
+               BlueprintName = "WireDomain"
+               ReferencedContainer = "container:WireDomain Project.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,19 +30,19 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:AllTests.xctestplan"
-            default = "YES">
+            reference = "container:AllTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDomainPkgTests"
-               BuildableName = "WireDomainPkgTests"
-               BlueprintName = "WireDomainPkgTests"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "01D0DCAF2C1C8C880076CB1C"
+               BuildableName = "WireDomainTests.xctest"
+               BlueprintName = "WireDomainTests"
+               ReferencedContainer = "container:WireDomain Project.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -81,10 +67,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireDomainPackage"
-            BuildableName = "WireDomainPackage"
-            BlueprintName = "WireDomainPackage"
-            ReferencedContainer = "container:">
+            BlueprintIdentifier = "01D0DCA52C1C8C870076CB1C"
+            BuildableName = "WireDomain.framework"
+            BlueprintName = "WireDomain"
+            ReferencedContainer = "container:WireDomain Project.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

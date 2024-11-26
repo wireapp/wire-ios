@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "5094DC2A-279D-4405-B61E-639FBA8C9278",
+      "id" : "FF9237A6-BBF3-4B34-84D3-2863ACE87CC9",
       "name" : "Configuration 1",
       "options" : {
 
@@ -16,9 +16,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:WireDomain Project.xcodeproj",
-        "identifier" : "01D0DCAF2C1C8C880076CB1C",
-        "name" : "WireDomainTests"
+        "containerPath" : "container:Ziphy.xcodeproj",
+        "identifier" : "DBF380631B15C0B800369FB7",
+        "name" : "ZiphyTests"
       }
     }
   ],

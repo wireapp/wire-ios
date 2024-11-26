@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "AB12434E-7ADD-4462-9E65-A35D45EE4B48",
+      "id" : "754901A3-9CDC-4252-A3EE-01A168E7045C",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,17 +9,9 @@
     }
   ],
   "defaultOptions" : {
-    "environmentVariableEntries" : [
-      {
-        "key" : "ZM_TESTING",
-        "value" : "1"
-      }
-    ],
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WireUtilities.xcodeproj",
-      "identifier" : "3E88BD371B1F3EA300232589",
-      "name" : "WireUtilities"
-    }
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
