@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1310"
+   LastUpgradeVersion = "1610"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -26,18 +27,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      disableMainThreadChecker = "YES"
-      codeCoverageEnabled = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8F42C537199244A700288E4D"
-            BuildableName = "Wire.app"
-            BlueprintName = "Wire-iOS"
-            ReferencedContainer = "container:Wire-iOS.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
             reference = "container:Tests/TestPlans/AllTests.xctestplan"
@@ -63,95 +53,17 @@
                BlueprintName = "Wire-iOS-Tests"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AVURLAsset_conversionTests">
-               </Test>
-               <Test
-                  Identifier = "AppLockModuleInteractorTests">
-               </Test>
-               <Test
-                  Identifier = "AppStateCalculatorTests/testApplicationTransit_WhenAppStateChanges()">
-               </Test>
-               <Test
-                  Identifier = "ArticleViewTests/testArticleViewWithImageHavingExactSize()">
-               </Test>
-               <Test
-                  Identifier = "ArticleViewTests/testArticleViewWithPicture()">
-               </Test>
-               <Test
-                  Identifier = "AuthenticationInterfaceBuilderTests/testLandingScreen()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
-               </Test>
-               <Test
-                  Identifier = "ConversationTextMessageTests/testMediaPreviewAttachment()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testCancelledUploadCell_fromThisDevice()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testFailedUploadCell_fromThisDevice()">
-               </Test>
-               <Test
-                  Identifier = "ConversationVideoMessageCellTests/testUploadedCell_fromOtherUser()">
-               </Test>
-               <Test
-                  Identifier = "DeveloperOptionsControllerSnapshotTests/testForInitState()">
-               </Test>
-               <Test
-                  Identifier = "ImageMessageViewTests/testThatItRendersPortraitImage()">
-               </Test>
-               <Test
-                  Identifier = "LandingViewControllerSnapshotTests/testForInitState()">
-               </Test>
-               <Test
-                  Identifier = "ProfileDetailsViewControllerTests/test_Group_BlockingConnectionRequest_MissingLegalHoldConsent1()">
-               </Test>
-               <Test
-                  Identifier = "SearchResultLabelTests">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_FileMessage()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_File_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Image_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Photos()">
-               </Test>
-               <Test
-                  Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Video_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsers()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndName_AllowGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndWithoutName_AllowGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithoutParticipants_AllowGuests()">
-               </Test>
-            </SkippedTests>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E6579E352AFF9B30004E7FD8"
+               BuildableName = "Wire-iOS UnitTests.xctest"
+               BlueprintName = "Wire-iOS UnitTests"
+               ReferencedContainer = "container:Wire-iOS.xcodeproj">
+            </BuildableReference>
          </TestableReference>
       </Testables>
    </TestAction>
@@ -159,7 +71,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      enableUBSanitizer = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -176,102 +87,9 @@
             ReferencedContainer = "container:Wire-iOS.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-com.apple.CoreData.ConcurrencyDebug 1"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-NSShowNonLocalizedStrings YES"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-com.apple.CoreData.MigrationDebug 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--disable-interactive-keyboard-dismissal"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-com.apple.CoreData.SQLDebug 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--disable-call-quality-survey"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--debug-data-to-install=/Users/xxxxxxx/Database2.41"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--addressbook-on-simulator"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--addressbook-search-delay 20"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--debug-log-network"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "OPTIN_STDERR YES"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-SkipFirstTimeUseChecks 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--use-app-center=0"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-BackendEnvironmentTypeOverrideKey staging"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--persist-backend-type"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--keep-calling-overlay-visible"
-            isEnabled = "NO">
-         </CommandLineArgument>
-      </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "DYLD_PRINT_RPATHS"
-            value = ""
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "ZMLOG_TAGS"
-            value = "Network,Authentication,Performance,event-processing,Message Processing,mls"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "DYLD_PRINT_LIBRARIES"
-            value = ""
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "LIBDISPATCH_COOPERATIVE_POOL_STRICT"
-            value = "1"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "IDELogRedirectionPolicy"
-            value = "oslogToStdio"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
