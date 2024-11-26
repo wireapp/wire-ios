@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "5218A40A-16E4-45F4-883F-67BA675941EB",
+      "id" : "AB88FACB-0871-4EE4-8D50-8E4959B7ED42",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,12 +9,9 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:WireNotificationEngine.xcodeproj",
-      "identifier" : "067ECB392487A93D00701956",
-      "name" : "WireNotificationEngine"
-    }
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

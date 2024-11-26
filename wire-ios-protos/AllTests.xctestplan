@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "F2102EC5-B5E2-4DF5-9F36-8C6EC4819DFE",
+      "id" : "ABAAC225-C137-4281-A5E6-334A914925C4",
       "name" : "Configuration 1",
       "options" : {
 
@@ -9,7 +9,9 @@
     }
   ],
   "defaultOptions" : {
-
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

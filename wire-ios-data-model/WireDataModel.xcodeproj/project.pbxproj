@@ -1134,13 +1134,12 @@
 		16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+EncryptionKeys.swift"; sourceTree = "<group>"; };
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
 		256C1B782B1654BB0015C89D /* E2eIdentityCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityCertificate.swift; sourceTree = "<group>"; };
-		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
-		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
+		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
+		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		4058AAA12AA76BFA0013DE71 /* ReactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionData.swift; sourceTree = "<group>"; };
 		4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-109-0.wiredatabase"; sourceTree = "<group>"; };
 		4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsSortingTests.swift; sourceTree = "<group>"; };
 		541E4F941CBD182100D82D69 /* FileAssetCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAssetCache.swift; sourceTree = "<group>"; };
-		543089B71D420165004D8AC4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54363A001D7876200048FD7D /* ZMClientMessage+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Encryption.swift"; sourceTree = "<group>"; };
 		543ABF5A1F34A13000DBE28B /* DatabaseBaseTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseBaseTest.swift; sourceTree = "<group>"; };
 		544034331D6DFE8500860F2D /* ZMAddressBookContactTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAddressBookContactTests.swift; sourceTree = "<group>"; };
@@ -1189,6 +1188,7 @@
 		55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+LegalHoldRequest.swift"; sourceTree = "<group>"; };
 		55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserLegalHoldTests.swift; sourceTree = "<group>"; };
 		590407092C258C810009542C /* ConversationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationList.swift; sourceTree = "<group>"; };
+		5905CA062CF64522005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MLSGroupID+random.swift"; sourceTree = "<group>"; };
 		591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSVerificationStatusTests.swift; sourceTree = "<group>"; };
 		591942B52B6A4B4D0000B390 /* UserObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserObserving.swift; sourceTree = "<group>"; };
@@ -3496,7 +3496,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC812BD1570E00F7853F /* WireDataModel.docc */,
-				543089B71D420165004D8AC4 /* README.md */,
 				F9A708641CAEF9BD00C2F5FE /* Default-568h@2x.png */,
 				F9C9A6771CAD7A790039E10C /* Resources */,
 				F9C9A4FE1CAD5DF10039E10C /* Source */,
@@ -3505,6 +3504,7 @@
 				F9C9A4FD1CAD5DF10039E10C /* Products */,
 				F9C9A6701CAD779E0039E10C /* Frameworks */,
 				63709F622993E70A00577D4B /* Packages */,
+				5905CA062CF64522005DB864 /* AllTests.xctestplan */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

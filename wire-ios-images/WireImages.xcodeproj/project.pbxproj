@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01E8EC392BB7D267002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */; };
 		0969602D1B663EF0006DF53B /* ZMAssetsPreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1331B5FAD5A00712DF9 /* ZMAssetsPreprocessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB1341B5FAD5A00712DF9 /* ZMAssetsPreprocessor.m */; };
 		0969602F1B663EF0006DF53B /* ZMImageDownsampleOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1351B5FAD5A00712DF9 /* ZMImageDownsampleOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -93,7 +92,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0927584A1B70C23B00AD5A78 /* WireImages.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireImages.xcconfig; sourceTree = "<group>"; };
 		092758591B70D7A200AD5A78 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0969600C1B663E7B006DF53B /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -123,6 +121,7 @@
 		5471F8211B73E6E000460C35 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		5471F8251B73E6E000460C35 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5471F8271B73E6E000460C35 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		5905C9F32CF644EB005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireImages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		870253E51DAB7AA00095D272 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -169,7 +168,6 @@
 		87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview_small_profile.jpg; sourceTree = "<group>"; };
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
-		E6A09CD32C2EBA020069C15A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9AEC892BD158D600F7853F /* WireImages.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireImages.docc; sourceTree = "<group>"; };
@@ -270,7 +268,6 @@
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
 				09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */,
 				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
-				01E8EC382BB7D267002A5A91 /* AllTests.xctestplan */,
 				09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */,
 				09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */,
 				09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */,
@@ -283,13 +280,13 @@
 		09DD1EA81B5D41E0005EBCC4 = {
 			isa = PBXGroup;
 			children = (
-				E6A09CD32C2EBA020069C15A /* README.md */,
 				EE9AEC892BD158D600F7853F /* WireImages.docc */,
 				098CB1281B5FAD5A00712DF9 /* Sources */,
 				098CB1611B5FAD6300712DF9 /* Resources */,
 				098CB1651B5FAD6900712DF9 /* Tests */,
 				870253E11DAB7AA00095D272 /* WireImages-iosTestHost */,
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
+				5905C9F32CF644EB005DB864 /* AllTests.xctestplan */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
 			indentWidth = 4;
@@ -526,7 +523,6 @@
 				87B91C311E5C7E5D00A5EC11 /* ceiling_rotated_3.tiff in Resources */,
 				87B91C3B1E5C7E5D00A5EC11 /* unsplash_medium_exif_4.jpg in Resources */,
 				87B91C3A1E5C7E5D00A5EC11 /* unsplash_medium_exif_3.jpg in Resources */,
-				01E8EC392BB7D267002A5A91 /* AllTests.xctestplan in Resources */,
 				87B91C471E5C7E5D00A5EC11 /* unsplash_owl_1_MB.png in Resources */,
 				87B91C351E5C7E5D00A5EC11 /* unsplash_720_KB_rotated.jpg in Resources */,
 				87B91C441E5C7E5D00A5EC11 /* unsplash_original_exif_6.jpg in Resources */,

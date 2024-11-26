@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */; };
 		0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */; };
 		0106AC8E2C99A4DC0022E2CF /* MessageInfoExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */; };
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
 		0106AC952C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */; };
 		0106AC982C9CBCE40022E2CF /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC962C9CB7F90022E2CF /* MessageInfo.swift */; };
 		012B55F62C4A8FFC00DC12D0 /* EventHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */; };
+		01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */; };
 		01F5AED02CAD892000B01069 /* ProteusMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5AECF2CAD892000B01069 /* ProteusMessageTests.swift */; };
 		06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06025661248E467B00E060E1 /* NotificationStreamSync.swift */; };
 		06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */ = {isa = PBXBuildFile; fileRef = 06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */; };
@@ -464,13 +464,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilder.swift; sourceTree = "<group>"; };
 		0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractor.swift; sourceTree = "<group>"; };
 		0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractorTests.swift; sourceTree = "<group>"; };
 		0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilderTests.swift; sourceTree = "<group>"; };
 		0106AC962C9CB7F90022E2CF /* MessageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfo.swift; sourceTree = "<group>"; };
 		012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHasher.swift; sourceTree = "<group>"; };
+		01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		01F5AECF2CAD892000B01069 /* ProteusMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusMessageTests.swift; sourceTree = "<group>"; };
 		06025661248E467B00E060E1 /* NotificationStreamSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStreamSync.swift; sourceTree = "<group>"; };
 		06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSimpleListRequestPaginator.m; sourceTree = "<group>"; };
@@ -704,6 +704,7 @@
 		16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConnectionActionHandlerTests.swift; sourceTree = "<group>"; };
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5905C9EE2CF64303005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientRegistrationDelegate.swift; sourceTree = "<group>"; };
 		59271BEE2B90D24A0019B726 /* MockOTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockOTREntity.swift; sourceTree = "<group>"; };
 		597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandler.swift; sourceTree = "<group>"; };
@@ -1295,6 +1296,7 @@
 				EEA58F1A2B71179D006DEE32 /* Support */,
 				1669016B1D707509000FE4AF /* Products */,
 				166902041D7082C7000FE4AF /* Frameworks */,
+				5905C9EE2CF64303005DB864 /* AllTests.xctestplan */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

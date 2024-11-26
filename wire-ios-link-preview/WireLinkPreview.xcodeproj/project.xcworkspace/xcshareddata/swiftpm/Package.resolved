@@ -1,0 +1,15 @@
+{
+  "originHash" : "81a0ae839262e7676f5e7cb566dd44598715dce96d5b99c8c919e05e168ee5a8",
+  "pins" : [
+    {
+      "identity" : "htmlstring",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wireapp/HTMLString",
+      "state" : {
+        "revision" : "04613a3b0f40a91e554b5174c0a10657f1a26357",
+        "version" : "6.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}

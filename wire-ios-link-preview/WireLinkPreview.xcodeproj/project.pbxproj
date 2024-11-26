@@ -86,8 +86,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC472BB7D63C002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
+		01E8EC472BB7D63C002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5905C9F22CF6449F005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		5E2BEC51214BA4A600E65B53 /* WireLinkPreviewTestsHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireLinkPreviewTestsHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5E2BEC55214BA4A600E65B53 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -290,6 +291,7 @@
 				5E2BEC52214BA4A600E65B53 /* WireLinkPreviewTestsHost */,
 				BFF0578B1D25434D004A2C29 /* Products */,
 				16A5FE0F215A868700AEEBBD /* Frameworks */,
+				5905C9F22CF6449F005DB864 /* AllTests.xctestplan */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
