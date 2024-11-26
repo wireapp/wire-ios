@@ -113,8 +113,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func conversationListViewControllerViewModelDidReloadContent(
-        _ viewModel: ConversationListViewController
-            .ViewModel
+        _ viewModel: ConversationListViewController.ViewModel
     ) {
         // no - op
     }
