@@ -48,7 +48,7 @@ struct ConversationMemberLeaveEventDecoder {
             senderID: senderID,
             timestamp: timestamp.date,
             removedUserIDs: payload.userIDs,
-            reason: payload.reason ?? .left
+            reason: payload.reason ?? .userLeft
         )
     }
 
