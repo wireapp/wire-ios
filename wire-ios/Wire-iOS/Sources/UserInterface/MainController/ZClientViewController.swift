@@ -285,8 +285,6 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.borderColor = ColorTheme.Strokes.outline
         mainSplitViewController.conversationListUI = conversationListViewController
 
-        selfProfileViewControllerBuilder.mainCoordinator = .init(mainCoordinator: mainCoordinator)
-
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
         mainTabBarController.settingsUI = settingsViewControllerBuilder

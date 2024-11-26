@@ -41,6 +41,7 @@ struct AccentColorPicker: View {
         List(AccentColor.allCases, id: \.self) { color in
             cell(for: color)
                 .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
+                .contentShape(Rectangle())
                 .onTapGesture {
                     selectedColor = color
                     onColorSelect?(color)
