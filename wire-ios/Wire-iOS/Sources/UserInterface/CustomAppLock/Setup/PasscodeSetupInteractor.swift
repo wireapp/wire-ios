@@ -36,6 +36,7 @@ final class PasscodeSetupInteractor {
 }
 
 // MARK: - Interface
+
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
 
     func storePasscode(passcode: String) throws {
@@ -54,7 +55,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
         }
 
         switch error {
-        case .invalidPassword(let violations):
+        case let .invalidPassword(violations):
             interactorOutput?.passcodeValidated(result: .invalid(violations: violations))
         default:
             break

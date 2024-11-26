@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireTestingPackage
 import XCTest
 
@@ -32,7 +33,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
         snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
@@ -42,7 +42,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
+        UIColor.setAccentOverride(nil)
     }
 
     // MARK: - Snapshot Tests
@@ -53,7 +53,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    func testTeamGroupOptionsCollapsed() {
+    func testTeamGroupOptions() {
         createSut(isTeamMember: true)
 
         snapshotHelper
@@ -61,7 +61,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -71,24 +71,27 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
     }
 
-    func testTeamGroupOptionsExpanded() {
-        createSut(isTeamMember: true)
-        sut.expandOptions()
+    func testTeamGroupOptions_withoutServices() {
+        let mls = Feature.MLS(status: .enabled, config: .init(defaultProtocol: .mls))
+        createSut(isTeamMember: true, mlsFeature: mls)
 
         snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool) {
+    private func createSut(isTeamMember: Bool, mlsFeature: Feature.MLS = .init(status: .disabled, config: .init())) {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
-        sut = ConversationCreationController(preSelectedParticipants: nil, userSession: mockUserSession)
+        sut = ConversationCreationController(
+            preSelectedParticipants: nil,
+            userSession: mockUserSession,
+            mlsFeature: mlsFeature)
     }
 }

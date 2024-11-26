@@ -31,7 +31,7 @@ public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
     }
 
     public func storedValue(key: String) -> Any? {
-        return keysAndValues[key]
+        keysAndValues[key]
     }
 
     public func enqueueDelayedSave() {
@@ -62,13 +62,13 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         notificationCenter = UserNotificationCenterMock()
         sut.notificationCenter = notificationCenter
 
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
-        sender = ZMUser.insertNewObject(in: self.uiMOC)
+        sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
-        conversation1 = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation1 = ZMConversation.insertNewObject(in: uiMOC)
         conversation1.remoteIdentifier = UUID.create()
-        conversation2 = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation2 = ZMConversation.insertNewObject(in: uiMOC)
         conversation2.remoteIdentifier = UUID.create()
     }
 
@@ -93,8 +93,13 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
 
         // given
         let text = GenericMessage(content: WireProtos.Text(content: "Hello Hello"))
-        let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: text, senderID: sender.remoteIdentifier!)
-        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: self.uiMOC)
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation1.remoteIdentifier!,
+            genericMessage: text,
+            senderID: sender.remoteIdentifier!
+        )
+        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: uiMOC)
 
         // when
         sut.addObject(note!)
@@ -112,11 +117,21 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
     func testThatItCancelsNotificationsOnlyForSpecificConversations() {
 
         // given
-        let event1 = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello Hello")), senderID: sender.remoteIdentifier!)
-        let note1 = ZMLocalNotification(event: event1, conversation: conversation1, managedObjectContext: self.uiMOC)
+        let event1 = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation1.remoteIdentifier!,
+            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello Hello")),
+            senderID: sender.remoteIdentifier!
+        )
+        let note1 = ZMLocalNotification(event: event1, conversation: conversation1, managedObjectContext: uiMOC)
 
-        let event2 = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Bye BYe")), senderID: sender.remoteIdentifier!)
-        let note2 = ZMLocalNotification(event: event2, conversation: conversation2, managedObjectContext: self.uiMOC)
+        let event2 = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation1.remoteIdentifier!,
+            genericMessage: GenericMessage(content: WireProtos.Text(content: "Bye BYe")),
+            senderID: sender.remoteIdentifier!
+        )
+        let note2 = ZMLocalNotification(event: event2, conversation: conversation2, managedObjectContext: uiMOC)
 
         // when
         sut.addObject(note1!)
@@ -134,8 +149,13 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
     func testThatItPersistsNotifications() {
 
         // given
-        let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")), senderID: sender.remoteIdentifier!)
-        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: self.uiMOC)
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation1.remoteIdentifier!,
+            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")),
+            senderID: sender.remoteIdentifier!
+        )
+        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: uiMOC)
         sut.addObject(note!)
 
         // when recreate sut to release non-persisted objects
@@ -148,8 +168,13 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
     func testThatItResetsTheNotificationSetWhenCancellingAllNotifications() {
 
         // given
-        let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")), senderID: sender.remoteIdentifier!)
-        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: self.uiMOC)
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation1.remoteIdentifier!,
+            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")),
+            senderID: sender.remoteIdentifier!
+        )
+        let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: uiMOC)
         sut.addObject(note!)
 
         // when
@@ -159,7 +184,12 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         XCTAssertEqual(sut.notifications.count, 0)
     }
 
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, genericMessage: GenericMessage, senderID: UUID = UUID.create()) -> ZMUpdateEvent {
+    func createUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        genericMessage: GenericMessage,
+        senderID: UUID = UUID.create()
+    ) -> ZMUpdateEvent {
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "conversation": conversationID.transportString(),

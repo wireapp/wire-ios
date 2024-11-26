@@ -23,8 +23,8 @@ import WireDataModel
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
 
-    @objc static public let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
-    @objc static public let CallInProgressKey = "callInProgress"
+    @objc public static let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
+    @objc public static let CallInProgressKey = "callInProgress"
 
     fileprivate weak var notificationStyleProvider: CallNotificationStyleProvider?
     fileprivate let localNotificationDispatcher: LocalNotificationDispatcher
@@ -34,9 +34,12 @@ public final class CallStateObserver: NSObject {
     fileprivate var missedCalltoken: Any?
     fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
 
-    @objc public init(localNotificationDispatcher: LocalNotificationDispatcher,
-                      contextProvider: ContextProvider,
-                      callNotificationStyleProvider: CallNotificationStyleProvider) {
+    @objc
+    public init(
+        localNotificationDispatcher: LocalNotificationDispatcher,
+        contextProvider: ContextProvider,
+        callNotificationStyleProvider: CallNotificationStyleProvider
+    ) {
 
         self.uiContext = contextProvider.viewContext
         self.syncContext = contextProvider.syncContext
@@ -53,9 +56,11 @@ public final class CallStateObserver: NSObject {
         didSet {
             if callInProgress != oldValue {
                 syncContext.performGroupedBlock {
-                    NotificationInContext(name: CallStateObserver.CallInProgressNotification,
-                                          context: self.syncContext.notificationContext,
-                                          userInfo: [ CallStateObserver.CallInProgressKey: self.callInProgress ]).post()
+                    NotificationInContext(
+                        name: CallStateObserver.CallInProgressNotification,
+                        context: self.syncContext.notificationContext,
+                        userInfo: [CallStateObserver.CallInProgressKey: self.callInProgress]
+                    ).post()
                 }
             }
         }
@@ -65,7 +70,13 @@ public final class CallStateObserver: NSObject {
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
 
-    public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    public func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         let callerId = caller.remoteIdentifier
         let callerDomain = caller.domain
         let conversationId = conversation.remoteIdentifier
@@ -90,7 +101,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             self.updateConversation(conversation, with: callState, timestamp: timestamp)
 
             // CallKit depends on a fetched conversation & and is not used for muted conversations
-            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation.mutedMessageTypesIncludingAvailability != .none
+            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation
+                .mutedMessageTypesIncludingAvailability != .none
             let notificationStyle = self.notificationStyleProvider?.callNotificationStyle ?? .callKit
 
             if notificationStyle == .pushNotifications || skipCallKit {
@@ -99,12 +111,20 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
             self.updateConversationListIndicator(convObjectID: conversation.objectID, callState: callState)
 
-            if let systemMessage = self.systemMessageGenerator.appendSystemMessageIfNeeded(callState: callState, conversation: conversation, caller: caller, timestamp: timestamp, previousCallState: previousCallState) {
+            if let systemMessage = self.systemMessageGenerator.appendSystemMessageIfNeeded(
+                callState: callState,
+                conversation: conversation,
+                caller: caller,
+                timestamp: timestamp,
+                previousCallState: previousCallState
+            ) {
                 switch (systemMessage.systemMessageType, callState, conversation.conversationType) {
                 case (.missedCall, .terminating(reason: .normal), .group),
-                    (.missedCall, .terminating(reason: .canceled), _ ):
-                    // group calls we didn't join, end with reason .normal. We should still insert a missed call in this case.
-                    // since the systemMessageGenerator keeps track whether we joined or not, we can use it to decide whether we should show a missed call APNS
+                     (.missedCall, .terminating(reason: .canceled), _):
+                    // group calls we didn't join, end with reason .normal. We should still insert a missed call in this
+                    // case.
+                    // since the systemMessageGenerator keeps track whether we joined or not, we can use it to decide
+                    // whether we should show a missed call APNS
                     self.localNotificationDispatcher.processMissedCall(in: conversation, caller: caller)
                 default:
                     break
@@ -116,9 +136,11 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
     }
 
     public func updateConversationListIndicator(convObjectID: NSManagedObjectID, callState: CallState) {
-        // We need to switch to the uiContext here because we are making changes that need to be present on the UI when the change notification fires
+        // We need to switch to the uiContext here because we are making changes that need to be present on the UI when
+        // the change notification fires
         uiContext.performGroupedBlock {
-            guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation else { return }
+            guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation
+            else { return }
 
             switch callState {
             case .incoming(video: _, shouldRing: let shouldRing, degraded: _):
@@ -134,9 +156,11 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             }
 
             if self.uiContext.zm_hasChanges {
-                NotificationDispatcher.notifyNonCoreDataChanges(objectID: convObjectID,
-                                                                changedKeys: [ZMConversationListIndicatorKey],
-                                                                uiContext: self.uiContext)
+                NotificationDispatcher.notifyNonCoreDataChanges(
+                    objectID: convObjectID,
+                    changedKeys: [ZMConversationListIndicatorKey],
+                    uiContext: self.uiContext
+                )
             }
         }
     }
@@ -151,8 +175,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 let conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
-                else {
-                    return
+            else {
+                return
             }
 
             if (self.notificationStyleProvider?.callNotificationStyle ?? .callKit) == .pushNotifications {
@@ -167,7 +191,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
     private func updateConversation(_ conversation: ZMConversation, with callState: CallState, timestamp: Date?) {
         switch callState {
         case .incoming(_, shouldRing: true, degraded: _):
-            if conversation.isArchived && conversation.mutedMessageTypes != .all {
+            if conversation.isArchived, conversation.mutedMessageTypes != .all {
                 conversation.isArchived = false
             }
 

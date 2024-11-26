@@ -44,20 +44,27 @@ final class PostContent {
     // MARK: - Send attachments
 
     /// Send the content to the selected conversation
-    func send(text: String,
-              sharingSession: SharingSession,
-              stateCallback: @escaping SendingStateCallback) {
+    func send(
+        text: String,
+        sharingSession: SharingSession,
+        stateCallback: @escaping SendingStateCallback
+    ) {
         guard sharingSession.fileSharingFeature.status == .enabled,
               SecurityFlags.fileSharing.isEnabled else {
-                  stateCallback(.fileSharingRestriction)
-                  return
-              }
+            stateCallback(.fileSharingRestriction)
+            return
+        }
         guard let conversation = target else {
             stateCallback(.error(UnsentSendableError.conversationDoesNotExist))
             return
         }
 
-        sendController = SendController(text: text, attachments: attachments, conversation: conversation, sharingSession: sharingSession)
+        sendController = SendController(
+            text: text,
+            attachments: attachments,
+            conversation: conversation,
+            sharingSession: sharingSession
+        )
 
         let allMessagesEnqueuedGroup = DispatchGroup()
         allMessagesEnqueuedGroup.enter()
@@ -77,7 +84,7 @@ final class PostContent {
             })
         }
 
-        // We intercept and forward the state callback to start listening for 
+        // We intercept and forward the state callback to start listening for
         // conversation degradation and to tearDown the observer once done.
         sendController?.send {
             switch $0 {
@@ -97,6 +104,7 @@ final class PostContent {
     }
 
 }
+
 /// What to do when a conversation that was verified degraded (we discovered a new
 /// non-verified client)
 enum DegradationStrategy {

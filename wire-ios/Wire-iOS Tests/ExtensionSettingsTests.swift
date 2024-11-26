@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCommonComponents
 import XCTest
+@testable import WireCommonComponents
 
 final class ExtensionSettingsTests: XCTestCase {
 
@@ -37,32 +37,14 @@ final class ExtensionSettingsTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatItDisablesCrashReportByDefault() {
-        XCTAssert(settings.disableCrashSharing)
-    }
-
-    func testThatItEnablesAnalyticsReportByDefault() {
-        XCTAssertFalse(settings.disableAnalyticsSharing)
-    }
-
-    func testThatItHandlesCrashReportPreferenceChange() {
-        XCTAssert(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = false
-        XCTAssertFalse(settings.disableCrashSharing)
-
-        settings.disableCrashSharing = true
-        XCTAssert(settings.disableCrashSharing)
-    }
-
     func testThatItHandlesAnalyticsPreferenceChange() {
-        XCTAssertFalse(settings.disableAnalyticsSharing)
-
-        settings.disableAnalyticsSharing = true
-        XCTAssert(settings.disableAnalyticsSharing)
+        XCTAssertNil(settings.disableAnalyticsSharing)
 
         settings.disableAnalyticsSharing = false
-        XCTAssertFalse(settings.disableAnalyticsSharing)
+        XCTAssertEqual(settings.disableAnalyticsSharing, false)
+
+        settings.disableAnalyticsSharing = true
+        XCTAssertEqual(settings.disableAnalyticsSharing, true)
     }
 
     func testThatItEnablesLinkPreviewsByDefault() {

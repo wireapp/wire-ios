@@ -31,13 +31,13 @@ public extension Array {
     var cardinality: Cardinality {
         switch count {
         case 0:
-            return .zero
+            .zero
 
         case 1:
-            return .singular
+            .singular
 
         default:
-            return .plural
+            .plural
         }
     }
 

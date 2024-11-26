@@ -18,8 +18,8 @@
 
 import WireCoreCrypto
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
 
@@ -61,7 +61,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         name: String,
         status: DeviceStatus
     ) -> WireCoreCrypto.WireIdentity {
-        return .init(
+        .init(
             clientId: clientID,
             status: status,
             thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
@@ -72,8 +72,8 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
                 domain: "local.com",
                 certificate: mockCertificate,
                 serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
-                notBefore: 1709112038,
-                notAfter: 1716888038
+                notBefore: 1_709_112_038,
+                notAfter: 1_716_888_038
             )
         )
     }
@@ -136,7 +136,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         )
 
         coreCrypto.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
-            return [
+            [
                 validIdentity,
                 identityWithInvalidHandle,
                 identityWithInvalidName,

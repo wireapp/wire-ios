@@ -21,6 +21,7 @@ import Foundation
 import WireAPI
 import WireDataModel
 
+// sourcery: AutoMockable
 protocol ConnectionsLocalStoreProtocol {
 
     func storeConnection(
@@ -66,7 +67,10 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     ///   - storedConnection: ZMConnection object stored locally
     /// - Returns: conversation object stored locally
 
-    private func storedConversation(from connection: Connection, with storedConnection: ZMConnection) throws -> ZMConversation {
+    private func storedConversation(
+        from connection: Connection,
+        with storedConnection: ZMConnection
+    ) throws -> ZMConversation {
         guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
             throw ConnectionsRepositoryError.missingConversationId
         }

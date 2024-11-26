@@ -19,9 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-/**
- * The view that displays the restore from backup button.
- */
+/// The view that displays the restore from backup button.
 
 final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
 
@@ -31,8 +29,11 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
     typealias NoHistory = L10n.Localizable.Registration.NoHistory
 
     init() {
-        let restoreButton = SecondaryButtonDescription(title: NoHistory.restoreBackup.capitalized, accessibilityIdentifier: "restore_backup")
-        views = [restoreButton]
+        let restoreButton = SecondaryButtonDescription(
+            title: NoHistory.restoreBackup.capitalized,
+            accessibilityIdentifier: "restore_backup"
+        )
+        self.views = [restoreButton]
 
         restoreButton.buttonTapped = { [weak self] in
             self?.actioner?.executeAction(.startBackupFlow)
@@ -40,9 +41,7 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
     }
 }
 
-/**
- * The step that displays information about the history.
- */
+/// The step that displays information about the history.
 
 final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
@@ -53,24 +52,27 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init(context: NoHistoryContext) {
-        backButton = BackButtonDescription()
-        mainView = SolidButtonDescription(title: L10n.Localizable.Registration.NoHistory.gotIt, accessibilityIdentifier: "ignore_backup")
-        secondaryView = nil
+        self.backButton = BackButtonDescription()
+        self.mainView = SolidButtonDescription(
+            title: L10n.Localizable.Registration.NoHistory.gotIt,
+            accessibilityIdentifier: "ignore_backup"
+        )
+        self.secondaryView = nil
         switch context {
         case .newDevice:
-            headline = L10n.Localizable.Registration.NoHistory.hero
-            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
+            self.headline = L10n.Localizable.Registration.NoHistory.hero
+            self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
         case .loggedOut:
-            headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
-            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
+            self.headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
+            self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
         }
 
         guard SecurityFlags.backup.isEnabled else {
-            footerView = nil
+            self.footerView = nil
             return
         }
 
-        footerView = BackupRestoreStepDescriptionFooterView()
+        self.footerView = BackupRestoreStepDescriptionFooterView()
 
     }
 

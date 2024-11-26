@@ -27,8 +27,8 @@ private enum Item {
     case unsupportedValue(MessageDestructionTimeoutValue)
 }
 
-extension ZMConversation {
-    fileprivate var timeoutItems: [Item] {
+private extension ZMConversation {
+    var timeoutItems: [Item] {
         var newItems = MessageDestructionTimeoutValue.all.map(Item.supportedValue)
 
         let groupTimeout = messageDestructionTimeoutValue(for: .groupConversation)
@@ -47,11 +47,9 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     private let userSession: ZMUserSession
     private var observerToken: Any! = nil
 
-    weak var dismisser: ViewControllerDismisser?
-
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+    private lazy var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     // MARK: - Initialization
 
@@ -59,8 +57,8 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        self.updateItems()
-        observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        updateItems()
+        self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     @available(*, unavailable)
@@ -85,7 +83,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func configureSubviews() {
@@ -98,7 +96,11 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
         collectionViewLayout.minimumLineSpacing = 0
 
         CheckmarkCell.register(in: collectionView)
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
+        collectionView.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
 
     }
 
@@ -117,19 +119,29 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
-        return view
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader",
+            for: indexPath
+        )
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
 
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
@@ -141,9 +153,9 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
 
         switch item {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             configure(cell, for: value, disabled: false)
-        case .unsupportedValue(let value):
+        case let .unsupportedValue(value):
             configure(cell, for: value, disabled: true)
         }
 
@@ -153,7 +165,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     private func updateItems() {
-        self.items = conversation.timeoutItems
+        items = conversation.timeoutItems
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
@@ -162,7 +174,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             activityIndicator.start()
         }
 
-        self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
+        conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
             guard let self else {
                 return
             }
@@ -170,8 +182,8 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             item.cancel()
             activityIndicator.stop()
 
-            if case .failure(let error) = result {
-                self.handle(error: error)
+            if case let .failure(error) = result {
+                handle(error: error)
             }
         }
     }
@@ -194,7 +206,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         let selectedItem = items[indexPath.row]
 
         switch selectedItem {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             guard canSelectItem(with: value) else {
                 break
             }
@@ -206,12 +218,20 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 32)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 
 }

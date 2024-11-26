@@ -26,15 +26,22 @@ extension Data {
         return string.fingerprintStringWithSpaces
     }
 
-    func attributedFingerprint(attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString? {
+    func attributedFingerprint(
+        attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool = false
+    ) -> NSAttributedString? {
 
-        var fingerprintString = self.fingerprintString
+        var fingerprintString = fingerprintString
 
         if uppercase {
             fingerprintString = fingerprintString.uppercased()
         }
 
-        let attributedRemoteIdentifier = fingerprintString.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = fingerprintString.fingerprintString(
+            attributes: attributes,
+            boldAttributes: boldAttributes
+        )
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10

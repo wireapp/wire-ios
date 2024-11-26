@@ -41,7 +41,7 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         let timestamp = event.timestamp
 
         let existingConversation = await repository.fetchConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 

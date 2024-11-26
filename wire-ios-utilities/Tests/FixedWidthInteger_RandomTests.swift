@@ -23,19 +23,19 @@ class FixedWidthInteger_RandomTests: XCTestCase {
     func testThatTheGeneratedNumberIsInRangeWithUInt() {
 
         let upperBound: UInt = 2
-        let range = 0..<upperBound
+        let range = 0 ..< upperBound
 
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             XCTAssertTrue(range.contains(UInt.secureRandomNumber(upperBound: upperBound)))
         }
     }
 
     func testThatTheGeneratedNumberIsInRangeWithInt() {
 
-        let upperBound: Int = 100
-        let range = -upperBound..<upperBound
+        let upperBound = 100
+        let range = -upperBound ..< upperBound
 
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             XCTAssertTrue(range.contains(Int.secureRandomNumber(upperBound: upperBound)))
         }
     }

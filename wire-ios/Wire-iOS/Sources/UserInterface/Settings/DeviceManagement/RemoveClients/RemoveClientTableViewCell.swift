@@ -28,15 +28,18 @@ final class RemoveClientTableViewCell: UITableViewCell {
 
     private let deviceNameLabel = DynamicFontLabel(
         style: .h3,
-        color: LabelColors.textDefault)
+        color: LabelColors.textDefault
+    )
 
     private let proteusIdLabel = DynamicFontLabel(
         style: .subline1,
-        color: LabelColors.textCellSubtitle)
+        color: LabelColors.textCellSubtitle
+    )
 
     private let activationDateLabel = DynamicFontLabel(
         style: .subline1,
-        color: LabelColors.textCellSubtitle)
+        color: LabelColors.textCellSubtitle
+    )
 
     var viewModel: ClientTableViewCellModel? {
         didSet {
@@ -100,4 +103,4 @@ final class RemoveClientTableViewCell: UITableViewCell {
         ])
     }
 
- }
+}

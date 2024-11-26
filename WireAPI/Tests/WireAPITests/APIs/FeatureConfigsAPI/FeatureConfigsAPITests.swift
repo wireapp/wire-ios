@@ -107,7 +107,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.teamNotFound) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.teamNotFound) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -119,7 +119,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.userIsNotTeamMember) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.userIsNotTeamMember) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -131,7 +131,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(FeatureConfigsAPIError.insufficientPermissions) {
+        await XCTAssertThrowsErrorAsync(FeatureConfigsAPIError.insufficientPermissions) {
             // When
             try await sut.getFeatureConfigs()
         }
@@ -211,189 +211,226 @@ extension FeatureConfigsAPITests {
         }
 
         static let featureConfigsV0: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             )
         ]
 
         static let featureConfigsV1: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
-            .mls(.init(
-                status: .enabled,
-                protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
-                defaultProtocol: .proteus,
-                allowedCipherSuites: [
-                    .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-                    .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
-                ],
-                defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                supportedProtocols: [.proteus]
-            )
+            .mls(
+                .init(
+                    status: .enabled,
+                    protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                    defaultProtocol: .proteus,
+                    allowedCipherSuites: [
+                        .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                        .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    ],
+                    defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                    supportedProtocols: [.proteus]
+                )
             )
         ]
 
         static let featureConfigsV4: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
             .conversationGuestLinks(.init(status: .enabled)),
             .digitalSignature(.init(status: .enabled)),
             .fileSharing(.init(status: .enabled)),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
-            .mls(.init(
-                status: .enabled,
-                protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
-                defaultProtocol: .proteus,
-                allowedCipherSuites: [
-                    .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-                    .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
-                ],
-                defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                supportedProtocols: [.proteus]
-            )
+            .mls(
+                .init(
+                    status: .enabled,
+                    protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                    defaultProtocol: .proteus,
+                    allowedCipherSuites: [
+                        .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                        .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    ],
+                    defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                    supportedProtocols: [.proteus]
+                )
             ),
-            .mlsMigration(.init(
-                status: .enabled,
-                startTime: dateV4(from: "2021-05-12T10:52:02.671Z"),
-                finaliseRegardlessAfter: dateV4(from: "2021-05-12T10:52:02.671Z")
-            )
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV4(from: "2021-05-12T10:52:02.671Z"),
+                    finaliseRegardlessAfter: dateV4(from: "2021-05-12T10:52:02.671Z")
+                )
             ),
-            .endToEndIdentity(.init(
-                status: .enabled,
-                acmeDiscoveryURL: "https://example.com",
-                verificationExpiration: 9_223_372_036_854_776_000,
-                crlProxy: nil,
-                useProxyOnMobile: false
-            )
+            .endToEndIdentity(
+                .init(
+                    status: .enabled,
+                    acmeDiscoveryURL: "https://example.com",
+                    verificationExpiration: 9_223_372_036_854_776_000,
+                    crlProxy: nil,
+                    useProxyOnMobile: false
+                )
             )
         ]
 
         static let featureConfigsV6: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
             .conferenceCalling(
-                .init(status: .enabled,
-                      useSFTForOneToOneCalls: true)
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: true
+                )
             ),
-            .conversationGuestLinks(.init(status: .enabled)
+            .conversationGuestLinks(
+                .init(status: .enabled)
             ),
             .digitalSignature(.init(status: .enabled)),
             .fileSharing(.init(status: .enabled)),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
-            .mls(.init(
-                status: .enabled,
-                protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
-                defaultProtocol: .proteus,
-                allowedCipherSuites: [
-                    .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
-                    .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
-                ],
-                defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                supportedProtocols: [.proteus]
-            )
+            .mls(
+                .init(
+                    status: .enabled,
+                    protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
+                    defaultProtocol: .proteus,
+                    allowedCipherSuites: [
+                        .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
+                        .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    ],
+                    defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+                    supportedProtocols: [.proteus]
+                )
             ),
-            .mlsMigration(.init(
-                status: .enabled,
-                startTime: dateV6(from: "2021-05-12T10:52:02Z"),
-                finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
-            )
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
+                )
             ),
-            .endToEndIdentity(.init(
-                status: .enabled,
-                acmeDiscoveryURL: "https://example.com",
-                verificationExpiration: 9_223_372_036_854_776_000,
-                crlProxy: "https://example.com",
-                useProxyOnMobile: true
-            )
+            .endToEndIdentity(
+                .init(
+                    status: .enabled,
+                    acmeDiscoveryURL: "https://example.com",
+                    verificationExpiration: 9_223_372_036_854_776_000,
+                    crlProxy: "https://example.com",
+                    useProxyOnMobile: true
+                )
             )
         ]
     }

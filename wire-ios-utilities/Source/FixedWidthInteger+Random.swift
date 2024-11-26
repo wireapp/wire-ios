@@ -22,9 +22,9 @@ public extension FixedWidthInteger {
 
     private var abs: Self {
         if self < 0 {
-            return 0 - self
+            0 - self
         } else {
-            return self
+            self
         }
     }
 
@@ -34,7 +34,10 @@ public extension FixedWidthInteger {
     ///
     static func secureRandomNumber(upperBound: Self) -> Self {
 
-        assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
+        assert(
+            upperBound != 0 && upperBound != Self.min,
+            "Upper bound should not be zero or equal to the minimum possible value"
+        )
 
         var random: Self
 
@@ -61,7 +64,8 @@ public extension FixedWidthInteger {
 
 /// Extension for NSNumber so we can support ObjC
 public extension NSNumber {
-    @objc static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
-        return UInt32.secureRandomNumber(upperBound: upperBound)
+    @objc
+    static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
+        UInt32.secureRandomNumber(upperBound: upperBound)
     }
 }

@@ -77,7 +77,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
 
-        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             throw CryptoError.ConversationNotFound(message: "conversation not found")
         }
 
@@ -97,7 +97,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let messageBytes = Data.random().bytes
-        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: nil,
                 proposals: [],
@@ -133,7 +133,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var mockDecryptMessageCount = 0
-        self.mockMLSActionExecutor.mockDecryptMessage = {
+        mockMLSActionExecutor.mockDecryptMessage = {
             mockDecryptMessageCount += 1
 
             XCTAssertEqual($0, messageData)
@@ -171,10 +171,11 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let messageData = Data.random()
         let sender = MLSClientID.random()
 
-        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+        mockSubconversationGroupIDRepository
+            .fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
 
         var mockDecryptMessageCount = 0
-        self.mockMLSActionExecutor.mockDecryptMessage = {
+        mockMLSActionExecutor.mockDecryptMessage = {
             mockDecryptMessageCount += 1
 
             XCTAssertEqual($0, messageData)
@@ -204,7 +205,10 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
 
-        XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
+        XCTAssertEqual(
+            mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count,
+            1
+        )
     }
 
     func test_Decrypt_ReturnsBufferedMessages() async throws {
@@ -218,7 +222,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
 
         var mockDecryptMessageCount = 0
-        self.mockMLSActionExecutor.mockDecryptMessage = {
+        mockMLSActionExecutor.mockDecryptMessage = {
             mockDecryptMessageCount += 1
 
             XCTAssertEqual($0, messageData)
@@ -241,7 +245,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         senderClientId: sender.rawValue.data(using: .utf8)!,
                         hasEpochChanged: false,
                         identity: .withBasicCredentials(),
-                        crlNewDistributionPoints: nil)
+                        crlNewDistributionPoints: nil
+                    )
                 ], crlNewDistributionPoints: nil
             )
         }
@@ -276,8 +281,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             didReceiveGroupIDs.fulfill()
         }
 
-        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            return DecryptedMessage(
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            DecryptedMessage(
                 message: messageData,
                 proposals: [],
                 isActive: false,
@@ -315,8 +320,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let senderData = try XCTUnwrap(sender.rawValue.data(using: .utf8))
 
         // Mock message decryption
-        self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            return DecryptedMessage(
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            DecryptedMessage(
                 message: messageData,
                 proposals: [],
                 isActive: false,

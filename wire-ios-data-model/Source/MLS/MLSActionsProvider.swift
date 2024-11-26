@@ -159,8 +159,9 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func sendCommitBundle(
         _ bundle: Data,
-        in context: NotificationContext)
-    async throws -> [ZMUpdateEvent] {
+        in context: NotificationContext
+    )
+        async throws -> [ZMUpdateEvent] {
         var action = SendCommitBundleAction(commitBundle: bundle)
         return try await action.perform(in: context)
     }

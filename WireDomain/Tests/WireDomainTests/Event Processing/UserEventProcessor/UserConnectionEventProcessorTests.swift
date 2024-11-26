@@ -17,9 +17,9 @@
 //
 
 import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireDomain
 
 final class UserConnectionEventProcessorTests: XCTestCase {
 
@@ -57,7 +57,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.invoke_MockMethod = {}
+        oneOnOneResolver.resolveAllOneOnOneConversations_MockMethod = {}
 
         // When
 
@@ -66,7 +66,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
-        XCTAssertEqual(oneOnOneResolver.invoke_Invocations.count, 1)
+        XCTAssertEqual(oneOnOneResolver.resolveAllOneOnOneConversations_Invocations.count, 1)
     }
 
     private enum Scaffolding {

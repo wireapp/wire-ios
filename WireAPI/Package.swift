@@ -12,7 +12,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
-        .package(path: "../SourceryPlugin"),
+        .package(path: "../WirePlugins"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
@@ -24,7 +24,7 @@ let package = Package(
             name: "WireAPISupport",
             dependencies: ["WireAPI"],
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(
@@ -33,6 +33,7 @@ let package = Package(
                 "WireAPI",
                 "WireAPISupport",
                 .product(name: "WireTestingPackage", package: "WireFoundation"),
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
@@ -46,7 +47,9 @@ let package = Package(
                 .process("APIs/FeatureConfigsAPI/Resources"),
                 .process("APIs/UserPropertiesAPI/Resources"),
                 .process("APIs/SelfUserAPI/Resources"),
-                .process("Network/PushChannel/Resources")
+                .process("APIs/UserClientsAPI/Resources"),
+                .process("Network/PushChannel/Resources"),
+                .process("Authentication/Resources")
             ]
         )
     ]

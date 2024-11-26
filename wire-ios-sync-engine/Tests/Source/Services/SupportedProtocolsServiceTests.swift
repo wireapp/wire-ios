@@ -18,9 +18,9 @@
 
 import WireDataModelSupport
 import WireDomainSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class SupportedProtocolsServiceTests: XCTestCase {
 
@@ -88,14 +88,14 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
 
             // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate == validLastActiveDate && otherClient.mlsPublicKeys == validMLSPublicKeys {
+            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
                 otherClient.lastActiveDate = invalidLastActiveDate
             }
         }
     }
 
     private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
-        return UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
+        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {

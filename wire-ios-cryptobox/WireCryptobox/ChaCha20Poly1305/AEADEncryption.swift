@@ -22,7 +22,7 @@ import WireUtilities
 public extension ChaCha20Poly1305 {
 
     /// AEAD Encryption wrapper for IETF ChaCha20-Poly1305 construction.
-    /// 
+    ///
     /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction
 
     enum AEADEncryption {
@@ -128,15 +128,15 @@ public extension ChaCha20Poly1305 {
             public var errorDescription: String? {
                 switch self {
                 case .failedToInitializeSodium:
-                    return "Failed to initialize sodium."
+                    "Failed to initialize sodium."
                 case .malformedKey:
-                    return "Encountered a malformed key."
+                    "Encountered a malformed key."
                 case .malformedNonce:
-                    return "Encountered a malformed nonce."
+                    "Encountered a malformed nonce."
                 case .malformedCiphertext:
-                    return "Encountered a malformed ciphertext."
+                    "Encountered a malformed ciphertext."
                 case .failedToDecrypt:
-                    return "Failed to decrypt, possible due to incorrect key or malformed ciphertext."
+                    "Failed to decrypt, possible due to incorrect key or malformed ciphertext."
                 }
             }
 
@@ -171,11 +171,11 @@ public extension ChaCha20Poly1305 {
         private static let authenticationBytesLength = Int(crypto_aead_chacha20poly1305_IETF_ABYTES)
 
         private static func ciphertextLength(forMessageLength messageLength: Int) -> Int {
-            return messageLength + authenticationBytesLength
+            messageLength + authenticationBytesLength
         }
 
         private static func messageLength(forCiphertextLength ciphertextLength: Int) -> Int {
-            return ciphertextLength - authenticationBytesLength
+            ciphertextLength - authenticationBytesLength
         }
 
         // MARK: - Buffer creation
@@ -187,7 +187,7 @@ public extension ChaCha20Poly1305 {
         }
 
         private static func createByteArray(length: Int) -> [Byte] {
-            return [Byte](repeating: 0, count: length)
+            [Byte](repeating: 0, count: length)
         }
 
     }

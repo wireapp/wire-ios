@@ -17,15 +17,15 @@
 //
 
 import UIKit
+import class WireCommonComponents.NetworkStatus
 import WireDataModel
 import WireSyncEngine
-import class WireCommonComponents.NetworkStatus
 
-// TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
+// TODO: [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
     var isCallingSupported: Bool {
-        return localParticipants.count > 1
+        localParticipants.count > 1
     }
 
     var firstCallingParticipantOtherThanSelf: UserType? {
@@ -62,13 +62,9 @@ extension ZMConversation {
     func joinVoiceChannel(video: Bool) {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let onGranted: (_ granted: Bool ) -> Void = { granted in
+        let onGranted: (_ granted: Bool) -> Void = { granted in
             if granted {
-                let joined = self.voiceChannel?.join(video: video, userSession: userSession) ?? false
-
-                if joined {
-                    Analytics.shared.tagMediaActionCompleted(video ? .videoCall : .audioCall, inConversation: self)
-                }
+                _ = self.voiceChannel?.join(video: video, userSession: userSession)
             } else {
                 self.voiceChannel?.leave(userSession: userSession, completion: nil)
             }
@@ -107,13 +103,17 @@ extension ZMConversation {
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
+            badConnectionController.addAction(UIAlertAction(
+                title: ErrorCallSlowCallLocale.SlowConnection.callAnyway,
+                style: .default
+            ) { _ in
                 handler(false)
             })
             badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
                 handler(true)
             })
-            ZClientViewController.shared?.present(badConnectionController, animated: true)
+
+            badConnectionController.presentOverAll(animated: true)
         } else {
             handler(false)
         }
@@ -145,15 +145,20 @@ extension ZMConversation {
         return true
     }
 
-    func confirmJoiningCallIfNeeded(alertPresenter: UIViewController, forceAlertModal: Bool = false, completion: @escaping () -> Void) {
+    func confirmJoiningCallIfNeeded(
+        alertPresenter: UIViewController,
+        forceAlertModal: Bool = false,
+        completion: @escaping () -> Void
+    ) {
         guard ZMUserSession.shared()?.isCallOngoing == true else {
             return completion()
         }
 
-        let controller = UIAlertController.ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
-            guard confirmed else { return }
-            self.endAllCallsExceptIncoming(completion: completion)
-        }
+        let controller = UIAlertController
+            .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
+                guard confirmed else { return }
+                self.endAllCallsExceptIncoming(completion: completion)
+            }
 
         alertPresenter.present(controller, animated: true)
     }

@@ -85,14 +85,16 @@ final class UserStatusView: TitleView {
             var accessibilityLabel = title
             if userStatus.isE2EICertified {
                 trailingIcons += [.e2eiCertifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesHaveValidCertificates
             }
             if userStatus.isProteusVerified {
                 trailingIcons += [.proteusVerifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesProteusVerified
             }
             self.accessibilityLabel = accessibilityLabel
-        } else if availability == .none && options.contains(.allowSettingStatus) {
+        } else if availability == .none, options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
         } else if availability != .none {
@@ -152,9 +154,9 @@ extension UserStatusView {
     }
 }
 
-extension NSTextAttachment {
+private extension NSTextAttachment {
 
-    fileprivate static var e2eiCertifiedShield: NSTextAttachment {
+    static var e2eiCertifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .certificateValid)
         if let imageSize = textAttachment.image?.size {
             textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
@@ -162,7 +164,7 @@ extension NSTextAttachment {
         return textAttachment
     }
 
-    fileprivate static var proteusVerifiedShield: NSTextAttachment {
+    static var proteusVerifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
         if let imageSize = textAttachment.image?.size {
             textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)

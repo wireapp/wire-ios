@@ -21,8 +21,8 @@ import WireDesign
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,
-                                                UICollectionViewDelegateFlowLayout,
-                                                UICollectionViewDataSource {
+    UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSource {
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
@@ -35,15 +35,17 @@ final class OtherUserClientsListViewController: UIViewController,
     private let contextProvider: ContextProvider?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private let mlsGroupId: MLSGroupID?
 
-    init(user: UserType,
-         userSession: UserSession,
-         contextProvider: ContextProvider?,
-         mlsGroupId: MLSGroupID?) {
+    init(
+        user: UserType,
+        userSession: UserSession,
+        contextProvider: ContextProvider?,
+        mlsGroupId: MLSGroupID?
+    ) {
         self.user = user
         self.clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
@@ -54,7 +56,7 @@ final class OtherUserClientsListViewController: UIViewController,
 
         tokens.append(userSession.addUserObserver(self, for: user))
 
-        self.headerView.delegate = self
+        headerView.delegate = self
         title = L10n.Localizable.Profile.Devices.title
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
@@ -93,7 +95,11 @@ final class OtherUserClientsListViewController: UIViewController,
         collectionView.dataSource = self
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
         UserClientCell.register(in: collectionView)
-        collectionView.register(CollectionViewCellAdapter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier)
+        collectionView.register(
+            CollectionViewCellAdapter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier
+        )
 
         view.addSubview(collectionView)
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -109,14 +115,15 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
-        return user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
+        user.allClients.sortedByRelevance().filter { !$0.isSelfClient() }
     }
 
     private func updateCertificatesForUserClients() {
         Task {
             if let mlsGroupId {
                 clients = await clients.updateCertificates(
-                    mlsGroupId: mlsGroupId, userSession: userSession)
+                    mlsGroupId: mlsGroupId, userSession: userSession
+                )
             }
             refreshView()
         }
@@ -129,14 +136,26 @@ final class OtherUserClientsListViewController: UIViewController,
 
     // MARK: - UICollectionViewDelegateFlowLayout & UICollectionViewDataSource
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         headerView.size(fittingWidth: collectionView.bounds.size.width)
 
         return headerView.bounds.size
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerViewCell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier, for: indexPath) as! CollectionViewCellAdapter
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let headerViewCell = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier,
+            for: indexPath
+        ) as! CollectionViewCellAdapter
 
         headerViewCell.wrappedView = headerView
 
@@ -144,14 +163,17 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return clients.count
+        clients.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
         cell.viewModel = .init(userClient: client)
@@ -249,10 +271,12 @@ extension Array where Element: UserClientType {
                 nil
             }
         })
-        let mlsClienIds = mlsClients.values.map({ $0 })
+        let mlsClienIds = mlsClients.values.map { $0 }
         do {
-            let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
-                                                                                       clientIds: mlsClienIds)
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(
+                mlsGroupId: mlsGroupId,
+                clientIds: mlsClienIds
+            )
             if !certificates.isEmpty {
                 for client in userClients {
                     let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue

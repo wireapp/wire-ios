@@ -32,7 +32,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public let syncStatus: SyncStatus
     public let operationStatus: OperationStatus
     public let requestCancellation: ZMRequestCancellation
-    public let analytics: AnalyticsType?
     public let teamInvitationStatus: TeamInvitationStatus
     public let assetDeletionStatus: AssetDeletionStatus
     public let callEventStatus: CallEventStatus
@@ -45,24 +44,24 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol,
-        analytics: AnalyticsType? = nil
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.requestCancellation = requestCancellation
         self.operationStatus = OperationStatus()
         self.callEventStatus = CallEventStatus()
-        self.analytics = analytics
         self.teamInvitationStatus = TeamInvitationStatus()
-        self.operationStatus.isInBackground = application.applicationState == .background
+        operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
         )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
-        self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
-                                                                   cookieProvider: cookieStorage,
-                                                                   coreCryptoProvider: coreCryptoProvider)
+        self.clientRegistrationStatus = ZMClientRegistrationStatus(
+            context: managedObjectContext,
+            cookieProvider: cookieStorage,
+            coreCryptoProvider: coreCryptoProvider
+        )
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
@@ -72,7 +71,10 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] note in
+        self.callInProgressObserverToken = NotificationInContext.addObserver(
+            name: CallStateObserver.CallInProgressNotification,
+            context: managedObjectContext.notificationContext
+        ) { [weak self] note in
             managedObjectContext.performGroupedBlock {
                 if let callInProgress = note.userInfo[CallStateObserver.CallInProgressKey] as? Bool {
                     self?.operationStatus.hasOngoingCall = callInProgress
@@ -82,29 +84,29 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var operationState: OperationState {
         switch operationStatus.operationState {
         case .foreground:
-            return .foreground
+            .foreground
         case .background, .backgroundCall, .backgroundFetch, .backgroundTask:
-            return .background
+            .background
         }
     }
 
     public var synchronizationState: SynchronizationState {
         if !clientRegistrationStatus.clientIsReadyForRequests {
-            return .unauthenticated
+            .unauthenticated
         } else if syncStatus.isSlowSyncing {
-            return .slowSyncing
+            .slowSyncing
         } else if syncStatus.isFetchingNotificationStream {
-            return .quickSyncing
+            .quickSyncing
         } else if syncStatus.isSyncing {
-            return .establishingWebsocket
+            .establishingWebsocket
         } else {
-            return .online
+            .online
         }
     }
 

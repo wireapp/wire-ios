@@ -18,32 +18,54 @@
 
 import Foundation
 
-extension MockTransportSession {
+public extension MockTransportSession {
 
     // V3
 
     @objc(processAssetV3DeleteWithKey:apiVersion:)
-    public func processAssetV3Delete(withKey key: String, apiVersion: APIVersion) -> ZMTransportResponse {
+    func processAssetV3Delete(withKey key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key) {
             managedObjectContext.delete(asset)
-            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         } else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         }
     }
 
     // V4
 
     @objc(processAssetV4PostWithDomain:multipart:apiVersion:)
-    public func processAssetV4Post(with domain: String, multipart: [ZMMultipartBodyItem], apiVersion: APIVersion) -> ZMTransportResponse {
+    func processAssetV4Post(
+        with domain: String,
+        multipart: [ZMMultipartBodyItem],
+        apiVersion: APIVersion
+    ) -> ZMTransportResponse {
         guard
             multipart.count == 2,
             let jsonObject = multipart.first,
-            let json = (try? JSONSerialization.jsonObject(with: jsonObject.data, options: .allowFragments)) as? [String: Any],
+            let json = (try? JSONSerialization.jsonObject(
+                with: jsonObject.data,
+                options: .allowFragments
+            )) as? [String: Any],
             let imageData = multipart.last,
             let mimeType = imageData.contentType
         else {
-            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         }
 
         let asset = MockAsset.insert(into: managedObjectContext)
@@ -63,28 +85,51 @@ extension MockTransportSession {
         ].compactMapValues { $0 } as ZMTransportData
 
         let location = String(format: "/asset/v4/%@", arguments: [asset.identifier])
-        return ZMTransportResponse(payload: payload,
-                                   httpStatus: 201,
-                                   transportSessionError: nil,
-                                   headers: ["Location": location],
-                                   apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: payload,
+            httpStatus: 201,
+            transportSessionError: nil,
+            headers: ["Location": location],
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     @objc(processAssetV4GetWithDomain:key:apiVersion:)
-    public func processAssetV4Get(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
+    func processAssetV4Get(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
-            return ZMTransportResponse(imageData: asset.data, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                imageData: asset.data,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: apiVersion.rawValue
+            )
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 404,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     @objc(processAssetV4DeleteWithDomain:key:apiVersion:)
-    public func processAssetV4Delete(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
+    func processAssetV4Delete(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
             managedObjectContext.delete(asset)
-            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         } else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         }
     }
 }

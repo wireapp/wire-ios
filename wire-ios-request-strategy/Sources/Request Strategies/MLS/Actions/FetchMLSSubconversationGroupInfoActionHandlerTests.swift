@@ -17,16 +17,23 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSSubconversationGroupInfoAction, FetchMLSSubconversationGroupInfoActionHandler> {
+class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<
+    FetchMLSSubconversationGroupInfoAction,
+    FetchMLSSubconversationGroupInfoActionHandler
+> {
 
     let subgroupType: SubgroupType = .conference
 
     override func setUp() {
         super.setUp()
-        action = FetchMLSSubconversationGroupInfoAction(conversationId: conversationId, domain: domain, subgroupType: subgroupType)
+        action = FetchMLSSubconversationGroupInfoAction(
+            conversationId: conversationId,
+            domain: domain,
+            subgroupType: subgroupType
+        )
         handler = FetchMLSSubconversationGroupInfoActionHandler(context: syncMOC)
     }
 

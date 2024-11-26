@@ -29,13 +29,6 @@ extension ConversationLocalStore {
         from remoteConversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        if let selfMember = remoteConversation.members?.selfMember {
-            updateMemberStatus(
-                from: selfMember,
-                for: localConversation
-            )
-        }
-
         if let readReceiptMode = remoteConversation.readReceiptMode {
             localConversation.updateReceiptMode(readReceiptMode)
         }
@@ -46,10 +39,8 @@ extension ConversationLocalStore {
                     accessModes: accessModes,
                     accessRoles: accessRoles
                 )
-
             } else if let accessRole = remoteConversation.legacyAccessRole {
                 let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole)
-
                 localConversation.updateAccessStatus(
                     accessModes: accessModes,
                     accessRoles: accessRoles.map(\.rawValue)
@@ -104,8 +95,6 @@ extension ConversationLocalStore {
             }
         }
 
-        guard let mlsService else { return }
-
         let conversationExists: Bool
 
         do {
@@ -123,32 +112,4 @@ extension ConversationLocalStore {
             context.saveOrRollback()
         }
     }
-
-    // MARK: - Member status
-
-    func updateMemberStatus(
-        from conversationMember: Conversation.Members.Member,
-        for localConversation: ZMConversation
-    ) {
-        let mutedStatus = conversationMember.mutedStatus
-        let mutedReference = conversationMember.mutedReference
-
-        if let mutedStatus, let mutedReference {
-            localConversation.updateMutedStatus(
-                status: Int32(mutedStatus),
-                referenceDate: mutedReference
-            )
-        }
-
-        let archived = conversationMember.archived
-        let archivedReference = conversationMember.archivedReference
-
-        if let archived, let archivedReference {
-            localConversation.updateArchivedStatus(
-                archived: archived,
-                referenceDate: archivedReference
-            )
-        }
-    }
-
 }

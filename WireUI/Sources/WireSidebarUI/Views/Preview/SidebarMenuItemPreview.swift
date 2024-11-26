@@ -33,6 +33,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Regular") },
+                    accessibilityLabel: { Text("Regular") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
@@ -40,6 +41,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: true,
                     title: { Text("Initially highlighted") },
+                    accessibilityLabel: { Text("Initially highlighted") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
@@ -47,6 +49,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isLink: true,
                     title: { Text("Initially highlighted") },
+                    accessibilityLabel: { Text("Initially highlighted") },
                     action: { print("show all conversations") }
                 )
             }
@@ -68,6 +71,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Small Icon") },
+                    accessibilityLabel: { Text("Small Icon") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
@@ -75,6 +79,7 @@ struct SidebarMenuItemPreview: View {
                     iconSize: iconSize,
                     isHighlighted: false,
                     title: { Text("Little larger Icon") },
+                    accessibilityLabel: { Text("Little larger Icon") },
                     action: { print("show all conversations") }
                 )
             }

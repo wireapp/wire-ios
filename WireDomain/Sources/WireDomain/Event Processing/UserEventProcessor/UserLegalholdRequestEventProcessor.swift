@@ -36,7 +36,7 @@ struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorPro
 
     func processEvent(_ event: UserLegalholdRequestEvent) async throws {
         await repository.addLegalHoldRequest(
-            for: event.userID,
+            userID: event.userID,
             clientID: event.clientID,
             lastPrekey: event.lastPrekey
         )

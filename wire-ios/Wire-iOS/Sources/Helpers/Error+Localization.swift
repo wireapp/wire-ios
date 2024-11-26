@@ -26,14 +26,14 @@ extension SessionManager.AccountError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .accountLimitReached:
-            return SettingsAddAccountLocale.title
+            SettingsAddAccountLocale.title
         }
     }
 
     public var failureReason: String? {
         switch self {
         case .accountLimitReached:
-            return SettingsAddAccountLocale.message
+            SettingsAddAccountLocale.message
         }
     }
 
@@ -46,9 +46,9 @@ extension SessionManager.SwitchBackendError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidBackend:
-            return UrlActionSwitchBackendErrorLocale.InvalidBackend.title
+            UrlActionSwitchBackendErrorLocale.InvalidBackend.title
         case .loggedInAccounts:
-            return UrlActionSwitchBackendErrorLocale.LoggedIn.title
+            UrlActionSwitchBackendErrorLocale.LoggedIn.title
         }
     }
 
@@ -72,13 +72,13 @@ extension DeepLinkRequestError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidUserLink:
-            return UrlActionLocale.InvalidUser.title
+            UrlActionLocale.InvalidUser.title
         case .invalidConversationLink:
-            return UrlActionLocale.InvalidConversation.title
+            UrlActionLocale.InvalidConversation.title
         case .malformedLink:
-            return UrlActionLocale.InvalidLink.title
+            UrlActionLocale.InvalidLink.title
         case .notLoggedIn:
-            return UrlActionLocale.AuthorizationRequired.title
+            UrlActionLocale.AuthorizationRequired.title
         }
     }
 
@@ -103,11 +103,11 @@ extension DeepLinkRequestError: LocalizedError {
 extension CompanyLoginError: LocalizedError {
 
     public var errorDescription: String? {
-        return L10n.Localizable.General.failure
+        L10n.Localizable.General.failure
     }
 
     public var failureReason: String? {
-        return L10n.Localizable.Login.Sso.Error.Alert.message(displayCode)
+        L10n.Localizable.Login.Sso.Error.Alert.message(displayCode)
     }
 
 }
@@ -117,14 +117,14 @@ extension ConmpanyLoginRequestError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidLink:
-            return L10n.Localizable.Login.Sso.startErrorTitle
+            L10n.Localizable.Login.Sso.startErrorTitle
         }
     }
 
     public var failureReason: String? {
         switch self {
         case .invalidLink:
-            return L10n.Localizable.Login.Sso.linkErrorMessage
+            L10n.Localizable.Login.Sso.linkErrorMessage
         }
     }
 }
@@ -134,15 +134,15 @@ extension ConnectToUserError: LocalizedError {
     typealias ConnectionError = L10n.Localizable.Error.Connection
 
     public var errorDescription: String? {
-        return ConnectionError.title
+        ConnectionError.title
     }
 
     public var failureReason: String? {
         switch self {
         case .missingLegalholdConsent:
-            return ConnectionError.missingLegalholdConsent
+            ConnectionError.missingLegalholdConsent
         default:
-            return ConnectionError.genericError
+            ConnectionError.genericError
         }
     }
 
@@ -153,15 +153,15 @@ extension UpdateConnectionError: LocalizedError {
     typealias ConnectionError = L10n.Localizable.Error.Connection
 
     public var errorDescription: String? {
-        return ConnectionError.title
+        ConnectionError.title
     }
 
     public var failureReason: String? {
         switch self {
         case .missingLegalholdConsent:
-            return ConnectionError.missingLegalholdConsent
+            ConnectionError.missingLegalholdConsent
         default:
-            return ConnectionError.genericError
+            ConnectionError.genericError
         }
     }
 

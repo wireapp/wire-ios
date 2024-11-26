@@ -93,7 +93,10 @@ final class FilterConversationsUseCaseTests: XCTestCase {
         // - the "Announcements" conversation, because the conversation name contains "o"
         // - the "Pipaluk Bróðir" conversation, because the conversation name contains "o"
         // - the "Guests" conversation, because at least one participant's name contains "o"
-        XCTAssertEqual(filtered, [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]])
+        XCTAssertEqual(
+            filtered,
+            [[groupConversations[0], groupConversations[1]], [oneOnOneConversations[0]], [otherGroupConversations[0]]]
+        )
     }
 
     func testSpecialCharacter_ß_MatchesConversationNameWith_ss() {
@@ -139,29 +142,38 @@ final class FilterConversationsUseCaseTests: XCTestCase {
     private let groupConversations = [
         MockConversation(
             name: "Wire Team",
-            participants: ["Petrŭ", "Mariele", "Mneme Tiedemann", "Sasho Gréta", "Pipaluk Bróðir", "Liselot Þórgrímr", "Völund Gustavo"]
+            otherParticipants: [
+                "Petrŭ",
+                "Mariele",
+                "Mneme Tiedemann",
+                "Sasho Gréta",
+                "Pipaluk Bróðir",
+                "Liselot Þórgrímr",
+                "Völund Gustavo"
+            ]
         ),
         MockConversation(
             name: "Announcements",
-            participants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
+            otherParticipants: ["Petrŭ", "Rifka", "Mneme Tiedemann", "Pipaluk Bróðir"]
         )
     ]
 
     private let oneOnOneConversations = [
-        MockConversation(name: "Pipaluk Bróðir", participants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
-        MockConversation(name: "Mariele", participants: ["Mariele", "Mneme Tiedemann"])
+        MockConversation(name: "Pipaluk Bróðir", otherParticipants: ["Pipaluk Bróðir", "Mneme Tiedemann"]),
+        MockConversation(name: "Mariele", otherParticipants: ["Mariele", "Mneme Tiedemann"])
     ]
 
     private let otherGroupConversations = [
-        MockConversation(name: "Guests", participants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
-        MockConversation(name: "Spaß", participants: ["Mneme Tiedemann"]),
-        MockConversation(name: "Essen", participants: ["Mneme Tiedemann"])
+        MockConversation(name: "Guests", otherParticipants: ["Grusha Žarko", "Rifka", "Mneme Tiedemann"]),
+        MockConversation(name: "Spaß", otherParticipants: ["Mneme Tiedemann"]),
+        MockConversation(name: "Essen", otherParticipants: ["Mneme Tiedemann"])
     ]
 }
 
 // MARK: - Mock Conversation, Mock Container
 
-private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable, ExpressibleByArrayLiteral {
+private struct MockContainer: MutableConversationContainer, CustomDebugStringConvertible, Equatable,
+    ExpressibleByArrayLiteral {
 
     private(set) var conversations: [MockConversation]
 
@@ -183,23 +195,24 @@ private struct MockContainer: MutableConversationContainer, CustomDebugStringCon
 private struct MockConversation: FilterableConversation, CustomDebugStringConvertible, Equatable {
 
     private(set) var name: String
-    private(set) var participants: [MockParticipant]
+    private(set) var otherParticipants: [MockParticipant]
 
     var debugDescription: String {
-        let participants = participants
+        let otherParticipants = otherParticipants
             .map(String.init(reflecting:))
             .joined(separator: ", ")
-        return "\(name)(\(participants))"
+        return "\(name)(\(otherParticipants) + self-user)"
     }
 }
 
-private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable, ExpressibleByStringLiteral {
+private struct MockParticipant: FilterableConversationParticipant, CustomDebugStringConvertible, Equatable,
+    ExpressibleByStringLiteral {
 
     private(set) var name: String
 
     var debugDescription: String { name }
 
     init(stringLiteral value: String) {
-        name = value
+        self.name = value
     }
 }

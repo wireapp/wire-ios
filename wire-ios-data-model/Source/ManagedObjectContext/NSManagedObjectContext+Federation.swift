@@ -24,11 +24,17 @@ private protocol FederationMigratable: ZMManagedObject {
 }
 
 extension ZMConversation: FederationMigratable {
-    static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(format: "%K == nil", #keyPath(ZMConversation.domain))
+    static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(
+        format: "%K == nil",
+        #keyPath(ZMConversation.domain)
+    )
 }
 
 extension ZMUser: FederationMigratable {
-    static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(format: "%K == nil", #keyPath(ZMUser.domain))
+    static let predicateForObjectsNeedingFederationMigration: NSPredicate? = NSPredicate(
+        format: "%K == nil",
+        #keyPath(ZMUser.domain)
+    )
 }
 
 extension NSManagedObjectContext {

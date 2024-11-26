@@ -40,15 +40,15 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
     func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws {
         let senderID = event.senderID
         let conversationID = event.conversationID
-        let isEnabled = event.newRecieptMode == 1
+        let isEnabled = event.newReceiptMode == 1
 
         let sender = try await userRepository.fetchUser(
-            with: senderID.uuid,
+            id: senderID.uuid,
             domain: senderID.domain
         )
 
         let conversation = await conversationRepository.fetchConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 

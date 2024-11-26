@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public import UIKit
 
 public extension UIImage {
 
@@ -27,7 +27,7 @@ public extension UIImage {
         borderColor: UIColor
     ) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: size)
-        let combinedImage = renderer.image { context in
+        return renderer.image { context in
             self.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
 
             let xPosition = (size.width - overlaySize.width) / 2
@@ -42,10 +42,13 @@ public extension UIImage {
             borderColor.setFill()
             context.cgContext.fill(borderRect)
 
-            overlayImage.draw(in: CGRect(x: xPosition, y: yPosition, width: overlaySize.width, height: overlaySize.height))
+            overlayImage.draw(in: CGRect(
+                x: xPosition,
+                y: yPosition,
+                width: overlaySize.width,
+                height: overlaySize.height
+            ))
         }
-
-        return combinedImage
     }
 
 }

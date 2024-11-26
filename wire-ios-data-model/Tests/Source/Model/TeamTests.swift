@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 final class TeamTests: ZMConversationTestsBase {
 
@@ -64,7 +64,8 @@ final class TeamTests: ZMConversationTestsBase {
 
         // when
         let guest = ZMUser.insertNewObject(in: uiMOC)
-        guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [guest], team: team) else { XCTFail(); return }
+        guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [guest], team: team)
+        else { XCTFail(); return }
 
         // then
         XCTAssertTrue(guest.isGuest(in: conversation))
@@ -84,7 +85,11 @@ final class TeamTests: ZMConversationTestsBase {
         bot.serviceIdentifier = UUID.create().transportString()
         bot.providerIdentifier = UUID.create().transportString()
         XCTAssert(bot.isServiceUser)
-        guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [guest, bot], team: team) else { XCTFail(); return }
+        guard let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [guest, bot],
+            team: team
+        ) else { XCTFail(); return }
 
         // then
         XCTAssert(guest.isGuest(in: conversation))
@@ -101,7 +106,8 @@ final class TeamTests: ZMConversationTestsBase {
         let users = [user, otherUser]
 
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: users) else { return XCTFail("No conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: users)
+        else { return XCTFail("No conversation") }
 
         // then
         users.forEach {
@@ -122,8 +128,13 @@ final class TeamTests: ZMConversationTestsBase {
         let guest = ZMUser.insertNewObject(in: uiMOC)
 
         // when
-        guard let conversation1 = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [guest], team: team1) else { XCTFail(); return }
-        guard let conversation2 = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [otherUser], team: team2) else { XCTFail(); return }
+        guard let conversation1 = ZMConversation
+            .insertGroupConversation(moc: uiMOC, participants: [guest], team: team1) else { XCTFail(); return }
+        guard let conversation2 = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [otherUser],
+            team: team2
+        ) else { XCTFail(); return }
 
         // then
         XCTAssertTrue(guest.isGuest(in: conversation1))

@@ -18,12 +18,10 @@
 
 import UIKit
 
-/**
- * A view with rounded corners. Adopt this protocol if your view's layer is a `ContinuousMaskLayer`.
- * This protocol provides utilities to easily change the rounded corners.
- *
- * You need to override `+ (Class *)layerClass` on `UIView` before conforming to this protocol.
- */
+/// A view with rounded corners. Adopt this protocol if your view's layer is a `ContinuousMaskLayer`.
+/// This protocol provides utilities to easily change the rounded corners.
+///
+/// You need to override `+ (Class *)layerClass` on `UIView` before conforming to this protocol.
 
 protocol RoundedViewProtocol: AnyObject {
     var layer: CALayer { get }
@@ -33,7 +31,7 @@ extension RoundedViewProtocol {
 
     var shape: MaskShape {
         get {
-            return roundedLayer.shape
+            roundedLayer.shape
         }
         set {
             roundedLayer.shape = newValue
@@ -42,7 +40,7 @@ extension RoundedViewProtocol {
 
     var roundedCorners: UIRectCorner {
         get {
-            return roundedLayer.roundedCorners
+            roundedLayer.roundedCorners
         }
         set {
             roundedLayer.roundedCorners = newValue
@@ -50,7 +48,7 @@ extension RoundedViewProtocol {
     }
 
     var roundedLayer: ContinuousMaskLayer {
-        return layer as! ContinuousMaskLayer
+        layer as! ContinuousMaskLayer
     }
 
 }
