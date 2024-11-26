@@ -29,6 +29,7 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
     private var userRepository: MockUserRepositoryProtocol!
     private var conversationRepository: MockConversationRepositoryProtocol!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var messageRepository: MockMessageRepositoryProtocol!
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -47,11 +48,13 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         userRepository = MockUserRepositoryProtocol()
         conversationRepository = MockConversationRepositoryProtocol()
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        messageRepository = MockMessageRepositoryProtocol()
 
         sut = ConversationMessageTimerUpdateEventProcessor(
             userRepository: userRepository,
             conversationRepository: conversationRepository,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            messageRepository: messageRepository
         )
     }
 
@@ -61,6 +64,7 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         userRepository = nil
         conversationRepository = nil
         conversationLocalStore = nil
+        messageRepository = nil
         modelHelper = nil
         coreDataStack = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -72,18 +76,16 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async {
         // Mock
 
-        let (user, conversation) = await context.perform { [self] in
-            let user = modelHelper.createUser(in: context)
+        let (conversation) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(in: context)
 
-            return (user, conversation)
+            return (conversation)
         }
 
-        userRepository.fetchOrCreateUserWithDomain_MockValue = user
-        conversationRepository.fetchOrCreateConversationWithDomain_MockValue = conversation
-        conversationRepository.addSystemMessageTo_MockMethod = { _, _ in }
+        conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMessageDestructionTimeout_MockValue = .fiveMinutes
         conversationLocalStore.storeConversationTimeoutValueFor_MockMethod = { _, _ in }
+        messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -91,11 +93,10 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userRepository.fetchOrCreateUserWithDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.fetchOrCreateConversationWithDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.addSystemMessageTo_Invocations.count, 1)
+        XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.conversationMessageDestructionTimeout_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationTimeoutValueFor_Invocations.count, 1)
+        XCTAssertEqual(messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
     }
 
     private enum Scaffolding {

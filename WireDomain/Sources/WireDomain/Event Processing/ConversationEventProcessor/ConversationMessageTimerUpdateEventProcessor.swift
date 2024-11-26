@@ -36,17 +36,13 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
     let userRepository: any UserRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageRepository: any MessageRepositoryProtocol
 
     func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
         let userID = event.senderID
         let conversationID = event.conversationID
         let timer = Double(event.newTimer ?? 0)
         let timestamp = event.timestamp
-
-        let sender = await userRepository.fetchOrCreateUser(
-            id: userID.uuid,
-            domain: userID.domain
-        )
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
             id: conversationID.uuid,
@@ -58,18 +54,17 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
         let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
 
         if currentTimeout != timeout {
-            let systemMessage = SystemMessage(
-                type: .messageTimerUpdate,
-                sender: sender,
-                users: [sender],
-                timestamp: timestamp,
-                messageTimer: timeoutValue
+            
+            let messageType: MessageType = .messageTimerUpdate(
+                sender: (userID.uuid, userID.domain),
+                date: timestamp,
+                timeoutValue: timeoutValue
             )
-
-            // TODO: [WPB-11839] Use MessageRepository
-            await conversationRepository.addSystemMessage(
-                systemMessage,
-                to: conversation
+            
+            await messageRepository.addMessageToConversation(
+                messageType: messageType,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain
             )
         }
 

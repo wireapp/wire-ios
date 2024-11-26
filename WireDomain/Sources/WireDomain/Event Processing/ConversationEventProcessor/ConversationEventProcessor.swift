@@ -54,13 +54,13 @@ struct ConversationEventProcessor {
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
         case let .accessUpdate(event):
-            try await accessUpdateEventProcessor.processEvent(event)
+            await accessUpdateEventProcessor.processEvent(event)
 
         case let .codeUpdate(event):
             try await codeUpdateEventProcessor.processEvent(event)
 
         case let .create(event):
-            try await createEventProcessor.processEvent(event)
+            await createEventProcessor.processEvent(event)
 
         case let .delete(event):
             try await deleteEventProcessor.processEvent(event)
@@ -75,7 +75,7 @@ struct ConversationEventProcessor {
             try await memberUpdateEventProcessor.processEvent(event)
 
         case let .messageTimerUpdate(event):
-            try await messageTimerUpdateEventProcessor.processEvent(event)
+            await messageTimerUpdateEventProcessor.processEvent(event)
 
         case let .mlsMessageAdd(event):
             try await mlsMessageAddEventProcessor.processEvent(event)

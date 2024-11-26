@@ -313,6 +313,25 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+            
+        case .messageTimerUpdate(let sender, let date, let timeoutValue):
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+            
+            let systemMessage = await createSystemMessage(
+                messageType: .messageTimerUpdate,
+                sender: sender,
+                users: [sender],
+                timestamp: date,
+                messageTimer: timeoutValue
+            )
+            
+            return [systemMessage]
+            
         }
     }
 

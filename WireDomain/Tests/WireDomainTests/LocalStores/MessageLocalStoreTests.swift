@@ -138,6 +138,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.mlsMigrationFinalized])
         case .receiptModeIsOn:
             (messagesCount: 1, [.readReceiptsOn])
+        case .messageTimerUpdate:
+            (messagesCount: 1, [.messageTimerUpdate])
         }
     }
 
