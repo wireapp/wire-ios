@@ -66,7 +66,9 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
 
-        captureSession.startRunning()
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.captureSession.startRunning()
+        }
     }
 
     private func failed() {
