@@ -27,11 +27,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     // MARK: - Properties
-    
+
     let apiService: any APIServiceProtocol
 
     var apiVersion: APIVersion { .v0 }
-    
+
     var basePath: String {
         "/conversations"
     }
@@ -54,7 +54,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
         let components = URLComponents(string: "\(basePath)/list-ids/")
         let jsonEncoder = JSONEncoder.defaultEncoder
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw ConversationsAPIError.invalidURL
@@ -69,12 +69,12 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
                 .withMethod(.post)
                 .withBody(body, contentType: .json)
                 .build()
-            
+
             let (data, response) = try await self.apiService.executeRequest(
                 request,
                 requiringAccessToken: true
             )
-            
+
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConversationIDsV0.self)
                 .parse(code: response.statusCode, data: data)
@@ -90,22 +90,22 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         var components = URLComponents(string: "\(pathPrefix)\(basePath)/list/v2")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw ConversationsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
-        
+
         return try ResponseParser()
             .success(code: .ok, type: QualifiedConversationListV0.self)
             .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
@@ -118,7 +118,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     ) async throws -> Conversation {
         throw ConversationsAPIError.unsupportedEndpointForAPIVersion
     }
-    
+
     func getConversationGuestLink(
         conversationID: String
     ) async throws -> String {
@@ -143,7 +143,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .failure(code: .forbidden, label: "access-denied", error: ConversationsAPIError.accessDenied)
             .failure(code: .notFound, label: "cnv", error: ConversationsAPIError.invalidConversationID)
             .failure(code: .notFound, label: "no-conversation", error: ConversationsAPIError.conversationNotFound)
-            .failure(code: .notFound, label: "no-conversation-code", error: ConversationsAPIError.conversationCodeNotFound)
+            .failure(
+                code: .notFound,
+                label: "no-conversation-code",
+                error: ConversationsAPIError.conversationCodeNotFound
+            )
             .failure(code: .conflict, label: "guest-links-disabled", error: ConversationsAPIError.guestLinksDisabled)
             .parse(code: response.statusCode, data: data)
     }
@@ -272,11 +276,11 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
 }
 
 struct ConversationCodeV0: Decodable, ToAPIModelConvertible {
-    
+
     let code: String
     let key: String
     let uri: String
-    
+
     func toAPIModel() -> String {
         uri
     }

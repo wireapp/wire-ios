@@ -179,7 +179,7 @@ public protocol ConversationRepositoryProtocol {
         _ message: SystemMessage,
         to conversation: ZMConversation
     ) async
-    
+
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation id.
     /// - returns: The guest link.
@@ -224,20 +224,20 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Public
-    
+
     public func fetchConversationGuestLink(
         conversationID: String
     ) async throws -> String {
-        
+
         do {
             return try await conversationsAPI.getConversationGuestLink(
                 conversationID: conversationID
             )
-            
-        } catch let error {
+
+        } catch {
             throw ConversationRepositoryError.failedToFetchGuestLink(error)
         }
-        
+
     }
 
     public func pullConversation(id: UUID, domain: String) async throws {

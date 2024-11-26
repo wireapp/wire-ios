@@ -29,7 +29,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
     override func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/list-ids/")
         let jsonEncoder = JSONEncoder.defaultEncoder
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw ConversationsAPIError.invalidURL
@@ -44,7 +44,7 @@ class ConversationsAPIV1: ConversationsAPIV0 {
                 .withMethod(.post)
                 .withBody(body, contentType: .json)
                 .build()
-            
+
             let (data, response) = try await self.apiService.executeRequest(
                 request,
                 requiringAccessToken: true

@@ -25,22 +25,22 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw ConversationsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
-        
+
         // Removed in v5: remove handling of error code 400
         return try ResponseParser()
             .success(code: .ok, type: QualifiedConversationListV5.self)
@@ -54,7 +54,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         guard !userID.isEmpty, !domain.isEmpty else {
             throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
         }
-        
+
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/one2one/\(domain)/\(userID)")
 
         guard let url = components?.url else {
@@ -65,7 +65,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
-        
+
         let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true

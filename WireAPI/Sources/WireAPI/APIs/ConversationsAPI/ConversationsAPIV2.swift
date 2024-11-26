@@ -27,7 +27,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
 
         // New change for v2
         let components = URLComponents(string: "\(pathPrefix)\(basePath)/list")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw ConversationsAPIError.invalidURL
@@ -37,7 +37,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
-        
+
         let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true

@@ -45,13 +45,14 @@ final class UpdateEventsAPITests: XCTestCase {
                 (.ok, "GetUpdateEventsSuccessResponse200_Page1"),
                 (.ok, "GetUpdateEventsSuccessResponse200_Page2")
             ]), when: { sut in
-            for try await _ in sut.getUpdateEvents(
-                selfClientID: Scaffolding.selfClientID,
-                sinceEventID: Scaffolding.lastUpdateEventID
-            ) {
-                // Nothing to assert here since we're only snapshotting request.
+                for try await _ in sut.getUpdateEvents(
+                    selfClientID: Scaffolding.selfClientID,
+                    sinceEventID: Scaffolding.lastUpdateEventID
+                ) {
+                    // Nothing to assert here since we're only snapshotting request.
+                }
             }
-        })
+        )
     }
 
     // MARK: - Response handling

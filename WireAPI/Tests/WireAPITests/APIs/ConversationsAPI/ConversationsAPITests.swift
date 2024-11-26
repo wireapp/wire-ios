@@ -17,9 +17,9 @@
 //
 
 import WireTestingPackage
-@testable import WireAPISupport
 import XCTest
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class ConversationsAPITests: XCTestCase {
 
@@ -31,7 +31,7 @@ final class ConversationsAPITests: XCTestCase {
         apiSnapshotHelper = APIServiceSnapshotHelper<any ConversationsAPI> { apiService, apiVersion in
             ConversationsAPIBuilder(apiService: apiService)
                 .makeAPI(for: apiVersion)
-            
+
         }
     }
 
@@ -91,7 +91,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ])
@@ -105,7 +105,7 @@ final class ConversationsAPITests: XCTestCase {
         }
 
         // then
-        
+
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { api in
             _ = try await api.getLegacyConversationIdentifiers()
         }
@@ -135,7 +135,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetLegacyConversationIdentifiers_givenV0AndErrorResponse() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
@@ -170,7 +170,7 @@ final class ConversationsAPITests: XCTestCase {
         for try await _ in pager {
             // trigger fetching date
         }
-        
+
         try await apiSnapshotHelper.verifyRequest(for: [.v1], apiService: apiService) { api in
             _ = try await api.getConversationIdentifiers()
         }
@@ -242,7 +242,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV0AndSuccessResponse200")
         ])
@@ -301,7 +301,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV2AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV2AndSuccessResponse200")
         ])
@@ -339,7 +339,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV2AndSuccessResponse503() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
@@ -361,7 +361,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV3AndSuccessResponse200")
         ])
@@ -424,7 +424,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV5AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetConversations_givenV5AndSuccessResponse200")
         ])
@@ -468,9 +468,12 @@ final class ConversationsAPITests: XCTestCase {
         // Given
 
         let supportedVersions = APIVersion.v5.andNextVersions
-        
-        let mocks: [MockAPIServiceProtocol.Response] = Array(repeating: (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200"), count: supportedVersions.count)
-        
+
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200"),
+            count: supportedVersions.count
+        )
+
         let apiService = MockAPIServiceProtocol.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
@@ -482,14 +485,14 @@ final class ConversationsAPITests: XCTestCase {
                 userID: Scaffolding.userID,
                 in: Scaffolding.domain
             )
-            
+
             XCTAssertEqual(mlsConversation.id, Scaffolding.mlsConversationID)
         }
     }
 
     func testGetMLSOneToOneConversation_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "")
         ])
@@ -517,7 +520,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetMLSOneToOneConversation_Failure_Response_MLS_Not_Enabled() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: "mls-not-enabled"
@@ -559,7 +562,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetMLSOneToOneConversation_Failure_UserID_And_Domain_Empty() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200")
         ])
@@ -576,12 +579,12 @@ final class ConversationsAPITests: XCTestCase {
             )
         }
     }
-    
+
     func testGetConversationGuestLink() async throws {
         // Given
 
         let apiVersions = APIVersion.allCases
-        let conversationID =  Scaffolding.conversationID.uuidString
+        let conversationID = Scaffolding.conversationID.uuidString
 
         // Then
 
@@ -592,64 +595,64 @@ final class ConversationsAPITests: XCTestCase {
             )
         }
     }
-    
+
     func testGetConversationGuestLink_Success_Response_V0_To_V3() async throws {
-        
+
         let supportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3]
-        
+
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testGetConversationGuestLinkV0SuccessResponse200"),
             count: supportedVersions.count
         )
-        
+
         let apiService = MockAPIServiceProtocol.withResponses(mocks)
 
-        let conversationID =  Scaffolding.conversationID.uuidString
+        let conversationID = Scaffolding.conversationID.uuidString
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // When
 
         for sut in suts {
             let uri = try await sut.getConversationGuestLink(conversationID: conversationID)
-            
+
             XCTAssertEqual(uri, Scaffolding.guestLinkV0)
         }
-        
+
     }
-    
+
     func testGetConversationGuestLink_Success_Response_V4_And_Next_Versions() async throws {
-        
+
         let supportedVersions = APIVersion.v4.andNextVersions
-        
+
         let mocks: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "testGetConversationGuestLinkV4SuccessResponse200"),
             count: supportedVersions.count
         )
-        
+
         let apiService = MockAPIServiceProtocol.withResponses(mocks)
 
-        let conversationID =  Scaffolding.conversationID.uuidString
+        let conversationID = Scaffolding.conversationID.uuidString
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // When
 
         for sut in suts {
             let uri = try await sut.getConversationGuestLink(conversationID: conversationID)
-            
+
             XCTAssertEqual(uri, Scaffolding.guestLinkV4)
         }
-        
+
     }
-    
+
     func testGetConversationGuestLinkV0_Failure_Access_Denied() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "access-denied"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v0.buildAPI(apiService: apiService)
 
@@ -660,16 +663,16 @@ final class ConversationsAPITests: XCTestCase {
             try await sut.getConversationGuestLink(conversationID: conversationID)
         }
     }
-    
+
     func testGetConversationGuestLinkV0_Failure_Invalid_Conversation_ID() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "cnv"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v0.buildAPI(apiService: apiService)
 
@@ -680,16 +683,16 @@ final class ConversationsAPITests: XCTestCase {
             try await sut.getConversationGuestLink(conversationID: conversationID)
         }
     }
-    
+
     func testGetConversationGuestLinkV0_Failure_No_Conversation_Found() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-conversation"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v0.buildAPI(apiService: apiService)
 
@@ -700,16 +703,16 @@ final class ConversationsAPITests: XCTestCase {
             try await sut.getConversationGuestLink(conversationID: conversationID)
         }
     }
-    
+
     func testGetConversationGuestLinkV0_Failure_No_Conversation_Code_Found() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-conversation-code"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v0.buildAPI(apiService: apiService)
 
@@ -720,16 +723,16 @@ final class ConversationsAPITests: XCTestCase {
             try await sut.getConversationGuestLink(conversationID: conversationID)
         }
     }
-    
+
     func testGetConversationGuestLinkV0_Failure_Guest_Links_Disabled() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .conflict,
             label: "guest-links-disabled"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v0.buildAPI(apiService: apiService)
 
@@ -740,17 +743,17 @@ final class ConversationsAPITests: XCTestCase {
             try await sut.getConversationGuestLink(conversationID: conversationID)
         }
     }
-    
+
     func testGetConversationGuestLinkV4_Invalid_Conversation_ID() async throws {
         // Given
-        
+
         // Dedicated error code in V4
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: "cnv"
         )
-        
-        let conversationID =  Scaffolding.conversationID.uuidString
+
+        let conversationID = Scaffolding.conversationID.uuidString
 
         let sut = APIVersion.v4.buildAPI(apiService: apiService)
 
