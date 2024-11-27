@@ -889,6 +889,29 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         await mock(newName, conversationID, conversationDomain, senderID, senderDomain, date)
     }
 
+    // MARK: - fetchConversationGuestLink
+
+    public var fetchConversationGuestLinkConversationID_Invocations: [String] = []
+    public var fetchConversationGuestLinkConversationID_MockError: Error?
+    public var fetchConversationGuestLinkConversationID_MockMethod: ((String) async throws -> String?)?
+    public var fetchConversationGuestLinkConversationID_MockValue: String??
+
+    public func fetchConversationGuestLink(conversationID: String) async throws -> String? {
+        fetchConversationGuestLinkConversationID_Invocations.append(conversationID)
+
+        if let error = fetchConversationGuestLinkConversationID_MockError {
+            throw error
+        }
+
+        if let mock = fetchConversationGuestLinkConversationID_MockMethod {
+            return try await mock(conversationID)
+        } else if let mock = fetchConversationGuestLinkConversationID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationGuestLinkConversationID`")
+        }
+    }
+
 }
 
 public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {

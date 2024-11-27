@@ -19,6 +19,9 @@
 /// Errors originating from `ConversationsAPI`.
 public enum ConversationsAPIError: Error {
 
+    /// A request url is not invalid.
+    case invalidURL
+
     /// Failure if functionality has not been implemented.
     case notImplemented
 
@@ -36,5 +39,20 @@ public enum ConversationsAPIError: Error {
 
     /// Failure if user and domain are empty
     case userAndDomainShouldNotBeEmpty
+
+    /// Access denied
+    case accessDenied
+
+    /// Conversation not found
+    case conversationNotFound
+
+    /// Conversation code not found
+    case conversationCodeNotFound
+
+    /// Conversation guests links disabled
+    case guestLinksDisabled
+
+    /// Invalid conversation id
+    case invalidConversationID
 
 }

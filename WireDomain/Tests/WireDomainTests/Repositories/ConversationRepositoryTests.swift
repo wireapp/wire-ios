@@ -528,11 +528,50 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.addParticipantsAddedByAtDateConversation_Invocations.count, 1)
     }
 
+    func testFetchConversationGuestLink_It_Invokes_Conversation_API_Method() async throws {
+
+        // Mock
+
+        conversationsAPI.getConversationGuestLinkConversationID_MockValue = Scaffolding.guestLink
+
+        // When
+
+        let guestLink = try await sut.fetchConversationGuestLink(
+            conversationID: Scaffolding.id.uuidString
+        )
+
+        // Then
+
+        XCTAssertEqual(conversationsAPI.getConversationGuestLinkConversationID_Invocations.count, 1)
+        XCTAssertEqual(guestLink, Scaffolding.guestLink)
+
+    }
+
+    func testFetchConversationGuestLink_It_Throws_Error() async throws {
+
+        // Mock
+
+        enum MockAPIError: Error {
+            case error
+        }
+
+        conversationsAPI.getConversationGuestLinkConversationID_MockError = MockAPIError.error
+
+        // Then
+        await XCTAssertThrowsErrorAsync {
+            // When
+            try await sut.fetchConversationGuestLink(
+                conversationID: Scaffolding.id.uuidString
+            )
+        }
+    }
+
     private enum Scaffolding {
 
         static let id = UUID.mockID1
 
         static let domain = "domain.com"
+        static let guestLink = "https://www.example.com"
 
         static let conversation = Conversation(
             id: id,

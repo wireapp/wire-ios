@@ -132,7 +132,6 @@
 		EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */; };
 		EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */; };
 		EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */; };
-		EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */; };
 		EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */; };
 		EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */; };
 		EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */; };
@@ -254,7 +253,6 @@
 		C98433E82CCA86CA009723D4 /* MessageLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStore.swift; sourceTree = "<group>"; };
 		C98433EE2CCB7EE6009723D4 /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		C98433F02CCBC251009723D4 /* MessageRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRepositoryTests.swift; sourceTree = "<group>"; };
-		C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLocalStoreTests.swift; sourceTree = "<group>"; };
 		C99322B22C986E3A0065E10F /* TeamRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepository.swift; sourceTree = "<group>"; };
 		C99322B32C986E3A0065E10F /* TeamRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryError.swift; sourceTree = "<group>"; };
 		C99322B52C986E3A0065E10F /* SelfUserProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
@@ -310,7 +308,6 @@
 		EE57A7062C2A86880096F242 /* ProteusMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageDecryptorError.swift; sourceTree = "<group>"; };
 		EE57A70A2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventDecryptorTests.swift; sourceTree = "<group>"; };
 		EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAccessUpdateEventProcessor.swift; sourceTree = "<group>"; };
-		EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCodeUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMemberJoinEventProcessor.swift; sourceTree = "<group>"; };
@@ -870,7 +867,6 @@
 			children = (
 				EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */,
 				EEAD09F12C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift */,
-				EEAD09F32C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift */,
 				EEAD09F52C46772000CC8658 /* ConversationCreateEventProcessor.swift */,
 				EEAD09F72C46772C00CC8658 /* ConversationDeleteEventProcessor.swift */,
 				EEAD09F92C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift */,
