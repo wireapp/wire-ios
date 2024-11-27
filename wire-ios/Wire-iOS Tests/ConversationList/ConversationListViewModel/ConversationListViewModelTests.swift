@@ -22,15 +22,7 @@ import XCTest
 @testable import Wire
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
-        // no-op
-    }
-
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
-        // no-op
-    }
-
-    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {
         // no-op
     }
 
@@ -65,7 +57,6 @@ final class ConversationListViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        removeViewModelState()
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
 
@@ -87,12 +78,6 @@ final class ConversationListViewModelTests: XCTestCase {
         coreDataFixture = nil
 
         super.tearDown()
-    }
-
-    func removeViewModelState() {
-        guard let persistentURL = ConversationListViewModel.persistentURL else { return }
-
-        try? FileManager.default.removeItem(at: persistentURL)
     }
 
     // 2 group conversations and 1 contact. First group conversation is mock conversation

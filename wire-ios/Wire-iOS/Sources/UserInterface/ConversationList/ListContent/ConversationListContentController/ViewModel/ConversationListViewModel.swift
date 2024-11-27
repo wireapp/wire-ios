@@ -194,28 +194,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    weak var delegate: ConversationListViewModelDelegate? {
-        didSet {
-            delegateFolderEnableState(newState: state)
-        }
-    }
-
-    // TODO: [WPB-7307]: remove everything regarding folders
-    var folderEnabled: Bool {
-        get {
-            state.folderEnabled
-        }
-
-        set {
-            guard newValue != state.folderEnabled else { return }
-
-            state.folderEnabled = newValue
-
-            updateAllSections()
-            delegate?.listViewModelShouldBeReloaded()
-            delegateFolderEnableState(newState: state)
-        }
-    }
+    weak var delegate: ConversationListViewModelDelegate?
 
     // Local copies of the lists.
     private var sections: [Section] = []
@@ -250,29 +229,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    /// for folder enabled and collapse presistent
-    private lazy var _state: State = {
-        return .init()
-    }()
-
-    private var state: State {
-        get {
-            _state
-        }
-
-        set {
-            /// simulate willSet
-
-            /// assign
-            if newValue != _state {
-                _state = newValue
-            }
-
-            /// simulate didSet
-            saveState(state: _state)
-        }
-    }
-
     private var conversationDirectoryToken: Any?
 
     let userSession: UserSession?
@@ -286,30 +242,12 @@ final class ConversationListViewModel: NSObject {
         updateAllSections()
     }
 
-    private func delegateFolderEnableState(newState: State) {
-        delegate?.listViewModel(self, didChangeFolderEnabled: folderEnabled)
-    }
-
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {
         kind(of: sectionIndex)?.localizedName
-    }
-
-    /// return true if seaction header is visible.
-    /// For .contactRequests section it is always invisible
-    /// When folderEnabled == true, returns false
-    ///
-    /// - Parameter sectionIndex: section number of collection view
-    /// - Returns: if the section exists and visible, return true.
-    func sectionHeaderVisible(section: Int) -> Bool {
-        guard sections.indices.contains(section),
-              kind(of: section) != .contactRequests,
-              folderEnabled else { return false }
-
-        return !sections[section].items.isEmpty
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
@@ -438,7 +376,7 @@ final class ConversationListViewModel: NSObject {
             Section(
                 kind: kind,
                 conversationDirectory: conversationDirectory,
-                collapsed: state.collapsed.contains(kind.identifier)
+                collapsed: false // FIXME: Removed collapsed property
             )
         }
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
@@ -464,7 +402,7 @@ final class ConversationListViewModel: NSObject {
 
             newValue[sectionNumber].items = newList
 
-            // Refresh the section header(since it may be hidden if the sectio is empty) when a section becomes
+            // Refresh the section header(since it may be hidden if the section is empty) when a section becomes
             // empty/from empty to non-empty
             if sections[sectionNumber].items.isEmpty || newList.isEmpty {
                 sections = newValue
@@ -486,15 +424,6 @@ final class ConversationListViewModel: NSObject {
                     self.sections = data
                 }
             })
-        }
-
-        if let kind,
-           let sectionNumber = sectionNumber(for: kind) {
-            delegate?.listViewModel(self, didUpdateSection: sectionNumber)
-        } else {
-            sections.indices.forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0)
-            }
         }
     }
 
@@ -539,15 +468,10 @@ final class ConversationListViewModel: NSObject {
     }
 
     func collapsed(at sectionIndex: Int) -> Bool {
-        collapsed(at: sectionIndex, state: state)
+        false // FIXME: Remove
     }
 
-    private func collapsed(at sectionIndex: Int, state: State) -> Bool {
-        guard let kind = kind(of: sectionIndex) else { return false }
-
-        return state.collapsed.contains(kind.identifier)
-    }
-
+    // FIXME: Remove
     /// set a collpase state of a section
     ///
     /// - Parameters:
@@ -563,12 +487,6 @@ final class ConversationListViewModel: NSObject {
         guard let kind = kind(of: sectionIndex) else { return }
         guard self.collapsed(at: sectionIndex) != collapsed else { return }
         guard let sectionNumber = sectionNumber(for: kind) else { return }
-
-        if collapsed {
-            state.collapsed.insert(kind.identifier)
-        } else {
-            state.collapsed.remove(kind.identifier)
-        }
 
         var newValue = sections
         newValue[sectionNumber] = Section(
@@ -591,53 +509,6 @@ final class ConversationListViewModel: NSObject {
             sections = newValue
             delegate?.listViewModel(self, didUpdateSectionForReload: sectionIndex, animated: true)
         }
-    }
-
-    // MARK: - state presistent
-
-    // TODO: [WPB-7307]: remove everything around the legacy folder view (grouped)
-    private struct State: Codable, Equatable {
-        var collapsed: Set<SectionIdentifier>
-        var folderEnabled: Bool
-
-        init() {
-            self.collapsed = []
-            self.folderEnabled = false
-        }
-
-        var jsonString: String? {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .sortedKeys
-            guard let jsonData = try? encoder.encode(self) else { return nil }
-
-            return String(decoding: jsonData, as: UTF8.self)
-        }
-    }
-
-    var jsonString: String? {
-        state.jsonString
-    }
-
-    private func saveState(state: State) {
-        return
-    }
-
-    private static var persistentDirectory: String? {
-        guard let userID = ZMUser.selfUser()?.remoteIdentifier else { return nil }
-
-        return "UI_state/\(userID)"
-    }
-
-    private static var persistentFilename: String {
-        let className = String(describing: self)
-        return "\(className).json"
-    }
-
-    static var persistentURL: URL? {
-        guard let persistentDirectory else { return nil }
-
-        return URL.directoryURL(persistentDirectory)?
-            .appendingPathComponent(ConversationListViewModel.persistentFilename)
     }
 }
 
