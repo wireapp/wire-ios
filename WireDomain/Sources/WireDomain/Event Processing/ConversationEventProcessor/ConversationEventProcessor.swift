@@ -56,8 +56,9 @@ struct ConversationEventProcessor {
             await accessUpdateEventProcessor.processEvent(event)
 
         case .codeUpdate:
-            break // Event is not currently processed instead we fetch guest link on demand directly from API, see
+            // Event is not currently processed instead we fetch guest link on demand directly from API, see
             // `CreateConversationGuestLinkUseCase` and `CreateConversationGuestLinkActionHandler`
+            break
 
         case let .create(event):
             await createEventProcessor.processEvent(event)
