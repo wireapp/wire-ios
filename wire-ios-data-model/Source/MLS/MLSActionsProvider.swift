@@ -104,7 +104,9 @@ protocol MLSActionsProviderProtocol {
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
 
-    func fetchBackendPublicKeys(
+    public init() {}
+
+    public func fetchBackendPublicKeys(
         in context: NotificationContext
     ) async throws -> BackendMLSPublicKeys {
         var action = FetchBackendMLSPublicKeysAction()

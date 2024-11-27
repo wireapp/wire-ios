@@ -32,9 +32,22 @@ protocol ConversationRenameEventProcessorProtocol {
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
-    func processEvent(_: ConversationRenameEvent) async throws {
-        // TODO: [WPB-10177]
-        assertionFailure("not implemented yet")
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationRenameEvent) async throws {
+        let newName = event.newName
+        let conversationID = event.conversationID
+        let senderID = event.senderID
+        let timestamp = event.timestamp
+
+        await repository.updateConversationName(
+            newName: newName,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            senderID: senderID.uuid,
+            senderDomain: senderID.domain,
+            date: timestamp
+        )
     }
 
 }
