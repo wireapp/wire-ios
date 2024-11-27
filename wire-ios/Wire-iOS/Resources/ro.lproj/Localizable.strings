@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Cel puțin un caracter";
 "conversation.create.guidance.toolong" = "Prea multe caractere";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Allow guests";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";

@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Legalább 1 karakter";
 "conversation.create.guidance.toolong" = "Túl sok karakter";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Vendégek engedélyezése";
 "conversation.create.guests.subtitle" = "Megnyitja a beszélgetést a csapatodon kívüli partnerek számára is.";
 "conversation.create.services.title" = "Allow services";
