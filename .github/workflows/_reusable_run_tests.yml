@@ -37,10 +37,6 @@ on:
         type: boolean
         default: false
         required: false
-      wire-datadog:
-        type: boolean
-        default: false
-        required: false
       wire-domain-project:
         type: boolean
         default: false
@@ -612,7 +608,7 @@ jobs:
 
       # WireUI
 
-      - name: Test WireUI
+      - name: Build WireUI
         if: ${{ inputs.wire-ui || inputs.all }}
         run: |
           echo "WireUI has changes"
