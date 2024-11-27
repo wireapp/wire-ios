@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "على الأقل حرف واحد";
 "conversation.create.guidance.toolong" = "حروف كثيرة عن الحد";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "اسمح بالضيوف";
 "conversation.create.guests.subtitle" = "إتاحة هذه المحادثة لأشخاص خارج فريقك.";
 "conversation.create.services.title" = "Allow services";
