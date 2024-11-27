@@ -33,6 +33,9 @@
             reference = "container:WireLinkPreviewTests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:WireLinkPreviewTests/TestPlans/E2ETests.xctestplan">
+         </TestPlanReference>
       </TestPlans>
    </TestAction>
    <LaunchAction

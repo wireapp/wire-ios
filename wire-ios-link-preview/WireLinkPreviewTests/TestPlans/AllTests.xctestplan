@@ -15,6 +15,9 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "E2ETests"
+      ],
       "target" : {
         "containerPath" : "container:WireLinkPreview.xcodeproj",
         "identifier" : "BFF057931D25434E004A2C29",
