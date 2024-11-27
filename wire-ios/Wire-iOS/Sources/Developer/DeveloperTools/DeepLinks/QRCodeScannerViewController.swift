@@ -75,7 +75,8 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
         let alertController = UIAlertController(
             title: "Scanning not supported",
             message: "Your device doesn't support QR code scanning.",
-            preferredStyle: .alert)
+            preferredStyle: .alert
+        )
         alertController.addAction(UIAlertAction(title: "OK", style: .default))
         present(alertController, animated: true)
         captureSession = nil
@@ -89,7 +90,11 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
         }
     }
 
-    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+    func metadataOutput(
+        _ output: AVCaptureMetadataOutput,
+        didOutput metadataObjects: [AVMetadataObject],
+        from connection: AVCaptureConnection
+    ) {
         captureSession.stopRunning()
 
         if let metadataObject = metadataObjects.first {
@@ -102,10 +107,10 @@ final class QRCodeScannerViewController: UIViewController, AVCaptureMetadataOutp
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 }
