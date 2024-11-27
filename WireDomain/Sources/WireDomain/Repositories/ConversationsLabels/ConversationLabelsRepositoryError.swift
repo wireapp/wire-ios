@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAPI
 
 /// Errors originating from `ConversationLabelsRepository`.
 
 enum ConversationLabelsRepositoryError: Error, Equatable {
-
-    /// Unable to store label locally
-
-    case failedToStoreLabelLocally(ConversationLabel)
 
     /// Unable to pull labels from backend
 

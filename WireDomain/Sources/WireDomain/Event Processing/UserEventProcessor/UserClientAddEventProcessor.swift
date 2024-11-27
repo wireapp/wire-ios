@@ -41,11 +41,11 @@ struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
     func processEvent(_ event: UserClientAddEvent) async throws {
         do {
             let localUserClient = try await repository.fetchOrCreateClient(
-                with: event.client.id
+                id: event.client.id
             )
 
             try await repository.updateClient(
-                with: event.client.id,
+                id: event.client.id,
                 from: event.client,
                 isNewClient: localUserClient.isNew
             )
