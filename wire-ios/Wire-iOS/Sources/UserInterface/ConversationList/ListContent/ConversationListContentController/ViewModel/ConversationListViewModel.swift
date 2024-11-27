@@ -362,7 +362,7 @@ final class ConversationListViewModel: NSObject {
         case .oneOnOne:
             [.contacts, .contactRequests]
         case let .folder(id, _):
-            if let folder = conversationDirectory.allFolders.first(where: { $0.remoteIdentifier == id }) {
+            if let folder = conversationDirectory.nonDeletedFolders.first(where: { $0.remoteIdentifier == id }) {
                 [.folder(label: folder)]
             } else {
                 // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented

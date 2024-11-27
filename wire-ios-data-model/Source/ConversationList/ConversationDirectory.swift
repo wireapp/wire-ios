@@ -50,8 +50,8 @@ public protocol ConversationDirectoryObserver: AnyObject {
 
 public protocol ConversationDirectoryType {
 
-    /// All folder created by the user
-    var allFolders: [LabelType] { get }
+    /// Folders excluding those marked for deletion
+    var nonDeletedFolders: [LabelType] { get }
 
     /// Create a new folder with a given name
     func createFolder(_ name: String) -> LabelType?

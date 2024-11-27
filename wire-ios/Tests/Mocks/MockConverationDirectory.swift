@@ -21,7 +21,7 @@ import WireDataModel
 
 class MockConversationDirectory: ConversationDirectoryType {
 
-    var allFolders: [LabelType] = []
+    var nonDeletedFolders: [LabelType] = []
     var mockGroupConversations: [ZMConversation] = []
     var mockContactsConversations: [ZMConversation] = []
     var mockFavoritesConversations: [ZMConversation] = []
