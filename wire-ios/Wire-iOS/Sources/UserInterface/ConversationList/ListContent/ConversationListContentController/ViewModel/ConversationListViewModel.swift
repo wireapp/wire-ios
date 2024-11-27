@@ -252,18 +252,7 @@ final class ConversationListViewModel: NSObject {
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
-        guard isFolderStatePersistenceEnabled else { return .init() }
-
-        guard let persistentPath = ConversationListViewModel.persistentURL,
-              let jsonData = try? Data(contentsOf: persistentPath) else { return State()
-        }
-
-        do {
-            return try JSONDecoder().decode(ConversationListViewModel.State.self, from: jsonData)
-        } catch {
-            log.error("restore state error: \(error)")
-            return State()
-        }
+        return .init()
     }()
 
     private var state: State {
@@ -606,10 +595,6 @@ final class ConversationListViewModel: NSObject {
 
     // MARK: - state presistent
 
-    // TODO: [WPB-7307]: the follow-up PR will remove anything around folders
-    // https://github.com/wireapp/wire-ios/pull/1466
-    let isFolderStatePersistenceEnabled = false
-
     // TODO: [WPB-7307]: remove everything around the legacy folder view (grouped)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
@@ -634,23 +619,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func saveState(state: State) {
-
-        guard isFolderStatePersistenceEnabled,
-              let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel.persistentDirectory,
-              let directoryURL = URL.directoryURL(persistentDirectory) else { return }
-
-        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
-
-        do {
-            try jsonString.write(
-                to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename),
-                atomically: true,
-                encoding: .utf8
-            )
-        } catch {
-            log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
-        }
+        return
     }
 
     private static var persistentDirectory: String? {
