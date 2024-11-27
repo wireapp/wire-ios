@@ -181,7 +181,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             withConfiguration: symbolConfiguration
         )!
 
-        var selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
+        let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
         case .favorites, .groups, .oneOnOne, .folder:
             filledFilterImage
         case .none:
