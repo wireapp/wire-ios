@@ -54,6 +54,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
         if mainSplitViewState == .collapsed {
             setupLeftNavigationBarButtonItems()
@@ -337,7 +341,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileViewControllerBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }

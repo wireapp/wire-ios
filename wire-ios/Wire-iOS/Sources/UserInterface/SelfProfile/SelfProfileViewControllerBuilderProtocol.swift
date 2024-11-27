@@ -21,5 +21,5 @@ import UIKit
 // sourcery: AutoMockable
 protocol SelfProfileViewControllerBuilderProtocol {
     @MainActor
-    func build() -> UIViewController
+    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController
 }

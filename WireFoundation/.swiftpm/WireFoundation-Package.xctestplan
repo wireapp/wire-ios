@@ -20,13 +20,6 @@
         "identifier" : "WireFoundationTests",
         "name" : "WireFoundationTests"
       }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireUtilitiesPackageTests",
-        "name" : "WireUtilitiesPackageTests"
-      }
     }
   ],
   "version" : 1
