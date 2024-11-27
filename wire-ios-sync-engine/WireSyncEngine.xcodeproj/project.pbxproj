@@ -861,7 +861,6 @@
 		3E1858B21951D69B005FE78F /* MemoryLeaksObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryLeaksObserver.h; sourceTree = "<group>"; };
 		3E1858B31951D69B005FE78F /* MemoryLeaksObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemoryLeaksObserver.m; sourceTree = "<group>"; };
 		3E18605C191A4F3B000FE027 /* WireSyncEngine-iOS.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireSyncEngine-iOS.pch"; sourceTree = "<group>"; };
-		3E18605F191A4F6A000FE027 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		3E186088191A56F6000FE027 /* WireSyncEngine Test Host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireSyncEngine Test Host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E1860B4191A5D99000FE027 /* Test-Host-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Test-Host-Info.plist"; sourceTree = "<group>"; };
 		3E1860B5191A5D99000FE027 /* Test-Host-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Test-Host-Prefix.pch"; sourceTree = "<group>"; };
@@ -1790,7 +1789,6 @@
 			children = (
 				EEDDB6A32BCFC5E4009ECF97 /* WireSyncEngine.docc */,
 				09284B6A1B8272C300EEE10E /* WireSyncEngine Test Host.entitlements */,
-				3E18605F191A4F6A000FE027 /* README.md */,
 				5423B98C191A49CD0044347D /* Source */,
 				3E18605E191A4F4F000FE027 /* Resources */,
 				5423B997191A4A1B0044347D /* Tests */,
