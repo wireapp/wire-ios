@@ -151,7 +151,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
-    private let backButtonDescription = BackButtonDescription()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
