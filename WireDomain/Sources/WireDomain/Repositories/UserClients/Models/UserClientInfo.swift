@@ -19,7 +19,7 @@
 import WireDataModel
 
 public struct UserClientInfo: Sendable {
-    
+
     let id: String
     let label: String?
     let type: WireDataModel.DeviceType

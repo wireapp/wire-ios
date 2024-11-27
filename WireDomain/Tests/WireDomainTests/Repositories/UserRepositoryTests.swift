@@ -270,7 +270,7 @@ final class UserRepositoryTests: XCTestCase {
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
-        
+
         conversationsRepository
             .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
             }
@@ -440,7 +440,7 @@ final class UserRepositoryTests: XCTestCase {
 
     func testFetchAllUserIdsWithOneOnOneConversation() async throws {
         // Given
-        
+
         userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
 
         // When
