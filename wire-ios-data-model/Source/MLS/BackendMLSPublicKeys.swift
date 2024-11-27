@@ -67,7 +67,7 @@ public struct BackendMLSPublicKeys: Equatable {
         }
 
         public func hasValidKeys() -> Bool {
-            return [ed25519, ed448, p256, p384, p521].contains { key in
+            [ed25519, ed448, p256, p384, p521].contains { key in
                 guard let key else { return false }
 
                 return !key.isEmpty
