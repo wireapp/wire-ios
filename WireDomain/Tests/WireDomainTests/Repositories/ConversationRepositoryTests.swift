@@ -677,11 +677,11 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testUpdateConversationName() async {
-        
+
         // Mock
-        
+
         let newConversationName = "new"
-        
+
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
@@ -689,15 +689,15 @@ final class ConversationRepositoryTests: XCTestCase {
                 in: context
             )
             conversation.userDefinedName = "old"
-            
+
             return conversation
         }
-        
+
         messageRepository
             .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
-        
+
         // When
-        
+
         await sut.updateConversationName(
             newName: newConversationName,
             conversationID: Scaffolding.conversationID,
@@ -706,14 +706,14 @@ final class ConversationRepositoryTests: XCTestCase {
             senderDomain: Scaffolding.domain,
             date: .now
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(
             messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
-        
+
         await context.perform {
             XCTAssertEqual(conversation.userDefinedName, newConversationName)
         }
