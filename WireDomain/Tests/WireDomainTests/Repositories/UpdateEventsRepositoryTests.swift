@@ -269,43 +269,43 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         // 6 envelopes, the first 2 will be already stored in the DB
         // and the rest will come from the backend.
 
-        nonisolated(unsafe) static let envelope1 = UpdateEventEnvelope(
+        static let envelope1 = UpdateEventEnvelope(
             id: id1,
             events: [.user(.pushRemove)],
             isTransient: false
         )
 
-        nonisolated(unsafe) static let envelope2 = UpdateEventEnvelope(
+        static let envelope2 = UpdateEventEnvelope(
             id: id2,
             events: [.user(.pushRemove)],
             isTransient: false
         )
 
-        nonisolated(unsafe) static let envelope3 = UpdateEventEnvelope(
+        static let envelope3 = UpdateEventEnvelope(
             id: id3,
             events: [.conversation(.proteusMessageAdd(proteusMessage1))],
             isTransient: false
         )
 
-        nonisolated(unsafe) static let envelope4 = UpdateEventEnvelope(
+        static let envelope4 = UpdateEventEnvelope(
             id: id4,
             events: [.user(.pushRemove)],
             isTransient: true
         )
 
-        nonisolated(unsafe) static let envelope5 = UpdateEventEnvelope(
+        static let envelope5 = UpdateEventEnvelope(
             id: id5,
             events: [.conversation(.proteusMessageAdd(proteusMessage2))],
             isTransient: false
         )
 
-        nonisolated(unsafe) static let envelope6 = UpdateEventEnvelope(
+        static let envelope6 = UpdateEventEnvelope(
             id: id6,
             events: [.conversation(.proteusMessageAdd(proteusMessage3))],
             isTransient: false
         )
 
-        nonisolated(unsafe) static let proteusMessage1 = ConversationProteusMessageAddEvent(
+        static let proteusMessage1 = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: aliceID,
             timestamp: time30SecondsAgo,
@@ -315,7 +315,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             messageRecipientClientID: selfClientID
         )
 
-        nonisolated(unsafe) static let proteusMessage2 = ConversationProteusMessageAddEvent(
+        static let proteusMessage2 = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: aliceID,
             timestamp: time20SecondsAgo,
@@ -325,7 +325,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             messageRecipientClientID: selfClientID
         )
 
-        nonisolated(unsafe) static let proteusMessage3 = ConversationProteusMessageAddEvent(
+        static let proteusMessage3 = ConversationProteusMessageAddEvent(
             conversationID: conversationID,
             senderID: aliceID,
             timestamp: time10SecondsAgo,
