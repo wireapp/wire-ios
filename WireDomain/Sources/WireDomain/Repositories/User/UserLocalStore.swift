@@ -126,7 +126,6 @@ public protocol UserLocalStoreProtocol {
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
-
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -281,7 +280,6 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             return Set(users)
         }
-
     }
 
     public func cancelSelfUserLegalholdRequest() async {
@@ -379,5 +377,4 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.isPendingMetadataRefresh = false
         }
     }
-
 }

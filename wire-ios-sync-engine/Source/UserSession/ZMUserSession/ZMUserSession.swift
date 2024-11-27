@@ -966,8 +966,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         let supportedProtocolService = SupportedProtocolsService(context: context)
         let resolver = OneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
-            isMLSEnabled: mlsFeature.isEnabled
-        )
+            isMLSEnabled: mlsFeature.isEnabled)
 
         return ResolveOneOnOneConversationsUseCase(
             context: context,

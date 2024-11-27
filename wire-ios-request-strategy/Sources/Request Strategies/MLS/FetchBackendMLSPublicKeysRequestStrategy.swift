@@ -44,8 +44,8 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress
     ) {
-        self.actionHandler = FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext)
-        self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
+        actionHandler = FetchBackendMLSPublicKeysActionHandler(context: managedObjectContext)
+        actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
 
         super.init(
@@ -110,7 +110,7 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
                     }
                 }
 
-                slowSyncTask = nil
+                self.slowSyncTask = nil
             }
         }
 

@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "１文字以上";
 "conversation.create.guidance.toolong" = "文字が多すぎます";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "ゲストアクセスを許可";
 "conversation.create.guests.subtitle" = "チーム外の人々にこの会話を公開します。";
 "conversation.create.services.title" = "サービスを許可";

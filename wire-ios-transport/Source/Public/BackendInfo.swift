@@ -26,7 +26,7 @@ public enum BackendInfo {
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
-        case isMLSEnabled
+        case isMLSEnabled = "isMLSEnabled"
 
     }
 

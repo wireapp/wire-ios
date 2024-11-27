@@ -19,6 +19,7 @@
 import WireDataModel
 
 public struct UserClientInfo: Sendable {
+    
     let id: String
     let label: String?
     let type: WireDataModel.DeviceType
@@ -35,4 +36,5 @@ public struct UserClientInfo: Sendable {
         let p384: String?
         let p512: String?
     }
+
 }

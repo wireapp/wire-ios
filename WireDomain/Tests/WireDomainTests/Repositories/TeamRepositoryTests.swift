@@ -264,7 +264,6 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
 
         await XCTAssertThrowsErrorAsync { [self] in
-
             // When
 
             try await sut.storeTeamMemberNeedsBackendUpdate(

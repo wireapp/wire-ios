@@ -19,7 +19,7 @@
 import WireAPI
 
 extension WireAPI.ConversationLabel {
-
+    
     func toDomainModel() -> ConversationLabelInfo {
         .init(
             id: id,
@@ -28,5 +28,4 @@ extension WireAPI.ConversationLabel {
             conversationIDs: conversationIDs
         )
     }
-
 }

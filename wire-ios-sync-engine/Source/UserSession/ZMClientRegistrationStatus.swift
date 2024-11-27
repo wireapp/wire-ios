@@ -459,7 +459,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         var action = FetchBackendMLSPublicKeysAction()
         action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
             switch result {
-            case let .success(backendPublicKeys):
+            case .success(let backendPublicKeys):
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
                 BackendInfo.isMLSEnabled = hasValidKeys
                 self?.didFetchBackendMLSPublicKeys()

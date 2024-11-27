@@ -270,6 +270,7 @@ final class UserRepositoryTests: XCTestCase {
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
+        
         conversationsRepository
             .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
             }
@@ -286,6 +287,7 @@ final class UserRepositoryTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userLocalStore.markAccountAsDeletedFor_Invocations.count, 1)
+
         XCTAssertEqual(
             conversationsRepository
                 .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count,
@@ -410,6 +412,35 @@ final class UserRepositoryTests: XCTestCase {
     func testFetchAllUserIdsWithOneOnOneConversation_It_Invokes_Local_Store_Method() async throws {
         // Given
 
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
+
+        // When
+
+        let userIds = try await sut.fetchAllUserIDsWithOneOnOneConversation()
+
+        // Then
+
+        XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
+    }
+
+    func testPullSelfUser() async throws {
+        // Mock
+        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
+        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
+
+        // When
+
+        try await sut.pullSelfUser()
+
+        // Then
+
+        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
+    }
+
+    func testFetchAllUserIdsWithOneOnOneConversation() async throws {
+        // Given
+        
         userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
 
         // When
