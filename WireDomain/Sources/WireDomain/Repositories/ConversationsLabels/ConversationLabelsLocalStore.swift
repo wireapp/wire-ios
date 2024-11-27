@@ -41,7 +41,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
 
     // MARK: - Error
 
-    enum Error: Swift.Error {
+    enum Failure: Error {
         case failedToStoreLabelLocally(UUID)
     }
 
@@ -75,7 +75,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
             }
 
             guard let label else {
-                throw Error.failedToStoreLabelLocally(conversationLabel.id)
+                throw Failure.failedToStoreLabelLocally(conversationLabel.id)
             }
 
             label.name = conversationLabel.name
@@ -92,7 +92,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
             do {
                 try context.save()
             } catch {
-                throw Error.failedToStoreLabelLocally(conversationLabel.id)
+                throw Failure.failedToStoreLabelLocally(conversationLabel.id)
             }
         }
     }

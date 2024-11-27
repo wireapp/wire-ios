@@ -91,7 +91,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                 case .success:
                     continue
                 case .failure(let error):
-                    let repoError = error as? ConversationLabelsLocalStore.Error
+                    let repoError = error as? ConversationLabelsLocalStore.Failure
                     if case .failedToStoreLabelLocally(let id) = repoError {
                         logger.error("Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)")
                     } else {
