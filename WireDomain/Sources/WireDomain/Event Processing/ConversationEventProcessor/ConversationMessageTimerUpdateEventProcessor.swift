@@ -33,9 +33,8 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    let userRepository: any UserRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
-    let messageRepository: any MessageRepositoryProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
 
     func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
         let userID = event.senderID
@@ -60,7 +59,7 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
                 timeoutValue: timeoutValue
             )
 
-            await messageRepository.addMessageToConversation(
+            await messageLocalStore.addSystemMessageToConversation(
                 messageType: messageType,
                 conversationID: conversationID.uuid,
                 conversationDomain: conversationID.domain

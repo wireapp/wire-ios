@@ -26,9 +26,8 @@ import XCTest
 final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
 
     private var sut: ConversationMessageTimerUpdateEventProcessor!
-    private var userRepository: MockUserRepositoryProtocol!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
-    private var messageRepository: MockMessageRepositoryProtocol!
+    private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -44,23 +43,20 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
-        userRepository = MockUserRepositoryProtocol()
         conversationLocalStore = MockConversationLocalStoreProtocol()
-        messageRepository = MockMessageRepositoryProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
 
         sut = ConversationMessageTimerUpdateEventProcessor(
-            userRepository: userRepository,
             conversationLocalStore: conversationLocalStore,
-            messageRepository: messageRepository
+            messageLocalStore: messageLocalStore
         )
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
         sut = nil
-        userRepository = nil
         conversationLocalStore = nil
-        messageRepository = nil
+        messageLocalStore = nil
         modelHelper = nil
         coreDataStack = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -79,8 +75,8 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         conversationLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationLocalStore.conversationMessageDestructionTimeout_MockValue = .fiveMinutes
         conversationLocalStore.storeConversationTimeoutValueFor_MockMethod = { _, _ in }
-        messageRepository
-            .addMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+        messageLocalStore
+            .addSystemMessageToConversationMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -92,7 +88,7 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.conversationMessageDestructionTimeout_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationTimeoutValueFor_Invocations.count, 1)
         XCTAssertEqual(
-            messageRepository.addMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
             1
         )
     }
