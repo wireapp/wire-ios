@@ -99,7 +99,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     )
         -> Bool {
-            
+
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
@@ -130,9 +130,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
+
     private func setNavigationAppearance() {
-        let backIndicator = UIImage(resource: self.mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
+        let backIndicator = UIImage(resource: mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
         UINavigationBar.appearance().backIndicatorImage = backIndicator
         UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
     }

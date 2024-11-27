@@ -217,7 +217,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
         appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
         navigationItem.backButtonDisplayMode = .minimal
-        
+
         // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
