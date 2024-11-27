@@ -21,6 +21,13 @@
   "testTargets" : [
     {
       "target" : {
+        "containerPath" : "container:Project\/WireDomain Project.xcodeproj",
+        "identifier" : "01D0DCAF2C1C8C880076CB1C",
+        "name" : "WireDomainTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:",
         "identifier" : "WireDomainPkgTests",
         "name" : "WireDomainPkgTests"
