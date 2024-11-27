@@ -94,7 +94,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private let useCompactLayout: Bool
 
-    private let infoLabel: UILabel = {
+    private lazy var infoLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .normalRegularFont,
             color: ColorTheme.Backgrounds.onSurfaceVariant)
@@ -103,7 +103,7 @@ final class PasscodeSetupViewController: UIViewController {
         return label
     }()
 
-    private let scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
         return scrollView
@@ -142,14 +142,26 @@ final class PasscodeSetupViewController: UIViewController {
         self.useCompactLayout = useCompactLayout ?? (windowHeight <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        passcodeTextField.becomeFirstResponder()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
         setupViews()
     }
 
+    // MARK: - setup views
+
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        view.addSubview(scrollView)
+        setupScrollView()
         scrollView.addSubview(contentView)
 
         stackView.distribution = .fill
@@ -185,34 +197,37 @@ final class PasscodeSetupViewController: UIViewController {
         createConstraints()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
 
-        passcodeTextField.becomeFirstResponder()
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        NSLayoutConstraint.activate([
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     private func createConstraints() {
 
-        [scrollView, contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
+        let contentLayoutGuide = scrollView.contentLayoutGuide
 
         let contentPadding: CGFloat = 24
 
         NSLayoutConstraint.activate([
-            // scroll view
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            heightConstraint,
-
             // content view
+            heightConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: scrollView.leadingAnchor, constant: contentPadding),
-            contentView.trailingAnchor.constraint(lessThanOrEqualTo: scrollView.trailingAnchor, constant: -contentPadding),
+            contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor),
+            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor, constant: contentPadding),
+            contentView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor, constant: -contentPadding),
             contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
             // stack view
