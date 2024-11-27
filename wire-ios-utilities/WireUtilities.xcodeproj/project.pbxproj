@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -265,7 +265,6 @@
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
-		5905C8F32CF63F90005DB864 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativelySupportedUserDefaultsKey.swift; sourceTree = "<group>"; };
 		5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+NativelySupportedKey.swift"; sourceTree = "<group>"; };
 		5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
@@ -379,6 +378,20 @@
 		F9D381D81B70DF8400E6E4EB /* WireUtilities-ios-tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireUtilities-ios-tests-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D2643A2CF725E00005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264392CF725D90005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643A2CF725E00005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		09F028CB1B78BE2700BADDB6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -467,7 +480,6 @@
 				3E88BD7C1B1F3F6700232589 /* Resources */,
 				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
-				5905C8F32CF63F90005DB864 /* AllTests.xctestplan */,
 				3E88BD391B1F3EA300232589 /* Products */,
 			);
 			indentWidth = 4;
@@ -533,6 +545,7 @@
 		3E88BD471B1F3EA300232589 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264392CF725D90005317F /* TestPlans */,
 				091799791B7E2F0300E60DD9 /* Resources */,
 				F9D381A21B70B91000E6E4EB /* WireUtilities-Tests.pch */,
 				F9D381D81B70DF8400E6E4EB /* WireUtilities-ios-tests-Bridging-Header.h */,
@@ -873,6 +886,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59D264392CF725D90005317F /* TestPlans */,
 			);
 			name = WireUtilities;
 			packageProductDependencies = (
