@@ -109,6 +109,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         mainWindow = .init(windowScene: windowScene)
 
+        setNavigationAppearance()
         // enable logs
         _ = Settings.shared
         // switch logs
@@ -128,6 +129,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         return true
+    }
+
+    private func setNavigationAppearance() {
+        let backIndicator = UIImage(resource: mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
+        UINavigationBar.appearance().backIndicatorImage = backIndicator
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
