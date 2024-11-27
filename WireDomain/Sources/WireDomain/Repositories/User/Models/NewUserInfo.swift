@@ -16,14 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-/// Errors originating from `FeatureConfigRepository`.
-
-enum FeatureConfigRepositoryError: Error {
-
-    /// Unable to fetch feature locally
-
-    case failedToFetchFeatureLocally
-
+public struct NewUserInfo: Sendable {
+    let userID: WireDataModel.QualifiedID
+    let name: String
+    let handle: String?
+    let teamID: UUID?
+    let accentID: Int
+    let previewAssetKey: String?
+    let completeAssetKey: String?
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: Date?
+    let serviceID: UUID?
+    let serviceProvider: UUID?
+    let supportedProtocols: Set<WireDataModel.MessageProtocol>?
 }

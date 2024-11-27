@@ -46,6 +46,10 @@ enum HTTPStatusCode: Int {
 
     case forbidden = 403
 
+    /// conflict - 409
+
+    case conflict = 409
+
     // MARK: Server Errors - 5xx
 
     /// service unavailable - 503
