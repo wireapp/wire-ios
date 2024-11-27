@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "1F8A3CDC-E12B-4921-9BD0-0ADB68899DC0",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "enabled" : false,
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireRequestStrategy.xcodeproj",
+        "identifier" : "166901731D707509000FE4AF",
+        "name" : "WireRequestStrategyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -137,7 +137,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC3E2BB7D426002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		06392CFA23C36D30003186E6 /* MockParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockParticipantRole.swift; sourceTree = "<group>"; };
 		0641A8C3239A56E900B24621 /* MockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAction.swift; sourceTree = "<group>"; };
 		0641A8C5239A581A00B24621 /* MockRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRole.swift; sourceTree = "<group>"; };
@@ -272,6 +271,20 @@
 		F1F3FE9620F39EB700B0BAF3 /* MockTransportPushTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportPushTokenTests.swift; sourceTree = "<group>"; };
 		F1F7B6FB1ED4789E0042A26D /* MockConversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D2642E2CF724B20005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 54C9023D1B7532DD007162A8 /* WireMockTransportTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2642D2CF724AD0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2642E2CF724B20005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		54C9022F1B7532DD007162A8 /* Frameworks */ = {
@@ -453,7 +466,6 @@
 		545AFFB71CB695040054B665 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				01E8EC3E2BB7D426002A5A91 /* AllTests.xctestplan */,
 				545AFFB81CB695040054B665 /* medium.jpg */,
 				545AFFB91CB695040054B665 /* tiny.jpg */,
 				54C902441B7532DD007162A8 /* Info.plist */,
@@ -534,6 +546,7 @@
 		54C902421B7532DD007162A8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D2642D2CF724AD0005317F /* TestPlans */,
 				0641A8B4239825DD00B24621 /* Source */,
 				545AFFB71CB695040054B665 /* Resources */,
 			);
@@ -836,6 +849,9 @@
 			);
 			dependencies = (
 				54C902411B7532DD007162A8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D2642D2CF724AD0005317F /* TestPlans */,
 			);
 			name = WireMockTransportTests;
 			productName = WireMockTransportTests;

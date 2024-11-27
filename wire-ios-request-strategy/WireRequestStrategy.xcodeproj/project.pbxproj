@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */; };
 		0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */; };
 		0106AC8E2C99A4DC0022E2CF /* MessageInfoExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */; };
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
@@ -464,7 +463,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilder.swift; sourceTree = "<group>"; };
 		0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractor.swift; sourceTree = "<group>"; };
 		0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractorTests.swift; sourceTree = "<group>"; };
@@ -944,6 +942,20 @@
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 166901731D707509000FE4AF /* WireRequestStrategyTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264282CF7225A0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		166901661D707509000FE4AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -1344,6 +1356,7 @@
 				F154EDC51F447B6C00CB8184 /* Test Host */,
 				1621D2211D75AB2D007108C2 /* Helpers */,
 				F12CD7932035FC4400EAAEBC /* Resources */,
+				59D264282CF7225A0005317F /* TestPlans */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1752,7 +1765,6 @@
 		F12CD7932035FC4400EAAEBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				01E8EC422BB7D4A5002A5A91 /* AllTests.xctestplan */,
 				0648FC1027851623006519D1 /* audio.m4a */,
 				F18402042073C2FF00E9F4CC /* 1900x1500.jpg */,
 				F18402022073C2FF00E9F4CC /* animated.gif */,
@@ -2213,6 +2225,9 @@
 				F154EDD71F447BB600CB8184 /* PBXTargetDependency */,
 				CB7979082C73663B006FBA58 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				59D264282CF7225A0005317F /* TestPlans */,
+			);
 			name = WireRequestStrategyTests;
 			packageProductDependencies = (
 				598D042F2C89C67E00B64D71 /* WireFoundation */,
@@ -2337,7 +2352,6 @@
 			files = (
 				0649D15524F64335001DDC78 /* Push.strings in Resources */,
 				0649D15424F64335001DDC78 /* Push.stringsdict in Resources */,
-				01E8EC432BB7D4A5002A5A91 /* AllTests.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
