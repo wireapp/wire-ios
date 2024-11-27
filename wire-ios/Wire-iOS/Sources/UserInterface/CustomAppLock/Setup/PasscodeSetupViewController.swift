@@ -142,18 +142,14 @@ final class PasscodeSetupViewController: UIViewController {
         self.useCompactLayout = useCompactLayout ?? (windowHeight <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
+
+        setupViews()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         passcodeTextField.becomeFirstResponder()
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        setupViews()
     }
 
     // MARK: - setup views
