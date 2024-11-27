@@ -206,7 +206,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
         setupTableView()
 
-        navigationItem.backButtonDisplayMode = .minimal
         setupNavigationBarAccessibility()
     }
 
@@ -214,8 +213,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
         let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
         appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+        navigationItem.backButtonDisplayMode = .minimal
+        
         // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
