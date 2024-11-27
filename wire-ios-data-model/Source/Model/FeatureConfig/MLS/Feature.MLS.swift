@@ -131,3 +131,11 @@ public extension Feature {
     }
 
 }
+
+public extension Feature.MLS {
+
+    var isEnabled: Bool {
+        return status == .enabled
+    }
+
+}

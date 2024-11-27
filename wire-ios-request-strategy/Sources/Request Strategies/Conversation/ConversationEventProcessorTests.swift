@@ -30,7 +30,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
         conversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
@@ -57,7 +56,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         conversationService = nil
         mockMLSEventProcessor = nil
 
-        DeveloperFlag.storage = .standard
         super.tearDown()
     }
 
@@ -151,6 +149,11 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     // MARK: - MLS conversation member leave
 
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMLS() async throws {
+        // given
+        await syncMOC.perform {
+            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        }
+        // then
         try await internalTest_UpdateConversationMemberLeave(
             messageProtocol: .mls,
             shouldWipeMLSGroup: true
@@ -158,6 +161,11 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     }
 
     func test_UpdateConversationMemberLeave_WipesMLSGroup_WithProtocolMixed() async throws {
+        // given
+        await syncMOC.perform {
+            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        }
+        // then
         try await internalTest_UpdateConversationMemberLeave(
             messageProtocol: .mixed,
             shouldWipeMLSGroup: true
@@ -839,6 +847,10 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
+    }
+
+    private func enableE2EI() {
+        FeatureRepository(context: syncMOC).storeMLS(Feature.MLS(status: .enabled))
     }
 
 }
