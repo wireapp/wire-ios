@@ -527,7 +527,7 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.addParticipantsAddedByAtDateConversation_Invocations.count, 1)
     }
-    
+
     func testFetchConversationGuestLink_It_Invokes_Conversation_API_Method() async throws {
 
         // Mock
@@ -548,15 +548,15 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testFetchConversationGuestLink_It_Throws_Error() async throws {
-        
+
         // Mock
-        
+
         enum MockAPIError: Error {
             case error
         }
-        
+
         conversationsAPI.getConversationGuestLinkConversationID_MockError = MockAPIError.error
-        
+
         // Then
         await XCTAssertThrowsErrorAsync {
             // When
