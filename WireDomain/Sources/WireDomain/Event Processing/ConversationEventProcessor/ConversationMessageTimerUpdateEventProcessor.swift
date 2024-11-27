@@ -34,22 +34,21 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
 
     let userRepository: any UserRepositoryProtocol
-    let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageRepository: any MessageRepositoryProtocol
 
     func processEvent(_ event: ConversationMessageTimerUpdateEvent) async {
         let userID = event.senderID
         let conversationID = event.conversationID
-        let timer = Double(event.newTimer ?? 0)
+        let timerInMilliseconds = Double(event.newTimer ?? 0)
         let timestamp = event.timestamp
 
-        let conversation = await conversationRepository.fetchOrCreateConversation(
+        let conversation = await conversationLocalStore.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
 
-        let timeoutValue = timer / 1000
+        let timeoutValue = timerInMilliseconds / 1000
         let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
         let currentTimeout = await conversationLocalStore.conversationMessageDestructionTimeout(conversation)
 
