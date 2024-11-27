@@ -22,7 +22,7 @@ import WireDataModel
 public protocol ConversationLabelsLocalStoreProtocol {
 
     /// Save label and related conversations objects to local storage.
-    /// - Parameter conversationLabel: conversation label from WireAPI
+    /// - Parameter conversationLabel: conversation label info
 
     func storeLabel(
         _ conversationLabel: ConversationLabelInfo
@@ -61,7 +61,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
     // MARK: - Public
 
     /// Save label and related conversations objects to local storage.
-    /// - Parameter conversationLabel: conversation label from WireAPI
+    /// - Parameter conversationLabel: conversation label
 
     public func storeLabel(
         _ conversationLabel: ConversationLabelInfo
@@ -71,7 +71,12 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
             let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
                 Label.fetchFavoriteLabel(in: context)
             } else {
-                Label.fetchOrCreate(remoteIdentifier: conversationLabel.id, create: true, in: context, created: &created)
+                Label.fetchOrCreate(
+                    remoteIdentifier: conversationLabel.id,
+                    create: true,
+                    in: context,
+                    created: &created
+                )
             }
 
             guard let label else {

@@ -47,7 +47,7 @@ struct QRCodeView: View {
     }
 
     private var shareView: some View {
-        return VStack {
+        VStack {
             qrCodeCard
             infoTextView
             Spacer()
@@ -103,7 +103,7 @@ struct QRCodeView: View {
 
 extension QRCodeView {
 
-    private func captureImage<Content: View>(from view: Content) -> UIImage? {
+    private func captureImage(from view: some View) -> UIImage? {
         let controller = UIHostingController(rootView: view)
         let targetSize = CGSize(width: 400, height: 400)
         controller.view.bounds = CGRect(origin: .zero, size: targetSize)
@@ -123,6 +123,8 @@ extension QRCodeView {
     NavigationView {
         QRCodeView(viewModel: UserQRCodeViewModel(
             profileLink: "http://link,knfieoqrngorengoejnbgjroqekgnbojqre3bgqjore3bgn3ejjeqrlw3bglrejkbgnjorqwbglejrqg",
-            handle: "handle"))
+            profileDeepLink: "wire://link",
+            handle: "handle"
+        ))
     }
 }

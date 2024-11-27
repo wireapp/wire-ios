@@ -35,7 +35,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp
@@ -45,9 +45,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
             setAllowGuestAndServicesUseCase = .init()
-            setAllowGuestAndServicesUseCase.invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
-                completion(.success(()))
-            }
+            setAllowGuestAndServicesUseCase
+                .invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
+                    completion(.success(()))
+                }
             sut = CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: setAllowGuestAndServicesUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
@@ -90,15 +91,18 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation()
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .success("www.test.com"),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "Guest link creation")
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let link):
+                case let .success(link):
                     XCTAssertNotNil(link)
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 
@@ -115,16 +119,22 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation(legacyAccessMode: true)
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
-            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .success("www.test.com"),
+                context: syncContext.notificationContext
+            )
+            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .success(()),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "Guest link creation")
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let link):
+                case let .success(link):
                     XCTAssertNotNil(link)
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 
@@ -139,7 +149,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .failure(.unknown), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .failure(.unknown),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "completion should be called")
 

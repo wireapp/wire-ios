@@ -59,15 +59,15 @@ enum CellConfiguration {
 
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
-        case .iconToggle: return IconToggleSubtitleCell.self
-        case .linkHeader: return LinkHeaderCell.self
-        case .secureLinkHeader: return SecureLinkHeaderCell.self
-        case .leadingButton: return ActionCell.self
-        case .loading: return LoadingIndicatorCell.self
-        case .text: return TextCell.self
-        case .info: return GuestLinkInfoCell.self
-        case .iconAction: return IconActionCell.self
-        case .appearance: return SettingsAppearanceCell.self
+        case .iconToggle: IconToggleSubtitleCell.self
+        case .linkHeader: LinkHeaderCell.self
+        case .secureLinkHeader: SecureLinkHeaderCell.self
+        case .leadingButton: ActionCell.self
+        case .loading: LoadingIndicatorCell.self
+        case .text: TextCell.self
+        case .info: GuestLinkInfoCell.self
+        case .iconAction: IconActionCell.self
+        case .appearance: SettingsAppearanceCell.self
         }
     }
 
@@ -79,16 +79,16 @@ enum CellConfiguration {
              .loading,
              .text,
              .info,
-             .appearance: return nil
-        case let .leadingButton(_, _, action: action): return action
-        case let .iconAction(_, _, _, action: action): return action
+             .appearance: nil
+        case let .leadingButton(_, _, action: action): action
+        case let .iconAction(_, _, _, action: action): action
         }
     }
 
     // MARK: - Convenience
 
     static var allCellTypes: [UITableViewCell.Type] {
-        return [
+        [
             IconToggleSubtitleCell.self,
             LinkHeaderCell.self,
             SecureLinkHeaderCell.self,

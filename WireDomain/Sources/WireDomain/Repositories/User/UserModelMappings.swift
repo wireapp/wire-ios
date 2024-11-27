@@ -105,7 +105,7 @@ extension WireAPI.Prekey {
 }
 
 extension WireAPI.UserUpdateEvent {
-    
+
     func toDomainModel() -> UserUpdateInfo {
         .init(
             userID: userID,
@@ -123,13 +123,13 @@ extension WireAPI.UserUpdateEvent {
             supportedProtocols: supportedProtocols?.toDomainModel()
         )
     }
-    
+
 }
 
 extension WireAPI.User {
-    
+
     func toDomainModel() -> NewUserInfo {
-        
+
         .init(
             userID: id.toDomainModel(),
             name: name,
@@ -149,7 +149,33 @@ extension WireAPI.User {
             serviceProvider: service?.provider,
             supportedProtocols: supportedProtocols?.toDomainModel()
         )
-        
+
     }
-    
+
+}
+
+extension WireAPI.SelfUser {
+
+    func toDomainModel() -> NewUserInfo {
+        .init(
+            userID: qualifiedID.toDomainModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            accentID: accentID,
+            previewAssetKey: assets?
+                .first(where: { $0.size == .preview })
+                .map(\.key),
+            completeAssetKey: assets?
+                .first(where: { $0.size == .complete })
+                .map(\.key),
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt,
+            serviceID: service?.id,
+            serviceProvider: service?.provider,
+            supportedProtocols: supportedProtocols?.toDomainModel()
+        )
+    }
+
 }

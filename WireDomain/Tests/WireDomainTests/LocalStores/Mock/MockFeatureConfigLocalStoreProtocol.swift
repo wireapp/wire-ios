@@ -81,7 +81,8 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
 
     // MARK: - storeFeature
 
-    var storeFeatureNameIsEnabledConfig_Invocations: [(name: Feature.Name, isEnabled: Bool, config: (any Codable)?)] = []
+    var storeFeatureNameIsEnabledConfig_Invocations: [(name: Feature.Name, isEnabled: Bool, config: (any Codable)?)] =
+        []
     var storeFeatureNameIsEnabledConfig_MockMethod: ((Feature.Name, Bool, (any Codable)?) async -> Void)?
 
     func storeFeature(name: Feature.Name, isEnabled: Bool, config: (any Codable)?) async {

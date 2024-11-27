@@ -36,7 +36,10 @@ private final class MockURLSession: SessionProtocol {
     var nextCompletionParameters: (Data?, URLResponse?, Error?)?
     var nextMockTask: MockTask?
 
-    func task(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTaskProtocol {
+    func task(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> DataTaskProtocol {
         recordedRequest = request
         recordedCompletionHandler = completionHandler
         if let params = nextCompletionParameters {
@@ -55,9 +58,9 @@ private final class MockReachability: NSObject, ReachabilityProvider, TearDownCa
     let oldIsMobileConnection = true
 
     func tearDown() {}
-    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { return NSObject() }
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { NSObject() }
     func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        return NSObject()
+        NSObject()
     }
 
 }
@@ -68,7 +71,7 @@ final class MockCertificateTrust: NSObject, BackendTrustProvider {
     var isTrustingServer: Bool = true
 
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return isTrustingServer
+        isTrustingServer
     }
 }
 
@@ -91,13 +94,15 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     private func setupSut(readyForRequests: Bool) {
         sessionMock = MockURLSession()
-        let endpoints = BackendEndpoints(backendURL: url,
-                                         backendWSURL: url,
-                                         blackListURL: url,
-                                         teamsURL: url,
-                                         accountsURL: url,
-                                         websiteURL: url,
-                                         countlyURL: url)
+        let endpoints = BackendEndpoints(
+            backendURL: url,
+            backendWSURL: url,
+            blackListURL: url,
+            teamsURL: url,
+            accountsURL: url,
+            websiteURL: url,
+            countlyURL: url
+        )
         let trust = MockCertificateTrust()
         let environment = BackendEnvironment(
             title: name,
@@ -106,18 +111,20 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
             proxySettings: nil,
             certificateTrust: trust
         )
-        sut = UnauthenticatedTransportSession(environment: environment,
-                                              proxyUsername: nil,
-                                              proxyPassword: nil,
-                                              urlSession: sessionMock,
-                                              reachability: MockReachability(),
-                                              applicationVersion: "1.0",
-                                              readyForRequests: readyForRequests)
+        sut = UnauthenticatedTransportSession(
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            urlSession: sessionMock,
+            reachability: MockReachability(),
+            applicationVersion: "1.0",
+            readyForRequests: readyForRequests
+        )
     }
 
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
         // when
-        (0..<3).forEach { _ in
+        (0 ..< 3).forEach { _ in
             sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
 
@@ -128,7 +135,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatEnqueueOneTime_IsNotLimitedByRequestLimit() {
         // given
-        (0..<3).forEach { _ in
+        (0 ..< 3).forEach { _ in
             sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
 
@@ -165,7 +172,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatItDoesNotEnqueueMoreThanThreeRequests() {
         // when
-        (0..<3).forEach { _ in
+        (0 ..< 3).forEach { _ in
             let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
@@ -177,12 +184,13 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatItDoesEnqueueAnotherRequestAfterTheLastOneHasBeenCompleted() {
         // when
-        (0..<3).forEach { _ in
+        (0 ..< 3).forEach { _ in
             let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
 
-        guard let lastCompletion = sessionMock.recordedCompletionHandler else { return XCTFail("No completion handler") }
+        guard let lastCompletion = sessionMock.recordedCompletionHandler
+        else { return XCTFail("No completion handler") }
 
         // then
         do {

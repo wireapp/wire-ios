@@ -41,7 +41,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -56,7 +56,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
-        collectionViewController = SectionCollectionViewController()
+        self.collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -66,13 +66,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation.refetchParticipantsIfNeeded()
             }
 
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             if let session = ZMUserSession.shared() {
                 if session.hasCompletedInitialSync {
-                    didCompleteInitialSync = true
+                    self.didCompleteInitialSync = true
                 } else {
-                    initialSyncToken = NotificationInContext.addObserver(
+                    self.initialSyncToken = NotificationInContext.addObserver(
                         name: .initialSync,
                         context: userSession.notificationContext
                     ) { [weak self] _ in
@@ -96,8 +96,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     private func createSubviews() {
         let collectionView = UICollectionView(forGroupedSections: ())
         collectionView.accessibilityIdentifier = "group_details.list"
-
-        collectionView.contentInsetAdjustmentBehavior = .never
 
         [collectionView, footerView].forEach { subview in
             subview.translatesAutoresizingMaskIntoConstraints = false
@@ -126,7 +124,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         let titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus)
+            second: verificationStatus
+        )
 
         titleView.addInteraction(UILargeContentViewerInteraction())
         navigationItem.titleView = titleView
@@ -136,6 +135,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -170,7 +170,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         var sections = [CollectionViewSectionController]()
 
-        let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
+        let renameGroupSectionController = RenameGroupSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
@@ -191,7 +194,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
                 // Dispay the ShowAll button after the first section.
-                if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
+                if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
                         userStatuses: userStatuses,
@@ -217,7 +220,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         userSession: userSession
                     )
                     sections.append(adminSection)
-                    if members.count <= (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) { // Don't display the ShowAll button
+                    if members
+                        .count <=
+                        (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) {
+                        // Don't display the ShowAll button
                         if !members.isEmpty {
                             let memberSection = ParticipantsSectionController(
                                 participants: members,
@@ -265,6 +271,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if let user = SelfUser.provider?.providedSelfUser {
             // MARK: options sections
+
             let optionsSectionController = GroupOptionsSectionController(
                 conversation: conversation,
                 user: user,
@@ -275,12 +282,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
-            if conversation.teamRemoteIdentifier != nil &&
-                user.canModifyReadReceiptSettings(in: conversation) {
+            if conversation.teamRemoteIdentifier != nil,
+               user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
-                    collectionView: self.collectionViewController.collectionView!,
+                    collectionView: collectionViewController.collectionView!,
                     presentingViewController: self
                 )
                 sections.append(receiptOptionsSectionController)
@@ -290,7 +297,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // MARK: services sections
 
         if !serviceUsers.isEmpty {
-            let servicesSection = ServicesSectionController(serviceUsers: serviceUsers, conversation: conversation, delegate: self)
+            let servicesSection = ServicesSectionController(
+                serviceUsers: serviceUsers,
+                conversation: conversation,
+                delegate: self
+            )
             sections.append(servicesSection)
         }
 
@@ -307,12 +318,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard let conversation = conversation as? ZMConversation,
               changeInfo.participantsChanged ||
-                changeInfo.nameChanged ||
-                changeInfo.allowGuestsChanged ||
-                changeInfo.allowServicesChanged ||
-                changeInfo.destructionTimeoutChanged ||
-                changeInfo.mutedMessageTypesChanged ||
-                changeInfo.legalHoldStatusChanged
+              changeInfo.nameChanged ||
+              changeInfo.allowGuestsChanged ||
+              changeInfo.allowServicesChanged ||
+              changeInfo.destructionTimeoutChanged ||
+              changeInfo.mutedMessageTypesChanged ||
+              changeInfo.legalHoldStatusChanged
         else { return }
 
         updateLegalHoldIndicator()
@@ -330,8 +341,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
 
-    func footerView(_ view: GroupDetailsFooterView,
-                    shouldPerformAction action: GroupDetailsFooterView.Action) {
+    func footerView(
+        _ view: GroupDetailsFooterView,
+        shouldPerformAction action: GroupDetailsFooterView.Action
+    ) {
         switch action {
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
@@ -418,18 +431,18 @@ private extension GroupDetailsViewController {
     var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return .init(resource: .verifiedShield)
+            .init(resource: .verifiedShield)
         case .mls:
-            return .init(resource: .certificateValid)
+            .init(resource: .certificateValid)
         }
     }
 
     var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return SemanticColors.Label.textCertificateVerified
+            SemanticColors.Label.textCertificateVerified
         case .mls:
-            return SemanticColors.Label.textCertificateValid
+            SemanticColors.Label.textCertificateValid
         }
     }
 
@@ -457,21 +470,16 @@ private extension GroupDetailsViewController {
                 guard let user = user as? ZMUser else { continue }
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
-                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                     userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }
             }
             collectionViewController.sections = computeVisibleSections()
-        }
-    }
-}
-
-extension GroupDetailsViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        navigationController?.popViewController(animated: true) {
-            completion?()
         }
     }
 }
@@ -494,7 +502,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self,
             userSession: userSession,
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -525,7 +532,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: userSession)
-        menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 
@@ -533,7 +539,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         guard let conversation = conversation as? ZMConversation else { return }
         guard let userSession = ZMUserSession.shared() else { return }
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
-        menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 }

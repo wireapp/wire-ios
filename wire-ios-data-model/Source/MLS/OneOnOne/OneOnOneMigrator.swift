@@ -122,7 +122,11 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         let users = [MLSUser(userID)]
 
         do {
-            let ciphersuite = try await mlsService.establishGroup(for: mlsGroupID, with: users, removalKeys: removalKeys)
+            let ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: users,
+                removalKeys: removalKeys
+            )
             await context.perform {
                 let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
                 conversation?.ciphersuite = ciphersuite

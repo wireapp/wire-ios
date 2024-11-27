@@ -50,6 +50,16 @@ public protocol UserLocalStoreProtocol {
         domain: String?
     ) async -> ZMUser
 
+    /// Fetches or creates users locally.
+    ///
+    /// - parameters:
+    ///     - userIDs: The users id to fetch or create locally.
+    /// - returns: A list of users fetched or created locally.
+
+    func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser>
+
     /// Removes user push token from storage.
 
     func deletePushToken()
@@ -111,6 +121,12 @@ public protocol UserLocalStoreProtocol {
     // TODO: [WPB-10727] Merge these two methods into a single method
     func persistUser(userInfo: NewUserInfo) async
     func updateUser(userUpdateInfo: UserUpdateInfo) async
+
+    /// Fetches all user IDs that have a one on one conversation
+    /// - returns: A list of users' qualified IDs.
+
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -167,6 +183,26 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 domain: domain,
                 in: context
             )
+        }
+    }
+
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        try await context.perform { [context] in
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            let predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+            request.predicate = predicate
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error(
+                            "Missing user's qualifiedID"
+                        )
+                        return nil
+                    }
+                    return userID
+                }
         }
     }
 
@@ -227,6 +263,25 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
+    }
+
+    public func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser> {
+
+        await context.perform { [context] in
+
+            let users = userIDs.map {
+                ZMUser.fetchOrCreate(
+                    with: $0.id,
+                    domain: $0.domain,
+                    in: context
+                )
+            }
+
+            return Set(users)
+        }
+
     }
 
     public func cancelSelfUserLegalholdRequest() async {
@@ -302,7 +357,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 ZMUser.completeProfileAssetIdentifierKey
             ]
 
-            /// Do not update assets if user has local modifications: a possible explanation is that if user has local changes to its assets
+            /// Do not update assets if user has local modifications: a possible explanation is that if user has local
+            /// changes to its assets
             /// we don't want to update them and keep these changes as is until they're synced.
             if !user.hasLocalModifications(forKeys: assetKeys) {
                 let previewAssetKey = userUpdateInfo.previewAssetKey

@@ -35,6 +35,7 @@ final class MockOTREntity: OTREntity {
     func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
+
     var conversation: ZMConversation?
 
     var isMissingClients = false
@@ -70,23 +71,20 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
-    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
-    }
+    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {}
 
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants
     }
 
-    func prepareMessageForSending() async throws {
-
-    }
+    func prepareMessageForSending() async throws {}
 
     var debugInfo: String {
         "Mock ProteusMessage"
     }
 
     var underlyingMessage: GenericMessage? {
-        return nil
+        nil
     }
 
     func setExpirationDate() {
@@ -95,5 +93,5 @@ extension MockOTREntity: ProteusMessage {
 }
 
 func == (lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
-    return lhs === rhs
+    lhs === rhs
 }

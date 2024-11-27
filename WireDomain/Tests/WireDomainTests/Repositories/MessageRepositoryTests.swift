@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDomain
 import WireDomainSupport
-import XCTest
 import WireTestingPackage
+import XCTest
+@testable import WireDomain
 
 final class MessageRepositoryTests: XCTestCase {
 
@@ -56,7 +56,10 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            localStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {

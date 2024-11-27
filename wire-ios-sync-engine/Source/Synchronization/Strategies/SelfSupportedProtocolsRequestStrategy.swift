@@ -40,7 +40,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // MARK: - Initializers
 
-    required public init(
+    public required init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,

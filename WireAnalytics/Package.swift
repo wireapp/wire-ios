@@ -3,6 +3,9 @@
 import Foundation
 import PackageDescription
 
+// You can enable/disable Datadog for debugging by overriding the boolean.
+let datadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
+
 let package = Package(
     name: "WireAnalytics",
     platforms: [.iOS(.v16), .macOS(.v12)],
@@ -14,35 +17,28 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0"),
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
-        .package(path: "../SourceryPlugin")
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies() + [
+            dependencies: [
                 .product(name: "Countly", package: "countly-sdk-ios")
             ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
-            dependencies: [
-                .product(name: "DatadogCore", package: "dd-sdk-ios"),
-                .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-                .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-                .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-                .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ],
+            dependencies: datadogDependencies(),
+            path: "Sources/WireDatadog",
+            sources: datadogFiles(),
             swiftSettings: swiftSettings
         ),
         .target(
             name: "WireAnalyticsSupport",
             dependencies: ["WireAnalytics"],
             plugins: [
-                .plugin(
-                    name: "SourceryPlugin",
-                    package: "SourceryPlugin"
-                )
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
         .testTarget(
@@ -52,12 +48,25 @@ let package = Package(
     ]
 )
 
-func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
-    // You can enable/disable Datadog for debugging by overriding the boolean.
-    if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
-        ["WireDatadog"]
+func datadogDependencies() -> [Target.Dependency] {
+    guard datadogEnabled else {
+        // note: in this case SPM will warn that the dd-sdk-ios is not used
+        return []
+    }
+    return [
+        .product(name: "DatadogCore", package: "dd-sdk-ios"),
+        .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
+        .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+        .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+        .product(name: "DatadogTrace", package: "dd-sdk-ios")
+    ]
+}
+
+func datadogFiles() -> [String] {
+    if datadogEnabled {
+        ["WireDatadog.swift", "LogLevel.swift"]
     } else {
-        []
+        ["WireFakeDatadog.swift", "LogLevel.swift"]
     }
 }
 

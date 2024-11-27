@@ -19,7 +19,7 @@
 import WireAPI
 
 extension WireAPI.SelfUserClient {
-    
+
     func toDomainModel() -> UserClientInfo {
         .init(
             id: id,
@@ -38,5 +38,5 @@ extension WireAPI.SelfUserClient {
             )
         )
     }
-    
+
 }

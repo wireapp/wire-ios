@@ -18,10 +18,10 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
-import XCTest
 import WireTestingPackage
+import XCTest
+@testable import WireDomain
 
 final class UserLocalStoreTests: XCTestCase {
 
@@ -69,7 +69,11 @@ final class UserLocalStoreTests: XCTestCase {
 
         await context.perform { [context] in
             // There is no user in the database.
-            XCTAssertNil(ZMUser.fetch(with: Scaffolding.userInfo.userID.uuid, domain: Scaffolding.userInfo.userID.domain, in: context))
+            XCTAssertNil(ZMUser.fetch(
+                with: Scaffolding.userInfo.userID.uuid,
+                domain: Scaffolding.userInfo.userID.domain,
+                in: context
+            ))
         }
 
         // When
@@ -344,7 +348,8 @@ final class UserLocalStoreTests: XCTestCase {
         static let existingEmail = "test@wire.com"
         static let userClientID = UUID.mockID4.uuidString
         static let lastPrekeyId = 65_535
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+        static let base64encodedString =
+            "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
         nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
             target: userID,
@@ -355,7 +360,7 @@ final class UserLocalStoreTests: XCTestCase {
                 key: Data(base64Encoded: base64encodedString)!
             )
         )
-        
+
         static let userInfo = NewUserInfo(
             userID: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
@@ -371,7 +376,7 @@ final class UserLocalStoreTests: XCTestCase {
             serviceProvider: nil,
             supportedProtocols: [.mls]
         )
-        
+
         static let userUpdateInfo = UserUpdateInfo(
             userID: userID,
             accentColorID: nil,

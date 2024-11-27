@@ -41,6 +41,7 @@
 		0649D19B24F66E9E001DDC78 /* ZMLocalNotification+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19A24F66E9E001DDC78 /* ZMLocalNotification+Events.swift */; };
 		0649D19F24F6717C001DDC78 /* ZMLocalNotificationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19E24F6717C001DDC78 /* ZMLocalNotificationSet.swift */; };
 		0649D1A624F673E7001DDC78 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D1A524F673E7001DDC78 /* Logging.swift */; };
+		066A3D822CDE6EFC0089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */; };
 		0671976E2AE951F400D96598 /* AcmeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671976D2AE951F400D96598 /* AcmeAPI.swift */; };
 		0671979A2AFBE9FD00D96598 /* AcmeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197992AFBE9FD00D96598 /* AcmeResponse.swift */; };
 		067215AD2B10DCA300CF4AD4 /* E2EIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067215AC2B10DCA300CF4AD4 /* E2EIRepository.swift */; };
@@ -539,6 +540,7 @@
 		0649D19A24F66E9E001DDC78 /* ZMLocalNotification+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+Events.swift"; sourceTree = "<group>"; };
 		0649D19E24F6717C001DDC78 /* ZMLocalNotificationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationSet.swift; sourceTree = "<group>"; };
 		0649D1A524F673E7001DDC78 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysRequestStrategy.swift; sourceTree = "<group>"; };
 		0671976D2AE951F400D96598 /* AcmeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeAPI.swift; sourceTree = "<group>"; };
 		067197992AFBE9FD00D96598 /* AcmeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeResponse.swift; sourceTree = "<group>"; };
 		067215AC2B10DCA300CF4AD4 /* E2EIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIRepository.swift; sourceTree = "<group>"; };
@@ -1743,6 +1745,7 @@
 			children = (
 				7AEBB6732859E5F00090B524 /* Actions */,
 				EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */,
+				066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -2521,6 +2524,7 @@
 				E629E3A32B47015300D526AD /* EventData.swift in Sources */,
 				63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				066A3D822CDE6EFC0089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift in Sources */,
 				EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */,
 				E629E39F2B4700B600D526AD /* Payload+NewConversation.swift in Sources */,
 				0649D14524F63BBD001DDC78 /* LocalNotificationType+Configuration.swift in Sources */,

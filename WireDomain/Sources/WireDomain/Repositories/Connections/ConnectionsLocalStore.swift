@@ -23,7 +23,7 @@ public protocol ConnectionsLocalStoreProtocol {
 
     /// Save connection and related objects to local storage.
     /// - Parameter connectionInfo: connection object
-    
+
     func storeConnection(
         _ connectionInfo: ConnectionInfo
     ) async throws

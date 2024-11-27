@@ -20,7 +20,7 @@ import Foundation
 
 public struct BackendMLSPublicKeys: Equatable {
 
-    let removal: MLSPublicKeys
+    public let removal: MLSPublicKeys
 
     public init(removal: MLSPublicKeys = .init()) {
         self.removal = removal
@@ -52,16 +52,26 @@ public struct BackendMLSPublicKeys: Equatable {
         let p384: Data?
         let p521: Data?
 
-        public init(ed25519: Data? = nil,
-                    ed448: Data? = nil,
-                    p256: Data? = nil,
-                    p384: Data? = nil,
-                    p521: Data? = nil) {
+        public init(
+            ed25519: Data? = nil,
+            ed448: Data? = nil,
+            p256: Data? = nil,
+            p384: Data? = nil,
+            p521: Data? = nil
+        ) {
             self.ed25519 = ed25519
             self.ed448 = ed448
             self.p256 = p256
             self.p384 = p384
             self.p521 = p521
+        }
+
+        public func hasValidKeys() -> Bool {
+            [ed25519, ed448, p256, p384, p521].contains { key in
+                guard let key else { return false }
+
+                return !key.isEmpty
+            }
         }
 
     }

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class UserRepositoryTests: XCTestCase {
 
@@ -80,7 +80,11 @@ final class UserRepositoryTests: XCTestCase {
 
         await context.perform { [context] in
             // There is no user in the database.
-            XCTAssertNil(ZMUser.fetch(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context))
+            XCTAssertNil(ZMUser.fetch(
+                with: Scaffolding.user1.id.uuid,
+                domain: Scaffolding.user1.id.domain,
+                in: context
+            ))
         }
 
         // Mock
@@ -231,12 +235,10 @@ final class UserRepositoryTests: XCTestCase {
         // Mock
 
         let selfUser = await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(
+            return modelHelper.createSelfUser(
                 id: .mockID1,
                 in: context
             )
-
-            return selfUser
         }
 
         userLocalStore.isSelfUserIdDomain_MockValue = (selfUser, true)
@@ -260,17 +262,17 @@ final class UserRepositoryTests: XCTestCase {
         // Mock
 
         let user = await context.perform { [self] in
-            let user = modelHelper.createUser(
+            return modelHelper.createUser(
                 id: .mockID1,
                 in: context
             )
-
-            return user
         }
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, false)
         userLocalStore.markAccountAsDeletedFor_MockMethod = { _ in }
-        conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in }
+        conversationsRepository
+            .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_MockMethod = { _, _, _ in
+            }
 
         // When
 
@@ -284,13 +286,19 @@ final class UserRepositoryTests: XCTestCase {
 
         XCTAssertEqual(userLocalStore.isSelfUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userLocalStore.markAccountAsDeletedFor_Invocations.count, 1)
-        XCTAssertEqual(conversationsRepository.removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsRepository
+                .removeParticipantFromAllGroupConversationsParticipantIDParticipantDomainRemovedAt_Invocations.count,
+            1
+        )
     }
 
     func testUpdateUserProperty_It_Enables_Read_Receipts_Property_It_Invokes_Local_Store_Method() async throws {
         // Mock
 
-        userLocalStore.updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_MockMethod = { _, _ in }
+        userLocalStore
+            .updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_MockMethod = { _, _ in
+            }
 
         // When
 
@@ -298,7 +306,11 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userLocalStore.updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_Invocations.count, 1)
+        XCTAssertEqual(
+            userLocalStore
+                .updateSelfUserReadReceiptsIsReadReceiptsEnabledIsReadReceiptsEnabledChangedRemotely_Invocations.count,
+            1
+        )
     }
 
     func testUpdateUserProperty_It_Invokes_Conversation_Labels_Repo_Method() async throws {
@@ -325,11 +337,12 @@ final class UserRepositoryTests: XCTestCase {
     func testUpdateUserProperty_It_Throws_Error() async throws {
         // Mock
 
-        conversationLabelsRepository.updateConversationLabels_MockError = ConversationLabelsRepositoryError.failedToDeleteStoredLabels
+        conversationLabelsRepository.updateConversationLabels_MockError = ConversationLabelsRepositoryError
+            .failedToDeleteStoredLabels
 
         // Then
 
-        await XCTAssertThrowsError(
+        await XCTAssertThrowsErrorAsync(
             ConversationLabelsRepositoryError.failedToDeleteStoredLabels
         ) { [self] in
 
@@ -355,16 +368,14 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.updateUserUserUpdateInfo_Invocations.count, 1)
     }
 
-    func testIsSelfUser_It_Returns_True() async throws {
+    func testIsSelfUser_It_Invokes_Local_Store_Method() async throws {
         // Mock
 
         let user = await context.perform { [self] in
-            let user = modelHelper.createSelfUser(
+            return modelHelper.createSelfUser(
                 id: .mockID1,
                 in: context
             )
-
-            return user
         }
 
         userLocalStore.isSelfUserIdDomain_MockValue = (user, true)
@@ -378,7 +389,37 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(isSelfUser, true)
+        XCTAssertEqual(userLocalStore.isSelfUserIdDomain_Invocations.count, 1)
+    }
+
+    func testPullSelfUser_It_Invokes_Local_Store_Methods() async throws {
+        // Mock
+        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
+        userLocalStore.persistUserUserInfo_MockMethod = { _ in }
+
+        // When
+
+        try await sut.pullSelfUser()
+
+        // Then
+
+        XCTAssertEqual(selfUsersAPI.getSelfUser_Invocations.count, 1)
+        XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
+    }
+
+    func testFetchAllUserIdsWithOneOnOneConversation_It_Invokes_Local_Store_Method() async throws {
+        // Given
+
+        userLocalStore.fetchAllUserIDsWithOneOnOneConversation_MockValue = [Scaffolding.qualifiedID.toDomainModel()]
+
+        // When
+
+        let userIds = try await sut.fetchAllUserIDsWithOneOnOneConversation()
+
+        // Then
+
+        XCTAssertEqual(userLocalStore.fetchAllUserIDsWithOneOnOneConversation_Invocations.count, 1)
+        XCTAssertEqual(userIds, [Scaffolding.qualifiedID.toDomainModel()])
     }
 
     private enum Scaffolding {
@@ -387,7 +428,10 @@ final class UserRepositoryTests: XCTestCase {
 
         static let lastPrekeyId = 65_535
 
-        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+        static let base64encodedString =
+            "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+
+        static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
 
         static let conversationLabel1 = ConversationLabel(
             id: .mockID1,
@@ -434,6 +478,24 @@ final class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
 
+        static let selfUser = SelfUser(
+            id: qualifiedID.uuid,
+            qualifiedID: qualifiedID,
+            ssoID: nil,
+            name: "username",
+            handle: "username",
+            teamID: UUID(),
+            phone: "",
+            accentID: 1,
+            managedBy: .wire,
+            assets: [],
+            deleted: false,
+            email: "username@wire.com",
+            expiresAt: .now,
+            service: nil,
+            supportedProtocols: [.mls]
+        )
+
         static let event = UserUpdateEvent(
             userID: .mockID1,
             accentColorID: nil,
@@ -445,7 +507,7 @@ final class UserRepositoryTests: XCTestCase {
             supportedProtocols: [.proteus, .mls]
         )
 
-        nonisolated(unsafe) static let pushToken = PushToken(
+        static let pushToken = PushToken(
             deviceToken: Data(repeating: 0x41, count: 10),
             appIdentifier: "com.wire",
             transportType: "APNS_VOIP",

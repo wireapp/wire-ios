@@ -195,7 +195,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
         switch config {
-        case .appLock(let appLockFeatureConfig):
+        case let .appLock(appLockFeatureConfig):
 
             return FeatureState(
                 name: .appLock,
@@ -203,7 +203,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .classifiedDomains(let classifiedDomainsFeatureConfig):
+        case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
             return FeatureState(
                 name: .classifiedDomains,
@@ -211,7 +211,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .conferenceCalling(let conferenceCallingFeatureConfig):
+        case let .conferenceCalling(conferenceCallingFeatureConfig):
 
             let needsToNotifyUser = try await needsToNotifyUser(name: .conferenceCalling)
             return FeatureState(
@@ -220,7 +220,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: needsToNotifyUser
             )
 
-        case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
+        case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
             let needsToNotifyUser = try await needsToNotifyUser(name: .conversationGuestLinks)
             return FeatureState(
@@ -229,7 +229,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: needsToNotifyUser
             )
 
-        case .digitalSignature(let digitalSignatureFeatureConfig):
+        case let .digitalSignature(digitalSignatureFeatureConfig):
 
             return FeatureState(
                 name: .digitalSignature,
@@ -237,7 +237,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .endToEndIdentity(let endToEndIdentityFeatureConfig):
+        case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
             return FeatureState(
                 name: .e2ei,
@@ -245,7 +245,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .fileSharing(let fileSharingFeatureConfig):
+        case let .fileSharing(fileSharingFeatureConfig):
 
             let needsToNotifyUser = try await needsToNotifyUser(name: .fileSharing)
             return FeatureState(
@@ -254,7 +254,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: needsToNotifyUser
             )
 
-        case .mls(let mlsFeatureConfig):
+        case let .mls(mlsFeatureConfig):
 
             return FeatureState(
                 name: .mls,
@@ -262,7 +262,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .mlsMigration(let mLSMigrationFeatureConfig):
+        case let .mlsMigration(mLSMigrationFeatureConfig):
 
             return FeatureState(
                 name: .mlsMigration,
@@ -270,7 +270,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: false
             )
 
-        case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
+        case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
             let needsToNotifyUser = try await needsToNotifyUser(name: .selfDeletingMessages)
             return FeatureState(
@@ -279,7 +279,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: needsToNotifyUser
             )
 
-        case .unknown(let featureName):
+        case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"
             )
@@ -292,7 +292,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         _ featureConfig: FeatureConfig
     ) -> (name: Feature.Name, isEnabled: Bool, config: (any Codable)?)? {
         switch featureConfig {
-        case .appLock(let appLockFeatureConfig):
+        case let .appLock(appLockFeatureConfig):
 
             return (
                 .appLock,
@@ -300,7 +300,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 appLockFeatureConfig.toDomainModel()
             )
 
-        case .classifiedDomains(let classifiedDomainsFeatureConfig):
+        case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
             return (
                 .classifiedDomains,
@@ -308,7 +308,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 classifiedDomainsFeatureConfig.toDomainModel()
             )
 
-        case .conferenceCalling(let conferenceCallingFeatureConfig):
+        case let .conferenceCalling(conferenceCallingFeatureConfig):
 
             return (
                 .conferenceCalling,
@@ -316,7 +316,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 conferenceCallingFeatureConfig.toDomainModel()
             )
 
-        case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
+        case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
             return (
                 .conversationGuestLinks,
@@ -324,7 +324,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 nil
             )
 
-        case .digitalSignature(let digitalSignatureFeatureConfig):
+        case let .digitalSignature(digitalSignatureFeatureConfig):
 
             return (
                 .digitalSignature,
@@ -332,7 +332,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 nil
             )
 
-        case .endToEndIdentity(let endToEndIdentityFeatureConfig):
+        case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
             return (
                 .e2ei,
@@ -340,7 +340,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 nil
             )
 
-        case .fileSharing(let fileSharingFeatureConfig):
+        case let .fileSharing(fileSharingFeatureConfig):
 
             return (
                 .fileSharing,
@@ -348,7 +348,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 nil
             )
 
-        case .mls(let mlsFeatureConfig):
+        case let .mls(mlsFeatureConfig):
 
             return (
                 .mls,
@@ -356,7 +356,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 mlsFeatureConfig.toDomainModel()
             )
 
-        case .mlsMigration(let mLSMigrationFeatureConfig):
+        case let .mlsMigration(mLSMigrationFeatureConfig):
 
             return (
                 .mlsMigration,
@@ -364,7 +364,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 mLSMigrationFeatureConfig.toDomainModel()
             )
 
-        case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
+        case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
             return (
                 .selfDeletingMessages,
@@ -372,7 +372,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 selfDeletingMessagesFeatureConfig.toDomainModel()
             )
 
-        case .unknown(let featureName):
+        case let .unknown(featureName):
             logger.warn(
                 "Unknown feature name: \(featureName)"
             )

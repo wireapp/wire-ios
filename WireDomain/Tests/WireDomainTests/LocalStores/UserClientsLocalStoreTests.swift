@@ -18,10 +18,10 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
-import XCTest
 import WireTestingPackage
+import XCTest
+@testable import WireDomain
 
 final class UserClientsLocalStoreTests: XCTestCase {
 

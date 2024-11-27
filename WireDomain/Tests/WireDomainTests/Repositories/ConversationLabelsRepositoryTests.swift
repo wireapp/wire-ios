@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
-@testable import WireDomain
+import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+@testable import WireAPI
+@testable import WireDataModel
+@testable import WireDomain
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
@@ -52,7 +54,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // Mock
 
         userPropertiesAPI.getLabels_MockValue = [
-            Scaffolding.conversationLabel1,
+            Scaffolding.conversationLabel1
         ]
 
         conversationLabelsLocalStore.storeLabel_MockMethod = { _ in }

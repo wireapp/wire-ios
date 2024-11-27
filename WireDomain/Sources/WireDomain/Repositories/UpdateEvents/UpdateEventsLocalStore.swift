@@ -89,7 +89,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         sharedUserDefaults: UserDefaults
     ) {
         self.context = context
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

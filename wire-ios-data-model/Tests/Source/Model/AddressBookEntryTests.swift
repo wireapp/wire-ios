@@ -25,7 +25,7 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
     func testThatItReturnsTrackedKeys() {
 
         // GIVEN
-        let entry = AddressBookEntry.insertNewObject(in: self.uiMOC)
+        let entry = AddressBookEntry.insertNewObject(in: uiMOC)
 
         // WHEN
         let keys = entry.keysTrackedForLocalModifications()
@@ -37,7 +37,7 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
     func testThatItCreatesEntryFromContact() {
 
         // GIVEN
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         let contact = CNMutableContact()
         contact.familyName = "TheFamily"
         contact.givenName = "MyName"
@@ -45,7 +45,7 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
         contact.phoneNumbers.append(CNLabeledValue(label: "home", value: CNPhoneNumber(stringValue: "+15557654321")))
 
         // WHEN
-        let sut = AddressBookEntry.create(from: contact, managedObjectContext: self.uiMOC, user: user)
+        let sut = AddressBookEntry.create(from: contact, managedObjectContext: uiMOC, user: user)
 
         // THEN
         XCTAssertEqual(sut.localIdentifier, contact.identifier)

@@ -24,11 +24,16 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
     fileprivate let messageSender: MessageSenderInterface
     fileprivate let managedObjectContext: NSManagedObjectContext
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface
+    ) {
 
         self.managedObjectContext = managedObjectContext
-        self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
+        self.keyPathSync = KeyPathObjectSync(
+            entityName: UserClient.entityName(),
+            \.needsToNotifyOtherUserAboutSessionReset
+        )
         self.messageSender = messageSender
 
         super.init()
@@ -37,7 +42,7 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [keyPathSync]
+        [keyPathSync]
     }
 
 }
@@ -52,10 +57,12 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
             return
         }
 
-        let message = GenericMessageEntity(message: GenericMessage(clientAction: .resetSession),
-                                           context: managedObjectContext,
-                                           conversation: conversation,
-                                           completionHandler: nil)
+        let message = GenericMessageEntity(
+            message: GenericMessage(clientAction: .resetSession),
+            context: managedObjectContext,
+            conversation: conversation,
+            completionHandler: nil
+        )
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
             do {
@@ -75,8 +82,6 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         }
     }
 
-    func cancel(_ object: UserClient) {
-
-    }
+    func cancel(_ object: UserClient) {}
 
 }

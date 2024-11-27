@@ -20,8 +20,13 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
+// sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend
-public struct PushSupportedProtocolsUseCase {
+public protocol PushSupportedProtocolsUseCaseProtocol {
+    func invoke() async throws
+}
+
+public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
 
     private enum ProteusToMLSMigrationState: String {
         case disabled
@@ -95,8 +100,10 @@ public struct PushSupportedProtocolsUseCase {
             type: Feature.MLS.Config.self
         )
 
-        let mls = (status: mlsFeature?.status ?? .disabled,
-                   config: mlsFeature?.config ?? Feature.MLS.Config())
+        let mls = (
+            status: mlsFeature?.status ?? .disabled,
+            config: mlsFeature?.config ?? Feature.MLS.Config()
+        )
 
         guard mls.status == .enabled else {
             /// If there is no MLS then there can only be proteus.
@@ -122,8 +129,10 @@ public struct PushSupportedProtocolsUseCase {
             type: Feature.MLSMigration.Config.self
         )
 
-        let mlsMigration = (status: mlsMigrationFeature?.status ?? .disabled,
-                            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config())
+        let mlsMigration = (
+            status: mlsMigrationFeature?.status ?? .disabled,
+            config: mlsMigrationFeature?.config ?? Feature.MLSMigration.Config()
+        )
 
         guard mlsMigration.status == .enabled else {
             return .disabled

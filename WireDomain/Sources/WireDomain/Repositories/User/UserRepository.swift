@@ -29,6 +29,10 @@ import WireFoundation
 /// as well as the possible source(s) of the models.
 public protocol UserRepositoryProtocol {
 
+    /// Pulls self user and stores it locally
+
+    func pullSelfUser() async throws
+
     /// Fetch self user from the local store
 
     func fetchSelfUser() async -> ZMUser
@@ -149,6 +153,11 @@ public protocol UserRepositoryProtocol {
         domain: String?
     ) async throws -> Bool
 
+    /// Fetches all user IDs that have a one on one conversation
+    /// - returns: A list of users' qualified IDs.
+
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -178,6 +187,14 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     // MARK: - Public
+
+    public func pullSelfUser() async throws {
+        let selfUser = try await selfUserAPI.getSelfUser()
+
+        await userLocalStore.persistUser(
+            userInfo: selfUser.toDomainModel()
+        )
+    }
 
     public func fetchSelfUser() async -> ZMUser {
         await userLocalStore.fetchSelfUser()
@@ -271,14 +288,14 @@ public final class UserRepository: UserRepositoryProtocol {
 
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         switch userProperty {
-        case .areReadReceiptsEnabled(let isEnabled):
+        case let .areReadReceiptsEnabled(isEnabled):
 
             await userLocalStore.updateSelfUserReadReceipts(
                 isReadReceiptsEnabled: isEnabled,
                 isReadReceiptsEnabledChangedRemotely: true
             )
 
-        case .conversationLabels(let conversationLabels):
+        case let .conversationLabels(conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
 
         default:
@@ -331,6 +348,10 @@ public final class UserRepository: UserRepositoryProtocol {
                 removedAt: date
             )
         }
+    }
+
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
     }
 
     public func isSelfUser(

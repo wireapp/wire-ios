@@ -73,39 +73,35 @@ indirect enum AuthenticationFlowStep: Equatable {
     var needsInterface: Bool {
         switch self {
         // Initial Steps
-        case .start: return false
-        case .landingScreen: return true
-        case .reauthenticate: return true
-
+        case .start: false
+        case .landingScreen: true
+        case .reauthenticate: true
         // Sign-In
-        case .provideCredentials: return true
-        case .enterEmailVerificationCode: return true
-        case .authenticateEmailCredentials: return false
-        case .registerEmailCredentials: return false
-        case .companyLogin: return false
-        case .switchBackend: return true
-
+        case .provideCredentials: true
+        case .enterEmailVerificationCode: true
+        case .authenticateEmailCredentials: false
+        case .registerEmailCredentials: false
+        case .companyLogin: false
+        case .switchBackend: true
         // Post Sign-In
-        case .noHistory: return true
-        case .clientManagement: return true
-        case .deleteClient: return true
-        case .addEmailAndPassword: return true
-        case .enrollE2EIdentity: return true
-        case .enrollE2EIdentitySuccess: return true
-        case .addUsername: return true
-        case .pendingInitialSync: return false
-        case .pendingEmailLinkVerification: return true
-
+        case .noHistory: true
+        case .clientManagement: true
+        case .deleteClient: true
+        case .addEmailAndPassword: true
+        case .enrollE2EIdentity: true
+        case .enrollE2EIdentitySuccess: true
+        case .addUsername: true
+        case .pendingInitialSync: false
+        case .pendingEmailLinkVerification: true
         // Registration
-        case .createCredentials: return true
-        case .sendActivationCode: return false
-        case .enterActivationCode: return true
-        case .activateCredentials: return false
-        case .incrementalUserCreation(_, let intermediateStep): return intermediateStep.needsInterface
-        case .createUser: return false
-
+        case .createCredentials: true
+        case .sendActivationCode: false
+        case .enterActivationCode: true
+        case .activateCredentials: false
+        case let .incrementalUserCreation(_, intermediateStep): intermediateStep.needsInterface
+        case .createUser: false
         // Configuration
-        case .configureDevice: return false
+        case .configureDevice: false
         }
     }
 
@@ -115,12 +111,14 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 /// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
-    case start, setName, setPassword
+    case start
+    case setName
+    case setPassword
 
     var needsInterface: Bool {
         switch self {
-        case .start: return false
-        default: return true
+        case .start: false
+        default: true
         }
     }
 }

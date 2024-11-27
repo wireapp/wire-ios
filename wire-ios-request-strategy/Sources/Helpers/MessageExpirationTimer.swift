@@ -30,7 +30,12 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         fatalError("Should not use this init")
     }
 
-    public init(moc: NSManagedObjectContext, entityNames: [String], localNotificationDispatcher: PushMessageHandler, filter: NSPredicate? = nil) {
+    public init(
+        moc: NSManagedObjectContext,
+        entityNames: [String],
+        localNotificationDispatcher: PushMessageHandler,
+        filter: NSPredicate? = nil
+    ) {
         self.localNotificationsDispatcher = localNotificationDispatcher
         self.entityNames = entityNames
         self.filter = filter
@@ -50,25 +55,25 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
             WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
         }
 
-        guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
+        guard message.deliveryState != .delivered, message.deliveryState != .sent, message.deliveryState != .read else {
             return
         }
         message.expire(withReason: .timeout)
         message.managedObjectContext?.enqueueDelayedSave()
-        self.localNotificationsDispatcher.didFailToSend(message)
+        localNotificationsDispatcher.didFailToSend(message)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
+        ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        self.startTimerIfNeeded(for: objects)
+        startTimerIfNeeded(for: objects)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        self.startTimerIfNeeded(for: object)
+        startTimerIfNeeded(for: object)
     }
 
     private func startTimerIfNeeded(for objects: Set<AnyHashable>) {

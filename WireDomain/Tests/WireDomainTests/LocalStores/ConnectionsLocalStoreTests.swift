@@ -18,8 +18,8 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import XCTest
+@testable import WireDomain
 
 final class ConnectionsLocalStoreTests: XCTestCase {
 
@@ -83,7 +83,11 @@ final class ConnectionsLocalStoreTests: XCTestCase {
 
         try await context.perform { [context] in
             // There is a connection in the database.
-            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(
+                userID: Scaffolding.member2ID.uuid,
+                domain: Scaffolding.member2ID.domain,
+                in: context
+            ))
 
             XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
 
@@ -120,7 +124,11 @@ final class ConnectionsLocalStoreTests: XCTestCase {
         // Then
 
         try await context.perform { [context] in
-            let storedConnection = try XCTUnwrap(ZMConnection.fetch(userID: Scaffolding.member2ID.uuid, domain: Scaffolding.member2ID.domain, in: context))
+            let storedConnection = try XCTUnwrap(ZMConnection.fetch(
+                userID: Scaffolding.member2ID.uuid,
+                domain: Scaffolding.member2ID.domain,
+                in: context
+            ))
 
             XCTAssertEqual(storedConnection.lastUpdateDateInGMT, connection.lastUpdate)
 
@@ -138,9 +146,18 @@ final class ConnectionsLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        nonisolated(unsafe) static let member1ID = WireDataModel.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
-        nonisolated(unsafe) static let conversationID = WireDataModel.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
-        nonisolated(unsafe) static let member2ID = WireDataModel.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
+        nonisolated(unsafe) static let member1ID = WireDataModel.QualifiedID(
+            uuid: .mockID1,
+            domain: String.randomDomain()
+        )
+        nonisolated(unsafe) static let conversationID = WireDataModel.QualifiedID(
+            uuid: .mockID2,
+            domain: String.randomDomain()
+        )
+        nonisolated(unsafe) static let member2ID = WireDataModel.QualifiedID(
+            uuid: .mockID3,
+            domain: String.randomDomain()
+        )
         static let lastUpdate = Date()
         static let connectionStatus = ZMConnectionStatus.accepted
 

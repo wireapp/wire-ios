@@ -56,7 +56,7 @@ struct DeviceDetailsBottomView: View {
         HStack {
             Button {
                 Task {
-                   await viewModel.removeDevice()
+                    await viewModel.removeDevice()
                 }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)

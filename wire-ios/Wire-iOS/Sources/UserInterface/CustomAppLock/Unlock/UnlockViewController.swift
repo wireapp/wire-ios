@@ -29,7 +29,7 @@ protocol UnlockViewControllerDelegate: AnyObject {
 }
 
 /// UnlockViewController
-/// 
+///
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
 
@@ -40,10 +40,10 @@ final class UnlockViewController: UIViewController {
     private let selfUser: UserType
     private var userSession: UserSession?
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView: UIStackView = .verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
 
-    private let contentView: UIView = UIView()
+    private let contentView: UIView = .init()
 
     private static let errorFont = FontSpec.smallLightFont.font!
 
@@ -57,7 +57,11 @@ final class UnlockViewController: UIViewController {
     }()
 
     lazy var validatedTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.nonEmpty, isNew: false), delegate: self, setNewColors: true)
+        let textField = ValidatedTextField.createPasscodeTextField(
+            kind: .passcode(.nonEmpty, isNew: false),
+            delegate: self,
+            setNewColors: true
+        )
         textField.placeholder = Unlock.Textfield.placeholder
         textField.delegate = self
         textField.accessibilityIdentifier = "unlock_screen.text_field.enter_passcode"
@@ -66,9 +70,11 @@ final class UnlockViewController: UIViewController {
     }()
 
     private let titleLabel: UILabel = {
-        let label = DynamicFontLabel(text: Unlock.titleLabel,
-                                     fontSpec: .largeSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Unlock.titleLabel,
+            fontSpec: .largeSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
 
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -94,8 +100,10 @@ final class UnlockViewController: UIViewController {
     }()
 
     private lazy var nameLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .mediumRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byTruncatingTail
@@ -149,6 +157,7 @@ final class UnlockViewController: UIViewController {
         createConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -227,11 +236,13 @@ final class UnlockViewController: UIViewController {
 
     func showWrongPasscodeMessage() {
 
-        let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle,
-                                                             with: SemanticColors.Label.textErrorDefault,
-                                                             iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize,
-                                                             verticalCorrection: -1,
-                                                             insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4))
+        let textAttachment = NSTextAttachment.textAttachment(
+            for: .exclamationMarkCircle,
+            with: SemanticColors.Label.textErrorDefault,
+            iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize,
+            verticalCorrection: -1,
+            insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+        )
 
         let attributedString = NSAttributedString(string: Unlock.errorLabel) && UnlockViewController.errorFont
 
@@ -263,6 +274,6 @@ extension UnlockViewController: TextFieldValidationDelegate {
 
 extension UnlockViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return unlock()
+        unlock()
     }
 }

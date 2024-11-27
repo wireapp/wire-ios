@@ -19,10 +19,10 @@
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
-@testable import WireDomainSupport
 import WireTestingPackage
 import XCTest
+@testable import WireDomain
+@testable import WireDomainSupport
 
 final class UpdateEventsLocalStoreTests: XCTestCase {
 
@@ -97,7 +97,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertTrue(fetchedEnvelopes.isEmpty)
     }
 
-    func testFetchStoredEventEnvelopePayloads_It_Fetches_Less_Than_The_Limit_If_There_Are_Not_Enough_Envelopes() async throws {
+    func testFetchStoredEventEnvelopePayloads_It_Fetches_Less_Than_The_Limit_If_There_Are_Not_Enough_Envelopes(
+    ) async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([Scaffolding.envelope3])
@@ -144,7 +145,8 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertEqual(fetchedEnvelope3, Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes(
+    ) async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([

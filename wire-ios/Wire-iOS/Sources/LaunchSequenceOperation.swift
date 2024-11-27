@@ -23,11 +23,13 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - LaunchSequenceOperation
+
 protocol LaunchSequenceOperation {
     func execute()
 }
 
 // MARK: - DeveloperFlagOperation
+
 final class DeveloperFlagOperation: LaunchSequenceOperation {
     func execute() {
         DeveloperFlag.storage = .applicationGroup
@@ -35,6 +37,7 @@ final class DeveloperFlagOperation: LaunchSequenceOperation {
 }
 
 // MARK: - BackendEnvironmentOperation
+
 final class BackendEnvironmentOperation: LaunchSequenceOperation {
     func execute() {
         guard let backendTypeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() else {
@@ -45,6 +48,7 @@ final class BackendEnvironmentOperation: LaunchSequenceOperation {
 }
 
 // MARK: - PerformanceDebuggerOperation
+
 final class PerformanceDebuggerOperation: LaunchSequenceOperation {
     func execute() {
         PerformanceDebugger.shared.start()
@@ -52,6 +56,7 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
 }
 
 // MARK: - ZMSLogOperation
+
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {
         SessionManager.startAVSLogging()
@@ -59,18 +64,15 @@ final class AVSLoggingOperation: LaunchSequenceOperation {
 }
 
 // MARK: - AutomationHelperOperation
+
 final class AutomationHelperOperation: LaunchSequenceOperation {
     func execute() {
         AutomationHelper.sharedHelper.installDebugDataIfNeeded()
-
-        if AutomationHelper.sharedHelper.enableMLSSupport == true {
-            var flag = DeveloperFlag.enableMLSSupport
-            flag.isOn = true
-        }
     }
 }
 
 // MARK: - MediaManagerOperation
+
 final class MediaManagerOperation: LaunchSequenceOperation {
     private let mediaManagerLoader = MediaManagerLoader()
 
@@ -80,6 +82,7 @@ final class MediaManagerOperation: LaunchSequenceOperation {
 }
 
 // MARK: - FileBackupExcluderOperation
+
 final class FileBackupExcluderOperation: LaunchSequenceOperation {
     private let fileBackupExcluder = FileBackupExcluder()
 

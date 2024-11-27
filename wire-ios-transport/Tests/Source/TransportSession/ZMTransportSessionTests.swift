@@ -30,7 +30,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     }
 
     public func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     public var mayBeReachable: Bool = true
@@ -38,7 +38,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     public var oldMayBeReachable: Bool = true
     public var oldIsMobileConnection: Bool = true
 
-    public func tearDown() { }
+    public func tearDown() {}
 }
 
 @objcMembers
@@ -50,7 +50,7 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
     public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession? = nil) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession ?? foregroundSession
-        allSessions = [foregroundSession, backgroundSession].compactMap { $0 }
+        self.allSessions = [foregroundSession, backgroundSession].compactMap { $0 }
     }
 
     var tearDownCalled = false
@@ -78,18 +78,24 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         serverName = "https://example.com"
         baseURL = URL(string: serverName)!
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
-        cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier, useCache: true)
+        cookieStorage = ZMPersistentCookieStorage(
+            forServerName: serverName,
+            userIdentifier: userIdentifier,
+            useCache: true
+        )
         reachability = FakeReachability()
         environment = MockEnvironment()
-        sut = ZMTransportSession(environment: environment,
-                                 proxyUsername: nil,
-                                 proxyPassword: nil,
-                                 cookieStorage: cookieStorage,
-                                 reachability: reachability,
-                                 initialAccessToken: nil,
-                                 applicationGroupIdentifier: containerIdentifier,
-                                 applicationVersion: "1.0",
-                                 minTLSVersion: nil)
+        sut = ZMTransportSession(
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            cookieStorage: cookieStorage,
+            reachability: reachability,
+            initialAccessToken: nil,
+            applicationGroupIdentifier: containerIdentifier,
+            applicationVersion: "1.0",
+            minTLSVersion: nil
+        )
     }
 
     override func tearDown() {
@@ -105,7 +111,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         super.tearDown()
     }
 
-    func check(identifier: String?, contains items: [String], file: StaticString = #file, line: UInt = #line) {
+    func check(identifier: String?, contains items: [String], file: StaticString = #filePath, line: UInt = #line) {
         guard let identifier else { XCTFail("identifier should not be nil", file: file, line: line); return }
         for item in items {
             XCTAssert(identifier.contains(item), "[\(identifier)] should contain [\(item)]", file: file, line: line)
@@ -131,7 +137,11 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         check(identifier: backgroundConfiguration.identifier, contains: [userID])
         XCTAssertEqual(backgroundConfiguration.sharedContainerIdentifier, containerIdentifier)
 
-        XCTAssertEqual(Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count, 2, "All identifiers should be unique")
+        XCTAssertEqual(
+            Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count,
+            2,
+            "All identifiers should be unique"
+        )
     }
 
 }

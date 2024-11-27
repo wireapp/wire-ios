@@ -85,7 +85,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func fetchOrCreateClient(
         id: String
     ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
-        let localUserClient = await context.perform { [context] in
+        await context.perform { [context] in
             if let existingClient = UserClient.fetchExistingUserClient(
                 with: id,
                 in: context
@@ -97,8 +97,6 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 return (newClient, true)
             }
         }
-
-        return localUserClient
     }
 
     public func deletedSelfClients(
@@ -119,12 +117,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         id: String
     ) async {
         let localClient = await context.perform { [context] in
-            let localClient = UserClient.fetchExistingUserClient(
+            return UserClient.fetchExistingUserClient(
                 with: id,
                 in: context
             )
-
-            return localClient
         }
 
         guard let localClient else {

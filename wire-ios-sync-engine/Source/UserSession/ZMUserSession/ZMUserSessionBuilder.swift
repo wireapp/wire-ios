@@ -49,7 +49,7 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Initialize
 
-    init() { }
+    init() {}
 
     // MARK: - Build
 
@@ -188,7 +188,10 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             userID: userId
         )
-        let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
+        let recurringActionService = recurringActionService ?? RecurringActionService(
+            storage: sharedUserDefaults,
+            dateProvider: .system
+        )
 
         // setup builder
 
@@ -200,11 +203,11 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
+        dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
-        self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
+        lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
         self.mediaManager = mediaManager
         self.mlsService = mlsService

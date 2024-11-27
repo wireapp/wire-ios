@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
-import XCTest
 import WireTestingPackage
+import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class UserClientsRepositoryTests: XCTestCase {
 
@@ -69,12 +69,10 @@ final class UserClientsRepositoryTests: XCTestCase {
         // Mock
 
         let userClient = await context.perform { [self] in
-            let userClient = modelHelper.createSelfClient(
+            return modelHelper.createSelfClient(
                 id: Scaffolding.userClientID,
                 in: context
             )
-
-            return userClient
         }
 
         userClientsLocalStore.fetchOrCreateClientId_MockValue = (userClient, false)
@@ -112,12 +110,10 @@ final class UserClientsRepositoryTests: XCTestCase {
         // Mock
 
         let selfUserClient = await context.perform { [self] in
-            let selfUserClient = modelHelper.createSelfClient(
+            return modelHelper.createSelfClient(
                 id: Scaffolding.otherUserClientID,
                 in: context
             )
-
-            return selfUserClient
         }
 
         userClientsAPI.getSelfClients_MockValue = [

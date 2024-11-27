@@ -98,6 +98,11 @@ public protocol TeamLocalStoreProtocol {
         selfTeamID: UUID,
         teamMembersInfo: [TeamMemberInfo]
     ) async throws
+
+    /// Fetches self user info : user ID and client ID.
+    /// - returns: the user ID and the client ID.
+
+    func selfUserInfo() async -> (id: UUID, clientId: String?)
 }
 
 public final class TeamLocalStore: TeamLocalStoreProtocol {
@@ -297,6 +302,17 @@ public final class TeamLocalStore: TeamLocalStoreProtocol {
                 membership.createdAt = teamMemberInfo.creationDate
                 membership.needsToBeUpdatedFromBackend = false
             }
+        }
+    }
+
+    public func selfUserInfo() async -> (id: UUID, clientId: String?) {
+        let selfUser = await userLocalStore.fetchSelfUser()
+
+        return await context.perform {
+            (
+                id: selfUser.remoteIdentifier,
+                clientId: selfUser.selfClient()?.remoteIdentifier
+            )
         }
     }
 

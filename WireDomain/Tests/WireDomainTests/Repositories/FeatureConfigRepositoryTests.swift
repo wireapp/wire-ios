@@ -17,13 +17,13 @@
 //
 
 import Combine
-@testable import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 
@@ -72,12 +72,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 in: context
             ) { $0.status = .enabled }
 
-            let feature = Feature.fetch(
+            return Feature.fetch(
                 name: .conversationGuestLinks,
                 context: context
             )
-
-            return feature
         }
 
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
@@ -93,7 +91,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
         XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
-        XCTAssertEqual(featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count, Scaffolding.featureConfigs.count)
+        XCTAssertEqual(
+            featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
+            Scaffolding.featureConfigs.count
+        )
     }
 
     func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
@@ -105,12 +106,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 in: context
             ) { $0.status = .enabled }
 
-            let feature = Feature.fetch(
+            return Feature.fetch(
                 name: .conversationGuestLinks,
                 context: context
             )
-
-            return feature
         }
 
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
@@ -183,12 +182,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 $0.config = config
             }
 
-            let feature = Feature.fetch(
+            return Feature.fetch(
                 name: .appLock,
                 context: context
             )
-
-            return feature
         }
 
         let expectation = XCTestExpectation()
@@ -222,7 +219,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 4)
         XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 4)
-        XCTAssertEqual(featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count, Scaffolding.featureConfigs.count)
+        XCTAssertEqual(
+            featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
+            Scaffolding.featureConfigs.count
+        )
     }
 
     private enum Scaffolding {
@@ -233,35 +233,45 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         )
 
         static let featureConfigs: [FeatureConfig] = [
-            .appLock(.init(
-                status: .enabled,
-                isMandatory: true,
-                inactivityTimeoutInSeconds: 2_147_483_647
-            )
+            .appLock(
+                .init(
+                    status: .enabled,
+                    isMandatory: true,
+                    inactivityTimeoutInSeconds: 2_147_483_647
+                )
             ),
-            .classifiedDomains(.init(
-                status: .enabled,
-                domains: ["example.com"]
-            )
+            .classifiedDomains(
+                .init(
+                    status: .enabled,
+                    domains: ["example.com"]
+                )
             ),
-            .conferenceCalling(.init(
-                status: .enabled,
-                useSFTForOneToOneCalls: false
-            )
+            .conferenceCalling(
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
+                )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(
+                .init(
+                    status: .enabled
+                )
             ),
-            .digitalSignature(.init(
-                status: .enabled)
+            .digitalSignature(
+                .init(
+                    status: .enabled
+                )
             ),
-            .fileSharing(.init(
-                status: .enabled)
+            .fileSharing(
+                .init(
+                    status: .enabled
+                )
             ),
-            .selfDeletingMessages(.init(
-                status: .enabled,
-                enforcedTimeoutSeconds: 2_147_483_647
-            )
+            .selfDeletingMessages(
+                .init(
+                    status: .enabled,
+                    enforcedTimeoutSeconds: 2_147_483_647
+                )
             ),
             .mls(.init(
                 status: .enabled,
@@ -275,14 +285,18 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
             )),
-            .mlsMigration(.init(status: .enabled,
-                                startTime: nil,
-                                finaliseRegardlessAfter: nil)),
-            .endToEndIdentity(.init(status: .enabled,
-                                    acmeDiscoveryURL: "https://example.com",
-                                    verificationExpiration: 9_223_372_036_854_776_000,
-                                    crlProxy: "https://example.com",
-                                    useProxyOnMobile: true))
+            .mlsMigration(.init(
+                status: .enabled,
+                startTime: nil,
+                finaliseRegardlessAfter: nil
+            )),
+            .endToEndIdentity(.init(
+                status: .enabled,
+                acmeDiscoveryURL: "https://example.com",
+                verificationExpiration: 9_223_372_036_854_776_000,
+                crlProxy: "https://example.com",
+                useProxyOnMobile: true
+            ))
         ]
 
     }

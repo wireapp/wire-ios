@@ -3505,7 +3505,6 @@
 				F9C9A4FD1CAD5DF10039E10C /* Products */,
 				F9C9A6701CAD779E0039E10C /* Frameworks */,
 				63709F622993E70A00577D4B /* Packages */,
-				012F3CFE2CD0505D00A9EACB /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";

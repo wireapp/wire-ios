@@ -28,8 +28,10 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
     ///
     /// - networkStatusViewController: caller of this delegate method
     /// - Parameter orientation: orientation to check
-    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain orientation.
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool
+    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain
+    /// orientation.
+    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation)
+        -> Bool
 }
 
 final class NetworkStatusViewController: UIViewController {
@@ -69,7 +71,12 @@ final class NetworkStatusViewController: UIViewController {
         self.application = UIApplication.shared
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateStateForIPad), name: UIDevice.orientationDidChangeNotification, object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateStateForIPad),
+            name: UIDevice.orientationDidChangeNotification,
+            object: .none
+        )
 
         view.addSubview(networkStatusView)
 
@@ -111,7 +118,10 @@ final class NetworkStatusViewController: UIViewController {
             )
         }
 
-        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnNetworkStatusBar)))
+        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(tappedOnNetworkStatusBar)
+        ))
 
         setupApplicationNotifications()
     }
@@ -134,21 +144,22 @@ final class NetworkStatusViewController: UIViewController {
             preferredStyle: .alert
         )
         alert.addAction(.confirm())
-        alert.presentTopmost()
+        alert.presentOverAll()
     }
 
     private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
-            return .offlineExpanded
+            .offlineExpanded
         case .online:
-            return .online
+            .online
         case .onlineSynchronizing:
-            return .onlineSynchronizing
+            .onlineSynchronizing
         }
     }
 
-    @objc func tappedOnNetworkStatusBar() {
+    @objc
+    func tappedOnNetworkStatusBar() {
         switch networkStatusView.state {
         case .offlineExpanded:
             showOfflineAlert()
@@ -164,7 +175,8 @@ final class NetworkStatusViewController: UIViewController {
         perform(#selector(applyPendingState), with: nil, afterDelay: 1)
     }
 
-    @objc func applyPendingState() {
+    @objc
+    func applyPendingState() {
         guard let state = pendingState else { return }
         update(state: state)
         pendingState = nil
@@ -203,7 +215,8 @@ extension NetworkStatusViewController {
         return delegate.showInIPad(networkStatusViewController: self, with: newOrientation)
     }
 
-    @objc func updateStateForIPad() {
+    @objc
+    func updateStateForIPad() {
         guard device.userInterfaceIdiom == .pad else { return }
 
         switch traitCollection.horizontalSizeClass {
@@ -211,7 +224,8 @@ extension NetworkStatusViewController {
             if shouldShowOnIPad() {
                 networkStatusView.update(state: state, animated: false)
             } else {
-                // When size class changes and delegate view controller disabled to show networkStatusView, hide the networkStatusView
+                // When size class changes and delegate view controller disabled to show networkStatusView, hide the
+                // networkStatusView
                 networkStatusView.update(state: .online, animated: false)
             }
         case .compact, .unspecified:

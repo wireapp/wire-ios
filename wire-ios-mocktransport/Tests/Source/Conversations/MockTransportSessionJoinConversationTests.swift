@@ -27,10 +27,14 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         super.setUp()
         sut.performRemoteChanges { session in
             self.selfUser = session.insertSelfUser(withName: "me")
-            self.conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [self.selfUser!], type: .group)
+            self.conversation = session.insertConversation(
+                withCreator: self.selfUser,
+                otherUsers: [self.selfUser!],
+                type: .group
+            )
 
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     override func tearDown() {
@@ -49,7 +53,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
+        let response = response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -73,7 +77,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
+        let response = response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 204)
@@ -87,7 +91,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
+        let response = response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -106,7 +110,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "test-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -117,7 +121,10 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
 
         XCTAssertNotNil(receivedPayload["id"])
         XCTAssertNotNil(receivedPayload["name"])
-        let existingConversation = fetchConversation(with: receivedPayload["id"] as! String, in: sut.managedObjectContext)
+        let existingConversation = fetchConversation(
+            with: receivedPayload["id"] as! String,
+            in: sut.managedObjectContext
+        )
         XCTAssertNil(existingConversation)
     }
 
@@ -126,7 +133,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "existing-conversation-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -137,7 +144,10 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
 
         XCTAssertNotNil(receivedPayload["id"])
         XCTAssertNotNil(receivedPayload["name"])
-        let existingConversation = fetchConversation(with: receivedPayload["id"] as! String, in: sut.managedObjectContext)
+        let existingConversation = fetchConversation(
+            with: receivedPayload["id"] as! String,
+            in: sut.managedObjectContext
+        )
         XCTAssertEqual(existingConversation, conversation)
     }
 
@@ -146,7 +156,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "wrong-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -158,7 +168,10 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         XCTAssertEqual(receivedPayload["label"] as! String, "no-conversation-code")
     }
 
-    private func fetchConversation(with identifier: String, in managedObjectContext: NSManagedObjectContext) -> MockConversation? {
+    private func fetchConversation(
+        with identifier: String,
+        in managedObjectContext: NSManagedObjectContext
+    ) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
         request.predicate = NSPredicate(format: "identifier == %@", identifier.lowercased())
         let conversations = try! managedObjectContext.fetch(request) as? [MockConversation]

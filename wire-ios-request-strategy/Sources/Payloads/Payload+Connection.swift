@@ -22,30 +22,30 @@ extension Payload {
 
     enum ConnectionStatus: String, Codable, CaseIterable {
 
-        case accepted = "accepted"
-        case blocked = "blocked"
-        case pending = "pending"
-        case ignored = "ignored"
-        case sent = "sent"
-        case cancelled = "cancelled"
+        case accepted
+        case blocked
+        case pending
+        case ignored
+        case sent
+        case cancelled
         case missingLegalholdConsent = "missing-legalhold-consent"
 
         var internalStatus: ZMConnectionStatus {
             switch self {
             case .sent:
-                return .sent
+                .sent
             case .accepted:
-                return .accepted
+                .accepted
             case .pending:
-                return .pending
+                .pending
             case .blocked:
-                return .blocked
+                .blocked
             case .cancelled:
-                return .cancelled
+                .cancelled
             case .ignored:
-                return .ignored
+                .ignored
             case .missingLegalholdConsent:
-                return .blockedMissingLegalholdConsent
+                .blockedMissingLegalholdConsent
             }
         }
 
@@ -87,7 +87,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .userConnection
+            .userConnection
         }
 
         let from: UUID?
@@ -123,7 +123,7 @@ extension Payload {
         }
 
         var nextStartReference: String? {
-            return connections.last?.to?.transportString()
+            connections.last?.to?.transportString()
         }
 
         let connections: [Connection]
@@ -139,7 +139,7 @@ extension Payload {
         }
 
         var nextStartReference: String? {
-            return pagingState
+            pagingState
         }
 
         let connections: [Connection]

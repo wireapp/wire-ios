@@ -20,10 +20,10 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireTestingPackage
+import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
-import XCTest
-import WireTestingPackage
 
 final class TeamRepositoryTests: XCTestCase {
 
@@ -160,10 +160,11 @@ final class TeamRepositoryTests: XCTestCase {
         XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 1)
     }
 
-    func testFetchSelfLegalholdStatus_It_Invokes_Local_Store_And_Teams_API_Methods_And_Legal_Hold_Status_Is_Pending() async throws {
+    func testFetchSelfLegalholdStatus_It_Invokes_Local_Store_And_Teams_API_Methods_And_Legal_Hold_Status_Is_Pending(
+    ) async throws {
         // Mock
 
-        teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
+        teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
         teamLocalStore.selfUserID_MockValue = UUID()
 
         // When
@@ -173,7 +174,7 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(teamLocalStore.selfUserID_Invocations.count, 1)
-        XCTAssertEqual(teamsAPI.getLegalholdStatusForUserID_Invocations.count, 1)
+        XCTAssertEqual(teamsAPI.getLegalholdInfoForUserID_Invocations.count, 1)
         XCTAssertEqual(result, .pending)
     }
 
@@ -203,9 +204,9 @@ final class TeamRepositoryTests: XCTestCase {
         // When
 
         try await sut.deleteMembership(
-            for: Scaffolding.userID,
+            userID: Scaffolding.userID,
             domain: nil,
-            at: .distantPast
+            date: .distantPast
         )
 
         // Then
@@ -233,13 +234,11 @@ final class TeamRepositoryTests: XCTestCase {
                 in: context
             )
 
-            let member = modelHelper.addUser(
+            return modelHelper.addUser(
                 user,
                 to: team,
                 in: context
             )
-
-            return member
         }
 
         teamLocalStore.fetchMemberId_MockValue = member
@@ -264,7 +263,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        await XCTAssertThrowsError { [self] in
+        await XCTAssertThrowsErrorAsync { [self] in
 
             // When
 
@@ -299,5 +298,12 @@ final class TeamRepositoryTests: XCTestCase {
         static let member2CreatorID = UUID.mockID4
         static let member2legalholdStatus = LegalholdStatus.pending
         static let member2Permissions = Permissions.member.rawValue
+
+        static let teamMemberLegalhold = TeamMemberLegalholdInfo(
+            status: .pending,
+            prekey: prekey
+        )
+
+        static let prekey = LegalholdPrekey(id: 2330, base64EncodedKey: "foo")
     }
 }

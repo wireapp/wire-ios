@@ -43,7 +43,7 @@ extension WireAPI.ConnectionStatus {
 }
 
 extension WireAPI.Connection {
-    
+
     func toDomainModel() -> ConnectionInfo {
         .init(
             senderID: senderID,

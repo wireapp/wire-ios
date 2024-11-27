@@ -28,14 +28,18 @@ final class MessageExpirationTimerTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        self.localNotificationDispatcher = MockPushMessageHandler()
-        self.sut = MessageExpirationTimer(moc: self.uiMOC, entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()], localNotificationDispatcher: self.localNotificationDispatcher)
+        localNotificationDispatcher = MockPushMessageHandler()
+        sut = MessageExpirationTimer(
+            moc: uiMOC,
+            entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
+            localNotificationDispatcher: localNotificationDispatcher
+        )
     }
 
     override func tearDown() {
-        self.sut.tearDown()
-        self.sut = nil
-        self.localNotificationDispatcher = nil
+        sut.tearDown()
+        sut = nil
+        localNotificationDispatcher = nil
         super.tearDown()
     }
 }
@@ -44,51 +48,51 @@ extension MessageExpirationTimerTests {
 
     func testThatItExpireAMessageImmediately() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: -2)
+        let message = clientMessage(expirationTime: -2)
         let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
+        sut.objectsDidChange(messageSet)
 
         // THEN
-        self.checkExpiration(of: message)
+        checkExpiration(of: message)
     }
 
     func testThatItExpiresAMessageWhenItsTimeRunsOut() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
         let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
+        sut.objectsDidChange(messageSet)
         wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
-        self.checkExpiration(of: message)
+        checkExpiration(of: message)
     }
 
     func testThatItNotifiesTheLocalNotificaitonDispatcherWhenItsTimeRunsOut() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
         let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
+        sut.objectsDidChange(messageSet)
         wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
-        XCTAssertEqual(self.localNotificationDispatcher.failedToSend, [message])
+        XCTAssertEqual(localNotificationDispatcher.failedToSend, [message])
     }
 
     func testThatItDoesNotExpireAMessageWhenDeliveredIsSetToTrue() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
         let messageSet: Set<NSManagedObject> = [message]
         message.delivered = true
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
-        self.spinMainQueue(withTimeout: 0.4)
+        sut.objectsDidChange(messageSet)
+        spinMainQueue(withTimeout: 0.4)
 
         // THEN
         XCTAssertFalse(message.isExpired)
@@ -96,27 +100,27 @@ extension MessageExpirationTimerTests {
 
     func testThatItExpiresAMessageWhenDeliveredIsNotTrue() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
         let messageSet: Set<NSManagedObject> = [message]
         message.delivered = false
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
-        self.spinMainQueue(withTimeout: 0.4)
+        sut.objectsDidChange(messageSet)
+        spinMainQueue(withTimeout: 0.4)
 
         // THEN
-        self.checkExpiration(of: message)
+        checkExpiration(of: message)
     }
 
     func testThatItDoesNotExpireAMessageForWhichTheTimerWasStopped() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.2)
+        let message = clientMessage(expirationTime: 0.2)
         let messageSet: Set<NSManagedObject> = [message]
-        self.sut.objectsDidChange(messageSet)
+        sut.objectsDidChange(messageSet)
 
         // WHEN
-        self.sut.stop(for: message)
-        self.spinMainQueue(withTimeout: 0.4)
+        sut.stop(for: message)
+        spinMainQueue(withTimeout: 0.4)
 
         // THEN
         XCTAssertNotNil(message.expirationDate)
@@ -125,13 +129,13 @@ extension MessageExpirationTimerTests {
 
     func testThatItDoesNotExpireAMessageThatHasNoExpirationDate() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
         let messageSet: Set<NSManagedObject> = [message]
         message.removeExpirationDate()
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
-        self.spinMainQueue(withTimeout: 0.4)
+        sut.objectsDidChange(messageSet)
+        spinMainQueue(withTimeout: 0.4)
 
         // THEN
         XCTAssertNil(message.expirationDate)
@@ -140,55 +144,56 @@ extension MessageExpirationTimerTests {
 
     func testThatItStartsTimerForStoredMessagesOnFirstRequest() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.1)
+        let message = clientMessage(expirationTime: 0.1)
 
         // WHEN
-        ZMChangeTrackerBootstrap.bootStrapChangeTrackers([self.sut!], on: self.uiMOC)
+        ZMChangeTrackerBootstrap.bootStrapChangeTrackers([sut!], on: uiMOC)
         wait(forConditionToBeTrue: message.isExpired, timeout: 2)
 
         // THEN
-        self.checkExpiration(of: message)
+        checkExpiration(of: message)
     }
 
     func testThatItDoesNotHaveMessageTimersRunningWhenThereIsNoMessage() {
-        XCTAssertFalse(self.sut.hasMessageTimersRunning)
+        XCTAssertFalse(sut.hasMessageTimersRunning)
     }
 
     func testThatItDoesNotHaveMessageTimersRunningWhenThereIsNoMessageBecauseTheyAreExpired() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: -2)
+        let message = clientMessage(expirationTime: -2)
         let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
+        sut.objectsDidChange(messageSet)
         wait(forConditionToBeTrue: message.isExpired, timeout: 2)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        XCTAssertFalse(self.sut.hasMessageTimersRunning)
+        XCTAssertFalse(sut.hasMessageTimersRunning)
     }
 
     func testThatItHasMessageTimersRunningWhenThereIsAMessage() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.5)
+        let message = clientMessage(expirationTime: 0.5)
         let messageSet: Set<NSManagedObject> = [message]
 
         // WHEN
-        self.sut.objectsDidChange(messageSet)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        sut.objectsDidChange(messageSet)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        XCTAssertTrue(self.sut.hasMessageTimersRunning)
+        XCTAssertTrue(sut.hasMessageTimersRunning)
         wait(forConditionToBeTrue: message.isExpired, timeout: 2)
     }
 }
 
 // MARK: - Slow sync
+
 extension MessageExpirationTimerTests {
 
     func testThatItReturnsCorrectFetchRequest() {
         // WHEN
-        let request = self.sut.fetchRequestForTrackedObjects()
+        let request = sut.fetchRequestForTrackedObjects()
 
         // THEN
         let expected = ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
@@ -197,37 +202,38 @@ extension MessageExpirationTimerTests {
 
     func testThatItAddsObjectsThatNeedProcessing() {
         // GIVEN
-        let message = self.clientMessage(expirationTime: 0.4)
-        let anotherMessage = self.clientMessage(expirationTime: 0.4)
+        let message = clientMessage(expirationTime: 0.4)
+        let anotherMessage = clientMessage(expirationTime: 0.4)
 
-        XCTAssertFalse(self.sut.hasMessageTimersRunning)
+        XCTAssertFalse(sut.hasMessageTimersRunning)
 
         // WHEN
         let messageAndAnotherMessageSet: Set<NSManagedObject> = [message, anotherMessage]
-        self.sut.addTrackedObjects(messageAndAnotherMessageSet)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sut.addTrackedObjects(messageAndAnotherMessageSet)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertTrue(self.sut.hasMessageTimersRunning)
-        XCTAssertEqual(self.sut.runningTimersCount, 2)
+        XCTAssertTrue(sut.hasMessageTimersRunning)
+        XCTAssertEqual(sut.runningTimersCount, 2)
     }
 }
 
 // MARK: - Helpers
-extension MessageExpirationTimerTests {
+
+private extension MessageExpirationTimerTests {
 
     /// Creates a message with expiration time
-    fileprivate func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
+    func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         ZMMessage.setDefaultExpirationTime(expirationTime)
         message.setExpirationDate()
-        XCTAssertTrue(self.uiMOC.saveOrRollback())
+        XCTAssertTrue(uiMOC.saveOrRollback())
         ZMMessage.resetDefaultExpirationTime()
         return message
     }
 
     /// Checks that the message is expired. Asserts if not.
-    fileprivate func checkExpiration(of message: ZMMessage, file: StaticString = #file, line: UInt = #line) {
+    func checkExpiration(of message: ZMMessage, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         XCTAssertFalse(message.hasChanges, file: file, line: line)
         XCTAssertNil(message.expirationDate, file: file, line: line)

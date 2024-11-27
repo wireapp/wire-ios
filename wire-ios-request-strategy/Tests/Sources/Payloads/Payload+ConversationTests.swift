@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class Payload_ConversationTests: MessagingTestBase {
 
@@ -138,7 +138,7 @@ class Payload_ConversationTests: MessagingTestBase {
 
         // THEN
         XCTAssertNotNil(conversation)
-        XCTAssertEqual(conversation?.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
+        XCTAssertEqual(conversation?.epochTimestamp, Date(timeIntervalSince1970: 1_620_816_722.671))
     }
 
     // MARK: -

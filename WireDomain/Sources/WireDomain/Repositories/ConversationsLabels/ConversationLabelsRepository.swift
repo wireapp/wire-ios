@@ -90,10 +90,13 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                 switch result {
                 case .success:
                     continue
-                case .failure(let error):
+                case let .failure(error):
                     let repoError = error as? ConversationLabelsLocalStore.Failure
-                    if case .failedToStoreLabelLocally(let id) = repoError {
-                        logger.error("Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)")
+                    if case let .failedToStoreLabelLocally(id) = repoError {
+                        logger
+                            .error(
+                                "Failed to store conversation label with id \(id.safeForLoggingDescription): \(error)"
+                            )
                     } else {
                         logger.error("Failed to store conversation with error: \(error)")
                     }
@@ -101,5 +104,4 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
             }
         }
     }
-
 }

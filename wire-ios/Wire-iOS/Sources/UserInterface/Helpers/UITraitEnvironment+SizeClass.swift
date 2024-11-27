@@ -22,11 +22,11 @@ import WireFoundation
 extension UITraitEnvironment {
 
     var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
+        traitCollection.horizontalSizeClass == .regular
     }
 
     func isIPadRegular(device: DeviceAbstraction = DeviceWrapper(device: .current)) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
+        device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
     }
 
     func isIPadRegularPortrait(

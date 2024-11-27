@@ -30,64 +30,91 @@ public struct FolderPicker: View {
 
     private let showCloseButton: Bool
     private let options: [FolderPickerOption]
-    @Binding private var selected: UUID?
+    private let helpLink: URL
+    @Binding private var selected: FolderPickerOption?
 
     /// Creates a new instance of `FolderPicker`
     /// - Parameters:
     ///   - showCloseButton: Whether to show a close button in the navigation bar
     ///   - options: An array of `FolderPickerOption` to display in the picker
+    ///   - helpLink: A URL to a help page that explains how to add conversations to a folder
     ///   - selected: The `id` of the selected `FolderPickerOption`
 
     public init(
         showCloseButton: Bool,
         options: [FolderPickerOption],
-        selected: Binding<UUID?>
+        helpLink: URL,
+        selected: Binding<FolderPickerOption?>
     ) {
         self.showCloseButton = showCloseButton
         self.options = options
+        self.helpLink = helpLink
         _selected = selected
     }
 
     public var body: some View {
+        content()
+            .background(Color.viewBackground)
+            .scrollContentBackground(.hidden)
+            .navigationTitle(
+                Text("folderPicker.title", tableName: "Localizable", bundle: .module)
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if showCloseButton {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        CloseButton(
+                            action: didTapClose,
+                            accessibilityLabel: String(
+                                localized: "folderPicker.close.label",
+                                table: "Accessibility",
+                                bundle: .module
+                            )
+                        )
+                    }
+                }
+            }
+    }
+
+    private func didTapClose() {
+        dismiss()
+    }
+
+    @ViewBuilder
+    private func content() -> some View {
+        if options.isEmpty {
+            EmptyState(
+                image: Image(systemName: "folder"),
+                description: Text("folderPicker.emptyState.description", tableName: "Localizable", bundle: .module),
+                linkText: Text("folderPicker.emptyState.link.text", tableName: "Localizable", bundle: .module),
+                url: helpLink
+            )
+        } else {
+            if #available(iOS 17.0, *) {
+                picker()
+                    .contentMargins(.top, 16)
+            } else {
+                picker()
+            }
+        }
+    }
+
+    private func picker() -> some View {
         List {
             Picker(selection: $selected) {
                 ForEach(options) { option in
                     Text(option.title)
                         .font(.textStyle(.body1))
                         .lineLimit(1)
-                        .foregroundStyle(option.id == selected ? Color(accentColor) : .primaryText)
-                        .tag(option.id)
+                        .foregroundStyle(option.id == selected?.id ? Color(accentColor) : .primaryText)
+                        .tag(option)
                 }
             } label: {
-                Text(verbatim: "")
+                EmptyView()
             }
             .accentColor(Color(accentColor))
             .pickerStyle(.inline)
         }
-        .background(Color.viewBackground)
-        .scrollContentBackground(.hidden)
-        .navigationTitle(
-            Text("folderPicker.title", tableName: "Localizable", bundle: .module)
-        )
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            if showCloseButton {
-                ToolbarItem(placement: .topBarTrailing) {
-                    CloseButton(
-                        action: didTapClose,
-                        accessibilityLabel: String(
-                            localized: "folderPicker.close.label",
-                            table: "Accessibility",
-                            bundle: .module
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    private func didTapClose() {
-        dismiss()
     }
 
 }
@@ -95,25 +122,40 @@ public struct FolderPicker: View {
 // MARK: - Previews
 
 @available(iOS 17.0, *)
-#Preview {
-    @Previewable @State var isPresented = false
-    @Previewable @State var selected: UUID? = FolderPickerOption.previewData.first?.id
+#Preview("With Data") {
+    FolderPickerPreview(showCloseButton: true, options: FolderPickerOption.previewData)
+}
 
-    Button {
-        isPresented.toggle()
-    } label: {
-        Text(verbatim: "Show Picker")
-    }
-    .sheet(isPresented: $isPresented) {
-        NavigationStack {
-            FolderPicker(
-                showCloseButton: true,
-                options: FolderPickerOption.previewData,
-                selected: $selected
-            )
+@available(iOS 17.0, *)
+#Preview("Empty State") {
+    FolderPickerPreview(showCloseButton: false, options: [])
+}
+
+private struct FolderPickerPreview: View {
+    @State private var isPresented = true
+    @State private var selected: FolderPickerOption?
+
+    let showCloseButton: Bool
+    let options: [FolderPickerOption]
+
+    var body: some View {
+        Button {
+            isPresented.toggle()
+        } label: {
+            Text(verbatim: "Open Folder Picker")
         }
-        .presentationDragIndicator(.visible)
-        .presentationDetents([.medium, .large])
+        .sheet(isPresented: $isPresented) {
+            NavigationStack {
+                FolderPicker(
+                    showCloseButton: showCloseButton,
+                    options: options,
+                    helpLink: URL(string: "https://www.example.com")!,
+                    selected: $selected
+                )
+            }
+            .presentationDragIndicator(.visible)
+            .presentationDetents([.medium, .large])
+        }
     }
 }
 

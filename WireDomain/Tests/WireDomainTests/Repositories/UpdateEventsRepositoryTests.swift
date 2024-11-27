@@ -20,10 +20,10 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
-@testable import WireDomainSupport
 import WireTestingPackage
 import XCTest
+@testable import WireDomain
+@testable import WireDomainSupport
 
 final class UpdateEventsRepositoryTests: XCTestCase {
 

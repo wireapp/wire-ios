@@ -35,7 +35,14 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
 
-    init(settingsProperty: SettingsProperty, value: SettingsPropertyValue, title: String, identifier: String? = .none, selectAction: SelectActionType? = .none, backgroundColor: UIColor? = .none) {
+    init(
+        settingsProperty: SettingsProperty,
+        value: SettingsPropertyValue,
+        title: String,
+        identifier: String? = .none,
+        selectAction: SelectActionType? = .none,
+        backgroundColor: UIColor? = .none
+    ) {
         self.settingsProperty = settingsProperty
         self.value = value
         self.title = title
@@ -45,9 +52,9 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
         if let valueCell = cell as? SettingsValueCell {
-            valueCell.accessoryType = self.settingsProperty.value() == self.value ? .checkmark : .none
+            valueCell.accessoryType = settingsProperty.value() == value ? .checkmark : .none
         }
     }
 
