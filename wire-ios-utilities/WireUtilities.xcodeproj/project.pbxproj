@@ -249,7 +249,6 @@
 		546E8A521B7501D0009EBA02 /* NSUUID+DataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUUID+DataTests.m"; path = "Source/NSUUID+DataTests.m"; sourceTree = "<group>"; };
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+WireUtilitiesTests.m"; path = "Source/NSManagedObjectContext+WireUtilitiesTests.m"; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
-		54BD49EE1D41FA1D006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireUtilities.xcconfig; sourceTree = "<group>"; };
 		54C1B1001B31A1E400CB8CF3 /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUUID+Type1.swift"; sourceTree = "<group>"; };
@@ -461,7 +460,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC872BD158BC00F7853F /* WireUtilities.docc */,
-				54BD49EE1D41FA1D006E29D1 /* README.md */,
 				3E88BD3A1B1F3EA300232589 /* Source */,
 				598E86B42BF4D64100FC5438 /* Support */,
 				3E88BD471B1F3EA300232589 /* Tests */,
