@@ -194,6 +194,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public struct BackendInfo {
         let domain: String
         let isFederationEnabled: Bool
+        let isMLSEnabled: Bool
     }
 
     // MARK: - Properties
@@ -241,7 +242,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation,
             timestamp: .now,
-            isFederationEnabled: backendInfo.isFederationEnabled
+            isFederationEnabled: backendInfo.isFederationEnabled,
+            isMLSEnabled: backendInfo.isMLSEnabled
         )
     }
 
@@ -272,7 +274,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             conversation,
             timestamp: timestamp,
-            isFederationEnabled: backendInfo.isFederationEnabled
+            isFederationEnabled: backendInfo.isFederationEnabled,
+            isMLSEnabled: backendInfo.isMLSEnabled
         )
     }
 
@@ -350,7 +353,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await conversationsLocalStore.storeConversation(
             mlsConversation,
             timestamp: .now,
-            isFederationEnabled: backendInfo.isFederationEnabled
+            isFederationEnabled: backendInfo.isFederationEnabled,
+            isMLSEnabled: backendInfo.isMLSEnabled
         )
 
         return mlsGroupID
