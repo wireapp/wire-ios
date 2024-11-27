@@ -67,7 +67,7 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchFeatureConfig<T: Decodable>
 
-    func fetchFeatureConfig<T: Decodable>(with name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
+    func fetchFeatureConfig<T: Decodable>(name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
         fatalError("to implement using generics")
     }
 
@@ -93,41 +93,41 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
 
     // MARK: - fetchNeedsToNotifyUser
 
-    var fetchNeedsToNotifyUserFor_Invocations: [Feature.Name] = []
-    var fetchNeedsToNotifyUserFor_MockError: Error?
-    var fetchNeedsToNotifyUserFor_MockMethod: ((Feature.Name) async throws -> Bool)?
-    var fetchNeedsToNotifyUserFor_MockValue: Bool?
+    var needsToNotifyUserName_Invocations: [Feature.Name] = []
+    var needsToNotifyUserName_MockError: Error?
+    var needsToNotifyUserName_MockMethod: ((Feature.Name) async throws -> Bool)?
+    var needsToNotifyUserName_MockValue: Bool?
 
-    func fetchNeedsToNotifyUser(for name: Feature.Name) async throws -> Bool {
-        fetchNeedsToNotifyUserFor_Invocations.append(name)
+    func needsToNotifyUser(name: Feature.Name) async throws -> Bool {
+        needsToNotifyUserName_Invocations.append(name)
 
-        if let error = fetchNeedsToNotifyUserFor_MockError {
+        if let error = needsToNotifyUserName_MockError {
             throw error
         }
 
-        if let mock = fetchNeedsToNotifyUserFor_MockMethod {
+        if let mock = needsToNotifyUserName_MockMethod {
             return try await mock(name)
-        } else if let mock = fetchNeedsToNotifyUserFor_MockValue {
+        } else if let mock = needsToNotifyUserName_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchNeedsToNotifyUserFor`")
+            fatalError("no mock for `featureNeedsToNotifyUser`")
         }
     }
 
     // MARK: - storeNeedsToNotifyUser
 
-    var storeNeedsToNotifyUserForFeatureName_Invocations: [(notifyUser: Bool, name: Feature.Name)] = []
-    var storeNeedsToNotifyUserForFeatureName_MockError: Error?
-    var storeNeedsToNotifyUserForFeatureName_MockMethod: ((Bool, Feature.Name) async throws -> Void)?
+    var storeFeatureNeedsToNotifyUserName_Invocations: [(notifyUser: Bool, name: Feature.Name)] = []
+    var storeFeatureNeedsToNotifyUserName_MockError: Error?
+    var storeFeatureNeedsToNotifyUserName_MockMethod: ((Bool, Feature.Name) async throws -> Void)?
 
-    func storeNeedsToNotifyUser(_ notifyUser: Bool, forFeatureName name: Feature.Name) async throws {
-        storeNeedsToNotifyUserForFeatureName_Invocations.append((notifyUser: notifyUser, name: name))
+    func storeFeatureNeedsToNotifyUser(_ notifyUser: Bool, name: Feature.Name) async throws {
+        storeFeatureNeedsToNotifyUserName_Invocations.append((notifyUser: notifyUser, name: name))
 
-        if let error = storeNeedsToNotifyUserForFeatureName_MockError {
+        if let error = storeFeatureNeedsToNotifyUserName_MockError {
             throw error
         }
 
-        guard let mock = storeNeedsToNotifyUserForFeatureName_MockMethod else {
+        guard let mock = storeFeatureNeedsToNotifyUserName_MockMethod else {
             fatalError("no mock for `storeNeedsToNotifyUserForFeatureName`")
         }
 

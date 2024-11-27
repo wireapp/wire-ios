@@ -16,14 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-/// Errors originating from `FeatureConfigRepository`.
+extension WireAPI.SelfUserClient {
 
-enum FeatureConfigRepositoryError: Error {
-
-    /// Unable to fetch feature locally
-
-    case failedToFetchFeatureLocally
+    func toDomainModel() -> UserClientInfo {
+        .init(
+            id: id,
+            label: label,
+            type: type.toDomainModel(),
+            activationDate: activationDate,
+            model: model,
+            deviceClass: deviceClass?.toDomainModel(),
+            lastActiveDate: lastActiveDate,
+            mlsPublicKeys: .init(
+                ed25519: mlsPublicKeys?.ed25519,
+                ed448: mlsPublicKeys?.ed448,
+                p256: mlsPublicKeys?.p256,
+                p384: mlsPublicKeys?.p384,
+                p512: mlsPublicKeys?.p512
+            )
+        )
+    }
 
 }
