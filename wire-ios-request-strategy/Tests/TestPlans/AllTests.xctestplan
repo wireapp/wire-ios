@@ -9,6 +9,18 @@
     }
   ],
   "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "enabled" : false,
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      }
+    ],
     "language" : "en",
     "region" : "DE",
     "testExecutionOrdering" : "random"
