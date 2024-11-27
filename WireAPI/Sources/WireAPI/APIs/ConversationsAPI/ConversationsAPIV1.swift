@@ -27,24 +27,32 @@ class ConversationsAPIV1: ConversationsAPIV0 {
     }
 
     override func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
-        let resourcePath = "\(pathPrefix)/conversations/list-ids/"
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/list-ids/")
         let jsonEncoder = JSONEncoder.defaultEncoder
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw ConversationsAPIError.invalidURL
+        }
 
         return PayloadPager<QualifiedID> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
 
-            let request = HTTPRequest(
-                path: resourcePath,
-                method: .post,
-                body: body
+            let request = URLRequestBuilder(url: url)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConversationIDsV1.self)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 }

@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
 "conversation.create.options.title" = "KONVERSATIONSALTERNATIV";
-"conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
 "conversation.create.services.title" = "Tillåt tjänster";

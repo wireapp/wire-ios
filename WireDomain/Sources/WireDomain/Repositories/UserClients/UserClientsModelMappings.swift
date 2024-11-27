@@ -18,23 +18,25 @@
 
 import WireAPI
 
-/// Process conversation code update events.
+extension WireAPI.SelfUserClient {
 
-protocol ConversationCodeUpdateEventProcessorProtocol {
-
-    /// Process a conversation code update event.
-    ///
-    /// - Parameter event: A conversation code update event.
-
-    func processEvent(_ event: ConversationCodeUpdateEvent) async throws
-
-}
-
-struct ConversationCodeUpdateEventProcessor: ConversationCodeUpdateEventProcessorProtocol {
-
-    func processEvent(_: ConversationCodeUpdateEvent) async throws {
-        // TODO: [WPB-10165]
-        assertionFailure("not implemented yet")
+    func toDomainModel() -> UserClientInfo {
+        .init(
+            id: id,
+            label: label,
+            type: type.toDomainModel(),
+            activationDate: activationDate,
+            model: model,
+            deviceClass: deviceClass?.toDomainModel(),
+            lastActiveDate: lastActiveDate,
+            mlsPublicKeys: .init(
+                ed25519: mlsPublicKeys?.ed25519,
+                ed448: mlsPublicKeys?.ed448,
+                p256: mlsPublicKeys?.p256,
+                p384: mlsPublicKeys?.p384,
+                p512: mlsPublicKeys?.p512
+            )
+        )
     }
 
 }

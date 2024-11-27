@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Minimaal 1 teken";
 "conversation.create.guidance.toolong" = "Te veel tekens";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Sta gasten toe";
 "conversation.create.guests.subtitle" = "Open dit gesprek voor mensen buiten jouw team.";
 "conversation.create.services.title" = "Allow services";

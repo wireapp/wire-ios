@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Bent 1 simbolis";
 "conversation.create.guidance.toolong" = "Per daug simbolių";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Leisti svečius";
 "conversation.create.guests.subtitle" = "Leiskite matyti šį susirašinėjimą žmonėms nesantiems komandoje.";
 "conversation.create.services.title" = "Allow services";

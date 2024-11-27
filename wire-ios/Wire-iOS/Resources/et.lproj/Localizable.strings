@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Vähemalt 1 tähemärk";
 "conversation.create.guidance.toolong" = "Liiga pikk nimi";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Luba külalisi";
 "conversation.create.guests.subtitle" = "Ava see vestlus meeskonnast väljas olevatele inimestele.";
 "conversation.create.services.title" = "Allow services";
