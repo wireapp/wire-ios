@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -223,6 +223,20 @@
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264322CF7252F0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = BA7EF9681B7109B600204A8E /* WireCryptoboxTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264312CF7252A0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264322CF7252F0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		0928E2301BA0777A0057232E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -432,6 +446,7 @@
 		BA7EF96D1B7109B600204A8E /* CryptoboxTests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264312CF7252A0005317F /* TestPlans */,
 				BA7EF96E1B7109B600204A8E /* Supporting Files */,
 				54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */,
 				87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */,
@@ -597,6 +612,9 @@
 			);
 			dependencies = (
 				5471A66D1D24216D0092A9A9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264312CF7252A0005317F /* TestPlans */,
 			);
 			name = WireCryptoboxTests;
 			productName = CryptoboxTests;
