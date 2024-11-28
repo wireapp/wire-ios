@@ -322,6 +322,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5902F8D72BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */; };
 		5902F8E32BF7B18B00F1D392 /* ArchivedListViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */; };
+		5905C1892CF4D59E005DB864 /* WireAnalytics+CocoaLumberjack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905C1882CF4D59A005DB864 /* WireAnalytics+CocoaLumberjack.swift */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
 		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
@@ -2321,6 +2322,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
+		5905C1882CF4D59A005DB864 /* WireAnalytics+CocoaLumberjack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireAnalytics+CocoaLumberjack.swift"; sourceTree = "<group>"; };
 		590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+addressBook.swift"; sourceTree = "<group>"; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -4601,6 +4603,14 @@
 				5902F8E02BF7B14F00F1D392 /* ArchivedList */,
 			);
 			path = ConversationList;
+			sourceTree = "<group>";
+		};
+		5905C1872CF4D584005DB864 /* CocoaLumberjack */ = {
+			isa = PBXGroup;
+			children = (
+				5905C1882CF4D59A005DB864 /* WireAnalytics+CocoaLumberjack.swift */,
+			);
+			path = CocoaLumberjack;
 			sourceTree = "<group>";
 		};
 		590A5F052BF4CB06008E87D8 /* ShareContacts */ = {
@@ -7588,6 +7598,7 @@
 		E63C65642C1B456900354BB4 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				5905C1872CF4D584005DB864 /* CocoaLumberjack */,
 				E68C005D2C1C536900747C9E /* Datadog */,
 				E66C51D42C13375700F82F88 /* WireAnalytics.swift */,
 			);
@@ -10818,6 +10829,7 @@
 				594211C92C90587400576053 /* ImageFilePreviewGenerator.swift in Sources */,
 				F15650B321DD025A00210504 /* URL+Backup.swift in Sources */,
 				A9CF5F58242B98B300920877 /* NetworkStatus.swift in Sources */,
+				5905C1892CF4D59E005DB864 /* WireAnalytics+CocoaLumberjack.swift in Sources */,
 				7C88BB90235F413F0075BCC5 /* Bundle+InfoDict.swift in Sources */,
 				F15650AF21DCFE5200210504 /* CircularProgressView.swift in Sources */,
 				E66C51D52C13375700F82F88 /* WireAnalytics.swift in Sources */,

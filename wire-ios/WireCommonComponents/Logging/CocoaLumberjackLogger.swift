@@ -21,11 +21,11 @@ import Foundation
 import WireSystem
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+public final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 
-    init() {
+    public init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
