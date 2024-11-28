@@ -26,8 +26,8 @@ import WireDataModel
 @MainActor
 final class ConversationFilterSelector: @preconcurrency ConversationDirectoryObserver {
 
-    private let mainCoordinator: AnyMainCoordinator
     private let conversationFilter: () -> ConversationFilter?
+    private let updateConversationFilter: (ConversationFilter?) -> Void
     private var observation: Any?
 
     /// Creates a new ConversationFilterSelector.
@@ -36,9 +36,12 @@ final class ConversationFilterSelector: @preconcurrency ConversationDirectoryObs
     ///  - mainCoordinator: The main coordinator.
     ///  - conversationFilter: A closure that returns the current conversation filter.
 
-    init(mainCoordinator: AnyMainCoordinator, conversationFilter: @escaping () -> ConversationFilter?) {
-        self.mainCoordinator = mainCoordinator
+    init(
+        conversationFilter: @escaping () -> ConversationFilter?,
+        updateConversationFilter: @escaping (ConversationFilter?) -> Void
+    ) {
         self.conversationFilter = conversationFilter
+        self.updateConversationFilter = updateConversationFilter
     }
 
     /// Start observing `conversationDirectory`.
@@ -53,7 +56,7 @@ final class ConversationFilterSelector: @preconcurrency ConversationDirectoryObs
     ) {
         if case let .folder(id, _) = conversationFilter(),
            conversationDirectory.nonDeletedFolders.first(where: { $0.remoteIdentifier == id }) == nil {
-            mainCoordinator.applyConversationFilter(.none)
+            updateConversationFilter(nil)
         }
     }
 }

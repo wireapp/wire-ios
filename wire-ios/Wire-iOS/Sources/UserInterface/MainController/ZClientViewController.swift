@@ -47,9 +47,11 @@ final class ZClientViewController: UIViewController {
     private(set) var conversationRootViewController: UIViewController?
 
     private lazy var conversationFilterSelector = ConversationFilterSelector(
-        mainCoordinator: AnyMainCoordinator(mainCoordinator: mainCoordinator),
         conversationFilter: { [weak conversationListViewController] in
             conversationListViewController?.conversationFilter
+        },
+        updateConversationFilter: { [weak mainCoordinator] filter in
+            mainCoordinator?.applyConversationFilter(filter)
         }
     )
 
