@@ -519,7 +519,10 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 // MARK: - ConversationDirectoryObserver
 
 extension ConversationListViewModel: ConversationDirectoryObserver {
-    func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
+    func conversationDirectoryDidChange(
+        conversationDirectory: ConversationDirectoryType,
+        changeInfo: ConversationDirectoryChangeInfo
+    ) {
 
         if changeInfo.reloaded {
             // If the section was empty in certain cases collection view breaks down on the big amount of conversations,

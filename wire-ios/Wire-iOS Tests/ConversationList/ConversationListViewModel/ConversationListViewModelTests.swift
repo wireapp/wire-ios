@@ -100,7 +100,10 @@ final class ConversationListViewModelTests: XCTestCase {
         mockUserSession.mockConversationDirectory.mockGroupConversations = [mockConversation, teamConversation]
         mockUserSession.mockConversationDirectory.mockContactsConversations = [oneToOneConversation]
 
-        sut.conversationDirectoryDidChange(info)
+        sut.conversationDirectoryDidChange(
+            conversationDirectory: mockUserSession.mockConversationDirectory,
+            changeInfo: info
+        )
     }
 
     func testForNumberOfItems() {

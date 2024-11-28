@@ -44,7 +44,10 @@ public struct ConversationDirectoryChangeInfo {
 
 public protocol ConversationDirectoryObserver: AnyObject {
 
-    func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
+    func conversationDirectoryDidChange(
+        conversationDirectory: ConversationDirectoryType,
+        changeInfo: ConversationDirectoryChangeInfo
+    )
 
 }
 
@@ -136,19 +139,17 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
     }
 
     func conversationListsDidReload() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
-            reloaded: true,
-            updatedLists: [],
-            updatedFolders: false
-        ))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false)
+        )
     }
 
     func conversationListsDidChangeFolders() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
-            reloaded: false,
-            updatedLists: [],
-            updatedFolders: true
-        ))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true)
+        )
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -170,11 +171,14 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
             []
         }
 
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
-            reloaded: false,
-            updatedLists: updatedLists,
-            updatedFolders: false
-        ))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(
+                reloaded: false,
+                updatedLists: updatedLists,
+                updatedFolders: false
+            )
+        )
     }
 
 }
