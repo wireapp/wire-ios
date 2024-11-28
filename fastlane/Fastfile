@@ -66,12 +66,14 @@ platform :ios do
         if options[:all] == "true" || options[:all] == "1" 
             schemas = Framework.all.values.map { |f| f.scheme }
         else
-            if options[:folders] == nil || options[:folders].empty?
+            if (options[:folders] == nil || options[:folders].empty?) && !is_running_on_ci
                 schemas = select_frameworks()
             else 
                 schemas = generate_framework_schemes(folders: options[:folders])
             end
         end
+       
+       UI.message "🤖 No schemes to test" if schemas.empty?
        
        # hardcoded values that are required - not meaningful for testing
        options[:build_type] = "Development"
@@ -462,7 +464,6 @@ platform :ios do
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
-
         )
 
     end
