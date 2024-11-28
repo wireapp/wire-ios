@@ -17,8 +17,6 @@
 		09A217F51B78DFAF0076547A /* ZMTExpectation.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217E51B78DFAF0076547A /* ZMTExpectation.m */; };
 		09A217F61B78DFAF0076547A /* ZMTImageComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217E71B78DFAF0076547A /* ZMTImageComparator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A217F71B78DFAF0076547A /* ZMTImageComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217E81B78DFAF0076547A /* ZMTImageComparator.m */; };
-		09A217F81B78DFAF0076547A /* NSData+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217E91B78DFAF0076547A /* NSData+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */; };
 		09A217FA1B78DFAF0076547A /* NSOperationQueue+WireTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A217FB1B78DFAF0076547A /* NSOperationQueue+WireTesting.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */; };
 		09A217FC1B78DFAF0076547A /* ZMTAsserts.h in Headers */ = {isa = PBXBuildFile; fileRef = 09A217ED1B78DFAF0076547A /* ZMTAsserts.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,8 +80,6 @@
 		09A217E51B78DFAF0076547A /* ZMTExpectation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTExpectation.m; sourceTree = "<group>"; };
 		09A217E71B78DFAF0076547A /* ZMTImageComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTImageComparator.h; sourceTree = "<group>"; };
 		09A217E81B78DFAF0076547A /* ZMTImageComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTImageComparator.m; sourceTree = "<group>"; };
-		09A217E91B78DFAF0076547A /* NSData+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+WireTesting.h"; sourceTree = "<group>"; };
-		09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+WireTesting.m"; sourceTree = "<group>"; };
 		09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+WireTesting.h"; sourceTree = "<group>"; };
 		09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+WireTesting.m"; sourceTree = "<group>"; };
 		09A217ED1B78DFAF0076547A /* ZMTAsserts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTAsserts.h; sourceTree = "<group>"; };
@@ -247,8 +243,6 @@
 				09A217F01B78DFAF0076547A /* WireTesting.h */,
 				09A217E71B78DFAF0076547A /* ZMTImageComparator.h */,
 				09A217E81B78DFAF0076547A /* ZMTImageComparator.m */,
-				09A217E91B78DFAF0076547A /* NSData+WireTesting.h */,
-				09A217EA1B78DFAF0076547A /* NSData+WireTesting.m */,
 				09A217EB1B78DFAF0076547A /* NSOperationQueue+WireTesting.h */,
 				09A217EC1B78DFAF0076547A /* NSOperationQueue+WireTesting.m */,
 				09A217ED1B78DFAF0076547A /* ZMTAsserts.h */,
@@ -324,7 +318,6 @@
 				CEF709D91C1599E700AF3718 /* ZMMockEntity.h in Headers */,
 				09A217FA1B78DFAF0076547A /* NSOperationQueue+WireTesting.h in Headers */,
 				09A218001B78DFAF0076547A /* ZMTFailureRecorder.h in Headers */,
-				09A217F81B78DFAF0076547A /* NSData+WireTesting.h in Headers */,
 				CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */,
 				09A217F41B78DFAF0076547A /* ZMTExpectation.h in Headers */,
 				09A217FF1B78DFAF0076547A /* WireTesting.h in Headers */,
@@ -456,7 +449,6 @@
 				CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */,
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
 				16AAA62C2C22E5BD00080A06 /* FileManger+RandomCacheURL.swift in Sources */,
-				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
 				595D4B202C0A1A0500AF6269 /* XCTestExpectation+inverted.swift in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
