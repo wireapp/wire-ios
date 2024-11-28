@@ -50,30 +50,18 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             id: conversationID.uuid,
             domain: conversationID.domain
         ) else {
-            WireLogger.mls.error(
-                "failed to add mls message: conversation not found in db"
-            )
-
             throw MLSMessageDecryptorError.conversationNotFound
         }
 
         guard let mlsGroupID = await conversationLocalStore.mlsGroupID(
             for: mlsConversation
         ) else {
-            WireLogger.mls.error(
-                "failed to add mls message: missing MLS group ID"
-            )
-
             throw MLSMessageDecryptorError.missingMLSGroupID
         }
 
         guard await conversationLocalStore.isConversationMLSReady(
             mlsConversation
         ) else {
-            WireLogger.mls.warn(
-                "failed to add mls message: conversation is not ready"
-            )
-
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
@@ -122,7 +110,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             return results
 
         } catch {
-            WireLogger.mls.warn(
+            WireLogger.mls.error(
                 "failed to decrypt mls message: \(String(describing: error))"
             )
 
