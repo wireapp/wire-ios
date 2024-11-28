@@ -70,17 +70,6 @@
                BlueprintName = "UnitTests"
                ReferencedContainer = "container:WireSyncEngine.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AvailabilityTests">
-               </Test>
-               <Test
-                  Identifier = "EventProcessingPerformanceTests">
-               </Test>
-               <Test
-                  Identifier = "SessionManagerTests/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
@@ -91,11 +80,6 @@
                BlueprintName = "IntegrationTests"
                ReferencedContainer = "container:WireSyncEngine.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "AvailabilityTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
