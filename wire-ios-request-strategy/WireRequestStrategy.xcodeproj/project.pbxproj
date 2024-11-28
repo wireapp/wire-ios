@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -944,6 +944,20 @@
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 166901731D707509000FE4AF /* WireRequestStrategyTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264282CF7225A0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		166901661D707509000FE4AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -1344,6 +1358,7 @@
 				F154EDC51F447B6C00CB8184 /* Test Host */,
 				1621D2211D75AB2D007108C2 /* Helpers */,
 				F12CD7932035FC4400EAAEBC /* Resources */,
+				59D264282CF7225A0005317F /* TestPlans */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -2212,6 +2227,9 @@
 				166901771D707509000FE4AF /* PBXTargetDependency */,
 				F154EDD71F447BB600CB8184 /* PBXTargetDependency */,
 				CB7979082C73663B006FBA58 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264282CF7225A0005317F /* TestPlans */,
 			);
 			name = WireRequestStrategyTests;
 			packageProductDependencies = (

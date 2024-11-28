@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -272,6 +272,20 @@
 		F1F7B6FB1ED4789E0042A26D /* MockConversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D2642E2CF724B20005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 54C9023D1B7532DD007162A8 /* WireMockTransportTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2642D2CF724AD0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2642E2CF724B20005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		54C9022F1B7532DD007162A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -532,6 +546,7 @@
 		54C902421B7532DD007162A8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D2642D2CF724AD0005317F /* TestPlans */,
 				0641A8B4239825DD00B24621 /* Source */,
 				545AFFB71CB695040054B665 /* Resources */,
 			);
@@ -834,6 +849,9 @@
 			);
 			dependencies = (
 				54C902411B7532DD007162A8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D2642D2CF724AD0005317F /* TestPlans */,
 			);
 			name = WireMockTransportTests;
 			productName = WireMockTransportTests;

@@ -70,13 +70,20 @@
 			);
 			target = 3ECC350F1AD436750089FD4B /* WireSystem */;
 		};
+		59D2643E2CF726150005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+			);
+			target = 54A3272B1B99A3190004EB95 /* WireSystem Tests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5939CB6D2CEBB29F000F6FAD /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		5939CB872CEBB2BA000F6FAD /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5939CB8A2CEBB2BA000F6FAD /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		5953DD242CF0CA900069ABC8 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5953DD4A2CF0CA900069ABC8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
-		5953DE452CF0CD2A0069ABC8 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		5953DE452CF0CD2A0069ABC8 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643E2CF726150005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
