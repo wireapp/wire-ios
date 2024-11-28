@@ -45,10 +45,11 @@ struct ConfirmationView: View {
             }
             Spacer()
             VStack(alignment: .leading) {
-                CallToActionButton(
+                Button(
                     action: { actionCallback(.continue) },
-                    title: String.localized(key: "individualToTeam.button.continue", bundle: .module)
+                    label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
                 )
+                .wireButtonStyle(.primary)
                 .disabled(!(migrationConfirmed && termsAccepted))
             }
         }

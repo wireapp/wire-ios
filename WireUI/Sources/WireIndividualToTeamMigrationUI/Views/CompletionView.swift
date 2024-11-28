@@ -42,14 +42,17 @@ struct CompletionView: View {
                 .wireTextStyle(.body1)
             Spacer()
 
-            BackButton(
-                title: String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module),
-                action: { actionCallback(.goBack) }
+            Button(
+                action: { actionCallback(.goBack) },
+                label: { Text(String.localized(key: "individualToTeam.completion.button.backToApp", bundle: .module)) }
             )
-            CallToActionButton(
+            .wireButtonStyle(.secondary)
+
+            Button(
                 action: { actionCallback(.goToTeamManagement) },
-                title: String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module)
+                label: { Text(String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module)) }
             )
+            .wireButtonStyle(.primary)
         }
     }
 }

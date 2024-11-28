@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireDesign
 
 struct TeamPlanSelectionView: View {
 
@@ -61,10 +62,11 @@ struct TeamPlanSelectionView: View {
             )
             .padding(.top, 4)
             Spacer()
-            CallToActionButton(
+            Button(
                 action: { actionCallback(.continue) },
-                title: String.localized(key: "individualToTeam.button.continue", bundle: .module)
+                label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .wireButtonStyle(.primary)
         }
     }
 }

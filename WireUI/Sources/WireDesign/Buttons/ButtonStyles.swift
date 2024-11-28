@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-enum WireButtonStyle: String, CaseIterable {
+public enum WireButtonStyle: String, CaseIterable {
     case primary
     case secondary
     case tertiary
@@ -49,7 +49,7 @@ struct WireButtonStyleModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func wireButtonStyle(_ wireButtonStyle: WireButtonStyle) -> some View {
         self.modifier(WireButtonStyleModifier(wireButtonStyle: wireButtonStyle))
     }

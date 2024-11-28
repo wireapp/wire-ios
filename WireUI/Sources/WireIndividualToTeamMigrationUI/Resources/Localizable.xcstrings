@@ -4,6 +4,36 @@
     "" : {
 
     },
+    "individualToTeam.banner.body" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore extra features for free with the same level of security."
+          }
+        }
+      }
+    },
+    "individualToTeam.banner.button" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Wire Team"
+          }
+        }
+      }
+    },
+    "individualToTeam.banner.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enjoy benefits of a team"
+          }
+        }
+      }
+    },
     "individualToTeam.button.back" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -104,7 +134,14 @@
       }
     },
     "individualToTeam.completion.closeButton.accessibilityLabel" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close team created view"
+          }
+        }
+      }
     },
     "individualToTeam.completion.headline" : {
       "extractionState" : "manual",
@@ -140,7 +177,14 @@
       }
     },
     "individualToTeam.confirmation.closeButton.accessibilityLabel" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close confirmation view"
+          }
+        }
+      }
     },
     "individualToTeam.confirmation.passwordField.forgotPassword" : {
       "extractionState" : "manual",
@@ -209,7 +253,14 @@
       }
     },
     "individualToTeam.planSelection.closeButton.accessibilityLabel" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close team account overview"
+          }
+        }
+      }
     },
     "individualToTeam.planSelection.feature.adminConsole" : {
       "extractionState" : "manual",
@@ -322,7 +373,14 @@
       }
     },
     "individualToTeam.teamName.closeButton.accessibilityLabel" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close team name view"
+          }
+        }
+      }
     },
     "individualToTeam.teamName.field.placeholder" : {
       "extractionState" : "manual",

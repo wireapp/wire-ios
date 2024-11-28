@@ -21,7 +21,7 @@ import UIKit
 import WireDesign
 import WireDomainAPI
 
-class IndividualToTeamMigrationViewController: UIViewController {
+public class IndividualToTeamMigrationViewController: UIViewController {
     enum Step: Sendable {
         case teamPlanSelection(features: [TeamPlanFeature])
         case teamName
@@ -80,7 +80,7 @@ class IndividualToTeamMigrationViewController: UIViewController {
     let features: [TeamPlanFeature]
     let useCase: any IndividualToTeamMigrationUseCase
 
-    init(features: [TeamPlanFeature], useCase: any IndividualToTeamMigrationUseCase) {
+    public init(features: [TeamPlanFeature], useCase: any IndividualToTeamMigrationUseCase) {
         self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
@@ -93,7 +93,7 @@ class IndividualToTeamMigrationViewController: UIViewController {
         fatalError()
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         addChild(childController)
         view.addSubview(childController.view)

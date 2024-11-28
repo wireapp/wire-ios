@@ -42,11 +42,11 @@ struct Checkbox: View {
                 if isChecked {
                     Image(systemName: "checkmark.square.fill")
                         .font(.system(size: 24))
-                        .foregroundStyle(Color(uiColor: ColorTheme.Buttons.Primary.enabled))
+                        .foregroundStyle(Color(uiColor: ColorTheme.Checkbox.enabled))
                 } else {
                     Image(systemName: "square")
                         .font(.system(size: 24))
-                        .backgroundStyle(Color(uiColor: ColorTheme.Buttons.Secondary.disabled))
+                        .backgroundStyle(Color(uiColor: ColorTheme.Checkbox.disabled))
                 }
             })
             .buttonStyle(.plain)

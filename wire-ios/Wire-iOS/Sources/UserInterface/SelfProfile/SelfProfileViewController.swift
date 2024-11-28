@@ -23,10 +23,12 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
+import SwiftUI
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -38,9 +40,14 @@ final class SelfProfileViewController: UIViewController {
 
     private let settingsController: SettingsTableViewController
     private weak var accountSelectorView: AccountSelectorView?
-    private let profileContainerView = UIView()
+    private let profileLayoutGuide = UILayoutGuide()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
+    private lazy var teamMigrationBanner: UIViewController = SelfProfileViewCallToActionBannerHostingController(
+        actionCallback: { [weak self] action in
+            self?.userDidTapCreateTeam()
+        }
+    )
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
@@ -123,8 +130,8 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.imageView.addGestureRecognizer(tapGestureRecognizer)
 
         addChild(profileHeaderViewController)
-        profileContainerView.addSubview(profileHeaderViewController.view)
-        view.addSubview(profileContainerView)
+        view.addLayoutGuide(profileLayoutGuide)
+        view.addSubview(profileHeaderViewController.view)
         profileHeaderViewController.didMove(toParent: self)
 
         addChild(settingsController)
@@ -133,10 +140,13 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController.tableView.isScrollEnabled = false
 
+        addChild(teamMigrationBanner)
+        view.addSubview(teamMigrationBanner.view)
+        teamMigrationBanner.didMove(toParent: self)
+
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -171,26 +181,29 @@ final class SelfProfileViewController: UIViewController {
 
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        profileContainerView.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
+        teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            // profileContainerView
-            profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            profileContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            // teamMigrationBanner
+            teamMigrationBanner.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            teamMigrationBanner.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            teamMigrationBanner.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            // profileLayoutGuide
+            profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor),
+            profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
 
             // profileView
-            profileHeaderViewController.view.leadingAnchor.constraint(equalTo: profileContainerView.leadingAnchor),
-            profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileContainerView.topAnchor),
-            profileHeaderViewController.view.trailingAnchor.constraint(equalTo: profileContainerView.trailingAnchor),
-            profileHeaderViewController.view.bottomAnchor
-                .constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
-            profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
+            profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileLayoutGuide.topAnchor),
+            profileHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            profileHeaderViewController.view.bottomAnchor.constraint(lessThanOrEqualTo: profileLayoutGuide.bottomAnchor),
+            profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView
             settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            settingsController.view.topAnchor.constraint(equalTo: profileContainerView.bottomAnchor),
             settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
@@ -204,6 +217,22 @@ final class SelfProfileViewController: UIViewController {
     }
 
     // MARK: - Events
+
+    private func onTeamCreationBannerInteraction(_ action: SelfProfileViewCallToActionBanner.Action) {
+        switch action {
+        case .createWireTeam:
+            userDidTapCreateTeam()
+        }
+    }
+
+    private func userDidTapCreateTeam() {
+        // TODO: [WPB-10347] Present team creation flow
+//        let vc = IndividualToTeamMigrationViewController(
+//            features: ,
+//            useCase: ,
+//        )
+//        present(vc, animated: true)
+    }
 
     @objc
     private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
