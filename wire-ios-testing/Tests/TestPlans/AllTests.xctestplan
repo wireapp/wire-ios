@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "90D290FF-BFDB-47A7-86A4-EB80D37A0CF4",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireTesting.xcodeproj",
+        "identifier" : "096AD7C51B68D41D00E007A8",
+        "name" : "WireTesting-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
