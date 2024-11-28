@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -174,6 +174,20 @@
 		EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMImageFormat+StringValue.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264382CF725AF0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 096960151B663E7C006DF53B /* WireImages-iosTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264372CF725AC0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264382CF725AF0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		096960081B663E7B006DF53B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -265,6 +279,7 @@
 		098CB1651B5FAD6900712DF9 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264372CF725AC0005317F /* TestPlans */,
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
 				09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */,
 				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
@@ -432,6 +447,9 @@
 			dependencies = (
 				54A5A6181E92A06100D56F2E /* PBXTargetDependency */,
 				096960191B663E7C006DF53B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264372CF725AC0005317F /* TestPlans */,
 			);
 			name = "WireImages-iosTests";
 			productName = "zimages-iosTests";
@@ -695,7 +713,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -706,7 +728,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

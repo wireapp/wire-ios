@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "FF9237A6-BBF3-4B34-84D3-2863ACE87CC9",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Ziphy.xcodeproj",
+        "identifier" : "DBF380631B15C0B800369FB7",
+        "name" : "ZiphyTests"
+      }
+    }
+  ],
+  "version" : 1
+}
