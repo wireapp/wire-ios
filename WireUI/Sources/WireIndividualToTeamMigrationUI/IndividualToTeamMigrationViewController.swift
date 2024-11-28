@@ -120,7 +120,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 for: .teamPlanSelection(features: features),
                 stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
-                target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false)
@@ -129,7 +128,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 for: .teamName,
                 stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
-                target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
@@ -138,7 +136,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 for: .confirmation,
                 stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
-                target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
@@ -147,7 +144,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 for: .completion(profileName: "Profile Name", teamName: "Some Team"),
                 stepIndex: (childController.viewControllers.count + 1),
                 stepCount: 4,
-                target: self,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
@@ -157,10 +153,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             break
         }
     }
-
-    @objc func onDismissTapped() {
-        transition(to: .toCancellationAlert)
-    }
 }
 
 @MainActor
@@ -168,7 +160,6 @@ private func hostedView(
     for step: IndividualToTeamMigrationViewController.Step,
     stepIndex: Int,
     stepCount: Int,
-    target: IndividualToTeamMigrationViewController,
     onTransition transitionCallback: @escaping @MainActor @Sendable (IndividualToTeamMigrationViewController.Transition) -> Void
 ) -> UIViewController {
     let vc = UIHostingController(rootView:
