@@ -142,10 +142,9 @@ final class ConversationListViewModel: NSObject {
 
         var kind: Kind
         var items: [SectionItem]
-        var collapsed: Bool
 
         var elements: [SectionItem] {
-            collapsed ? [] : items
+            items
         }
 
         /// ref to AggregateArray, we return the first found item's index
@@ -166,33 +165,22 @@ final class ConversationListViewModel: NSObject {
 
         init(source: ConversationListViewModel.Section, elements: some Collection<SectionItem>) {
             self.kind = source.kind
-            self.collapsed = source.collapsed
             self.items = Array(elements)
         }
 
         init(
             kind: Kind,
-            conversationDirectory: ConversationDirectoryType,
-            collapsed: Bool
+            conversationDirectory: ConversationDirectoryType
         ) {
             self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
-            self.collapsed = collapsed
         }
     }
 
     static let contactRequestsItem: ConversationListConnectRequestsItem = .init()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
-    private(set) var selectedItem: ConversationListItem? {
-        didSet {
-            /// expand the section if selcted item is update
-            guard let indexPath = indexPath(for: selectedItem),
-                  collapsed(at: indexPath.section) else { return }
-
-            setCollapsed(sectionIndex: indexPath.section, collapsed: false, batchUpdate: false)
-        }
-    }
+    private(set) var selectedItem: ConversationListItem?
 
     weak var delegate: ConversationListViewModelDelegate?
 
@@ -273,8 +261,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     func numberOfItems(inSection sectionIndex: Int) -> Int {
-        guard sections.indices.contains(sectionIndex),
-              !collapsed(at: sectionIndex) else { return 0 }
+        guard sections.indices.contains(sectionIndex) else { return 0 }
 
         return sections[sectionIndex].elements.count
     }
@@ -375,8 +362,7 @@ final class ConversationListViewModel: NSObject {
         let sections = kinds.map { kind in
             Section(
                 kind: kind,
-                conversationDirectory: conversationDirectory,
-                collapsed: false // FIXME: Removed collapsed property
+                conversationDirectory: conversationDirectory
             )
         }
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
@@ -454,60 +440,6 @@ final class ConversationListViewModel: NSObject {
 
         if let itemToSelect {
             delegate?.listViewModel(self, didSelectItem: itemToSelect)
-        }
-    }
-
-    // MARK: - folder badge
-
-    func folderBadge(at sectionIndex: Int) -> Int {
-        sections[sectionIndex].items.filter {
-            let status = ($0.item as? ZMConversation)?.status
-            return status?.messagesRequiringAttention.isEmpty == false &&
-                status?.showingAllMessages == true
-        }.count
-    }
-
-    func collapsed(at sectionIndex: Int) -> Bool {
-        false // FIXME: Remove
-    }
-
-    // FIXME: Remove
-    /// set a collpase state of a section
-    ///
-    /// - Parameters:
-    ///   - sectionIndex: section to update
-    ///   - collapsed: collapsed or expanded
-    ///   - batchUpdate: true for update with difference kit comparison, false for reload the section animated
-    func setCollapsed(
-        sectionIndex: Int,
-        collapsed: Bool,
-        batchUpdate: Bool = true
-    ) {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return }
-        guard let kind = kind(of: sectionIndex) else { return }
-        guard self.collapsed(at: sectionIndex) != collapsed else { return }
-        guard let sectionNumber = sectionNumber(for: kind) else { return }
-
-        var newValue = sections
-        newValue[sectionNumber] = Section(
-            kind: kind,
-            conversationDirectory: conversationDirectory,
-            collapsed: collapsed
-        )
-
-        if batchUpdate {
-            let changeset = StagedChangeset(source: sections, target: newValue)
-
-            delegate?.reload(using: changeset, interrupt: { _ in
-                false
-            }, setData: { data in
-                if let data {
-                    self.sections = data
-                }
-            })
-        } else {
-            sections = newValue
-            delegate?.listViewModel(self, didUpdateSectionForReload: sectionIndex, animated: true)
         }
     }
 }
