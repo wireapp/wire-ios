@@ -46,6 +46,13 @@ final class ZClientViewController: UIViewController {
 
     private(set) var conversationRootViewController: UIViewController?
 
+    private lazy var conversationFilterSelector = ConversationFilterSelector(
+        mainCoordinator: AnyMainCoordinator(mainCoordinator: mainCoordinator),
+        conversationFilter: { [weak conversationListViewController] in
+            conversationListViewController?.conversationFilter
+        }
+    )
+
     var currentConversation: ZMConversation? {
         conversationListViewController.selectedConversation
     }
@@ -320,6 +327,8 @@ final class ZClientViewController: UIViewController {
             await updateCachedAccountImage()
             await updateCachedAccountInfo()
         }
+
+        conversationFilterSelector.observe(conversationDirectory: userSession.conversationDirectory)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
