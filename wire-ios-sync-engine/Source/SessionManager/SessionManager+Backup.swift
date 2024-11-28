@@ -145,7 +145,7 @@ extension SessionManager {
             WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {
-                if (password.isEmpty) {
+                if password.isEmpty {
                     try FileManager.default.copyItem(at: location, to: decryptedURL)
                 } else {
                     try SessionManager.decrypt(

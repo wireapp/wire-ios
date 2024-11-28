@@ -6,9 +6,9 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class BackupMPBackup, BackupBackupQualifiedId, BackupBackupConversation, BackupBackupMetadata, BackupBackupUser, BackupKotlinArray<T>, BackupBackupMessage, BackupKotlinx_datetimeInstant, BackupBackupDateTime, BackupBackupMessageContent, BackupBackupMessageContentAsset, BackupBackupMessageContentText, BackupBackupQualifiedIdCompanion, BackupKotlinByteArray, BackupBackupImportResult, BackupBackupImportResultParsingFailure, BackupBackupData, BackupBackupImportResultSuccess, BackupKotlinx_datetimeInstantCompanion, BackupKotlinByteIterator, BackupKotlinx_serialization_coreSerializersModule, BackupKotlinx_serialization_coreSerialKind, BackupKotlinNothing;
+@class BackupMPBackup, BackupBackupQualifiedId, BackupBackupConversation, BackupBackupMetadata, BackupBackupUser, BackupKotlinArray<T>, BackupBackupMessage, BackupKotlinx_datetimeInstant, BackupBackupDateTime, BackupBackupMessageContent, BackupKotlinByteArray, BackupBackupMessageContentAssetEncryptionAlgorithm, BackupBackupMessageContentAssetAssetMetadata, BackupBackupMessageContentAsset, BackupBackupMessageContentAssetAssetMetadataAudio, BackupBackupMessageContentAssetAssetMetadataGeneric, BackupBackupMessageContentAssetAssetMetadataImage, BackupBackupMessageContentAssetAssetMetadataVideo, BackupKotlinEnumCompanion, BackupKotlinEnum<E>, BackupBackupMessageContentLocation, BackupBackupMessageContentText, BackupBackupQualifiedIdCompanion, BackupCommonMPBackupExporter, BackupBackupImportResult, BackupBackupImportResultParsingFailure, BackupBackupData, BackupBackupImportResultSuccess, BackupCommonMPBackupImporter, BackupKotlinx_datetimeInstantCompanion, BackupKotlinByteIterator, BackupKotlinx_serialization_coreSerializersModule, BackupKotlinx_serialization_coreSerialKind, BackupKotlinNothing;
 
-@protocol BackupKotlinx_serialization_coreKSerializer, BackupKotlinIterator, BackupKotlinComparable, BackupKotlinx_serialization_coreEncoder, BackupKotlinx_serialization_coreSerialDescriptor, BackupKotlinx_serialization_coreSerializationStrategy, BackupKotlinx_serialization_coreDecoder, BackupKotlinx_serialization_coreDeserializationStrategy, BackupKotlinx_serialization_coreCompositeEncoder, BackupKotlinAnnotation, BackupKotlinx_serialization_coreCompositeDecoder, BackupKotlinx_serialization_coreSerializersModuleCollector, BackupKotlinKClass, BackupKotlinKDeclarationContainer, BackupKotlinKAnnotatedElement, BackupKotlinKClassifier;
+@protocol BackupKotlinComparable, BackupKotlinx_serialization_coreKSerializer, BackupKotlinIterator, BackupKotlinx_serialization_coreEncoder, BackupKotlinx_serialization_coreSerialDescriptor, BackupKotlinx_serialization_coreSerializationStrategy, BackupKotlinx_serialization_coreDecoder, BackupKotlinx_serialization_coreDeserializationStrategy, BackupKotlinx_serialization_coreCompositeEncoder, BackupKotlinAnnotation, BackupKotlinx_serialization_coreCompositeDecoder, BackupKotlinx_serialization_coreSerializersModuleCollector, BackupKotlinKClass, BackupKotlinKDeclarationContainer, BackupKotlinKAnnotatedElement, BackupKotlinKClassifier;
 
 NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
@@ -170,9 +170,9 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("BackupData")))
 @interface BackupBackupData : BackupBase
 - (instancetype)initWithMetadata:(BackupBackupMetadata *)metadata users:(BackupKotlinArray<BackupBackupUser *> *)users conversations:(BackupKotlinArray<BackupBackupConversation *> *)conversations messages:(BackupKotlinArray<BackupBackupMessage *> *)messages __attribute__((swift_name("init(metadata:users:conversations:messages:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) NSArray<BackupBackupUser *> *conversations __attribute__((swift_name("conversations")));
+@property (readonly) NSArray<BackupBackupConversation *> *conversations __attribute__((swift_name("conversations")));
 @property (readonly) BackupKotlinArray<BackupBackupConversation *> *conversations_ __attribute__((swift_private));
-@property (readonly) NSArray<BackupBackupUser *> *messages __attribute__((swift_name("messages")));
+@property (readonly) NSArray<BackupBackupMessage *> *messages __attribute__((swift_name("messages")));
 @property (readonly) BackupKotlinArray<BackupBackupMessage *> *messages_ __attribute__((swift_private));
 @property (readonly) BackupBackupMetadata *metadata __attribute__((swift_name("metadata")));
 @property (readonly) NSArray<BackupBackupUser *> *users __attribute__((swift_name("users")));
@@ -193,8 +193,8 @@ __attribute__((swift_name("BackupDateTime")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("BackupMessage")))
 @interface BackupBackupMessage : BackupBase
-- (instancetype)initWithId:(NSString *)id conversationId:(BackupBackupQualifiedId *)conversationId senderUserId:(BackupBackupQualifiedId *)senderUserId senderClientId:(NSString *)senderClientId creationDate:(BackupBackupDateTime *)creationDate content:(BackupBackupMessageContent *)content __attribute__((swift_name("init(id:conversationId:senderUserId:senderClientId:creationDate:content:)"))) __attribute__((objc_designated_initializer));
-- (BackupBackupMessage *)doCopyId:(NSString *)id conversationId:(BackupBackupQualifiedId *)conversationId senderUserId:(BackupBackupQualifiedId *)senderUserId senderClientId:(NSString *)senderClientId creationDate:(BackupBackupDateTime *)creationDate content:(BackupBackupMessageContent *)content __attribute__((swift_name("doCopy(id:conversationId:senderUserId:senderClientId:creationDate:content:)")));
+- (instancetype)initWithId:(NSString *)id conversationId:(BackupBackupQualifiedId *)conversationId senderUserId:(BackupBackupQualifiedId *)senderUserId senderClientId:(NSString *)senderClientId creationDate:(BackupBackupDateTime *)creationDate content:(BackupBackupMessageContent *)content webPrimaryKey:(BackupInt * _Nullable)webPrimaryKey __attribute__((swift_name("init(id:conversationId:senderUserId:senderClientId:creationDate:content:webPrimaryKey:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessage *)doCopyId:(NSString *)id conversationId:(BackupBackupQualifiedId *)conversationId senderUserId:(BackupBackupQualifiedId *)senderUserId senderClientId:(NSString *)senderClientId creationDate:(BackupBackupDateTime *)creationDate content:(BackupBackupMessageContent *)content webPrimaryKey:(BackupInt * _Nullable)webPrimaryKey __attribute__((swift_name("doCopy(id:conversationId:senderUserId:senderClientId:creationDate:content:webPrimaryKey:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
@@ -204,6 +204,7 @@ __attribute__((swift_name("BackupMessage")))
 @property (readonly) NSString *id __attribute__((swift_name("id")));
 @property (readonly) NSString *senderClientId __attribute__((swift_name("senderClientId")));
 @property (readonly) BackupBackupQualifiedId *senderUserId __attribute__((swift_name("senderUserId")));
+@property (readonly) BackupInt * _Nullable webPrimaryKey __attribute__((swift_name("webPrimaryKey"))) __attribute__((deprecated("Used only by the Webteam in order to simplify debugging")));
 @end
 
 __attribute__((swift_name("BackupMessageContent")))
@@ -213,12 +214,118 @@ __attribute__((swift_name("BackupMessageContent")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("BackupMessageContent.Asset")))
 @interface BackupBackupMessageContentAsset : BackupBackupMessageContent
-- (instancetype)initWithTODO:(NSString *)TODO __attribute__((swift_name("init(TODO:)"))) __attribute__((objc_designated_initializer));
-- (BackupBackupMessageContentAsset *)doCopyTODO:(NSString *)TODO __attribute__((swift_name("doCopy(TODO:)")));
+- (instancetype)initWithMimeType:(NSString *)mimeType size:(int32_t)size name:(NSString * _Nullable)name otrKey:(BackupKotlinByteArray *)otrKey sha256:(BackupKotlinByteArray *)sha256 assetId:(NSString *)assetId assetToken:(NSString * _Nullable)assetToken assetDomain:(NSString * _Nullable)assetDomain encryption:(BackupBackupMessageContentAssetEncryptionAlgorithm * _Nullable)encryption metaData:(BackupBackupMessageContentAssetAssetMetadata * _Nullable)metaData __attribute__((swift_name("init(mimeType:size:name:otrKey:sha256:assetId:assetToken:assetDomain:encryption:metaData:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentAsset *)doCopyMimeType:(NSString *)mimeType size:(int32_t)size name:(NSString * _Nullable)name otrKey:(BackupKotlinByteArray *)otrKey sha256:(BackupKotlinByteArray *)sha256 assetId:(NSString *)assetId assetToken:(NSString * _Nullable)assetToken assetDomain:(NSString * _Nullable)assetDomain encryption:(BackupBackupMessageContentAssetEncryptionAlgorithm * _Nullable)encryption metaData:(BackupBackupMessageContentAssetAssetMetadata * _Nullable)metaData __attribute__((swift_name("doCopy(mimeType:size:name:otrKey:sha256:assetId:assetToken:assetDomain:encryption:metaData:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
-@property (readonly) NSString *TODO __attribute__((swift_name("TODO")));
+@property (readonly) NSString * _Nullable assetDomain __attribute__((swift_name("assetDomain")));
+@property (readonly) NSString *assetId __attribute__((swift_name("assetId")));
+@property (readonly) NSString * _Nullable assetToken __attribute__((swift_name("assetToken")));
+@property (readonly) BackupBackupMessageContentAssetEncryptionAlgorithm * _Nullable encryption __attribute__((swift_name("encryption")));
+@property (readonly) BackupBackupMessageContentAssetAssetMetadata * _Nullable metaData __attribute__((swift_name("metaData")));
+@property (readonly) NSString *mimeType __attribute__((swift_name("mimeType")));
+@property (readonly) NSString * _Nullable name __attribute__((swift_name("name")));
+@property (readonly) BackupKotlinByteArray *otrKey __attribute__((swift_name("otrKey")));
+@property (readonly) BackupKotlinByteArray *sha256 __attribute__((swift_name("sha256")));
+@property (readonly) int32_t size __attribute__((swift_name("size")));
+@end
+
+__attribute__((swift_name("BackupMessageContent.AssetAssetMetadata")))
+@interface BackupBackupMessageContentAssetAssetMetadata : BackupBase
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.AssetAssetMetadataAudio")))
+@interface BackupBackupMessageContentAssetAssetMetadataAudio : BackupBackupMessageContentAssetAssetMetadata
+- (instancetype)initWithNormalization:(BackupKotlinByteArray * _Nullable)normalization duration:(BackupLong * _Nullable)duration __attribute__((swift_name("init(normalization:duration:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentAssetAssetMetadataAudio *)doCopyNormalization:(BackupKotlinByteArray * _Nullable)normalization duration:(BackupLong * _Nullable)duration __attribute__((swift_name("doCopy(normalization:duration:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) BackupLong * _Nullable duration __attribute__((swift_name("duration")));
+@property (readonly) BackupKotlinByteArray * _Nullable normalization __attribute__((swift_name("normalization")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.AssetAssetMetadataGeneric")))
+@interface BackupBackupMessageContentAssetAssetMetadataGeneric : BackupBackupMessageContentAssetAssetMetadata
+- (instancetype)initWithName:(NSString * _Nullable)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentAssetAssetMetadataGeneric *)doCopyName:(NSString * _Nullable)name __attribute__((swift_name("doCopy(name:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) NSString * _Nullable name __attribute__((swift_name("name")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.AssetAssetMetadataImage")))
+@interface BackupBackupMessageContentAssetAssetMetadataImage : BackupBackupMessageContentAssetAssetMetadata
+- (instancetype)initWithWidth:(int32_t)width height:(int32_t)height tag:(NSString * _Nullable)tag __attribute__((swift_name("init(width:height:tag:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentAssetAssetMetadataImage *)doCopyWidth:(int32_t)width height:(int32_t)height tag:(NSString * _Nullable)tag __attribute__((swift_name("doCopy(width:height:tag:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) int32_t height __attribute__((swift_name("height")));
+@property (readonly) NSString * _Nullable tag __attribute__((swift_name("tag")));
+@property (readonly) int32_t width __attribute__((swift_name("width")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.AssetAssetMetadataVideo")))
+@interface BackupBackupMessageContentAssetAssetMetadataVideo : BackupBackupMessageContentAssetAssetMetadata
+- (instancetype)initWithWidth:(BackupInt * _Nullable)width height:(BackupInt * _Nullable)height duration:(BackupLong * _Nullable)duration __attribute__((swift_name("init(width:height:duration:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentAssetAssetMetadataVideo *)doCopyWidth:(BackupInt * _Nullable)width height:(BackupInt * _Nullable)height duration:(BackupLong * _Nullable)duration __attribute__((swift_name("doCopy(width:height:duration:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) BackupLong * _Nullable duration __attribute__((swift_name("duration")));
+@property (readonly) BackupInt * _Nullable height __attribute__((swift_name("height")));
+@property (readonly) BackupInt * _Nullable width __attribute__((swift_name("width")));
+@end
+
+__attribute__((swift_name("KotlinComparable")))
+@protocol BackupKotlinComparable
+@required
+- (int32_t)compareToOther:(id _Nullable)other __attribute__((swift_name("compareTo(other:)")));
+@end
+
+__attribute__((swift_name("KotlinEnum")))
+@interface BackupKotlinEnum<E> : BackupBase <BackupKotlinComparable>
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer));
+@property (class, readonly, getter=companion) BackupKotlinEnumCompanion *companion __attribute__((swift_name("companion")));
+- (int32_t)compareToOther:(E)other __attribute__((swift_name("compareTo(other:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) NSString *name __attribute__((swift_name("name")));
+@property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.AssetEncryptionAlgorithm")))
+@interface BackupBackupMessageContentAssetEncryptionAlgorithm : BackupKotlinEnum<BackupBackupMessageContentAssetEncryptionAlgorithm *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) BackupBackupMessageContentAssetEncryptionAlgorithm *aesGcm __attribute__((swift_name("aesGcm")));
+@property (class, readonly) BackupBackupMessageContentAssetEncryptionAlgorithm *aesCbc __attribute__((swift_name("aesCbc")));
++ (BackupKotlinArray<BackupBackupMessageContentAssetEncryptionAlgorithm *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<BackupBackupMessageContentAssetEncryptionAlgorithm *> *entries __attribute__((swift_name("entries")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("BackupMessageContent.Location")))
+@interface BackupBackupMessageContentLocation : BackupBackupMessageContent
+- (instancetype)initWithLongitude:(float)longitude latitude:(float)latitude name:(NSString * _Nullable)name zoom:(BackupInt * _Nullable)zoom __attribute__((swift_name("init(longitude:latitude:name:zoom:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMessageContentLocation *)doCopyLongitude:(float)longitude latitude:(float)latitude name:(NSString * _Nullable)name zoom:(BackupInt * _Nullable)zoom __attribute__((swift_name("doCopy(longitude:latitude:name:zoom:)")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@property (readonly) float latitude __attribute__((swift_name("latitude")));
+@property (readonly) float longitude __attribute__((swift_name("longitude")));
+@property (readonly) NSString * _Nullable name __attribute__((swift_name("name")));
+@property (readonly) BackupInt * _Nullable zoom __attribute__((swift_name("zoom")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -235,14 +342,13 @@ __attribute__((swift_name("BackupMessageContent.Text")))
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("BackupMetadata")))
 @interface BackupBackupMetadata : BackupBase
-- (instancetype)initWithPlatform:(NSString *)platform version:(NSString *)version userId:(BackupBackupQualifiedId *)userId creationTime:(BackupBackupDateTime *)creationTime clientId:(NSString * _Nullable)clientId __attribute__((swift_name("init(platform:version:userId:creationTime:clientId:)"))) __attribute__((objc_designated_initializer));
-- (BackupBackupMetadata *)doCopyPlatform:(NSString *)platform version:(NSString *)version userId:(BackupBackupQualifiedId *)userId creationTime:(BackupBackupDateTime *)creationTime clientId:(NSString * _Nullable)clientId __attribute__((swift_name("doCopy(platform:version:userId:creationTime:clientId:)")));
+- (instancetype)initWithVersion:(NSString *)version userId:(BackupBackupQualifiedId *)userId creationTime:(BackupBackupDateTime *)creationTime clientId:(NSString * _Nullable)clientId __attribute__((swift_name("init(version:userId:creationTime:clientId:)"))) __attribute__((objc_designated_initializer));
+- (BackupBackupMetadata *)doCopyVersion:(NSString *)version userId:(BackupBackupQualifiedId *)userId creationTime:(BackupBackupDateTime *)creationTime clientId:(NSString * _Nullable)clientId __attribute__((swift_name("doCopy(version:userId:creationTime:clientId:)")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
 - (NSString *)description __attribute__((swift_name("description()")));
 @property (readonly) NSString * _Nullable clientId __attribute__((swift_name("clientId")));
 @property (readonly) BackupBackupDateTime *creationTime __attribute__((swift_name("creationTime")));
-@property (readonly) NSString *platform __attribute__((swift_name("platform")));
 @property (readonly) BackupBackupQualifiedId *userId __attribute__((swift_name("userId")));
 @property (readonly) NSString *version __attribute__((swift_name("version")));
 @end
@@ -282,6 +388,7 @@ __attribute__((swift_name("BackupQualifiedId.Companion")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) BackupBackupQualifiedIdCompanion *shared __attribute__((swift_name("shared")));
+- (BackupBackupQualifiedId * _Nullable)fromEncodedStringId:(NSString *)id __attribute__((swift_name("fromEncodedString(id:)")));
 - (id<BackupKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
@@ -298,15 +405,19 @@ __attribute__((swift_name("BackupUser")))
 @property (readonly) NSString *name __attribute__((swift_name("name")));
 @end
 
+__attribute__((swift_name("CommonMPBackupExporter")))
+@interface BackupCommonMPBackupExporter : BackupBase
+- (instancetype)initWithSelfUserId:(BackupBackupQualifiedId *)selfUserId __attribute__((swift_name("init(selfUserId:)"))) __attribute__((objc_designated_initializer));
+- (void)addConversation:(BackupBackupConversation *)conversation __attribute__((swift_name("add(conversation:)")));
+- (void)addMessage:(BackupBackupMessage *)message __attribute__((swift_name("add(message:)")));
+- (void)addUser:(BackupBackupUser *)user __attribute__((swift_name("add(user:)")));
+- (BackupKotlinByteArray *)serialize __attribute__((swift_private));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("MPBackupExporter")))
-@interface BackupMPBackupExporter : BackupBase
+@interface BackupMPBackupExporter : BackupCommonMPBackupExporter
 - (instancetype)initWithSelfUserId:(BackupBackupQualifiedId *)selfUserId __attribute__((swift_name("init(selfUserId:)"))) __attribute__((objc_designated_initializer));
-- (void)addConversationConversation:(BackupBackupConversation *)conversation __attribute__((swift_name("addConversation(conversation:)")));
-- (void)addMessageMessage:(BackupBackupMessage *)message __attribute__((swift_name("addMessage(message:)")));
-- (void)addUserUser:(BackupBackupUser *)user __attribute__((swift_name("addUser(user:)")));
-- (BackupKotlinByteArray *)serialize __attribute__((swift_name("serialize()")));
-@property (readonly) BackupBackupQualifiedId *selfUserId __attribute__((swift_name("selfUserId")));
 @end
 
 __attribute__((swift_name("BackupImportResult")))
@@ -336,20 +447,23 @@ __attribute__((swift_name("BackupImportResult.Success")))
 @property (readonly) BackupBackupData *backupData __attribute__((swift_name("backupData")));
 @end
 
+__attribute__((swift_name("CommonMPBackupImporter")))
+@interface BackupCommonMPBackupImporter : BackupBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (BackupBackupImportResult *)importBackupData:(BackupKotlinByteArray *)data __attribute__((swift_private));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("MPBackupImporter")))
-@interface BackupMPBackupImporter : BackupBase
-- (instancetype)initWithSelfUserDomain:(NSString *)selfUserDomain __attribute__((swift_name("init(selfUserDomain:)"))) __attribute__((objc_designated_initializer));
-- (BackupBackupImportResult *)importData:(BackupKotlinByteArray *)data __attribute__((swift_private));
-- (BackupBackupImportResult *)importMultiplatformBackupFilePath:(NSString *)multiplatformBackupFilePath __attribute__((swift_name("import(multiplatformBackupFilePath:)")));
+@interface BackupMPBackupImporter : BackupCommonMPBackupImporter
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (BackupBackupImportResult *)importFileMultiplatformBackupFilePath:(NSString *)multiplatformBackupFilePath __attribute__((swift_name("importFile(multiplatformBackupFilePath:)")));
 @end
 
 @interface BackupBackupDateTime (Extensions)
 - (int64_t)toLongMilliseconds __attribute__((swift_name("toLongMilliseconds()")));
-@end
-
-@interface BackupBackupMetadata (Extensions)
-- (BOOL)isWebBackup __attribute__((swift_name("isWebBackup()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -368,12 +482,6 @@ __attribute__((swift_name("KotlinArray")))
 - (id<BackupKotlinIterator>)iterator __attribute__((swift_name("iterator()")));
 - (void)setIndex:(int32_t)index value:(T _Nullable)value __attribute__((swift_name("set(index:value:)")));
 @property (readonly) int32_t size __attribute__((swift_name("size")));
-@end
-
-__attribute__((swift_name("KotlinComparable")))
-@protocol BackupKotlinComparable
-@required
-- (int32_t)compareToOther:(id _Nullable)other __attribute__((swift_name("compareTo(other:)")));
 @end
 
 
@@ -397,6 +505,28 @@ __attribute__((swift_name("Kotlinx_datetimeInstant")))
 @property (readonly) int32_t nanosecondsOfSecond __attribute__((swift_name("nanosecondsOfSecond")));
 @end
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinByteArray")))
+@interface BackupKotlinByteArray : BackupBase
++ (instancetype)arrayWithSize:(int32_t)size __attribute__((swift_name("init(size:)")));
++ (instancetype)arrayWithSize:(int32_t)size init:(BackupByte *(^)(BackupInt *))init __attribute__((swift_name("init(size:init:)")));
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (int8_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
+- (BackupKotlinByteIterator *)iterator __attribute__((swift_name("iterator()")));
+- (void)setIndex:(int32_t)index value:(int8_t)value __attribute__((swift_name("set(index:value:)")));
+@property (readonly) int32_t size __attribute__((swift_name("size")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KotlinEnumCompanion")))
+@interface BackupKotlinEnumCompanion : BackupBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)companion __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) BackupKotlinEnumCompanion *shared __attribute__((swift_name("shared")));
+@end
+
 __attribute__((swift_name("Kotlinx_serialization_coreSerializationStrategy")))
 @protocol BackupKotlinx_serialization_coreSerializationStrategy
 @required
@@ -414,19 +544,6 @@ __attribute__((swift_name("Kotlinx_serialization_coreDeserializationStrategy")))
 __attribute__((swift_name("Kotlinx_serialization_coreKSerializer")))
 @protocol BackupKotlinx_serialization_coreKSerializer <BackupKotlinx_serialization_coreSerializationStrategy, BackupKotlinx_serialization_coreDeserializationStrategy>
 @required
-@end
-
-__attribute__((objc_subclassing_restricted))
-__attribute__((swift_name("KotlinByteArray")))
-@interface BackupKotlinByteArray : BackupBase
-+ (instancetype)arrayWithSize:(int32_t)size __attribute__((swift_name("init(size:)")));
-+ (instancetype)arrayWithSize:(int32_t)size init:(BackupByte *(^)(BackupInt *))init __attribute__((swift_name("init(size:init:)")));
-+ (instancetype)alloc __attribute__((unavailable));
-+ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-- (int8_t)getIndex:(int32_t)index __attribute__((swift_name("get(index:)")));
-- (BackupKotlinByteIterator *)iterator __attribute__((swift_name("iterator()")));
-- (void)setIndex:(int32_t)index value:(int8_t)value __attribute__((swift_name("set(index:value:)")));
-@property (readonly) int32_t size __attribute__((swift_name("size")));
 @end
 
 __attribute__((swift_name("KotlinIterator")))
@@ -451,6 +568,14 @@ __attribute__((swift_name("Kotlinx_datetimeInstant.Companion")))
 - (id<BackupKotlinx_serialization_coreKSerializer>)serializer __attribute__((swift_name("serializer()")));
 @property (readonly) BackupKotlinx_datetimeInstant *DISTANT_FUTURE __attribute__((swift_name("DISTANT_FUTURE")));
 @property (readonly) BackupKotlinx_datetimeInstant *DISTANT_PAST __attribute__((swift_name("DISTANT_PAST")));
+@end
+
+__attribute__((swift_name("KotlinByteIterator")))
+@interface BackupKotlinByteIterator : BackupBase <BackupKotlinIterator>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (BackupByte *)next __attribute__((swift_name("next()")));
+- (int8_t)nextByte __attribute__((swift_name("nextByte()")));
 @end
 
 __attribute__((swift_name("Kotlinx_serialization_coreEncoder")))
@@ -592,14 +717,6 @@ __attribute__((swift_name("Kotlinx_serialization_coreDecoder")))
 - (int16_t)decodeShort __attribute__((swift_name("decodeShort()")));
 - (NSString *)decodeString __attribute__((swift_name("decodeString()")));
 @property (readonly) BackupKotlinx_serialization_coreSerializersModule *serializersModule __attribute__((swift_name("serializersModule")));
-@end
-
-__attribute__((swift_name("KotlinByteIterator")))
-@interface BackupKotlinByteIterator : BackupBase <BackupKotlinIterator>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
-+ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (BackupByte *)next __attribute__((swift_name("next()")));
-- (int8_t)nextByte __attribute__((swift_name("nextByte()")));
 @end
 
 __attribute__((swift_name("Kotlinx_serialization_coreCompositeEncoder")))

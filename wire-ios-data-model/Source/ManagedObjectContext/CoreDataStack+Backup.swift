@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import backup
 import Foundation
 import WireUtilities
-import backup
 
 private let log = ZMSLog(tag: "Backup")
 
@@ -191,11 +191,11 @@ extension CoreDataStack {
 
     fileprivate static func ingest(
         mpBackupFile: URL,
-        onFailure fail: (CoreDataStack.BackupImportError) -> ()
+        onFailure fail: (CoreDataStack.BackupImportError) -> Void
     ) {
         // TODO: Figure out the actual self-user domain before importing
-        let importer = MPBackupImporter(selfUserDomain: "wire.com")
-        let result = importer.import(multiplatformBackupFilePath: mpBackupFile.path())
+        let importer = MPBackupImporter()
+        let result = importer.importFile(multiplatformBackupFilePath: mpBackupFile.path())
         switch result {
         case let success as BackupImportResult.Success:
             let backupData = success.backupData
@@ -207,7 +207,7 @@ extension CoreDataStack {
                 // TODO: Import conversations
                 print("Imported Conversation \(conversation)")
             }
-            for message in backupData.messages{
+            for message in backupData.messages {
                 // TODO: Import messages
                 print("Imported Message \(message)")
             }
@@ -218,7 +218,7 @@ extension CoreDataStack {
             fail(BackupImportError.failedToCopy(NSError()))
         }
     }
-    
+
     static func importLocalStorage(
         accountIdentifier: UUID,
         from backupDirectory: URL,
@@ -241,8 +241,8 @@ extension CoreDataStack {
 
         let multiplatformBackupFileName = MPBackup().ZIP_ENTRY_DATA
         let mpBackupFile = backupDirectory.appendingPathComponent(multiplatformBackupFileName)
-        
-        if (fileManager.fileExists(atPath: mpBackupFile.path())) {
+
+        if fileManager.fileExists(atPath: mpBackupFile.path()) {
             // It's a MP Backup.
             ingest(mpBackupFile: mpBackupFile, onFailure: fail)
             completion(.success(accountDirectory))

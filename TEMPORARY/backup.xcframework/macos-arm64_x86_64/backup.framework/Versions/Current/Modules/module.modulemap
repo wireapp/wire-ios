@@ -1,6 +1,0 @@
-framework module backup {
-    umbrella header "backup.h"
-
-    export *
-    module * { export * }
-}
