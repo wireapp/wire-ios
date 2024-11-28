@@ -16,18 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireSystem
 
 /// Namespace for analytics tools.
 public enum WireAnalytics {
 
+    private static let isSetUpLock = NSLock()
     private static var isSetUp = false
 
     public static func setup() {
+        isSetUpLock.lock()
+        defer { isSetUpLock.unlock() }
+
         guard !isSetUp else {
             assertionFailure("WireAnalytics.setup() called more than once")
             return
         }
+        isSetUp = true
 
         WireAnalytics.Datadog.shared.enable()
 
