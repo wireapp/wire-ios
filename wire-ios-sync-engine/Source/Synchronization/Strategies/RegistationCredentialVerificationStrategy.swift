@@ -82,7 +82,7 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                     NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             default:
                 let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
-                fatal("Error occurs for invalid phase: \(phaseString)")
+                return assertionFailure("Error occurs for invalid phase: \(phaseString)")
             }
             registrationStatus.handleError(error)
         }
