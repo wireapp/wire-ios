@@ -16,14 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import Foundation
 
-public struct TeamPlanFeature: Hashable, Identifiable, Sendable {
-    public let id: String
-    let description: AttributedString
-
-    public init(id: String, description: AttributedString) {
-        self.id = id
-        self.description = description
-    }
-}
+public let SnapshotTestReferenceImageDirectory = URL(fileURLWithPath: #file)
+    .deletingLastPathComponent()
+    .path

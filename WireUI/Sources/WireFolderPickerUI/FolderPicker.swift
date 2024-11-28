@@ -108,8 +108,6 @@ public struct FolderPicker: View {
                         .lineLimit(1)
                         .foregroundStyle(option.id == selected?.id ? Color(accentColor) : .primaryText)
                         .tag(option)
-                        .wireForegroundStyle(.primaryText)
-                        .wireFont
                 }
             } label: {
                 EmptyView()

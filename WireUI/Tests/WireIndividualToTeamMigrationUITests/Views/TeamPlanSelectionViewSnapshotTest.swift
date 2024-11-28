@@ -16,29 +16,3 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-import SwiftUI
-import WireDesign
-import WireFoundation
-import WireReusableUIComponents
-
-struct BackButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(
-            action: action,
-            label: { Text(title) }
-        )
-        .buttonStyle(.plain)
-        .wireTextStyle(.buttonBig)
-        .frame(height: 56)
-        .frame(maxWidth: .infinity)
-        .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(uiColor: ColorTheme.Strokes.outline), lineWidth: 1)
-        }
-        .cornerRadius(16)
-    }
-}

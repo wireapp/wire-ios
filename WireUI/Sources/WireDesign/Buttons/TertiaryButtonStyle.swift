@@ -27,11 +27,13 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let colors = colors(for: configuration.isPressed, enabled: isEnabled)
         configuration.label
+            .lineLimit(1)
             .padding()
             .underline(color: colors.underline)
             .frame(maxWidth: .infinity)
             .background(colors.background)
             .foregroundStyle(colors.foreground)
+            .fontWeight(.bold)
             .overlay {
                 if let borderColor = colors.border {
                     RoundedRectangle(cornerRadius: 16)

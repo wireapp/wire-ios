@@ -40,10 +40,12 @@ struct TeamNameView: View {
                 .textFieldStyle(.roundedBorder)
                 .wireTextStyle(.body1)
             Spacer()
-            CallToActionButton(
+
+            Button(
                 action: { actionCallback(.continue(teamName: teamName)) },
-                title: String.localized(key: "individualToTeam.button.continue", bundle: .module)
+                label: { Text(String.localized(key: "individualToTeam.button.continue", bundle: .module)) }
             )
+            .wireButtonStyle(.primary)
             .disabled(teamName.isEmpty)
         }
     }

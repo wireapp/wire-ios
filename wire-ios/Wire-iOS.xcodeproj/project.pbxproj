@@ -694,6 +694,7 @@
 		6636CFDE2C519980001403F9 /* EditingStateControllable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6636CFDD2C519980001403F9 /* EditingStateControllable.swift */; };
 		669105C327397E6A00324115 /* NSAttributedString+DownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669105C227397E6900324115 /* NSAttributedString+DownTests.swift */; };
 		70355A7127AAD96E00F02C76 /* SecurityLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70355A7027AAD96E00F02C76 /* SecurityLevelView.swift */; };
+		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		7A702FB7286322D800004580 /* ConversationEncryptionProtocolCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A702FB6286322D800004580 /* ConversationEncryptionProtocolCell.swift */; };
 		7C0BB6E61FE682A200386A19 /* AccountSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0BB6E41FE680F200386A19 /* AccountSelectionViewController.swift */; };
 		7C23A26D20247500005FEB54 /* ShareViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C23A26B20247474005FEB54 /* ShareViewControllerTests.swift */; };
@@ -3968,6 +3969,7 @@
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
 				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
+				76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */,
 				016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */,
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
 				59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */,
@@ -8651,6 +8653,7 @@
 				E92C8CC52C942A5C00E0F7F7 /* Inject */,
 				CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */,
 				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
+				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11820,6 +11823,10 @@
 		59D038262C85D31E009FE583 /* WireMainNavigationUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMainNavigationUI;
+		};
+		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireIndividualToTeamMigrationUI;
 		};
 		CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */ = {
 			isa = XCSwiftPackageProductDependency;

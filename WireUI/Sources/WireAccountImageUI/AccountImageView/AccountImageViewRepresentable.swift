@@ -201,3 +201,4 @@ struct AvailabilityIndicatorBackgroundColorViewModifier: ViewModifier {
 private struct AvailabilityIndicatorBackgroundViewColorKey: EnvironmentKey {
     static let defaultValue = AvailabilityIndicatorView.Defaults.backgroundViewColor
 }
+
