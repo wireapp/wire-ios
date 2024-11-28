@@ -18,11 +18,7 @@
 
 import Foundation
 
-<<<<<<<< HEAD:WireAPI/Sources/WireAPI/Authentication/HTTPCodecError.swift
 enum HTTPCookieCodecError: Error {
-========
-@testable import WireLogging
->>>>>>>> b0666045b3a660df08cc667bb0b5497154303bc2:WireFoundation/Tests/WireLoggingTests/PlaceholderTests.swift
 
     case invalidCookies
     case invalidCookieData(reason: String)

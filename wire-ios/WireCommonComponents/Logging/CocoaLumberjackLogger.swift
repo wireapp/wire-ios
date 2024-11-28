@@ -21,22 +21,21 @@ import Foundation
 import WireSystem
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-public final class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 
-    public init() {
+    init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
     }
 
-    public var logFiles: [URL] {
+    var logFiles: [URL] {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-<<<<<<<< HEAD:wire-ios/WireCommonComponents/Logging/CocoaLumberjackLogger.swift
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
@@ -58,29 +57,6 @@ public final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-========
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .debug)
-    }
-
-    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .info)
-    }
-
-    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .info)
-    }
-
-    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .warning)
-    }
-
-    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .error)
-    }
-
-    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
->>>>>>>> b0666045b3a660df08cc667bb0b5497154303bc2:wire-ios-system/Source/Logging/CocoaLumberjackLogger.swift
         log(message, attributes: attributes, level: .error)
     }
 

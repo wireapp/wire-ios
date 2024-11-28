@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireDomain/Sources/WireDomain/Repositories/UserClients/Models/UserClientInfo.swift
 import WireDataModel
 
 public struct UserClientInfo: Sendable {
@@ -38,13 +37,4 @@ public struct UserClientInfo: Sendable {
         let p512: String?
     }
 
-========
-import XCTest
-
-@testable import WireLogging
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
->>>>>>>> ccda849bb7 (squashed commit):WireFoundation/Tests/WireLoggingTests/PlaceholderTests.swift
 }

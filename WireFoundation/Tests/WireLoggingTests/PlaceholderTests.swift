@@ -16,29 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireDomain/Sources/WireDomain/Repositories/UserClients/Models/UserClientInfo.swift
-import WireDataModel
-
-public struct UserClientInfo: Sendable {
-
-    let id: String
-    let label: String?
-    let type: WireDataModel.DeviceType
-    let activationDate: Date
-    let model: String?
-    let deviceClass: WireDataModel.DeviceClass?
-    let lastActiveDate: Date?
-    let mlsPublicKeys: UserClientInfo.MLSPublicKeys?
-
-    struct MLSPublicKeys {
-        let ed25519: String?
-        let ed448: String?
-        let p256: String?
-        let p384: String?
-        let p512: String?
-    }
-
-========
 import XCTest
 
 @testable import WireLogging
@@ -46,5 +23,4 @@ import XCTest
 final class PlaceholderTests: XCTestCase {
 
     func testNothing() {}
->>>>>>>> ccda849bb7 (squashed commit):WireFoundation/Tests/WireLoggingTests/PlaceholderTests.swift
 }
