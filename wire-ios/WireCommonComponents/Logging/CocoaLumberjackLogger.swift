@@ -18,44 +18,45 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import WireSystem
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-public final class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 
-    public init() {
+    init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
     }
 
-    public var logFiles: [URL] {
+    var logFiles: [URL] {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }
 
-    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .info)
     }
 
-    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .warning)
     }
 
-    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
-    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .error)
     }
 
@@ -84,7 +85,7 @@ public final class CocoaLumberjackLogger: LoggerProtocol {
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
-    public func addTag(_ key: LogAttributesKey, value: String?) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
     }
 

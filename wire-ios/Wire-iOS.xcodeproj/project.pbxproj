@@ -3906,6 +3906,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
+		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -8507,6 +8508,7 @@
 				E63C65642C1B456900354BB4 /* Analytics */,
 				594211BD2C90542100576053 /* FilePreviewGenerator */,
 				594211CE2C906FEC00576053 /* FileMetaDataGenerator */,
+				5983A3EE2CF86F9A002006F6 /* Logging */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
 				EF1EB850235F008F00575DD9 /* Bundle+InfoDict.swift */,
 				5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */,
@@ -8720,6 +8722,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5983A3EE2CF86F9A002006F6 /* Logging */,
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (

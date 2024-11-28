@@ -26,7 +26,7 @@ public enum WireAnalytics {
     private static var isSetUp = false
 
     public static func setup() {
-        isSetUpLock.lock()
+        isSetUpLock.lock() // TODO: add stackoverflow link and description why lock is needed
         defer { isSetUpLock.unlock() }
 
         guard !isSetUp else {
