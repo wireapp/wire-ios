@@ -1011,8 +1011,10 @@ extension WireCallCenterV3 {
     func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
         Self.logger.info("process call event")
         if isReady {
+            Self.logger.info("ready handle event \(callEvent.conversationId) - currentTimestamp \(callEvent.currentTimestamp) - serverTimestamp \(callEvent.serverTimestamp)")
             handleCallEvent(callEvent, completionHandler: completionHandler)
         } else {
+            Self.logger.info("buffering handle event \(callEvent.conversationId) - currentTimestamp \(callEvent.currentTimestamp) - serverTimestamp \(callEvent.serverTimestamp)")
             bufferedEvents.append((callEvent, completionHandler))
         }
     }

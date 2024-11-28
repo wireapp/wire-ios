@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let zmLog = ZMSLog(tag: "calling")
-
 /// CallEventStatus keep track of call events which are waiting to be processed. this is important to know when
 /// the app is launched via push notification since then we need keep the app running until we've processed all
 /// call events.
@@ -34,7 +32,7 @@ public class CallEventStatus: NSObject, ZMTimerClient {
     fileprivate var callEventsWaitingToBeProcessed: Int = 0 {
         didSet {
             if callEventsWaitingToBeProcessed == 0 {
-                zmLog.debug("CallEventStatus: all events processed, starting timer")
+                WireLogger.calling.debug("CallEventStatus: all events processed, starting timer")
                 eventProcessingTimer = ZMTimer(target: self, operationQueue: .main)
                 eventProcessingTimer?.fire(afterTimeInterval: eventProcessingTimoutInterval)
             }
@@ -42,7 +40,7 @@ public class CallEventStatus: NSObject, ZMTimerClient {
     }
 
     public func timerDidFire(_ timer: ZMTimer!) {
-        zmLog.debug("CallEventStatus: finished timer")
+        WireLogger.calling.debug("CallEventStatus: finished timer")
         observers.forEach { $0() }
         observers = []
         eventProcessingTimer = nil
@@ -60,11 +58,11 @@ public class CallEventStatus: NSObject, ZMTimerClient {
     @discardableResult
     public func waitForCallEventProcessingToComplete(_ completionHandler: @escaping () -> Void) -> Bool {
         guard callEventsWaitingToBeProcessed != 0 || eventProcessingTimer != nil else {
-            zmLog.debug("CallEventStatus: No active call events, completing")
+            WireLogger.calling.debug("CallEventStatus: No active call events, completing")
             completionHandler()
             return false
         }
-        zmLog.debug("CallEventStatus: Active call events, waiting")
+        WireLogger.calling.debug("CallEventStatus: Active call events, waiting")
         observers.append(completionHandler)
         return true
     }

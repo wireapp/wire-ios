@@ -24,11 +24,13 @@ import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
-    ZMContextChangeTrackerSource, ZMEventConsumer {
+                                           ZMContextChangeTrackerSource, ZMEventAsyncConsumer {
+
+    
 
     // MARK: - Private Properties
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
+    private static let logger = WireLogger.calling
 
     private let messageSender: MessageSenderInterface
     private let flowManager: FlowManagerType
@@ -177,7 +179,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             guard response.httpStatus == 412 else {
-                Self.logger.warning("Expected 412 response: missing clients")
+                Self.logger.warn("Expected 412 response: missing clients")
                 return
             }
 
@@ -235,17 +237,19 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Event Consumer
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        Self.logger.trace("process events: \(events)")
-        events.forEach(processEvent)
+    public func processEvents(_ events: [ZMUpdateEvent]) async {
+        Self.logger.debug("process events: \(events.count)")
+        for event in events {
+            await processEvent(event)
+        }
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) {
+    private func processEvent(_ event: ZMUpdateEvent) async {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
         if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
-
+            Self.logger.debug("process call event", attributes: [.eventId: event.safeUUID])
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
 
@@ -259,11 +263,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             guard !callEventContent.isRemoteMute else {
+                Self.logger.debug("isRemoteMute", attributes: [.eventId: event.safeUUID])
                 callCenter?.isMuted = true
                 return
             }
 
-            processCallEvent(
+            await processCallEvent(
                 callingConversationId: genericMessage.calling.qualifiedConversationID,
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
@@ -287,7 +292,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         payload: Data,
         currentTimestamp: TimeInterval,
         eventTimestamp: Date
-    ) {
+    ) async {
 
         let identifier = !callingConversationId.id
             .isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
@@ -312,10 +317,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             clientId: clientId
         )
 
-        callEventStatus.scheduledCallEventForProcessing()
-        callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-            self?.callEventStatus.finishedProcessingCallEvent()
-        })
+        await withCheckedContinuation { continuation in
+            callCenter?.processCallEvent(callEvent, completionHandler: {
+                continuation.resume()
+            })
+        }
     }
 
 }

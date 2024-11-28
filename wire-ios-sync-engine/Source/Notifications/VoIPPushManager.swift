@@ -46,7 +46,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public weak var delegate: VoIPPushManagerDelegate?
 
-    private static let logger = Logger(subsystem: "VoIP Push", category: "VoipPushManager")
+    private static let logger = WireLogger.calling
 
     // MARK: - Life cycle
 
@@ -55,7 +55,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface
     ) {
-        Self.logger.trace("init")
+        Self.logger.debug("init VoIPPushManager")
         self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
 
@@ -73,7 +73,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
     // MARK: - Methods
 
     public func registerForVoIPPushes() {
-        Self.logger.trace("register for voIP pushes")
+        Self.logger.debug("register for voIP pushes")
         registry.desiredPushTypes = [.voIP]
     }
 
@@ -82,7 +82,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         didUpdate pushCredentials: PKPushCredentials,
         for type: PKPushType
     ) {
-        Self.logger.trace("did update push credentials")
+        Self.logger.debug("did update push credentials")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return }
@@ -97,7 +97,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         _ registry: PKPushRegistry,
         didInvalidatePushTokenFor type: PKPushType
     ) {
-        Self.logger.trace("did invalidate push token")
+        Self.logger.debug("did invalidate push token")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return }
@@ -114,7 +114,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         for type: PKPushType,
         completion: @escaping () -> Void
     ) {
-        Self.logger.trace("did receive incoming push")
+        Self.logger.debug("did receive incoming push")
 
         // We're only interested in voIP tokens.
         guard type == .voIP else { return completion() }
@@ -138,7 +138,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Self.logger.trace("process NSE push, payload: \(payload)")
+        Self.logger.debug("process NSE push, payload: \(payload)")
 
         guard
             let accountIDString = payload["accountID"] as? String,
@@ -182,7 +182,8 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Self.logger.trace("process voIP push, payload: \(payload)")
+        // TODO: check this is dead code right?
+        Self.logger.debug("process voIP push, payload: \(payload)")
 
         guard let delegate else {
             Self.logger.info("no delegate, ignoring...")
