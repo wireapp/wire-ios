@@ -33,6 +33,11 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     }
 
     @MainActor
+    func applyConversationFilter(_ filter: ConversationFilter?) {
+        fatalError("Mock method not implemented")
+    }
+
+    @MainActor
     func showArchive() {
         fatalError("Mock method not implemented")
     }

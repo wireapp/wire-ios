@@ -30,6 +30,8 @@ public protocol MainCoordinatorProtocol: AnyObject {
     @MainActor
     func showConversationList(conversationFilter: ConversationFilter?) async
     @MainActor
+    func applyConversationFilter(_ filter: ConversationFilter?)
+    @MainActor
     func showArchive() async
     @MainActor
     func showSettings() async
