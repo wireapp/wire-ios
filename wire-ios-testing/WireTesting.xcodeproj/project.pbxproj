@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -129,6 +129,20 @@
 		F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+WireTesting.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D2643C2CF725F90005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 096AD7C51B68D41D00E007A8 /* WireTesting-Tests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2643B2CF725F50005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643C2CF725F90005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		096AD7B71B68D41D00E007A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -203,6 +217,7 @@
 		096AD7E21B68D6BD00E007A8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D2643B2CF725F50005317F /* TestPlans */,
 				096AD7E31B68D6BD00E007A8 /* Resources */,
 				096AD7E51B68D6BD00E007A8 /* WireTestingTests.m */,
 				5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */,
@@ -363,6 +378,9 @@
 			);
 			dependencies = (
 				096AD7C91B68D41D00E007A8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D2643B2CF725F50005317F /* TestPlans */,
 			);
 			name = "WireTesting-Tests";
 			productName = ZMTestingTests;
