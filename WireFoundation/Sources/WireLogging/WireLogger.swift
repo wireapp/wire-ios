@@ -40,10 +40,10 @@ public struct WireLoggerTag: RawRepresentable {
     }
 }
 
-//public struct WireLoggerInterpolation: ExpressibleByStringInterpolation {
+// public struct WireLoggerInterpolation: ExpressibleByStringInterpolation {
 //    public init(stringInterpolation: DefaultStringInterpolation) {
 //    }
-//}
+// }
 
 public struct MyStruct {
     public let id: Int
@@ -105,3 +105,12 @@ func something() {
     print(myString.valuee)
     // Output: This is MyStruct(id: 42, name: Alice), and here is MyStruct(id: 7, name: Bob).
 }
+
+/*
+ - injectable logger (protocol)
+ - interpolation with strict types (stringinterpolation should trigger warning or error)
+ - force public flag
+ - check the current attributes
+ - additional info
+ - ?
+ */
