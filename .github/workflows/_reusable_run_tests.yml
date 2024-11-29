@@ -178,14 +178,15 @@ jobs:
         id: get_commit_sha
         run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
-      - name: Notify on Wire
+      - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
         if: ${{ inputs.all }}
         with:
           status: ${{ job.status }}
           text: |
-            IGNORE TEST: Tests for '${{ inputs.branch }}'
-            commit: https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }}
+            **Tests for **${{ inputs.branch }}'**
+
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
