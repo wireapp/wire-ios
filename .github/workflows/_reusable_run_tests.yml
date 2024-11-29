@@ -196,7 +196,7 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **🚨 Tests for ${{ inputs.branch }}**
+            **🚨 Tests for ${{ inputs.branch }} failed 🆘**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
