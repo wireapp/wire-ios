@@ -42,137 +42,137 @@ jobs:
           ref: ${{ inputs.branch }}
           lfs: 'true'
 
-      # - name: Retrieve Xcode version
-      #   run: |
-      #     echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
-      #   id: xcode-version
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
 
-      # - uses: maxim-lobanov/setup-xcode@v1.5.1
-      #   with:
-      #     xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+      - uses: maxim-lobanov/setup-xcode@v1.5.1
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
 
-      # - name: Load .env file
-      #   uses: xom9ikk/dotenv@v2
-      #   with:
-      #       path: fastlane/
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+            path: fastlane/
 
-      # - name: Restore Carthage Cache
-      #   uses: actions/cache@v3
-      #   id: cache-carthage
-      #   with:
-      #     path: Carthage
-      #     key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+      - name: Restore Carthage Cache
+        uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
 
-      # - name: Restore Danger results
-      #   id: restore-danger-results
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: Danger.results
-      #     key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
+      - name: Restore Danger results
+        id: restore-danger-results
+        uses: actions/cache/restore@v4
+        with:
+          path: Danger.results
+          key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
 
-      # - name: Bootstrap Carthage if no cache
-      #   if: steps.cache-carthage.outputs.cache-hit != 'true'
-      #   run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+      - name: Bootstrap Carthage if no cache
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
-      #   # Restore Swift Package Dependencies Cache
-      # - name: Restore Swift Package Dependencies Cache
-      #   id: cache-swift-packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.PACKAGES_DIR }}
-      #     key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
 
-      #   # Resolve Swift Package Dependencies
-      # - name: Resolve Swift Package Dependencies
-      #   run: |
-      #     ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+        # Resolve Swift Package Dependencies
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
-      # - name: Setup Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     bundler-cache: true
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
 
-      # - name: Setup workspace
-      #   run: |
-      #     ./setup.sh
+      - name: Setup workspace
+        run: |
+          ./setup.sh
 
-      # - name: Setup simulator
-      #   run: |
-      #     bundle exec fastlane prepare_for_tests
+      - name: Setup simulator
+        run: |
+          bundle exec fastlane prepare_for_tests
 
-      # - name: "Test all selected frameworks" 
-      #   id: set_frameworks
-      #   run: |
-      #     bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
+      - name: "Test all selected frameworks" 
+        id: set_frameworks
+        run: |
+          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
-      # - name: Find all .xcresult files
-      #   if: ${{ always() && github.event_name == 'pull_request' }}
-      #   id: find-xcresults
-      #   run: |
-      #     # Find all .xcresult directories and convert them to a JSON array
-      #     files=`find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .`
-      #     echo xcresult_files=${files} >> $GITHUB_OUTPUT
-      # - name: Debug Print xcresult files
-      #   run: |
-      #     echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
-      # - name: Upload .xcresult files as artifact
-      #   if: always()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: xcresults
-      #     path: artifacts/**/*.xcresult  # Adjust this if necessary
+      - name: Find all .xcresult files
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        id: find-xcresults
+        run: |
+          # Find all .xcresult directories and convert them to a JSON array
+          files=`find artifacts/ -type d -name "*.xcresult" | jq -R . | jq -s .`
+          echo xcresult_files=${files} >> $GITHUB_OUTPUT
+      - name: Debug Print xcresult files
+        run: |
+          echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
+      - name: Upload .xcresult files as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresults
+          path: artifacts/**/*.xcresult  # Adjust this if necessary
 
-      # # Scripts
-      # - name: Test Scripts
-      #   if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
-      #   run: |
-      #     echo "Scripts has changes"
-      #     echo "Testing Scripts..."
-      #     xcrun swift test --package-path ./scripts
+      # Scripts
+      - name: Test Scripts
+        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
+        run: |
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
 
-      # - name: Upload Failed snapshots
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: Failed Snapshots and log
-      #     path: |
-      #       **/SnapshotResults/
-      #       xcodebuild*.log
+      - name: Upload Failed snapshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Failed Snapshots and log
+          path: |
+            **/SnapshotResults/
+            xcodebuild*.log
 
-      # - name: Save cache with warning counts
-      #   # This step should only run for the test_develop.yml workflow
-      #   if: ${{ !cancelled() && github.event.action == 'push' }}
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: Danger.results
-      #     key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
+      - name: Save cache with warning counts
+        # This step should only run for the test_develop.yml workflow
+        if: ${{ !cancelled() && github.event.action == 'push' }}
+        uses: actions/cache/save@v4
+        with:
+          path: Danger.results
+          key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
 
-      # - name: Upload Test Reports as Artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: test-reports
-      #     path: |
-      #       build/reports/*.junit
-      #       artifacts/**/*.junit
+      - name: Upload Test Reports as Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            build/reports/*.junit
+            artifacts/**/*.junit
 
-      # - name: Prepare visual representation of test results
-      #   uses: EnricoMi/publish-unit-test-result-action/macos@v2
-      #   if: always()
-      #   with:
-      #     files: |
-      #       build/reports/*.junit
-      #       artifacts/**/*.junit
-      #     compare_to_earlier_commit: false
+      - name: Prepare visual representation of test results
+        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        if: always()
+        with:
+          files: |
+            build/reports/*.junit
+            artifacts/**/*.junit
+          compare_to_earlier_commit: false
 
-      # - name: Archiving DerivedData Logs
-      #   uses: actions/upload-artifact@v4
-      #   if: always()
-      #   with:
-      #     name: derived-data-xcode
-      #     path: |
-      #       /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
-      #       ~/Library/Logs/DiagnosticReports/**
+      - name: Archiving DerivedData Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: derived-data-xcode
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
 
       - name: Get Commit SHA
         id: get_commit_sha
@@ -184,55 +184,67 @@ jobs:
         with:
           status: ${{ job.status }}
           text: |
-            **Tests for **${{ inputs.branch }}'**
+            **Tests for ${{ inputs.branch }}**
+
+            **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
+      - name: Notify on Wire for iOS CI
+        uses: 8398a7/action-slack@v3
+        if: ${{ !inputs.all && failure() }}
+        with:
+          status: ${{ job.status }}
+          text: |
+            **🚨 Tests for ${{ inputs.branch }}**
 
             **Commit:** [${{ env.commit_sha }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }})
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-  # analyze-xcresults:
-  #   needs: run-tests
-  #   if: ${{ always() && github.event_name == 'pull_request' }}
-  #   runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
-  #   strategy:
-  #     matrix:
-  #       xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
-  #   steps:
-  #     - name: Download .xcresult files
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: xcresults
-  #         path: ./artifacts
+  analyze-xcresults:
+    needs: run-tests
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    strategy:
+      matrix:
+        xcresult_file: ${{ fromJson(needs.run-tests.outputs.xcresult_files) }}
+    steps:
+      - name: Download .xcresult files
+        uses: actions/download-artifact@v4
+        with:
+          name: xcresults
+          path: ./artifacts
 
-  #     - name: Display downloaded files
-  #       run: ls -R
+      - name: Display downloaded files
+        run: ls -R
       
-  #     - name: Analyze .xcresult file
-  #       uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-  #       with:
-  #         results: ${{ matrix.xcresult_file }}
-  #         warningAnnotations: true
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Analyze .xcresult file
+        uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        with:
+          results: ${{ matrix.xcresult_file }}
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # upload-test-results-datadadog:
-  #   runs-on: ubuntu-latest
-  #   needs: run-tests
-  #   if: always()
-  #   steps:
-  #     - name: Download tests results
-  #       uses: actions/download-artifact@v3
-  #       continue-on-error: true
-  #       with:
-  #         name: test-reports
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #     - name: Install datadog-ci
-  #       run: npm install -g @datadog/datadog-ci
-  #     - name: "Upload results"
-  #       env:
-  #         DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
-  #         DD_ENV: ci
-  #         DATADOG_SITE: datadoghq.eu
-  #       run: |
-  #         find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
+  upload-test-results-datadadog:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    if: always()
+    steps:
+      - name: Download tests results
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+        with:
+          name: test-reports
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install datadog-ci
+        run: npm install -g @datadog/datadog-ci
+      - name: "Upload results"
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ci
+          DATADOG_SITE: datadoghq.eu
+        run: |
+          find . -name "*.junit" -type f | tr '\n' ' ' | xargs -L 1 datadog-ci junit upload --service wire-ios-mono .
