@@ -44,6 +44,9 @@ public struct WireLogger: LoggerProtocol, Sendable {
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
+        if key == .selfClientId {
+            print("adding selfClientId tag to logger: \(value ?? "<nil>")")
+        }
         Self.provider?.addTag(key, value: value)
     }
 

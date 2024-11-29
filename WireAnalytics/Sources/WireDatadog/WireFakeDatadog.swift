@@ -32,6 +32,7 @@ public final class WireDatadog {
         identifierForVendor: UUID?,
         environmentName: String
     ) {
+        fatalError()
         // do nothing
     }
 
@@ -50,6 +51,9 @@ public final class WireDatadog {
 
     public func addAttribute(forKey key: String, value: String) {
         // do nothing
+        if key == "self_client_id" {
+            print("adding selfClientId tag to logger self: \(Unmanaged.passUnretained(self).toOpaque())")
+        }
     }
 
     public func removeAttribute(forKey key: String) {
