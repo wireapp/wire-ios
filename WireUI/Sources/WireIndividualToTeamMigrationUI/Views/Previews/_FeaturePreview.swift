@@ -32,10 +32,11 @@ fileprivate struct FeaturePreviewContainer: UIViewControllerRepresentable {
     let features: [TeamPlanFeature]
 
     func makeUIViewController(context: Context) -> IndividualToTeamMigrationViewController {
-        // Return MyViewController instance
+
         return IndividualToTeamMigrationViewController(
             features: features,
-            useCase: MockUseCase()
+            useCase: MockUseCase(),
+            actionCallback: { _ in }
         )
     }
 
