@@ -19,6 +19,5 @@ jobs:
     with:
       all: true
       branch: ${{ matrix.branch }}
+      notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
     secrets: inherit
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_WEBHOOK }}

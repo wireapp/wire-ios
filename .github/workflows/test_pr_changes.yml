@@ -93,6 +93,5 @@ jobs:
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       branch: ${{ github.head_ref }}
+      notify_secret: WIRE_IOS_CI_WEBHOOK
     secrets: inherit
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
