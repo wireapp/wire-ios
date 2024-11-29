@@ -31,9 +31,9 @@ public protocol LoggerProtocol {
     func addTag(_ key: LogAttributesKey, value: String?)
 }
 
-extension LoggerProtocol {
+public extension LoggerProtocol {
 
-    public func attributesDescription(from attributes: LogAttributes) -> String {
+    func attributesDescription(from attributes: LogAttributes) -> String {
         var logAttributes = attributes
 
         // drop attributes used for visibility and category
@@ -55,7 +55,7 @@ extension LoggerProtocol {
 
     /// helper method to transform attributes array to single LogAttributes
     /// - note: if same key is contained accross multiple attributes, the latest one is taken
-    public func flattenArray(_ attributes: [LogAttributes]) -> LogAttributes {
+    func flattenArray(_ attributes: [LogAttributes]) -> LogAttributes {
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {
             mergedAttributes.merge($0) { _, new in new }

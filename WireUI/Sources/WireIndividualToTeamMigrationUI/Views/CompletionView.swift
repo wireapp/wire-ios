@@ -51,7 +51,10 @@ struct CompletionView: View {
 
             Button(
                 action: { actionCallback(.goToTeamManagement) },
-                label: { Text(String.localized(key: "individualToTeam.completion.button.teamManagement", bundle: .module)) }
+                label: { Text(String.localized(
+                    key: "individualToTeam.completion.button.teamManagement",
+                    bundle: .module
+                )) }
             )
             .wireButtonStyle(.primary)
         }

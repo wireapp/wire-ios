@@ -20,7 +20,7 @@ import SwiftUI
 import WireFoundation
 
 @MainActor
-internal func cancellationSheetFactory(
+func cancellationSheetFactory(
     onLeave: @escaping @MainActor @Sendable () -> Void,
     onContinue: @escaping @MainActor @Sendable () -> Void
 ) -> UIAlertController {

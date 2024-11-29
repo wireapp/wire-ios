@@ -32,7 +32,7 @@ public struct IndividualToTeamMigrationResult {
 
 public struct IndividualToTeamMigrationUseCase {
     private let accountsAPI: AccountsAPI
-    private let logger: WireLogger = WireLogger.individualToTeamMigration
+    private let logger: WireLogger = .individualToTeamMigration
 
     public init(apiService: APIServiceProtocol) {
         self.accountsAPI = AccountsAPIBuilder(apiService: apiService).build()

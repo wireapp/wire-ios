@@ -23,7 +23,7 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isFocused) var isFocused
 
     typealias Theme = ColorTheme.Buttons.Tertiary
-    
+
     func makeBody(configuration: Configuration) -> some View {
         let colors = colors(for: configuration.isPressed, enabled: isEnabled)
         configuration.label
@@ -42,25 +42,28 @@ struct TertiaryButtonStyle: SwiftUI.ButtonStyle {
             }
             .clipShape(.rect(cornerRadius: 16))
     }
-    
-    func colors(for pressed: Bool, enabled: Bool) -> (underline: Color, background: Color, foreground: Color, border: Color?) {
+
+    func colors(
+        for pressed: Bool,
+        enabled: Bool
+    ) -> (underline: Color, background: Color, foreground: Color, border: Color?) {
         switch (enabled, pressed) {
         case (false, _):
-            return (
+            (
                 underline: Theme.onDisabled.color,
                 background: Theme.disabled.color,
                 foreground: Theme.onDisabled.color,
                 border: nil
             )
         case (_, false):
-            return (
+            (
                 underline: Theme.onEnabled.color,
                 background: Theme.enabled.color,
                 foreground: Theme.onEnabled.color,
                 border: nil
             )
         case (_, true):
-            return (
+            (
                 underline: Theme.onSelected.color,
                 background: Theme.selected.color,
                 foreground: Theme.onSelected.color,

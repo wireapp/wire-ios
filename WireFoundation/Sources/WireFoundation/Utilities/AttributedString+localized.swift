@@ -19,7 +19,11 @@
 public import Foundation
 
 public extension AttributedString {
-    static func formattedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil, _ arguments: any CVarArg...) -> AttributedString {
+    static func formattedMarkdown(
+        key: String.LocalizationValue,
+        bundle: Bundle? = nil,
+        _ arguments: any CVarArg...
+    ) -> AttributedString {
         let string: String = .formated(key: key, bundle: bundle, arguments)
         return .markdown(from: string)
     }
@@ -30,6 +34,6 @@ public extension AttributedString {
     }
 
     static func markdown(from string: String) -> AttributedString {
-        return (try? AttributedString(markdown: string)) ?? AttributedString(string)
+        (try? AttributedString(markdown: string)) ?? AttributedString(string)
     }
 }

@@ -37,9 +37,12 @@ struct TeamNameView: View {
                 .frame(height: 24)
             Text(String.localized(key: "individualToTeam.teamName.field.title", bundle: .module))
                 .wireTextStyle(.h4)
-            TextField(String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module), text: $teamName)
-                .textFieldStyle(.roundedBorder)
-                .wireTextStyle(.body1)
+            TextField(
+                String.localized(key: "individualToTeam.teamName.field.placeholder", bundle: .module),
+                text: $teamName
+            )
+            .textFieldStyle(.roundedBorder)
+            .wireTextStyle(.body1)
             Spacer()
 
             Button(

@@ -52,15 +52,15 @@ struct TeamPlanSelectionView: View {
                     }
                 }
             }
-            // TODO: Add a "link" Text Style?
             Button(
-                action: { },
+                action: {},
                 label: {
                     Text(String.localized(key: "individualToTeam.planSelection.url", bundle: .module))
-                        .tint(.primary)
-                        .underline()
+//                        .tint(.primary)
+//                        .underline()
                 }
             )
+            .wireButtonStyle(.tertiary)
             .padding(.top, 4)
             Spacer()
             Button(

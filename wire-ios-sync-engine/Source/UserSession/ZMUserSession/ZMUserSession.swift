@@ -1086,7 +1086,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
-        self.apiService = apiServiceFactory(clientId, selfUser.remoteIdentifier)
+        apiService = apiServiceFactory(clientId, selfUser.remoteIdentifier)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

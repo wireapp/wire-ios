@@ -38,22 +38,34 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         var title: String {
             switch self {
             case .teamPlanSelection, .teamName, .confirmation:
-                return .localized(key: titleStringKey, bundle: .module)
-            case .completion(let profileName, _):
-                return .formated(key: titleStringKey, bundle: .module, profileName)
+                .localized(key: titleStringKey, bundle: .module)
+            case let .completion(profileName, _):
+                .formated(key: titleStringKey, bundle: .module, profileName)
             }
         }
 
         var closeButtonAccessibilityLabel: String {
             switch self {
             case .teamPlanSelection:
-                return .localizedAccessibilityLabel(key: "individualToTeam.planSelection.closeButton.accessibilityLabel", bundle: .module)
+                .localizedAccessibilityLabel(
+                    key: "individualToTeam.planSelection.closeButton.accessibilityLabel",
+                    bundle: .module
+                )
             case .teamName:
-                return .localizedAccessibilityLabel(key: "individualToTeam.teamName.closeButton.accessibilityLabel", bundle: .module)
+                .localizedAccessibilityLabel(
+                    key: "individualToTeam.teamName.closeButton.accessibilityLabel",
+                    bundle: .module
+                )
             case .confirmation:
-                return .localizedAccessibilityLabel(key: "individualToTeam.confirmation.closeButton.accessibilityLabel", bundle: .module)
+                .localizedAccessibilityLabel(
+                    key: "individualToTeam.confirmation.closeButton.accessibilityLabel",
+                    bundle: .module
+                )
             case .completion:
-                return .localizedAccessibilityLabel(key: "individualToTeam.completion.closeButton.accessibilityLabel", bundle: .module)
+                .localizedAccessibilityLabel(
+                    key: "individualToTeam.completion.closeButton.accessibilityLabel",
+                    bundle: .module
+                )
             }
         }
 
@@ -106,7 +118,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         fatalError()
     }
 
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         addChild(childController)
         view.addSubview(childController.view)
@@ -124,14 +136,15 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                     self?.actionCallback(.cancel)
                 }, onContinue: { [weak self] in
                     self?.transition(to: .dismissCancellationAlert)
-                })
+                }
+            )
             childController.present(alert, animated: true)
         case .dismissCancellationAlert:
             childController.dismiss(animated: true)
         case .toPlans:
             let vc = hostedView(
                 for: .teamPlanSelection(features: features),
-                stepIndex: (childController.viewControllers.count + 1),
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -139,7 +152,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toTeamName:
             let vc = hostedView(
                 for: .teamName,
-                stepIndex: (childController.viewControllers.count + 1),
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -147,7 +160,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toConfirmation:
             let vc = hostedView(
                 for: .confirmation,
-                stepIndex: (childController.viewControllers.count + 1),
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -155,7 +168,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCompletion:
             let vc = hostedView(
                 for: .completion(profileName: "Profile Name", teamName: "Some Team"),
-                stepIndex: (childController.viewControllers.count + 1),
+                stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
@@ -173,9 +186,13 @@ private func hostedView(
     for step: IndividualToTeamMigrationViewController.Step,
     stepIndex: Int,
     stepCount: Int,
-    onTransition transitionCallback: @escaping @MainActor @Sendable (IndividualToTeamMigrationViewController.Transition) -> Void
+    onTransition transitionCallback: @escaping @MainActor @Sendable (
+        IndividualToTeamMigrationViewController
+            .Transition
+    ) -> Void
 ) -> UIViewController {
-    let vc = UIHostingController(rootView:
+    let vc = UIHostingController(
+        rootView:
         PageContainer(
             content: { viewFor(
                 step: step,
@@ -200,15 +217,20 @@ private func hostedView(
     vc.navigationItem.rightBarButtonItem?.tintColor = ColorTheme.Backgrounds.onBackground
     return vc
 }
+
 @MainActor
-@ViewBuilder func viewFor(
+@ViewBuilder
+func viewFor(
     step: IndividualToTeamMigrationViewController.Step,
     stepIndex: Int,
     stepCount: Int,
-    onTransition transitionCallback: @escaping @MainActor @Sendable (IndividualToTeamMigrationViewController.Transition) -> Void
+    onTransition transitionCallback: @escaping @MainActor @Sendable (
+        IndividualToTeamMigrationViewController
+            .Transition
+    ) -> Void
 ) -> some View {
     switch step {
-    case .teamPlanSelection(let features):
+    case let .teamPlanSelection(features):
         TeamPlanSelectionView(features: features) { action in
             switch action {
             case .goToPlans:
@@ -218,20 +240,20 @@ private func hostedView(
             }
         }
     case .teamName:
-        TeamNameView() { action in
+        TeamNameView { action in
             switch action {
-            case .continue(let teamName):
+            case let .continue(teamName):
                 transitionCallback(.toConfirmation)
             }
         }
     case .confirmation:
-        ConfirmationView() { action in
+        ConfirmationView { action in
             switch action {
             case .continue:
                 transitionCallback(.toCompletion)
             }
         }
-    case .completion(let profileName, let teamName):
+    case let .completion(profileName, teamName):
         CompletionView(profileName: profileName, teamName: teamName) { action in
             switch action {
             case .goBack:
