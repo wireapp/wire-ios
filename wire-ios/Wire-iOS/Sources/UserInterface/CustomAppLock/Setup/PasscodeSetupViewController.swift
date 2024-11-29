@@ -97,7 +97,8 @@ final class PasscodeSetupViewController: UIViewController {
     private lazy var infoLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .normalRegularFont,
-            color: ColorTheme.Backgrounds.onSurfaceVariant)
+            color: ColorTheme.Backgrounds.onSurfaceVariant
+        )
         label.textAlignment = .center
         label.configMultipleLineLabel()
         return label
@@ -222,8 +223,14 @@ final class PasscodeSetupViewController: UIViewController {
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
             contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor),
             contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor),
-            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor, constant: contentPadding),
-            contentView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor, constant: -contentPadding),
+            contentView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor,
+                constant: contentPadding
+            ),
+            contentView.trailingAnchor.constraint(
+                lessThanOrEqualTo: contentLayoutGuide.trailingAnchor,
+                constant: -contentPadding
+            ),
             contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
             // stack view
