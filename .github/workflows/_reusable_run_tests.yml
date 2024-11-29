@@ -30,7 +30,6 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v4
