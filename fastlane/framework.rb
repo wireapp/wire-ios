@@ -107,9 +107,9 @@ class Framework
         when "wire-ios"
             "Wire-iOS"
         when "WireFoundation"
-            "WireFoundationAll" # use a custom scheme that includes all targets of WireFoundation
+            "WireFoundationAll" # use a custom scheme that includes all targets of WireFoundation, fastlane does not found WireUI-Package
         when "WireUI"
-            "WireUI" # use a custom scheme that includes all targets of WireUI
+            "WireUIAll" # use a custom scheme that includes all targets of WireUI, fastlane does not found WireUI-Package
         when "WireDomain", "WireAPI", "WireAnalytics"
             name
         when "wire-ios-mocktransport"
