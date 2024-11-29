@@ -19,6 +19,7 @@
 import SwiftUI
 import UIKit
 import WireDesign
+import WireFoundation
 import WireReusableUIComponents
 
 public struct SelfProfileViewCallToActionBanner: View {

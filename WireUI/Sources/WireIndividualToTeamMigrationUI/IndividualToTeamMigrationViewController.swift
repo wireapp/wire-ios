@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireDesign
 import WireDomainAPI
+import WireFoundation
 
 public class IndividualToTeamMigrationViewController: UIViewController {
     enum Step: Sendable {

@@ -18,32 +18,18 @@
 
 import Foundation
 
-extension AttributedString {
-    static func formattedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil, _ arguments: any CVarArg...) -> AttributedString {
+public extension AttributedString {
+    public static func formattedMarkdown(key: String.LocalizationValue, bundle: Bundle? = .module, _ arguments: any CVarArg...) -> AttributedString {
         let string: String = .formated(key: key, bundle: bundle, arguments)
         return .markdown(from: string)
     }
 
-    static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil) -> AttributedString {
+    public static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = .module) -> AttributedString {
         let string: String = .localized(key: key, bundle: bundle)
         return .markdown(from: string)
     }
 
-    static func markdown(from string: String) -> AttributedString {
+    public static func markdown(from string: String) -> AttributedString {
         return (try? AttributedString(markdown: string)) ?? AttributedString(string)
-    }
-}
-
-extension String {
-    static func formated(key: String.LocalizationValue, bundle: Bundle? = nil, _ arguments: any CVarArg...) -> String {
-        String(format: .localized(key: key, bundle: bundle), arguments)
-    }
-
-    static func localizedAccessibilityLabel(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
-        String(localized: key, table: "Accessibility", bundle: bundle)
-    }
-
-    static func localized(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
-        String(localized: key, table: "Localizable", bundle: bundle)
     }
 }
