@@ -203,6 +203,12 @@ static NSString * const PendingKey = @"Pending";
     return self.folderList.backingList;
 }
 
+- (NSArray<id<LabelType>> *)nonDeletedFolders
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"markedForDeletion == NO"];
+    return [self.folderList.backingList filteredArrayUsingPredicate:predicate];
+}
+
 @end
 
 
