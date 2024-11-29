@@ -41,7 +41,8 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     private(set) var coreDataStack: CoreDataStack!
-    let apiService: APIServiceProtocol
+    private let apiServiceFactory: (_ clientID: String) -> APIServiceProtocol
+    private(set) var apiService: APIServiceProtocol?
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -363,7 +364,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiService: APIServiceProtocol,
+        apiServiceFactory: @escaping @Sendable (_ clientID: String) -> APIServiceProtocol,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -382,7 +383,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies
     ) {
-        self.apiService = apiService
+        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.appVersion = appVersion
         self.flowManager = flowManager
@@ -1085,6 +1086,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        self.apiService = apiServiceFactory(clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

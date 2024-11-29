@@ -21,7 +21,7 @@ public enum AccountsAPIError: Error {
     /// An error occurred while encoding the request body.
     case invalidRequestBody
 
-    /// A request url is not invalid.
+    /// A request url is invalid.
     case invalidURL
 
     /// Unsupported endpoint for API version
