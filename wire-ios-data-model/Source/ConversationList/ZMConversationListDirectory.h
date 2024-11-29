@@ -42,6 +42,7 @@
 
 @property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
 @property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;
+@property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *nonDeletedFolders;
 
 
 /// Refetches all conversation lists and resets the snapshots

@@ -123,6 +123,10 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             }
         }
 
+        applyConversationFilter(conversationFilter)
+    }
+
+    public func applyConversationFilter(_ conversationFilter: ConversationFilter?) {
         // apply the filter to the conversation list
         let conversationFilter = conversationFilter.map { ConversationFilter(mappingFrom: $0) }
         conversationListUI.conversationFilter = conversationFilter
