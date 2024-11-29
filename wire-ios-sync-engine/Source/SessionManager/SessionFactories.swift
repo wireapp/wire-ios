@@ -35,7 +35,6 @@ open class AuthenticatedSessionFactory {
     public init(
         appVersion: String,
         application: ZMApplication,
-        authenticationManager: AuthenticationManagerProtocol,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
         environment: BackendEnvironmentProvider,
@@ -62,19 +61,23 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
-        let apiServiceFactory = { (clientID: String, userID: String) in
 
-            let authenticationManager = AuthenticationManager(
+        let apiServiceFactory = { [environment, minTLSVersion] (clientID: String, userID: UUID) in
+            let wireAssembly = WireAPI.Assembly(
+                userID: userID,
                 clientID: clientID,
-                cookieStorage,
-                networkService: NetworkService(),
+                backendURL: environment.backendURL,
+                backendWebSocketURL: environment.backendWSURL,
+                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                cookieEncryptionKey: UserDefaults.cookiesKey()
             )
 
-            APIService(
-                backendURL: environment.backendURL,
-                // TODO: Use the authentication storage from https://github.com/wireapp/wire-ios/pull/2084
-                authenticationManager: authenticationManager,
-                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+            let authenticationManager = wireAssembly.authenticationManager
+            let networkService = wireAssembly.apiNetworkService
+
+            return APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
             )
         }
         let transportSession = ZMTransportSession(
