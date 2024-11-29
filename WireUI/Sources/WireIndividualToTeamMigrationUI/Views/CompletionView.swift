@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 struct CompletionView: View {
 

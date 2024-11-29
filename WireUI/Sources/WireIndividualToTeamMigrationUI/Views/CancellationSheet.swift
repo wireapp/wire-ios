@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 @MainActor
 internal func cancellationSheetFactory(
