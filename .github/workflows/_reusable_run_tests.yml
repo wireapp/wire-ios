@@ -174,12 +174,20 @@ jobs:
       #       /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
       #       ~/Library/Logs/DiagnosticReports/**
 
+      - name: Get Commit SHA
+        id: get_commit_sha
+        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
       - name: Notify on Wire
         uses: 8398a7/action-slack@v3
         if: ${{ inputs.all }}
         with:
           status: ${{ job.status }}
-          text: "IGNORE TEST: Tests for '${{ inputs.branch }}'\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ $GITHUB_SHA }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: |
+            IGNORE TEST: Tests for '${{ inputs.branch }}'
+            commit: https://github.com/wireapp/wire-ios-mono/commit/${{ env.commit_sha }}
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   # analyze-xcresults:
   #   needs: run-tests
