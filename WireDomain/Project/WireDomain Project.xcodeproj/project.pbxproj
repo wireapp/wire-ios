@@ -81,10 +81,9 @@
 		C9C1020F2CE49A5C00EA273F /* ConversationMLSMessageAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C1020E2CE49A5C00EA273F /* ConversationMLSMessageAddEventProcessorTests.swift */; };
 		C9C102152CE4BE0C00EA273F /* MLSMessageDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102142CE4BE0C00EA273F /* MLSMessageDecryptor.swift */; };
 		C9C102172CE4BE1D00EA273F /* MLSMessageDecryptorError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102162CE4BE1D00EA273F /* MLSMessageDecryptorError.swift */; };
-		C9C102192CE65E6E00EA273F /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102182CE65E6E00EA273F /* MessageType.swift */; };
 		C9C102502CE7B46900EA273F /* MLSMessageDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C1024F2CE7B46900EA273F /* MLSMessageDecryptorTests.swift */; };
-		C9C102812CEB724300EA273F /* MockEncryptedBase64EncodedExternalMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102802CEB724300EA273F /* MockEncryptedBase64EncodedExternalMessage.swift */; };
-		C9C102832CEB729B00EA273F /* MockExternalMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102822CEB729B00EA273F /* MockExternalMessage.swift */; };
+		C9C102812CEB724300EA273F /* MockEncryptedLargeMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102802CEB724300EA273F /* MockEncryptedLargeMessagePayload.swift */; };
+		C9C102832CEB729B00EA273F /* MockDecryptedLargeMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C102822CEB729B00EA273F /* MockDecryptedLargeMessagePayload.swift */; };
 		C9C8FDCE2C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC32C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift */; };
 		C9C8FDCF2C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC52C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift */; };
 		C9C8FDD02C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC62C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift */; };
@@ -92,6 +91,9 @@
 		C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */; };
 		C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */; };
 		C9C8FDD42C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */; };
+		C9D57B5C2CF9AA0200012A0E /* ConversationProtobufMessageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57B5B2CF9AA0200012A0E /* ConversationProtobufMessageProcessor.swift */; };
+		C9D57B5E2CFA0B1D00012A0E /* ConversationProteusMessageAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57B5D2CFA0B1D00012A0E /* ConversationProteusMessageAddEventProcessorTests.swift */; };
+		C9D57B602CFA0C5D00012A0E /* ConversationProtobufMessageProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57B5F2CFA0C5D00012A0E /* ConversationProtobufMessageProcessorTests.swift */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
@@ -239,10 +241,9 @@
 		C9C1020E2CE49A5C00EA273F /* ConversationMLSMessageAddEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMLSMessageAddEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C102142CE4BE0C00EA273F /* MLSMessageDecryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageDecryptor.swift; sourceTree = "<group>"; };
 		C9C102162CE4BE1D00EA273F /* MLSMessageDecryptorError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageDecryptorError.swift; sourceTree = "<group>"; };
-		C9C102182CE65E6E00EA273F /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		C9C1024F2CE7B46900EA273F /* MLSMessageDecryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageDecryptorTests.swift; sourceTree = "<group>"; };
-		C9C102802CEB724300EA273F /* MockEncryptedBase64EncodedExternalMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEncryptedBase64EncodedExternalMessage.swift; sourceTree = "<group>"; };
-		C9C102822CEB729B00EA273F /* MockExternalMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExternalMessage.swift; sourceTree = "<group>"; };
+		C9C102802CEB724300EA273F /* MockEncryptedLargeMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEncryptedLargeMessagePayload.swift; sourceTree = "<group>"; };
+		C9C102822CEB729B00EA273F /* MockDecryptedLargeMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDecryptedLargeMessagePayload.swift; sourceTree = "<group>"; };
 		C9C8FDC32C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDC52C9DBE0E00702B91 /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDC62C9DBE0E00702B91 /* TeamMemberLeaveEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMemberLeaveEventProcessorTests.swift; sourceTree = "<group>"; };
@@ -250,6 +251,9 @@
 		C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalHoldDisableEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9D57B5B2CF9AA0200012A0E /* ConversationProtobufMessageProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtobufMessageProcessor.swift; sourceTree = "<group>"; };
+		C9D57B5D2CFA0B1D00012A0E /* ConversationProteusMessageAddEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProteusMessageAddEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9D57B5F2CFA0C5D00012A0E /* ConversationProtobufMessageProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtobufMessageProcessorTests.swift; sourceTree = "<group>"; };
 		C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigRepositoryTests.swift; sourceTree = "<group>"; };
@@ -488,12 +492,15 @@
 		C96B75282CDB7688003A85EB /* ConversationEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
+				C9C1027F2CEB722300EA273F /* Mock */,
 				C96B75212CDB7688003A85EB /* ConversationAccessUpdateEventProcessorTests.swift */,
 				C96B75222CDB7688003A85EB /* ConversationCreateEventProcessorTests.swift */,
 				C96B75442CDBA0A9003A85EB /* ConversationDeleteEventProcessorTests.swift */,
 				C96B75232CDB7688003A85EB /* ConversationMemberJoinEventTests.swift */,
 				C96B75242CDB7688003A85EB /* ConversationMemberLeaveEventTests.swift */,
 				C9C1020E2CE49A5C00EA273F /* ConversationMLSMessageAddEventProcessorTests.swift */,
+				C9D57B5F2CFA0C5D00012A0E /* ConversationProtobufMessageProcessorTests.swift */,
+				C9D57B5D2CFA0B1D00012A0E /* ConversationProteusMessageAddEventProcessorTests.swift */,
 				C96B75252CDB7688003A85EB /* ConversationMemberUpdateEventProcessorTests.swift */,
 				C96B75262CDB7688003A85EB /* ConversationProtocolUpdateEventProcessorTests.swift */,
 				C96B75272CDB7688003A85EB /* ConversationReceiptModeUpdateEventProcessorTests.swift */,
@@ -572,7 +579,6 @@
 			isa = PBXGroup;
 			children = (
 				C98433EE2CCB7EE6009723D4 /* SystemMessageType.swift */,
-				C9C102182CE65E6E00EA273F /* MessageType.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -580,7 +586,6 @@
 		C98433F32CCBC26E009723D4 /* LocalStores */ = {
 			isa = PBXGroup;
 			children = (
-				C9C1027F2CEB722300EA273F /* Mock */,
 				C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */,
 			);
 			path = LocalStores;
@@ -665,10 +670,11 @@
 		C9C1027F2CEB722300EA273F /* Mock */ = {
 			isa = PBXGroup;
 			children = (
-				C9C102802CEB724300EA273F /* MockEncryptedBase64EncodedExternalMessage.swift */,
-				C9C102822CEB729B00EA273F /* MockExternalMessage.swift */,
+				C9C102802CEB724300EA273F /* MockEncryptedLargeMessagePayload.swift */,
+				C9C102822CEB729B00EA273F /* MockDecryptedLargeMessagePayload.swift */,
 			);
-			path = Mock;
+			name = Mock;
+			path = ../../LocalStores/Mock;
 			sourceTree = "<group>";
 		};
 		C9C8FDC42C9DBE0E00702B91 /* FeatureConfigEventProcessor */ = {
@@ -785,6 +791,7 @@
 				EEAD09FF2C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift */,
 				EEAD0A012C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift */,
 				EEAD0A032C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift */,
+				C9D57B5B2CF9AA0200012A0E /* ConversationProtobufMessageProcessor.swift */,
 				EEAD0A052C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift */,
 				EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */,
 				EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */,
@@ -1083,7 +1090,6 @@
 				C96B75432CDB8E03003A85EB /* NSManagedObjectContext.swift in Sources */,
 				C99322E32C986E3A0065E10F /* ConversationModelMappings.swift in Sources */,
 				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
-				C9C102192CE65E6E00EA273F /* MessageType.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
 				EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */,
 				C98433E92CCA86CA009723D4 /* MessageLocalStore.swift in Sources */,
@@ -1127,6 +1133,7 @@
 				C96B75482CDBA10F003A85EB /* SystemMessage.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
 				C99322E92C986E3A0065E10F /* ConversationLabelsRepositoryError.swift in Sources */,
+				C9D57B5C2CF9AA0200012A0E /* ConversationProtobufMessageProcessor.swift in Sources */,
 				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
 				C99322DB2C986E3A0065E10F /* FeatureConfigModelMappings.swift in Sources */,
 				C97C01A52CB80F54000683C5 /* UserClientsRepository.swift in Sources */,
@@ -1162,11 +1169,13 @@
 				C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */,
 				C9841A1F2CA309310062A834 /* MockFeatureConfigRepositoryProtocol.swift in Sources */,
 				C97C015C2CB40038000683C5 /* UserPropertiesSetEventProcessorTests.swift in Sources */,
+				C9D57B602CFA0C5D00012A0E /* ConversationProtobufMessageProcessorTests.swift in Sources */,
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
+				C9D57B5E2CFA0B1D00012A0E /* ConversationProteusMessageAddEventProcessorTests.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
 				C96B75452CDBA0A9003A85EB /* ConversationDeleteEventProcessorTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
-				C9C102832CEB729B00EA273F /* MockExternalMessage.swift in Sources */,
+				C9C102832CEB729B00EA273F /* MockDecryptedLargeMessagePayload.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
 				C9C1020F2CE49A5C00EA273F /* ConversationMLSMessageAddEventProcessorTests.swift in Sources */,
@@ -1175,7 +1184,7 @@
 				C97C013D2CAD7D69000683C5 /* UserPropertiesDeleteEventProcessorTests.swift in Sources */,
 				C97C01502CB01BDF000683C5 /* OneOnOneResolverTests.swift in Sources */,
 				C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */,
-				C9C102812CEB724300EA273F /* MockEncryptedBase64EncodedExternalMessage.swift in Sources */,
+				C9C102812CEB724300EA273F /* MockEncryptedLargeMessagePayload.swift in Sources */,
 				C9C8FDD12C9DBE0E00702B91 /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
 				C97C01542CB04626000683C5 /* UserDeleteEventProcessorTests.swift in Sources */,
 				C9C8FDCE2C9DBE0E00702B91 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */,

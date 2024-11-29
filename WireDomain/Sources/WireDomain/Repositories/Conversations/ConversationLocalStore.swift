@@ -306,13 +306,28 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async -> MLSGroupID?
 
-    /// Stores the commit pending proposal date locally.
-    /// - Parameter commitPendingProposalDate: The date to update.
-    /// - Parameter conversation: The conversation to update the `commitPendingProposalDate` flag for.
+    /// Commits pending proposals for a given conversation.
+    /// - Parameter conversation: The conversation to update the `date` flag for.
+    /// - Parameter date: The date to update.
+    /// - Parameter commitDelay: The commit delay.
 
-    func storeConversation(
-        commitPendingProposalDate: Date,
-        conversation: ZMConversation
+    func commitPendingProposals(
+        conversation: ZMConversation,
+        date: Date,
+        commitDelay: UInt64
+    ) async
+    
+    func updateSecurityLevelAfterReceivingMessage(
+        conversation: ZMConversation,
+        genericMessage: GenericMessage,
+        date: Date
+    ) async
+    
+    func addParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        in conversation: ZMConversation,
+        date: Date
     ) async
 }
 
@@ -642,15 +657,59 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mlsStatus == .ready
         }
     }
-
-    public func storeConversation(
-        commitPendingProposalDate: Date,
-        conversation: ZMConversation
+    
+    public func commitPendingProposals(
+        conversation: ZMConversation,
+        date: Date,
+        commitDelay: UInt64
     ) async {
+        let scheduledDate = date + TimeInterval(commitDelay)
+
         await context.perform {
-            conversation.commitPendingProposalDate = commitPendingProposalDate
+            conversation.commitPendingProposalDate = scheduledDate
+        }
+
+        mlsService.commitPendingProposalsIfNeeded()
+    }
+    
+    public func updateSecurityLevelAfterReceivingMessage(
+        conversation: ZMConversation,
+        genericMessage: GenericMessage,
+        date: Date
+    ) async {
+        // Update the legal hold state in the conversation
+        await context.perform {
+            conversation.updateSecurityLevelIfNeededAfterReceiving(
+                message: genericMessage,
+                timestamp: date
+            )
         }
     }
+    
+    public func addParticipant(
+        participantID: UUID,
+        participantDomain: String?,
+        in conversation: ZMConversation,
+        date: Date
+    ) async {
+        
+        // Verifies that a sender of an update event is part of the conversation. If they are not,
+        // it means that our local state is out of sync and we need to update the list of participants.
+        guard let participant = try? await userLocalStore.fetchUser(
+            id: participantID,
+            domain: participantDomain
+        ) else {
+            return
+        }
+        
+        await context.perform {
+            conversation.addParticipantAndSystemMessageIfMissing(
+                participant,
+                date: date
+            )
+        }
+    }
+    
 
     public func conversationMutedMessageTypes(
         _ conversation: ZMConversation

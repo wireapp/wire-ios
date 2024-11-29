@@ -27,14 +27,6 @@ public protocol MessageRepositoryProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-
-    /// Adds a message to a given conversation.
-    /// - parameter messageType: The type of message to add (MLS or Proteus)
-
-    func addMessage(
-        _ messageType: MessageType
-    ) async
-
 }
 
 public class MessageRepository: MessageRepositoryProtocol {
@@ -63,89 +55,6 @@ public class MessageRepository: MessageRepositoryProtocol {
             messageType: messageType,
             conversationID: conversationID,
             conversationDomain: conversationDomain
-        )
-    }
-
-    public func addMessage(
-        _ messageType: MessageType
-    ) async {
-        switch messageType {
-        case .mls(let decryptedMessages, let conversationID, let conversationDomain, let senderID, let senderDomain, let date):
-
-            await addMLSClientMessage(
-                decryptedMessages: decryptedMessages,
-                conversation: (conversationID, conversationDomain),
-                sender: (senderID, senderDomain),
-                date: date
-            )
-
-        case .proteus(let message, let messageExternalData, let conversationID, let conversationDomain, let senderID, let senderDomain, let senderClientID, let recipientClientID, let date):
-
-            await addProteusMessage(
-                message,
-                externalData: messageExternalData,
-                conversation: (conversationID, conversationDomain),
-                sender: (senderID, senderDomain),
-                senderClientID: senderClientID,
-                recipientClientID: recipientClientID,
-                date: date
-            )
-        }
-    }
-
-    // MARK: - Private
-
-    private func addProteusMessage(
-        _ message: String,
-        externalData: String?,
-        conversation: (id: UUID, domain: String),
-        sender: (id: UUID, domain: String),
-        senderClientID: String,
-        recipientClientID: String,
-        date: Date
-    ) async {
-        guard let conversation = await conversationRepository.fetchConversation(
-            id: conversation.id,
-            domain: conversation.domain
-        ) else {
-            return WireLogger.proteus.error(
-                "failed to add proteus message: conversation not found in db"
-            )
-        }
-
-        await localStore.addProteusMessage(
-            message,
-            externalData: externalData,
-            conversation: conversation,
-            senderID: sender.id,
-            senderDomain: sender.domain,
-            senderClientID: senderClientID,
-            recipientClientID: recipientClientID,
-            date: date
-        )
-    }
-
-    private func addMLSClientMessage(
-        decryptedMessages: [(message: String, senderClientID: String?)],
-        conversation: (id: UUID, domain: String),
-        sender: (id: UUID, domain: String),
-        date: Date?
-    ) async {
-        guard let conversation = await conversationRepository.fetchConversation(
-            id: conversation.id,
-            domain: conversation.domain
-        ) else {
-            return WireLogger.mls.error(
-                "failed to add mls message: conversation not found in db"
-            )
-        }
-
-        await localStore.addMLSMessages(
-            decryptedMessages: decryptedMessages,
-            mlsConversation: conversation,
-            senderID: sender.id,
-            senderDomain: sender.domain,
-            date: date
         )
     }
 

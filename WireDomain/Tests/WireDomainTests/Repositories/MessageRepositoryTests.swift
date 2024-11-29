@@ -79,75 +79,10 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertEqual(localStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count, 1)
     }
 
-    func testAddMLSMessageToConversation_It_Invokes_Conversation_Repo_And_Local_Store_Methods() async {
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createMLSConversation(in: context)
-        }
-
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        localStore.addMLSMessagesDecryptedMessagesMlsConversationSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _ in }
-
-        // When
-
-        await sut.addMessage(
-            Scaffolding.mlsMessage
-        )
-
-        // Then
-
-        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.addMLSMessagesDecryptedMessagesMlsConversationSenderIDSenderDomainDate_Invocations.count, 1)
-    }
-
-    func testAddProteusMessageToConversation_It_Invokes_Conversation_Repo_And_Local_Store_Methods() async {
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createMLSConversation(in: context)
-        }
-
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        localStore.addProteusMessageExternalDataConversationSenderIDSenderDomainSenderClientIDRecipientClientIDDate_MockMethod = { _, _, _, _, _, _, _, _ in }
-
-        // When
-
-        await sut.addMessage(
-            Scaffolding.proteusMessage
-        )
-
-        // Then
-
-        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(localStore.addProteusMessageExternalDataConversationSenderIDSenderDomainSenderClientIDRecipientClientIDDate_Invocations.count, 1)
-    }
-
     private enum Scaffolding {
 
         static let conversationID = UUID()
         static let domain = "domain.com"
-
-        static let mlsMessage = MessageType.mls(
-            decryptedMessages: [(message: "Test", senderClientID: UUID.mockID1.uuidString)],
-            conversationID: conversationID,
-            conversationDomain: domain,
-            senderID: .mockID2,
-            senderDomain: domain,
-            date: .distantPast
-        )
-
-        static let proteusMessage = MessageType.proteus(
-            message: "Test",
-            externalData: nil,
-            conversationID: .mockID1,
-            conversationDomain: domain,
-            senderID: .mockID2,
-            senderDomain: domain,
-            senderClientID: UUID.mockID6.uuidString,
-            recipientClientID: UUID.mockID5.uuidString,
-            date: .distantPast
-        )
 
     }
 

@@ -139,14 +139,11 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 )
 
             case .proposal(let commitDelay):
-                let scheduledDate = (date ?? Date.now) + TimeInterval(commitDelay)
-
-                await conversationLocalStore.storeConversation(
-                    commitPendingProposalDate: scheduledDate,
-                    conversation: mlsConversation
+                await conversationLocalStore.commitPendingProposals(
+                    conversation: mlsConversation,
+                    date: date ?? .now,
+                    commitDelay: commitDelay
                 )
-
-                mlsService.commitPendingProposalsIfNeeded()
             }
         }
 

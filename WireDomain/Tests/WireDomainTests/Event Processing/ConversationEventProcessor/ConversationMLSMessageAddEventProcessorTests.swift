@@ -19,33 +19,70 @@
 @testable import WireAPI
 @testable import WireDomain
 import WireDomainSupport
+import WireDataModel
+import WireDataModelSupport
 import XCTest
 
 final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
     private var sut: ConversationMLSMessageAddEventProcessor!
-    private var repository: MockMessageRepositoryProtocol!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var messageLocalStore: MockMessageLocalStoreProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
+    private var protobufMessageProcessor: MockConversationProtobufMessageProcessorProtocol!
+    
+    private var coreDataStack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+
+    private var context: NSManagedObjectContext {
+        coreDataStack.syncContext
+    }
 
     override func setUp() async throws {
-        try await super.setUp()
-        repository = MockMessageRepositoryProtocol()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        coreDataStack = try await coreDataStackHelper.createStack()
+        
+        conversationLocalStore = MockConversationLocalStoreProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
+        protobufMessageProcessor = MockConversationProtobufMessageProcessorProtocol()
+        
         sut = ConversationMLSMessageAddEventProcessor(
-            repository: repository
+            conversationLocalStore: conversationLocalStore,
+            messageLocalStore: messageLocalStore,
+            userLocalStore: userLocalStore,
+            protobufMessageProcessor: protobufMessageProcessor
         )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
-        repository = nil
+        conversationLocalStore = nil
+        messageLocalStore = nil
+        userLocalStore = nil
+        modelHelper = nil
+        coreDataStack = nil
         sut = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Add_Message_Repo_Method() async throws {
+    func testProcessEvent_It_Invokes_Local_Stores_And_Protobuf_Processor_Methods() async throws {
         // Mock
+        
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
 
-        repository.addMessage_MockMethod = { _ in }
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
+        conversationLocalStore.addParticipantParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
+        messageLocalStore.canAddMessageConversationSenderIDLogAttributes_MockValue = true
+        protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
+        
 
         // When
 
@@ -53,7 +90,11 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.addMessage_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderIDLogAttributes_Invocations.count, 1)
+        XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.addParticipantParticipantIDParticipantDomainInDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {
@@ -62,7 +103,10 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             senderID: UserID(uuid: UUID(), domain: "domain.com"),
             subconversation: "",
             message: "",
-            timestamp: .now
+            timestamp: .now,
+            decryptedMessages: [.init(message: Scaffolding.base64EncodedString, senderClientID: UUID.mockID1.uuidString)]
         )
+        
+        static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

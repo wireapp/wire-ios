@@ -17,6 +17,8 @@
 //
 
 import WireAPI
+import WireSystem
+import WireDataModel
 
 /// Process conversation mls message add events.
 
@@ -32,26 +34,126 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
 
-    let repository: any MessageRepositoryProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageLocalStore: any MessageLocalStoreProtocol
+    let userLocalStore: any UserLocalStoreProtocol
+    let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
 
     func processEvent(_ event: ConversationMLSMessageAddEvent) async throws {
-        let message = event.message
         let conversationID = event.conversationID
         let senderID = event.senderID
-        let subconversation = event.subconversation
         let date = event.timestamp
+        let decryptedMessages = event.decryptedMessages
+        
+        for decryptedMessage in decryptedMessages {
+            await processDecryptedMessage(
+                decryptedMessage,
+                conversationID: conversationID,
+                senderID: senderID,
+                date: date
+            )
+        }
+    }
+    
+    private func processDecryptedMessage(
+        _ decryptedMessage: ConversationMLSMessageAddEvent.DecryptedMessage,
+        conversationID: ConversationID,
+        senderID: UserID,
+        date: Date?
+    ) async {
+        guard let conversation = await conversationLocalStore.fetchConversation(
+            id: conversationID.uuid,
+            domain: conversationID.domain
+        ) else {
+            return WireLogger.proteus.error(
+                "failed to add MLS message: conversation not found in db"
+            )
+        }
+        
+        let logAttributes: LogAttributes = [
+            .messageType: "conversation.mls-message-add",
+            .conversationId: conversationID.uuid.safeForLoggingDescription
+        ]
+        
+        // Ensure is self conversation, sender is self user and conversation is not read-only
+        guard await messageLocalStore.canAddMessage(
+            conversation: conversation,
+            senderID: senderID.uuid,
+            logAttributes: logAttributes
+        ) else {
+            return
+        }
+        
+        // Read protobuf message
+        let (protobufMessage) = await readProtobufMessage(
+            from: decryptedMessage.message
+        )
+        
+        guard let (genericMessage, content) = protobufMessage else {
+            WireLogger.eventProcessing.warn(
+                "Can't read protobuf, abort processing",
+                attributes: logAttributes
+            )
+            
+            return await addInvalidSystemMessage(
+                senderID: senderID,
+                conversationID: conversationID,
+                date: date ?? .now
+            )
+        }
+        
+        await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
+            conversation: conversation,
+            genericMessage: genericMessage,
+            date: date ?? .now
+        )
+        
+        await conversationLocalStore.addParticipant(
+            participantID: senderID.uuid,
+            participantDomain: senderID.domain,
+            in: conversation,
+            date: date?.addingTimeInterval(-0.01) ?? .now
+        )
 
-        let decryptedMessages = event.decryptedMessages.map {
-            (message: $0.message, senderClientID: $0.senderClientID)
+        // Process protobuf message
+        await protobufMessageProcessor.processProtobufMessage(
+            genericMessage,
+            content: content,
+            conversation: conversation,
+            conversationID: conversationID,
+            senderID: senderID,
+            senderClientID: decryptedMessage.senderClientID,
+            logAttributes: logAttributes,
+            date: date ?? .now
+        )
+    }
+    
+    private func readProtobufMessage(
+        from base64Message: String
+    ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
+        let genericMessage = GenericMessage(withBase64String: base64Message)
+
+        guard let genericMessage, let content = genericMessage.content else {
+            return nil
         }
 
-        await repository.addMessage(
-            .mls(decryptedMessages: decryptedMessages,
-                 conversationID: conversationID.uuid,
-                 conversationDomain: conversationID.domain,
-                 senderID: senderID.uuid,
-                 senderDomain: senderID.domain,
-                 date: date)
+        return (genericMessage, content)
+    }
+    
+    private func addInvalidSystemMessage(
+        senderID: UserID,
+        conversationID: ConversationID,
+        date: Date
+    ) async {
+        let systemMessageType: SystemMessageType = .invalid(
+            sender: (senderID.uuid, senderID.domain),
+            date: date
+        )
+        
+        await messageLocalStore.addSystemMessage(
+            messageType: systemMessageType,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain
         )
     }
 

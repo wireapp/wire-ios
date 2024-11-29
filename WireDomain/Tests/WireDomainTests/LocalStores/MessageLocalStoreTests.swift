@@ -61,51 +61,7 @@ final class MessageLocalStoreTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testAddMLSMessage_It_Adds_Message_To_Conversation() async throws {
-        // Mock
-
-        let (mlsConversation, selfUser, user) = await context.perform { [self] in
-            let conversation = modelHelper.createMLSConversation(
-                in: context
-            )
-
-            let selfUser = modelHelper.createSelfUser(
-                id: .mockID1,
-                domain: nil,
-                in: context
-            )
-
-            let user = modelHelper.createUser(in: context)
-
-            return (conversation, selfUser, user)
-        }
-
-        let decryptedMessages = [(Scaffolding.base64EncodedString, Scaffolding.senderClientID.uuidString)]
-        userLocalStore.fetchSelfUser_MockValue = selfUser
-        userLocalStore.fetchUserIdDomain_MockValue = user
-        conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-
-        // When
-
-        await sut.addMLSMessages(
-            decryptedMessages: decryptedMessages,
-            mlsConversation: mlsConversation,
-            senderID: .mockID1,
-            senderDomain: Scaffolding.domain,
-            date: .now
-        )
-
-        // Then
-
-        let expectedMessageText = "Everything"
-
-        await internalTest_assertConversationLastMessage(
-            expectedMessageText: expectedMessageText,
-            conversation: mlsConversation
-        )
-    }
-
-    func testAddProteusMessage_It_Adds_Message_To_Conversation() async throws {
+    func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
         // Mock
 
         let (groupConversation, selfUser, user) = await context.perform { [self] in
@@ -127,74 +83,26 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-
+        
+        // Given a regular message to add to a conversation
+        let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
+        
         // When
 
-        await sut.addProteusMessage(
-            Scaffolding.base64EncodedString,
-            externalData: nil,
-            conversation: groupConversation,
+        await sut.addTextMessage(
+            genericMessage,
+            in: groupConversation,
             senderID: .mockID1,
             senderDomain: Scaffolding.domain,
             senderClientID: Scaffolding.senderClientID.uuidString,
-            recipientClientID: UUID.mockID2.uuidString,
-            date: .now
+            date: .now,
+            logAttributes: LogAttributes()
         )
 
         // Then
 
         let expectedMessageText = "Everything"
-
-        await internalTest_assertConversationLastMessage(
-            expectedMessageText: expectedMessageText,
-            conversation: groupConversation
-        )
-    }
-
-    func testAddProteusMessage_It_Adds_Big_Payload_Message_To_Conversation() async throws {
-        // Mock
-
-        let (groupConversation, selfUser, user) = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(
-                in: context
-            )
-
-            let selfUser = modelHelper.createSelfUser(
-                id: .mockID1,
-                domain: nil,
-                in: context
-            )
-
-            let user = modelHelper.createUser(in: context)
-
-            return (conversation, selfUser, user)
-        }
-
-        // `External` message content is used if original message results in large payload, that would not be accepted by backend. Regular messages are encrypted multiple times (per recipient) and in case of multiple participants even quite small message can generate huge payload. In that case we want to encrypt original message with symmetric encryption and only send a key to all participants.
-
-        let externalMessage = "CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx"
-        let externalData = Scaffolding.mockEncryptedExternalMessage
-        userLocalStore.fetchSelfUser_MockValue = selfUser
-        userLocalStore.fetchUserIdDomain_MockValue = user
-        conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-
-        // When
-
-        await sut.addProteusMessage(
-            externalMessage,
-            externalData: externalData,
-            conversation: groupConversation,
-            senderID: .mockID1,
-            senderDomain: Scaffolding.domain,
-            senderClientID: Scaffolding.senderClientID.uuidString,
-            recipientClientID: UUID.mockID2.uuidString,
-            date: .now
-        )
-
-        // Then
-
-        let expectedMessageText = Scaffolding.externalMessageText
-
+        
         await internalTest_assertConversationLastMessage(
             expectedMessageText: expectedMessageText,
             conversation: groupConversation
@@ -221,30 +129,26 @@ final class MessageLocalStoreTests: XCTestCase {
         }
 
         userLocalStore.fetchUserIdDomain_MockValue = user
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = user
 
-        await withTaskGroup(of: Void.self) { taskGroup in
-            for messageType in Scaffolding.allSystemMessageTypes {
-                taskGroup.addTask { [self] in
-
-                    let conversation = await makeConversation(creator: user)
-                    conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-
-                    // When
-
-                    await sut.addSystemMessage(
-                        messageType: messageType,
-                        conversationID: UUID(),
-                        conversationDomain: Scaffolding.domain1
-                    )
-
-                    // Then
-
-                    await internalTest_assertConversationLastSystemMessages(
-                        messageType: messageType,
-                        conversation: conversation
-                    )
-                }
-            }
+        for messageType in Scaffolding.allSystemMessageTypes {
+            let conversation = await makeConversation(creator: user)
+            conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+            
+            // When
+            
+            await sut.addSystemMessage(
+                messageType: messageType,
+                conversationID: UUID(),
+                conversationDomain: Scaffolding.domain1
+            )
+            
+            // Then
+            
+            await internalTest_assertConversationLastSystemMessages(
+                messageType: messageType,
+                conversation: conversation
+            )
         }
     }
 
@@ -307,6 +211,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.invalid])
         case .decryptionFailed:
             (messagesCount: 1, [.decryptionFailed_RemoteIdentityChanged])
+        case .sessionReset:
+            (messagesCount: 1, [.sessionReset])
         }
     }
 
@@ -335,7 +241,8 @@ final class MessageLocalStoreTests: XCTestCase {
             .participantRemoved(participant: (id: userID, domain: domain1), sender: (id: otherUserID, domain: domain1), date: date),
             .participantsRemovedAnonymously(participants: [(id: userID, domain: domain1)], date: date),
             .invalid(sender: (id: userID, domain: domain1), date: date),
-            .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, errorCode: 4, date: date)
+            .decryptionFailed(sender: (id: userID, domain: domain1), senderClientID: otherUserID.uuidString, errorCode: 4, date: date),
+            .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date)
         ]
     }
 
