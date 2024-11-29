@@ -111,15 +111,13 @@ public struct SearchRequest {
     let searchOptions: SearchOptions
 
     public init(
-        query: String,
+        query: Query,
+        searchDomain: String?,
         searchOptions: SearchOptions,
-        team: Team? = nil,
-        isOtherDomainAllowed: Bool,
-        selfDomain: String
+        team: Team? = nil
     ) {
-        let (query, searchDomain) = Self.parseQuery(query)
         self.query = query
-        self.searchDomain = isOtherDomainAllowed ? searchDomain : selfDomain
+        self.searchDomain = searchDomain
         self.searchOptions = searchOptions
         self.team = team
     }
@@ -130,7 +128,7 @@ public struct SearchRequest {
 
 }
 
-private extension SearchRequest {
+extension SearchRequest {
 
     static let maxQueryLength = 200
 

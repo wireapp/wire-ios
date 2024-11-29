@@ -183,8 +183,7 @@ final class AddParticipantsViewController: UIViewController {
         self.userSession = userSession
 
         self.viewModel = AddParticipantsViewModel(
-            with: context,
-            isFederationSearchAllowedUseCase: userSession.makeIsFederationSearchAllowedUseCase())
+            with: context)
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -241,7 +240,7 @@ final class AddParticipantsViewController: UIViewController {
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
+        searchResultsViewController.searchContactList()
         searchResultsViewController.delegate = self
 
         userSelection.add(observer: self)
@@ -369,8 +368,7 @@ final class AddParticipantsViewController: UIViewController {
                 selfUser: userSession.selfUser
             )
             viewModel = AddParticipantsViewModel(
-                with: .create(updated),
-                isFederationSearchAllowedUseCase: userSession.makeIsFederationSearchAllowedUseCase())
+                with: .create(updated))
         }
 
         // Enable button & collection view content inset
@@ -455,12 +453,11 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.searchForServices(withQuery: searchHeaderViewController.tokenField.filterText)
         case (.people, false):
             searchResultsViewController.mode = .list
-            searchResultsViewController.searchContactList(isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
+            searchResultsViewController.searchContactList()
         case (.people, true):
             searchResultsViewController.mode = .search
             searchResultsViewController.searchForLocalUsers(
-                withQuery: searchHeaderViewController.tokenField.filterText,
-                isOtherDomainAllowed: viewModel.canAddUsersWithOtherDomains)
+                withQuery: searchHeaderViewController.tokenField.filterText)
         }
     }
 

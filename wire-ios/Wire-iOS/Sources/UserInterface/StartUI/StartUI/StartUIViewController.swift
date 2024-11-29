@@ -67,10 +67,6 @@ final class StartUIViewController: UIViewController {
             userSession.mlsFeature.config.defaultProtocol != .mls
     }
 
-    var canSearchUsersWithOtherDomains: Bool {
-        userSession.makeIsFederationSearchAllowedUseCase().invoke(conversationProtocol: nil)
-    }
-
     // MARK: - Init
 
     private var navigationBarTitle: String? {
@@ -176,7 +172,7 @@ final class StartUIViewController: UIViewController {
 
         createConstraints()
         updateActionBar()
-        searchResults.searchContactList(isOtherDomainAllowed: canSearchUsersWithOtherDomains)
+        searchResults.searchContactList()
 
         view.accessibilityViewIsModal = true
     }
@@ -246,10 +242,10 @@ final class StartUIViewController: UIViewController {
         if groupSelector.group == .people {
             if searchString.isEmpty {
                 searchResults.mode = .list
-                searchResults.searchContactList(isOtherDomainAllowed: canSearchUsersWithOtherDomains)
+                searchResults.searchContactList()
             } else {
                 searchResults.mode = .search
-                searchResults.searchForUsers(withQuery: searchString, isOtherDomainAllowed: canSearchUsersWithOtherDomains)
+                searchResults.searchForUsers(withQuery: searchString)
             }
         } else {
             searchResults.searchForServices(withQuery: searchString)

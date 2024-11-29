@@ -46,10 +46,3 @@ extension NSAttributedString {
         return mutableCopy
     }
 }
-
-extension String {
-
-    func trim() -> String {
-        trimmingCharacters(in: .whitespaces)
-    }
-}

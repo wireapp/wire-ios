@@ -23,14 +23,11 @@ import WireSyncEngine
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
-    let isFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol
 
     init(
-        with context: AddParticipantsViewController.Context,
-        isFederationSearchAllowedUseCase: IsFederationSearchAllowedUseCaseProtocol
+        with context: AddParticipantsViewController.Context
     ) {
         self.context = context
-        self.isFederationSearchAllowedUseCase = isFederationSearchAllowedUseCase
     }
 
     var botCanBeAdded: Bool {
@@ -60,10 +57,6 @@ struct AddParticipantsViewModel {
         case let .add(conversation) where conversation.conversationType == .group: conversation as? ZMConversation
         default: nil
         }
-    }
-
-    var canAddUsersWithOtherDomains: Bool {
-        isFederationSearchAllowedUseCase.invoke(conversationProtocol: filterConversation?.messageProtocol)
     }
 
     var showsConfirmButton: Bool {

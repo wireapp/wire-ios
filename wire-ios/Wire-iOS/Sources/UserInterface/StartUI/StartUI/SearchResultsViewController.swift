@@ -145,16 +145,9 @@ final class SearchResultsViewController: UIViewController {
         return view
     }()
 
-    private lazy var searchDirectory: SearchDirectory? = {
-        guard let session = userSession as? ZMUserSession else {
-            return nil
-        }
-
-        return SearchDirectory(userSession: session)
-    }()
-
     let userSelection: UserSelection
     let userSession: UserSession
+    let searchUsersUseCase: SearchUsersUseCaseProtocol
 
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
@@ -193,10 +186,6 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    deinit {
-        searchDirectory?.tearDown()
-    }
-
     init(
         userSelection: UserSelection,
         userSession: UserSession,
@@ -210,6 +199,7 @@ final class SearchResultsViewController: UIViewController {
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
+        self.searchUsersUseCase = SearchUsersUseCase(userSession: userSession)
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -264,47 +254,31 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
-        searchDirectory?.updateIncompleteMetadataIfNeeded()
-    }
-
-    @objc
-    func cancelPreviousSearch() {
-        pendingSearchTask?.cancel()
-        pendingSearchTask = nil
     }
 
     private func performSearch(
         query: String,
-        options: SearchOptions,
-        isOtherDomainAllowed: Bool
+        options: SearchOptions
     ) {
-        let selfUser = userSession.selfUser
-
         pendingSearchTask?.cancel()
         searchResultsView.emptyResultContainer.isHidden = true
 
-        var options = options
-        options.updateForSelfUserTeamRole(selfUser: selfUser)
-
-        let request = SearchRequest(
-            query: query.trim(),
-            searchOptions: options,
-            team: selfUser.membership?.team,
-            isOtherDomainAllowed: isOtherDomainAllowed,
-            selfDomain: selfUser.domain ?? ""
-        )
-
-        if let task = searchDirectory?.perform(request) {
-            task.addResultHandler { [weak self] result, isCompleted in
-                self?.handleSearchResult(result: result, isCompleted: isCompleted)
+        Task {
+            do {
+                let (result, isCompleted) = try await searchUsersUseCase.invoke(
+                    query: query,
+                    options: options,
+                    filterConversation: filterConversation)
+                if !Task.isCancelled {
+                    handleSearchResult(result: result, isCompleted: true)
+                }
+            } catch {
+                print("Search failed with error: \(error.localizedDescription)")
             }
-            task.start()
-
-            pendingSearchTask = task
         }
     }
 
-    func searchForUsers(withQuery query: String, isOtherDomainAllowed: Bool) {
+    func searchForUsers(withQuery query: String) {
         var options: SearchOptions = [
             .conversations,
             .contacts,
@@ -318,25 +292,23 @@ final class SearchResultsViewController: UIViewController {
 
         performSearch(
             query: query,
-            options: options,
-            isOtherDomainAllowed: isOtherDomainAllowed
+            options: options
         )
     }
 
-    func searchForLocalUsers(withQuery query: String, isOtherDomainAllowed: Bool) {
+    func searchForLocalUsers(withQuery query: String) {
         performSearch(
             query: query,
-            options: [.contacts, .teamMembers],
-            isOtherDomainAllowed: isOtherDomainAllowed
+            options: [.contacts, .teamMembers]
         )
     }
 
     func searchForServices(withQuery query: String) {
-        performSearch(query: query, options: [.services], isOtherDomainAllowed: true)
+        performSearch(query: query, options: [.services])
     }
 
-    func searchContactList(isOtherDomainAllowed: Bool) {
-        searchForLocalUsers(withQuery: "", isOtherDomainAllowed: isOtherDomainAllowed)
+    func searchContactList() {
+        searchForLocalUsers(withQuery: "")
     }
 
     var isResultEmpty: Bool = true {
