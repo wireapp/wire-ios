@@ -179,7 +179,7 @@ jobs:
         if: ${{ inputs.all }}
         with:
           status: ${{ job.status }}
-          text: "IGNORE TEST: Tests for '${{ github.ref_name }}'\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "IGNORE TEST: Tests for '${{ inputs.branch }}'\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ $GITHUB_SHA }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
 
   # analyze-xcresults:
   #   needs: run-tests
