@@ -88,12 +88,12 @@ fileprivate extension View {
         self.background {
             if #available(iOS 17.0, *) {
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(.blue, lineWidth: 1)
-                    .fill(.blue.opacity(0.3))
+                    .stroke(ColorTheme.Banners.border.color, lineWidth: 1)
+                    .fill(ColorTheme.Banners.background.color)
             } else {
-                Color.blue.opacity(0.3)
+                ColorTheme.Banners.background.color
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .border(.blue, width: 1)
+                    .border(ColorTheme.Banners.border.color, width: 1)
             }
         }
     }

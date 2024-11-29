@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public extension String {
-    public static func formated(key: String.LocalizationValue, bundle: Bundle? = .module, _ arguments: any CVarArg...) -> String {
+    static func formated(key: String.LocalizationValue, bundle: Bundle? = nil, _ arguments: any CVarArg...) -> String {
         String(format: .localized(key: key, bundle: bundle), arguments)
     }
 
-    public static func localizedAccessibilityLabel(key: String.LocalizationValue, bundle: Bundle? = .module) -> String {
+    static func localizedAccessibilityLabel(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
         String(localized: key, table: "Accessibility", bundle: bundle)
     }
 
@@ -40,11 +40,7 @@ public extension String {
      * ```
      * - note: The default value for `bundle` is `.module`.
      */
-    public static func localized(key: String.LocalizationValue, bundle: Bundle? = .module) -> String {
+    static func localized(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
         String(localized: key, table: "Localizable", bundle: bundle)
     }
-}
-
-func whatever {
-    let string: String = .localized(key: "hey", bundle: .main)
 }
