@@ -182,6 +182,7 @@ jobs:
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
         env:
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+          #GITHUB_STEP_SUMMARY: ${{ GITHUB_STEP_SUMMARY }}
       - name: Archiving Logs
         uses: actions/upload-artifact@v4
         if: failure()
