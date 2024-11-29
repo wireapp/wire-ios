@@ -45,6 +45,15 @@ final class AnyMainCoordinatorTests: XCTestCase {
         XCTAssertEqual(mockMainCoordinator.showConversationList_Invocations.first, .groups)
     }
 
+    func testApplyFilterIsInvoked() {
+        // When
+        sut.applyConversationFilter(.groups)
+
+        // Then
+        XCTAssertEqual(mockMainCoordinator.applyConversationFilter_Invocations.count, 1)
+        XCTAssertEqual(mockMainCoordinator.applyConversationFilter_Invocations.first, .groups)
+    }
+
     func testShowArchiveIsInvoked() async {
         // When
         await sut.showArchive()
