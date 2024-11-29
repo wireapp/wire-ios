@@ -145,9 +145,10 @@ final class SearchResultsViewController: UIViewController {
         return view
     }()
 
-    let userSelection: UserSelection
-    let userSession: UserSession
-    let searchUsersUseCase: SearchUsersUseCaseProtocol
+    private let userSelection: UserSelection
+    private let userSession: UserSession
+    private let searchUsersUseCase: SearchUsersUseCaseProtocol
+    private var pendingSearchTask: Task<Void, Never>?
 
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
@@ -166,7 +167,6 @@ final class SearchResultsViewController: UIViewController {
     let servicesSection: SearchServicesSectionController
     let inviteTeamMemberSection: InviteTeamMemberSection
 
-    var pendingSearchTask: SearchTask?
     var isAddingParticipants: Bool
     let isFederationEnabled: Bool
     var searchGroup: SearchGroup = .people {
@@ -199,7 +199,7 @@ final class SearchResultsViewController: UIViewController {
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
-        self.searchUsersUseCase = SearchUsersUseCase(userSession: userSession)
+        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -260,20 +260,21 @@ final class SearchResultsViewController: UIViewController {
         query: String,
         options: SearchOptions
     ) {
-        pendingSearchTask?.cancel()
         searchResultsView.emptyResultContainer.isHidden = true
+        pendingSearchTask?.cancel()
 
-        Task {
+        pendingSearchTask = Task {
+            guard !Task.isCancelled else { return }
             do {
-                let (result, isCompleted) = try await searchUsersUseCase.invoke(
+                var options = options
+                options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
+                let result = try await searchUsersUseCase.invoke(
                     query: query,
                     options: options,
                     filterConversation: filterConversation)
-                if !Task.isCancelled {
-                    handleSearchResult(result: result, isCompleted: true)
-                }
+                handleSearchResult(result: result, isCompleted: true)
             } catch {
-                print("Search failed with error: \(error.localizedDescription)")
+                WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
             }
         }
     }
@@ -290,17 +291,11 @@ final class SearchResultsViewController: UIViewController {
             options.formUnion(.federated)
         }
 
-        performSearch(
-            query: query,
-            options: options
-        )
+        performSearch(query: query, options: options)
     }
 
     func searchForLocalUsers(withQuery query: String) {
-        performSearch(
-            query: query,
-            options: [.contacts, .teamMembers]
-        )
+        performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
     func searchForServices(withQuery query: String) {

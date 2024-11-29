@@ -96,6 +96,9 @@ public class SearchTask {
         )
     }
 
+    deinit {
+        print("deinit")
+    }
     public init(
         task: Task,
         searchContext: NSManagedObjectContext,
@@ -440,6 +443,7 @@ extension SearchTask {
                         searchUsersCache: self?.searchUsersCache
                     )
                 else {
+                    print(self)
                     self?.completeRemoteSearch()
                     return
                 }

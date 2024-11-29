@@ -619,11 +619,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
         // TODO: should be changed
-//        if isMLSEnabled {
+        if isMLSEnabled {
             fetchFetchBackendMLSPublicKeys()
-//        } else {
-//            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-//        }
+        } else {
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
     }
 
     public func didFetchBackendMLSPublicKeys() {

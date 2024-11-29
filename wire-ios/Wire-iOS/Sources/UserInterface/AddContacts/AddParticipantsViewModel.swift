@@ -19,14 +19,11 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 
 struct AddParticipantsViewModel {
     let context: AddParticipantsViewController.Context
 
-    init(
-        with context: AddParticipantsViewController.Context
-    ) {
+    init(with context: AddParticipantsViewController.Context) {
         self.context = context
     }
 

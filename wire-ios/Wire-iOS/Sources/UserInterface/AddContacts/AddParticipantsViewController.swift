@@ -182,8 +182,7 @@ final class AddParticipantsViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        self.viewModel = AddParticipantsViewModel(
-            with: context)
+        self.viewModel = AddParticipantsViewModel(with: context)
 
         self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
@@ -367,8 +366,7 @@ final class AddParticipantsViewController: UIViewController {
                 encryptionProtocol: mlsFeature.config.defaultProtocol.toMessageProtocol,
                 selfUser: userSession.selfUser
             )
-            viewModel = AddParticipantsViewModel(
-                with: .create(updated))
+            viewModel = AddParticipantsViewModel(with: .create(updated))
         }
 
         // Enable button & collection view content inset
@@ -456,8 +454,7 @@ final class AddParticipantsViewController: UIViewController {
             searchResultsViewController.searchContactList()
         case (.people, true):
             searchResultsViewController.mode = .search
-            searchResultsViewController.searchForLocalUsers(
-                withQuery: searchHeaderViewController.tokenField.filterText)
+            searchResultsViewController.searchForLocalUsers(withQuery: searchHeaderViewController.tokenField.filterText)
         }
     }
 

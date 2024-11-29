@@ -25,54 +25,58 @@ public protocol SearchUsersUseCaseProtocol {
         query: String,
         options: SearchOptions,
         filterConversation: ZMConversation?
-    ) async throws -> (SearchResult, isCompleted: Bool)
+    ) async throws -> SearchResult
 }
 
 public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
-    private let userSession: UserSession
+    private let context: NSManagedObjectContext
+    private let searchDirectory: SearchDirectory?
+    private let isFederationUsageAllowed: Bool
     private var pendingSearchTask: SearchTask?
-
-    private lazy var searchDirectory: SearchDirectory? = {
-        guard let session = userSession as? ZMUserSession else {
-            return nil
-        }
-
-        return SearchDirectory(userSession: session)
-    }()
 
     deinit {
         searchDirectory?.tearDown()
     }
 
-    public init(userSession: UserSession) {
-        self.userSession = userSession
+    public init(
+        context: NSManagedObjectContext,
+        searchDirectory: SearchDirectory?,
+        isFederationUsageAllowed: Bool
+    ) {
+        self.context = context
+        self.searchDirectory = searchDirectory
+        self.isFederationUsageAllowed = isFederationUsageAllowed
     }
 
     public func invoke(
         query: String,
         options: SearchOptions,
         filterConversation: ZMConversation?
-    ) async throws -> (SearchResult, isCompleted: Bool) {
-
+    ) async throws -> SearchResult {
+        searchDirectory?.updateIncompleteMetadataIfNeeded()
         pendingSearchTask?.cancel()
-        let selfUser = userSession.selfUser
-        var options = options
-        options.updateForSelfUserTeamRole(selfUser: selfUser)
+
         let (query, searchDomain) = SearchRequest.parseQuery(query.trim())
+
+        let (selfDomain, team) = await context.perform {
+            let selfUser = ZMUser.selfUser(in: self.context)
+            return (selfUser.domain, selfUser.membership?.team)
+        }
 
         let request = SearchRequest(
             query: query,
-            searchDomain: isOtherDomainSearchAllowed(conversation: filterConversation) ? searchDomain : selfUser.domain,
+            searchDomain: isOtherDomainSearchAllowed(conversation: filterConversation) ? searchDomain : selfDomain,
             searchOptions: options,
-            team: selfUser.membership?.team
+            team: team
         )
-        searchDirectory?.updateIncompleteMetadataIfNeeded()
 
         return try await withCheckedThrowingContinuation { continuation in
             let task = searchDirectory?.perform(request)
             task?.addResultHandler { result, isCompleted in
-                continuation.resume(returning: (result, isCompleted))
+                if isCompleted {
+                    continuation.resume(returning: result)
+                }
             }
             task?.start()
             pendingSearchTask = task
@@ -81,7 +85,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
     private func isOtherDomainSearchAllowed(conversation: ZMConversation?) -> Bool {
         guard let conversation else {
-            return userSession.isFederationUsageAllowed
+            return isFederationUsageAllowed
         }
         return conversation.isAllowedToAddFederatedUsers
     }
@@ -92,7 +96,7 @@ public extension UserSession {
 
     var isFederationUsageAllowed: Bool {
         guard BackendInfo.isMLSEnabled else {
-            // Usage of federation is allowed if MLS is not enabled
+            // If there is no MLS removal key configured,federation search is allowed.
             return true
         }
         return mlsFeature.config.defaultProtocol != .proteus
@@ -104,7 +108,7 @@ private extension ZMConversation {
 
     var isAllowedToAddFederatedUsers: Bool {
         guard BackendInfo.isMLSEnabled else {
-            // Usage of federation is allowed if MLS is not enabled
+            // If there is no MLS removal key configured,federation search is allowed.
             return true
         }
         return messageProtocol != .proteus
