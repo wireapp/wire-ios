@@ -65,6 +65,11 @@ public enum ColorTheme {
         public static let onInverted = UIColor(light: .white, dark: .black)
     }
 
+    public enum Banners {
+        public static let background = Base.primaryVariant
+        public static let border = Base.primary
+    }
+
     public enum Buttons {
 
         enum Primary {
@@ -153,7 +158,7 @@ private extension UIColor {
     }
 }
 
-extension UIColor {
+public extension UIColor {
     var color: Color {
         Color(self)
     }

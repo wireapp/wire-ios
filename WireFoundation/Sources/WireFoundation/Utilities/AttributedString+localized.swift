@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public extension AttributedString {
-    public static func formattedMarkdown(key: String.LocalizationValue, bundle: Bundle? = .module, _ arguments: any CVarArg...) -> AttributedString {
+    static func formattedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil, _ arguments: any CVarArg...) -> AttributedString {
         let string: String = .formated(key: key, bundle: bundle, arguments)
         return .markdown(from: string)
     }
 
-    public static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = .module) -> AttributedString {
+    static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil) -> AttributedString {
         let string: String = .localized(key: key, bundle: bundle)
         return .markdown(from: string)
     }
 
-    public static func markdown(from string: String) -> AttributedString {
+    static func markdown(from string: String) -> AttributedString {
         return (try? AttributedString(markdown: string)) ?? AttributedString(string)
     }
 }
