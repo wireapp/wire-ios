@@ -73,6 +73,8 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         //    return
         // }
 
+        guard isDebug || (level.rawValue <= DDLogLevel.info.rawValue) else { return }
+
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
