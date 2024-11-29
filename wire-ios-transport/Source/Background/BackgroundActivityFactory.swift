@@ -191,7 +191,7 @@ public final class BackgroundActivityFactory: NSObject {
 
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
-        guard let activityManager else {
+        guard activityManager != nil else {
             WireLogger.backgroundActivity.warn(
                 "Handle expiration: failed, activityManager is nil",
                 attributes: .safePublic

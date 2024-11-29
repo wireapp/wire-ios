@@ -65,10 +65,16 @@ extension SessionManager: VoIPPushManagerDelegate {
         WireLogger.calling.info("process pending call events preemptively")
 
         guard
-            let account = accountManager.account(with: accountID),
+            let account = accountManager.account(with: accountID)
+        else {
+            WireLogger.calling.error("failed to process pending call events preemptively: account not found for \(accountID))")
+            return
+        }
+        
+        guard
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
         else {
-            WireLogger.calling.error("failed to process pending call events preemptively")
+            WireLogger.calling.error("failed to process pending call events preemptively: activity not started")
             return
         }
 
