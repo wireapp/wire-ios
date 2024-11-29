@@ -23,6 +23,12 @@ import WireDomainAPI
 import WireFoundation
 
 public class IndividualToTeamMigrationViewController: UIViewController {
+    public enum Action: Sendable {
+        case cancel
+        case completionGoToApp
+        case completionGoToTeamManagement
+    }
+
     enum Step: Sendable {
         case teamPlanSelection(features: [TeamPlanFeature])
         case teamName
@@ -76,12 +82,18 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case toTeamManagement
     }
 
+    let actionCallback: @Sendable (Action) -> Void
     let childController: UINavigationController
     var currentStep: Step
     let features: [TeamPlanFeature]
     let useCase: any IndividualToTeamMigrationUseCase
 
-    public init(features: [TeamPlanFeature], useCase: any IndividualToTeamMigrationUseCase) {
+    public init(
+        features: [TeamPlanFeature],
+        useCase: any IndividualToTeamMigrationUseCase,
+        actionCallback: @escaping @Sendable (Action) -> Void
+    ) {
+        self.actionCallback = actionCallback
         self.currentStep = .teamPlanSelection(features: features)
         self.childController = UINavigationController()
         self.features = features
@@ -109,7 +121,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toCancellationAlert:
             let alert = cancellationSheetFactory(
                 onLeave: { [weak self] in
-                    self?.transition(to: .toApp)
+                    self?.actionCallback(.cancel)
                 }, onContinue: { [weak self] in
                     self?.transition(to: .dismissCancellationAlert)
                 })
@@ -149,9 +161,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             )
             childController.pushViewController(vc, animated: true)
         case .toApp:
-            break
+            actionCallback(.completionGoToApp)
         case .toTeamManagement:
-            break
+            actionCallback(.completionGoToTeamManagement)
         }
     }
 }
