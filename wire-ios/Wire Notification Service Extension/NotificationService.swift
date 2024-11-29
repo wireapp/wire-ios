@@ -29,7 +29,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        WireAnalytics.Datadog.enable()
+        WireAnalytics.setup()
     }
 
     // MARK: - Methods

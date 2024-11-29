@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
 @testable import WireDomain
 
@@ -157,9 +158,9 @@ final class MessageLocalStoreTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let conversationID = UUID()
-        static let userID = UUID()
-        static let otherUserID = UUID()
+        static let conversationID = UUID.mockID1
+        static let userID = UUID.mockID2
+        static let otherUserID = UUID.mockID3
         static let domain1 = "domain1.com"
         static let domain2 = "domain2.com"
         static let date = Date.now

@@ -20,10 +20,9 @@ import XCTest
 
 @testable import WireSystem
 
-class ZMLogTests: XCTestCase {
+final class ZMLogTests: XCTestCase {
 
     override func setUp() {
-        super.setUp()
         ZMSLog.debug_resetAllLevels()
         ZMSLog.clearLogs()
     }
@@ -32,7 +31,6 @@ class ZMLogTests: XCTestCase {
         ZMSLog.debug_resetAllLevels()
         ZMSLog.stopRecording()
         ZMSLog.removeAllLogHooks()
-        super.tearDown()
     }
 
     func testNumberOfPreviousZipLogURLs() {
@@ -207,6 +205,7 @@ extension ZMLogTests {
 
 extension ZMLogTests {
 
+    @MainActor
     func testThatLogHookIsCalledWithError() {
 
         // GIVEN
@@ -255,6 +254,7 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token)
     }
 
+    @MainActor
     func testThatLogHookIsCalledWithWarning() {
 
         // GIVEN
@@ -304,6 +304,7 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token)
     }
 
+    @MainActor
     func testThatLogHookIsCalledWithDebugIfEnabled() {
 
         // GIVEN
@@ -362,6 +363,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
     }
 
+    @MainActor
     func testThatCallsMultipleLogHook() {
 
         // GIVEN

@@ -380,7 +380,7 @@ class ConversationListSnapshot: NSObject {
         notification.post()
     }
 
-    func logMessage(
+    private func logMessage(
         for conversationChanges: [ConversationChangeInfo],
         listChanges: ConversationListChangeInfo?
     ) -> String {

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -281,7 +281,6 @@
 		5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMWebSocketHandshake.h; sourceTree = "<group>"; };
 		5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMWebSocketHandshake.m; sourceTree = "<group>"; };
 		54B4D9E01E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLSessionConfiguration+Debugging.swift"; sourceTree = "<group>"; };
-		54BD49FD1D41FE0B006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		54C3EC5E243E2988000B9230 /* RequestAvailableNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotification.swift; sourceTree = "<group>"; };
 		54C3EC6E243E3516000B9230 /* RequestAvailableNotificationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotificationTests.swift; sourceTree = "<group>"; };
 		54CA15001B32F2C1008D3787 /* ZMAccessTokenHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAccessTokenHandler.h; sourceTree = "<group>"; };
@@ -397,6 +396,20 @@
 		F9C4317D1CD7ADF300A8542F /* ZMKeychainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMKeychainTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264342CF7256A0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 3E88BCB11B1F35DF00232589 /* WireTransport-ios-tests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264332CF725570005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264342CF7256A0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		09A218631B790D330076547A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -475,7 +488,6 @@
 			children = (
 				EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */,
 				EF1A09A51FF6BEE300F89634 /* testing.modulemap */,
-				54BD49FD1D41FE0B006E29D1 /* README.md */,
 				5499FF661B31C66C00835C8B /* Source */,
 				546E89BD1B33015000DD1042 /* Tests */,
 				3E88BD0B1B1F370700232589 /* Resources */,
@@ -524,6 +536,7 @@
 		546E89BD1B33015000DD1042 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264332CF725570005317F /* TestPlans */,
 				F173092A21C7EC91008F82EE /* Resources */,
 				546E89BE1B33015000DD1042 /* Source */,
 			);
@@ -995,6 +1008,9 @@
 				3E88BCB51B1F35DF00232589 /* PBXTargetDependency */,
 				09A2188D1B790D6E0076547A /* PBXTargetDependency */,
 				CB79AC6E2C6D00CF003CF5F4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264332CF725570005317F /* TestPlans */,
 			);
 			name = "WireTransport-ios-tests";
 			productName = TransportTests;

@@ -25,7 +25,7 @@ extension ZMUserSession {
         .init(id: #function, interval: .oneDay) { [weak self] in
             guard
                 let self,
-                self.mlsFeature.isEnabled else {
+                mlsFeature.isEnabled else {
                 return
             }
 

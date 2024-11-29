@@ -1,0 +1,75 @@
+{
+  "configurations" : [
+    {
+      "id" : "1F8A3CDC-E12B-4921-9BD0-0ADB68899DC0",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "enabled" : false,
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "AssetV3UploadRequestStrategyTests",
+        "AssetV3UploadRequestStrategyTests\/testThatItAddsAssetId_OnSuccessfulResponse()",
+        "AssetV3UploadRequestStrategyTests\/testThatItCancelsRequest_WhenTransferStateChangesToUploadingCancelled()",
+        "AssetV3UploadRequestStrategyTests\/testThatItDoesNotGenerateRequestForDeliveredMessages()",
+        "AssetV3UploadRequestStrategyTests\/testThatItDoesNotGenerateRequestForVersion2Assets()",
+        "AssetV3UploadRequestStrategyTests\/testThatItDoesNotGenerateRequestWhenTransferStateIsNotUploading()",
+        "AssetV3UploadRequestStrategyTests\/testThatItDoesNotGenerateRequestWhilePreprocessingIsNotCompleted()",
+        "AssetV3UploadRequestStrategyTests\/testThatItDoesNotUpdateTransferState_OnSuccessfulResponse_WhenThereIsMoreAssetsToUpload()",
+        "AssetV3UploadRequestStrategyTests\/testThatItExpiresTheMessage_OnPermanentFailureResponse()",
+        "AssetV3UploadRequestStrategyTests\/testThatItGeneratesRequestWhenAssetIsPreprocessed()",
+        "AssetV3UploadRequestStrategyTests\/testThatItUpdatesTransferState_OnSuccessfulResponse()",
+        "AssetV3UploadRequestStrategyTests\/testThatItUpdatesUploadProgress()",
+        "FetchClientRequestStrategyTests",
+        "FetchClientRequestStrategyTests\/testThatItAddsFetchedClientToIgnoredClientsWhenClientDoesNotExist()",
+        "FetchClientRequestStrategyTests\/testThatItAddsFetchedClientToIgnoredClientsWhenClientHasNoSession()",
+        "FetchClientRequestStrategyTests\/testThatItAddsFetchedClientToIgnoredClientsWhenSessionExistsButClientDoesNotExist()",
+        "FetchClientRequestStrategyTests\/testThatItAddsOtherUsersNewFetchedClientsToSelfUsersMissingClients()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesARequestForV0_WhenUserClientNeedsToBeUpdatedFromBackend()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesARequestForV1_WhenUserClientNeedsToBeUpdatedFromBackend()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesARequestForV2_WhenUserClientNeedsToBeUpdatedFromBackend()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesARequestForV2_WhenUserClientNeedsToBeUpdatedFromBackend_AutomaticSync()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesBatchRequestForV2_WhenFederationEndpointIsAvailable()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesBatchRequest_WhenFederationEndpointIsAvailable()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesLegacyRequest_WhenFederationEndpointIsNotAvailable()",
+        "FetchClientRequestStrategyTests\/testThatItCreatesOtherUsersClientsCorrectly()",
+        "FetchClientRequestStrategyTests\/testThatItDeletesAnObjectWhenResponseDoesNotContainRemoteID()",
+        "FetchClientRequestStrategyTests\/testThatItDeletesLocalClient_WhenNotIncludedInBatchResponse()",
+        "FetchClientRequestStrategyTests\/testThatItDeletesLocalClientsNotIncludedInResponseToFetchOtherUsersClients()",
+        "FetchClientRequestStrategyTests\/testThatItDeletesTheClient_WhenReceivingPermanentErrorResponse()",
+        "FetchClientRequestStrategyTests\/testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID()",
+        "FetchClientRequestStrategyTests\/testThatItMarksNewClientsAsMissingAndIgnored_WhenReceivingTheBatchResponse()",
+        "FetchClientRequestStrategyTests\/testThatItUpdatesTheClient_WhenReceivingTheBatchResponse()",
+        "FetchClientRequestStrategyTests\/testThatItUpdatesTheClient_WhenReceivingTheResponse()",
+        "ZMLocalNotificationTests_Event\/testThatItDoesntCreateConversationCreateNotification_OneToOne()"
+      ],
+      "target" : {
+        "containerPath" : "container:WireRequestStrategy.xcodeproj",
+        "identifier" : "166901731D707509000FE4AF",
+        "name" : "WireRequestStrategyTests"
+      }
+    }
+  ],
+  "version" : 1
+}

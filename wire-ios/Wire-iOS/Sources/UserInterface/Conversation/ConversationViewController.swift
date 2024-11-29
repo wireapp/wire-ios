@@ -433,7 +433,8 @@ final class ConversationViewController: UIViewController {
                 let mlsFeature = await userSession.makeGetMLSFeatureUseCase().invoke()
                 let resolver = OneOnOneResolver(
                     migrator: OneOnOneMigrator(mlsService: mlsService),
-                    isMLSEnabled: mlsFeature.isEnabled)
+                    isMLSEnabled: mlsFeature.isEnabled
+                )
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case let .migratedToMLSGroup(identifier) = resolvedState {
