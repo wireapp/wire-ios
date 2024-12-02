@@ -81,6 +81,7 @@ jobs:
               - 'wire-ios-testing/**'
             WireFoundation:
               - 'WireFoundation/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireFoundationAll.xcscheme'
             wire-ios-system:
               - 'wire-ios-system/**'
             scripts:
