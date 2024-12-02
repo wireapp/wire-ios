@@ -185,7 +185,7 @@ public protocol ConversationRepositoryProtocol {
     ///     - typingUsersInfo: A list of typing users for a given conversation.
     
     func updateTypingUsers(
-        _ typingUsersInfo: [TypingUsersInfo]
+        _ typingUsersInfo: [ConversationTypingUsersInfo]
     ) async
 }
 
@@ -552,7 +552,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
     
     public func updateTypingUsers(
-        _ typingUsersInfo: [TypingUsersInfo]
+        _ typingUsersInfo: [ConversationTypingUsersInfo]
     ) async {
         for typingUserInfo in typingUsersInfo {
             await conversationsLocalStore.updateTypingUsers(

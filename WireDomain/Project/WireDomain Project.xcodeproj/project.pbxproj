@@ -85,9 +85,11 @@
 		C9C8FDD22C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */; };
 		C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */; };
 		C9C8FDD42C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */; };
-		C9D574D72CEF76C900012A0E /* ConversationTypingUsersTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */; };
 		C9D574D92CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D82CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift */; };
 		C9D574DD2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574DC2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift */; };
+		C9D57F102CFE04D200012A0E /* ConversationTypingEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57F0D2CFE04D200012A0E /* ConversationTypingEventProcessor.swift */; };
+		C9D57F112CFE04D200012A0E /* ConversationTypingUsersInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57F0E2CFE04D200012A0E /* ConversationTypingUsersInfo.swift */; };
+		C9D57F122CFE04D200012A0E /* ConversationTypingUsersTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57F0F2CFE04D200012A0E /* ConversationTypingUsersTimeout.swift */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
@@ -123,7 +125,6 @@
 		EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */; };
 		EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */; };
 		EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */; };
-		EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */; };
 		EEAD0A112C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */; };
 		EEAD0A132C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */; };
 		EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */; };
@@ -239,9 +240,11 @@
 		C9C8FDC92C9DBE0E00702B91 /* UserClientAddEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalHoldDisableEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessorTests.swift; sourceTree = "<group>"; };
-		C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationTypingUsersTimeout.swift; path = ../ConversationTypingUsersTimeout.swift; sourceTree = "<group>"; };
 		C9D574D82CEF7E1E00012A0E /* ConversationTypingEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9D574DC2CF0854800012A0E /* ConversationTypingUsersTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingUsersTimeoutTests.swift; sourceTree = "<group>"; };
+		C9D57F0D2CFE04D200012A0E /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
+		C9D57F0E2CFE04D200012A0E /* ConversationTypingUsersInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingUsersInfo.swift; sourceTree = "<group>"; };
+		C9D57F0F2CFE04D200012A0E /* ConversationTypingUsersTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTypingUsersTimeout.swift; sourceTree = "<group>"; };
 		C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigRepositoryTests.swift; sourceTree = "<group>"; };
@@ -278,7 +281,6 @@
 		EEAD0A072C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationProtocolUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A092C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReceiptModeUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A0B2C46777200CC8658 /* ConversationRenameEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenameEventProcessor.swift; sourceTree = "<group>"; };
-		EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConversationTypingEventProcessor.swift; path = ../ConversationTypingEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A102C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A122C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamMemberLeaveEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A142C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessor.swift; sourceTree = "<group>"; };
@@ -704,8 +706,9 @@
 		C9D574DA2CF084F600012A0E /* ConversationTypingEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
-				EEAD0A0D2C46777800CC8658 /* ConversationTypingEventProcessor.swift */,
-				C9D574D62CEF76C900012A0E /* ConversationTypingUsersTimeout.swift */,
+				C9D57F0D2CFE04D200012A0E /* ConversationTypingEventProcessor.swift */,
+				C9D57F0E2CFE04D200012A0E /* ConversationTypingUsersInfo.swift */,
+				C9D57F0F2CFE04D200012A0E /* ConversationTypingUsersTimeout.swift */,
 			);
 			path = ConversationTypingEventProcessor;
 			sourceTree = "<group>";
@@ -1044,7 +1047,6 @@
 				C99322DD2C986E3A0065E10F /* FeatureConfigRepositoryError.swift in Sources */,
 				C99322E72C986E3A0065E10F /* ConnectionsRepositoryError.swift in Sources */,
 				C98433D02CC26A1D009723D4 /* MLSProvider.swift in Sources */,
-				C9D574D72CEF76C900012A0E /* ConversationTypingUsersTimeout.swift in Sources */,
 				EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */,
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
@@ -1055,6 +1057,9 @@
 				C91F111D2C9C4B2B00BA5BE2 /* ConnectionsLocalStore.swift in Sources */,
 				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
+				C9D57F102CFE04D200012A0E /* ConversationTypingEventProcessor.swift in Sources */,
+				C9D57F112CFE04D200012A0E /* ConversationTypingUsersInfo.swift in Sources */,
+				C9D57F122CFE04D200012A0E /* ConversationTypingUsersTimeout.swift in Sources */,
 				EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */,
@@ -1081,7 +1086,6 @@
 				EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */,
 				C99322DC2C986E3A0065E10F /* FeatureConfigRepository.swift in Sources */,
 				C99322E22C986E3A0065E10F /* ConversationLocalStore+Status.swift in Sources */,
-				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
 				C99322D92C986E3A0065E10F /* UpdateEventsRepositoryError.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,

@@ -31,11 +31,6 @@ protocol ConversationTypingEventProcessorProtocol {
 
 }
 
-public struct TypingUsersInfo {
-    let users: Set<NSManagedObjectID>
-    let conversationID: NSManagedObjectID
-}
-
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
     
     let conversationRepository: any ConversationRepositoryProtocol
