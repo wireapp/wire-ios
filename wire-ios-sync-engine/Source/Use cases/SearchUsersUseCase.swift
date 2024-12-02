@@ -19,6 +19,7 @@
 import Foundation
 import WireUtilities
 
+// sourcery: AutoMockable
 public protocol SearchUsersUseCaseProtocol {
 
     func invoke(
@@ -33,19 +34,19 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let searchDirectory: SearchDirectory?
+    private let searchDirectory: SearchDirectory
     private let isFederationUsageAllowed: Bool
     private var activeSearchTask: SearchTask?
 
     deinit {
-        searchDirectory?.tearDown()
+        searchDirectory.tearDown()
     }
 
     // MARK: - Initialization
 
-    public init(
+    init(
         context: NSManagedObjectContext,
-        searchDirectory: SearchDirectory?,
+        searchDirectory: SearchDirectory,
         isFederationUsageAllowed: Bool
     ) {
         self.context = context
@@ -63,7 +64,7 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
-        searchDirectory?.updateIncompleteMetadataIfNeeded()
+        searchDirectory.updateIncompleteMetadataIfNeeded()
 
         let (selfDomain, team) = await context.perform {
             let selfUser = ZMUser.selfUser(in: self.context)
@@ -79,14 +80,14 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         )
 
         return try await withCheckedThrowingContinuation { continuation in
-            let task = searchDirectory?.perform(request)
-            task?.addResultHandler { result, isCompleted in
+            let task = searchDirectory.perform(request)
+            task.addResultHandler { result, isCompleted in
                 if isCompleted {
                     continuation.resume(returning: result)
                     self.activeSearchTask = nil
                 }
             }
-            task?.start()
+            task.start()
             activeSearchTask = task
         }
     }

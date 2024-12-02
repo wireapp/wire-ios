@@ -342,10 +342,7 @@ final class UserSessionMock: UserSession {
     }
 
     func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
-        SearchUsersUseCase(
-            context: syncContext,
-            searchDirectory: nil,
-            isFederationUsageAllowed: true)
+        MockSearchUsersUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
