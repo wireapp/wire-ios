@@ -15,6 +15,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireTestingPackage"
+               BuildableName = "WireTestingPackage"
+               BlueprintName = "WireTestingPackage"
+               ReferencedContainer = "container:WireFoundation">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "WireFoundation"
                BuildableName = "WireFoundation"
                BlueprintName = "WireFoundation"
@@ -43,9 +57,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireTestingPackage"
-               BuildableName = "WireTestingPackage"
-               BlueprintName = "WireTestingPackage"
+               BlueprintIdentifier = "WireFoundationTests"
+               BuildableName = "WireFoundationTests"
+               BlueprintName = "WireFoundationTests"
                ReferencedContainer = "container:WireFoundation">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,18 +76,6 @@
             default = "YES">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireFoundationTests"
-               BuildableName = "WireFoundationTests"
-               BlueprintName = "WireFoundationTests"
-               ReferencedContainer = "container:WireFoundation">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -95,9 +97,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireFoundation"
-            BuildableName = "WireFoundation"
-            BlueprintName = "WireFoundation"
+            BlueprintIdentifier = "WireTestingPackage"
+            BuildableName = "WireTestingPackage"
+            BlueprintName = "WireTestingPackage"
             ReferencedContainer = "container:WireFoundation">
          </BuildableReference>
       </MacroExpansion>
