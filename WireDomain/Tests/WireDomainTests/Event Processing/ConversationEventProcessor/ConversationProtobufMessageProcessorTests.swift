@@ -17,10 +17,10 @@
 //
 
 @testable import WireAPI
-@testable import WireDomain
-import WireDomainSupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
+import WireDomainSupport
 import XCTest
 
 final class ConversationProtobufMessageProcessorTests: XCTestCase {
@@ -28,7 +28,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
     private var sut: ConversationProtobufMessageProcessor!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
-    
+
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -41,10 +41,10 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
-        
+
         messageLocalStore = MockMessageLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
-        
+
         sut = ConversationProtobufMessageProcessor(
             messageLocalStore: messageLocalStore,
             userLocalStore: userLocalStore
@@ -65,17 +65,17 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
     func testProcessEvent_It_Invokes_Local_Store_Add_Text_Message_Method() async throws {
         // Mock
-        
+
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
 
         messageLocalStore.canAddMessageConversationSenderIDLogAttributes_MockValue = true
         messageLocalStore.addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_MockMethod = { _, _, _, _, _, _, _ in }
-        
+
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
         let content = try XCTUnwrap(genericMessage.content) // .text
-        
+
         // When
 
         await sut.processProtobufMessage(

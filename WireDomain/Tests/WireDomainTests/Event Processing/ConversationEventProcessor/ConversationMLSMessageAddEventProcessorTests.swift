@@ -17,10 +17,10 @@
 //
 
 @testable import WireAPI
-@testable import WireDomain
-import WireDomainSupport
 import WireDataModel
 import WireDataModelSupport
+@testable import WireDomain
+import WireDomainSupport
 import XCTest
 
 final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
@@ -30,7 +30,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var protobufMessageProcessor: MockConversationProtobufMessageProcessorProtocol!
-    
+
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
@@ -43,12 +43,12 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
-        
+
         conversationLocalStore = MockConversationLocalStoreProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
         protobufMessageProcessor = MockConversationProtobufMessageProcessorProtocol()
-        
+
         sut = ConversationMLSMessageAddEventProcessor(
             conversationLocalStore: conversationLocalStore,
             messageLocalStore: messageLocalStore,
@@ -72,7 +72,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
     func testProcessEvent_It_Invokes_Local_Stores_And_Protobuf_Processor_Methods() async throws {
         // Mock
-        
+
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(in: context)
         }
@@ -82,7 +82,6 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         conversationLocalStore.addParticipantParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderIDLogAttributes_MockValue = true
         protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
-        
 
         // When
 
@@ -106,7 +105,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
             timestamp: .now,
             decryptedMessages: [.init(message: Scaffolding.base64EncodedString, senderClientID: UUID.mockID1.uuidString)]
         )
-        
+
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 /// Process conversation proteus message add events.
 
@@ -50,7 +50,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         guard let decryptedMessage = messageContent.decryptedMessage else {
             return
         }
-        
+
         guard let conversation = await conversationLocalStore.fetchConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
@@ -59,12 +59,12 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 "failed to add proteus message: conversation not found in db"
             )
         }
-        
+
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
             .conversationId: conversationID.uuid.safeForLoggingDescription
         ]
-        
+
         // Ensure is self conversation, sender is self user and conversation is not read-only
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
@@ -73,39 +73,39 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         ) else {
             return
         }
-        
+
         // Read protobuf message
-        let (protobufMessage) = await readProtobufMessage(
+        let protobufMessage = await readProtobufMessage(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
-        
+
         guard let (genericMessage, content) = protobufMessage else {
             WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing",
                 attributes: logAttributes
             )
-            
+
             return await addInvalidSystemMessage(
                 senderID: senderID,
                 conversationID: conversationID,
                 date: date
             )
         }
-        
+
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
             conversation: conversation,
             genericMessage: genericMessage,
             date: date
         )
-        
+
         await conversationLocalStore.addParticipant(
             participantID: senderID.uuid,
             participantDomain: senderID.domain,
             in: conversation,
             date: date.addingTimeInterval(-0.01)
         )
-        
+
         // Process protobuf message
         await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
@@ -117,9 +117,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             logAttributes: logAttributes,
             date: date
         )
-
     }
-    
+
     private func readProtobufMessage(
         from base64Message: String,
         externalData: String?
@@ -158,7 +157,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         return (genericMessage, content)
     }
-    
+
     private func addInvalidSystemMessage(
         senderID: UserID,
         conversationID: ConversationID,
@@ -168,7 +167,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             sender: (senderID.uuid, senderID.domain),
             date: date
         )
-        
+
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
             conversationID: conversationID.uuid,

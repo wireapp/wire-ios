@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireProtos
-import WireDataModel
 import WireAPI
+import WireDataModel
+import WireProtos
 
 // sourcery: AutoMockable
 /// A common processor for processing MLS / Proteus protobuf message.
 /// Used by `ConversationMLSMessageAddEventProcessor` and `ConversationProteusMessageAddEventProcessor`
 /// The message content is encoded using protocol buffers. There is a common protocol buffer definition adopted by all Wire client.
 public protocol ConversationProtobufMessageProcessorProtocol {
-    
+
     func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
@@ -36,14 +36,14 @@ public protocol ConversationProtobufMessageProcessorProtocol {
         logAttributes: LogAttributes,
         date: Date
     ) async
-    
+
 }
 
 struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
-    
+
     let messageLocalStore: any MessageLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
-    
+
     func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
@@ -58,42 +58,42 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
         logAttributes[.nonce] = UUID(uuidString: message.messageID) ?? "<nil>"
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
-        
+
         // Message content types: https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         switch content {
         case .lastRead:
-            
+
             await messageLocalStore.updateLastReadMessageTimestamp(
                 message.lastRead,
                 in: conversation
             )
-            
+
         case .cleared:
-            
+
             await messageLocalStore.updateClearedMessageTimestamp(
                 message.cleared,
                 in: conversation
             )
 
         case .hidden:
-            
+
             await messageLocalStore.deleteMessageForSelf(
                 message.hidden,
                 in: conversation
             )
-            
+
         case .dataTransfer(let dataTransfer):
             guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
                 break
             }
-            
+
             await userLocalStore.updateSelfUserAnalyticsID(
                 analyticsID: trackingIdentifier,
                 conversation: conversation
             )
 
         case .deleted:
-            
+
             await messageLocalStore.deleteMessageForEveryone(
                 message.deleted,
                 in: conversation,
@@ -101,7 +101,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             )
 
         case .reaction:
-            
+
             await messageLocalStore.addMessageReaction(
                 message.reaction,
                 in: conversation,
@@ -110,19 +110,19 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             )
 
         case .confirmation:
-            
+
             // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
             break
-            
+
         case .buttonActionConfirmation:
-            
+
             await messageLocalStore.updateButtonStates(
                 message.buttonActionConfirmation,
                 in: conversation
             )
 
         case .edited:
-            
+
             await messageLocalStore.editMessage(
                 message.edited,
                 in: conversation,
@@ -132,20 +132,20 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             )
 
         case .clientAction(.resetSession):
-            
+
             guard let senderClientID else {
                 return WireLogger.eventProcessing.warn(
                     "clientAction resetSession did not create any message",
                     attributes: logAttributes
                 )
             }
-            
+
             let systemMessageType: SystemMessageType = .sessionReset(
                 sender: (senderID.uuid, senderID.domain),
                 senderClientID: senderClientID,
                 date: date
             )
-            
+
             await messageLocalStore.addSystemMessage(
                 messageType: systemMessageType,
                 conversationID: conversationID.uuid,
@@ -153,12 +153,12 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             )
 
         case .calling, .availability:
-            
+
             // cases not handled
             break
 
         default:
-            
+
             await messageLocalStore.addTextMessage(
                 message,
                 in: conversation,
@@ -168,8 +168,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 date: date,
                 logAttributes: logAttributes
             )
-            
         }
     }
-    
+
 }

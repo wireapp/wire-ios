@@ -83,10 +83,10 @@ final class MessageLocalStoreTests: XCTestCase {
         userLocalStore.fetchSelfUser_MockValue = selfUser
         userLocalStore.fetchUserIdDomain_MockValue = user
         conversationLocalStore.isConversationForcedReadOnly_MockValue = false
-        
+
         // Given a regular message to add to a conversation
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
-        
+
         // When
 
         await sut.addTextMessage(
@@ -102,7 +102,7 @@ final class MessageLocalStoreTests: XCTestCase {
         // Then
 
         let expectedMessageText = "Everything"
-        
+
         await internalTest_assertConversationLastMessage(
             expectedMessageText: expectedMessageText,
             conversation: groupConversation
@@ -134,17 +134,17 @@ final class MessageLocalStoreTests: XCTestCase {
         for messageType in Scaffolding.allSystemMessageTypes {
             let conversation = await makeConversation(creator: user)
             conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-            
+
             // When
-            
+
             await sut.addSystemMessage(
                 messageType: messageType,
                 conversationID: UUID(),
                 conversationDomain: Scaffolding.domain1
             )
-            
+
             // Then
-            
+
             await internalTest_assertConversationLastSystemMessages(
                 messageType: messageType,
                 conversation: conversation

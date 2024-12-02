@@ -136,7 +136,7 @@ public protocol UserLocalStoreProtocol {
     // TODO: [WPB-10727] Merge these two methods into a single method (also no API objects should be passed to local store)
     func persistUser(from user: WireAPI.User) async
     func updateUser(from event: UserUpdateEvent) async
-    
+
     func updateSelfUserAnalyticsID(
         analyticsID: String,
         conversation: ZMConversation
@@ -296,7 +296,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             user.isAccountDeleted = true
         }
     }
-    
+
     public func updateSelfUserAnalyticsID(
         analyticsID: String,
         conversation: ZMConversation
@@ -305,7 +305,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             guard conversation.isSelfConversation else {
                 return
             }
-            
+
             ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
         }
     }

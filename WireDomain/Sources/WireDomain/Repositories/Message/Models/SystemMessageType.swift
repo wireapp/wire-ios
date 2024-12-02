@@ -80,7 +80,7 @@ public enum SystemMessageType: Sendable {
         errorCode: Int,
         date: Date
     )
-    
+
     case sessionReset(
         sender: (id: UUID, domain: String?),
         senderClientID: String,

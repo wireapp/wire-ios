@@ -316,13 +316,13 @@ public protocol ConversationLocalStoreProtocol {
         date: Date,
         commitDelay: UInt64
     ) async
-    
+
     func updateSecurityLevelAfterReceivingMessage(
         conversation: ZMConversation,
         genericMessage: GenericMessage,
         date: Date
     ) async
-    
+
     func addParticipant(
         participantID: UUID,
         participantDomain: String?,
@@ -657,7 +657,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mlsStatus == .ready
         }
     }
-    
+
     public func commitPendingProposals(
         conversation: ZMConversation,
         date: Date,
@@ -671,7 +671,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         mlsService.commitPendingProposalsIfNeeded()
     }
-    
+
     public func updateSecurityLevelAfterReceivingMessage(
         conversation: ZMConversation,
         genericMessage: GenericMessage,
@@ -685,14 +685,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func addParticipant(
         participantID: UUID,
         participantDomain: String?,
         in conversation: ZMConversation,
         date: Date
     ) async {
-        
         // Verifies that a sender of an update event is part of the conversation. If they are not,
         // it means that our local state is out of sync and we need to update the list of participants.
         guard let participant = try? await userLocalStore.fetchUser(
@@ -701,7 +700,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         ) else {
             return
         }
-        
+
         await context.perform {
             conversation.addParticipantAndSystemMessageIfMissing(
                 participant,
@@ -709,7 +708,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
 
     public func conversationMutedMessageTypes(
         _ conversation: ZMConversation

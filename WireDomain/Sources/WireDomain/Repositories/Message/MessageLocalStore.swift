@@ -35,7 +35,7 @@ public protocol MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-    
+
     /// Adds a message text to a given conversation.
     /// - Parameters:
     ///     - message: The message to add.
@@ -45,7 +45,7 @@ public protocol MessageLocalStoreProtocol {
     ///     - senderClientID: The sender client id.
     ///     - date: The date the message was created.
     ///     - logAttributes: Attributes to add to the log.
-    
+
     func addTextMessage(
         _ message: GenericMessage,
         in conversation: ZMConversation,
@@ -67,19 +67,18 @@ public protocol MessageLocalStoreProtocol {
         senderID: UUID,
         logAttributes: LogAttributes
     ) async -> Bool
-    
-    
+
     /// Updates last read message timestamp.
     /// - Parameters:
     ///     - lastReadMessage: The last read message protobuf object.
     ///     - conversation: The conversation the message is derived from.
     ///
-    
+
     func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
         in conversation: ZMConversation
     ) async
-    
+
     /// Updates cleared message timestamp.
     /// - Parameters:
     ///     - clearedMessage: The cleared message protobuf object.
@@ -90,7 +89,7 @@ public protocol MessageLocalStoreProtocol {
         _ clearedMessage: Cleared,
         in conversation: ZMConversation
     ) async
-    
+
     /// Deletes a given message from all of the self user's devices.
     /// - Parameters:
     ///     - hiddenMessage: The hidden message protobuf object.
@@ -99,12 +98,12 @@ public protocol MessageLocalStoreProtocol {
     /// "Delete for me" will locally delete the message, and tell all other devices of this user to delete the message in a similar fashion.
     /// In the optimal case, no trace of that message is left on the user's devices.
     /// However, other users will still see that message.
-    
+
     func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
         in conversation: ZMConversation
     ) async
-    
+
     /// Recalls a previously sent message.
     /// - Parameters:
     ///     - deletedMessage: The delete message protobuf object.
@@ -118,7 +117,7 @@ public protocol MessageLocalStoreProtocol {
         in conversation: ZMConversation,
         senderID: UUID
     ) async
-    
+
     /// Adds a reaction to a message.
     /// - Parameters:
     ///     - messageReaction: The message reaction protobuf object.
@@ -127,26 +126,26 @@ public protocol MessageLocalStoreProtocol {
     ///     - date: The date the reaction was added.
     ///
     /// For instance, like or unlike a message.
-    
+
     func addMessageReaction(
         _ messageReaction: WireProtos.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
     ) async
-    
+
     /// Updates button states.
     /// - Parameters:
     ///     - buttonActionConfirmation: The button action confirmation protobuf object.
     ///     - conversation: The related conversation.
     ///
     /// When someone has clicked on a button, to confirm to them that the answer has been accepted.
-    
+
     func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
         in conversation: ZMConversation
     ) async
-    
+
     /// Edits a previously sent message.
     /// - Parameters:
     ///     - messageEdit: The protobuf message edit object.
@@ -210,39 +209,39 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             to: conversation
         )
     }
-    
+
     public func canAddMessage(
         conversation: ZMConversation,
         senderID: UUID,
         logAttributes: LogAttributes
     ) async -> Bool {
         let selfUser = await userLocalStore.fetchSelfUser()
-        
+
         return await context.perform {
             let isSelf = conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
-            
+
             guard !isSelf else {
                 WireLogger.eventProcessing.debug(
                     "Illegal sender or conversation, abort processing.",
                     attributes: logAttributes
                 )
-                
+
                 return false
             }
-            
+
             guard !conversation.isForcedReadOnly else {
                 WireLogger.eventProcessing.warn(
                     "Ignoring incoming message in readonly conversation.",
                     attributes: logAttributes
                 )
-                
+
                 return false
             }
-            
+
             return true
         }
     }
-    
+
     public func addTextMessage(
         _ message: GenericMessage,
         in conversation: ZMConversation,
@@ -254,27 +253,28 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     ) async {
         await context.perform { [self] in
             guard shouldAddMessage(to: conversation, date: date),
-                  let nonce = UUID(uuidString: message.messageID) else {
+                  let nonce = UUID(uuidString: message.messageID)
+            else {
                 return WireLogger.eventProcessing.warn(
                     "Dropping message because no nonce or for self conv",
                     attributes: logAttributes
                 )
             }
-            
+
             let messageClass: AnyClass = GenericMessage.entityClass(for: message)
             var clientMessage = fetchExistingMessage(
                 nonce: nonce,
                 conversation: conversation,
                 messageClass: messageClass
             )
-            
+
             guard !isZombieObject(clientMessage) else {
                 return WireLogger.eventProcessing.warn(
                     "Dropping message because zombieObject",
                     attributes: logAttributes
                 )
             }
-            
+
             let isNewMessage = clientMessage == nil
             clientMessage = clientMessage ?? createNewMessage(
                 nonce: nonce,
@@ -286,7 +286,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 conversation: conversation,
                 logAttributes: logAttributes
             )
-            
+
             if let assetClientMessage = clientMessage as? ZMAssetClientMessage {
                 updateAssetClientMessage(
                     assetClientMessage,
@@ -301,9 +301,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                     isNewMessage: isNewMessage
                 )
             }
-            
+
             guard let clientMessage else { return }
-            
+
             finalizeMessageUpdate(
                 clientMessage: clientMessage,
                 message: message,
@@ -322,14 +322,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard conversation.isSelfConversation else {
                 return
             }
-            
+
             ZMConversation.updateConversation(
                 withLastReadFromSelfConversation: lastReadMessage,
                 in: context
             )
         }
     }
-    
+
     public func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
         in conversation: ZMConversation
@@ -338,14 +338,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard conversation.isSelfConversation else {
                 return
             }
-            
+
             ZMConversation.updateConversation(
                 withClearedFromSelfConversation: clearedMessage,
                 in: context
             )
         }
     }
-    
+
     public func deleteMessageForSelf(
         _ hiddenMessage: MessageHide,
         in conversation: ZMConversation
@@ -354,14 +354,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             guard conversation.isSelfConversation else {
                 return
             }
-            
+
             ZMMessage.remove(
                 remotelyHiddenMessage: hiddenMessage,
                 inContext: context
             )
         }
     }
-    
+
     public func deleteMessageForEveryone(
         _ deletedMessage: MessageDelete,
         in conversation: ZMConversation,
@@ -376,7 +376,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
         }
     }
-    
+
     public func addMessageReaction(
         _ messageReaction: WireProtos.Reaction,
         in conversation: ZMConversation,
@@ -393,7 +393,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
         }
     }
-    
+
     public func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
         in conversation: ZMConversation
@@ -406,7 +406,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
         }
     }
-    
+
     public func editMessage(
         _ messageEdit: MessageEdit,
         in conversation: ZMConversation,
@@ -414,13 +414,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         genericMessage: GenericMessage,
         date: Date
     ) async {
-        
         guard let editedMessageID = UUID(
             uuidString: messageEdit.replacingMessageID
         ) else {
             return
         }
-        
+
         await context.perform { [self] in
             guard let editedClientMessage = ZMClientMessage.fetch(
                 withNonce: editedMessageID,
@@ -429,7 +428,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             ) else {
                 return
             }
-            
+
             guard editMessage(
                 messageEdit,
                 clientMessage: editedClientMessage,
@@ -439,14 +438,14 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             ) else {
                 return
             }
-            
+
             editedClientMessage.updateCategoryCache()
             editedClientMessage.markAsSent()
         }
     }
 
     // MARK: - Private
-    
+
     private func shouldAddMessage(to conversation: ZMConversation, date: Date) -> Bool {
         if let clearedTime = conversation.clearedTimeStamp,
            clearedTime.compare(date) != .orderedAscending {
@@ -454,7 +453,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
         return conversation.conversationType != .self
     }
-    
+
     private func createNewMessage(
         nonce: UUID,
         messageClass: AnyClass,
@@ -484,7 +483,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
         return newMessage
     }
-    
+
     private func instantiateNewMessage(messageClass: AnyClass, nonce: UUID) -> ZMOTRMessage? {
         if messageClass is ZMClientMessage.Type {
             return ZMClientMessage(nonce: nonce, managedObjectContext: context)
@@ -493,7 +492,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
         return nil
     }
-    
+
     private func fetchExistingMessage(
         nonce: UUID,
         conversation: ZMConversation,
@@ -506,12 +505,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             prefetchResult: .none
         ) as? ZMOTRMessage
     }
-    
+
     private func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
         guard let message else { return false }
         return message.isZombieObject
     }
-    
+
     private func finalizeMessageUpdate(
         clientMessage: ZMOTRMessage,
         message: GenericMessage,
@@ -821,34 +820,33 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
-            
+
         case .sessionReset(let sender, let senderClientID, let date):
             let sender = await userLocalStore.fetchOrCreateUser(
                 id: sender.id,
                 domain: sender.domain
             )
-            
+
             let client = await context.perform {
                 UserClient.fetchUserClient(
-                        withRemoteId: senderClientID,
-                        forUser: sender,
-                        createIfNeeded: true
+                    withRemoteId: senderClientID,
+                    forUser: sender,
+                    createIfNeeded: true
                 )
             }
-            
+
             guard let client else {
                 return []
             }
-            
+
             let systemMessage = await createSystemMessage(
                 messageType: .sessionReset,
                 sender: sender,
                 clients: [client],
                 timestamp: date
             )
-            
+
             return [systemMessage]
-            
         }
     }
 
