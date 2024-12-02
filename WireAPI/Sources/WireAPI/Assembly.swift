@@ -66,7 +66,7 @@ final class Assembly {
     )
 
     private lazy var pushChannelNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendURL)
+        let service = NetworkService(baseURL: backendWebSocketURL)
         let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
