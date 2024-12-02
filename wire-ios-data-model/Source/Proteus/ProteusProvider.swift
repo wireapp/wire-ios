@@ -82,7 +82,7 @@ public class ProteusProvider: ProteusProviding {
             return try keyStoreBlock(keyStore)
         } else {
 
-            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
+            OldWireLogger.coreCrypto.error("can't access any proteus cryptography service")
             fatal("can't access any proteus cryptography service")
         }
     }
@@ -102,7 +102,7 @@ public class ProteusProvider: ProteusProviding {
             return try await keyStoreBlock(keyStore)
         } else {
 
-            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
+            OldWireLogger.coreCrypto.error("can't access any proteus cryptography service")
             fatal("can't access any proteus cryptography service")
         }
     }

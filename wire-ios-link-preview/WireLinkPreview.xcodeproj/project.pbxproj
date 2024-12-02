@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -160,6 +160,20 @@
 		EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireLinkPreview.docc; sourceTree = "<group>"; };
 		F1202A751FA0830000296B4B /* crash.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264362CF725900005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = BFF057931D25434E004A2C29 /* WireLinkPreviewTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264352CF7258C0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264362CF725900005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		5E2BEC4E214BA4A600E65B53 /* Frameworks */ = {
@@ -331,6 +345,7 @@
 		BFF057981D25434E004A2C29 /* WireLinkPreviewTests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264352CF7258C0005317F /* TestPlans */,
 				BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */,
 				BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */,
 				BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */,
@@ -416,6 +431,9 @@
 			dependencies = (
 				BFF057971D25434E004A2C29 /* PBXTargetDependency */,
 				5E2BEC64214BA4AE00E65B53 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264352CF7258C0005317F /* TestPlans */,
 			);
 			name = WireLinkPreviewTests;
 			productName = WireLinkPreviewTests;

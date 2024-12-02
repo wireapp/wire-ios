@@ -55,7 +55,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         skipMigration: Bool = false
     ) throws {
         do {
-            WireLogger.ear.info("setting ear enabled (\(enabled))")
+            OldWireLogger.ear.info("setting ear enabled (\(enabled))")
 
             if enabled {
                 try earService.enableEncryptionAtRest(
@@ -69,7 +69,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
                 )
             }
         } catch {
-            WireLogger.ear.error("failed to set ear enabled (\(enabled)): \(String(describing: error))")
+            OldWireLogger.ear.error("failed to set ear enabled (\(enabled)): \(String(describing: error))")
             throw error
         }
     }

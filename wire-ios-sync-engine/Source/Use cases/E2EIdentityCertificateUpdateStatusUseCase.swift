@@ -66,7 +66,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID
         }
         guard let selfMLSConversationGroupID else {
-            WireLogger.e2ei.warn("Failed to get MLS group ID of the self-MLS-conversation.")
+            OldWireLogger.e2ei.warn("Failed to get MLS group ID of the self-MLS-conversation.")
             return .noAction
         }
 
@@ -75,7 +75,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             clientIds: [mlsClientID]
         ).first
         guard let certificate else {
-            WireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
+            OldWireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
             return .noAction
         }
 

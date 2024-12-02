@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers
@@ -59,7 +58,7 @@ public final class TimePoint: NSObject {
     @discardableResult
     public func warnIfLongerThanInterval() -> Bool {
         guard elapsedTime > warnInterval else { return false }
-        WireLogger.timePoint.warn("Time point (\(label)) warning threshold: \(elapsedTime) seconds elapsed")
+        OldWireLogger.timePoint.warn("Time point (\(label)) warning threshold: \(elapsedTime) seconds elapsed")
         return true
     }
 

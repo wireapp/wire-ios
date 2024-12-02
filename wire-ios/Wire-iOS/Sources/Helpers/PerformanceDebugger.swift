@@ -56,13 +56,13 @@ final class PerformanceDebugger {
         let elapsedTime = displayLink.duration * 100
 
         if elapsedTime > 16.7 {
-            WireLogger.performance.warn("Frame dropped after \(elapsedTime)s")
+            OldWireLogger.performance.warn("Frame dropped after \(elapsedTime)s")
         }
     }
 
     @objc
     private func handleMemoryWarning() {
-        WireLogger.performance.warn("Application did receive memory warning.")
+        OldWireLogger.performance.warn("Application did receive memory warning.")
     }
 
 }

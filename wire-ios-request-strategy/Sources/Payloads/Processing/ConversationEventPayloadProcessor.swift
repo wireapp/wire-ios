@@ -78,18 +78,18 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let timestamp = payload.timestamp else {
-            WireLogger.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
+            OldWireLogger.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
-            WireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
+            OldWireLogger.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
             return
         }
         guard await context.perform({
             ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
         }) else {
-            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
+            OldWireLogger.eventProcessing.warn("Conversation already exists, aborting...")
             return
         }
 
@@ -114,7 +114,7 @@ struct ConversationEventPayloadProcessor {
             )
         }
         guard let conversation else {
-            WireLogger.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
+            OldWireLogger.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
             return
         }
 
@@ -124,7 +124,7 @@ struct ConversationEventPayloadProcessor {
                 syncContext: context
             )
         } catch {
-            WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            OldWireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
         }
     }
 
@@ -147,7 +147,7 @@ struct ConversationEventPayloadProcessor {
             return (conversation, removedUsers)
         }
         guard let conversation, let removedUsers else {
-            WireLogger.eventProcessing.error("Member leave update missing conversation or users, aborting...")
+            OldWireLogger.eventProcessing.error("Member leave update missing conversation or users, aborting...")
             return
         }
 
@@ -177,7 +177,8 @@ struct ConversationEventPayloadProcessor {
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn {
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
             }
@@ -190,7 +191,7 @@ struct ConversationEventPayloadProcessor {
                 for user in removedUsers {
                     // only delete users that had been members
                     guard let membership = user.membership else {
-                        WireLogger.updateEvent.error("Trying to delete non existent membership of \(user)")
+                        OldWireLogger.updateEvent.error("Trying to delete non existent membership of \(user)")
                         continue
                     }
 
@@ -220,7 +221,7 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            WireLogger.eventProcessing.error("Member join update missing conversation, aborting...")
+            OldWireLogger.eventProcessing.error("Member join update missing conversation, aborting...")
             return
         }
 
@@ -268,7 +269,7 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            WireLogger.eventProcessing.error("Conversation name update missing conversation, aborting...")
+            OldWireLogger.eventProcessing.error("Conversation name update missing conversation, aborting...")
             return
         }
 
@@ -298,7 +299,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing
+            OldWireLogger.eventProcessing
                 .error("Conversation member update missing conversation or target user, aborting...")
             return
         }
@@ -330,7 +331,7 @@ struct ConversationEventPayloadProcessor {
             from: payload,
             in: context
         ) else {
-            WireLogger.eventProcessing.error("Converation access update missing conversation, aborting...")
+            OldWireLogger.eventProcessing.error("Converation access update missing conversation, aborting...")
             return
         }
 
@@ -359,7 +360,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing
+            OldWireLogger.eventProcessing
                 .error("Conversation message timer update missing sender or conversation, aborting...")
             return
         }
@@ -393,7 +394,7 @@ struct ConversationEventPayloadProcessor {
             conversation.lastServerTimeStamp == nil || conversation
             .lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
-            WireLogger.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
+            OldWireLogger.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
         }
 
@@ -422,7 +423,7 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let qualifiedID = payload.qualifiedID else {
-            WireLogger.eventProcessing
+            OldWireLogger.eventProcessing
                 .error(
                     "processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting..."
                 )
@@ -433,7 +434,7 @@ struct ConversationEventPayloadProcessor {
             var action = SyncConversationAction(qualifiedID: qualifiedID)
             try await action.perform(in: context.notificationContext)
         } catch {
-            WireLogger.eventProcessing
+            OldWireLogger.eventProcessing
                 .error(
                     "processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)"
                 )
@@ -505,7 +506,7 @@ struct ConversationEventPayloadProcessor {
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
-            WireLogger.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
 
@@ -589,7 +590,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
-            WireLogger.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
             return nil
         }
 
@@ -618,7 +619,7 @@ struct ConversationEventPayloadProcessor {
             do {
                 try await createOrJoinSelfConversation(from: conversation)
             } catch {
-                WireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
+                OldWireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
             }
         }
 
@@ -627,7 +628,7 @@ struct ConversationEventPayloadProcessor {
 
     func createOrJoinSelfConversation(from conversation: ZMConversation) async throws {
         guard let context = conversation.managedObjectContext else {
-            return WireLogger.mls.warn("conversation.managedObjectContext is nil")
+            return OldWireLogger.mls.warn("conversation.managedObjectContext is nil")
         }
         let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
             (
@@ -638,11 +639,11 @@ struct ConversationEventPayloadProcessor {
         }
 
         guard let groupID, let mlsService, hasRegisteredMLSClient else {
-            WireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
+            OldWireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
             return
         }
 
-        WireLogger.mls
+        OldWireLogger.mls
             .debug(
                 "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
             )
@@ -663,7 +664,7 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
-            WireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
@@ -700,7 +701,7 @@ struct ConversationEventPayloadProcessor {
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
             let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
-            WireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
@@ -849,12 +850,12 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) {
         guard let messageProtocolString = payload.messageProtocol else {
-            WireLogger.eventProcessing.warn("message protocol is missing")
+            OldWireLogger.eventProcessing.warn("message protocol is missing")
             return
         }
 
         guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            OldWireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
@@ -868,12 +869,12 @@ struct ConversationEventPayloadProcessor {
     ) {
 
         guard let messageProtocolString = payload.messageProtocol else {
-            WireLogger.eventProcessing.warn("message protocol is missing")
+            OldWireLogger.eventProcessing.warn("message protocol is missing")
             return
         }
 
         guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
-            WireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            OldWireLogger.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
 
@@ -896,7 +897,7 @@ struct ConversationEventPayloadProcessor {
         case .mixed:
             switch newMessageProtocol {
             case .proteus:
-                WireLogger.updateEvent
+                OldWireLogger.updateEvent
                     .warn(
                         "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
                     )
@@ -910,7 +911,7 @@ struct ConversationEventPayloadProcessor {
         case .mls:
             switch newMessageProtocol {
             case .proteus, .mixed:
-                WireLogger.updateEvent
+                OldWireLogger.updateEvent
                     .warn(
                         "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
                     )
@@ -926,7 +927,9 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        guard mlsFeature.isEnabled else { return }
+
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,

@@ -150,7 +150,7 @@ final class GroupParticipantsDetailViewModel: NSObject, ZMConversationObserver {
                         userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: isE2EICertified)
                     }
                 } catch {
-                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                    OldWireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }
             }
             participantsDidChange?()

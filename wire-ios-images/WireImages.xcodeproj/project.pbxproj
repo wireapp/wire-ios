@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -27,7 +27,6 @@
 		591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
 		591B6E742C8B0A10009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
 		591B6E772C8B0A17009F8A7B /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		59B5BCF92CEFEC4F00584043 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B5BCF82CEFEC4F00584043 /* WireFoundation */; };
 		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
 		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
@@ -174,12 +173,25 @@
 		EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMImageFormat+StringValue.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264382CF725AF0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 096960151B663E7C006DF53B /* WireImages-iosTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264372CF725AC0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264382CF725AF0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		096960081B663E7B006DF53B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59B5BCF92CEFEC4F00584043 /* WireFoundation in Frameworks */,
 				591B6E712C8B0A0D009F8A7B /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,6 +278,7 @@
 		098CB1651B5FAD6900712DF9 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264372CF725AC0005317F /* TestPlans */,
 				098CB1661B5FAD6900712DF9 /* Info.plist */,
 				09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */,
 				09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */,
@@ -432,6 +445,9 @@
 			dependencies = (
 				54A5A6181E92A06100D56F2E /* PBXTargetDependency */,
 				096960191B663E7C006DF53B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264372CF725AC0005317F /* TestPlans */,
 			);
 			name = "WireImages-iosTests";
 			productName = "zimages-iosTests";
@@ -761,13 +777,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		59B5BCF82CEFEC4F00584043 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 09DD1EA91B5D41E0005EBCC4 /* Project object */;
 }

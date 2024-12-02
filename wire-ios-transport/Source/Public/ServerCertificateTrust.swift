@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     let trustData: [TrustData]
@@ -75,7 +74,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         // serverTrust is the certificate coming from the backend server we make request to, so next line will
         // check that the certificate is not expired
         guard SecTrustEvaluateWithError(serverTrust, &someError) else {
-            WireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
+            OldWireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
             return false
         }
 

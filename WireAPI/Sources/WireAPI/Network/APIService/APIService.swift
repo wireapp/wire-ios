@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 // sourcery: AutoMockable
 /// A service for network communication to a specific backend.
@@ -50,38 +51,14 @@ public protocol APIServiceProtocol {
 public final class APIService: APIServiceProtocol {
 
     private let networkService: NetworkService
-    private let authenticationStorage: any AuthenticationStorage
-
-    /// Create a new `APIService`.
-    ///
-    /// - Parameters:
-    ///   - backendURL: The url of the target backend.
-    ///   - authenticationStorage: The storage for authentication objects.
-    ///   - minTLSVersion: The minimum supported TLS version.
-
-    public convenience init(
-        backendURL: URL,
-        authenticationStorage: any AuthenticationStorage,
-        minTLSVersion: TLSVersion
-    ) {
-        let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = configFactory.makeRESTAPISessionConfiguration()
-        let networkService = NetworkService(baseURL: backendURL)
-        let urlSession = URLSession(configuration: configuration)
-        networkService.configure(with: urlSession)
-
-        self.init(
-            networkService: networkService,
-            authenticationStorage: authenticationStorage
-        )
-    }
+    private let authenticationManager: any AuthenticationManagerProtocol
 
     init(
         networkService: NetworkService,
-        authenticationStorage: any AuthenticationStorage
+        authenticationManager: any AuthenticationManagerProtocol
     ) {
         self.networkService = networkService
-        self.authenticationStorage = authenticationStorage
+        self.authenticationManager = authenticationManager
     }
 
     /// Execute a request to the backend.
@@ -99,14 +76,23 @@ public final class APIService: APIServiceProtocol {
         var request = request
 
         if requiringAccessToken {
-            guard let accessToken = authenticationStorage.fetchAccessToken() else {
-                throw APIServiceError.missingAccessToken
-            }
-
+            let accessToken = try await authenticationManager.getValidAccessToken()
             request.setAccessToken(accessToken)
         }
 
-        return try await networkService.executeRequest(request)
+        let firstAttempt = try await networkService.executeRequest(request)
+
+        // If we get an authentication error, it could be that we erroneously
+        // thought we had a valid access token (e.g the device moved to a new
+        // timezone and we miscalculated its expiry date). We'll attempt a
+        // single retry with a new token just in case.
+        if HTTPStatusCode(rawValue: firstAttempt.1.statusCode) == .unauthorized {
+            let accessToken = try await authenticationManager.refreshAccessToken()
+            request.setAccessToken(accessToken)
+            return try await networkService.executeRequest(request)
+        } else {
+            return firstAttempt
+        }
     }
 
 }

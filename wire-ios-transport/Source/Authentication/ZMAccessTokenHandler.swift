@@ -17,17 +17,16 @@
 //
 
 import Foundation
-import WireFoundation
 
 @objc
 public extension ZMAccessTokenHandler {
 
     func logDebug(_ message: String) {
-        WireLogger.authentication.debug(message)
+        OldWireLogger.authentication.debug(message)
     }
 
     func logError(_ message: String) {
-        WireLogger.authentication.error(message)
+        OldWireLogger.authentication.error(message)
     }
 
 }

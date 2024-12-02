@@ -36,7 +36,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
     private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
     private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
 
-    private static let logger = WireLogger(tag: "EmojiRepository")
+    private static let logger = OldWireLogger(tag: "EmojiRepository")
 
     // MARK: - Life cycle
 

@@ -37,10 +37,6 @@ on:
         type: boolean
         default: false
         required: false
-      wire-datadog:
-        type: boolean
-        default: false
-        required: false
       wire-domain-project:
         type: boolean
         default: false
@@ -168,7 +164,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.PACKAGES_DIR }}
-          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-false
 
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
@@ -456,7 +452,7 @@ jobs:
         run: |
           echo "WireAPI has changes"
           echo "Building WireAPI..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAPI-Package -resultBundlePath xcodebuild-wire-api.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-api.log | bundle exec xcpretty
 
       - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-api || inputs.all }}
@@ -469,26 +465,8 @@ jobs:
         if: ${{ inputs.wire-api || inputs.all }}
         run: |
           echo "Testing WireAPI..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAPI-Package -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
-
-      # WireDatadog
-
-      - name: Build WireDatadog
-        if: ${{ inputs.wire-datadog || inputs.all }}
-        run: |
-          echo "WireDatadog has changes"
-          echo "Building WireDatadog..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDatadog -resultBundlePath xcodebuild-wire-datadog.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-datadog.log | bundle exec xcpretty
-
-      - uses: wireapp/analyze-xcoderesults-action@v1
-        if: ${{ inputs.wire-datadog || inputs.all }}
-        with:
-          results: xcodebuild-wire-datadog.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # No tests exist for WireDatadog currently
 
       # WireAnalytics
 
@@ -497,7 +475,7 @@ jobs:
         run: |
           echo "WireAnalytics has changes"
           echo "Building WireAnalytics..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAnalytics -resultBundlePath xcodebuild-wire-analytics.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-analytics.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAnalytics-Package -resultBundlePath xcodebuild-wire-analytics.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-analytics.log | bundle exec xcpretty
 
       - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-analytics || inputs.all }}
@@ -506,7 +484,12 @@ jobs:
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # No tests exist for WireAnalytics currently
+      - name: Test WireAnalytics
+        if: ${{ inputs.wire-analytics || inputs.all }}
+        run: |
+          echo "Testing WireAnalytics..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAnalytics-Package -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-analytics.log | bundle exec xcpretty --report junit --output build/reports/WireAnalytics.junit
+          exit ${PIPESTATUS[0]}
 
       # WireDomain
 
@@ -515,7 +498,7 @@ jobs:
         run: |
           echo "WireDomain has changes"
           echo "Building WireDomain..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDomain-Package -resultBundlePath xcodebuild-wire-domain.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-domain.log | bundle exec xcpretty
 
       - uses: wireapp/analyze-xcoderesults-action@v1
         if: ${{ inputs.wire-domain || inputs.all }}
@@ -528,7 +511,7 @@ jobs:
         if: ${{ inputs.wire-domain || inputs.all }}
         run: |
           echo "Testing WireDomain..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomainPackage -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDomain-Package -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-domain.log | bundle exec xcpretty --report junit --output build/reports/WireDomain.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain Project
@@ -625,7 +608,7 @@ jobs:
 
       # WireUI
 
-      - name: Test WireUI
+      - name: Build WireUI
         if: ${{ inputs.wire-ui || inputs.all }}
         run: |
           echo "WireUI has changes"

@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireFoundation;
 @import WireSystem;
-
 #import "NSData+ZMSCrypto.h"
 #import <CommonCrypto/CommonCrypto.h>
 

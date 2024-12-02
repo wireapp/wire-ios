@@ -35,10 +35,10 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) async -> ZMUpdateEvent? {
-        WireLogger.updateEvent.info("decrypting proteus event...", attributes: event.logAttributes)
+        OldWireLogger.updateEvent.info("decrypting proteus event...", attributes: event.logAttributes)
 
         guard !event.wasDecrypted else {
-            WireLogger.updateEvent.info("returned already decrypted event", attributes: event.logAttributes)
+            OldWireLogger.updateEvent.info("returned already decrypted event", attributes: event.logAttributes)
             return event
         }
 
@@ -63,7 +63,7 @@ extension EventDecoder {
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
                 ]
-                WireLogger.updateEvent.error(
+                OldWireLogger.updateEvent.error(
                     "decrypting proteus event... failed: is not for self client, dropping...)",
                     attributes: event.logAttributes,
                     additionalInfo,
@@ -77,7 +77,7 @@ extension EventDecoder {
         }
 
         guard let senderClient, let senderClientSessionId else {
-            WireLogger.updateEvent.error(
+            OldWireLogger.updateEvent.error(
                 "decrypting proteus event... failed: couldn't fetch sender client, dropping...",
                 attributes: event.logAttributes
             )
@@ -104,7 +104,7 @@ extension EventDecoder {
                 using: decryptFunction
             ) else {
                 fail()
-                WireLogger.updateEvent.error(
+                OldWireLogger.updateEvent.error(
                     "decrypting proteus event... failed: could not decrypt, dropping...",
                     attributes: event.logAttributes
                 )
@@ -116,7 +116,7 @@ extension EventDecoder {
         } catch let error as CBoxResult {
             let proteusError = ProteusError(cboxResult: error)
             fail(error: proteusError)
-            WireLogger.updateEvent.error(
+            OldWireLogger.updateEvent.error(
                 "decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")",
                 attributes: event.logAttributes
             )
@@ -125,7 +125,7 @@ extension EventDecoder {
         } catch let error as ProteusService.DecryptionError {
             let proteusError = error.proteusError
             fail(error: proteusError)
-            WireLogger.updateEvent.error(
+            OldWireLogger.updateEvent.error(
                 "decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)",
                 attributes: event.logAttributes
             )
@@ -133,7 +133,7 @@ extension EventDecoder {
 
         } catch {
             fail(error: nil)
-            WireLogger.updateEvent.error(
+            OldWireLogger.updateEvent.error(
                 "decrypting proteus event... failed with unkown error: \(error.localizedDescription)",
                 attributes: event.logAttributes
             )
@@ -189,12 +189,12 @@ extension EventDecoder {
         sender: UserClient,
         in context: NSManagedObjectContext
     ) {
-        WireLogger.updateEvent.error(
+        OldWireLogger.updateEvent.error(
             "Failed to decrypt message with error: \(String(describing: error))",
             attributes: [.senderUserId: sender.safeRemoteIdentifier.value],
             event.logAttributes
         )
-        WireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
+        OldWireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
 
         if error == .outdatedMessage || error == .duplicateMessage {
             // Do not notify the user if the error is just "duplicated".

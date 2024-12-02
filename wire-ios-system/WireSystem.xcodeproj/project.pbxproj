@@ -11,9 +11,9 @@
 		591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
 		591B6E8C2C8B0A37009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		591B6E8F2C8B0A3A009F8A7B /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
+		595375FC2CFE02F200920B59 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 595375FB2CFE02F200920B59 /* WireFoundation */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
 		EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC832BD1585500F7853F /* WireSystem.docc */; };
-		59B5BC132CEFE95E00584043 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B5BC122CEFE95E00584043 /* WireFoundation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,13 +70,20 @@
 			);
 			target = 3ECC350F1AD436750089FD4B /* WireSystem */;
 		};
+		59D2643E2CF726150005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+			);
+			target = 54A3272B1B99A3190004EB95 /* WireSystem Tests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5939CB6D2CEBB29F000F6FAD /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		5939CB872CEBB2BA000F6FAD /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5939CB8A2CEBB2BA000F6FAD /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		5953DD242CF0CA900069ABC8 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5953DD4A2CF0CA900069ABC8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
-		5953DE452CF0CD2A0069ABC8 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		5953DE452CF0CD2A0069ABC8 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643E2CF726150005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +92,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */,
-				59B5BC132CEFE95E00584043 /* WireFoundation in Frameworks */,
+				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
+				595375FC2CFE02F200920B59 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +191,8 @@
 			);
 			name = WireSystem;
 			packageProductDependencies = (
-				59B5BC122CEFE95E00584043 /* WireFoundation */,
+				013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */,
+				595375FB2CFE02F200920B59 /* WireFoundation */,
 			);
 			productName = SyncEngineSystem;
 			productReference = 3ECC35191AD436750089FD4B /* WireSystem.framework */;
@@ -263,6 +272,7 @@
 			);
 			mainGroup = 3ECC34C31AD430BB0089FD4B;
 			packageReferences = (
+				013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */,
 			);
 			productRefGroup = 3ECC34E61AD433520089FD4B /* Products */;
 			projectDirPath = "";
@@ -658,8 +668,24 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CocoaLumberjack/CocoaLumberjack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.8.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		59B5BC122CEFE95E00584043 /* WireFoundation */ = {
+		013334BB2C204AB0002D97DB /* CocoaLumberjackSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 013334BA2C204AB0002D97DB /* XCRemoteSwiftPackageReference "CocoaLumberjack" */;
+			productName = CocoaLumberjackSwift;
+		};
+		595375FB2CFE02F200920B59 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};

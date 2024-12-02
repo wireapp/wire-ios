@@ -20,8 +20,6 @@ import avs
 import Combine
 import Foundation
 
-private let zmLog = ZMSLog(tag: "calling")
-
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
 ///
@@ -29,7 +27,7 @@ private let zmLog = ZMSLog(tag: "calling")
 /// called from any thread.
 public class WireCallCenterV3: NSObject {
 
-    static let logger = WireLogger.calling
+    static let logger = OldWireLogger.calling
 
     /// The maximum number of participants for a legacy video call.
 
@@ -765,7 +763,7 @@ public extension WireCallCenterV3 {
                                 )
                             }
                         } catch {
-                            WireLogger.calling.error("Error updating conference info: \(error)")
+                            OldWireLogger.calling.error("Error updating conference info: \(error)")
                         }
                     }
 
@@ -942,7 +940,7 @@ extension WireCallCenterV3 {
         overMLSSelfConversation: Bool = false
     ) {
         Self.logger.info("sending call message for AVS")
-        zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
+        Self.logger.debug("\(self): send call message, transport = \(String(describing: transport))")
         transport?.send(
             data: data,
             conversationId: conversationId,
@@ -957,10 +955,10 @@ extension WireCallCenterV3 {
     /// Sends an SFT call message when requested by AVS through `wcall_sft_req_h`.
     func sendSFT(token: WireCallMessageToken, url: String, data: Data) {
         Self.logger.info("sending SFT message for AVS")
-        zmLog.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
+        Self.logger.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
 
         guard let endpoint = URL(string: url) else {
-            zmLog.error("SFT request failed. Invalid url: \(url)")
+            Self.logger.error("SFT request failed. Invalid url: \(url)")
             avsWrapper.handleSFTResponse(data: nil, context: token)
             return
         }
@@ -968,7 +966,7 @@ extension WireCallCenterV3 {
         transport?.sendSFT(data: data, url: endpoint) { [weak self] result in
             switch result {
             case let .failure(error):
-                zmLog.error("SFT request failed: \(error.localizedDescription)")
+                Self.logger.error("SFT request failed: \(error.localizedDescription)")
                 self?.avsWrapper.handleSFTResponse(data: nil, context: token)
 
             case let .success(data):
@@ -979,17 +977,17 @@ extension WireCallCenterV3 {
 
     /// Sends the config request when requested by AVS through `wcall_config_req_h`.
     func requestCallConfig() {
-        zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
+        Self.logger.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
         transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
             guard let self else { return }
-            zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
+            Self.logger.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
             avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
         })
     }
 
     /// Tags a call as missing when requested by AVS through `wcall_missed_h`.
     func missed(conversationId: AVSIdentifier, userId: AVSIdentifier, timestamp: Date, isVideoCall: Bool) {
-        zmLog.debug("missed call")
+        Self.logger.debug("missed call")
 
         if let context = uiMOC {
             WireCallCenterMissedCallNotification(

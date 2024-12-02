@@ -107,13 +107,13 @@ public extension ZMUserSession {
 public extension ZMUserSession {
 
     func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
-        WireLogger.notifications.debug("Received push notification with payload: \(payload)")
+        OldWireLogger.notifications.debug("Received push notification with payload: \(payload)")
 
         syncManagedObjectContext.performGroupedBlock {
             let notAuthenticated = !self.isAuthenticated
 
             if notAuthenticated {
-                WireLogger.notifications.info(
+                OldWireLogger.notifications.info(
                     "Not displaying notification because app is not authenticated",
                     attributes: .safePublic
                 )
@@ -203,7 +203,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         userText: String? = nil,
         completionHandler: @escaping () -> Void
     ) {
-        WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
+        OldWireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
         case CallNotificationAction.ignore.rawValue:

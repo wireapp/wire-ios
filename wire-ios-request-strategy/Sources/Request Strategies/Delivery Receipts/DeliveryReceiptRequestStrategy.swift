@@ -94,7 +94,7 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                     completionHandler: nil
                 ))
             } catch {
-                WireLogger.messaging.error("send delivery receipt: \(error.localizedDescription)")
+                OldWireLogger.messaging.error("send delivery receipt: \(error.localizedDescription)")
             }
         }
     }

@@ -186,6 +186,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType
     private var token: NSObjectProtocol?
+    private lazy var sizingFooter = SectionFooter()
 
     init(
         participants: [UserType],
@@ -258,7 +259,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
         let unexpectedCellHandler: () -> UICollectionViewCell = {
             let message = "Unexpected collection view cell type: \(String(describing: cell.self))"
-            WireLogger.conversation.error(message)
+            OldWireLogger.conversation.error(message)
             assertionFailure(message)
             return cell
         }
@@ -299,17 +300,12 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
 
-        guard
-            viewModel.footerVisible,
-            let footer = collectionView.dequeueFooter(for: IndexPath(item: 0, section: section)) as? SectionFooter
-        else {
-            return .zero
-        }
+        guard viewModel.footerVisible else { return .zero }
 
-        footer.titleLabel.text = viewModel.footerTitle
-        footer.size(fittingWidth: collectionView.bounds.width)
+        sizingFooter.titleLabel.text = viewModel.footerTitle
+        sizingFooter.size(fittingWidth: collectionView.bounds.width)
 
-        return footer.bounds.size
+        return sizingFooter.bounds.size
     }
 
     override func collectionView(

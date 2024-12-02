@@ -190,7 +190,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         model: String,
         label: String
     ) -> UserClient {
-        WireLogger.userClient.debug("inserting new self client in context \(managedObjectContext)")
+        OldWireLogger.userClient.debug("inserting new self client in context \(managedObjectContext)")
 
         let userClient = UserClient.insertNewObject(in: managedObjectContext)
         userClient.user = selfUser
@@ -220,7 +220,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         let relationClients = user.clients.filter { $0.remoteIdentifier == remoteIdentifier }
 
         if relationClients.count > 1 {
-            WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
+            OldWireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
         }
 
         requireInternal(
@@ -241,7 +241,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
 
         if createIfNeeded {
-            WireLogger.userClient.info("inserting new user client (\(remoteIdentifier)) in context \(context)")
+            OldWireLogger.userClient.info("inserting new user client (\(remoteIdentifier)) in context \(context)")
 
             let newClient = UserClient.insertNewObject(in: context)
             newClient.remoteIdentifier = remoteIdentifier
@@ -274,7 +274,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         do {
             try await deleteSession()
         } catch {
-            WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
+            OldWireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
         }
         await managedObjectContext?.perform { self.deleteClient() }
     }
@@ -431,7 +431,7 @@ public extension UserClient {
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {
-        WireLogger.userClient.info("create or update self user client")
+        OldWireLogger.userClient.info("create or update self user client")
 
         guard
             let id = payloadData["id"] as? String,
@@ -511,15 +511,15 @@ public extension UserClient {
         var client: UserClient
         var isNewClient: Bool
 
-        WireLogger.userClient.info("trying to fetch client with id (\(id))")
+        OldWireLogger.userClient.info("trying to fetch client with id (\(id))")
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: could optimize: look into self user relationship before executing a fetch request
         if let fetchedClient = fetchExistingUserClient(with: id, in: context) {
-            WireLogger.userClient.info("fetched existing user client in context \(context)")
+            OldWireLogger.userClient.info("fetched existing user client in context \(context)")
             client = fetchedClient
             isNewClient = false
         } else {
-            WireLogger.userClient.info("no fetched client. inserting new user client in context \(context)")
+            OldWireLogger.userClient.info("no fetched client. inserting new user client in context \(context)")
             client = UserClient.insertNewObject(in: context)
             isNewClient = true
         }

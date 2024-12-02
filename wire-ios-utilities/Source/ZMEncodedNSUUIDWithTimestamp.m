@@ -17,7 +17,6 @@
 //
 
 @import CoreFoundation;
-@import WireFoundation;
 @import WireSystem;
 
 #import "ZMEncodedNSUUIDWithTimestamp.h"

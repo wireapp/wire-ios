@@ -89,7 +89,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
-        WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
+        OldWireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
 
         isProcessingNotifications = true
 
@@ -101,7 +101,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 .appendDebugInformation(
                     "From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload"
                 )
-            WireLogger.updateEvent.info("received event", attributes: event.logAttributes)
+            OldWireLogger.updateEvent.info("received event", attributes: event.logAttributes)
         }
 
         Task {
@@ -121,7 +121,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                     delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
                 }
             } catch {
-                WireLogger.notifications.warn("Failed to process fetched events: \(error)")
+                OldWireLogger.notifications.warn("Failed to process fetched events: \(error)")
                 await managedObjectContext.perform {
                     self.isProcessingNotifications = false
                 }

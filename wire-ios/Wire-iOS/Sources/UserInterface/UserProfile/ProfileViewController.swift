@@ -141,7 +141,8 @@ final class ProfileViewController: UIViewController {
 
         let controller = ConversationCreationController(
             preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            mlsFeature: viewModel.userSession.makeGetMLSFeatureUseCase().invoke()
         )
         controller.delegate = self
 
@@ -510,7 +511,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicate.createdTeams = original.createdTeams
             context.saveOrRollback()
 
-            WireLogger.conversation
+            OldWireLogger.conversation
                 .debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
         }
     }
@@ -520,7 +521,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
               let context = (viewModel.userSession as? ZMUserSession)?.syncContext,
               let team = user.team else {
             assertionFailure("couldn't get context or has no team to duplicateTeam")
-            WireLogger.conversation.debug("can't duplicate team")
+            OldWireLogger.conversation.debug("can't duplicate team")
             return
         }
 
@@ -536,7 +537,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
             context.saveOrRollback()
 
-            WireLogger.conversation
+            OldWireLogger.conversation
                 .debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
     }

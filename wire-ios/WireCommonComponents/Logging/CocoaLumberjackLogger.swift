@@ -18,9 +18,10 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import WireSystem
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol { // TODO: move to common components
+final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 
@@ -73,6 +74,22 @@ final class CocoaLumberjackLogger: LoggerProtocol { // TODO: move to common comp
         //    return
         // }
 
+        // Filter logs by level:
+        // Only continue if we're running a DEBUG build or
+        // the level is greater than or equal to error and lower than or equal to info.
+        //
+        // DDLogLevelOff     00000 0
+        // DDLogLevelError   00001 1
+        // DDLogLevelWarning 00011 3
+        // DDLogLevelInfo    00111 7
+        // DDLogLevelDebug   01111 15
+        // DDLogLevelVerbose 11111 31
+        // DDLogLevelAll  1..11111 UInt.max
+        guard
+            isDebug ||
+            (level.rawValue >= DDLogLevel.error.rawValue && level.rawValue <= DDLogLevel.info.rawValue)
+        else { return }
+
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
@@ -84,7 +101,7 @@ final class CocoaLumberjackLogger: LoggerProtocol { // TODO: move to common comp
         DDLog.log(asynchronous: true, message: formatedMessage)
     }
 
-    public func addTag(_ key: LogAttributesKey, value: String?) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
     }
 

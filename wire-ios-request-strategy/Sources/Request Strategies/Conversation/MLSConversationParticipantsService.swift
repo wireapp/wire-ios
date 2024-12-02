@@ -87,10 +87,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             (conversation.qualifiedID, conversation.mlsGroupID)
         }
 
-        WireLogger.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
+        OldWireLogger.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID else {
-            WireLogger.mls
+            OldWireLogger.mls
                 .warn(
                     "failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID"
                 )
@@ -119,7 +119,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             throw FederationError.unreachableDomains(domains)
 
         } catch {
-            WireLogger.mls
+            OldWireLogger.mls
                 .warn(
                     "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
                 )
@@ -136,10 +136,10 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             (conversation.qualifiedID, conversation.mlsGroupID, user.qualifiedID)
         }
 
-        WireLogger.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
+        OldWireLogger.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
         guard let groupID, let userID else {
-            WireLogger.mls
+            OldWireLogger.mls
                 .warn(
                     "failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation"
                 )
@@ -157,7 +157,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
                 for: groupID
             )
         } catch {
-            WireLogger.mls
+            OldWireLogger.mls
                 .warn(
                     "failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
                 )

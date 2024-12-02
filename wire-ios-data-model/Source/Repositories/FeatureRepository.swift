@@ -60,7 +60,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let logger = WireLogger(tag: "FeatureRepository")
+    private let logger = OldWireLogger(tag: "FeatureRepository")
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 

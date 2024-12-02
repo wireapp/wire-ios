@@ -604,7 +604,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
                     syncContext: context
                 )
             } catch {
-                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                OldWireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
             }
         }
     }
@@ -748,7 +748,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                     syncContext: context
                 )
             } catch {
-                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                OldWireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
             }
         }
     }

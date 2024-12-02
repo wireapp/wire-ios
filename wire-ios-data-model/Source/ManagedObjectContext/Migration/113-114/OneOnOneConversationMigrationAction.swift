@@ -36,7 +36,7 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
                 do {
                     try migrateTeamOneOnOne(user: user, context: context)
                 } catch {
-                    WireLogger.localStorage.error("failed to migrate non connected user: \(user)")
+                    OldWireLogger.localStorage.error("failed to migrate non connected user: \(user)")
                 }
             }
         }

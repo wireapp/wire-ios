@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import struct WireSystem.WireLogger
+import struct WireSystem.OldWireLogger
 
 /// A placeholder container for AVSVideo to start the rendering only if the view is instantiated and setup.
 final class AVSVideoContainerView: UIView {
@@ -26,7 +26,7 @@ final class AVSVideoContainerView: UIView {
 
     func setupVideoView(_ view: UIView) {
         guard videoView == nil else {
-            WireLogger.ui.error(
+            OldWireLogger.ui.error(
                 "video view cannot be added, because it contains already a view!",
                 attributes: .safePublic
             )

@@ -19,7 +19,6 @@
 import Foundation
 import os.log
 import ZipArchive
-import WireFoundation
 
 /// Represents an entry to be logged.
 @objcMembers
@@ -48,7 +47,7 @@ public final class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public final class ZMSLog: NSObject {
+public final class ZMSLog: NSObject, Sendable {
 
     public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
@@ -363,7 +362,7 @@ public extension ZMSLog {
         do {
             assertionFile = try AssertionDumpFile.url
         } catch {
-            WireLogger.system.warn("AssertionDumpFile.url threw error: \(String(reflecting: error))")
+            OldWireLogger.system.warn("AssertionDumpFile.url threw error: \(String(reflecting: error))")
             assertionFile = nil
         }
         if let assertionFile, FileManager.default.fileExists(atPath: assertionFile.path) {

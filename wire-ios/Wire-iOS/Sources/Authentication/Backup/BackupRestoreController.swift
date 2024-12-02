@@ -114,13 +114,13 @@ final class BackupRestoreController: NSObject {
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
-                WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
+                OldWireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
                 return
             }
 
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
+                OldWireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 showWrongPasswordAlert { _ in
@@ -128,7 +128,7 @@ final class BackupRestoreController: NSObject {
                 }
 
             case let .failure(error):
-                WireLogger.localStorage.error("Failed restoring backup: \(error)")
+                OldWireLogger.localStorage.error("Failed restoring backup: \(error)")
                 showRestoreError(error)
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
@@ -172,7 +172,7 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
         _ controller: UIDocumentPickerViewController,
         didPickDocumentAt url: URL
     ) {
-        WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+        OldWireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
 
         restore(with: url)
     }

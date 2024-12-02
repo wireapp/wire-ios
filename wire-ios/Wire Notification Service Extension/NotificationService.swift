@@ -29,7 +29,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        WireAnalytics.Datadog.enable()
+        WireAnalytics.setup()
     }
 
     // MARK: - Methods
@@ -38,7 +38,7 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
+        OldWireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         legacyService.didReceive(
             request,

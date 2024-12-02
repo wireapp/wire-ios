@@ -26,17 +26,17 @@ extension UserClient {
     /// These have less chances of collision.
 
     static func migrateAllSessionsClientIdentifiersV2(in moc: NSManagedObjectContext) {
-        WireLogger.proteus.info("migrating all session ids to v2")
+        OldWireLogger.proteus.info("migrating all session ids to v2")
 
         let request = UserClient.sortedFetchRequest()
 
         guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-            WireLogger.proteus.info("migrating all session ids to v2: no clients to migrate")
+            OldWireLogger.proteus.info("migrating all session ids to v2: no clients to migrate")
             return
         }
 
         guard let keyStore = keyStore(in: moc) else {
-            WireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
+            OldWireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
             fatalError("could not migrate proteus session ids: keystore doesn't exist")
         }
 
@@ -57,17 +57,17 @@ extension UserClient {
     // Migrate to V3 proteus session ids, which incorporate the domain.
 
     static func migrateAllSessionsClientIdentifiersV3(in moc: NSManagedObjectContext) {
-        WireLogger.proteus.info("migrating all session ids to v3")
+        OldWireLogger.proteus.info("migrating all session ids to v3")
 
         let request = UserClient.sortedFetchRequest()
 
         guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-            WireLogger.proteus.info("migrating all session ids to v3: no clients to migrate")
+            OldWireLogger.proteus.info("migrating all session ids to v3: no clients to migrate")
             return
         }
 
         guard let keyStore = keyStore(in: moc) else {
-            WireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
+            OldWireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
             fatalError("could not migrate proteus session ids: keystore doesn't exist")
         }
 
@@ -92,11 +92,11 @@ extension UserClient {
 
     static func keyStore(in context: NSManagedObjectContext) -> UserClientKeysStore? {
         if let existingKeyStore = context.zm_cryptKeyStore {
-            WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
+            OldWireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             return existingKeyStore
         } else if let accountDirectory = context.accountDirectoryURL,
                   let applicationContainer = context.applicationContainerURL {
-            WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
+            OldWireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
 
             return UserClientKeysStore(
                 accountDirectory: accountDirectory,

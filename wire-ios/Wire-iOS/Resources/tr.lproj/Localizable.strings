@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "En az 1 karakter";
 "conversation.create.guidance.toolong" = "Çok fazla karakter";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Misafirlere izin ver";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";

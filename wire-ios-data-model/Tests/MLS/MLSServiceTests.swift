@@ -1782,10 +1782,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     enum TestError: Error {
-        case failedToUploadKeyPackages
+        case failedToCountUnclaimedKeyPackages
     }
 
-    func test_UploadKeyPackages_DoesNotSetKeyPackageQueriedTime_IfItFails() async {
+    func test_CountUnclaimedKeyPackages_DoesNotSetKeyPackageQueriedTime_IfItFails() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 
@@ -1795,13 +1795,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
-            0
+            throw TestError.failedToCountUnclaimedKeyPackages
         }
 
-        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
-            throw TestError.failedToUploadKeyPackages
-
-        }
+        mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in }
         mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
             [Data.random()]
         }
@@ -1812,7 +1809,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertNil(privateUserDefaults.date(forKey: .keyPackageQueriedTime))
     }
 
-    func test_UploadKeyPackages_SetsKeyPackageQueriedTime_IfItSucceed() async {
+    func test_CountUnclaimedKeyPackages_SetsKeyPackageQueriedTime_IfItSucceed() async {
         // Given
         await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 

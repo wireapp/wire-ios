@@ -530,7 +530,7 @@ extension MessagingTestBase {
             do {
                 try FileManager.default.removeItem(at: $0)
             } catch {
-                WireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
+                OldWireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
             }
         }
     }

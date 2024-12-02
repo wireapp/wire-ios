@@ -175,7 +175,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             if (!event.isTransient) {
                 latestEventId = event.uuid;
             }
-            [WireLoggerObjC logReceivedUpdateEventWithId:[event safeUUID]];
+            [WireLoggerObjc logReceivedUpdateEventWithId:[event safeUUID]];
         }
     }
     

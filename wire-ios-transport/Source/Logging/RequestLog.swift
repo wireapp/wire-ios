@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 
 struct RequestLog: Codable {
     var method: String
@@ -135,7 +134,7 @@ public extension String {
     }
 }
 
-extension WireLogger {
+extension OldWireLogger {
     func log(request: NSURLRequest) {
         let info = RequestLog(request)
 
@@ -165,17 +164,17 @@ extension WireLogger {
     }
 }
 
-extension WireLoggerObjC {
+extension WireLoggerObjc {
     static func logRequest(_ request: NSURLRequest) {
-        WireLogger.network.log(request: request)
+        OldWireLogger.network.log(request: request)
     }
 
     static func logHTTPResponse(_ response: HTTPURLResponse) {
-        WireLogger.network.log(response: response)
+        OldWireLogger.network.log(response: response)
     }
 
     @objc(logRequestLoopAtPath:)
     static func logRequestLoop(at path: String) {
-        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
+        OldWireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
     }
 }

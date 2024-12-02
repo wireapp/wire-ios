@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireFoundation
 import WireUtilities
 
 @objc
@@ -292,7 +291,7 @@ open class ZMUpdateEvent: NSObject {
     ) -> [ZMUpdateEvent] {
 
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error(
+            OldWireLogger.updateEvent.error(
                 "Push event payload is invalid",
                 attributes: [.eventId: uuid.transportString().redactedAndTruncated()],
                 .safePublic

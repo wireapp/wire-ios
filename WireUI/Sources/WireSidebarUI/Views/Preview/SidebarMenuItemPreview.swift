@@ -32,24 +32,24 @@ struct SidebarMenuItemPreview: View {
                     icon: "text.bubble",
                     iconSize: iconSize,
                     isHighlighted: false,
-                    title: { Text("Regular") },
-                    accessibilityLabel: { Text("Regular") },
+                    title: { Text(verbatim: "Regular") },
+                    accessibilityLabel: { Text(verbatim: "Regular") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "gamecontroller",
                     iconSize: iconSize,
                     isHighlighted: true,
-                    title: { Text("Initially highlighted") },
-                    accessibilityLabel: { Text("Initially highlighted") },
+                    title: { Text(verbatim: "Initially highlighted") },
+                    accessibilityLabel: { Text(verbatim: "Initially highlighted") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "person.3",
                     iconSize: iconSize,
                     isLink: true,
-                    title: { Text("Initially highlighted") },
-                    accessibilityLabel: { Text("Initially highlighted") },
+                    title: { Text(verbatim: "Initially highlighted") },
+                    accessibilityLabel: { Text(verbatim: "Initially highlighted") },
                     action: { print("show all conversations") }
                 )
             }
@@ -70,16 +70,16 @@ struct SidebarMenuItemPreview: View {
                     icon: "text.bubble",
                     iconSize: iconSize,
                     isHighlighted: false,
-                    title: { Text("Small Icon") },
-                    accessibilityLabel: { Text("Small Icon") },
+                    title: { Text(verbatim: "Small Icon") },
+                    accessibilityLabel: { Text(verbatim: "Small Icon") },
                     action: { print("show all conversations") }
                 )
                 SidebarMenuItemView(
                     icon: "brain",
                     iconSize: iconSize,
                     isHighlighted: false,
-                    title: { Text("Little larger Icon") },
-                    accessibilityLabel: { Text("Little larger Icon") },
+                    title: { Text(verbatim: "Little larger Icon") },
+                    accessibilityLabel: { Text(verbatim: "Little larger Icon") },
                     action: { print("show all conversations") }
                 )
             }

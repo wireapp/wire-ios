@@ -29,7 +29,7 @@ extension ZMUserSession: AccessTokenRenewing {
     }
 
     func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
+        OldWireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
@@ -46,7 +46,7 @@ extension ZMUserSession: AccessTokenRenewing {
     }
 
     func transportSessionAccessTokenDidSucceed() {
-        WireLogger.authentication.info("access token renewal did succeed")
+        OldWireLogger.authentication.info("access token renewal did succeed")
         accessTokenRenewalObserver?.accessTokenRenewalDidSucceed()
         accessTokenRenewalObserver = nil
     }

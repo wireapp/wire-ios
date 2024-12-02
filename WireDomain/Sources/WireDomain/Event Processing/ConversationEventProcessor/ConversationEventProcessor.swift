@@ -36,7 +36,6 @@ protocol ConversationEventProcessorProtocol {
 struct ConversationEventProcessor {
 
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
-    let codeUpdateEventProcessor: any ConversationCodeUpdateEventProcessorProtocol
     let createEventProcessor: any ConversationCreateEventProcessorProtocol
     let deleteEventProcessor: any ConversationDeleteEventProcessorProtocol
     let memberJoinEventProcessor: any ConversationMemberJoinEventProcessorProtocol
@@ -54,13 +53,15 @@ struct ConversationEventProcessor {
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
         case let .accessUpdate(event):
-            try await accessUpdateEventProcessor.processEvent(event)
+            await accessUpdateEventProcessor.processEvent(event)
 
-        case let .codeUpdate(event):
-            try await codeUpdateEventProcessor.processEvent(event)
+        case .codeUpdate:
+            // Event is not currently processed instead we fetch guest link on demand directly from API, see
+            // `CreateConversationGuestLinkUseCase` and `CreateConversationGuestLinkActionHandler`
+            break
 
         case let .create(event):
-            try await createEventProcessor.processEvent(event)
+            await createEventProcessor.processEvent(event)
 
         case let .delete(event):
             try await deleteEventProcessor.processEvent(event)

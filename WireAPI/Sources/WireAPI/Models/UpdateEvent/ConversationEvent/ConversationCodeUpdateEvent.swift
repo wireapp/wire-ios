@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the conversation's guest link code was updated.
 
-public struct ConversationCodeUpdateEvent: Equatable, Codable {
+public struct ConversationCodeUpdateEvent: Equatable, Codable, Sendable {
 
     /// The id of the conversation.
 

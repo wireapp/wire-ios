@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Co najmniej 1 znak";
 "conversation.create.guidance.toolong" = "Zbyt wiele znaków";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Zezwalaj na gości";
 "conversation.create.guests.subtitle" = "Wyraź zgodę na dołączenie do rozmowy osób spoza twojej drużyny.";
 "conversation.create.services.title" = "Allow services";

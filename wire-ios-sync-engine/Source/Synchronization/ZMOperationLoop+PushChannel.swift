@@ -33,7 +33,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                 let decoder = JSONDecoder.defaultDecoder
                 _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
             } catch {
-                WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
+                OldWireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
             }
         }
 
@@ -41,14 +41,14 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
             with: data,
             options: []
         ) as? ZMTransportData else {
-            WireLogger.updateEvent.error("failed to deserialize push channel data")
+            OldWireLogger.updateEvent.error("failed to deserialize push channel data")
             return
         }
 
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: transportData), !events.isEmpty {
-            WireLogger.eventProcessing.info("Received \(events.count) events from push channel")
+            OldWireLogger.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach {
-                WireLogger.updateEvent.info("received event", attributes: $0.logAttributes(source: .pushChannel))
+                OldWireLogger.updateEvent.info("received event", attributes: $0.logAttributes(source: .pushChannel))
                 $0.appendDebugInformation("from push channel (web socket)")
             }
 
@@ -62,7 +62,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                         try await self.updateEventProcessor.processEvents(events)
                     } catch {
                         events.forEach {
-                            WireLogger.updateEvent.error(
+                            OldWireLogger.updateEvent.error(
                                 "Failed to process event from push channel (web socket)",
                                 attributes: $0.logAttributes(source: .pushChannel)
                             )

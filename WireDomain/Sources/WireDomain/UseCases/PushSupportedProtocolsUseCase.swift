@@ -20,8 +20,13 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
+// sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend
-public struct PushSupportedProtocolsUseCase {
+public protocol PushSupportedProtocolsUseCaseProtocol {
+    func invoke() async throws
+}
+
+public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtocol {
 
     private enum ProteusToMLSMigrationState: String {
         case disabled
@@ -34,7 +39,7 @@ public struct PushSupportedProtocolsUseCase {
     let userRepository: any UserRepositoryProtocol
     let userClientsRepository: any UserClientsRepositoryProtocol
 
-    private let logger = WireLogger(tag: "supported-protocols")
+    private let logger = OldWireLogger(tag: "supported-protocols")
 
     public func invoke() async throws {
         let supportedProtocols = await calculateSupportedProtocols()
@@ -91,7 +96,7 @@ public struct PushSupportedProtocolsUseCase {
 
     private func remotelySupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mls,
+            name: .mls,
             type: Feature.MLS.Config.self
         )
 
@@ -120,7 +125,7 @@ public struct PushSupportedProtocolsUseCase {
 
     private func currentMigrationState() async -> ProteusToMLSMigrationState {
         let mlsMigrationFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mlsMigration,
+            name: .mlsMigration,
             type: Feature.MLSMigration.Config.self
         )
 

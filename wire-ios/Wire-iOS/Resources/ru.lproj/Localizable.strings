@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
 "conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
-"conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.services.title" = "Разрешить сервисы";

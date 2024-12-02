@@ -80,7 +80,7 @@ extension NSManagedObjectContext {
 
     public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
-            WireLogger.ear.info("migrating existing data toward EAR")
+            OldWireLogger.ear.info("migrating existing data toward EAR")
             saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMGenericMessageData.self,
@@ -96,7 +96,7 @@ extension NSManagedObjectContext {
             )
             saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
+            OldWireLogger.ear.error("failed to migrate existing data toward EAR: \(error)")
             reset()
             throw error
         }
@@ -104,7 +104,7 @@ extension NSManagedObjectContext {
 
     public func migrateAwayFromEncryptionAtRest(databaseKey: VolatileData) throws {
         do {
-            WireLogger.ear.info("migrating existing data away from EAR")
+            OldWireLogger.ear.info("migrating existing data away from EAR")
             saveOrRollback()
             try migrateInstancesAwayFromEncryptionAtRest(
                 type: ZMGenericMessageData.self,
@@ -120,7 +120,7 @@ extension NSManagedObjectContext {
             )
             saveOrRollback()
         } catch {
-            WireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
+            OldWireLogger.ear.error("failed to migrate existing data away from EAR: \(error)")
             reset()
             throw error
         }
@@ -294,7 +294,7 @@ extension NSManagedObjectContext {
             let selfClientId = selfClient.remoteIdentifier,
             let context = (selfUserId + selfClientId).data(using: .utf8)
         else {
-            WireLogger.ear.error("Could not obtain self user id and self client id")
+            OldWireLogger.ear.error("Could not obtain self user id and self client id")
             assertionFailure("Could not obtain self user id and self client id")
             return nil
         }

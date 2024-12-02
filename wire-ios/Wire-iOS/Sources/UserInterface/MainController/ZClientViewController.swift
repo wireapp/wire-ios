@@ -46,6 +46,15 @@ final class ZClientViewController: UIViewController {
 
     private(set) var conversationRootViewController: UIViewController?
 
+    private lazy var conversationFilterSelector = ConversationFilterSelector(
+        conversationFilter: { [weak conversationListViewController] in
+            conversationListViewController?.conversationFilter
+        },
+        updateConversationFilter: { [weak mainCoordinator] filter in
+            mainCoordinator?.applyConversationFilter(filter)
+        }
+    )
+
     var currentConversation: ZMConversation? {
         conversationListViewController.selectedConversation
     }
@@ -274,7 +283,7 @@ final class ZClientViewController: UIViewController {
             do {
                 try await trackingManager?.firstTimeRequestToEnableAnalytics()
             } catch {
-                WireLogger.analytics.error("failed to first time enable analytics: \(error)")
+                OldWireLogger.analytics.error("failed to first time enable analytics: \(error)")
             }
         }
     }
@@ -320,6 +329,8 @@ final class ZClientViewController: UIViewController {
             await updateCachedAccountImage()
             await updateCachedAccountInfo()
         }
+
+        conversationFilterSelector.observe(conversationDirectory: userSession.conversationDirectory)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -754,7 +765,7 @@ final class ZClientViewController: UIViewController {
                 account: account
             ).mapToAccountImageSource()
         } catch {
-            WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+            OldWireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }
     }
 
@@ -768,7 +779,7 @@ final class ZClientViewController: UIViewController {
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
-            WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
+            OldWireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
     }
 

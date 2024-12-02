@@ -41,3 +41,18 @@ extension WireAPI.ConnectionStatus {
     }
 
 }
+
+extension WireAPI.Connection {
+
+    func toDomainModel() -> ConnectionInfo {
+        .init(
+            senderID: senderID,
+            receiverID: receiverID,
+            receiverQualifiedID: receiverQualifiedID?.toDomainModel(),
+            conversationID: conversationID,
+            qualifiedConversationID: qualifiedConversationID?.toDomainModel(),
+            lastUpdate: lastUpdate,
+            status: status.toDomainModel()
+        )
+    }
+}

@@ -29,6 +29,10 @@ import WireFoundation
 /// as well as the possible source(s) of the models.
 public protocol UserRepositoryProtocol {
 
+    /// Pulls self user and stores it locally
+
+    func pullSelfUser() async throws
+
     /// Fetch self user from the local store
 
     func fetchSelfUser() async -> ZMUser
@@ -149,6 +153,11 @@ public protocol UserRepositoryProtocol {
         domain: String?
     ) async throws -> Bool
 
+    /// Fetches all user IDs that have a one on one conversation
+    /// - returns: A list of users' qualified IDs.
+
+    func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -178,6 +187,14 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     // MARK: - Public
+
+    public func pullSelfUser() async throws {
+        let selfUser = try await selfUserAPI.getSelfUser()
+
+        await userLocalStore.persistUser(
+            userInfo: selfUser.toDomainModel()
+        )
+    }
 
     public func fetchSelfUser() async -> ZMUser {
         await userLocalStore.fetchSelfUser()
@@ -226,7 +243,7 @@ public final class UserRepository: UserRepositoryProtocol {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             for user in userList.found {
-                await userLocalStore.persistUser(from: user)
+                await userLocalStore.persistUser(userInfo: user.toDomainModel())
             }
 
         } catch {
@@ -238,7 +255,7 @@ public final class UserRepository: UserRepositoryProtocol {
         from event: UserUpdateEvent
     ) async {
         await userLocalStore.updateUser(
-            from: event
+            userUpdateInfo: event.toDomainModel()
         )
     }
 
@@ -253,7 +270,7 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         // prepare data for the local store
         guard let mappedPrekey = lastPrekey.toDomainModel() else {
-            return WireLogger.eventProcessing.error(
+            return OldWireLogger.eventProcessing.error(
                 "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
             )
         }
@@ -282,7 +299,7 @@ public final class UserRepository: UserRepositoryProtocol {
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
 
         default:
-            WireLogger.updateEvent.warn(
+            OldWireLogger.updateEvent.warn(
                 "\(String(describing: userProperty)) property not handled."
             )
         }
@@ -331,6 +348,10 @@ public final class UserRepository: UserRepositoryProtocol {
                 removedAt: date
             )
         }
+    }
+
+    public func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID] {
+        try await userLocalStore.fetchAllUserIDsWithOneOnOneConversation()
     }
 
     public func isSelfUser(

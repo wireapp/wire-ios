@@ -71,7 +71,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             return nil
         }
 
-        WireLogger.notifications.info("generated request to fetch events")
+        OldWireLogger.notifications.info("generated request to fetch events")
         return request
     }
 
@@ -112,7 +112,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         let source = ZMUpdateEventSource.pushNotification
 
         guard let eventsDictionaries = eventDictionariesFrom(payload: payload) else {
-            WireLogger.notifications.warn("failed to decode events from response")
+            OldWireLogger.notifications.warn("failed to decode events from response")
             return nil
         }
 

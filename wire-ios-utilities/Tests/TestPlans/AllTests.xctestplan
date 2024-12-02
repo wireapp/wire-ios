@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "754901A3-9CDC-4252-A3EE-01A168E7045C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireUtilities.xcodeproj",
+        "identifier" : "3E88BD421B1F3EA300232589",
+        "name" : "WireUtilities-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

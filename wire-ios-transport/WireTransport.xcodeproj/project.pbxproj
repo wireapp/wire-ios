@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -103,7 +103,6 @@
 		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
-		5953DFC32CF0D0250069ABC8 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5953DFC22CF0D0250069ABC8 /* WireFoundation */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
@@ -397,6 +396,20 @@
 		F9C4317D1CD7ADF300A8542F /* ZMKeychainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMKeychainTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264342CF7256A0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 3E88BCB11B1F35DF00232589 /* WireTransport-ios-tests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264332CF725570005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264342CF7256A0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		09A218631B790D330076547A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -413,7 +426,6 @@
 			files = (
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
 				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
-				5953DFC32CF0D0250069ABC8 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,6 +536,7 @@
 		546E89BD1B33015000DD1042 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				59D264332CF725570005317F /* TestPlans */,
 				F173092A21C7EC91008F82EE /* Resources */,
 				546E89BE1B33015000DD1042 /* Source */,
 			);
@@ -976,7 +989,6 @@
 			name = "WireTransport-ios";
 			packageProductDependencies = (
 				01BBCFD72BF559AA001D9397 /* Starscream */,
-				5953DFC22CF0D0250069ABC8 /* WireFoundation */,
 			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
@@ -996,6 +1008,9 @@
 				3E88BCB51B1F35DF00232589 /* PBXTargetDependency */,
 				09A2188D1B790D6E0076547A /* PBXTargetDependency */,
 				CB79AC6E2C6D00CF003CF5F4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D264332CF725570005317F /* TestPlans */,
 			);
 			name = "WireTransport-ios-tests";
 			productName = TransportTests;
@@ -1632,10 +1647,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
 			productName = Starscream;
-		};
-		5953DFC22CF0D0250069ABC8 /* WireFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireFoundation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

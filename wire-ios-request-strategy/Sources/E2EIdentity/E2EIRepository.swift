@@ -48,7 +48,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let e2eiSetupService: E2EISetupServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let logger: WireLogger = .e2ei
+    private let logger: OldWireLogger = .e2ei
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     // MARK: - Life cycle

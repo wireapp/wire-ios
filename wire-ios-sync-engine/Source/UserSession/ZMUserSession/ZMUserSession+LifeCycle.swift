@@ -56,7 +56,7 @@ public extension ZMUserSession {
         do {
             try purgeTemporaryAssets()
         } catch {
-            WireLogger.assets.error("failed to purge temporary assets: \(error)")
+            OldWireLogger.assets.error("failed to purge temporary assets: \(error)")
         }
     }
 
@@ -112,7 +112,7 @@ public extension ZMUserSession {
     }
 
     internal func recalculateUnreadMessages() {
-        WireLogger.badgeCount.info("recalculate unread conversations")
+        OldWireLogger.badgeCount.info("recalculate unread conversations")
         syncManagedObjectContext.performGroupedBlock {
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)
             self.syncManagedObjectContext.saveOrRollback()

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -93,6 +93,20 @@
 		F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Sendable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264242CF722020005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+			);
+			target = 5470D3E71D76E1B000FDE440 /* WireShareEngine */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264222CF721F70005317F /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264242CF722020005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		5470D3E41D76E1B000FDE440 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -128,6 +142,7 @@
 			children = (
 				EE9AEC952BD159A900F7853F /* WireShareEngine.docc */,
 				F1DABF961E9B8B6100AD2324 /* Sources */,
+				59D264222CF721F70005317F /* Tests */,
 				5470D3F61D76E1B000FDE440 /* WireShareEngineTests */,
 				5470D4021D76E2A400FDE440 /* Resources */,
 				5470D3E91D76E1B000FDE440 /* Products */,
@@ -262,6 +277,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				59D264222CF721F70005317F /* Tests */,
 			);
 			name = WireShareEngine;
 			productName = "wire-ios-share-engine";
@@ -514,7 +532,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -525,7 +546,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

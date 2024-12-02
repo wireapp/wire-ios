@@ -41,7 +41,7 @@ public enum AES256Crypto {
 
         /// The size (number of bytes) of the prefix.
 
-        public let prefixSize: Int
+        public static let prefixSize = kCCBlockSizeAES128
 
         /// The data, including the prefix.
 
@@ -50,14 +50,9 @@ public enum AES256Crypto {
         /// Create a new instance of `PrefixedData`.
         ///
         /// - Parameters:
-        ///   - prefixSize: The size (number of bytes) of the prefix.
         ///   - data: The data, including the prefix.
 
-        public init(
-            prefixSize: Int,
-            data: Data
-        ) {
-            self.prefixSize = prefixSize
+        public init(data: Data) {
             self.data = data
         }
 
@@ -82,7 +77,7 @@ public enum AES256Crypto {
         plaintext: Data,
         key: Data
     ) throws -> PrefixedData {
-        let ivSize = kCCBlockSizeAES128
+        let ivSize = PrefixedData.prefixSize
         let iv = try SecureRandomByteGenerator.generateBytes(count: UInt(ivSize))
 
         let ciphertext = try encryptAllAtOnce(
@@ -90,10 +85,7 @@ public enum AES256Crypto {
             key: key
         )
 
-        return PrefixedData(
-            prefixSize: ivSize,
-            data: ciphertext
-        )
+        return PrefixedData(data: ciphertext)
     }
 
     /// Decrypt data with a prefixed IV all at once.
@@ -119,7 +111,7 @@ public enum AES256Crypto {
             key: key
         )
 
-        return plaintext.dropFirst(ciphertext.prefixSize)
+        return plaintext.dropFirst(PrefixedData.prefixSize)
     }
 
     // MARK: - Plain old encrypt / decrypt

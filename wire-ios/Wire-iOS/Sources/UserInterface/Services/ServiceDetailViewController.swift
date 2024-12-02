@@ -20,11 +20,18 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-extension ConversationLike where Self: SwiftConversationLike {
+extension MessageProtocol {
+    var supportsBots: Bool {
+        !isOne(of: .mls, .mixed)
+    }
+}
+
+extension ConversationLike where Self: GroupDetailsConversationType {
     var botCanBeAdded: Bool {
         conversationType != .oneOnOne &&
             teamType != nil &&
-            allowServices
+            allowServices &&
+            messageProtocol.supportsBots
     }
 }
 

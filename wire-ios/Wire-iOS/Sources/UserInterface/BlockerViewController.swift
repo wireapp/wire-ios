@@ -258,7 +258,7 @@ extension BlockerViewController {
             try await enrollCertificate()
             sessionManager?.didEnrollCertificateSuccessfully()
         } catch {
-            WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
+            OldWireLogger.e2ei.warn("failed to enroll certificate: \(error)")
 
             let alert = UIAlertController.getCertificateFailed(canCancel: false, isUpdateMode: false) {
                 Task {

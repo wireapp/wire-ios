@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "BE2F1BC8-EAC1-496B-9F9E-FD0251975803",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireAnalyticsTests",
+        "name" : "WireAnalyticsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

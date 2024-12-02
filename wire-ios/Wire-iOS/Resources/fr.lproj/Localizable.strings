@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Au moins un caractère";
 "conversation.create.guidance.toolong" = "Trop de caractères";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Invités : %@, Services : %@, Accusés de lecture : %@";
 "conversation.create.guests.title" = "Autoriser les invités";
 "conversation.create.guests.subtitle" = "Rendre cette conversation accessible à des personnes externes à votre équipe.";
 "conversation.create.services.title" = "Autoriser les services";
