@@ -226,7 +226,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func userDidTapCreateTeam() {
-        // TODO: [WPB-10347] Present team creation flow
+        // TODO: [WPB-11270] Present team creation flow
 //        let vc = IndividualToTeamMigrationViewController(
 //            features: ,
 //            useCase: ,
