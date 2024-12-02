@@ -23,14 +23,14 @@ final class NativePushChannel: NSObject, PushChannelType {
 
     var clientID: String? {
         didSet {
-            WireLogger.pushChannel.debug("Setting client ID")
+            OldWireLogger.pushChannel.debug("Setting client ID")
             scheduleOpen()
         }
     }
 
     var accessToken: AccessToken? {
         didSet {
-            WireLogger.pushChannel.debug("Setting access token")
+            OldWireLogger.pushChannel.debug("Setting access token")
         }
     }
 
@@ -89,7 +89,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     func close() {
-        WireLogger.pushChannel.info("Push channel was closed")
+        OldWireLogger.pushChannel.info("Push channel was closed")
 
         scheduler.performGroupedBlock { [weak self] in
             self?.websocketTask?.cancel()
@@ -140,10 +140,10 @@ final class NativePushChannel: NSObject, PushChannelType {
 
     private func scheduleOpenInternal() {
         guard canOpenConnection else {
-            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            OldWireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
             return
         }
-        WireLogger.pushChannel.debug("Schedule opening..")
+        OldWireLogger.pushChannel.debug("Schedule opening..")
         scheduler.add(ZMOpenPushChannelRequest())
     }
 
@@ -161,7 +161,7 @@ final class NativePushChannel: NSObject, PushChannelType {
         websocketTask?.receive(completionHandler: { [weak self] result in
             switch result {
             case let .failure(error):
-                WireLogger.pushChannel.debug("Failed to receive message \(error)")
+                OldWireLogger.pushChannel.debug("Failed to receive message \(error)")
                 self?.onClose()
             case let .success(message):
                 guard case let .data(data) = message else {
@@ -225,10 +225,10 @@ final class NativePushChannel: NSObject, PushChannelType {
 extension NativePushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
-        WireLogger.pushChannel.debug("Sending ping")
+        OldWireLogger.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
             if let error {
-                WireLogger.pushChannel.debug("Failed to send ping: \(error)")
+                OldWireLogger.pushChannel.debug("Failed to send ping: \(error)")
             }
         })
         schedulePingTimer()
@@ -243,7 +243,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
         webSocketTask: URLSessionWebSocketTask,
         didOpenWithProtocol protocol: String?
     ) {
-        WireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
+        OldWireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
 
         onOpen()
     }
@@ -254,7 +254,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
         didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
         reason: Data?
     ) {
-        WireLogger.pushChannel.info("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
+        OldWireLogger.pushChannel.info("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
 
         onClose()
     }
@@ -263,7 +263,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        WireLogger.pushChannel
+        OldWireLogger.pushChannel
             .error("Websocket open connection task did fail: \(error.map { String(describing: $0) } ?? "n/a")")
 
         websocketTask = nil

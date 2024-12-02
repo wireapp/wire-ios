@@ -92,7 +92,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
-        WireLogger.messaging.debug("inserting message", attributes: logAttributes)
+        OldWireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
@@ -104,7 +104,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 try await messageSender.sendMessage(message: object)
 
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
-                WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
+                OldWireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
 
                 await context.perform {
                     object.markAsSent()
@@ -112,7 +112,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 }
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
-                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
+                OldWireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
                 await context.perform {
                     object.expire(withReason: .other)
                     self.localNotificationDispatcher.didFailToSend(object)
@@ -142,14 +142,14 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         guard let underlyingMessage = message.underlyingMessage else { return }
 
         if underlyingMessage.hasReaction {
-            WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
+            OldWireLogger.messaging.debug("deleting message: \(message.debugInfo)")
             context.delete(message)
         }
 
         if underlyingMessage.hasConfirmation {
             // NOTE: this will only be read confirmations since delivery confirmations
             // are not sent using the ClientMessageTranscoder
-            WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
+            OldWireLogger.messaging.debug("deleting message: \(message.debugInfo)")
             context.delete(message)
         }
     }

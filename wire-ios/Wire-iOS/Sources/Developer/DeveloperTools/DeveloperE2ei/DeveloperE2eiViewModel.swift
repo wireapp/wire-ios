@@ -61,7 +61,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
                     expirySec: expirySec
                 )
             } catch {
-                WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
+                OldWireLogger.e2ei.error("failed to enroll e2ei: \(error)")
             }
         }
     }

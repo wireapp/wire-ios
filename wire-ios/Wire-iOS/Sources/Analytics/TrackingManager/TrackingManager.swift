@@ -57,9 +57,9 @@ final class TrackingManager: NSObject, TrackingInterface {
             return
         }
 
-        WireLogger.analytics.debug("requesting first time analytics content")
+        OldWireLogger.analytics.debug("requesting first time analytics content")
         let didConsent = try await requestAnalyticsConsent()
-        WireLogger.analytics.debug("user did consent: \(didConsent)")
+        OldWireLogger.analytics.debug("user did consent: \(didConsent)")
 
         if didConsent {
             try await enableAnalytics()

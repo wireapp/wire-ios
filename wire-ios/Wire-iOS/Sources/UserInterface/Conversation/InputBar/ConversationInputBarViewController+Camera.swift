@@ -111,7 +111,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     @objc
     func image(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         if let error {
-            WireLogger.ui.error("didFinishSavingWithError: \(error)")
+            OldWireLogger.ui.error("didFinishSavingWithError: \(error)")
         }
     }
 
@@ -120,7 +120,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     @objc
     func video(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         if let error {
-            WireLogger.ui.error("Error saving video: \(error)")
+            OldWireLogger.ui.error("Error saving video: \(error)")
         }
     }
 
@@ -271,7 +271,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
         didFailWithError error: Error
     ) {
         editor.dismiss(animated: true, completion: .none)
-        WireLogger.ui.error("Video editor failed with error: \(error)")
+        OldWireLogger.ui.error("Video editor failed with error: \(error)")
     }
 }
 

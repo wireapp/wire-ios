@@ -258,7 +258,7 @@ public extension ZMConversation {
                 do {
                     try await mlsService.joinNewGroup(with: mlsGroupID)
                 } catch {
-                    WireLogger.mls.error("failed to join new MLS Group \(mlsGroupID.safeForLoggingDescription)")
+                    OldWireLogger.mls.error("failed to join new MLS Group \(mlsGroupID.safeForLoggingDescription)")
                     completion?(error)
                     return
                 }

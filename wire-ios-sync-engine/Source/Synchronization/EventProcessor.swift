@@ -85,7 +85,7 @@ actor EventProcessor: UpdateEventProcessor {
     func bufferEvents(_ events: [ZMUpdateEvent]) async {
         guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
         events.forEach { event in
-            WireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
+            OldWireLogger.updateEvent.debug("buffer event", attributes: event.logAttributes)
         }
         bufferedEvents.append(contentsOf: events)
     }
@@ -143,18 +143,18 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(callEventsOnly: Bool) async throws {
-        WireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
+        OldWireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
 
         let encryptMessagesAtRest = await syncContext.perform {
             self.syncContext.encryptMessagesAtRest
         }
         if encryptMessagesAtRest {
             do {
-                WireLogger.updateEvent.info("trying to get EAR keys")
+                OldWireLogger.updateEvent.info("trying to get EAR keys")
                 let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
                 await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
             } catch {
-                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
+                OldWireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
                 throw error
             }
         } else {
@@ -166,13 +166,13 @@ actor EventProcessor: UpdateEventProcessor {
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false
     ) async {
-        WireLogger.updateEvent.info("process stored update events (callEventsOnly: \(callEventsOnly))")
+        OldWireLogger.updateEvent.info("process stored update events (callEventsOnly: \(callEventsOnly))")
 
         await eventDecoder.processStoredEvents(
             with: privateKeys,
             callEventsOnly: callEventsOnly
         ) { [weak self] decryptedUpdateEvents in
-            WireLogger.updateEvent.info(
+            OldWireLogger.updateEvent.info(
                 "retrieved \(decryptedUpdateEvents.count) events from the database",
                 attributes: .safePublic
             )
@@ -188,22 +188,22 @@ actor EventProcessor: UpdateEventProcessor {
                 ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
             }
 
-            WireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
+            OldWireLogger.updateEvent.info("consuming events: \(eventDescriptions)", attributes: .safePublic)
 
-            WireLogger.eventProcessing
+            OldWireLogger.eventProcessing
                 .info(
                     "Consuming: [\n\(decryptedUpdateEvents.map { "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }.joined(separator: "\n"))\n]"
                 )
 
             for event in decryptedUpdateEvents {
-                WireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
+                OldWireLogger.updateEvent.info("process decrypted event", attributes: event.logAttributes)
 
                 // Workaround: there's a concurrency bug where a stored event was fetched
                 // and processed, then before it could be deleted, a second pass refetched
                 // the same event and processed it again. It's not known why this happens,
                 // but in the meantime we will avoid processing an event more than once.
                 guard await !processedEventList.containsEvent(event) else {
-                    WireLogger.updateEvent.warn(
+                    OldWireLogger.updateEvent.warn(
                         "event already processed, skipping...",
                         attributes: event.logAttributes
                     )
@@ -229,7 +229,7 @@ actor EventProcessor: UpdateEventProcessor {
                 self.syncContext.saveOrRollback()
             }
 
-            WireLogger.updateEvent
+            OldWireLogger.updateEvent
                 .debug("Events processed in \(-date.timeIntervalSinceNow): \(eventProcessingTracker.debugDescription)")
         }
     }

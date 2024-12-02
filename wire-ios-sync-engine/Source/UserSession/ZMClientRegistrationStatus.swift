@@ -336,7 +336,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc(didFailToRegisterClient:)
     public func didFail(toRegisterClient error: NSError) {
-        WireLogger.authentication.debug(#function)
+        OldWireLogger.authentication.debug(#function)
 
         var error: NSError = error
 
@@ -386,29 +386,29 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc
     public func prepareForClientRegistration() {
-        WireLogger.userClient.info("preparing for client registration")
+        OldWireLogger.userClient.info("preparing for client registration")
 
         guard needsToRegisterClient else {
-            WireLogger.userClient.info("no need to register client. aborting client registration")
+            OldWireLogger.userClient.info("no need to register client. aborting client registration")
             return
         }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard selfUser.remoteIdentifier != nil else {
-            WireLogger.userClient.info("identifier for self user is nil. aborting client registration")
+            OldWireLogger.userClient.info("identifier for self user is nil. aborting client registration")
             return
         }
 
         if needsToCreateNewClientForSelfUser(selfUser) {
-            WireLogger.userClient.info("client creation needed. will insert client in context")
+            OldWireLogger.userClient.info("client creation needed. will insert client in context")
             insertNewClient(for: selfUser)
         } else {
             // there is already an unregistered client in the store
             // since there is no change in the managedObject, it will not trigger [ZMRequestAvailableNotification
             // notifyNewRequestsAvailable:] automatically
             // therefore we need to call it here
-            WireLogger.userClient.info("unregistered client found. notifying available requests")
+            OldWireLogger.userClient.info("unregistered client found. notifying available requests")
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -426,17 +426,17 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     private func needsToCreateNewClientForSelfUser(_ selfUser: ZMUser) -> Bool {
         if let selfClient = selfUser.selfClient(), !selfClient.isZombieObject {
-            WireLogger.userClient.info("self user has viable self client. no need to create new self client")
+            OldWireLogger.userClient.info("self user has viable self client. no need to create new self client")
             return false
         }
 
         let hasNotYetRegisteredClient = selfUser.clients.contains(where: { $0.remoteIdentifier == nil })
 
         if !hasNotYetRegisteredClient {
-            WireLogger.userClient
+            OldWireLogger.userClient
                 .info("self user has no client that isn't yet registered. will need to create new self client")
         } else {
-            WireLogger.userClient
+            OldWireLogger.userClient
                 .info("self user has a client that isn't yet registered. no need to create new self client")
         }
 
@@ -471,7 +471,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc
     public func didDeleteClient() {
-        WireLogger.userClient.info("client was deleted. will prepare for registration")
+        OldWireLogger.userClient.info("client was deleted. will prepare for registration")
 
         if isWaitingForClientsToBeDeleted {
             isWaitingForClientsToBeDeleted = false
@@ -481,7 +481,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc(didRegisterProteusClient:)
     public func didRegisterProteusClient(_ client: UserClient) {
-        WireLogger.authentication.info("Did register proteus client")
+        OldWireLogger.authentication.info("Did register proteus client")
 
         managedObjectContext.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
         managedObjectContext.saveOrRollback()
@@ -499,7 +499,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             registrationStatusDelegate?.didRegisterSelfUserClient(client)
         }
 
-        WireLogger.authentication.debug("current phase: \(currentPhase)")
+        OldWireLogger.authentication.debug("current phase: \(currentPhase)")
     }
 
     private func createMLSClient(client: UserClient) {
@@ -515,7 +515,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
                 do {
                     try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
                 } catch {
-                    WireLogger.mls.error("Failed to initialise mls client: \(error)")
+                    OldWireLogger.mls.error("Failed to initialise mls client: \(error)")
                 }
             }
             isWaitingForMLSClientToBeRegistered = true
@@ -541,7 +541,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     func didFetchClients(clientIDs: [NSManagedObjectID]) {
-        WireLogger.authentication.debug("didFetchClients(clientIDs:)")
+        OldWireLogger.authentication.debug("didFetchClients(clientIDs:)")
 
         if needsToVerifySelfClient {
             emailCredentials = nil
@@ -594,7 +594,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc
     public func didFetchSelfUser() {
-        WireLogger.userClient.info("did fetch self user")
+        OldWireLogger.userClient.info("did fetch self user")
         needsRefreshSelfUser = false
 
         if needsToRegisterClient {
@@ -616,7 +616,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc
     public func didFetchFeatureConfigs() {
-        WireLogger.userClient.info("did fetch feature configs")
+        OldWireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
         if isMLSEnabled {
             fetchFetchBackendMLSPublicKeys()
@@ -626,7 +626,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     public func didFetchBackendMLSPublicKeys() {
-        WireLogger.userClient.info("did fetch backend MLS public keys")
+        OldWireLogger.userClient.info("did fetch backend MLS public keys")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -701,7 +701,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     public func didEnrollIntoEndToEndIdentity() {
-        WireLogger.userClient.info("user client did enroll into end-2-end idenity")
+        OldWireLogger.userClient.info("user client did enroll into end-2-end idenity")
         isWaitingForE2EIEnrollment = false
         isWaitingForMLSClientToBeRegistered = true
         RequestAvailableNotification.notifyNewRequestsAvailable(self)

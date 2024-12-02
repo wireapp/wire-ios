@@ -326,7 +326,7 @@ public final class ZMUserSession: NSObject {
         )
         let apiProvider = APIProvider(httpClient: httpClient)
         guard let apiVersion = BackendInfo.apiVersion else {
-            WireLogger.backend.warn("apiVersion not resolved")
+            OldWireLogger.backend.warn("apiVersion not resolved")
 
             return nil
         }
@@ -486,7 +486,7 @@ public final class ZMUserSession: NSObject {
         configureRecurringActions()
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
-            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+            OldWireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
     }
 
@@ -515,7 +515,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
-        WireLogger.authentication.addTag(.selfClientId, value: nil)
+        OldWireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -891,14 +891,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 do {
                     try await mlsService.repairOutOfSyncConversations()
                 } catch {
-                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                    OldWireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
                 }
             }
         }
     }
 
     public func didStartQuickSync() {
-        WireLogger.sync.debug("did start quick sync")
+        OldWireLogger.sync.debug("did start quick sync")
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -906,7 +906,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFinishQuickSync() {
-        WireLogger.sync.debug("did finish quick sync")
+        OldWireLogger.sync.debug("did finish quick sync")
         processEvents()
 
         NotificationInContext(
@@ -923,7 +923,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     // rework implementation of following method - WPB-6053
                     try await mlsService.performPendingJoins()
                 } catch {
-                    WireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
+                    OldWireLogger.mls.error("Failed to performPendingJoins: \(String(reflecting: error))")
                 }
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -954,7 +954,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             let service = SupportedProtocolsService(context: syncContext)
             let selfUser = ZMUser.selfUser(in: syncContext)
             if selfUser.supportedProtocols.isEmpty {
-                WireLogger.supportedProtocols.warn("no supported protocols found")
+                OldWireLogger.supportedProtocols.warn("no supported protocols found")
                 selfUser.supportedProtocols = service.calculateSupportedProtocols()
                 syncContext.saveOrRollback()
             }
@@ -983,7 +983,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         do {
             try await resolveOneOnOneUseCase.invoke()
         } catch {
-            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+            OldWireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
     }
 
@@ -999,7 +999,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             var getFeatureConfigAction = GetFeatureConfigsAction()
             try await getFeatureConfigAction.perform(in: notificationContext)
         } catch {
-            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+            OldWireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
     }
 
@@ -1037,7 +1037,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func processPendingCallEvents(completionHandler: @escaping () -> Void) {
-        WireLogger.updateEvent.info("process pending call events")
+        OldWireLogger.updateEvent.info("process pending call events")
         Task {
             do {
                 try await updateEventProcessor!.processBufferedEvents()
@@ -1045,7 +1045,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     completionHandler()
                 }
             } catch {
-                WireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
+                OldWireLogger.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
@@ -1080,7 +1080,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
-        WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        OldWireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
@@ -1101,7 +1101,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {
-        WireLogger.authentication.debug("notifying authentication invalidated")
+        OldWireLogger.authentication.debug("notifying authentication invalidated")
         managedObjectContext.performGroupedBlock {  [weak self] in
             guard
                 let context = self?.managedObjectContext,

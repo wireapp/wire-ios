@@ -337,7 +337,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                     showNonFederatingDomainsAlert(domains: domains)
 
                 case let .failure(error):
-                    WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
+                    OldWireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
                     showGenericErrorAlert()
                 }
             }

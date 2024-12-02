@@ -182,7 +182,7 @@ public class EARService: EARServiceInterface {
     // MARK: - Migrate keys
 
     private func migrateKeysIfNeeded() {
-        WireLogger.ear.info("migrating ear keys if needed...", attributes: .safePublic)
+        OldWireLogger.ear.info("migrating ear keys if needed...", attributes: .safePublic)
 
         guard
             isEAREnabled,
@@ -195,7 +195,7 @@ public class EARService: EARServiceInterface {
             let secondaryKeys = try generateSecondaryKeys()
             try storeSecondaryPublicKey(secondaryKeys.publicKey)
         } catch {
-            WireLogger.ear.error("failed to migrate keys: \(error)")
+            OldWireLogger.ear.error("failed to migrate keys: \(error)")
         }
     }
 
@@ -218,11 +218,11 @@ public class EARService: EARServiceInterface {
         skipMigration: Bool = false
     ) throws {
         guard !context.encryptMessagesAtRest else {
-            WireLogger.ear.warn("skip enableEncryptionAtRest because EAR already enabled")
+            OldWireLogger.ear.warn("skip enableEncryptionAtRest because EAR already enabled")
             return
         }
 
-        WireLogger.ear.info("turning on EAR")
+        OldWireLogger.ear.info("turning on EAR")
 
         let enableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
             guard let self else { return }
@@ -240,7 +240,7 @@ public class EARService: EARServiceInterface {
                 earStorage.enableEAR(true)
                 context.encryptMessagesAtRest = true
             } catch {
-                WireLogger.ear.error("failed to turn on EAR: \(error)")
+                OldWireLogger.ear.error("failed to turn on EAR: \(error)")
                 context.databaseKey = nil
                 context.encryptMessagesAtRest = false
                 earStorage.enableEAR(false)
@@ -250,10 +250,10 @@ public class EARService: EARServiceInterface {
         }
 
         if skipMigration {
-            WireLogger.ear.info("skipping migration")
+            OldWireLogger.ear.info("skipping migration")
             try enableEAR(context)
         } else if let delegate {
-            WireLogger.ear.info("preparing for migration")
+            OldWireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try enableEAR(context)
             }
@@ -278,11 +278,11 @@ public class EARService: EARServiceInterface {
         skipMigration: Bool = false
     ) throws {
         guard context.encryptMessagesAtRest else {
-            WireLogger.ear.warn("skip disableEncryptionAtRest because EAR already disabled ")
+            OldWireLogger.ear.warn("skip disableEncryptionAtRest because EAR already disabled ")
             return
         }
 
-        WireLogger.ear.info("turning off EAR")
+        OldWireLogger.ear.info("turning off EAR")
 
         guard let databaseKey = context.databaseKey else {
             throw EARServiceFailure.databaseKeyMissing
@@ -300,7 +300,7 @@ public class EARService: EARServiceInterface {
                     try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 }
             } catch {
-                WireLogger.ear.error("failed to turn off EAR: \(error)")
+                OldWireLogger.ear.error("failed to turn off EAR: \(error)")
                 setDatabaseKeyInAllContexts(databaseKey)
                 context.encryptMessagesAtRest = true
                 earStorage.enableEAR(true)
@@ -311,10 +311,10 @@ public class EARService: EARServiceInterface {
         }
 
         if skipMigration {
-            WireLogger.ear.info("skipping migration")
+            OldWireLogger.ear.info("skipping migration")
             try disableEAR(context)
         } else if let delegate {
-            WireLogger.ear.info("preparing for migration")
+            OldWireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try disableEAR(context)
             }
@@ -330,7 +330,7 @@ public class EARService: EARServiceInterface {
     }
 
     func deleteExistingKeys() throws {
-        WireLogger.ear.debug("deleting existing keys")
+        OldWireLogger.ear.debug("deleting existing keys")
         try deletePrimaryKeys()
         try deleteSecondaryKeys()
         try deleteDatabaseKey()
@@ -352,7 +352,7 @@ public class EARService: EARServiceInterface {
 
     @discardableResult
     func generateKeys() throws -> VolatileData {
-        WireLogger.ear.debug("generating new keys")
+        OldWireLogger.ear.debug("generating new keys")
 
         let primaryPublicKey = try generatePrimaryKeys().publicKey
         let secondaryPublicKey = try generateSecondaryKeys().publicKey
@@ -365,7 +365,7 @@ public class EARService: EARServiceInterface {
                 publicKey: primaryPublicKey
             )
         } catch {
-            WireLogger.ear.error("failed to generate database key: \(String(describing: error))")
+            OldWireLogger.ear.error("failed to generate database key: \(String(describing: error))")
             throw error
         }
 
@@ -374,7 +374,7 @@ public class EARService: EARServiceInterface {
             try storeSecondaryPublicKey(secondaryPublicKey)
             try storeDatabaseKey(encryptedDatabaseKey)
         } catch {
-            WireLogger.ear.error("failed to store keys: \(String(describing: error))")
+            OldWireLogger.ear.error("failed to store keys: \(String(describing: error))")
             throw error
         }
 
@@ -386,20 +386,20 @@ public class EARService: EARServiceInterface {
             let id = primaryPrivateKeyDescription.id
             return try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: id)
         } catch {
-            WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
+            OldWireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
             throw error
         }
 
     }
 
     private func generateSecondaryKeys() throws -> (publicKey: SecKey, privateKey: SecKey) {
-        WireLogger.ear.debug("generating secondary keys")
+        OldWireLogger.ear.debug("generating secondary keys")
 
         do {
             let id = secondaryPrivateKeyDescription.id
             return try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: id)
         } catch {
-            WireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
+            OldWireLogger.ear.error("failed to generate secondary public private keypair: \(String(describing: error))")
             throw error
         }
     }
@@ -409,7 +409,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storePrimaryPublicKey(_ key: SecKey) throws {
-        WireLogger.ear.debug("storing primary public key")
+        OldWireLogger.ear.debug("storing primary public key")
         try keyRepository.storePublicKey(
             description: primaryPublicKeyDescription,
             key: key
@@ -417,7 +417,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storeSecondaryPublicKey(_ key: SecKey) throws {
-        WireLogger.ear.debug("storing secondary public key")
+        OldWireLogger.ear.debug("storing secondary public key")
         try keyRepository.storePublicKey(
             description: secondaryPublicKeyDescription,
             key: key
@@ -425,7 +425,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storeDatabaseKey(_ key: Data) throws {
-        WireLogger.ear.debug("storing database key")
+        OldWireLogger.ear.debug("storing database key")
         try keyRepository.storeDatabaseKey(
             description: databaseKeyDescription,
             key: key
@@ -442,13 +442,13 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            WireLogger.ear.debug("fetch public keys")
+            OldWireLogger.ear.debug("fetch public keys")
             return EARPublicKeys(
                 primary: try fetchPrimaryPublicKey(),
                 secondary: try fetchSecondaryPublicKey()
             )
         } catch {
-            WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
+            OldWireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
             throw error
         }
     }
@@ -483,13 +483,13 @@ public class EARService: EARServiceInterface {
                 secondary: try fetchSecondaryPrivateKey()
             )
         } catch {
-            WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
+            OldWireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")
             throw error
         }
     }
 
     private func fetchPrimaryPrivateKey() throws -> SecKey {
-        WireLogger.ear.debug("fetching private primary key")
+        OldWireLogger.ear.debug("fetching private primary key")
 
         // create a new description instead of the stored `primaryPrivateKeyDescription`,
         // because it doesn't not use the `authenticationContext`.
@@ -530,7 +530,7 @@ public class EARService: EARServiceInterface {
     /// until the database is unlocked again.
 
     public func lockDatabase() {
-        WireLogger.ear.info("locking database", attributes: .safePublic)
+        OldWireLogger.ear.info("locking database", attributes: .safePublic)
         setDatabaseKeyInAllContexts(nil)
         keyRepository.clearCache()
     }
@@ -542,11 +542,11 @@ public class EARService: EARServiceInterface {
 
     public func unlockDatabase() throws {
         do {
-            WireLogger.ear.info("unlocking database", attributes: .safePublic)
+            OldWireLogger.ear.info("unlocking database", attributes: .safePublic)
             let databaseKey = try fetchDecryptedDatabaseKey()
             setDatabaseKeyInAllContexts(databaseKey)
         } catch {
-            WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
+            OldWireLogger.ear.error("failed to unlock database: \(String(describing: error))")
             throw error
         }
     }

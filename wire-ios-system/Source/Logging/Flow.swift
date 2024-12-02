@@ -32,7 +32,7 @@ open class Flow {
 
     public let name: String
 
-    private let logger: WireLogger
+    private let logger: OldWireLogger
 
     // MARK: - Life cycle
 
@@ -47,7 +47,7 @@ open class Flow {
         name: String
     ) {
         self.name = name
-        self.logger = WireLogger(tag: tag)
+        self.logger = OldWireLogger(tag: tag)
     }
 
     // MARK: - Methods
@@ -146,10 +146,10 @@ extension FlowLog {
 
 public extension Flow {
     static var createGroup: Flow {
-        Flow(tag: WireLogger.conversation.tag, name: "CreateGroup")
+        Flow(tag: OldWireLogger.conversation.tag, name: "CreateGroup")
     }
 
     static var addParticipants: Flow {
-        Flow(tag: WireLogger.conversation.tag, name: "AddParticipants")
+        Flow(tag: OldWireLogger.conversation.tag, name: "AddParticipants")
     }
 }

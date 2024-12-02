@@ -355,7 +355,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             if overMLSSelfConversation, conversation.messageProtocol == .mls {
                 guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext)
                 else {
-                    WireLogger.mls.error("missing self conversation for sending message to own clients")
+                    OldWireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
                     return
                 }
@@ -475,7 +475,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        WireLogger.mls
+                        OldWireLogger.mls
                             .error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
@@ -662,14 +662,5 @@ private extension Calling {
 private extension AVSIdentifier {
     func toQualifiedId() -> QualifiedID {
         QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
-    }
-}
-
-extension WireLogInterpolation {
-
-    mutating func appendInterpolation(_ singleRequestSync: ZMSingleRequestSync) {
-        //output.append("MyStruct(id: \(value.id), name: \(value.name))")
-
-        appendLiteral("abcd \(3)")
     }
 }

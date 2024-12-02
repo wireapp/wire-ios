@@ -34,7 +34,7 @@ public func fatal(
     ) as String
 
     // report error to datadog or other loggers
-    WireLogger.system.critical(output, attributes: .safePublic)
+    OldWireLogger.system.critical(output, attributes: .safePublic)
 
     // prepare and dump to file
     do {
@@ -91,6 +91,6 @@ public func requireInternal(
     if AppBuild.current.canFatalError {
         fatal(errorMessage, file: file, line: line)
     } else {
-        WireLogger.system.critical("requireInternal: \(errorMessage)")
+        OldWireLogger.system.critical("requireInternal: \(errorMessage)")
     }
 }

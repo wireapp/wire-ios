@@ -48,7 +48,7 @@ public final class ConversationLabelsLocalStore: ConversationLabelsLocalStorePro
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let logger = WireLogger(tag: "conversation-labels")
+    private let logger = OldWireLogger(tag: "conversation-labels")
 
     // MARK: - Object lifecycle
 

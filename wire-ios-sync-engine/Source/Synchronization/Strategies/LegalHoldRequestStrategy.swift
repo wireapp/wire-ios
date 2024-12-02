@@ -95,7 +95,7 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
             let request = try decoder.decode(LegalHoldRequest.self, from: jsonPayload)
             selfUser.userDidReceiveLegalHoldRequest(request)
         } catch {
-            WireLogger.eventProcessing.error("Invalid legal hold request payload: \(error)")
+            OldWireLogger.eventProcessing.error("Invalid legal hold request payload: \(error)")
         }
     }
 

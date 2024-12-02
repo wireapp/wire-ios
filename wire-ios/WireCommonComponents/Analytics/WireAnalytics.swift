@@ -39,7 +39,7 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
-        WireLogger.initialize(
+        OldWireLogger.initialize(
             loggers: [
                 SystemLogger(),
                 CocoaLumberjackLogger(),
@@ -48,7 +48,7 @@ public enum WireAnalytics {
         )
 
         // pass tags to Datadog through WireLogger
-        WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
-        WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
+        OldWireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        OldWireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
 }

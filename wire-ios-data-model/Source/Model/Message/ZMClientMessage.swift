@@ -94,7 +94,7 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func expire(withReason reason: ExpirationReason) {
-        WireLogger.messaging
+        OldWireLogger.messaging
             .warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
@@ -165,7 +165,7 @@ public class ZMClientMessage: ZMOTRMessage {
         case .edited:
             if let nonce = nonce(fromPostPayload: payload),
                self.nonce != nonce {
-                WireLogger.messaging.error(
+                OldWireLogger.messaging.error(
                     "sent message response nonce does not match \(nonce)",
                     attributes: logInformation
                 )

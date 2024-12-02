@@ -177,7 +177,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             audioRecorder.delegate = self
             return audioRecorder
         } catch {
-            WireLogger.ui.error("Failed to initialize `AVAudioRecorder`!")
+            OldWireLogger.ui.error("Failed to initialize `AVAudioRecorder`!")
             return nil
         }
     }
@@ -236,7 +236,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             if successfullyStarted {
                 self.state = .recording(start: audioRecorder.deviceCurrentTime)
             } else {
-                WireLogger.ui.error("Failed to start audio recording")
+                OldWireLogger.ui.error("Failed to start audio recording")
             }
 
             completion(successfullyStarted)
@@ -296,7 +296,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
               let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
               let size = attribs[.size] as? UInt32,
               size > maxAllowedSize else { return false }
-        WireLogger.ui
+        OldWireLogger.ui
             .debug(
                 "Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)"
             )
@@ -319,7 +319,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         } catch {
-            WireLogger.ui.error("Failed change audio category for playback: \(error)")
+            OldWireLogger.ui.error("Failed change audio category for playback: \(error)")
         }
 
         setupDisplayLink()
@@ -435,7 +435,7 @@ extension AudioRecorder: AVAudioRecorderDelegate {
     }
 
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        WireLogger.ui.error("Cannot finish recording: \(String(describing: error))")
+        OldWireLogger.ui.error("Cannot finish recording: \(String(describing: error))")
     }
 }
 

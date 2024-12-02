@@ -245,9 +245,9 @@ final class NetworkStatusView: UIView {
             let data = try JSONEncoder().encode(logInfo)
             let jsonString = String(decoding: data, as: UTF8.self)
 
-            WireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString)")
+            OldWireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString)")
         } catch {
-            WireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
+            OldWireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }
     }
 }

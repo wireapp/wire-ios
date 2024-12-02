@@ -129,7 +129,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             }
 
         } catch {
-            WireLogger.e2ei.error(error.localizedDescription)
+            OldWireLogger.e2ei.error(error.localizedDescription)
         }
     }
 

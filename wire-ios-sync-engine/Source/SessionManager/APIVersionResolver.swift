@@ -68,17 +68,17 @@ final class APIVersionResolver {
     }
 
     private func handleResponse(_ response: ZMTransportResponse) {
-        WireLogger.environment.info("received api version response")
+        OldWireLogger.environment.info("received api version response")
 
         guard response.result == .success else {
             if response.httpStatus == 404 {
-                WireLogger.environment.warn("api version response was not success, falling back to v0")
+                OldWireLogger.environment.warn("api version response was not success, falling back to v0")
                 BackendInfo.apiVersion = .v0
                 BackendInfo.domain = "wire.com"
                 BackendInfo.isFederationEnabled = false
                 return
             }
-            WireLogger.environment.warn("api version response was not successful")
+            OldWireLogger.environment.warn("api version response was not successful")
             return
         }
 
@@ -96,19 +96,19 @@ final class APIVersionResolver {
         let commonProductionVersions = backendProdVersions.intersection(clientProdVersions)
 
         if commonProductionVersions.isEmpty {
-            WireLogger.environment.warn("no common api versions, app will be blacklisted")
+            OldWireLogger.environment.warn("no common api versions, app will be blacklisted")
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
         } else if isDeveloperModeEnabled,
                   let preferredAPIVersion = BackendInfo.preferredAPIVersion,
                   allBackendVersions.contains(preferredAPIVersion) {
-            WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
+            OldWireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {
-            WireLogger.environment.info("resolving to max common api version \(apiVersion.rawValue)")
+            OldWireLogger.environment.info("resolving to max common api version \(apiVersion.rawValue)")
             BackendInfo.apiVersion = apiVersion
         } else {
-            WireLogger.environment.warn("api version was not resolved")
+            OldWireLogger.environment.warn("api version was not resolved")
             BackendInfo.apiVersion = nil
         }
 

@@ -151,7 +151,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
                     }
 
                 } catch {
-                    WireLogger.featureConfigs.error(
+                    OldWireLogger.featureConfigs.error(
                         "Failed to encode \(String(describing: config.self)) : \(error)"
                     )
                 }

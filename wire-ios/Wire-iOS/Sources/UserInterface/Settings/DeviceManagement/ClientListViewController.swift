@@ -549,7 +549,7 @@ final class ClientListViewController: UIViewController,
             }
 
         } catch {
-            WireLogger.e2ei.error(String(reflecting: error))
+            OldWireLogger.e2ei.error(String(reflecting: error))
         }
     }
 

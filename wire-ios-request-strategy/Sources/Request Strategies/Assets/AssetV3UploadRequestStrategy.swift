@@ -146,7 +146,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
         else { fatal("Trying to send message that doesn't have a conversation") }
 
-        WireLogger.assets.debug(
+        OldWireLogger.assets.debug(
             "sending request for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
@@ -194,11 +194,11 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             let message = managedObject as? ZMAssetClientMessage,
             let asset = message.assets.first(where: { !$0.isUploaded })
         else {
-            WireLogger.assets.warn("response for asset not processed")
+            OldWireLogger.assets.warn("response for asset not processed")
             return false
         }
 
-        WireLogger.assets.debug(
+        OldWireLogger.assets.debug(
             "processing response for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
@@ -218,7 +218,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             domain: domain
         )
 
-        WireLogger.assets.debug(
+        OldWireLogger.assets.debug(
             "processed response for asset",
             attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
         )
@@ -227,14 +227,14 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
-            WireLogger.assets.debug(
+            OldWireLogger.assets.debug(
                 "message with asset uploaded",
                 attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
             )
             return false
         } else {
             // There are more assets to upload
-            WireLogger.assets.debug(
+            OldWireLogger.assets.debug(
                 "more assets to upload",
                 attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
             )

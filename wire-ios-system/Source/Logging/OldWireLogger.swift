@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogger: LoggerProtocol, Sendable {
+public struct OldWireLogger: LoggerProtocol, Sendable {
 
     public static func initialize(loggers: [any LoggerProtocol]) {
         guard provider == nil else {
-            assertionFailure("WireLogger.initialize called more than once")
+            assertionFailure("OldWireLogger.initialize called more than once")
             return
         }
 

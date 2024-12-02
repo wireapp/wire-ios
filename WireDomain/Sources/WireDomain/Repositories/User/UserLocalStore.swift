@@ -195,7 +195,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 .fetch(request)
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        WireLogger.conversation.error(
+                        OldWireLogger.conversation.error(
                             "Missing user's qualifiedID"
                         )
                         return nil

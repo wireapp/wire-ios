@@ -106,7 +106,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         fallbackGroupID: MLSGroupID?,
         context: NSManagedObjectContext
     ) async {
-        WireLogger.mls.debug("MLS event processor updating conversation if needed")
+        OldWireLogger.mls.debug("MLS event processor updating conversation if needed")
 
         let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
             (
@@ -126,7 +126,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         await context.perform {
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
-                WireLogger.mls
+                OldWireLogger.mls
                     .info(
                         "MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))"
                     )
@@ -141,7 +141,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
         } catch {
-            WireLogger.mls
+            OldWireLogger.mls
                 .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
             conversationExists = false
         }
@@ -155,7 +155,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
 
             if newStatus != previousStatus {
-                WireLogger.mls
+                OldWireLogger.mls
                     .debug(
                         "conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))"
                     )
@@ -192,7 +192,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
-        WireLogger.mls.info("MLS event processor is processing welcome message")
+        OldWireLogger.mls.info("MLS event processor is processing welcome message")
 
         guard let (conversation, groupID) = await context.perform({
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
@@ -215,11 +215,11 @@ public class MLSEventProcessor: MLSEventProcessing {
         in context: NSManagedObjectContext,
         oneOneOneResolver: OneOnOneResolverInterface
     ) async {
-        WireLogger.mls.debug("resolving one on one conversation")
+        OldWireLogger.mls.debug("resolving one on one conversation")
 
         let userID: QualifiedID? = await context.perform {
             guard conversation.conversationType == .oneOnOne else {
-                WireLogger.mls.info("conversation type is not expected 'oneOnOne', aborting.")
+                OldWireLogger.mls.info("conversation type is not expected 'oneOnOne', aborting.")
                 return nil
             }
 
@@ -228,7 +228,7 @@ public class MLSEventProcessor: MLSEventProcessing {
                 let otherUserID = otherUser.remoteIdentifier,
                 let otherUserDomain = otherUser.domain ?? BackendInfo.domain
             else {
-                WireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
+                OldWireLogger.mls.warn("failed to resolve one on one conversation: can not get other user id")
                 return nil
             }
 
@@ -247,9 +247,9 @@ public class MLSEventProcessor: MLSEventProcessing {
                 _ = context.saveOrRollback()
             }
 
-            WireLogger.mls.debug("successfully resolved one on one conversation")
+            OldWireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
-            WireLogger.mls.warn("failed to resolve one on one conversation: \(error)")
+            OldWireLogger.mls.warn("failed to resolve one on one conversation: \(error)")
         }
     }
 
@@ -259,7 +259,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
     ) async {
-        WireLogger.mls.info("MLS event processor is wiping conversation")
+        OldWireLogger.mls.info("MLS event processor is wiping conversation")
 
         let (messageProtocol, groupID, mlsService) = await context.perform {
             (
@@ -284,7 +284,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             try await mlsService.wipeGroup(groupID)
         } catch {
-            WireLogger.mls
+            OldWireLogger.mls
                 .error(
                     "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
                 )
@@ -297,7 +297,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         aborting action: ActionLog,
         withReason reason: AbortReason
     ) {
-        WireLogger.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
+        OldWireLogger.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
     }
 
     private enum ActionLog: String {

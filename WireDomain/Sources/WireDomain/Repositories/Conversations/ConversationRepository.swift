@@ -455,7 +455,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 domain: domain
             )
         else {
-            return WireLogger.conversation.warn(
+            return OldWireLogger.conversation.warn(
                 "Cannot delete a conversation that doesn't exist locally: \(id.safeForLoggingDescription)"
             )
         }
@@ -703,7 +703,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                             date: time
                         )
                     } catch {
-                        WireLogger.eventProcessing.error(
+                        OldWireLogger.eventProcessing.error(
                             "Unable to delete member with id: \(userID.uuid.safeForLoggingDescription)"
                         )
                     }

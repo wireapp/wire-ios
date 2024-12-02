@@ -54,7 +54,7 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         )
 
         guard let conversation else {
-            return WireLogger.eventProcessing.error(
+            return OldWireLogger.eventProcessing.error(
                 "Converation receipt mode update missing conversation, aborting..."
             )
         }

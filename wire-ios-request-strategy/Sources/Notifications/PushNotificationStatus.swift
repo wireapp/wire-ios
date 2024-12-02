@@ -77,7 +77,7 @@ open class PushNotificationStatus: NSObject {
             uniquingKeysWith: { _, new in new }
         )
         guard eventId.isType1UUID else {
-            WireLogger.eventProcessing.error(
+            OldWireLogger.eventProcessing.error(
                 "Attempt to fetch event id not conforming to UUID type1",
                 attributes: logAttributes
             )
@@ -89,12 +89,12 @@ open class PushNotificationStatus: NSObject {
             lastEventId: lastEventIDRepository.fetchLastEventID(),
             eventId: eventId
         ) {
-            WireLogger.eventProcessing.info("Already fetched event", attributes: logAttributes)
+            OldWireLogger.eventProcessing.info("Already fetched event", attributes: logAttributes)
             completionHandler(.failure(.alreadyFetchedEvent))
             return
         }
 
-        WireLogger.eventProcessing.info("Scheduling to fetch events notified by push", attributes: logAttributes)
+        OldWireLogger.eventProcessing.info("Scheduling to fetch events notified by push", attributes: logAttributes)
 
         eventIdRanking.add(eventId)
         completionHandlers[eventId] = completionHandler
@@ -117,7 +117,7 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info(
+        OldWireLogger.updateEvent.info(
             "finished fetching all available events, last event id: " +
                 String(describing: lastEventId?.safeForLoggingDescription),
             attributes: .safePublic

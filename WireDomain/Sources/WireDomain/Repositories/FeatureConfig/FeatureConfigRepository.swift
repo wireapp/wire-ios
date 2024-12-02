@@ -84,7 +84,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private let featureConfigsAPI: any FeatureConfigsAPI
     private let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
-    private let logger = WireLogger.featureConfigs
+    private let logger = OldWireLogger.featureConfigs
     private let featureStateSubject = PassthroughSubject<FeatureState, Never>()
 
     // MARK: - Object lifecycle
