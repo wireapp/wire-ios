@@ -20,6 +20,7 @@ WIRE_BUILD_NUMBER = 999999
 SSO_URL_SCHEME = wire-sso-alpha
 WIRE_URL_SCHEME = wire
 WIRE_BUNDLE_ID = com.wearezeta.zclient.alpha
+WIRE_INTERNAL_NAME = ALPHA
 
 //Code Signing
 CODE_SIGN_IDENTITY = Apple Development

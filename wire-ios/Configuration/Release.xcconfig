@@ -21,6 +21,7 @@ SSO_URL_SCHEME = wire-sso
 WIRE_URL_SCHEME = wire
 WIRE_BUNDLE_ID = com.wearezeta.zclient.ios
 
+
 //Code Signing
 CODE_SIGN_IDENTITY = iPhone Distribution: Wire Swiss GmbH (EDF3JCE8BC)
 
