@@ -36,8 +36,8 @@ struct DeepLinksView: View {
                     Button("Go") {
                         viewModel.openLink(urlString: urlString)
                     }
+                    .disabled(urlString.isEmpty)
                 }
-                .disabled(urlString.isEmpty)
             }
             .listStyle(InsetGroupedListStyle())
             .frame(height: 150)
