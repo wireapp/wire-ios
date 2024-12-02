@@ -369,11 +369,11 @@ platform :ios do
     def generate_build_number
         build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"`
         `echo BUILD_NUMBER=#{build_number} >> ./.post_build/.env`
-        write_build_number_to_summary(build_number)
+        write_extra_info_to_summary
         build_number
     end
 
-    def write_build_number_to_summary(build_number)
+    def write_extra_info_to_summary
         summary_file = ENV['GITHUB_STEP_SUMMARY']
 
         if summary_file.nil? || summary_file.empty?
@@ -383,7 +383,7 @@ platform :ios do
       
         File.open(summary_file, "a") do |file|
           file.puts "## Fastlane Summary"
-          file.puts "- 🛠️ Build Number: #{build_number}"
+          file.puts "- 🛠️ Version: '#{extra_info}'"
         end
       
         UI.message("Successfully wrote to GITHUB_STEP_SUMMARY.")
