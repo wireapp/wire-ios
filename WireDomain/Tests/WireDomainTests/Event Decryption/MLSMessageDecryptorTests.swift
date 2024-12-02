@@ -89,8 +89,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         )
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.mlsGroupIDFor_MockValue = Scaffolding.mlsGroupID
-        conversationLocalStore.isConversationMLSReady_MockValue = true
+        conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
         mlsDecryptionService.decryptMessageForSubconversationType_MockValue = [mockDecryptionResult]
 
         // When
@@ -100,8 +99,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.mlsGroupIDFor_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.isConversationMLSReady_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
         XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
         XCTAssertEqual(event.decryptedMessages.first?.message, decryptedMessage)
     }

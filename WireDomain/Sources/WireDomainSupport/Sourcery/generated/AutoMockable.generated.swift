@@ -477,24 +477,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
     }
 
-    // MARK: - isConversationMLSReady
-
-    public var isConversationMLSReady_Invocations: [ZMConversation] = []
-    public var isConversationMLSReady_MockMethod: ((ZMConversation) async -> Bool)?
-    public var isConversationMLSReady_MockValue: Bool?
-
-    public func isConversationMLSReady(_ conversation: ZMConversation) async -> Bool {
-        isConversationMLSReady_Invocations.append(conversation)
-
-        if let mock = isConversationMLSReady_MockMethod {
-            return await mock(conversation)
-        } else if let mock = isConversationMLSReady_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `isConversationMLSReady`")
-        }
-    }
-
     // MARK: - removeParticipantsAndUpdateConversationState
 
     public var removeParticipantsAndUpdateConversationStateConversationUsersInitiatingUser_Invocations: [(conversation: ZMConversation, users: Set<ZMUser>, initiatingUser: ZMUser)] = []
@@ -594,39 +576,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(isDeletedRemotely, conversation)
     }
 
-    // MARK: - isMLSConversation
+    // MARK: - mlsConversationInfo
 
-    public var isMLSConversation_Invocations: [ZMConversation] = []
-    public var isMLSConversation_MockMethod: ((ZMConversation) async -> Bool)?
-    public var isMLSConversation_MockValue: Bool?
+    public var mlsConversationInfoConversation_Invocations: [ZMConversation] = []
+    public var mlsConversationInfoConversation_MockMethod: ((ZMConversation) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)?)?
+    public var mlsConversationInfoConversation_MockValue: (mlsGroupID: MLSGroupID, isMLSReady: Bool)??
 
-    public func isMLSConversation(_ conversation: ZMConversation) async -> Bool {
-        isMLSConversation_Invocations.append(conversation)
+    public func mlsConversationInfo(conversation: ZMConversation) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
+        mlsConversationInfoConversation_Invocations.append(conversation)
 
-        if let mock = isMLSConversation_MockMethod {
+        if let mock = mlsConversationInfoConversation_MockMethod {
             return await mock(conversation)
-        } else if let mock = isMLSConversation_MockValue {
+        } else if let mock = mlsConversationInfoConversation_MockValue {
             return mock
         } else {
-            fatalError("no mock for `isMLSConversation`")
-        }
-    }
-
-    // MARK: - mlsGroupID
-
-    public var mlsGroupIDFor_Invocations: [ZMConversation] = []
-    public var mlsGroupIDFor_MockMethod: ((ZMConversation) async -> MLSGroupID?)?
-    public var mlsGroupIDFor_MockValue: MLSGroupID??
-
-    public func mlsGroupID(for conversation: ZMConversation) async -> MLSGroupID? {
-        mlsGroupIDFor_Invocations.append(conversation)
-
-        if let mock = mlsGroupIDFor_MockMethod {
-            return await mock(conversation)
-        } else if let mock = mlsGroupIDFor_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `mlsGroupIDFor`")
+            fatalError("no mock for `mlsConversationInfoConversation`")
         }
     }
 

@@ -226,14 +226,6 @@ public protocol ConversationLocalStoreProtocol {
         _ conversation: ZMConversation
     ) async -> Bool
 
-    /// Indicates whether a given conversation is MLS ready.
-    /// - parameter conversation: The conversation to check the flag for.
-    /// - returns: Whether the conversation is MLS ready.
-
-    func isConversationMLSReady(
-        _ conversation: ZMConversation
-    ) async -> Bool
-
     /// Removes participants from conversation and updates conversation state.
     /// - Parameters:
     ///     - conversation: The conversation to remove the participants from.
@@ -289,22 +281,16 @@ public protocol ConversationLocalStoreProtocol {
         isDeletedRemotely: Bool,
         conversation: ZMConversation
     ) async
+    
+    /// Fetches the MLS conversation info (given conversation is MLS one)
+    /// - parameter conversation: The conversation to fetch the the MLS info for.
+    /// - returns: The MLS conversation group ID (if conversation is MLS) and whether the conversation is MLS ready.
+    ///
+    /// MLS conversations should always have a group ID hence this method returns nil if conversation doesn't have a MLS group ID.
 
-    /// Indicates whether a conversation is a MLS one.
-    /// - parameter conversation: The conversation to check the flag for.
-    /// - returns: A flag indicating whether the conversation uses the MLS protocol.
-
-    func isMLSConversation(
-        _ conversation: ZMConversation
-    ) async -> Bool
-
-    /// Fetches the MLS group ID from a conversation.
-    /// - parameter conversation: The conversation to fetch the MLS group ID for.
-    /// - returns: The MLS conversation group ID.
-
-    func mlsGroupID(
-        for conversation: ZMConversation
-    ) async -> MLSGroupID?
+    func mlsConversationInfo(
+        conversation: ZMConversation
+    ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)?
 
     /// Commits pending proposals for a given conversation.
     /// - Parameter conversation: The conversation to update the `date` flag for.
@@ -359,6 +345,20 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+    
+    public func mlsConversationInfo(
+        conversation: ZMConversation
+    ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)? {
+        
+        await context.perform {
+            guard let mlsGroupID = conversation.mlsGroupID else {
+                return nil
+            }
+
+            return (mlsGroupID, conversation.mlsStatus == .ready)
+        }
+        
+    }
 
     public func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
@@ -650,14 +650,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func isConversationMLSReady(
-        _ conversation: ZMConversation
-    ) async -> Bool {
-        await context.perform {
-            conversation.mlsStatus == .ready
-        }
-    }
-
     public func commitPendingProposals(
         conversation: ZMConversation,
         date: Date,
@@ -816,22 +808,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 teamOrConversation: TeamOrConversation.matching(conversation),
                 in: context
             )
-        }
-    }
-
-    public func isMLSConversation(
-        _ conversation: ZMConversation
-    ) async -> Bool {
-        await context.perform {
-            conversation.messageProtocol == .mls
-        }
-    }
-
-    public func mlsGroupID(
-        for conversation: ZMConversation
-    ) async -> MLSGroupID? {
-        await context.perform {
-            conversation.mlsGroupID
         }
     }
 

@@ -52,16 +52,15 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         ) else {
             throw MLSMessageDecryptorError.conversationNotFound
         }
-
-        guard let mlsGroupID = await conversationLocalStore.mlsGroupID(
-            for: mlsConversation
+        
+        guard let (mlsGroupID, isMLSReady) = await conversationLocalStore.mlsConversationInfo(
+            conversation: mlsConversation
         ) else {
+            // MLS conversation should have a group id.
             throw MLSMessageDecryptorError.missingMLSGroupID
         }
 
-        guard await conversationLocalStore.isConversationMLSReady(
-            mlsConversation
-        ) else {
+        guard isMLSReady else {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 

@@ -380,18 +380,15 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             )
         }
 
-        let isMLSConversation = await conversationsLocalStore.isMLSConversation(
-            conversation
+        let mlsConversationInfo = await conversationsLocalStore.mlsConversationInfo(
+            conversation: conversation
         )
+        
+        let mlsGroupID = mlsConversationInfo?.mlsGroupID
 
-        if isMLSConversation {
-            let mlsGroupID = await conversationsLocalStore.mlsGroupID(
-                for: conversation
-            )
+        if let mlsGroupID {
 
-            if let mlsGroupID {
-                try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
-            }
+            try await conversationsLocalStore.wipeMLSGroup(groupID: mlsGroupID)
 
             await conversationsLocalStore.deleteConversation(
                 conversation
@@ -517,9 +514,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         let mlsService = mlsProvider.service
 
         if isMLSEnabled {
-            let mlsGroupID = await conversationsLocalStore.mlsGroupID(
-                for: conversation
+            
+            let mlsConversationInfo = await conversationsLocalStore.mlsConversationInfo(
+                conversation: conversation
             )
+            
+            let mlsGroupID = mlsConversationInfo?.mlsGroupID
 
             if isSelfUserRemoved, let mlsGroupID, messageProtocol.isOne(of: .mls, .mixed) {
                 try await mlsService.wipeGroup(mlsGroupID)
