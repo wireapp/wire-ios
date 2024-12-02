@@ -40,6 +40,7 @@ jobs:
               - 'wire-ios/**'
             WireUI:
               - 'WireUI/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireUIAll.xcscheme'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
             wire-ios-notification-engine:
