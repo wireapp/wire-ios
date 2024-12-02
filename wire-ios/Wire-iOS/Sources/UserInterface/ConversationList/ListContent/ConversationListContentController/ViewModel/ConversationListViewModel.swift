@@ -142,10 +142,9 @@ final class ConversationListViewModel: NSObject {
 
         var kind: Kind
         var items: [SectionItem]
-        var collapsed: Bool
 
         var elements: [SectionItem] {
-            collapsed ? [] : items
+            items
         }
 
         /// ref to AggregateArray, we return the first found item's index
@@ -166,56 +165,24 @@ final class ConversationListViewModel: NSObject {
 
         init(source: ConversationListViewModel.Section, elements: some Collection<SectionItem>) {
             self.kind = source.kind
-            self.collapsed = source.collapsed
             self.items = Array(elements)
         }
 
         init(
             kind: Kind,
-            conversationDirectory: ConversationDirectoryType,
-            collapsed: Bool
+            conversationDirectory: ConversationDirectoryType
         ) {
             self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
-            self.collapsed = collapsed
         }
     }
 
     static let contactRequestsItem: ConversationListConnectRequestsItem = .init()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
-    private(set) var selectedItem: ConversationListItem? {
-        didSet {
-            /// expand the section if selcted item is update
-            guard let indexPath = indexPath(for: selectedItem),
-                  collapsed(at: indexPath.section) else { return }
+    private(set) var selectedItem: ConversationListItem?
 
-            setCollapsed(sectionIndex: indexPath.section, collapsed: false, batchUpdate: false)
-        }
-    }
-
-    weak var delegate: ConversationListViewModelDelegate? {
-        didSet {
-            delegateFolderEnableState(newState: state)
-        }
-    }
-
-    // TODO: [WPB-7307]: remove everything regarding folders
-    var folderEnabled: Bool {
-        get {
-            state.folderEnabled
-        }
-
-        set {
-            guard newValue != state.folderEnabled else { return }
-
-            state.folderEnabled = newValue
-
-            updateAllSections()
-            delegate?.listViewModelShouldBeReloaded()
-            delegateFolderEnableState(newState: state)
-        }
-    }
+    weak var delegate: ConversationListViewModelDelegate?
 
     // Local copies of the lists.
     private var sections: [Section] = []
@@ -250,40 +217,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    /// for folder enabled and collapse presistent
-    private lazy var _state: State = {
-        guard isFolderStatePersistenceEnabled else { return .init() }
-
-        guard let persistentPath = ConversationListViewModel.persistentURL,
-              let jsonData = try? Data(contentsOf: persistentPath) else { return State()
-        }
-
-        do {
-            return try JSONDecoder().decode(ConversationListViewModel.State.self, from: jsonData)
-        } catch {
-            log.error("restore state error: \(error)")
-            return State()
-        }
-    }()
-
-    private var state: State {
-        get {
-            _state
-        }
-
-        set {
-            /// simulate willSet
-
-            /// assign
-            if newValue != _state {
-                _state = newValue
-            }
-
-            /// simulate didSet
-            saveState(state: _state)
-        }
-    }
-
     private var conversationDirectoryToken: Any?
 
     let userSession: UserSession?
@@ -297,30 +230,12 @@ final class ConversationListViewModel: NSObject {
         updateAllSections()
     }
 
-    private func delegateFolderEnableState(newState: State) {
-        delegate?.listViewModel(self, didChangeFolderEnabled: folderEnabled)
-    }
-
     private func setupObservers() {
         conversationDirectoryToken = userSession?.conversationDirectory.addObserver(self)
     }
 
     func sectionHeaderTitle(sectionIndex: Int) -> String? {
         kind(of: sectionIndex)?.localizedName
-    }
-
-    /// return true if seaction header is visible.
-    /// For .contactRequests section it is always invisible
-    /// When folderEnabled == true, returns false
-    ///
-    /// - Parameter sectionIndex: section number of collection view
-    /// - Returns: if the section exists and visible, return true.
-    func sectionHeaderVisible(section: Int) -> Bool {
-        guard sections.indices.contains(section),
-              kind(of: section) != .contactRequests,
-              folderEnabled else { return false }
-
-        return !sections[section].items.isEmpty
     }
 
     private func kind(of sectionIndex: Int) -> Section.Kind? {
@@ -346,8 +261,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     func numberOfItems(inSection sectionIndex: Int) -> Int {
-        guard sections.indices.contains(sectionIndex),
-              !collapsed(at: sectionIndex) else { return 0 }
+        guard sections.indices.contains(sectionIndex) else { return 0 }
 
         return sections[sectionIndex].elements.count
     }
@@ -435,7 +349,7 @@ final class ConversationListViewModel: NSObject {
         case .oneOnOne:
             [.contacts, .contactRequests]
         case let .folder(id, _):
-            if let folder = conversationDirectory.allFolders.first(where: { $0.remoteIdentifier == id }) {
+            if let folder = conversationDirectory.nonDeletedFolders.first(where: { $0.remoteIdentifier == id }) {
                 [.folder(label: folder)]
             } else {
                 // FIXME: [WPB-13905] Log invalid state once WPB-13905 is implemented
@@ -448,8 +362,7 @@ final class ConversationListViewModel: NSObject {
         let sections = kinds.map { kind in
             Section(
                 kind: kind,
-                conversationDirectory: conversationDirectory,
-                collapsed: state.collapsed.contains(kind.identifier)
+                conversationDirectory: conversationDirectory
             )
         }
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
@@ -475,7 +388,7 @@ final class ConversationListViewModel: NSObject {
 
             newValue[sectionNumber].items = newList
 
-            // Refresh the section header(since it may be hidden if the sectio is empty) when a section becomes
+            // Refresh the section header(since it may be hidden if the section is empty) when a section becomes
             // empty/from empty to non-empty
             if sections[sectionNumber].items.isEmpty || newList.isEmpty {
                 sections = newValue
@@ -497,15 +410,6 @@ final class ConversationListViewModel: NSObject {
                     self.sections = data
                 }
             })
-        }
-
-        if let kind,
-           let sectionNumber = sectionNumber(for: kind) {
-            delegate?.listViewModel(self, didUpdateSection: sectionNumber)
-        } else {
-            sections.indices.forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0)
-            }
         }
     }
 
@@ -538,138 +442,6 @@ final class ConversationListViewModel: NSObject {
             delegate?.listViewModel(self, didSelectItem: itemToSelect)
         }
     }
-
-    // MARK: - folder badge
-
-    func folderBadge(at sectionIndex: Int) -> Int {
-        sections[sectionIndex].items.filter {
-            let status = ($0.item as? ZMConversation)?.status
-            return status?.messagesRequiringAttention.isEmpty == false &&
-                status?.showingAllMessages == true
-        }.count
-    }
-
-    func collapsed(at sectionIndex: Int) -> Bool {
-        collapsed(at: sectionIndex, state: state)
-    }
-
-    private func collapsed(at sectionIndex: Int, state: State) -> Bool {
-        guard let kind = kind(of: sectionIndex) else { return false }
-
-        return state.collapsed.contains(kind.identifier)
-    }
-
-    /// set a collpase state of a section
-    ///
-    /// - Parameters:
-    ///   - sectionIndex: section to update
-    ///   - collapsed: collapsed or expanded
-    ///   - batchUpdate: true for update with difference kit comparison, false for reload the section animated
-    func setCollapsed(
-        sectionIndex: Int,
-        collapsed: Bool,
-        batchUpdate: Bool = true
-    ) {
-        guard let conversationDirectory = userSession?.conversationDirectory else { return }
-        guard let kind = kind(of: sectionIndex) else { return }
-        guard self.collapsed(at: sectionIndex) != collapsed else { return }
-        guard let sectionNumber = sectionNumber(for: kind) else { return }
-
-        if collapsed {
-            state.collapsed.insert(kind.identifier)
-        } else {
-            state.collapsed.remove(kind.identifier)
-        }
-
-        var newValue = sections
-        newValue[sectionNumber] = Section(
-            kind: kind,
-            conversationDirectory: conversationDirectory,
-            collapsed: collapsed
-        )
-
-        if batchUpdate {
-            let changeset = StagedChangeset(source: sections, target: newValue)
-
-            delegate?.reload(using: changeset, interrupt: { _ in
-                false
-            }, setData: { data in
-                if let data {
-                    self.sections = data
-                }
-            })
-        } else {
-            sections = newValue
-            delegate?.listViewModel(self, didUpdateSectionForReload: sectionIndex, animated: true)
-        }
-    }
-
-    // MARK: - state presistent
-
-    // TODO: [WPB-7307]: the follow-up PR will remove anything around folders
-    // https://github.com/wireapp/wire-ios/pull/1466
-    let isFolderStatePersistenceEnabled = false
-
-    // TODO: [WPB-7307]: remove everything around the legacy folder view (grouped)
-    private struct State: Codable, Equatable {
-        var collapsed: Set<SectionIdentifier>
-        var folderEnabled: Bool
-
-        init() {
-            self.collapsed = []
-            self.folderEnabled = false
-        }
-
-        var jsonString: String? {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .sortedKeys
-            guard let jsonData = try? encoder.encode(self) else { return nil }
-
-            return String(decoding: jsonData, as: UTF8.self)
-        }
-    }
-
-    var jsonString: String? {
-        state.jsonString
-    }
-
-    private func saveState(state: State) {
-
-        guard isFolderStatePersistenceEnabled,
-              let jsonString = state.jsonString,
-              let persistentDirectory = ConversationListViewModel.persistentDirectory,
-              let directoryURL = URL.directoryURL(persistentDirectory) else { return }
-
-        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
-
-        do {
-            try jsonString.write(
-                to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename),
-                atomically: true,
-                encoding: .utf8
-            )
-        } catch {
-            log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
-        }
-    }
-
-    private static var persistentDirectory: String? {
-        guard let userID = ZMUser.selfUser()?.remoteIdentifier else { return nil }
-
-        return "UI_state/\(userID)"
-    }
-
-    private static var persistentFilename: String {
-        let className = String(describing: self)
-        return "\(className).json"
-    }
-
-    static var persistentURL: URL? {
-        guard let persistentDirectory else { return nil }
-
-        return URL.directoryURL(persistentDirectory)?
-            .appendingPathComponent(ConversationListViewModel.persistentFilename)
-    }
 }
 
 // MARK: - ZMUserObserving
@@ -679,7 +451,10 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 // MARK: - ConversationDirectoryObserver
 
 extension ConversationListViewModel: ConversationDirectoryObserver {
-    func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
+    func conversationDirectoryDidChange(
+        conversationDirectory: ConversationDirectoryType,
+        changeInfo: ConversationDirectoryChangeInfo
+    ) {
 
         if changeInfo.reloaded {
             // If the section was empty in certain cases collection view breaks down on the big amount of conversations,
