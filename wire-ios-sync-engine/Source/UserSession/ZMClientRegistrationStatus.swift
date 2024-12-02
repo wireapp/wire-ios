@@ -455,7 +455,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
     }
 
-    private func fetchFetchBackendMLSPublicKeys() {
+    private func fetchBackendMLSPublicKeys() {
         var action = FetchBackendMLSPublicKeysAction()
         action.perform(in: managedObjectContext.notificationContext) { [weak self] result in
             switch result {
