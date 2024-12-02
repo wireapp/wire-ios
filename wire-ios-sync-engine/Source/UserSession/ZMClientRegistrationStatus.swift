@@ -462,10 +462,10 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             case let .success(backendPublicKeys):
                 let hasValidKeys = backendPublicKeys.removal.hasValidKeys()
                 BackendInfo.isMLSEnabled = hasValidKeys
-                self?.didFetchBackendMLSPublicKeys()
             case .failure:
-                self?.fetchFetchBackendMLSPublicKeys()
+                WireLogger.authentication.info("Backend doesn't have MLS public keys")
             }
+            self?.didFetchBackendMLSPublicKeys()
         }
     }
 
@@ -618,12 +618,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didFetchFeatureConfigs() {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
-        // TODO: should be changed
-        if isMLSEnabled {
-            fetchFetchBackendMLSPublicKeys()
-        } else {
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-        }
+        fetchFetchBackendMLSPublicKeys()
     }
 
     public func didFetchBackendMLSPublicKeys() {

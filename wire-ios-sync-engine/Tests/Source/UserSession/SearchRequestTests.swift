@@ -31,9 +31,7 @@ class SearchRequestTests: MessagingTest {
         // when
         let request = SearchRequest(
             query: tooLongString,
-            searchOptions: [],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [])
 
         // then
         XCTAssertEqual(request.query.string, croppedString)
@@ -46,9 +44,7 @@ class SearchRequestTests: MessagingTest {
         // when
         let request = SearchRequest(
             query: query,
-            searchOptions: [],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [])
 
         // then
         XCTAssertEqual(request.normalizedQuery, "abc")
@@ -86,9 +82,7 @@ class SearchRequestTests: MessagingTest {
         // when
         let request = SearchRequest(
             query: query,
-            searchOptions: [],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [])
 
         // then
         XCTAssertEqual(request.query.string, expectedHandle, file: file, line: line)

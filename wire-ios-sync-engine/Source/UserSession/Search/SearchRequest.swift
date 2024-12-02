@@ -111,13 +111,14 @@ public struct SearchRequest {
     let searchOptions: SearchOptions
 
     public init(
-        query: Query,
-        searchDomain: String?,
+        query: String,
+        searchDomain: String? = nil,
         searchOptions: SearchOptions,
         team: Team? = nil
     ) {
+        let (query, parsedDomain) = Self.parseQuery(query)
         self.query = query
-        self.searchDomain = searchDomain
+        self.searchDomain = searchDomain ?? parsedDomain
         self.searchOptions = searchOptions
         self.team = team
     }

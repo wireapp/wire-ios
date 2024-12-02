@@ -148,7 +148,6 @@ final class SearchResultsViewController: UIViewController {
     private let userSelection: UserSelection
     private let userSession: UserSession
     private let searchUsersUseCase: SearchUsersUseCaseProtocol
-    private var pendingSearchTask: Task<Void, Never>?
 
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
@@ -261,9 +260,8 @@ final class SearchResultsViewController: UIViewController {
         options: SearchOptions
     ) {
         searchResultsView.emptyResultContainer.isHidden = true
-        pendingSearchTask?.cancel()
 
-        pendingSearchTask = Task {
+        Task {
             guard !Task.isCancelled else { return }
             do {
                 var options = options
@@ -271,7 +269,7 @@ final class SearchResultsViewController: UIViewController {
                 let result = try await searchUsersUseCase.invoke(
                     query: query,
                     options: options,
-                    filterConversation: filterConversation)
+                    messageProtocol: filterConversation?.messageProtocol)
                 handleSearchResult(result: result, isCompleted: true)
             } catch {
                 WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")

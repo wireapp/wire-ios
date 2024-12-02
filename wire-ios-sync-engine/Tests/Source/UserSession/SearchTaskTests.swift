@@ -98,9 +98,8 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "bob",
-            searchOptions: [.directory],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchDomain: nil,
+            searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -139,9 +138,7 @@ final class SearchTaskTests: DatabaseTest {
         let remoteResultArrived = customExpectation(description: "received remote result")
         let request = SearchRequest(
             query: "einstein",
-            searchOptions: [.directory],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -165,9 +162,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "userA",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -188,9 +183,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "serA",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -211,9 +204,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "user",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -236,9 +227,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Some Body",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -261,9 +250,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Gr",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -284,9 +271,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "someBodY",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -307,9 +292,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Sømebôdy",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -332,7 +315,7 @@ final class SearchTaskTests: DatabaseTest {
         user2.connection?.status = .pending
         let user3 = createConnectedUser(withName: "Somebody")
 
-        let request = SearchRequest(query: "Some", searchOptions: [.contacts], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Some", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -353,7 +336,7 @@ final class SearchTaskTests: DatabaseTest {
         selfUser.name = "Some self user"
         let user = createConnectedUser(withName: "Somebody")
 
-        let request = SearchRequest(query: "Some", searchOptions: [.contacts], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Some", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -374,9 +357,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "userA@bella.com",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: false,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -397,9 +378,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "userA@anta.com",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: false,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -420,9 +399,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "userA@bella.com",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -455,9 +432,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "@member",
             searchOptions: [.teamMembers],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -502,9 +477,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "",
             searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -541,9 +514,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "",
             searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -597,9 +568,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "",
             searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -632,9 +601,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "@abc",
             searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -668,9 +635,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "",
             searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -693,9 +658,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Somebody",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -716,9 +679,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "mebo",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -739,7 +700,7 @@ final class SearchTaskTests: DatabaseTest {
         let conversation2 = createGroupConversation(withName: "Landspeed Records")
         _ = createGroupConversation(withName: "New Day Rising")
 
-        let request = SearchRequest(query: "Records", searchOptions: [.conversations], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Records", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -760,9 +721,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "someBodY",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -783,9 +742,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Sømebôdy",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -812,9 +769,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Conversation",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -844,9 +799,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Rei",
-            searchOptions: [.conversations, .contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations, .contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -872,9 +825,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Rei",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -897,9 +848,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Foo",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -931,9 +880,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "Foo",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -955,9 +902,7 @@ final class SearchTaskTests: DatabaseTest {
 
         let request = SearchRequest(
             query: "@records",
-            searchOptions: [.conversations],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -985,9 +930,7 @@ final class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(
             query: "Beach",
             searchOptions: [.conversations],
-            team: team,
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -1008,9 +951,7 @@ final class SearchTaskTests: DatabaseTest {
         BackendInfo.apiVersion = .v2
         let request = SearchRequest(
             query: "Steve O'Hara & Söhne",
-            searchOptions: [.directory],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1028,9 +969,7 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(
             query: "Steve O'Hara & Söhne",
-            searchOptions: [.contacts],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1045,9 +984,7 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let request = SearchRequest(
             query: "Steve O'Hara & Söhne",
-            searchOptions: [.directory, .localResultsOnly],
-            isOtherDomainAllowed: true,
-            selfDomain: "anta.com")
+            searchOptions: [.directory, .localResultsOnly])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1061,7 +998,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItEncodesAPlusCharacterInTheSearchURL() {
         // given
         BackendInfo.apiVersion = .v2
-        let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "foo+bar@example.com", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1083,7 +1020,7 @@ final class SearchTaskTests: DatabaseTest {
 
         // given
         BackendInfo.apiVersion = .v2
-        let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "$&+,/:;=?@", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1101,7 +1038,7 @@ final class SearchTaskTests: DatabaseTest {
         // given
         BackendInfo.apiVersion = .v2
         let resultArrived = customExpectation(description: "received result")
-        let request = SearchRequest(query: "User", searchOptions: [.directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1124,7 +1061,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItMakesRequestToFetchTeamMembershipMetadata() {
         // given
         BackendInfo.apiVersion = .v2
-        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1151,7 +1088,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() {
         // given
         BackendInfo.apiVersion = .v2
-        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1174,7 +1111,7 @@ final class SearchTaskTests: DatabaseTest {
         // given
         BackendInfo.apiVersion = .v2
         let resultArrived = customExpectation(description: "received result")
-        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1204,7 +1141,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItSendsASearchServicesRequest() {
         // given
-        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1220,7 +1157,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() {
         // given
-        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services, .localResultsOnly], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.services, .localResultsOnly])
         let task = makeSearchTask(request: request)
 
         // when
@@ -1234,7 +1171,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItCallsCompletionHandlerForServicesSearch() {
         // given
         let resultArrived = customExpectation(description: "received result")
-        let request = SearchRequest(query: "Service", searchOptions: [.services], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "Service", searchOptions: [.services])
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
@@ -1323,7 +1260,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItDoesNotSendAFederatedUserSearchRequest__WhenLocalSearchOnly() throws {
         // given
         BackendInfo.apiVersion = .v3
-        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: [.federated, .localResultsOnly], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: [.federated, .localResultsOnly])
         let task = makeSearchTask(request: searchRequest)
 
         // when
@@ -1337,7 +1274,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItSendsAFederatedUserSearchRequest() throws {
         // given
         BackendInfo.apiVersion = .v3
-        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated, isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest)
 
         // when
@@ -1363,7 +1300,7 @@ final class SearchTaskTests: DatabaseTest {
             mockUser.domain = federatedDomain
         }
 
-        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated, isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest)
 
         // expect
@@ -1383,7 +1320,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         mockTransportSession.federatedDomains = ["example.com"]
 
-        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated, isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let searchRequest = SearchRequest(query: "john@example.com", searchOptions: .federated)
         let task = makeSearchTask(request: searchRequest)
 
         // expect
@@ -1409,7 +1346,7 @@ final class SearchTaskTests: DatabaseTest {
             remoteChanges.insertUser(withName: "UserB")
         }
 
-        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -1446,7 +1383,7 @@ final class SearchTaskTests: DatabaseTest {
             remoteChanges.insertUser(withName: "UserB")
         }
 
-        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -1477,7 +1414,7 @@ final class SearchTaskTests: DatabaseTest {
         // given
         let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
-        let request = SearchRequest(query: "user", searchOptions: [.contacts], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "user", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -1500,7 +1437,7 @@ final class SearchTaskTests: DatabaseTest {
             remoteChanges.insertUser(withName: "UserB")
         }
 
-        let request = SearchRequest(query: "user", searchOptions: [.directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "user", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -1525,7 +1462,7 @@ final class SearchTaskTests: DatabaseTest {
             remoteChanges.insertUser(withName: "UserB")
         }
 
-        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory], isOtherDomainAllowed: true, selfDomain: "anta.com")
+        let request = SearchRequest(query: "user", searchOptions: [.contacts, .directory])
         let task = makeSearchTask(request: request)
 
         // expect

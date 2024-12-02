@@ -53,7 +53,6 @@
 		06E097A02A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */; };
 		06F98D602437916B007E914A /* SignatureRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */; };
 		06FC48082CF0E36A00D31461 /* SearchUsersUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FC48072CF0E36A00D31461 /* SearchUsersUseCase.swift */; };
-		06FC49352CF46DA600D31461 /* IsFederationSearchAllowedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FC49342CF46DA200D31461 /* IsFederationSearchAllowedUseCaseTests.swift */; };
 		092083401BA95EE100F82B29 /* UserClientRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0920833F1BA95EE100F82B29 /* UserClientRequestFactory.swift */; };
 		0920C4DA1B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0920C4D81B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift */; };
 		093694451BA9633300F36B3A /* UserClientRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093694441BA9633300F36B3A /* UserClientRequestFactoryTests.swift */; };
@@ -710,7 +709,6 @@
 		06E0979F2A264F0300B38C4A /* ZMUserSessionTests+RecurringActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSessionTests+RecurringActions.swift"; sourceTree = "<group>"; };
 		06F98D5E24379143007E914A /* SignatureRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignatureRequestStrategyTests.swift; sourceTree = "<group>"; };
 		06FC48072CF0E36A00D31461 /* SearchUsersUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUsersUseCase.swift; sourceTree = "<group>"; };
-		06FC49342CF46DA200D31461 /* IsFederationSearchAllowedUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsFederationSearchAllowedUseCaseTests.swift; sourceTree = "<group>"; };
 		0920833C1BA84F3100F82B29 /* UserClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientRequestStrategyTests.swift; sourceTree = "<group>"; };
 		0920833F1BA95EE100F82B29 /* UserClientRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientRequestFactory.swift; sourceTree = "<group>"; };
 		0920C4D81B305FF500C55728 /* UserSessionGiphyRequestStateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSessionGiphyRequestStateTests.swift; sourceTree = "<group>"; };
@@ -1478,7 +1476,6 @@
 				E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */,
 				E910CF132CABF65E00B30E87 /* ToggleMessageReactionUseCaseTests.swift */,
 				E9D6FC222CD4E92D007924B8 /* UpdateConversationFolderUseCaseTests.swift */,
-				06FC49342CF46DA200D31461 /* IsFederationSearchAllowedUseCaseTests.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -3273,7 +3270,6 @@
 				85D8522CF8DE246DDD5BD12C /* MockEntity.m in Sources */,
 				EF2CB12A22D5E5BF00350B0A /* TeamImageAssetUpdateStrategyTests.swift in Sources */,
 				3E288A6C19C859210031CFCE /* NotificationObservers.m in Sources */,
-				06FC49352CF46DA600D31461 /* IsFederationSearchAllowedUseCaseTests.swift in Sources */,
 				63C4B3CA2C36A4DB00C09A93 /* ShareFileUseCaseTests.swift in Sources */,
 				168CF42D2007BCA0009FCB89 /* TeamInvitationRequestStrategyTests.swift in Sources */,
 				A97E4F5B267CFB2D006FC545 /* ZMUserSessionTests_NetworkState.swift in Sources */,

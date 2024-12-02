@@ -24,20 +24,24 @@ public protocol SearchUsersUseCaseProtocol {
     func invoke(
         query: String,
         options: SearchOptions,
-        filterConversation: ZMConversation?
+        messageProtocol: MessageProtocol?
     ) async throws -> SearchResult
 }
 
 public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let searchDirectory: SearchDirectory?
     private let isFederationUsageAllowed: Bool
-    private var pendingSearchTask: SearchTask?
+    private var activeSearchTask: SearchTask?
 
     deinit {
         searchDirectory?.tearDown()
     }
+
+    // MARK: - Initialization
 
     public init(
         context: NSManagedObjectContext,
@@ -49,24 +53,27 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         self.isFederationUsageAllowed = isFederationUsageAllowed
     }
 
+    // MARK: - Public Interface
+
     public func invoke(
         query: String,
         options: SearchOptions,
-        filterConversation: ZMConversation?
+        messageProtocol: MessageProtocol?
     ) async throws -> SearchResult {
-        searchDirectory?.updateIncompleteMetadataIfNeeded()
-        pendingSearchTask?.cancel()
+        activeSearchTask?.cancel()
+        activeSearchTask = nil
 
-        let (query, searchDomain) = SearchRequest.parseQuery(query.trim())
+        searchDirectory?.updateIncompleteMetadataIfNeeded()
 
         let (selfDomain, team) = await context.perform {
             let selfUser = ZMUser.selfUser(in: self.context)
             return (selfUser.domain, selfUser.membership?.team)
         }
 
+        let searchDomain = isOtherDomainSearchAllowed(messageProtocol) ? nil : selfDomain
         let request = SearchRequest(
-            query: query,
-            searchDomain: isOtherDomainSearchAllowed(conversation: filterConversation) ? searchDomain : selfDomain,
+            query: query.trim(),
+            searchDomain: searchDomain,
             searchOptions: options,
             team: team
         )
@@ -76,18 +83,21 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
             task?.addResultHandler { result, isCompleted in
                 if isCompleted {
                     continuation.resume(returning: result)
+                    self.activeSearchTask = nil
                 }
             }
             task?.start()
-            pendingSearchTask = task
+            activeSearchTask = task
         }
     }
 
-    private func isOtherDomainSearchAllowed(conversation: ZMConversation?) -> Bool {
-        guard let conversation else {
+    // MARK: - Private methods
+
+    private func isOtherDomainSearchAllowed(_ messageProtocol: MessageProtocol?) -> Bool {
+        guard let messageProtocol else {
             return isFederationUsageAllowed
         }
-        return conversation.isAllowedToAddFederatedUsers
+        return BackendInfo.isMLSEnabled ? messageProtocol != .proteus : true
     }
 
 }
@@ -100,18 +110,6 @@ public extension UserSession {
             return true
         }
         return mlsFeature.config.defaultProtocol != .proteus
-    }
-
-}
-
-private extension ZMConversation {
-
-    var isAllowedToAddFederatedUsers: Bool {
-        guard BackendInfo.isMLSEnabled else {
-            // If there is no MLS removal key configured,federation search is allowed.
-            return true
-        }
-        return messageProtocol != .proteus
     }
 
 }
