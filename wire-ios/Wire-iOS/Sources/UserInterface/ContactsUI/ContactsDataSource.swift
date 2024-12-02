@@ -73,8 +73,7 @@ final class ContactsDataSource: NSObject {
     private func performSearch() {
         guard let searchDirectory else { return }
 
-        let selfUserDomain = SelfUser.provider?.providedSelfUser.domain
-        let request = SearchRequest(query: searchQuery, searchDomain: selfUserDomain, searchOptions: [.contacts, .addressBook])
+        let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
         let task = searchDirectory.perform(request)
 
         task.addResultHandler { [weak self] searchResult, _ in
