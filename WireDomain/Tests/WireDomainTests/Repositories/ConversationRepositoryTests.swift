@@ -36,7 +36,6 @@ final class ConversationRepositoryTests: XCTestCase {
     )
 
     private var teamRepository: MockTeamRepositoryProtocol!
-    private var userClientsRepository: MockUserClientsRepositoryProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var mlsProvider: MLSProvider!
     private var stack: CoreDataStack!
@@ -58,7 +57,6 @@ final class ConversationRepositoryTests: XCTestCase {
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         userLocalStore = MockUserLocalStoreProtocol()
-        userClientsRepository = MockUserClientsRepositoryProtocol()
 
         conversationsLocalStore = ConversationLocalStore(
             context: context,
@@ -73,14 +71,12 @@ final class ConversationRepositoryTests: XCTestCase {
             conversationsLocalStore: conversationsLocalStore,
             userRepository: userRepository,
             teamRepository: teamRepository,
-            userClientsRepository: userClientsRepository,
             backendInfo: backendInfo,
             mlsProvider: mlsProvider
         )
     }
 
     override func tearDown() async throws {
-        userClientsRepository = nil
         userRepository = nil
         teamRepository = nil
         mlsProvider = nil

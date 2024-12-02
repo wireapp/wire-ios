@@ -195,7 +195,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let conversationsLocalStore: any ConversationLocalStoreProtocol
     private let userRepository: any UserRepositoryProtocol
     private let teamRepository: any TeamRepositoryProtocol
-    private let userClientsRepository: any UserClientsRepositoryProtocol
     private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
@@ -206,7 +205,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         conversationsLocalStore: any ConversationLocalStoreProtocol,
         userRepository: any UserRepositoryProtocol,
         teamRepository: any TeamRepositoryProtocol,
-        userClientsRepository: any UserClientsRepositoryProtocol,
         backendInfo: BackendInfo,
         mlsProvider: MLSProvider
     ) {
@@ -214,7 +212,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.conversationsLocalStore = conversationsLocalStore
         self.userRepository = userRepository
         self.teamRepository = teamRepository
-        self.userClientsRepository = userClientsRepository
         self.backendInfo = backendInfo
         self.mlsProvider = mlsProvider
     }
