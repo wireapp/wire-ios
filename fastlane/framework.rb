@@ -111,9 +111,11 @@ class Framework
         when "WireUI"
             "WireUIAll" # use a custom scheme that includes all targets of WireUI, fastlane does not found WireUI-Package
         when "WireAPI"
-            "WireAPIAll"
-        when "WireDomain", "WireAnalytics"
+            "WireAPIAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireDomain"
             name
+        when "WireAnalytics"
+            "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else
