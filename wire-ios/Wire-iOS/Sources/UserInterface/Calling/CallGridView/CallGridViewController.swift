@@ -216,10 +216,12 @@ final class CallGridViewController: UIViewController {
         guard allowMaximizationToggling(for: view.stream) else { return }
 
         let shouldMaximize = !isMaximized(stream: view.stream)
-
+        
         maximizedView = shouldMaximize ? view : nil
         view.isMaximized = shouldMaximize
         updateGrid(with: streams)
+        view.stream.isFullscreen = shouldMaximize
+        self.requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
         updateHint(for: .maximizationChanged(stream: view.stream, maximized: view.isMaximized))
     }
 
@@ -418,12 +420,18 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
+        let oneOnOne = dataSource.count == 2
+        
         let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
-            .map(\.streamId)
+            .map { stream in
+                var newClient = stream.streamId
+                newClient.changeQuality(oneOnOne ? .high : .low)
+                newClient.changeQuality(stream.isFullscreen ? .high : .low)
+                return newClient
+            }
 
         guard Set(clients) != Set(visibleClientsSharingVideo) else { return }
-
         delegate?.callGridViewController(self, perform: .requestVideoStreamsForClients(clients))
         visibleClientsSharingVideo = clients
     }

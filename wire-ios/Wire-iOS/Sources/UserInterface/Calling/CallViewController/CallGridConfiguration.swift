@@ -125,7 +125,8 @@ extension VoiceChannel {
                 user: participant.user,
                 callParticipantState: participant.state,
                 activeSpeakerState: participant.activeSpeakerState,
-                isPaused: participant.state.videoState?.isPaused ?? false
+                isPaused: participant.state.videoState?.isPaused ?? false,
+                isFullscreen: false
             )
         }
     }
@@ -158,7 +159,8 @@ extension VoiceChannel {
                 microphoneState: .unmuted
             ),
             activeSpeakerState: .inactive,
-            isPaused: isPaused
+            isPaused: isPaused,
+            isFullscreen: false
         )
     }
 

@@ -18,6 +18,10 @@
 
 import Foundation
 
+public struct AVSClientVideoStream: Codable, Equatable {
+    
+}
+
 public struct AVSVideoStreams: Codable, Equatable {
     let conversationId: String
     let clients: [AVSClient]

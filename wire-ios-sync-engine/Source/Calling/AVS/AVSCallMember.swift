@@ -95,5 +95,6 @@ private extension AVSClient {
     init(member: AVSParticipantsChange.Member) {
         userId = member.userid
         clientId = member.clientid
+        streamQuality = AVSStreamQuality.any.rawValue // TODO: check this
     }
 }

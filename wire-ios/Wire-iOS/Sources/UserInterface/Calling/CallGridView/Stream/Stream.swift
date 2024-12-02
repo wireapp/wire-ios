@@ -27,6 +27,7 @@ struct Stream: Equatable {
     let callParticipantState: CallParticipantState
     let activeSpeakerState: ActiveSpeakerState
     let isPaused: Bool
+    var isFullscreen: Bool
 
 }
 
