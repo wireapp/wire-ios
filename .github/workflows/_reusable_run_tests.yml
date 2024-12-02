@@ -175,6 +175,7 @@ jobs:
             ~/Library/Logs/DiagnosticReports/**
 
       - name: Get Commit SHA
+        if: always()
         id: get_commit_sha
         run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
