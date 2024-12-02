@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLoggerTag: ExpressibleByStringLiteral, RawRepresentable {
+public struct WireLoggerTag: ExpressibleByStringLiteral, RawRepresentable, Sendable {
 
     public var rawValue: StringLiteralType
 

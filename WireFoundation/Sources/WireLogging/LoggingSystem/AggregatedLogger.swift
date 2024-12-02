@@ -18,9 +18,9 @@
 
 struct AggregatedLogger: WireLoggingSystem {
 
-    var loggingSystems: () -> [any WireLoggingSystem]
+    let loggingSystems: @Sendable () -> [any WireLoggingSystem]
 
-    init(loggingSystems: @escaping @autoclosure () -> [any WireLoggingSystem]) {
+    init(loggingSystems: @escaping @Sendable @autoclosure () -> [any WireLoggingSystem]) {
         self.loggingSystems = loggingSystems
     }
 

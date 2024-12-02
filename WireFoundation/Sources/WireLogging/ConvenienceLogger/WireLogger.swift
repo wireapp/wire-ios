@@ -22,15 +22,7 @@ public struct WireLogger: WireLoggerProtocol {
     private typealias Level = WireLogLevel
 
     public var tag: Tag
-    private var loggingSystem: () -> any WireLoggingSystem
-
-    init(
-        _ tag: Tag,
-        _ loggingSystem: @escaping () -> any WireLoggingSystem
-    ) {
-        self.tag = tag
-        self.loggingSystem = loggingSystem
-    }
+    private(set) var loggingSystem: @Sendable () -> any WireLoggingSystem
 
     public func debug(_ message: WireLogInterpolation) {
         log(.debug, message)

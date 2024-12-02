@@ -17,7 +17,7 @@
 //
 
 /// Abstraction of a convenience interface to the Wire logging systems.
-public protocol WireLoggerProtocol {
+public protocol WireLoggerProtocol: Sendable {
     typealias Tag = WireLoggerTag
 
     var tag: Tag { get }

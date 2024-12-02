@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireLoggingSystem {
+public protocol WireLoggingSystem: Sendable {
 
     typealias Tag = WireLoggerTag
     typealias Level = WireLogLevel
