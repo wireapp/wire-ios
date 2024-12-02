@@ -80,6 +80,9 @@ platform :ios do
        options[:build_number] = 1
        build = Build.new(options: options)
        
+       
+       UI.message "🤖 Testing schemas:  #{schemas.join(', ')}"
+       
        testplan = options[:testplan] || "AllTests"
        schemas.each do |scheme|
            UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
