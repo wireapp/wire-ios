@@ -18,27 +18,102 @@
 
 import os
 
-public protocol NewWireLogger {
+public protocol WireLoggingSystem {
+
     typealias Tag = WireLoggerTag
+    typealias Level = WireLogLevel
+
+    func log(tag: Tag, level: Level, message: WireLogInterpolation)
+}
+// DatadogLogger: WireLoggingSystem (different target, like WireAnalytics)
+// OSLog: WireLoggingSystem
+// ...
+
+struct AggregatedLogger: WireLoggingSystem {
+
+    var loggingSystems: () -> [any WireLoggingSystem]
+
+    init(loggingSystems: @escaping @autoclosure () -> [any WireLoggingSystem]) {
+        self.loggingSystems = loggingSystems
+    }
+
+    func log(tag: Tag, level: Level, message: WireLogInterpolation) {
+        loggingSystems().forEach { loggingSystem in
+            loggingSystem.log(tag: tag, level: level, message: message)
+        }
+    }
 }
 
-public protocol TaggedWireLogger {
-    typealias Tag = WireLoggerTag
+/// Convenience interface to the Wire logging systems.
+public struct WireLogger {
+    public typealias Tag = WireLoggerTag
+    private typealias Level = WireLogLevel
 
-    var tags: [Tag] { get }
+    public var tag: Tag
+    private var loggingSystem: () -> any WireLoggingSystem
+
+    public init(
+        _ tag: Tag,
+        _ loggingSystem: @escaping  () -> any WireLoggingSystem
+    ) {
+        self.tag = tag
+        self.loggingSystem = loggingSystem
+    }
+
+    public func debug(_ message: WireLogInterpolation) {
+        log(.debug, message)
+    }
+
+    public func info(_ message: WireLogInterpolation) {
+        log(.info, message)
+    }
+
+    public func notice(_ message: WireLogInterpolation) {
+        log(.notice, message)
+    }
+
+    public func warn(_ message: WireLogInterpolation) {
+        log(.warn, message)
+    }
+
+    public func error(_ message: WireLogInterpolation) {
+        log(.error, message)
+    }
+
+    public func critical(_ message: WireLogInterpolation) {
+        log(.critical, message)
+    }
+
+    private func log(_ level: Level, _ message: WireLogInterpolation) {
+        loggingSystem()
+            .log(tag: tag, level: level, message: message)
+    }
 }
 
-public struct WireLoggerTag: RawRepresentable {
+extension WireLogger {
+
+//    static var loggingSystems = [any WireLoggingSystem]()
+//
+//    static var network = TaggedWireLogger(tag: .init(rawValue: "network"))
+}
+
+public struct WireLoggerTag: ExpressibleByStringLiteral, RawRepresentable {
 
     public var rawValue: StringLiteralType
 
+    public init(stringLiteral rawValue: StringLiteralType) {
+        self.rawValue = rawValue
+    }
+
     public init?(rawValue: StringLiteralType) {
         self.rawValue = rawValue
-
-//        os.Logger().notice("abcd \("xyz", privacy: .public)")
-//        os.Logger().
     }
 }
+
+
+
+
+
 
 // public struct WireLoggerInterpolation: ExpressibleByStringInterpolation {
 //    public init(stringInterpolation: DefaultStringInterpolation) {
