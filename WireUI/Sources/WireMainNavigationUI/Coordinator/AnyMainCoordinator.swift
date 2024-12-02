@@ -24,6 +24,7 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     public let base: any MainCoordinatorProtocol
 
     private let _showConversationList: @MainActor (_ conversationFilter: ConversationFilter?) async -> Void
+    private let _applyConversationFilter: @MainActor (_ conversationFilter: ConversationFilter?) -> Void
     private let _showArchive: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
     private let _showConversation: @MainActor (
@@ -43,6 +44,9 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
         self.base = mainCoordinator
         self._showConversationList = { conversationFilter in
             await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
+        }
+        self._applyConversationFilter = { conversationFilter in
+            mainCoordinator.applyConversationFilter(conversationFilter)
         }
         self._showArchive = {
             await mainCoordinator.showArchive()
@@ -73,6 +77,11 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     @MainActor
     public func showConversationList(conversationFilter: ConversationFilter?) async {
         await _showConversationList(conversationFilter)
+    }
+
+    @MainActor
+    public func applyConversationFilter(_ conversationFilter: ConversationFilter?) {
+        _applyConversationFilter(conversationFilter)
     }
 
     @MainActor
