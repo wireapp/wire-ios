@@ -39,7 +39,7 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
             .withPreferredContentSizeCategory(imageConfig.traits.preferredContentSizeCategory)
 
         XCTestCase.accentColor = .blue
-        sut = ContactsViewController()
+        sut = ContactsViewController(isFederationUsageAllowed: true)
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
         sut.overrideUserInterfaceStyle = .dark
         sut.view.backgroundColor = .black
