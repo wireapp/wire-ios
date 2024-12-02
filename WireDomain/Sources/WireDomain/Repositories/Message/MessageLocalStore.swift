@@ -69,26 +69,24 @@ public protocol MessageLocalStoreProtocol {
     ) async -> Bool
     
     
-    /// Updates self conversation with a last read message.
+    /// Updates last read message timestamp.
     /// - Parameters:
     ///     - lastReadMessage: The last read message protobuf object.
-    ///     - conversation: The related conversation.
+    ///     - conversation: The conversation the message is derived from.
     ///
-    /// See legacy code `ConversationStatusStrategy` in WireSyncEngine.
     
-    func updateSelfConversation(
+    func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
         in conversation: ZMConversation
     ) async
     
-    /// Deletes older messages
+    /// Updates cleared message timestamp.
     /// - Parameters:
     ///     - clearedMessage: The cleared message protobuf object.
-    ///     - conversation: The related conversation.
+    ///     - conversation: The conversation the message is derived from.
     ///
-    /// See legacy code `ConversationStatusStrategy` in WireSyncEngine.
 
-    func deleteOlderMessages(
+    func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
         in conversation: ZMConversation
     ) async
@@ -316,7 +314,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
-    public func updateSelfConversation(
+    public func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
         in conversation: ZMConversation
     ) async {
@@ -332,7 +330,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
     
-    public func deleteOlderMessages(
+    public func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
         in conversation: ZMConversation
     ) async {

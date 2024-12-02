@@ -63,14 +63,14 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         switch content {
         case .lastRead:
             
-            await messageLocalStore.updateSelfConversation(
+            await messageLocalStore.updateLastReadMessageTimestamp(
                 message.lastRead,
                 in: conversation
             )
             
         case .cleared:
             
-            await messageLocalStore.deleteOlderMessages(
+            await messageLocalStore.updateClearedMessageTimestamp(
                 message.cleared,
                 in: conversation
             )

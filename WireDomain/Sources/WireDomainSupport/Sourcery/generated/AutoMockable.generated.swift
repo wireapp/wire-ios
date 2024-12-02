@@ -1038,31 +1038,31 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
     }
 
-    // MARK: - updateSelfConversation
+    // MARK: - updateLastReadMessageTimestamp
 
-    public var updateSelfConversationIn_Invocations: [(lastReadMessage: LastRead, conversation: ZMConversation)] = []
-    public var updateSelfConversationIn_MockMethod: ((LastRead, ZMConversation) async -> Void)?
+    public var updateLastReadMessageTimestampIn_Invocations: [(lastReadMessage: LastRead, conversation: ZMConversation)] = []
+    public var updateLastReadMessageTimestampIn_MockMethod: ((LastRead, ZMConversation) async -> Void)?
 
-    public func updateSelfConversation(_ lastReadMessage: LastRead, in conversation: ZMConversation) async {
-        updateSelfConversationIn_Invocations.append((lastReadMessage: lastReadMessage, conversation: conversation))
+    public func updateLastReadMessageTimestamp(_ lastReadMessage: LastRead, in conversation: ZMConversation) async {
+        updateLastReadMessageTimestampIn_Invocations.append((lastReadMessage: lastReadMessage, conversation: conversation))
 
-        guard let mock = updateSelfConversationIn_MockMethod else {
-            fatalError("no mock for `updateSelfConversationIn`")
+        guard let mock = updateLastReadMessageTimestampIn_MockMethod else {
+            fatalError("no mock for `updateLastReadMessageTimestampIn`")
         }
 
         await mock(lastReadMessage, conversation)
     }
 
-    // MARK: - deleteOlderMessages
+    // MARK: - updateClearedMessageTimestamp
 
-    public var deleteOlderMessagesIn_Invocations: [(clearedMessage: Cleared, conversation: ZMConversation)] = []
-    public var deleteOlderMessagesIn_MockMethod: ((Cleared, ZMConversation) async -> Void)?
+    public var updateClearedMessageTimestampIn_Invocations: [(clearedMessage: Cleared, conversation: ZMConversation)] = []
+    public var updateClearedMessageTimestampIn_MockMethod: ((Cleared, ZMConversation) async -> Void)?
 
-    public func deleteOlderMessages(_ clearedMessage: Cleared, in conversation: ZMConversation) async {
-        deleteOlderMessagesIn_Invocations.append((clearedMessage: clearedMessage, conversation: conversation))
+    public func updateClearedMessageTimestamp(_ clearedMessage: Cleared, in conversation: ZMConversation) async {
+        updateClearedMessageTimestampIn_Invocations.append((clearedMessage: clearedMessage, conversation: conversation))
 
-        guard let mock = deleteOlderMessagesIn_MockMethod else {
-            fatalError("no mock for `deleteOlderMessagesIn`")
+        guard let mock = updateClearedMessageTimestampIn_MockMethod else {
+            fatalError("no mock for `updateClearedMessageTimestampIn`")
         }
 
         await mock(clearedMessage, conversation)
