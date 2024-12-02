@@ -94,7 +94,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
                 in: conversationObjectID
             )
             
-            let typingUsersInfo = TypingUsersInfo(
+            let typingUsersInfo = ConversationTypingUsersInfo(
                 users: userObjectIDs,
                 conversationID: conversationObjectID
             )
@@ -118,7 +118,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
         )
         
         // Map typing users for each conversation
-        let typingUsersInfo: [TypingUsersInfo] = conversationObjectIDs.map {
+        let typingUsersInfo: [ConversationTypingUsersInfo] = conversationObjectIDs.map {
             let userObjectIDs = typingUsersTimeout.userIds(in: $0)
             return .init(users: userObjectIDs, conversationID: $0)
         }
