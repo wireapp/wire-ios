@@ -618,7 +618,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didFetchFeatureConfigs() {
         WireLogger.userClient.info("did fetch feature configs")
         needsToFetchFeatureConfigs = false
-        fetchFetchBackendMLSPublicKeys()
+        fetchBackendMLSPublicKeys()
     }
 
     public func didFetchBackendMLSPublicKeys() {
