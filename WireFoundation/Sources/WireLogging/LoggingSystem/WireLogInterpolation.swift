@@ -18,28 +18,24 @@
 
 import os
 
+/// This type's purpose is controlling the interface to an `OSLogInterpolation`.
+/// Each custom type should define how it should appear in the logs.
 public struct WireLogInterpolation: StringInterpolationProtocol {
-    // Buffer to store the interpolated string content
-    private var output: String = ""
+
+    private var logInterpolation: OSLogInterpolation
 
     // Required initializer
     public init(literalCapacity: Int, interpolationCount: Int) {
-        output.reserveCapacity(literalCapacity + interpolationCount * 20)
+        logInterpolation = .init(literalCapacity: literalCapacity, interpolationCount: interpolationCount)
     }
 
     // Required method for appending literal strings
     public mutating func appendLiteral(_ literal: StaticString) {
-        output.append("\(literal)")
+        logInterpolation.appendLiteral("\(literal)")
     }
 
     // Custom interpolation method for `MyStruct`
-    public mutating func appendInterpolation(_ value: MyStruct) {
-        output.append("MyStruct(id: \(value.id), name: \(value.name))")
-    }
-
-    // Expose the final result as a string
-    func outputString() -> String {
-        return output
-        os.Logger().log("abcd \(3)")
+    public mutating func appendInterpolation(_ value: StaticString) {
+        logInterpolation.appendLiteral("\(value)")
     }
 }
