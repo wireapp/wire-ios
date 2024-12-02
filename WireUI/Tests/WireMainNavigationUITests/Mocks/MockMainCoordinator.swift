@@ -29,6 +29,11 @@ final class MockMainCoordinatorProtocol: MainCoordinatorProtocol {
         showConversationList_Invocations += [conversationFilter]
     }
 
+    var applyConversationFilter_Invocations: [ConversationFilter?] = []
+    func applyConversationFilter(_ filter: ConversationFilter?) {
+        applyConversationFilter_Invocations += [filter]
+    }
+
     var showArchive_Invocations: [Void] = []
     func showArchive() async {
         showArchive_Invocations.append(())
