@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import os
+
 public struct WireLogInterpolation: StringInterpolationProtocol {
     // Buffer to store the interpolated string content
     private var output: String = ""
@@ -26,8 +28,8 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     }
 
     // Required method for appending literal strings
-    public mutating func appendLiteral(_ literal: String) {
-        output.append(literal)
+    public mutating func appendLiteral(_ literal: StaticString) {
+        output.append("\(literal)")
     }
 
     // Custom interpolation method for `MyStruct`
@@ -38,5 +40,6 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     // Expose the final result as a string
     func outputString() -> String {
         return output
+        os.Logger().log("abcd \(3)")
     }
 }

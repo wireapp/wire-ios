@@ -24,7 +24,7 @@ public struct WireLogger: WireLoggerProtocol {
     public var tag: Tag
     private var loggingSystem: () -> any WireLoggingSystem
 
-    public init(
+    init(
         _ tag: Tag,
         _ loggingSystem: @escaping () -> any WireLoggingSystem
     ) {

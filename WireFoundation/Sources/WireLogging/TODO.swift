@@ -40,11 +40,11 @@ public struct MyStruct {
     }
 }
 
-func something() {
-    let myStruct = MyStruct(id: 42, name: "Alice")
-    let anotherStruct = MyStruct(id: 7, name: "Bob")
-
-    let myString: WireLogMessage = "This is \(myStruct), and here is \(anotherStruct)."
-    print(myString.valuee)
-    // Output: This is MyStruct(id: 42, name: Alice), and here is MyStruct(id: 7, name: Bob).
-}
+//func something() {
+//    let myStruct = MyStruct(id: 42, name: "Alice")
+//    let anotherStruct = MyStruct(id: 7, name: "Bob")
+//
+//    let myString: WireLogMessage = "This is \(myStruct), and here is \(anotherStruct)."
+//    print(myString.value)
+//    // Output: This is MyStruct(id: 42, name: Alice), and here is MyStruct(id: 7, name: Bob).
+//}

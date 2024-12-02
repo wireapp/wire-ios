@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLogMessage: ExpressibleByStringInterpolation {
-    let valuee: String
+public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
+    public let interpolation: WireLogInterpolation
 
-    public init(stringLiteral value: String) {
-        self.valuee = value
+    public init(stringLiteral value: StaticString) {
+        var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)
+        interpolation.appendLiteral(value)
+        self.interpolation = interpolation
     }
 
-    public init(stringInterpolation: WireLogInterpolation) {
-        self.valuee = stringInterpolation.outputString()
+    public init(stringInterpolation interpolation: WireLogInterpolation) {
+        self.interpolation = interpolation
     }
 }
