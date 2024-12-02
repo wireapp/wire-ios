@@ -67,22 +67,6 @@ public struct SelfProfileViewCallToActionBanner: View {
     }
 }
 
-//fileprivate struct AdaptivePaddingModifier: ViewModifier {
-//    let edges: Edge.Set
-//
-//    init (edges: Edge.Set) {
-//        self.edges = edges
-//    }
-//
-//    func body(content: Content) -> some View {
-//        if UIScreen.main.bounds.width < 400 {
-//            content.padding(.all, 12)
-//        } else {
-//            content.padding(edges)
-//        }
-//    }
-//}
-
 fileprivate extension View {
     func bannerBackground() -> some View {
         self.background {
@@ -97,10 +81,6 @@ fileprivate extension View {
             }
         }
     }
-
-//    func adaptivePadding(_ edges: Edge.Set = .all) -> some View {
-//        self.modifier(AdaptivePaddingModifier(edges: edges))
-//    }
 }
 
 public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<SelfProfileViewCallToActionBanner> {
