@@ -48,7 +48,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         // Message should be decrypted see `ProteusEventDecryptor`
         guard let decryptedMessage = messageContent.decryptedMessage else {
-            return
+            return WireLogger.proteus.error(
+                "failed to add proteus message: there is no decrypted message to process"
+            )
         }
 
         guard let conversation = await conversationLocalStore.fetchConversation(
