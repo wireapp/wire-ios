@@ -262,7 +262,6 @@ final class SearchResultsViewController: UIViewController {
         searchResultsView.emptyResultContainer.isHidden = true
 
         Task {
-            guard !Task.isCancelled else { return }
             do {
                 var options = options
                 options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)

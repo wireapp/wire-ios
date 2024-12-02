@@ -101,15 +101,3 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     }
 
 }
-
-public extension UserSession {
-
-    var isFederationUsageAllowed: Bool {
-        guard BackendInfo.isMLSEnabled else {
-            // If there is no MLS removal key configured,federation search is allowed.
-            return true
-        }
-        return mlsFeature.config.defaultProtocol != .proteus
-    }
-
-}
