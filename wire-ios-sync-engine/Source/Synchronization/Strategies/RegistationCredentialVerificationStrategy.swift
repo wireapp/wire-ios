@@ -84,7 +84,10 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                 // We can end up here because more than one request can be sent for a single action/phase.
                 // This is an issue in some other part of SyncEngine but as a quick fix we will log and abort here.
                 let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
-                OldWireLogger.authentication.error("Recieved unsuccessful response for invalid phase (\(phaseString))", attributes: .safePublic)
+                OldWireLogger.authentication.error(
+                    "Recieved unsuccessful response for invalid phase (\(phaseString))",
+                    attributes: .safePublic
+                )
                 return assertionFailure("Error occurs for invalid phase: \(phaseString)")
             }
             registrationStatus.handleError(error)
