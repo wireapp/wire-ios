@@ -96,10 +96,7 @@ final class SearchTaskTests: DatabaseTest {
             mockUser.handle = "bob"
         }
 
-        let request = SearchRequest(
-            query: "bob",
-            searchDomain: nil,
-            searchOptions: [.directory])
+        let request = SearchRequest(query: "bob", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -136,9 +133,7 @@ final class SearchTaskTests: DatabaseTest {
         }
 
         let remoteResultArrived = customExpectation(description: "received remote result")
-        let request = SearchRequest(
-            query: "einstein",
-            searchOptions: [.directory])
+        let request = SearchRequest(query: "einstein", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -160,9 +155,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
 
-        let request = SearchRequest(
-            query: "userA",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "userA", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -181,9 +174,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         _ = createConnectedUser(withName: "userA")
 
-        let request = SearchRequest(
-            query: "serA",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "serA", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -202,9 +193,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")
 
-        let request = SearchRequest(
-            query: "user",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "user", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -225,9 +214,7 @@ final class SearchTaskTests: DatabaseTest {
         _ = createConnectedUser(withName: "Some")
         _ = createConnectedUser(withName: "Any Body")
 
-        let request = SearchRequest(
-            query: "Some Body",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "Some Body", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -248,9 +235,7 @@ final class SearchTaskTests: DatabaseTest {
         let user2 = createConnectedUser(withName: "Greg")
         _ = createConnectedUser(withName: "Bob")
 
-        let request = SearchRequest(
-            query: "Gr",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "Gr", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -269,9 +254,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Somebody")
 
-        let request = SearchRequest(
-            query: "someBodY",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "someBodY", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -290,9 +273,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let user1 = createConnectedUser(withName: "Sömëbodÿ")
 
-        let request = SearchRequest(
-            query: "Sømebôdy",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "Sømebôdy", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -350,14 +331,12 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItDoesNotFindUsersWithOtherDomainsIfItIsNotAllowed() {
+    func testThatItDoesNotFindUsersWithOtherDomainsIfSearchDomainIsRequired() {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "bella.com")
 
-        let request = SearchRequest(
-            query: "userA@bella.com",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "userA@bella.com", searchDomain: "anta.com", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -376,9 +355,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "anta.com")
 
-        let request = SearchRequest(
-            query: "userA@anta.com",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "userA@anta.com", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -392,14 +369,12 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatItFindsUsersWithOtherDomainsIfItIsAllowed() {
+    func testThatItFindsUsersWithOtherDomainsIfSearchDomainIsNotRequired() {
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA", domain: "bella.com")
 
-        let request = SearchRequest(
-            query: "userA@bella.com",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "userA@bella.com", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -429,10 +404,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "@member",
-            searchOptions: [.teamMembers],
-            team: team)
+        let request = SearchRequest(query: "@member", searchOptions: [.teamMembers], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -474,10 +446,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "",
-            searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
-            team: team)
+        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -511,10 +480,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "",
-            searchOptions: [.teamMembers, .excludeNonActiveTeamMembers],
-            team: team)
+        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActiveTeamMembers], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -565,10 +531,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "",
-            searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team)
+        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -598,10 +561,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "@abc",
-            searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team)
+        let request = SearchRequest(query: "@abc", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -632,10 +592,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "",
-            searchOptions: [.teamMembers, .excludeNonActivePartners],
-            team: team)
+        let request = SearchRequest(query: "", searchOptions: [.teamMembers, .excludeNonActivePartners], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -656,9 +613,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
 
-        let request = SearchRequest(
-            query: "Somebody",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Somebody", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -677,9 +632,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Somebody")
 
-        let request = SearchRequest(
-            query: "mebo",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "mebo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -719,9 +672,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "SoMEBody")
 
-        let request = SearchRequest(
-            query: "someBodY",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "someBodY", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -740,9 +691,7 @@ final class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
         let conversation = createGroupConversation(withName: "Sömëbodÿ")
 
-        let request = SearchRequest(
-            query: "Sømebôdy",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Sømebôdy", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -767,9 +716,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "Conversation",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Conversation", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -797,9 +744,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "Rei",
-            searchOptions: [.conversations, .contacts])
+        let request = SearchRequest(query: "Rei", searchOptions: [.conversations, .contacts])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -823,9 +768,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "Rei",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Rei", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -846,9 +789,7 @@ final class SearchTaskTests: DatabaseTest {
         let conversation2 = createGroupConversation(withName: "FooC")
         let conversation3 = createGroupConversation(withName: "FooB")
 
-        let request = SearchRequest(
-            query: "Foo",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Foo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -878,9 +819,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "Foo",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "Foo", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -900,9 +839,7 @@ final class SearchTaskTests: DatabaseTest {
         _ = createGroupConversation(withName: "New Day Rising")
         _ = createGroupConversation(withName: "Landspeed Records")
 
-        let request = SearchRequest(
-            query: "@records",
-            searchOptions: [.conversations])
+        let request = SearchRequest(query: "@records", searchOptions: [.conversations])
         let task = makeSearchTask(request: request)
 
         // expect
@@ -927,10 +864,7 @@ final class SearchTaskTests: DatabaseTest {
 
         uiMOC.saveOrRollback()
 
-        let request = SearchRequest(
-            query: "Beach",
-            searchOptions: [.conversations],
-            team: team)
+        let request = SearchRequest(query: "Beach", searchOptions: [.conversations], team: team)
         let task = makeSearchTask(request: request)
 
         // expect
@@ -949,9 +883,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItSendsASearchRequest() {
         // given
         BackendInfo.apiVersion = .v2
-        let request = SearchRequest(
-            query: "Steve O'Hara & Söhne",
-            searchOptions: [.directory])
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory])
         let task = makeSearchTask(request: request)
 
         // when
@@ -967,9 +899,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotSendASearchRequestIfSeachingLocally() {
         // given
-        let request = SearchRequest(
-            query: "Steve O'Hara & Söhne",
-            searchOptions: [.contacts])
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.contacts])
         let task = makeSearchTask(request: request)
 
         // when
@@ -982,9 +912,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotSendASearchRequestIfLocalResultsOnly() {
         // given
-        let request = SearchRequest(
-            query: "Steve O'Hara & Söhne",
-            searchOptions: [.directory, .localResultsOnly])
+        let request = SearchRequest(query: "Steve O'Hara & Söhne", searchOptions: [.directory, .localResultsOnly])
         let task = makeSearchTask(request: request)
 
         // when

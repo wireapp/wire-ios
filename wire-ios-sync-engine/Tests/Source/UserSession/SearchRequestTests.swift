@@ -29,9 +29,7 @@ class SearchRequestTests: MessagingTest {
         let tooLongString = "f".padding(toLength: 300, withPad: "o", startingAt: 0)
 
         // when
-        let request = SearchRequest(
-            query: tooLongString,
-            searchOptions: [])
+        let request = SearchRequest(query: tooLongString, searchOptions: [])
 
         // then
         XCTAssertEqual(request.query.string, croppedString)
@@ -42,9 +40,7 @@ class SearchRequestTests: MessagingTest {
         let query = "Ã.b.ć "
 
         // when
-        let request = SearchRequest(
-            query: query,
-            searchOptions: [])
+        let request = SearchRequest(query: query, searchOptions: [])
 
         // then
         XCTAssertEqual(request.normalizedQuery, "abc")
@@ -80,9 +76,7 @@ class SearchRequestTests: MessagingTest {
         line: UInt = #line
     ) throws {
         // when
-        let request = SearchRequest(
-            query: query,
-            searchOptions: [])
+        let request = SearchRequest(query: query, searchOptions: [])
 
         // then
         XCTAssertEqual(request.query.string, expectedHandle, file: file, line: line)

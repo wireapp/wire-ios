@@ -129,7 +129,7 @@ public struct SearchRequest {
 
 }
 
-extension SearchRequest {
+private extension SearchRequest {
 
     static let maxQueryLength = 200
 
