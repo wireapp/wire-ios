@@ -26,25 +26,25 @@ extension ConversationLocalStore {
     // MARK: - Metadata
 
     func updateMetadata(
-        from remoteConversation: WireAPI.Conversation,
+        from conversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        if let teamID = remoteConversation.teamID {
+        if let teamID = conversation.teamID {
             localConversation.updateTeam(identifier: teamID)
         }
 
-        if let name = remoteConversation.name {
+        if let name = conversation.name {
             localConversation.userDefinedName = name
         }
 
-        guard let userID = remoteConversation.creator else {
+        guard let userID = conversation.creator else {
             return
         }
 
         /// We assume that the creator always belongs to the same domain as the conversation
         let creator = ZMUser.fetchOrCreate(
             with: userID,
-            domain: remoteConversation.qualifiedID?.domain,
+            domain: conversation.qualifiedID?.domain,
             in: context
         )
 
@@ -54,28 +54,28 @@ extension ConversationLocalStore {
     // MARK: - Attributes
 
     func updateAttributes(
-        from remoteConversation: WireAPI.Conversation,
+        from conversation: Conversation,
         for localConversation: ZMConversation,
         isFederationEnabled: Bool
     ) {
-        localConversation.domain = isFederationEnabled ? remoteConversation.qualifiedID?.domain : nil
+        localConversation.domain = isFederationEnabled ? conversation.qualifiedID?.domain : nil
         localConversation.needsToBeUpdatedFromBackend = false
 
-        if let epoch = remoteConversation.epoch {
+        if let epoch = conversation.epoch {
             localConversation.epoch = UInt64(epoch)
         }
 
-        let base64String = remoteConversation.mlsGroupID
+        let base64String = conversation.mlsGroupID
 
         if let base64String, let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             localConversation.mlsGroupID = mlsGroupID
         }
 
-        let ciphersuite = remoteConversation.cipherSuite
-        let epoch = remoteConversation.epoch
+        let ciphersuite = conversation.cipherSuite
+        let epoch = conversation.epoch
 
         if let ciphersuite, let epoch, epoch > 0 {
-            localConversation.ciphersuite = ciphersuite.toDomainModel()
+            localConversation.ciphersuite = ciphersuite
         }
     }
 
