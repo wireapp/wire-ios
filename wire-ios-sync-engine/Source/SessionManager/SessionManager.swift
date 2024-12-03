@@ -18,6 +18,7 @@
 
 import avs
 import CallKit
+import WireLogging
 import Foundation
 import PushKit
 import UserNotifications

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 private let zmLog = ZMSLog(tag: "SyncStatus")
 
 public extension Notification.Name {

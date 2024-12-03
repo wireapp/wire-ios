@@ -19,6 +19,7 @@
 import Foundation
 import WireDomain
 import WireRequestStrategy
+import WireLogging
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 

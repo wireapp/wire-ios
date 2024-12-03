@@ -19,6 +19,7 @@
 import CallKit
 import Foundation
 import WireSystem
+import WireLogging
 
 enum ConversationLookupError: Error {
     case accountDoesNotExist

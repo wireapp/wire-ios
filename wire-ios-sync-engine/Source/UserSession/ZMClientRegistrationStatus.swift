@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSystem
+import WireLogging
 
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {

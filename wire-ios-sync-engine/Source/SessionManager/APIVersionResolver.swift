@@ -18,6 +18,7 @@
 
 import Foundation
 import WireTransport
+import WireLogging
 
 final class APIVersionResolver {
 

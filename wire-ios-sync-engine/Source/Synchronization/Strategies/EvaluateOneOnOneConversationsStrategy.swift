@@ -18,6 +18,7 @@
 
 import Foundation
 import WireRequestStrategy
+import WireLogging
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 

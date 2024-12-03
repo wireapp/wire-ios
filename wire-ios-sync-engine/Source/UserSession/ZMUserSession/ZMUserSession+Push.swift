@@ -19,6 +19,7 @@
 import Foundation
 import UserNotifications
 import WireRequestStrategy
+import WireLogging
 import WireTransport
 
 struct PushTokenMetadata {
