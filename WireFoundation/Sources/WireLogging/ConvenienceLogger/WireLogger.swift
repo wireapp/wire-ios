@@ -24,31 +24,31 @@ public struct WireLogger: WireLoggerProtocol {
     public var tag: Tag
     private(set) var loggingSystem: @Sendable () -> any WireLoggingSystem
 
-    public func debug(_ message: WireLogInterpolation) {
+    public func debug(_ message: WireLogMessage) {
         log(.debug, message)
     }
 
-    public func info(_ message: WireLogInterpolation) {
+    public func info(_ message: WireLogMessage) {
         log(.info, message)
     }
 
-    public func notice(_ message: WireLogInterpolation) {
+    public func notice(_ message: WireLogMessage) {
         log(.notice, message)
     }
 
-    public func warn(_ message: WireLogInterpolation) {
+    public func warn(_ message: WireLogMessage) {
         log(.warn, message)
     }
 
-    public func error(_ message: WireLogInterpolation) {
+    public func error(_ message: WireLogMessage) {
         log(.error, message)
     }
 
-    public func critical(_ message: WireLogInterpolation) {
+    public func critical(_ message: WireLogMessage) {
         log(.critical, message)
     }
 
-    private func log(_ level: Level, _ message: WireLogInterpolation) {
+    private func log(_ level: Level, _ message: WireLogMessage) {
         loggingSystem()
             .log(tag: tag, level: level, message: message)
     }

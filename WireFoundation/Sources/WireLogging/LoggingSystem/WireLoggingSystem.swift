@@ -21,7 +21,7 @@ public protocol WireLoggingSystem: Sendable {
     typealias Tag = WireLoggerTag
     typealias Level = WireLogLevel
 
-    func log(tag: Tag, level: Level, message: WireLogInterpolation)
+    func log(tag: Tag, level: Level, message: WireLogMessage)
 }
 // DatadogLogger: WireLoggingSystem (different target, like WireAnalytics)
 // OSLog: WireLoggingSystem

@@ -24,7 +24,7 @@ struct AggregatedLogger: WireLoggingSystem {
         self.loggingSystems = loggingSystems
     }
 
-    func log(tag: Tag, level: Level, message: WireLogInterpolation) {
+    func log(tag: Tag, level: Level, message: WireLogMessage) {
         loggingSystems().forEach { loggingSystem in
             loggingSystem.log(tag: tag, level: level, message: message)
         }

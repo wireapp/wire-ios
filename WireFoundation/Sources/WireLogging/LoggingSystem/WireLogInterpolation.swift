@@ -22,20 +22,46 @@ import os
 /// Each custom type should define how it should appear in the logs.
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
-    private var logInterpolation: OSLogInterpolation
+    //private var logInterpolation: OSLogInterpolation
+    // TODO: stack calls
+    private var calls = [(any StringInterpolationProtocol) -> Void]()
 
-    // Required initializer
     public init(literalCapacity: Int, interpolationCount: Int) {
-        logInterpolation = .init(literalCapacity: literalCapacity, interpolationCount: interpolationCount)
+        //logInterpolation = .init(literalCapacity: literalCapacity, interpolationCount: interpolationCount)
+        //calls += [{ $0.appendLiteral(<#T##literal: any StringInterpolationProtocol.StringLiteralType##any StringInterpolationProtocol.StringLiteralType#>) }]
     }
 
-    // Required method for appending literal strings
     public mutating func appendLiteral(_ literal: StaticString) {
-        logInterpolation.appendLiteral("\(literal)")
+        //logInterpolation.appendLiteral("\(literal)")
     }
 
-    // Custom interpolation method for `MyStruct`
-    public mutating func appendInterpolation(_ value: StaticString) {
-        logInterpolation.appendLiteral("\(value)")
+    public mutating func appendInterpolation(_ value: Int) {
+        //logInterpolation.appendLiteral("\(value)")
     }
 }
+
+public struct OSLogLoggingSystem: WireLoggingSystem {
+
+    let logger = os.Logger()
+
+    public func log(tag: Tag, level: Level, message: WireLogMessage) {
+        message
+    }
+}
+
+
+extension WireLogInterpolation {
+
+    mutating func appendInterpolation(_ conversation: ConversationModel, something: Int) {
+        //appendInterpolation(<#T##value: StaticString##StaticString#>)
+    }
+}
+
+public struct ConversationModel {
+    var id: Int
+    var content: String
+}
+
+let xxx = WireLogger(tag: "dummy") { [] }
+//    .debug("sending ping in \( ConversationModel(id: 1, content: "Hello World"), something: 0 )")
+    .debug("abcd \(4)")

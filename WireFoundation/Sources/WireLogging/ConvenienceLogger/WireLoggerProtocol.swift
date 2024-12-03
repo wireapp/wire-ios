@@ -22,10 +22,10 @@ public protocol WireLoggerProtocol: Sendable {
 
     var tag: Tag { get }
 
-    func debug(_ message: WireLogInterpolation)
-    func info(_ message: WireLogInterpolation)
-    func notice(_ message: WireLogInterpolation)
-    func warn(_ message: WireLogInterpolation)
-    func error(_ message: WireLogInterpolation)
-    func critical(_ message: WireLogInterpolation)
+    func debug(_ message: WireLogMessage)
+    func info(_ message: WireLogMessage)
+    func notice(_ message: WireLogMessage)
+    func warn(_ message: WireLogMessage)
+    func error(_ message: WireLogMessage)
+    func critical(_ message: WireLogMessage)
 }
