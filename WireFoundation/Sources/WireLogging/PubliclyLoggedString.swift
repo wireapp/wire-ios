@@ -34,9 +34,4 @@ extension WireLogInterpolation {
     public mutating func appendInterpolation(_ publiclyLoggedString: PubliclyLoggedString) {
         writeText(publiclyLoggedString.value)
     }
-
-    // TODO: ?
-//    public mutating func appendInterpolation(_ value: String, abcd: Void) {
-//        writeText(value)
-//    }
 }
