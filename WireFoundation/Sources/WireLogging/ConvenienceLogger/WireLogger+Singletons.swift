@@ -69,6 +69,10 @@ extension WireLogger {
     public static let avs = WireLogger(tag: "avs", providerBuilder)
     public static let analytics = WireLogger(tag: "analytics", providerBuilder)
     public static let supportedProtocols = WireLogger(tag: "supported-protocols", providerBuilder)
+
+    public static func with(tag: Tag) -> Self {
+        Self(tag: tag, providerBuilder)
+    }
 }
 
 private extension WireLogger {

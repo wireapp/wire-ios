@@ -42,7 +42,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
 
     private let userPropertiesAPI: any UserPropertiesAPI
     private let conversationLabelsLocalStore: any ConversationLabelsLocalStoreProtocol
-    private let logger = OldWireLogger(tag: "conversation-labels")
+    private let logger = WireLogger.with(tag: "conversation-labels")
 
     // MARK: - Object lifecycle
 

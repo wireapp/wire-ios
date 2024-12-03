@@ -365,6 +365,7 @@
 		59510DD32CB3E6EE00BCD5FD /* SidebarViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
 		5953781A2CFF2FD400920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 595378192CFF2FD400920B59 /* WireLogging */; };
+		59537AEE2CFF700900920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537AED2CFF700900920B59 /* WireLogging */; };
 		595BFD7D2CA9365800D02361 /* ConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595BFD7C2CA9365200D02361 /* ConversationListCoordinator.swift */; };
 		595C49362CA93D7200F8F881 /* AnyConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595C49352CA93D6D00F8F881 /* AnyConversationListCoordinator.swift */; };
 		595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettingsUI */; };
@@ -3963,6 +3964,7 @@
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
+				59537AEE2CFF700900920B59 /* WireLogging in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
 				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
@@ -8653,6 +8655,7 @@
 				E92C8CC52C942A5C00E0F7F7 /* Inject */,
 				CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */,
 				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
+				59537AED2CFF700900920B59 /* WireLogging */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11769,6 +11772,10 @@
 			productName = WireDesign;
 		};
 		595378192CFF2FD400920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537AED2CFF700900920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};

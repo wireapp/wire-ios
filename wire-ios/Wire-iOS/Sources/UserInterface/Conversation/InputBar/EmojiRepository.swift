@@ -18,6 +18,7 @@
 
 import Foundation
 import WireUtilities
+import WireLogging
 
 protocol EmojiRepositoryInterface {
 
@@ -36,7 +37,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
     private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
     private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
 
-    private static let logger = OldWireLogger(tag: "EmojiRepository")
+    private static let logger = WireLogger.with(tag: "EmojiRepository")
 
     // MARK: - Life cycle
 

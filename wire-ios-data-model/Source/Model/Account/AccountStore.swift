@@ -19,7 +19,7 @@
 import Foundation
 import WireSystem
 
-private let log = OldWireLogger(tag: "Accounts")
+private let log = WireLogger.with(tag: "Accounts")
 
 /// Persistence layer for `Account` objects.
 /// Objects are stored in files named after their identifier like this:

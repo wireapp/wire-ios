@@ -18,10 +18,11 @@
 
 import Foundation
 import WireUtilities
+import WireLogging
 
 extension PasswordRuleSet {
 
-    static let passwordRuleSetLogger = OldWireLogger(tag: "password-rule-set")
+    static let passwordRuleSetLogger = WireLogger.with(tag: "password-rule-set")
 
     /// The shared rule set.
     static let shared: PasswordRuleSet = {
