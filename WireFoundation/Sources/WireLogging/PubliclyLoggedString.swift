@@ -16,8 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
-// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
-// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
+// TODO: [WPB-14297] Remove this type and create `WireLogInterpolation.appendInterpolation` overloads.
 
-// TODO: remove if not needed
+/// A type which is only used during migrating to the new logging.
+public struct PubliclyLoggedString {
+
+    fileprivate let value: String
+
+    public init(_ value: String) {
+        self.value = value
+    }
+}
+
+extension WireLogInterpolation {
+
+    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
+    public mutating func appendInterpolation(_ publiclyLoggedString: PubliclyLoggedString) {
+        writeText(publiclyLoggedString.value)
+    }
+}

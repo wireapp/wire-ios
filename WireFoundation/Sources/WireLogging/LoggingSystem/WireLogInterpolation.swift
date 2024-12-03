@@ -49,53 +49,26 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
         attributes += [attribute]
     }
 
-    // Adds text to the logged content. The provided value is not obfuscated.
+    /// Adds text to the logged content. The provided value is not obfuscated.
     public mutating func writeText(_ text: String) {
         content += text
     }
 }
 
-extension WireLogInterpolation {
-
-    mutating func appendInterpolation(_ conversation: ConversationModel, something: Int) {
-        if isDebugBuild {
-            //
-        } else {
-            //
-        }
-        //writeAttribute()
-    }
-}
-
-public struct ConversationModel {
-    var id: Int
-    var content: String
-}
-
-let xxx = WireLogger(tag: "dummy") { AggregatedLogger(loggingSystems: []) }
-    .debug("sending ping in \( ConversationModel(id: 1, content: "Hello World"), something: 0 ) a \("abcd")")
-//    .debug("abcd")
-
-
-
-extension WireLogInterpolation {
-
-    @available(*, deprecated, message: "Overload `WireLogInterpolation.appendInterpolation` instead.")
-    mutating func appendInterpolation(_ uncheckedString: UncheckedString) {
+// TODO: remove this example
+//extension WireLogInterpolation {
+//
+//    mutating func appendInterpolation(_ conversation: ConversationModel, something: Int) {
 //        if isDebugBuild {
 //            //
 //        } else {
 //            //
 //        }
-    }
-}
-
-/// A type which is only used during migrating to the new logging.
-public struct UncheckedString {
-
-    let value: String
-
-    public init(_ value: String) {
-        self.value = value
-    }
-}
+//        //writeAttribute()
+//    }
+//}
+//
+//public struct ConversationModel {
+//    var id: Int
+//    var content: String
+//}
