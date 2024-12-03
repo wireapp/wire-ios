@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: only used for building, rename!
 public struct AggregatedLoggingProvider: WireLoggingProvider {
 
     let loggingSystems: @Sendable (Tag) -> [any WireLoggingProvider]
