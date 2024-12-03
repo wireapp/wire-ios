@@ -69,7 +69,7 @@ enum CoreDataMigrationActionFactory {
         switch destinationVersion {
         case .v120:
             ForceSyncResourcesPostAction()
-            
+
         case .v119:
             FixDuplicateOneOnOneConversationsAction()
 

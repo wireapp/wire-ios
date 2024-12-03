@@ -1,4 +1,3 @@
-
 //
 // Wire
 // Copyright (C) 2024 Wire Swiss GmbH
@@ -17,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import XCTest
 @testable import WireDataModel
@@ -26,7 +24,8 @@ final class DatabaseMigrationTests_ForceSyncResources: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let teamId = UUID()
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_ForceSyncResources/")
+    private let tmpStoreURL =
+        URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_ForceSyncResources/")
     private let helper = DatabaseMigrationHelper()
 
     override func setUpWithError() throws {
@@ -44,7 +43,7 @@ final class DatabaseMigrationTests_ForceSyncResources: XCTestCase {
 
         try helper.migrateStoreToCurrentVersion(
             sourceVersion: initialVersion,
-            preMigrationAction: { context in
+            preMigrationAction: { _ in
                 // nothing
             },
             postMigrationAction: { context in
