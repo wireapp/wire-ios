@@ -30,7 +30,10 @@ final class NetworkServiceTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-        sut = NetworkService(baseURL: backendURL)
+        sut = NetworkService(
+            baseURL: backendURL,
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+        )
         sut.configure(with: .mockURLSession())
     }
 

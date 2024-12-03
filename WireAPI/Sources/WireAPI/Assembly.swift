@@ -53,7 +53,7 @@ final class Assembly {
     )
 
     private lazy var apiNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendURL)
+        let service = NetworkService(baseURL: backendURL, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
@@ -66,7 +66,7 @@ final class Assembly {
     )
 
     private lazy var pushChannelNetworkService: NetworkService = {
-        let service = NetworkService(baseURL: backendWebSocketURL)
+        let service = NetworkService(baseURL: backendWebSocketURL, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
@@ -84,5 +84,7 @@ final class Assembly {
         cookieEncryptionKey: cookieEncryptionKey,
         keychain: keychain
     )
+
+    private lazy var serverTrustValidator = ServerTrustValidator(pinnedKeys: [])
 
 }

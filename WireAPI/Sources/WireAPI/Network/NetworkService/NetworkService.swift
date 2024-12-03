@@ -21,11 +21,13 @@ import Foundation
 final class NetworkService: NSObject {
 
     private let baseURL: URL
+    private let serverTrustValidator: ServerTrustValidator
     private var urlSession: URLSession?
     private var webSocketsByTask = [URLSessionWebSocketTask: WebSocket]()
 
-    init(baseURL: URL) {
+    init(baseURL: URL, serverTrustValidator: ServerTrustValidator) {
         self.baseURL = baseURL
+        self.serverTrustValidator = serverTrustValidator
     }
 
     deinit {
@@ -122,27 +124,23 @@ extension NetworkService: URLSessionDataDelegate {
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-        print("task did receive challenge")
-
+        didReceive challenge:
+        URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         let protectionSpace = challenge.protectionSpace
 
-        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
-            completionHandler(.performDefaultHandling, challenge.proposedCredential)
-            return
-        }
+        if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+            guard let trust = challenge.protectionSpace.serverTrust else { fatalError("Missing server trust") }
 
-        guard
-            protectionSpace.serverTrust != nil,
-            true // TODO: [WPB-10450] support certificate pinning
-        else {
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
+            do {
+                try await serverTrustValidator.validate(trust: trust, host: protectionSpace.host)
+                return (.performDefaultHandling, challenge.proposedCredential)
+            } catch {
+                return (.cancelAuthenticationChallenge, nil)
+            }
+        } else {
+            return (.performDefaultHandling, challenge.proposedCredential)
         }
-
-        completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
 
 }

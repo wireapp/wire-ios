@@ -31,6 +31,10 @@ struct ServerTrustValidator: Sendable {
 
     private let pinnedKeys: [PinnedKey]
 
+    init(pinnedKeys: [PinnedKey]) {
+        self.pinnedKeys = pinnedKeys
+    }
+
     /// Verifies the server `trust` for the given `host`.
     ///
     /// - Parameter trust: The `SecTrust` of the server.
