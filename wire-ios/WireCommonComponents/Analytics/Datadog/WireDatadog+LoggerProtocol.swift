@@ -19,6 +19,30 @@
 import WireAnalytics
 import WireDatadog
 import WireSystem
+import WireLogging
+
+struct NewWireDatadogLogger: WireLoggingProvider {
+
+    var tag: Tag
+    var logger: WireDatadog
+
+    func log(level: Level, message: WireLogMessage) {
+        switch level {
+        case .debug:
+            logger.debug(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .info:
+            logger.info(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .notice:
+            logger.notice(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .warn:
+            logger.warn(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .error:
+            logger.error(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .critical:
+            logger.critical(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        }
+    }
+}
 
 extension WireDatadog: WireSystem.LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

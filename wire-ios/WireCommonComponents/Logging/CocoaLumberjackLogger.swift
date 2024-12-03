@@ -27,21 +27,20 @@ struct NewCocoaLumberjackLogger: WireLoggingProvider {
     var logger: CocoaLumberjackLogger
 
     func log(level: Level, message: WireLogMessage) {
-        fatalError()
-//        switch level {
-//        case .debug:
-//            logger.debug(message, attributes: <#T##LogAttributes...##LogAttributes#>)
-//        case .info:
-//            <#code#>
-//        case .notice:
-//            <#code#>
-//        case .warn:
-//            <#code#>
-//        case .error:
-//            <#code#>
-//        case .critical:
-//            <#code#>
-//        }
+        switch level {
+        case .debug:
+            logger.debug(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .info:
+            logger.info(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .notice:
+            logger.notice(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .warn:
+            logger.warn(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .error:
+            logger.error(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        case .critical:
+            logger.critical(message.interpolation.content, attributes: [.tag: tag.rawValue])
+        }
     }
 }
 

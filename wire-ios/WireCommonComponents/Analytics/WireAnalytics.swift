@@ -46,9 +46,9 @@ public enum WireAnalytics {
         WireLogger.setup { tag in
             AggregatedLoggingProvider(tag: tag) { tag in
                 [
-                    OSLogLoggingProvider(tag: tag, logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
-                    NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger)
-                    // TODO: datadog
+                    OSLogLoggingProvider(logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
+                    NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
+                    NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
                 ]
             }
         }
