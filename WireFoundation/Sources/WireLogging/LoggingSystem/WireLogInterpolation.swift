@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import os
-
 /// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk of leaking sensible information.
 /// Each custom type which can be logged must define how it should appear in the logs.
 /// Query the property `isDebugBuild` in order to know, if the value should be obfuscated or not.
@@ -33,7 +31,9 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
     public let isDebugBuild = false
     #endif
 
-    public init(literalCapacity: Int, interpolationCount: Int) {}
+    public init(literalCapacity: Int, interpolationCount _: Int) {
+        content.reserveCapacity(literalCapacity)
+    }
 
     public mutating func appendLiteral(_ literal: StaticString) {
         writeText("\(literal)")
@@ -54,51 +54,6 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
         content += text
     }
 }
-
-public struct OSLogLoggingSystem: WireLoggingSystem {
-
-    let logger = os.Logger()
-
-    public func log(tag: Tag, level: Level, message: WireLogMessage) {
-        let level = level.mappedToOSLogType()
-        let attributes = message.interpolation.attributes.map { "[\($0)]" }
-        let message = (attributes + [message.interpolation.content])
-            .joined(separator: " ")
-        logger.log(level: level, "\(message, privacy: .public)")
-
-        // TODO: one os.Logger per tag
-    }
-}
-
-extension WireLogLevel {
-
-    func mappedToOSLogType() -> OSLogType {
-        /*
-         Note:
-         - levels are `default`, `info`, `debug`, `error` and `fault`
-         - `trace` is an alias for `debug`
-         - `notice` is an alias for `default`
-         - `warning` is an alias for `error`
-         - `critical` is an alias for `fault`
-         */
-
-        switch self {
-        case .debug:
-                .debug
-        case .info:
-                .info
-        case .notice:
-                .default
-        case .warn:
-                .error
-        case .error:
-                .error
-        case .critical:
-                .fault
-        }
-    }
-}
-
 
 extension WireLogInterpolation {
 
