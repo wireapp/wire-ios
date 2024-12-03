@@ -31,9 +31,9 @@ enum ButtonState: CaseIterable {
 
 struct WireButtonStyleModifier: ViewModifier {
     let wireButtonStyle: WireButtonStyle
-    
-    
-    @ViewBuilder private func applyStyle(_ wireButtonStyle: WireButtonStyle, content: () -> some View) -> some View {
+
+    @ViewBuilder
+    private func applyStyle(_ wireButtonStyle: WireButtonStyle, content: () -> some View) -> some View {
         switch wireButtonStyle {
         case .primary:
             content().buttonStyle(PrimaryButtonStyle())
@@ -51,7 +51,7 @@ struct WireButtonStyleModifier: ViewModifier {
 
 public extension View {
     func wireButtonStyle(_ wireButtonStyle: WireButtonStyle) -> some View {
-        self.modifier(WireButtonStyleModifier(wireButtonStyle: wireButtonStyle))
+        modifier(WireButtonStyleModifier(wireButtonStyle: wireButtonStyle))
     }
 }
 
@@ -59,7 +59,7 @@ public extension View {
 
 struct Buttons_Previews: PreviewProvider {
     static var previews: some View {
-        
+
         ForEach(ButtonState.allCases, id: \.self) { state in
             Group {
                 ForEach(WireButtonStyle.allCases, id: \.rawValue) { style in

@@ -24,19 +24,19 @@ struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isFocused) var isFocused
 
     typealias Theme = ColorTheme.Buttons.Secondary
-    
+
     func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .lineLimit(1)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
-                .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
-                .wireTextStyle(.buttonBig)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(isEnabled ? Theme.enabledOutline.color: Theme.disabledOutline.color, lineWidth: 1)
-                }
-                .clipShape(.rect(cornerRadius: 16))
-        }
+        configuration.label
+            .lineLimit(1)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
+            .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
+            .wireTextStyle(.buttonBig)
+            .overlay {
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)
+            }
+            .clipShape(.rect(cornerRadius: 16))
+    }
 }

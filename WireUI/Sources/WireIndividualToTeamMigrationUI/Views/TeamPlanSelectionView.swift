@@ -53,13 +53,14 @@ struct TeamPlanSelectionView: View {
                 }
             }
             Button(
-                action: { },
+                action: {},
                 label: {
                     Text(String.localized(key: "individualToTeam.planSelection.url", bundle: .module))
-                        .tint(.primary)
-                        .underline()
+//                        .tint(.primary)
+//                        .underline()
                 }
             )
+            .wireButtonStyle(.tertiary)
             .padding(.top, 4)
             Spacer()
             Button(

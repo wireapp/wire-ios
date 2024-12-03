@@ -21,9 +21,8 @@ import UIKit
 
 // The structure of this type corresponds to the Wire design system.
 
-
 public enum ColorTheme {
-    case base(Base) 
+    case base(Base)
     public enum Base {
 
         public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)

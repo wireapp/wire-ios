@@ -24,17 +24,16 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isFocused) var isFocused
 
     typealias PrimaryTheme = ColorTheme.Buttons.Primary
-    
+
     func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .lineLimit(1)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
-                .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
-                .wireTextStyle(.buttonBig)
-                .clipShape(.rect(cornerRadius: 16))
-        }
-    
+        configuration.label
+            .lineLimit(1)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
+            .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
+            .wireTextStyle(.buttonBig)
+            .clipShape(.rect(cornerRadius: 16))
+    }
 
 }

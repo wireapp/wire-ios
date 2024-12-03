@@ -17,6 +17,7 @@
 //
 
 import avs
+import WireAPI
 import WireDataModel
 
 open class AuthenticatedSessionFactory {
@@ -60,6 +61,25 @@ open class AuthenticatedSessionFactory {
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
+
+        let apiServiceFactory = { [environment, minTLSVersion] (clientID: String, userID: UUID) in
+            let wireAssembly = WireAPI.Assembly(
+                userID: userID,
+                clientID: clientID,
+                backendURL: environment.backendURL,
+                backendWebSocketURL: environment.backendWSURL,
+                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
+
+            let authenticationManager = wireAssembly.authenticationManager
+            let networkService = wireAssembly.apiNetworkService
+
+            return APIService(
+                networkService: networkService,
+                authenticationManager: authenticationManager
+            )
+        }
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -74,6 +94,7 @@ open class AuthenticatedSessionFactory {
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
+            apiServiceFactory: apiServiceFactory,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),

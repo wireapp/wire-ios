@@ -42,7 +42,8 @@ public struct SelfProfileViewCallToActionBanner: View {
 }
 
 @MainActor
-@ViewBuilder fileprivate func contentView(
+@ViewBuilder
+private func contentView(
     actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void
 ) -> some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -66,9 +67,9 @@ public struct SelfProfileViewCallToActionBanner: View {
     }
 }
 
-fileprivate extension View {
+private extension View {
     func bannerBackground() -> some View {
-        self.background {
+        background {
             if #available(iOS 17.0, *) {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(ColorTheme.Banners.border.color, lineWidth: 1)
@@ -85,7 +86,7 @@ fileprivate extension View {
 public class SelfProfileViewCallToActionBannerHostingController: UIHostingController<SelfProfileViewCallToActionBanner> {
     public init(actionCallback: @escaping @Sendable (SelfProfileViewCallToActionBanner.Action) -> Void) {
         super.init(rootView: SelfProfileViewCallToActionBanner(actionCallback: actionCallback))
-        self.view.backgroundColor = .clear
+        view.backgroundColor = .clear
     }
 
     @available(*, unavailable)
@@ -94,9 +95,7 @@ public class SelfProfileViewCallToActionBannerHostingController: UIHostingContro
     }
 }
 
-
 @available(iOS 17.0, *)
 #Preview {
     SelfProfileViewCallToActionBanner(actionCallback: { _ in })
 }
-

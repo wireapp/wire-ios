@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireIndividualToTeamMigration
 import XCTest
+@testable import WireIndividualToTeamMigration
 
 class WireIndividualToTeamMigrationTests: XCTestCase {
-    func testExample() { }
+    func testExample() {}
 }

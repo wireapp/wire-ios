@@ -20,6 +20,7 @@
 // - alert that new devices have been added
 // - alert about read receipts enabled
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -28,7 +29,6 @@ import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
-import SwiftUI
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -44,7 +44,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
     private lazy var teamMigrationBanner: UIViewController = SelfProfileViewCallToActionBannerHostingController(
-        actionCallback: { [weak self] action in
+        actionCallback: { [weak self] _ in
             self?.userDidTapCreateTeam()
         }
     )
@@ -199,7 +199,8 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileLayoutGuide.topAnchor),
             profileHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            profileHeaderViewController.view.bottomAnchor.constraint(lessThanOrEqualTo: profileLayoutGuide.bottomAnchor),
+            profileHeaderViewController.view.bottomAnchor
+                .constraint(lessThanOrEqualTo: profileLayoutGuide.bottomAnchor),
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView

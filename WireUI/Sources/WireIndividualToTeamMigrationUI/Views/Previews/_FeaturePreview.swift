@@ -26,14 +26,14 @@ struct MockUseCase: IndividualToTeamMigrationUseCase {
     }
 }
 
-fileprivate struct FeaturePreviewContainer: UIViewControllerRepresentable {
+private struct FeaturePreviewContainer: UIViewControllerRepresentable {
 
     typealias UIViewControllerType = IndividualToTeamMigrationViewController
     let features: [TeamPlanFeature]
 
     func makeUIViewController(context: Context) -> IndividualToTeamMigrationViewController {
 
-        return IndividualToTeamMigrationViewController(
+        IndividualToTeamMigrationViewController(
             features: features,
             useCase: MockUseCase(),
             actionCallback: { _ in }
@@ -53,7 +53,10 @@ fileprivate struct FeaturePreviewContainer: UIViewControllerRepresentable {
         ),
         .init(
             id: "collaboration",
-            description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.collaboration", bundle: .module)
+            description: .localizedMarkdown(
+                key: "individualToTeam.planSelection.feature.collaboration",
+                bundle: .module
+            )
         ),
         .init(
             id: "meetings",

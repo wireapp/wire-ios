@@ -27,19 +27,17 @@ public extension String {
         String(localized: key, table: "Accessibility", bundle: bundle)
     }
 
-    /**
-     *
-     * Returns a localized string from the specified table.
-     * - parameter key: The key for the localized string.
-     * - parameter bundle: The bundle where the localized string is located. (default: .module)
-     * - returns: The localized string.
-     *
-     * Example:
-     * ```
-     * let localizedString: String = .localized(key: "key")
-     * ```
-     * - note: The default value for `bundle` is `.module`.
-     */
+    ///
+    /// Returns a localized string from the specified table.
+    /// - parameter key: The key for the localized string.
+    /// - parameter bundle: The bundle where the localized string is located. (default: .module)
+    /// - returns: The localized string.
+    ///
+    /// Example:
+    /// ```
+    /// let localizedString: String = .localized(key: "key")
+    /// ```
+    /// - note: The default value for `bundle` is `.module`.
     static func localized(key: String.LocalizationValue, bundle: Bundle? = nil) -> String {
         String(localized: key, table: "Localizable", bundle: bundle)
     }

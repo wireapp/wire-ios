@@ -27,23 +27,38 @@ import WireFoundation
                 features: [
                     .init(
                         id: "console",
-                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.adminConsole", bundle: .module)
+                        description: .localizedMarkdown(
+                            key: "individualToTeam.planSelection.feature.adminConsole",
+                            bundle: .module
+                        )
                     ),
                     .init(
                         id: "collaboration",
-                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.collaboration", bundle: .module)
+                        description: .localizedMarkdown(
+                            key: "individualToTeam.planSelection.feature.collaboration",
+                            bundle: .module
+                        )
                     ),
                     .init(
                         id: "meetings",
-                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.meetings", bundle: .module)
+                        description: .localizedMarkdown(
+                            key: "individualToTeam.planSelection.feature.meetings",
+                            bundle: .module
+                        )
                     ),
                     .init(
                         id: "status",
-                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.status", bundle: .module)
+                        description: .localizedMarkdown(
+                            key: "individualToTeam.planSelection.feature.status",
+                            bundle: .module
+                        )
                     ),
                     .init(
                         id: "enterprise",
-                        description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.enterprise", bundle: .module)
+                        description: .localizedMarkdown(
+                            key: "individualToTeam.planSelection.feature.enterprise",
+                            bundle: .module
+                        )
                     )
                 ]
             ) { _ in }
