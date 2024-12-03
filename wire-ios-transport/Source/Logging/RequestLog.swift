@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 struct RequestLog: Codable {
     var method: String

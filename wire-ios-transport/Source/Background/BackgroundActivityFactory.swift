@@ -18,6 +18,7 @@
 
 import UIKit
 import WireUtilities
+import WireLogging
 
 /// Manages the creation and lifecycle of background tasks.
 ///
