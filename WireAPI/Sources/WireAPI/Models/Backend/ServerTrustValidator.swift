@@ -88,8 +88,8 @@ struct ServerTrustValidator: Sendable {
         var secTrust: SecTrust?
 
         guard SecTrustCreateWithCertificates(certificates, policy, &secTrust) == noErr,
-            let trust = secTrust,
-            let result = SecTrustCopyKey(trust)
+              let trust = secTrust,
+              let result = SecTrustCopyKey(trust)
         else {
             throw Error.noPublicKeyOnServerTrust
         }
