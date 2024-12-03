@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
+public import Foundation
 
 public struct WireLogger: LoggerProtocol, Sendable {
 
