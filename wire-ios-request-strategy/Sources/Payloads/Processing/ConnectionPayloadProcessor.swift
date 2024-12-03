@@ -35,7 +35,7 @@ final class ConnectionPayloadProcessor {
         in context: NSManagedObjectContext
     ) {
         guard let userID = payload.to ?? payload.qualifiedTo?.uuid else {
-            WireLogger.eventProcessing.error("Missing to field in connection payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing to field in connection payload, aborting...")
             return
         }
 
@@ -46,7 +46,7 @@ final class ConnectionPayloadProcessor {
         )
 
         guard let conversationID = payload.conversationID ?? payload.qualifiedConversationID?.uuid else {
-            WireLogger.eventProcessing.error("Missing conversation field in connection payload, aborting...")
+            OldWireLogger.eventProcessing.error("Missing conversation field in connection payload, aborting...")
             return
         }
 

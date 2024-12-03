@@ -220,7 +220,7 @@ extension ConversationListViewController.ViewModel {
                     account: account
                 ).mapToAccountImageSource()
             } catch {
-                WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
+                OldWireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
             }
         }
     }
@@ -280,7 +280,7 @@ extension ConversationListViewController.ViewModel {
             do {
                 selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
             } catch {
-                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                OldWireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
     }

@@ -171,7 +171,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             // Note: It could be that the user wasn't found,
             // which is to be expected if it's an unconnected search user
 
-            WireLogger.conversation.warn("failed to check 1:1 conversation readiness: \(error)")
+            OldWireLogger.conversation.warn("failed to check 1:1 conversation readiness: \(error)")
             return false
         }
     }

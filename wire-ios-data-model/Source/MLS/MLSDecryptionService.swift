@@ -136,7 +136,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        WireLogger.mls.info("processing welcome message")
+        OldWireLogger.mls.info("processing welcome message")
 
         guard let messageData = welcomeMessage.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
@@ -150,7 +150,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
-        WireLogger.mls
+        OldWireLogger.mls
             .debug(
                 "decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))"
             )
@@ -189,7 +189,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             return results
         } catch let CoreCryptoError.CryptoError(error) {
-            WireLogger.mls
+            OldWireLogger.mls
                 .error(
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
                 )
@@ -221,7 +221,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         } catch {
-            WireLogger.mls
+            OldWireLogger.mls
                 .error(
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
                 )

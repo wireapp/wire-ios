@@ -129,7 +129,7 @@ final class SyncManager: SyncManagerProtocol {
             return
         }
 
-        WireLogger.sync.info("performing quick sync")
+        OldWireLogger.sync.info("performing quick sync")
 
         // Opens the push channel, but events are buffered.
         let liveEventsStream = try await updateEventsRepository.startBufferingLiveEvents()
@@ -150,7 +150,7 @@ final class SyncManager: SyncManagerProtocol {
         let liveTask = Task {
             do {
                 for try await envelope in liveEventsStream {
-                    WireLogger.sync.info(
+                    OldWireLogger.sync.info(
                         "received live event",
                         attributes: [.eventEnvelopeID: envelope.id]
                     )
@@ -158,9 +158,9 @@ final class SyncManager: SyncManagerProtocol {
                     await processLiveEvents(in: envelope)
                 }
             } catch is CancellationError {
-                WireLogger.sync.info("live task was cancelled")
+                OldWireLogger.sync.info("live task was cancelled")
             } catch {
-                WireLogger.sync.error("live task encountered error: \(error)")
+                OldWireLogger.sync.error("live task encountered error: \(error)")
                 try await suspend()
                 throw error
             }
@@ -178,7 +178,7 @@ final class SyncManager: SyncManagerProtocol {
             return
         }
 
-        WireLogger.sync.info("suspending")
+        OldWireLogger.sync.info("suspending")
 
         isSuspending = true
         await closePushChannel()
@@ -207,7 +207,7 @@ final class SyncManager: SyncManagerProtocol {
             do {
                 try await updateEventProcessor.processEvent(event)
             } catch {
-                WireLogger.sync.error("failed to process live event, dropping: \(error)")
+                OldWireLogger.sync.error("failed to process live event, dropping: \(error)")
             }
         }
 
@@ -231,13 +231,13 @@ final class SyncManager: SyncManagerProtocol {
                 break
             }
 
-            WireLogger.sync.debug("fetched \(envelopes.count) stored envelopes for processing")
+            OldWireLogger.sync.debug("fetched \(envelopes.count) stored envelopes for processing")
 
             for event in envelopes.flatMap(\.events) {
                 do {
                     try await updateEventProcessor.processEvent(event)
                 } catch {
-                    WireLogger.sync.error("failed to process stored event, dropping: \(error)")
+                    OldWireLogger.sync.error("failed to process stored event, dropping: \(error)")
                 }
             }
 

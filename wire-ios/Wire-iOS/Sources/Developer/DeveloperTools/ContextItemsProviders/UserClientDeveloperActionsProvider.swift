@@ -23,7 +23,7 @@ import WireDataModel
 struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
 
     let userClient: UserClient
-    let logger = WireLogger.system
+    let logger = OldWireLogger.system
 
     init?(context: DeveloperToolsContext) {
         guard let userClient = context.currentUserClient else {
@@ -79,7 +79,7 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
             )
             _ = await sync.perform { sync.saveOrRollback() }
         } catch {
-            WireLogger.e2ei.debug(error.localizedDescription)
+            OldWireLogger.e2ei.debug(error.localizedDescription)
         }
     }
 

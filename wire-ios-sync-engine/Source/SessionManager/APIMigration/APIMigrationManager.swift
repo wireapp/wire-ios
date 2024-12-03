@@ -78,20 +78,20 @@ final class APIMigrationManager {
             return
         }
 
-        WireLogger.apiMigration
+        OldWireLogger.apiMigration
             .info(
                 "starting API migrations from api v\(lastVersion.rawValue) to v\(currentVersion.rawValue) for session with clientID \(String(describing: clientID))"
             )
 
         for migration in migrations(between: lastVersion, and: currentVersion) {
             do {
-                WireLogger.apiMigration
+                OldWireLogger.apiMigration
                     .info(
                         "starting migration (\(String(describing: migration))) for api v\(migration.version.rawValue)"
                     )
                 try await migration.perform(with: session, clientID: clientID)
             } catch {
-                WireLogger.apiMigration
+                OldWireLogger.apiMigration
                     .warn(
                         "migration (\(String(describing: migration))) failed for session with clientID (\(String(describing: clientID)). error: \(String(describing: error))"
                     )
@@ -116,7 +116,7 @@ final class APIMigrationManager {
             return
         }
 
-        WireLogger.apiMigration
+        OldWireLogger.apiMigration
             .info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
         userDefaults(for: clientID).lastUsedAPIVersion = apiVersion
     }

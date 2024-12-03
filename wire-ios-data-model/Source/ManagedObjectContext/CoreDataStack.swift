@@ -216,12 +216,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores() {
-        WireLogger.localStorage.info("Closing core data stores")
+        OldWireLogger.localStorage.info("Closing core data stores")
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
         } catch {
-            WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
+            OldWireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
 
@@ -242,21 +242,21 @@ public class CoreDataStack: NSObject, ContextProvider {
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
+                OldWireLogger.localStorage.info(
                     "[setup] start migration of core data messaging store!",
                     attributes: .safePublic
                 )
 
                 do {
                     try self.migrateMessagingStore()
-                    WireLogger.localStorage.info(
+                    OldWireLogger.localStorage.info(
                         "[setup] finished migration of core data messaging store!",
                         attributes: .safePublic
                     )
                 } catch {
                     let logMessage =
                         "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
+                    OldWireLogger.localStorage.error(logMessage, attributes: .safePublic)
 
                     DispatchQueue.main.async {
                         onFailure(error)
@@ -264,7 +264,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                     return
                 }
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
+                    OldWireLogger.localStorage.info(
                         "time spent in migration only: \(tp.elapsedTime)",
                         attributes: .safePublic
                     )
@@ -273,20 +273,20 @@ public class CoreDataStack: NSObject, ContextProvider {
 
             if self.needsEventStoreMigration() {
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
+                OldWireLogger.localStorage.info(
                     "[setup] start migration of core data event store!",
                     attributes: .safePublic
                 )
 
                 do {
                     try self.migrateEventStore()
-                    WireLogger.localStorage.info(
+                    OldWireLogger.localStorage.info(
                         "[setup] finished migration of core data event store!",
                         attributes: .safePublic
                     )
                 } catch {
                     let logMessage = "[setup] failed migration of core data event store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
+                    OldWireLogger.localStorage.error(logMessage, attributes: .safePublic)
 
                     DispatchQueue.main.async {
                         onFailure(error)
@@ -294,7 +294,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                     return
                 }
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
+                    OldWireLogger.localStorage.info(
                         "time spent in migration only: \(tp.elapsedTime)",
                         attributes: .safePublic
                     )
@@ -302,7 +302,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             }
 
             DispatchQueue.main.async {
-                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
+                OldWireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure
@@ -330,7 +330,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         dispatchGroup.enter()
         loadMessagesStore { error in
             if let error {
-                WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
+                OldWireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -339,7 +339,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         dispatchGroup.enter()
         loadEventStore { error in
             if let error {
-                WireLogger.localStorage.error("failed to load event store: \(error)")
+                OldWireLogger.localStorage.error("failed to load event store: \(error)")
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()

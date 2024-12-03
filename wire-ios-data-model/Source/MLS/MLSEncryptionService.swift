@@ -73,13 +73,13 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         for groupID: MLSGroupID
     ) async throws -> Data {
         do {
-            WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
+            OldWireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
             return try await coreCrypto.perform { try await $0.encryptMessage(
                 conversationId: groupID.data,
                 message: message
             ) }
         } catch {
-            WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
+            OldWireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }

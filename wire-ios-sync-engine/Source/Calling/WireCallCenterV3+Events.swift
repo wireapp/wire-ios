@@ -243,7 +243,7 @@ extension WireCallCenterV3 {
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
         let metricsData = Data(metrics.utf8)
-        WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self))")
+        OldWireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self))")
     }
 
     /// Handle requests for refreshing the calling configuration.

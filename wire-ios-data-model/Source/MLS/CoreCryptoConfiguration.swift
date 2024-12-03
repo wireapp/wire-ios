@@ -88,7 +88,7 @@ public class CoreCryptoConfigProvider {
                 key: key.base64EncodedString()
             )
         } catch {
-            WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
+            OldWireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }

@@ -82,7 +82,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
 
-    private let logger = WireLogger.with(tag: "call-kit")
+    private let logger = OldWireLogger(tag: "call-kit")
 
     // MARK: - Life cycle
 

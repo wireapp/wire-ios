@@ -69,7 +69,7 @@ public extension CoreDataStack {
                 try fileManager.removeItem(at: url)
             } catch {
                 log.debug("error removing directory: \(error)")
-                WireLogger.localStorage.debug("backup: clearBackupDirectory got error removing directory: \(error)")
+                OldWireLogger.localStorage.debug("backup: clearBackupDirectory got error removing directory: \(error)")
             }
         }
 
@@ -129,7 +129,7 @@ public extension CoreDataStack {
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
                 // Recreate the persistent store inside a new location
-                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
+                OldWireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
                 try coordinator.replacePersistentStore(
                     at: backupLocation,
                     destinationOptions: options,
@@ -138,7 +138,7 @@ public extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
+                OldWireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
                 try prepareStoreForBackupExport(
                     coordinator: coordinator,
                     location: backupLocation,
@@ -147,7 +147,7 @@ public extension CoreDataStack {
                 )
 
                 // Create & write metadata
-                WireLogger.localStorage.debug("backup: Create & write metadata")
+                OldWireLogger.localStorage.debug("backup: Create & write metadata")
                 let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
                 try metadata.write(to: metadataURL)
                 log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
@@ -177,7 +177,7 @@ public extension CoreDataStack {
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "import backup") else {
-            WireLogger.localStorage
+            OldWireLogger.localStorage
                 .error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             completion(.failure(CoreDataStackError.noDatabaseActivity))
@@ -205,7 +205,7 @@ public extension CoreDataStack {
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         func fail(_ error: BackupImportError) {
-            WireLogger.localStorage.error("backup: error backing up local store: \(error)", attributes: .safePublic)
+            OldWireLogger.localStorage.error("backup: error backing up local store: \(error)", attributes: .safePublic)
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(.failure(error))
             }
@@ -245,22 +245,22 @@ public extension CoreDataStack {
                 )
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-                WireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
+                OldWireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage
+                OldWireLogger.localStorage
                     .debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
                 try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
                 if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
+                    OldWireLogger.localStorage.info(
                         "time spent in migration only: \(tp.elapsedTime)",
                         attributes: .safePublic
                     )
                 }
 
                 // Import the persistent store to the account data directory
-                WireLogger.localStorage.debug(
+                OldWireLogger.localStorage.debug(
                     "backup: import the persistent store to the account data directory",
                     attributes: .safePublic
                 )
@@ -272,7 +272,7 @@ public extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                WireLogger.localStorage.info(
+                OldWireLogger.localStorage.info(
                     "successfully imported backup with metadata: \(metadata)",
                     attributes: .safePublic
                 )

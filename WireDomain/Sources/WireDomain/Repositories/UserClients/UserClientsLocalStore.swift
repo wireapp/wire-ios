@@ -124,7 +124,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
 
         guard let localClient else {
-            return WireLogger.userClient.error(
+            return OldWireLogger.userClient.error(
                 "Failed to find existing client with id: \(id.redactedAndTruncated())"
             )
         }
@@ -143,7 +143,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 with: id,
                 in: context
             ) else {
-                return WireLogger.userClient.error(
+                return OldWireLogger.userClient.error(
                     "Failed to find existing client with id: \(id.redactedAndTruncated())"
                 )
             }

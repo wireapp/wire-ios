@@ -75,7 +75,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
 
         guard !storedEventExists(for: eventId, eventHash: eventHash, in: context) else {
-            WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
+            OldWireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
             return nil
         }
 
@@ -86,7 +86,7 @@ public final class StoredUpdateEvent: NSManagedObject {
             index: index,
             context: context
         ) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
+            OldWireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
 
@@ -235,11 +235,11 @@ public final class StoredUpdateEvent: NSManagedObject {
                 result.eventsToDelete.append(storedEvent)
 
             case .failure(.permanent):
-                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure permanent")
+                OldWireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure permanent")
                 result.eventsToDelete.append(storedEvent)
 
             case .failure(.temporary):
-                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure temporary, continue")
+                OldWireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure temporary, continue")
                 continue
             }
         }
@@ -272,7 +272,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                     source: eventSource
                 )
             else {
-                WireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
+                OldWireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
                 return .failure(.permanent)
             }
 
@@ -286,10 +286,10 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         } catch DecryptionFailure.privateKeyUnavailable {
             // The required key isn't available now, but it may be later.
-            WireLogger.updateEvent.warn("StoreUpdateEvent: decryption failed temporary", attributes: .safePublic)
+            OldWireLogger.updateEvent.warn("StoreUpdateEvent: decryption failed temporary", attributes: .safePublic)
             return .failure(.temporary)
         } catch {
-            WireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
+            OldWireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
             return .failure(.permanent)
         }
     }
@@ -370,7 +370,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     private static func decrypt(payload: Data, privateKey: SecKey) throws -> NSDictionary {
-        WireLogger.updateEvent.debug("StoreUpdateEvent: decrypt payload")
+        OldWireLogger.updateEvent.debug("StoreUpdateEvent: decrypt payload")
 
         guard let decryptedData = SecKeyCreateDecryptedData(
             privateKey,

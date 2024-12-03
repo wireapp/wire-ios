@@ -353,7 +353,7 @@ extension ZMConversation {
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
-        WireLogger.badgeCount
+        OldWireLogger.badgeCount
             .info(
                 "update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(String(describing: remoteIdentifier?.uuidString)) timestamp: \(Date())"
             )

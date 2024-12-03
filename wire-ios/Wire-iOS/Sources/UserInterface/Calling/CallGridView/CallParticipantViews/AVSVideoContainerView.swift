@@ -26,7 +26,7 @@ final class AVSVideoContainerView: UIView {
 
     func setupVideoView(_ view: UIView) {
         guard videoView == nil else {
-            WireLogger.ui.error(
+            OldWireLogger.ui.error(
                 "video view cannot be added, because it contains already a view!",
                 attributes: .safePublic
             )

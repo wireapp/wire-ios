@@ -58,7 +58,7 @@ public final class TimePoint: NSObject {
     @discardableResult
     public func warnIfLongerThanInterval() -> Bool {
         guard elapsedTime > warnInterval else { return false }
-        WireLogger.timePoint.warn("Time point (\(label)) warning threshold: \(elapsedTime) seconds elapsed")
+        OldWireLogger.timePoint.warn("Time point (\(label)) warning threshold: \(elapsedTime) seconds elapsed")
         return true
     }
 

@@ -54,7 +54,7 @@ public struct AuthenticationContext: AuthenticationContextProtocol {
         localizedReason: String,
         reply: @escaping (Bool, (any Error)?) -> Void
     ) {
-        WireLogger.ear.info("AuthenticationContext: evaluatePolicy")
+        OldWireLogger.ear.info("AuthenticationContext: evaluatePolicy")
         storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }
 

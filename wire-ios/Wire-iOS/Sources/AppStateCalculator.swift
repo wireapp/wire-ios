@@ -189,7 +189,7 @@ final class AppStateCalculator {
         self.appState = appState
         pendingAppState = nil
 
-        WireLogger.appState.debug(
+        OldWireLogger.appState.debug(
             "transitioning to app state \(appState.safeForLoggingDescription)",
             attributes: .safePublic
         )

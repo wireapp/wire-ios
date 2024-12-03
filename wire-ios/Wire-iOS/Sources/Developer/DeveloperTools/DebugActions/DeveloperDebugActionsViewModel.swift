@@ -97,7 +97,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             do {
                 try await userSession.updateMLSMigrationStatus()
             } catch {
-                WireLogger.mls.error("failed to update MLS migration status: \(error)")
+                OldWireLogger.mls.error("failed to update MLS migration status: \(error)")
             }
         }
     }

@@ -21,7 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    let logger = WireLogger.e2ei
+    let logger = OldWireLogger.e2ei
     var userClient: UserClient
     var userSession: UserSession
     var clientRemovalObserver: ClientRemovalObserver?

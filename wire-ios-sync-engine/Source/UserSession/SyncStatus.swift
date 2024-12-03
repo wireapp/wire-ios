@@ -186,12 +186,12 @@ public extension SyncStatus {
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
-                WireLogger.sync
+                OldWireLogger.sync
                     .debug(
                         "restarting quick sync since push channel was closed or open after request to fetch notifiations"
                     )
             } else {
-                WireLogger.sync.debug("sync complete")
+                OldWireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
                 isForceQuickSync = false
             }
@@ -202,7 +202,7 @@ public extension SyncStatus {
     func failCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Failed syncPhase does not match currentPhase")
 
-        WireLogger.sync.warn("failed sync phase: \(phase)")
+        OldWireLogger.sync.warn("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
             lastEventIDRepository.storeLastEventID(nil)
@@ -216,19 +216,19 @@ public extension SyncStatus {
     }
 
     func updateLastUpdateEventID(eventID: UUID) {
-        WireLogger.sync.debug("update last eventID: \(eventID)")
+        OldWireLogger.sync.debug("update last eventID: \(eventID)")
         lastUpdateEventID = eventID
     }
 
     func persistLastUpdateEventID() {
         guard let lastUpdateEventID else { return }
-        WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
+        OldWireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
 
     func removeLastUpdateEventID() {
         lastUpdateEventID = nil
-        WireLogger.sync.debug("remove last eventID")
+        OldWireLogger.sync.debug("remove last eventID")
         lastEventIDRepository.storeLastEventID(nil)
     }
 }
@@ -251,7 +251,7 @@ public extension SyncStatus {
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        WireLogger.sync
+        OldWireLogger.sync
             .debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
 
@@ -308,10 +308,10 @@ public extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)
             let message = "SYNC_STATUS: \(jsonString)"
-            WireLogger.sync.info(message, attributes: .safePublic)
+            OldWireLogger.sync.info(message, attributes: .safePublic)
         } catch {
             let message = "SYNC_STATUS: \(description)"
-            WireLogger.sync.error(message, attributes: .safePublic)
+            OldWireLogger.sync.error(message, attributes: .safePublic)
         }
     }
 }
