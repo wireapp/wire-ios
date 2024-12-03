@@ -31,6 +31,55 @@ import WireDataModel
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    /// Query if a particular conversation exists.
+    ///
+    /// - Parameters:
+    ///   - id: The conversation id.
+    ///   - domain: The conversation domain.
+    ///
+    /// - Returns: `true` if the conversation exists.
+
+    func doesConversationExist(
+        id: UUID,
+        domain: String?
+    ) async -> Bool
+    
+    /// Insert a new conversation.
+    ///
+    /// Mutations are not automatically saved. To save the changes, you must
+    /// explicitly invoke `saveChanges()`.
+    ///
+    /// - Parameters:
+    ///   - id: The conversation id.
+    ///   - domain: The conversation domain.
+    ///   - changes: A block to mutate to newly inserted conversation.
+
+    func insertNewConversation(
+        id: UUID,
+        domain: String?,
+        changes: @escaping (ZMConversation) -> Void
+    ) async throws
+
+    /// Update an existing conversation.
+    ///
+    /// Mutations are not automatically saved. To save the changes, you must
+    /// explicitly invoke `saveChanges()`.
+    ///
+    /// - Parameters:
+    ///   - id: The conversation id.
+    ///   - domain: The conversation domain.
+    ///   - changes: A block to mutate conversation.
+
+    func updateConversation(
+        id: UUID,
+        domain: String?,
+        changes: @escaping (ZMConversation) -> Void
+    ) async throws
+
+    /// Save all pending changes to the database.
+
+    func saveChanges() async throws
+
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -282,6 +331,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     enum Error: Swift.Error {
         case noBackendConversationID
+        case conversationAlreadyExists(id: UUID, domain: String?)
+        case conversationNotFound(id: UUID, domain: String?)
     }
 
     // MARK: - Properties
@@ -309,6 +360,68 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func doesConversationExist(
+        id: UUID,
+        domain: String?
+    ) async -> Bool {
+        await fetchConversation(
+            id: id,
+            domain: domain
+        ) != nil
+    }
+
+    public func insertNewConversation(
+        id: UUID,
+        domain: String?,
+        changes: @escaping (ZMConversation) -> Void
+    ) async throws {
+        guard await !doesConversationExist(
+            id: id,
+            domain: domain
+        ) else {
+            throw Error.conversationAlreadyExists(
+                id: id,
+                domain: domain
+            )
+        }
+
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: id,
+                domain: domain,
+                in: context
+            )
+
+            changes(conversation)
+        }
+    }
+
+    public func updateConversation(
+        id: UUID,
+        domain: String?,
+        changes: @escaping (ZMConversation) -> Void
+    ) async throws {
+        guard let conversation = await fetchConversation(
+            id: id,
+            domain: domain
+        ) else {
+            throw Error.conversationNotFound(
+                id: id,
+                domain: domain
+            )
+        }
+
+        await context.perform {
+            changes(conversation)
+        }
+    }
+
+    public func saveChanges() async throws {
+        try await context.perform { [context] in
+            try context.save()
+        }
+    }
 
     public func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
