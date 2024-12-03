@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// Reports an error and terminates the application
 public func fatal(
@@ -91,6 +92,6 @@ public func requireInternal(
     if AppBuild.current.canFatalError {
         fatal(errorMessage, file: file, line: line)
     } else {
-        OldWireLogger.system.critical("requireInternal: \(errorMessage)")
+        WireLogger.system.critical("requireInternal: \(errorMessage)")
     }
 }
