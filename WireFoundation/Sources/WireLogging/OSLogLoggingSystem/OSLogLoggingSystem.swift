@@ -21,7 +21,7 @@ import Foundation
 
 public final class OSLogLoggingSystem: WireLoggingSystem {
 
-    private var loggers = [Tag: Logger]()
+//    private var loggers = [Tag: Logger]()
 
     public func log(tag: Tag, level: Level, message: WireLogMessage) {
         let level = level.mappedToOSLogType()
@@ -33,13 +33,14 @@ public final class OSLogLoggingSystem: WireLoggingSystem {
     }
 
     private func logger(for tag: Tag) -> Logger {
-        if let logger = loggers[tag] {
-            return logger
-        }
-
-        let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-        loggers[tag] = logger
-        return logger
+        fatalError()
+//        if let logger = loggers[tag] {
+//            return logger
+//        }
+//
+//        let logger = Logger(subsystem: subsystem, category: tag.rawValue)
+//        loggers[tag] = logger
+//        return logger
     }
 
     private var subsystem: String {
