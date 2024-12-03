@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireLogging
 import WireDataModel
 
 /// Provides log attributes for messages of supported message types.

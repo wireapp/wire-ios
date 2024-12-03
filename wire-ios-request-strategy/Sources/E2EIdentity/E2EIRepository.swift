@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireLogging
 import WireCoreCrypto
 
 public protocol E2EIRepositoryInterface {

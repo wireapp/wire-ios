@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireLogging
 import Foundation
 
 @objc(StoredUpdateEvent)

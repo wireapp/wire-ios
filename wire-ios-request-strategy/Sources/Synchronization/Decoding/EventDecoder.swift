@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCryptobox
+import WireLogging
 import WireDataModel
 import WireUtilities
 
