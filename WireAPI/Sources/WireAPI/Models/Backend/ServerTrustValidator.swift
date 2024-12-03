@@ -24,6 +24,9 @@ struct ServerTrustValidator: Sendable {
     enum Error: Swift.Error {
         case cannotLoadCertificate
         case cannotRetrievePublicKey
+        case evaluatingServerTrustFailed((any Swift.Error)?)
+        case noPublicKeyOnServerTrust
+        case noMatchingPublicKey
     }
 
     private let pinnedKeys: [PinnedKey]
@@ -32,39 +35,38 @@ struct ServerTrustValidator: Sendable {
     ///
     /// - Parameter trust: The `SecTrust` of the server.
     /// - Parameter host: The host of the server.
-    /// - Returns: `true` if the server trust is valid and its public key equals a pinned key with the same host,
-    /// otherwise `false`.
-    /// - Throws: If there is an error loading the pinned public keys.
+    /// - Throws: An error if server certificate should not be trusted.
     /// - Note: If no pinned keys are found for the `host`, the server certificate is trusted.
 
-    func verifyServerTrust(trust: SecTrust, host: String) async throws -> Bool {
+    func validate(trust: SecTrust, host: String) async throws {
         let matches = pinnedKeys.filter { $0.matches(host: host) }
 
         // If no keys are pinned for `host`, we trust the server certificate
-        guard !matches.isEmpty else { return true }
+        guard !matches.isEmpty else { return }
 
-        guard await Self.verifyServerCertificateTrusted(trust) else { return false }
+        try await Self.verifyServerCertificateTrusted(trust)
 
-        guard let publicKey = Self.publicKeyAssociatedWithServerTrust(trust) else { return false }
+        let publicKey = try Self.publicKeyAssociatedWithServerTrust(trust)
 
         let publicKeys = try matches.map { try Self.certificateKey(for: $0) }
-        return publicKeys.contains(publicKey)
+        guard publicKeys.contains(publicKey) else {
+            throw Error.noMatchingPublicKey
+        }
     }
 
     // MARK: - Private
 
-    private static func verifyServerCertificateTrusted(_ serverTrust: SecTrust) async -> Bool {
-        await withCheckedContinuation { continuation in
+    private static func verifyServerCertificateTrusted(_ serverTrust: SecTrust) async throws {
+        try await withCheckedThrowingContinuation { continuation in
             // `SecTrustEvaluateAsyncWithError` requires the completion queue to be the same as the queue on which it
             // is called.
             let queue = DispatchQueue.global()
             queue.async {
                 SecTrustEvaluateAsyncWithError(serverTrust, queue) { _, success, error in
                     if success {
-                        continuation.resume(returning: true)
+                        continuation.resume()
                     } else {
-                        print(error?.localizedDescription ?? "verifyServerTrust unknown error")
-                        continuation.resume(returning: false)
+                        continuation.resume(throwing: Error.evaluatingServerTrustFailed(error))
                     }
                 }
             }
@@ -76,16 +78,19 @@ struct ServerTrustValidator: Sendable {
     /// - Parameter serverTrust: SecTrust of server
     /// - Returns: public key from `serverTrust`
 
-    private static func publicKeyAssociatedWithServerTrust(_ serverTrust: SecTrust) -> SecKey? {
+    private static func publicKeyAssociatedWithServerTrust(_ serverTrust: SecTrust) throws -> SecKey {
         let certificates = SecTrustCopyCertificateChain(serverTrust) ?? [] as CFArray
         let policy = SecPolicyCreateBasicX509()
         var secTrust: SecTrust?
 
-        guard SecTrustCreateWithCertificates(certificates, policy, &secTrust) == noErr, let trust = secTrust else {
-            return nil
+        guard SecTrustCreateWithCertificates(certificates, policy, &secTrust) == noErr,
+            let trust = secTrust,
+            let result = SecTrustCopyKey(trust)
+        else {
+            throw Error.noPublicKeyOnServerTrust
         }
 
-        return SecTrustCopyKey(trust)
+        return result
     }
 
     private static func certificateKey(for value: PinnedKey) throws -> SecKey {
