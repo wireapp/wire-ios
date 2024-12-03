@@ -16,15 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct WireLoggerTag: ExpressibleByStringLiteral, RawRepresentable, Sendable {
+public struct WireLoggerTag: ExpressibleByStringLiteral, Sendable {
 
-    public var rawValue: StringLiteralType
+    public var rawValue: String
 
-    public init(stringLiteral rawValue: StringLiteralType) {
-        self.rawValue = rawValue
-    }
-
-    public init?(rawValue: StringLiteralType) {
+    public init(stringLiteral rawValue: String) {
         self.rawValue = rawValue
     }
 }
