@@ -17,6 +17,7 @@
 //
 
 import WireSyncEngine
+import WireLogging
 
 extension GroupDetailsConversation where Self: ZMConversation {
     var freeParticipantSlots: Int {

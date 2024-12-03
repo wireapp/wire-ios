@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine

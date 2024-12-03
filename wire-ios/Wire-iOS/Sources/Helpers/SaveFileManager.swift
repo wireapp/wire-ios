@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSystem
+import WireLogging
 
 protocol SaveFileActions {
     func save(value: String, fileName: String, type: String)

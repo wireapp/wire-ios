@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSystem
+import WireLogging
 
 extension TrackingManager {
 

@@ -22,6 +22,7 @@ import Social
 import UIKit
 import UniformTypeIdentifiers
 import WireCommonComponents
+import WireLogging
 import WireCoreCrypto
 import WireDataModel
 import WireDesign

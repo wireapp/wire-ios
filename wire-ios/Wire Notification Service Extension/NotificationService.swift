@@ -20,6 +20,7 @@ import Foundation
 import UserNotifications
 import WireCommonComponents
 import WireUtilities
+import WireLogging
 
 final class NotificationService: UNNotificationServiceExtension {
 
