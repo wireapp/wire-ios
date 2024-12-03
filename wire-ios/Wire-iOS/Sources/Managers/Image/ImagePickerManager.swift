@@ -84,7 +84,7 @@ class ImagePickerManager: NSObject {
 
             Task { @MainActor in
                 self.getImage(
-                    fromSourceType: .photoLibrary,
+                    fromSourceType: .camera,
                     viewController: viewController,
                     popoverConfiguration: popoverConfiguration
                 )
