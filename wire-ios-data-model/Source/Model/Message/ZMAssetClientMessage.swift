@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// An asset message (image, file, ...)
 @objcMembers

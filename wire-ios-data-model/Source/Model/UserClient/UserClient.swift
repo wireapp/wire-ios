@@ -18,6 +18,7 @@
 
 import CoreLocation
 import Foundation
+import WireLogging
 import WireCryptobox
 import WireUtilities
 

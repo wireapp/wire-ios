@@ -19,6 +19,7 @@
 import CoreData
 import Foundation
 import WireSystem
+import WireLogging
 import WireUtilities
 
 enum CoreDataStackError: Error {

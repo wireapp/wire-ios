@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSystem
+import WireLogging
 
 extension UserClient {
 

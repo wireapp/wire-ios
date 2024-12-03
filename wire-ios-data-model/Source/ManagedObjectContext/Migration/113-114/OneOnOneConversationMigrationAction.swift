@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import Foundation
 
 // Up until model version 2.113, a user was related to their one on one

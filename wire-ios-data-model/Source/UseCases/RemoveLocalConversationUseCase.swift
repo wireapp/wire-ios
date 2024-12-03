@@ -18,6 +18,7 @@
 
 import Foundation
 import WireSystem
+import WireLogging
 
 public protocol RemoveLocalConversationUseCaseProtocol {
 

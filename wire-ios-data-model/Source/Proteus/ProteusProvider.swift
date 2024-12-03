@@ -18,6 +18,7 @@
 
 import Foundation
 import WireUtilities
+import WireLogging
 
 public typealias KeyStorePerformBlock<T> = (UserClientKeysStore) throws -> T
 public typealias ProteusServicePerformBlock<T> = (ProteusServiceInterface) throws -> T
