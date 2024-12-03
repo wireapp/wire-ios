@@ -18,35 +18,16 @@
 
 import Foundation
 
-class MockSyncStatus: SyncStatusProtocol {
+final class ForceSyncResourcesPostAction: CoreDataMigrationAction {
 
-    
-
-    var mockForceSlowSync: (() -> Void)?
-    func forceSlowSync() {
-        guard let mock = mockForceSlowSync else {
-            fatalError("no mock for `forceSlowSync`")
+    override func execute(in context: NSManagedObjectContext) {
+        do {
+            try context.setMigrationNeedsSyncResources()
+        } catch {
+            WireLogger.localStorage.error(
+                "Failed to trigger syncResources for federation migration issue: \(error.localizedDescription)",
+                attributes: .safePublic
+            )
         }
-
-        mock()
     }
-
-    var mockPerformQuickSync: (() async -> Void)?
-    func performQuickSync() async {
-        guard let mock = mockPerformQuickSync else {
-            fatalError("no mock for `performQuickSync`")
-        }
-
-        await mock()
-    }
-
-    var mockResyncResources: (() -> Void)?
-    func resyncResources() {
-        guard let mock = mockResyncResources else {
-            fatalError("no mock for `resyncResources`")
-        }
-
-        mock()
-    }
-
 }
