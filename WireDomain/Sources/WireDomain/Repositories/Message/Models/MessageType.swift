@@ -81,7 +81,6 @@ public enum MessageType: Sendable {
         date: Date
     )
 
-
     case messageTimerUpdate(
         sender: (id: UUID, domain: String?),
         date: Date,

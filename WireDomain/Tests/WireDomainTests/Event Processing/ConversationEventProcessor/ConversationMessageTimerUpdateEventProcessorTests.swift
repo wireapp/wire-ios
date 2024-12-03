@@ -88,7 +88,8 @@ final class ConversationMessageTimerUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.conversationMessageDestructionTimeout_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.storeConversationTimeoutValueFor_Invocations.count, 1)
         XCTAssertEqual(
-            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations.count,
+            messageLocalStore.addSystemMessageToConversationMessageTypeConversationIDConversationDomain_Invocations
+                .count,
             1
         )
     }
