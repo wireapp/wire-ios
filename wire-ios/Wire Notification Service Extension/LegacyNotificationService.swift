@@ -33,10 +33,10 @@ protocol CallEventHandlerProtocol {
 final class CallEventHandler: CallEventHandlerProtocol {
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
-        OldWireLogger.calling.info("waking up main app to handle call event")
+        WireLogger.calling.info("waking up main app to handle call event")
         CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
             if let error {
-                OldWireLogger.calling.error("failed to wake up main app: \(error.localizedDescription)")
+                WireLogger.calling.error("failed to wake up main app: \(error.localizedDescription)")
             }
         }
     }
@@ -68,7 +68,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     // MARK: - Life cycle
 
     override init() {
-        OldWireLogger.notifications.info("initializing new legacy notification service")
+        WireLogger.notifications.info("initializing new legacy notification service")
         super.init()
     }
 
@@ -78,19 +78,19 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        OldWireLogger.notifications.info("legacy notification service will process request (\(request.identifier))")
+        WireLogger.notifications.info("legacy notification service will process request (\(request.identifier))")
 
         self.contentHandler = contentHandler
 
         guard let accountID = request.content.accountID else {
-            OldWireLogger.notifications.error("failed to process request: payload missing account ID")
+            WireLogger.notifications.error("failed to process request: payload missing account ID")
             return finishWithoutShowingNotification()
         }
 
         do {
             session = try createSession(accountID: accountID)
         } catch {
-            OldWireLogger.notifications
+            WireLogger.notifications
                 .error("failed to process process request: could not create session: \(error.localizedDescription)")
             return finishWithoutShowingNotification()
         }
@@ -99,12 +99,12 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     override func serviceExtensionTimeWillExpire() {
-        OldWireLogger.notifications.warn("legacy service extension will expire")
+        WireLogger.notifications.warn("legacy service extension will expire")
         finishWithoutShowingNotification()
     }
 
     private func finishWithoutShowingNotification() {
-        OldWireLogger.notifications.info("finishing without showing notification")
+        WireLogger.notifications.info("finishing without showing notification")
         contentHandler?(.empty)
         tearDown()
     }
@@ -114,31 +114,31 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            OldWireLogger.notifications.info("session did not generate a notification")
+            WireLogger.notifications.info("session did not generate a notification")
             return finishWithoutShowingNotification()
         }
 
         removeNotification(withSameMessageId: notification.messageNonce)
 
-        OldWireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes)
+        WireLogger.notifications.info("session did generate a notification", attributes: notification.logAttributes)
 
         defer { tearDown() }
 
         guard let contentHandler else { return }
 
         guard let content = notification.content as? UNMutableNotificationContent else {
-            OldWireLogger.notifications.error("generated notification is not mutable")
+            WireLogger.notifications.error("generated notification is not mutable")
             return finishWithoutShowingNotification()
         }
 
         content.interruptionLevel = .timeSensitive
 
         if let badgeCount = totalUnreadCount(unreadConversationCount) {
-            OldWireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")
+            WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")
             content.badge = badgeCount
         }
 
-        OldWireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes)
+        WireLogger.notifications.info("showing notification to user", attributes: notification.logAttributes)
         contentHandler(content)
     }
 
@@ -171,9 +171,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     func notificationSessionDidFailWithError(error: NotificationSessionError) {
         switch error {
         case .alreadyFetchedEvent:
-            OldWireLogger.notifications.warn("session failed with error: \(error.localizedDescription)")
+            WireLogger.notifications.warn("session failed with error: \(error.localizedDescription)")
         default:
-            OldWireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+            WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
         }
 
         finishWithoutShowingNotification()

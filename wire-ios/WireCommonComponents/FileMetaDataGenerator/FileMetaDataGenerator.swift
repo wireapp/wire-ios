@@ -46,7 +46,7 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
                 .jpegData(compressionQuality: 0.9)
         } catch {
             thumbnail = nil
-            OldWireLogger.ui.error("Failed to generate preview for file: \(url)")
+            WireLogger.ui.error("Failed to generate preview for file: \(url)")
         }
 
         if let uniformType = url.uniformType, AVURLAsset.wr_isAudioVisualUniformType(uniformType) {

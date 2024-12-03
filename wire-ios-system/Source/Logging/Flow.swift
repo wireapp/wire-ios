@@ -146,10 +146,10 @@ extension FlowLog {
 
 public extension Flow {
     static var createGroup: Flow {
-        Flow(tag: OldWireLogger.conversation.tag, name: "CreateGroup")
+        Flow(tag: WireLogger.conversation.tag, name: "CreateGroup")
     }
 
     static var addParticipants: Flow {
-        Flow(tag: OldWireLogger.conversation.tag, name: "AddParticipants")
+        Flow(tag: WireLogger.conversation.tag, name: "AddParticipants")
     }
 }

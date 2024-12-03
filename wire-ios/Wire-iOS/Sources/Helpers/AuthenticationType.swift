@@ -35,7 +35,7 @@ enum AuthenticationType: CaseIterable {
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
 
     var current: AuthenticationType {
-        OldWireLogger.ear.info("AuthenticationTypeDetector determines `current`!")
+        WireLogger.ear.info("AuthenticationTypeDetector determines `current`!")
         let context = LAContext()
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {

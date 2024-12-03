@@ -127,7 +127,7 @@ enum DebugAlert {
             do {
                 logsFileURL = try logFilesProvider.generateLogFilesZip()
             } catch {
-                OldWireLogger.system.error("Failed to generate log files zip: \(error)")
+                WireLogger.system.error("Failed to generate log files zip: \(error)")
                 return
             }
 
@@ -140,7 +140,7 @@ enum DebugAlert {
                 do {
                     try logFilesProvider.clearLogsDirectory()
                 } catch {
-                    OldWireLogger.system.warn("Unable to clear temporary directory: \(error)")
+                    WireLogger.system.warn("Unable to clear temporary directory: \(error)")
                 }
             }
 

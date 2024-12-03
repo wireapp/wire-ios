@@ -379,7 +379,7 @@ final class ProfileHeaderViewController: UIViewController {
                     false
                 }
             } catch {
-                OldWireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
     }

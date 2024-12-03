@@ -71,7 +71,7 @@ final class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
                 debugReport: shareableDebugReport
             )
         } catch {
-            OldWireLogger.system.error("failed to generate log files \(error)")
+            WireLogger.system.error("failed to generate log files \(error)")
         }
     }
 }

@@ -111,7 +111,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     private let e2eiService: E2EIServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
 
-    private let logger = OldWireLogger.e2ei
+    private let logger = WireLogger.e2ei
 
     public init(
         acmeApi: AcmeAPIInterface,

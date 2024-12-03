@@ -117,17 +117,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set up Datadog and other loggers
         WireAnalytics.setup()
 
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
         )
 
         // Initial log line to indicate the client version and build
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             Bundle.main.appInfo.safeForLoggingDescription,
             attributes: .safePublic
         )
 
-        OldWireLogger.appDelegate.error("TEST-ERROR", attributes: [.tag: "test_error"], [.syncPhase: "test_sync_phase"])
+        WireLogger.appDelegate.error("TEST-ERROR", attributes: [.tag: "test_error"], [.syncPhase: "test_sync_phase"])
 
         return true
     }
@@ -139,7 +139,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        OldWireLogger.push.info(
+        WireLogger.push.info(
             "application did register for remote notifications, storing standard token",
             attributes: .safePublic
         )
@@ -155,7 +155,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         temporaryFilesService.removeTemporaryData()
 
-        OldWireLogger.appDelegate
+        WireLogger.appDelegate
             .info(
                 "application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
             )
@@ -176,21 +176,21 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
-        OldWireLogger.appDelegate
+        WireLogger.appDelegate
             .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
-        OldWireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
+        WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
         return true
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "applicationWillEnterForeground: (applicationState = \(application.applicationState)",
             attributes: .safePublic
         )
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "applicationDidBecomeActive (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
@@ -205,14 +205,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "applicationWillResignActive: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "applicationDidEnterBackground: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
@@ -225,7 +225,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "application:openURL:options",
             attributes: .safePublic
         )
@@ -233,7 +233,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        OldWireLogger.appDelegate.info(
+        WireLogger.appDelegate.info(
             "applicationWillTerminate: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
@@ -269,7 +269,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        OldWireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
+        WireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
 
         return SessionManager.shared?.continueUserActivity(userActivity) ?? false
     }
@@ -281,7 +281,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        OldWireLogger.appDelegate
+        WireLogger.appDelegate
             .info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
 
         launchType = (application.applicationState == .inactive || application.applicationState == .background) ?
@@ -293,7 +293,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        OldWireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
+        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
         appRootRouter?.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
@@ -305,7 +305,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
-        OldWireLogger.appDelegate
+        WireLogger.appDelegate
             .info(
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )

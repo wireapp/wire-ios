@@ -77,7 +77,7 @@ struct LogFilesProvider: LogFilesProviding {
     }()
 
     private var logFilesURLs: [URL] {
-        var urls = OldWireLogger.logFiles
+        var urls = WireLogger.logFiles
         urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
         return urls
     }

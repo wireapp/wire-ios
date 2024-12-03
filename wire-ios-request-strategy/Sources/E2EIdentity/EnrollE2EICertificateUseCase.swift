@@ -66,7 +66,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
     // MARK: - Properties
 
-    private let logger = OldWireLogger.e2ei
+    private let logger = WireLogger.e2ei
     private let e2eiRepository: E2EIRepositoryInterface
     private let context: NSManagedObjectContext
 

@@ -65,7 +65,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
 
-    private let logger = OldWireLogger.mls
+    private let logger = WireLogger.mls
 
     // MARK: - Life cycle
 

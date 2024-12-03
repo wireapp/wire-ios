@@ -68,7 +68,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         for event in eventEnvelope.events {
             switch event {
             case let .conversation(.proteusMessageAdd(eventData)):
-                OldWireLogger.updateEvent.info(
+                WireLogger.updateEvent.info(
                     "decrypting proteus event...",
                     attributes: logAttributes
                 )
@@ -78,7 +78,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
 
                 } catch let error as ProteusError {
-                    OldWireLogger.updateEvent.error(
+                    WireLogger.updateEvent.error(
                         "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )
@@ -88,7 +88,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         error: error
                     )
                 } catch {
-                    OldWireLogger.updateEvent.error(
+                    WireLogger.updateEvent.error(
                         "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )

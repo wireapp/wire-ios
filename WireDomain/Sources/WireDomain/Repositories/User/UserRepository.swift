@@ -270,7 +270,7 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         // prepare data for the local store
         guard let mappedPrekey = lastPrekey.toDomainModel() else {
-            return OldWireLogger.eventProcessing.error(
+            return WireLogger.eventProcessing.error(
                 "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
             )
         }
@@ -299,7 +299,7 @@ public final class UserRepository: UserRepositoryProtocol {
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
 
         default:
-            OldWireLogger.updateEvent.warn(
+            WireLogger.updateEvent.warn(
                 "\(String(describing: userProperty)) property not handled."
             )
         }

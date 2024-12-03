@@ -35,7 +35,7 @@ public func fatal(
     ) as String
 
     // report error to datadog or other loggers
-    OldWireLogger.system.critical(output, attributes: .safePublic)
+    WireLogger.system.critical(output, attributes: .safePublic)
 
     // prepare and dump to file
     do {

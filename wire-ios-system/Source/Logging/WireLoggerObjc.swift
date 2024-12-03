@@ -23,16 +23,16 @@ import Foundation
 public final class WireLoggerObjc: NSObject {
 
     static func assertionDumpLog(_ message: String) {
-        OldWireLogger.system.critical(message, attributes: .safePublic)
+        WireLogger.system.critical(message, attributes: .safePublic)
     }
 
     @objc(logReceivedUpdateEventWithId:)
     static func logReceivedUpdateEvent(eventId: String) {
-        OldWireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
+        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
     }
 
     @objc(logSaveCoreDataError:)
     static func logSaveCoreData(error: any Error) {
-        OldWireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
+        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
 }

@@ -137,7 +137,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
-            OldWireLogger.network.info(
+            WireLogger.network.info(
                 "Dropping request \(request) as networkTransportSession not ready",
                 attributes: .safePublic
             )
@@ -146,14 +146,14 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init)
         else { preconditionFailure() }
         urlRequest.configure(with: request)
-        OldWireLogger.network.log(request: urlRequest)
+        WireLogger.network.log(request: urlRequest)
 
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
 
             var transportResponse: ZMTransportResponse!
 
             if let response = response as? HTTPURLResponse {
-                OldWireLogger.network.log(response: response)
+                WireLogger.network.log(response: response)
                 transportResponse = ZMTransportResponse(
                     httpurlResponse: response,
                     data: data,

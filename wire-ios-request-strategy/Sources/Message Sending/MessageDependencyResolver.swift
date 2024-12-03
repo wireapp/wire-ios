@@ -66,10 +66,10 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             let logAttributes = await MessageLogAttributesBuilder(context: context).logAttributes(message)
 
             if !hasDependencies {
-                OldWireLogger.messaging.debug("Message dependency resolved", attributes: logAttributes)
+                WireLogger.messaging.debug("Message dependency resolved", attributes: logAttributes)
                 return true
             } else {
-                OldWireLogger.messaging.debug("Message has dependency, waiting", attributes: logAttributes)
+                WireLogger.messaging.debug("Message has dependency, waiting", attributes: logAttributes)
                 return false
             }
         }

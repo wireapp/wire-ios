@@ -71,7 +71,7 @@ public extension ZMUserSession {
                     completion(.failure(error))
                 }
             } catch {
-                OldWireLogger.mls.error("creating team 1:1 conversation failed: \(error))")
+                WireLogger.mls.error("creating team 1:1 conversation failed: \(error))")
                 assertionFailure(String(reflecting: error))
             }
         }

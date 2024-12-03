@@ -33,7 +33,7 @@ public extension NSManagedObjectContext {
         do {
             try coreCrypto?.tearDown()
         } catch {
-            OldWireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
+            WireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
         }
         coreCrypto = nil
     }

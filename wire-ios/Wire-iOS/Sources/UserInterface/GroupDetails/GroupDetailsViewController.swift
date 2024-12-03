@@ -477,7 +477,7 @@ private extension GroupDetailsViewController {
                     )
                     userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                 } catch {
-                    OldWireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
                 }
             }
             collectionViewController.sections = computeVisibleSections()

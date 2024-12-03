@@ -49,7 +49,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
             do {
                 try await processUpdateEvent(event)
             } catch {
-                OldWireLogger.updateEvent.error(
+                WireLogger.updateEvent.error(
                     "failed to process user client event: \(event.safeForLoggingDescription): \(error)",
                     attributes: .safePublic
                 )
@@ -68,7 +68,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
     private func processClientListUpdateEvent(_ event: ZMUpdateEvent) async throws {
         guard let clientInfo = event.payload["client"] as? [String: AnyObject] else {
-            OldWireLogger.updateEvent.error("Client info has unexpected payload", attributes: .safePublic)
+            WireLogger.updateEvent.error("Client info has unexpected payload", attributes: .safePublic)
             return
         }
 

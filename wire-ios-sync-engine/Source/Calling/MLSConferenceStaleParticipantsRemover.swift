@@ -32,7 +32,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     typealias Failure = Never
 
     private let timerManager = TimerManager<MLSClientID>()
-    private let logger = OldWireLogger.mls
+    private let logger = WireLogger.mls
     private let removalTimeout: TimeInterval
     private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext

@@ -31,22 +31,22 @@ public enum KeychainManager {
     // MARK: - Keychain access
 
     static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
-        OldWireLogger.keychain.info("storing item (\(item.id))")
+        WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
         guard status == errSecSuccess else {
-            OldWireLogger.keychain.error("storing item (\(item.id)) failed: osstatus \(status)")
+            WireLogger.keychain.error("storing item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToStoreItemInKeychain(status)
         }
     }
 
     static func fetchItem<T>(_ item: KeychainItemProtocol) throws -> T {
-        OldWireLogger.keychain.info("fetching item (\(item.id))")
+        WireLogger.keychain.info("fetching item (\(item.id))")
         var value: CFTypeRef?
         let status = SecItemCopyMatching(item.getQuery as CFDictionary, &value)
 
         guard status == errSecSuccess else {
-            OldWireLogger.keychain.error("fetching item (\(item.id)) failed: osstatus \(status)")
+            WireLogger.keychain.error("fetching item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToFetchItemFromKeychain(status)
         }
 
@@ -54,11 +54,11 @@ public enum KeychainManager {
     }
 
     static func deleteItem(_ item: KeychainItemProtocol) throws {
-        OldWireLogger.keychain.info("deleting item (\(item.id))")
+        WireLogger.keychain.info("deleting item (\(item.id))")
         let status = SecItemDelete(item.getQuery as CFDictionary)
 
         guard status == errSecSuccess || status == errSecItemNotFound else {
-            OldWireLogger.keychain.error("deleting item (\(item.id)) failed: osstatus \(status)")
+            WireLogger.keychain.error("deleting item (\(item.id)) failed: osstatus \(status)")
             throw Error.failedToDeleteItemFromKeychain(status)
         }
     }

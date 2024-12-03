@@ -30,7 +30,7 @@ protocol UserSessionLogoutDelegate: AnyObject {
 extension SessionManager: UserSessionLogoutDelegate {
     /// Invoked when the user successfully logged out
     public func userDidLogout(accountId: UUID) {
-        OldWireLogger.sessionManager.debug("\(accountId): User logged out")
+        WireLogger.sessionManager.debug("\(accountId): User logged out")
 
         if let account = accountManager.account(with: accountId) {
             delete(account: account, reason: .userInitiated)
@@ -45,7 +45,7 @@ extension SessionManager: UserSessionLogoutDelegate {
             return
         }
 
-        OldWireLogger.authentication
+        WireLogger.authentication
             .warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {

@@ -40,7 +40,7 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
 
         let result = try context.fetch(request)
         for object in result {
-            OldWireLogger.localStorage.warn(
+            WireLogger.localStorage.warn(
                 "remove zombie object 'ParticipantRole' without conversation",
                 attributes: .safePublic
             )
@@ -50,14 +50,14 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
 
     private func removeUserClientDuplicates(in context: NSManagedObjectContext) throws {
 
-        OldWireLogger.localStorage.info("beginning duplicate clients migration", attributes: .safePublic)
+        WireLogger.localStorage.info("beginning duplicate clients migration", attributes: .safePublic)
 
         let duplicates: [String: [NSManagedObject]] = context.findDuplicated(
             entityName: UserClient.entityName(),
             by: #keyPath(UserClient.remoteIdentifier)
         )
 
-        OldWireLogger.localStorage.info(
+        WireLogger.localStorage.info(
             "found (\(duplicates.count)) occurences of duplicate clients",
             attributes: .safePublic
         )
@@ -69,7 +69,7 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
 
             clients.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             clients.dropFirst().forEach(context.delete)
-            OldWireLogger.localStorage.info("removed 1 occurence of duplicate clients", attributes: .safePublic)
+            WireLogger.localStorage.info("removed 1 occurence of duplicate clients", attributes: .safePublic)
         }
     }
 }

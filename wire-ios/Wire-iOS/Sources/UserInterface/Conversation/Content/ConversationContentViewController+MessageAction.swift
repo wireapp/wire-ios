@@ -68,7 +68,7 @@ extension ConversationContentViewController {
         switch actionId {
         case .cancel:
             userSession.enqueue {
-                OldWireLogger.messaging.info(
+                WireLogger.messaging.info(
                     "cancel message",
                     attributes: [
                         LogAttributesKey.conversationId: message.conversation?.qualifiedID?
@@ -80,7 +80,7 @@ extension ConversationContentViewController {
             }
         case .resend:
             userSession.enqueue {
-                OldWireLogger.messaging.info(
+                WireLogger.messaging.info(
                     "resend message",
                     attributes: [
                         LogAttributesKey.conversationId: message.conversation?.qualifiedID?
@@ -121,7 +121,7 @@ extension ConversationContentViewController {
                 )
                 present(activityViewController, animated: true)
             } else {
-                OldWireLogger.conversation
+                WireLogger.conversation
                     .warn("Saving a message of any type other than image or file is currently not handled.")
             }
         case .digitallySign:

@@ -322,7 +322,7 @@ public extension ZMConversation {
             return
         }
 
-        OldWireLogger.eventProcessing
+        WireLogger.eventProcessing
             .debug(
                 "Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map(\.remoteIdentifier.safeForLoggingDescription))"
             )
@@ -493,7 +493,7 @@ public extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire(withReason: .other)
             } else {
-                OldWireLogger.messaging
+                WireLogger.messaging
                     .warn(
                         "expiring message due to security degradation " +
                             String(describing: message.nonce?.transportString().readableHash)

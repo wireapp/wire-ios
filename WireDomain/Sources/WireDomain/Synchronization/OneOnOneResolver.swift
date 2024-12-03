@@ -65,7 +65,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
                         try await resolveOneOnOneConversation(with: userID)
                     } catch {
                         /// skip conversation migration for this user
-                        OldWireLogger.conversation.error(
+                        WireLogger.conversation.error(
                             "resolve 1-1 conversation with userID \(userID) failed!"
                         )
                     }
@@ -105,7 +105,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
     }
 
     private func resolveMLSConversation(for user: ZMUser) async throws {
-        OldWireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
+        WireLogger.conversation.debug("Should resolve to mls 1-1 conversation")
 
         let userID = await context.perform {
             user.qualifiedID
@@ -167,7 +167,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
                 userOneOnOneConversation?.isForcedReadOnly = true
             }
 
-            return OldWireLogger.conversation.error(
+            return WireLogger.conversation.error(
                 "Failed to setup MLS group with ID: \(mlsGroupID.safeForLoggingDescription)"
             )
         }
@@ -248,10 +248,10 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         for user: ZMUser
     ) async {
         await context.perform {
-            OldWireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
+            WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
 
             guard let conversation = user.oneOnOneConversation else {
-                return OldWireLogger.conversation.warn(
+                return WireLogger.conversation.warn(
                     "Failed to resolve Proteus conversation: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
                 )
             }
@@ -272,10 +272,10 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         and user: ZMUser
     ) async {
         await context.perform {
-            OldWireLogger.conversation.debug("No common protocols found")
+            WireLogger.conversation.debug("No common protocols found")
 
             guard let conversation = user.oneOnOneConversation else {
-                return OldWireLogger.conversation.warn(
+                return WireLogger.conversation.warn(
                     "Failed to resolve 1:1 conversation with no common protocol: missing 1:1 conversation for user with id \(user.remoteIdentifier.safeForLoggingDescription)"
                 )
             }

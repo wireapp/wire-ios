@@ -39,7 +39,7 @@ struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorPro
         let userPropertyKey = UserProperty.Key(rawValue: event.key)
 
         guard let userPropertyKey else {
-            return OldWireLogger.eventProcessing.error(
+            return WireLogger.eventProcessing.error(
                 "Unknown user property key: \(event.key)"
             )
         }

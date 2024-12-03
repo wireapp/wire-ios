@@ -42,14 +42,14 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
 
     public func waitForQuickSyncToFinish() async {
         if await quickSyncHasCompleted() {
-            OldWireLogger.messaging.info(
+            WireLogger.messaging.info(
                 "no need to wait, because quick sync has completed",
                 attributes: .safePublic
             )
             return
         }
 
-        OldWireLogger.messaging.info(
+        WireLogger.messaging.info(
             "Waiting for app to be online before sending message",
             attributes: .safePublic
         )
@@ -58,7 +58,7 @@ public final class QuickSyncObserver: QuickSyncObserverInterface {
             named: .quickSyncCompletedNotification,
             object: notificationContext
         ) {
-            OldWireLogger.messaging.info(
+            WireLogger.messaging.info(
                 "Quick sync finished",
                 attributes: .safePublic
             )

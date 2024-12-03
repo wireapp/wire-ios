@@ -22,11 +22,11 @@ import Foundation
 public extension ZMAccessTokenHandler {
 
     func logDebug(_ message: String) {
-        OldWireLogger.authentication.debug(message)
+        WireLogger.authentication.debug(message)
     }
 
     func logError(_ message: String) {
-        OldWireLogger.authentication.error(message)
+        WireLogger.authentication.error(message)
     }
 
 }

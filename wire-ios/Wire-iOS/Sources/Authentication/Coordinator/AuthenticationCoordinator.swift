@@ -869,7 +869,7 @@ extension AuthenticationCoordinator {
                     executeAction(.presentAlert(alert))
                 }
             } catch {
-                OldWireLogger.authentication.error("failed to update MLS migration status: \(error)")
+                WireLogger.authentication.error("failed to update MLS migration status: \(error)")
                 assertionFailure(String(reflecting: error))
             }
         }

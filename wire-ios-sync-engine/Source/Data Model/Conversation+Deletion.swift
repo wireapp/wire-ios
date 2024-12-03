@@ -87,7 +87,7 @@ extension ZMConversation {
                             completion(.success(()))
                         }
                     } catch {
-                        OldWireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                        WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
                         await MainActor.run {
                             completion(.failure(error))
                         }

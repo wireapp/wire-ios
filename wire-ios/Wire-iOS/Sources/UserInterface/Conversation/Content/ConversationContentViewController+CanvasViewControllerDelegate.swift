@@ -32,7 +32,7 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
                         let useCase = self.userSession.makeAppendImageMessageUseCase()
                         try useCase.invoke(withImageData: imageData, in: self.conversation)
                     } catch {
-                        OldWireLogger.messageProcessing
+                        WireLogger.messageProcessing
                             .warn("Failed to append image message from canvas. Reason: \(error.localizedDescription)")
                     }
                 }

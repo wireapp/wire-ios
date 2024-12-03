@@ -288,9 +288,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     let context: NSManagedObjectContext
     let mlsService: any MLSServiceInterface
-    let eventProcessingLogger = OldWireLogger.eventProcessing
-    let mlsLogger = OldWireLogger.mls
-    let updateEventLogger = OldWireLogger.updateEvent
+    let eventProcessingLogger = WireLogger.eventProcessing
+    let mlsLogger = WireLogger.mls
+    let updateEventLogger = WireLogger.updateEvent
     let userLocalStore: any UserLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
 
@@ -395,7 +395,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
 
         guard let localConversation else {
-            return OldWireLogger.eventProcessing.error(
+            return WireLogger.eventProcessing.error(
                 "Member join update missing conversation, aborting... ",
                 attributes: [
                     .conversationId: conversation.id.safeForLoggingDescription

@@ -420,7 +420,7 @@ final class ConversationViewController: UIViewController {
             let viewContext = conversation.managedObjectContext,
             let syncContext = viewContext.zm_sync
         else {
-            OldWireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
+            WireLogger.conversation.warn("missing expected value to resolve 1-1 conversation!")
             return
         }
 
@@ -441,7 +441,7 @@ final class ConversationViewController: UIViewController {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {
-                OldWireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
+                WireLogger.conversation.warn("resolution of proteus 1-1 conversation failed: \(error)")
             }
         }
     }
@@ -487,7 +487,7 @@ final class ConversationViewController: UIViewController {
         guard
             let mlsGroupID = conversation.mlsGroupID
         else {
-            OldWireLogger.conversation.warn("missing mlsGroupID to update verification status!")
+            WireLogger.conversation.warn("missing mlsGroupID to update verification status!")
             return
         }
 

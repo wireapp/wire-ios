@@ -32,7 +32,7 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
-        OldWireLogger.calling.info("lookup conversation for: \(handle)")
+        WireLogger.calling.info("lookup conversation for: \(handle)")
         guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
@@ -53,7 +53,7 @@ extension SessionManager: CallKitManagerDelegate {
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
-        OldWireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
+        WireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
 
         guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
@@ -68,7 +68,7 @@ extension SessionManager: CallKitManagerDelegate {
             }
 
             userSession.processPendingCallEvents {
-                OldWireLogger.calling.info("did process call events, returning conversation...")
+                WireLogger.calling.info("did process call events, returning conversation...")
                 completionHandler(.success(conversation))
             }
         }

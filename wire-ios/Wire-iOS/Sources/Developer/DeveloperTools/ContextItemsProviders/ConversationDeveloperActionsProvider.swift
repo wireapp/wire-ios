@@ -144,7 +144,7 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
 
             context.saveOrRollback()
 
-            OldWireLogger.conversation
+            WireLogger.conversation
                 .debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
     }

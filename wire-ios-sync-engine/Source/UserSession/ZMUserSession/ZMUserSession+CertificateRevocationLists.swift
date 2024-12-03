@@ -22,7 +22,7 @@ extension ZMUserSession {
 
     func setupCertificateRevocationLists() {
         guard let mlsGroupVerification else {
-            OldWireLogger.e2ei.error("requires 'mlsGroupVerification' to setup 'cRLsChecker'!", attributes: .safePublic)
+            WireLogger.e2ei.error("requires 'mlsGroupVerification' to setup 'cRLsChecker'!", attributes: .safePublic)
             assertionFailure("requires 'mlsGroupVerification' to setup 'cRLsChecker'!")
             return
         }
@@ -52,7 +52,7 @@ extension ZMUserSession {
 
     func checkExpiredCertificateRevocationLists() {
         guard let cRLsChecker else {
-            OldWireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
+            WireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
             return
         }
 

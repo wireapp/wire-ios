@@ -79,7 +79,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
-        OldWireLogger.mls.info("Initialising MLS client with basic credentials")
+        WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         _ = try await coreCrypto().perform { coreCrypto in
             try await coreCrypto.mlsInit(
@@ -95,7 +95,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         enrollment: E2eiEnrollment,
         certificateChain: String
     ) async throws -> CRLsDistributionPoints? {
-        OldWireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
+        WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         return try await coreCrypto().perform { coreCrypto in
             let crlsDistributionPoints = try await coreCrypto.e2eiMlsInitOnly(
                 enrollment: enrollment,
@@ -208,7 +208,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     // Workaround: set the access level for the keychain item on our side.
 
     private func updateKeychainItemAccess() {
-        OldWireLogger.coreCrypto.info("updating keychain item access")
+        WireLogger.coreCrypto.info("updating keychain item access")
 
         for account in accountsForAllItemsNeedingUpdates() {
             let query = [
@@ -252,7 +252,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         with coreCrypto: CoreCryptoProtocol,
         credentialType: MlsCredentialType
     ) async throws {
-        OldWireLogger.mls.info("generating public key")
+        WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
             ciphersuite: UInt16(ciphersuite.rawValue),
@@ -282,11 +282,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     private func migrateCryptoboxSessionsIfNeeded(with coreCrypto: SafeCoreCrypto) async {
         guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            OldWireLogger.proteus.info("cryptobox migration is not needed")
+            WireLogger.proteus.info("cryptobox migration is not needed")
             return
         }
 
-        OldWireLogger.proteus.info("preparing for cryptobox migration...")
+        WireLogger.proteus.info("preparing for cryptobox migration...")
 
         do {
             try await cryptoboxMigrationManager.performMigration(
@@ -294,13 +294,13 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 coreCrypto: coreCrypto
             )
         } catch {
-            OldWireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
+            WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
             fatalError(
                 "Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)"
             )
         }
 
-        OldWireLogger.proteus.info("cryptobox migration success")
+        WireLogger.proteus.info("cryptobox migration success")
     }
 
 }

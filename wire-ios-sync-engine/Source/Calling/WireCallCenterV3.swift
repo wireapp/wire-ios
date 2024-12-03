@@ -27,7 +27,7 @@ import Foundation
 /// called from any thread.
 public class WireCallCenterV3: NSObject {
 
-    static let logger = OldWireLogger.calling
+    static let logger = WireLogger.calling
 
     /// The maximum number of participants for a legacy video call.
 
@@ -763,7 +763,7 @@ public extension WireCallCenterV3 {
                                 )
                             }
                         } catch {
-                            OldWireLogger.calling.error("Error updating conference info: \(error)")
+                            WireLogger.calling.error("Error updating conference info: \(error)")
                         }
                     }
 

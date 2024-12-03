@@ -33,7 +33,7 @@ extension ZMUserSession {
                 do {
                     try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
                 } catch {
-                    OldWireLogger.mls
+                    WireLogger.mls
                         .error(
                             "proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))"
                         )
@@ -104,7 +104,7 @@ extension ZMUserSession {
                     guard e2eiFeature.isEnabled else { return }
                     try await e2eiRepository.fetchFederationCertificates()
                 } catch {
-                    OldWireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
+                    WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
                 }
             }
         }

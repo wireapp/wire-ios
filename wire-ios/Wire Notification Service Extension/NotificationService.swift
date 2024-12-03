@@ -38,7 +38,7 @@ final class NotificationService: UNNotificationServiceExtension {
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        OldWireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
+        WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         legacyService.didReceive(
             request,

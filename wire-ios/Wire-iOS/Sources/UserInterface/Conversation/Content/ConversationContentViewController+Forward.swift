@@ -94,7 +94,7 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendImage(from: imageData)
                     } catch {
-                        OldWireLogger.messageProcessing
+                        WireLogger.messageProcessing
                             .warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
@@ -109,7 +109,7 @@ extension ZMMessage: Shareable {
                         do {
                             try $0.appendFile(with: fileMetadata)
                         } catch {
-                            OldWireLogger.messageProcessing
+                            WireLogger.messageProcessing
                                 .warn("Failed to append file message. Reason: \(error.localizedDescription)")
                         }
                     }
@@ -128,7 +128,7 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        OldWireLogger.messageProcessing
+                        WireLogger.messageProcessing
                             .warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }

@@ -184,7 +184,7 @@ public extension GenericMessage {
                     .error(
                         "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
                     )
-                OldWireLogger.proteus
+                WireLogger.proteus
                     .error(
                         "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
                     )

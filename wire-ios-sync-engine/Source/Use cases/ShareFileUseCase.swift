@@ -52,7 +52,7 @@ public struct ShareFileUseCase: ShareFileUseCaseProtocol {
                 do {
                     try conversation.appendFile(with: fileMetadata)
                 } catch {
-                    OldWireLogger.system.warn("Failed to append file. Reason: \(error.localizedDescription)")
+                    WireLogger.system.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
             }
         }

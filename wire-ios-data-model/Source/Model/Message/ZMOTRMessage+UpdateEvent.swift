@@ -38,7 +38,7 @@ extension ZMOTRMessage {
                 differentFromSelfUserID: selfUser.remoteIdentifier
             )
         else {
-            OldWireLogger.eventProcessing.debug(
+            WireLogger.eventProcessing.debug(
                 "Illegal sender or conversation, abort processing.",
                 attributes: updateEvent.logAttributes
             )
@@ -46,7 +46,7 @@ extension ZMOTRMessage {
         }
 
         guard !conversation.isForcedReadOnly else {
-            OldWireLogger.eventProcessing.warn(
+            WireLogger.eventProcessing.warn(
                 "Ignoring incoming message in readonly conversation.",
                 attributes: updateEvent.logAttributes
             )
@@ -57,21 +57,21 @@ extension ZMOTRMessage {
             let message = GenericMessage(from: updateEvent),
             let content = message.content
         else {
-            OldWireLogger.eventProcessing.warn(
+            WireLogger.eventProcessing.warn(
                 "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
                 attributes: updateEvent.logAttributes
             )
             appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
             return nil
         }
-        OldWireLogger.eventProcessing.debug("Processing:\n\(message)")
+        WireLogger.eventProcessing.debug("Processing:\n\(message)")
         let logAttributes: LogAttributes = [
             .eventId: updateEvent.safeUUID,
             .conversationId: updateEvent.safeLoggingConversationId,
             .nonce: updateEvent.messageNonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: updateEvent.safeType
         ]
-        OldWireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
+        WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(
             message: message,
@@ -153,7 +153,7 @@ extension ZMOTRMessage {
                 ),
                 let timestamp = updateEvent.timestamp
             else {
-                OldWireLogger.eventProcessing.warn(
+                WireLogger.eventProcessing.warn(
                     "clientAction resetSession did not create any message",
                     attributes: logAttributes
                 )
@@ -173,7 +173,7 @@ extension ZMOTRMessage {
                 conversation.shouldAdd(event: updateEvent),
                 let nonce = UUID(uuidString: message.messageID)
             else {
-                OldWireLogger.eventProcessing.warn(
+                WireLogger.eventProcessing.warn(
                     "Dropping message because no nonce or for self conv",
                     attributes: logAttributes
                 )
@@ -190,7 +190,7 @@ extension ZMOTRMessage {
             ) as? ZMOTRMessage
 
             guard !isZombieObject(clientMessage) else {
-                OldWireLogger.eventProcessing.warn("Dropping message because zombieObject", attributes: logAttributes)
+                WireLogger.eventProcessing.warn("Dropping message because zombieObject", attributes: logAttributes)
                 return nil
             }
 
@@ -203,7 +203,7 @@ extension ZMOTRMessage {
                 } else if messageClass is ZMAssetClientMessage.Type {
                     clientMessage = ZMAssetClientMessage(nonce: nonce, managedObjectContext: moc)
                 } else {
-                    OldWireLogger.eventProcessing.warn("Dropping unknown type new message", attributes: logAttributes)
+                    WireLogger.eventProcessing.warn("Dropping unknown type new message", attributes: logAttributes)
                     return nil
                 }
 
@@ -224,7 +224,7 @@ extension ZMOTRMessage {
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent
                 .senderClientID {
-                OldWireLogger.eventProcessing.warn(
+                WireLogger.eventProcessing.warn(
                     "senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))",
                     attributes: logAttributes
                 )
@@ -240,7 +240,7 @@ extension ZMOTRMessage {
             // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
             // relationship between the deleted object and the conversation and / or sender
             guard !isZombieObject(clientMessage), clientMessage?.nonce != nil else {
-                OldWireLogger.eventProcessing.warn("Dropping potential zombie message", attributes: logAttributes)
+                WireLogger.eventProcessing.warn("Dropping potential zombie message", attributes: logAttributes)
                 return nil
             }
 

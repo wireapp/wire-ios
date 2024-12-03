@@ -61,7 +61,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
             return nil
         }
 
-        OldWireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
+        WireLogger.sync.info("start slow sync phase: \(syncPhase.description)")
 
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)
@@ -89,7 +89,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         guard let request = transportBuilder.buildTransportRequest() else {
             // finish sync instead of fail, because we can never execute a request
-            OldWireLogger.sync.warn(
+            WireLogger.sync.warn(
                 "can not create transport request, one reason could be an unsupported api version!",
                 attributes: .safePublic
             )
@@ -104,7 +104,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         guard isSlowSyncing else {
             // skip result if we are not in the slow sync...
             assertionFailure("expected response during slow sync phase!")
-            OldWireLogger.sync.error(
+            WireLogger.sync.error(
                 "received response, but expected during slow sync phase '\(syncPhase.description)'!",
                 attributes: .safePublic
             )
@@ -129,14 +129,14 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
     // MARK: Sync Progress
 
     private func finishSlowSync() {
-        OldWireLogger.sync.info("finished slow sync phase '\(syncPhase.description)'!")
+        WireLogger.sync.info("finished slow sync phase '\(syncPhase.description)'!")
         managedObjectContext.performAndWait {
             self.syncProgress.finishCurrentSyncPhase(phase: self.syncPhase)
         }
     }
 
     private func failSlowSync() {
-        OldWireLogger.sync.error(
+        WireLogger.sync.error(
             "failed slow sync phase '\(syncPhase.description)'!",
             attributes: .safePublic
         )

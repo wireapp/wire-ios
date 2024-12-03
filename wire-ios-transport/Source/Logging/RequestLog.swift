@@ -166,15 +166,15 @@ extension OldWireLogger {
 
 extension WireLoggerObjc {
     static func logRequest(_ request: NSURLRequest) {
-        OldWireLogger.network.log(request: request)
+        WireLogger.network.log(request: request)
     }
 
     static func logHTTPResponse(_ response: HTTPURLResponse) {
-        OldWireLogger.network.log(response: response)
+        WireLogger.network.log(response: response)
     }
 
     @objc(logRequestLoopAtPath:)
     static func logRequestLoop(at path: String) {
-        OldWireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
+        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
     }
 }

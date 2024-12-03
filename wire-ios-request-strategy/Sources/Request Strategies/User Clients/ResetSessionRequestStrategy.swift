@@ -71,7 +71,7 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
                     userClient.resolveDecryptionFailedSystemMessages()
                 }
             } catch {
-                OldWireLogger.messaging.error("Failed to send reset session message: \(error)")
+                WireLogger.messaging.error("Failed to send reset session message: \(error)")
             }
 
             await managedObjectContext.perform {
