@@ -18,18 +18,12 @@
 
 /// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk of leaking sensible information.
 /// Each custom type which can be logged must define how it should appear in the logs.
-/// Query the property `isDebugBuild` in order to know, if the value should be obfuscated or not.
+/// Query the property `isObfuscationRequired` in order to know, if the value should be obfuscated or not.
 /// Use `addText(_:)` and `addAttribute(_:)` to create the content to be logged.
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
     private(set) var content = ""
     private(set) var attributes = [WireLoggerAttribute]()
-
-    #if DEBUG
-    public let isDebugBuild = true
-    #else
-    public let isDebugBuild = false
-    #endif
 
     public init(literalCapacity: Int, interpolationCount _: Int) {
         content.reserveCapacity(literalCapacity)
@@ -59,7 +53,7 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
 //extension WireLogInterpolation {
 //
 //    mutating func appendInterpolation(_ conversation: ConversationModel, something: Int) {
-//        if isDebugBuild {
+//        if isObfuscationRequired {
 //            //
 //        } else {
 //            //

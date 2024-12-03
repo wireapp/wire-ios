@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+extension WireLogInterpolation {
 
-@testable import WireLogging
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
+    public mutating func appendInterpolation(_ error: any Error, skipObfuscation: Bool = false) {
+        if !skipObfuscation, isObfuscationRequired {
+            writeText(String(describing: type(of: error)))
+        } else {
+            writeText(String(reflecting: error))
+        }
+    }
 }
