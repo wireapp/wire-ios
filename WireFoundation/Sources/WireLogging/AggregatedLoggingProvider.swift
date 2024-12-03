@@ -19,20 +19,14 @@
 // TODO: only used for building, rename!
 public struct AggregatedLoggingProvider: WireLoggingProvider {
 
-    let loggingSystems: @Sendable (Tag) -> [any WireLoggingProvider]
+    let loggingSystems: [any WireLoggingProvider]
 
-    public let tag: Tag
-
-    public init(
-        tag: Tag,
-        loggingSystems: @escaping @Sendable (Tag) -> [any WireLoggingProvider]
-    ) {
-        self.tag = tag
-        self.loggingSystems = loggingSystems
+    public init(loggingSystems: @escaping @Sendable () -> [any WireLoggingProvider]) {
+        self.loggingSystems = loggingSystems()
     }
 
     public func log(level: Level, message: WireLogMessage) {
-        loggingSystems(tag).forEach { loggingSystem in
+        loggingSystems.forEach { loggingSystem in
             loggingSystem.log(level: level, message: message)
         }
     }

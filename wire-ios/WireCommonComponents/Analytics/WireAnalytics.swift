@@ -44,7 +44,7 @@ public enum WireAnalytics {
 
         let cocoaLumberjackLogger = CocoaLumberjackLogger()
         WireLogger.setup { tag in
-            AggregatedLoggingProvider(tag: tag) { tag in
+            AggregatedLoggingProvider {
                 var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
                 if tag == "system" {
                     datadogLogger.additionalAttributes = [
@@ -59,6 +59,8 @@ public enum WireAnalytics {
                 ]
             }
         }
+
+        // TODO: clean up
         OldWireLogger.initialize(
             loggers: [
                 SystemLogger(),
