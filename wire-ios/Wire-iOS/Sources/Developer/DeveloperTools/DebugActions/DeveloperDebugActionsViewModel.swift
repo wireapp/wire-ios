@@ -28,6 +28,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private let selfClient: UserClient?
 
+    private let logger = WireLogger(tag: "developer")
+
     // MARK: - Initialize
 
     init(selfClient: UserClient?) {
@@ -171,20 +173,20 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func deleteDomains() {
         guard let syncContext = userSession?.syncContext else {
-            print("failed to delete domains: no sync context")
+            logger.error("failed to delete domains: no sync context")
             return
         }
 
-        syncContext.perform {
+        syncContext.perform { [logger] in
             do {
-                print("deleted domains of users...")
+                logger.debug("deleted domains of users...")
                 let users = try syncContext.fetch(NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
 
                 for user in users where !user.isSelfUser {
                     user.domain = nil
                 }
 
-                print("deleted domains of conversations...")
+                logger.debug("deleted domains of conversations...")
                 let conversations = try syncContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
 
                 for conversation in conversations where conversation.conversationType.isOne(of: .oneOnOne, .group) {
@@ -192,10 +194,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 }
 
                 try syncContext.save()
-                print("successfully deleted domains")
+                logger.debug("successfully deleted domains")
 
             } catch {
-                print("failed to delete domains: \(error.localizedDescription)")
+                logger.error("failed to delete domains: \(error.localizedDescription)")
             }
         }
     }
