@@ -18,13 +18,20 @@
 
 import os
 
-/// This type's purpose is controlling the interface to an `OSLogInterpolation`.
-/// Each custom type should define how it should appear in the logs.
+/// This type's purpose is restricting the automatic conversion of custom types to String, in order to reduce the risk of leaking sensible information.
+/// Each custom type which can be logged must define how it should appear in the logs.
+/// Query the property `isDebugBuild` in order to know, if the value should be obfuscated or not.
 public struct WireLogInterpolation: StringInterpolationProtocol {
 
     //private var logInterpolation: OSLogInterpolation
     // TODO: stack calls
     private var calls = [(any StringInterpolationProtocol) -> Void]()
+
+#if DEBUG
+    public let isDebugBuild = true
+    #else
+    public let isDebugBuild = false
+    #endif
 
     public init(literalCapacity: Int, interpolationCount: Int) {
         //logInterpolation = .init(literalCapacity: literalCapacity, interpolationCount: interpolationCount)
@@ -35,9 +42,12 @@ public struct WireLogInterpolation: StringInterpolationProtocol {
         //logInterpolation.appendLiteral("\(literal)")
     }
 
-    public mutating func appendInterpolation(_ value: Int) {
-        //logInterpolation.appendLiteral("\(value)")
+    public mutating func appendInterpolation(_ value: Dummy) {
+        fatalError("Shouldn't be called.")
     }
+
+    /// A non-usable type for the `appendInterpolation` method in order to comply with the requirements of `StringInterpolationProtocol`.
+    public enum Dummy {}
 }
 
 public struct OSLogLoggingSystem: WireLoggingSystem {
@@ -53,7 +63,10 @@ public struct OSLogLoggingSystem: WireLoggingSystem {
 extension WireLogInterpolation {
 
     mutating func appendInterpolation(_ conversation: ConversationModel, something: Int) {
+        //if isDebugBuild
         //appendInterpolation(<#T##value: StaticString##StaticString#>)
+        appendLiteral("Conversation(")
+        //appendInterpolation("abcd \(3)")
     }
 }
 
@@ -62,6 +75,6 @@ public struct ConversationModel {
     var content: String
 }
 
-let xxx = WireLogger(tag: "dummy") { [] }
-//    .debug("sending ping in \( ConversationModel(id: 1, content: "Hello World"), something: 0 )")
-    .debug("abcd \(4)")
+let xxx = WireLogger(tag: "dummy") { AggregatedLogger(loggingSystems: []) }
+    .debug("sending ping in \( ConversationModel(id: 1, content: "Hello World"), something: 0 )")
+//    .debug("abcd")
