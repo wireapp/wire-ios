@@ -268,7 +268,7 @@ final class SearchResultsViewController: UIViewController {
             do {
                 var options = options
                 options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
-                
+
                 let result = try await searchUsersUseCase.invoke(
                     query: query,
                     options: options,

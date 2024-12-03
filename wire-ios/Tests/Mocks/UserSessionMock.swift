@@ -342,7 +342,25 @@ final class UserSessionMock: UserSession {
     }
 
     func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol {
-        MockSearchUsersUseCaseProtocol()
+        let mock = MockSearchUsersUseCaseProtocol()
+        mock.invokeQueryOptionsMessageProtocol_MockMethod = { _, _, _ in
+            let payload = ["documents": [
+                [
+                    "id": self.selfUser.remoteIdentifier ?? UUID(),
+                    "name": self.selfUser.name ?? "",
+                    "accent_id": 1,
+                    "handle": self.selfUser.handle ?? ""
+                ]
+            ]]
+            return SearchResult(
+                payload: payload,
+                query: .fullTextSearch(""),
+                searchOptions: [.directory],
+                contextProvider: MockContextProvider(),
+                searchUsersCache: nil
+            )!
+        }
+        return mock
     }
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
