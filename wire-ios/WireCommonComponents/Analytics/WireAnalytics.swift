@@ -46,7 +46,7 @@ public enum WireAnalytics {
         WireLogger.setup { tag in
             AggregatedLoggingProvider {
                 var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
-                if tag == "system" {
+                if tag == WireLogger.system.tag {
                     datadogLogger.additionalAttributes = [
                         .processId: "\(ProcessInfo.processInfo.processIdentifier)",
                         .processName: ProcessInfo.processInfo.processName
