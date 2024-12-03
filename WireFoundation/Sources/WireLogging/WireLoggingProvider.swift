@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol WireLoggingSystem: Sendable {
+public protocol WireLoggingProvider: Sendable {
 
     typealias Tag = WireLoggerTag
     typealias Level = WireLogLevel
 
-    func log(tag: Tag, level: Level, message: WireLogMessage)
+    // TODO: clean up
+    //var tag: Tag { get }
+
+    func log(level: Level, message: WireLogMessage)
 }

@@ -31,17 +31,6 @@ public struct SystemLogger: LoggerProtocol {
         []
     }
 
-    var lastReportTime: Date? {
-        get {
-            guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval
-            else { return nil }
-            return Date(timeIntervalSince1970: interval)
-        }
-        set {
-            UserDefaults.standard.set(newValue?.timeIntervalSince1970, forKey: "com.wire.log.lastReportTime")
-        }
-    }
-
     public init() {}
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

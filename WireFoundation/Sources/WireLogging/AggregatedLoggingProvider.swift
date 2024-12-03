@@ -16,17 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct AggregatedLogger: WireLoggingSystem {
+public struct AggregatedLoggingProvider: WireLoggingProvider {
 
-    let loggingSystems: @Sendable () -> [any WireLoggingSystem]
+    let loggingSystems: @Sendable (Tag) -> [any WireLoggingProvider]
 
-    init(loggingSystems: @escaping @Sendable @autoclosure () -> [any WireLoggingSystem]) {
+    public let tag: Tag
+
+    public init(
+        tag: Tag,
+        loggingSystems: @escaping @Sendable (Tag) -> [any WireLoggingProvider]
+    ) {
+        self.tag = tag
         self.loggingSystems = loggingSystems
     }
 
-    func log(tag: Tag, level: Level, message: WireLogMessage) {
-        loggingSystems().forEach { loggingSystem in
-            loggingSystem.log(tag: tag, level: level, message: message)
+    public func log(level: Level, message: WireLogMessage) {
+        loggingSystems(tag).forEach { loggingSystem in
+            loggingSystem.log(level: level, message: message)
         }
     }
 }

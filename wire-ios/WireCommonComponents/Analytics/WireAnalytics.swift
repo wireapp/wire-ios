@@ -18,6 +18,9 @@
 
 import Foundation
 import WireSystem
+import WireLogging
+
+private typealias AggregatedLoggingProvider = WireLogging.AggregatedLoggingProvider
 
 /// Namespace for analytics tools.
 public enum WireAnalytics {
@@ -39,14 +42,25 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
+        let cocoaLumberjackLogger = CocoaLumberjackLogger()
+        WireLogger.setup { tag in
+            AggregatedLoggingProvider(tag: tag) { tag in
+                [
+                    OSLogLoggingProvider(tag: tag, logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
+                    NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger)
+                    // TODO: datadog
+                ]
+            }
+        }
         OldWireLogger.initialize(
             loggers: [
                 SystemLogger(),
-                CocoaLumberjackLogger(),
+                cocoaLumberjackLogger,
                 WireAnalytics.Datadog.shared
             ]
         )
 
+        // TODO: fix
         // pass tags to Datadog through WireLogger
         OldWireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
         OldWireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)

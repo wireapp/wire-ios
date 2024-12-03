@@ -19,9 +19,34 @@
 import CocoaLumberjackSwift
 import Foundation
 import WireSystem
+import WireLogging
+
+struct NewCocoaLumberjackLogger: WireLoggingProvider {
+
+    var tag: Tag
+    var logger: CocoaLumberjackLogger
+
+    func log(level: Level, message: WireLogMessage) {
+        fatalError()
+//        switch level {
+//        case .debug:
+//            logger.debug(message, attributes: <#T##LogAttributes...##LogAttributes#>)
+//        case .info:
+//            <#code#>
+//        case .notice:
+//            <#code#>
+//        case .warn:
+//            <#code#>
+//        case .error:
+//            <#code#>
+//        case .critical:
+//            <#code#>
+//        }
+    }
+}
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
-final class CocoaLumberjackLogger: LoggerProtocol {
+final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
 

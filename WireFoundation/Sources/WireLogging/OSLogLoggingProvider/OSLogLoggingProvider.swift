@@ -16,35 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import os
-import Foundation
+public import os
 
-public final class OSLogLoggingSystem: WireLoggingSystem {
+public struct OSLogLoggingProvider: WireLoggingProvider {
 
-//    private var loggers = [Tag: Logger]()
+    public let tag: Tag
 
-    public func log(tag: Tag, level: Level, message: WireLogMessage) {
+    private var logger: Logger
+
+    public init(tag: Tag, logger: Logger) {
+        self.tag = tag
+        self.logger = logger
+    }
+
+    public func log(level: Level, message: WireLogMessage) {
         let level = level.mappedToOSLogType()
         let attributes = message.interpolation.attributes.map { "[\($0)]" }
         let message = (attributes + [message.interpolation.content])
             .joined(separator: " ")
-        logger(for: tag)
-            .log(level: level, "\(message, privacy: .public)")
-    }
-
-    private func logger(for tag: Tag) -> Logger {
-        fatalError()
-//        if let logger = loggers[tag] {
-//            return logger
-//        }
-//
-//        let logger = Logger(subsystem: subsystem, category: tag.rawValue)
-//        loggers[tag] = logger
-//        return logger
-    }
-
-    private var subsystem: String {
-        Bundle.main.bundleIdentifier!
+        logger.log(level: level, "\(message, privacy: .public)")
     }
 }
 
