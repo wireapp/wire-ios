@@ -45,10 +45,17 @@ public enum WireAnalytics {
         let cocoaLumberjackLogger = CocoaLumberjackLogger()
         WireLogger.setup { tag in
             AggregatedLoggingProvider(tag: tag) { tag in
-                [
+                var datadogLogger = NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
+                if tag == "system" {
+                    datadogLogger.additionalAttributes = [
+                        .processId: "\(ProcessInfo.processInfo.processIdentifier)",
+                        .processName: ProcessInfo.processInfo.processName
+                    ]
+                }
+                return [
                     OSLogLoggingProvider(logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
                     NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
-                    NewWireDatadogLogger(tag: tag, logger: WireAnalytics.Datadog.shared)
+                    datadogLogger
                 ]
             }
         }
@@ -60,7 +67,6 @@ public enum WireAnalytics {
             ]
         )
 
-        // TODO: fix
         // pass tags to Datadog through WireLogger
         OldWireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
         OldWireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)

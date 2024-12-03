@@ -24,22 +24,27 @@ import WireLogging
 struct NewWireDatadogLogger: WireLoggingProvider {
 
     var tag: Tag
+    var additionalAttributes = LogAttributes()
     var logger: WireDatadog
 
     func log(level: Level, message: WireLogMessage) {
+
+        var attributes = additionalAttributes
+        attributes[.tag] = tag.rawValue
+
         switch level {
         case .debug:
-            logger.debug(message.content, attributes: [.tag: tag.rawValue])
+            logger.debug(message.content, attributes: attributes)
         case .info:
-            logger.info(message.content, attributes: [.tag: tag.rawValue])
+            logger.info(message.content, attributes: attributes)
         case .notice:
-            logger.notice(message.content, attributes: [.tag: tag.rawValue])
+            logger.notice(message.content, attributes: attributes)
         case .warn:
-            logger.warn(message.content, attributes: [.tag: tag.rawValue])
+            logger.warn(message.content, attributes: attributes)
         case .error:
-            logger.error(message.content, attributes: [.tag: tag.rawValue])
+            logger.error(message.content, attributes: attributes)
         case .critical:
-            logger.critical(message.content, attributes: [.tag: tag.rawValue])
+            logger.critical(message.content, attributes: attributes)
         }
     }
 }
