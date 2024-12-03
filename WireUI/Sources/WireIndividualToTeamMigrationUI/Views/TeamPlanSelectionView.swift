@@ -52,7 +52,6 @@ struct TeamPlanSelectionView: View {
                     }
                 }
             }
-            // TODO: Add a "link" Text Style?
             Button(
                 action: { },
                 label: {

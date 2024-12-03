@@ -35,7 +35,6 @@ public struct SelfProfileViewCallToActionBanner: View {
     }
 
     public var body: some View {
-        // if the device screen width is less than 400 (iPhone mini is 375), use a smaller padding
         contentView(actionCallback: actionCallback)
             .padding(8)
             .bannerBackground()

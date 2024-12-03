@@ -27,7 +27,7 @@ struct TeamNameView: View {
     }
 
     let actionCallback: (Action) -> Void
-    @State var teamName: String = ""
+    @State private var teamName: String = ""
 
     var body: some View {
         VStack(alignment: .leading) {

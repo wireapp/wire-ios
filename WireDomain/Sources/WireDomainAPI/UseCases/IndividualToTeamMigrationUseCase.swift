@@ -28,6 +28,8 @@ public struct IndividualToTeamMigrationResult {
     }
 }
 
+// sourcery: AutoMockable
+/// Sends a request to the backend to migrate the user to a team.
 public protocol IndividualToTeamMigrationUseCase {
     func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

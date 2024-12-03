@@ -27,8 +27,8 @@ struct ConfirmationView: View {
     }
 
     let actionCallback: (Action) -> Void
-    @State var migrationConfirmed: Bool = false
-    @State var termsAccepted: Bool = false
+    @State private var migrationConfirmed: Bool = false
+    @State private var termsAccepted: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 56) {
