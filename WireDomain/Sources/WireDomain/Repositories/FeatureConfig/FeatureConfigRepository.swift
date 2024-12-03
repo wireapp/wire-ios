@@ -17,6 +17,7 @@
 //
 
 import Combine
+import WireLogging
 import WireAPI
 import WireDataModel
 

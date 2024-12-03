@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireSystem
+import WireLogging
 
 /// Process conversation create events.
 

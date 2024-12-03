@@ -18,6 +18,7 @@
 
 import CoreData
 import WireAPI
+import WireLogging
 import WireDataModel
 
 // sourcery: AutoMockable

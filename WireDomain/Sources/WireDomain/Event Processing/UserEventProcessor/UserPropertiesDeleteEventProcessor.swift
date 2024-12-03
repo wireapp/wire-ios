@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireSystem
+import WireLogging
 
 /// Process user properties delete events.
 

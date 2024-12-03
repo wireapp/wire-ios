@@ -17,6 +17,7 @@
 		591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */; };
 		591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01BDA5442C20762200636E50 /* WireDataModelSupport.framework */; };
 		594AF2062CF7358F00478C64 /* AllTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 594AF2042CF7358F00478C64 /* AllTests.xctestplan */; };
+		59537CDD2CFF90D100920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDC2CFF90D100920B59 /* WireLogging */; };
 		598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042C2C89C63100B64D71 /* WireFoundation */; };
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
@@ -110,7 +111,7 @@
 		C9C8FDD32C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCA2C9DBE0E00702B91 /* UserLegalHoldDisableEventProcessorTests.swift */; };
 		C9C8FDD42C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C8FDCB2C9DBE0E00702B91 /* UserLegalholdRequestEventProcessorTests.swift */; };
 		C9D574582CEB9FB400012A0E /* ConversationRenameEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574572CEB9FB400012A0E /* ConversationRenameEventProcessorTests.swift */; };
-		C9D57A8A2CF732A500012A0E /* MessageLocalStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */; };
+		C9D57A8A2CF732A500012A0E /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9D57A932CF7556800012A0E /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D57A922CF7556800012A0E /* ConversationRepositoryTests.swift */; };
 		C9D57B232CF75B3700012A0E /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
@@ -360,6 +361,7 @@
 			files = (
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
 				591B6E452C8B09BA009F8A7B /* WireDataModel.framework in Frameworks */,
+				59537CDD2CFF90D100920B59 /* WireLogging in Frameworks */,
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
 			);
@@ -556,7 +558,6 @@
 			children = (
 				C96B756E2CDCFFEB003A85EB /* Mock */,
 				C96B755C2CDBB176003A85EB /* ConversationLocalStoreTests.swift */,
-				C98433F42CCBC290009723D4 /* MessageLocalStoreTests.swift */,
 				C96B757A2CDDEDC4003A85EB /* ConversationLabelsLocalStoreTests.swift */,
 				C96B75762CDD154C003A85EB /* UpdateEventsLocalStoreTests.swift */,
 				C96B755E2CDBCD24003A85EB /* UserLocalStoreTests.swift */,
@@ -1023,6 +1024,7 @@
 			packageProductDependencies = (
 				59909A5D2C5BBEA8009C41DE /* WireAPI */,
 				598D042C2C89C63100B64D71 /* WireFoundation */,
+				59537CDC2CFF90D100920B59 /* WireLogging */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -1227,7 +1229,6 @@
 				EEAD0A132C46A38200CC8658 /* TeamMemberLeaveEventProcessor.swift in Sources */,
 				EEAD0A262C46AD4D00CC8658 /* UserLegalholdRequestEventProcessor.swift in Sources */,
 				EEAD09FE2C46774200CC8658 /* ConversationMemberUpdateEventProcessor.swift in Sources */,
-				EEAD09F42C46709800CC8658 /* ConversationCodeUpdateEventProcessor.swift in Sources */,
 				C96B757F2CDDEEAE003A85EB /* ConversationLabelsModelMappings.swift in Sources */,
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EECC35A82C2EB70400679448 /* SyncState.swift in Sources */,
@@ -1258,7 +1259,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9D57B232CF75B3700012A0E /* FeatureConfigRepositoryTests.swift in Sources */,
-				C9D57A8A2CF732A500012A0E /* MessageLocalStoreTests.swift in Sources */,
+				C9D57A8A2CF732A500012A0E /* (null) in Sources */,
 				C9F691292C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift in Sources */,
 				C96B757B2CDDEDC4003A85EB /* ConversationLabelsLocalStoreTests.swift in Sources */,
 				C96B75292CDB7688003A85EB /* ConversationMemberUpdateEventProcessorTests.swift in Sources */,
@@ -1690,6 +1691,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		59537CDC2CFF90D100920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		598D042C2C89C63100B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
