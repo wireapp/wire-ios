@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 extension ConversationContentViewController {

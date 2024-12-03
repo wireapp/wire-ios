@@ -18,6 +18,7 @@
 
 import Foundation
 import os.log
+import WireLogging
 import ZipArchive
 import WireLogging
 

@@ -285,6 +285,7 @@
 		591B6E132C8B092B009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
+		59537D892CFF9E7700920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D882CFF9E7700920B59 /* WireLogging */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
 		598D04362C89C6FB00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04352C89C6FB00B64D71 /* WireFoundation */; };
 		598D04392C89C70500B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04382C89C70500B64D71 /* WireFoundation */; };
@@ -1430,7 +1431,7 @@
 				59B99FAE2C89DF7B00201827 /* WireDomainPackage in Frameworks */,
 				598D04362C89C6FB00B64D71 /* WireFoundation in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
-				5905C5B62CF5D791005DB864 /* WireLogging in Frameworks */,
+				59537D892CFF9E7700920B59 /* WireLogging in Frameworks */,
 				01F0F8922CCA2B2C00FE4170 /* avs.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
 			);
@@ -2885,7 +2886,7 @@
 				598D04352C89C6FB00B64D71 /* WireFoundation */,
 				59B99FAD2C89DF7B00201827 /* WireDomainPackage */,
 				E9C60E912C259F3C004E5F13 /* WireAnalytics */,
-				5905C5B52CF5D791005DB864 /* WireLogging */,
+				59537D882CFF9E7700920B59 /* WireLogging */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -4107,7 +4108,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalyticsSupport;
 		};
-		5905C5B52CF5D791005DB864 /* WireLogging */ = {
+		59537D882CFF9E7700920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};

@@ -18,6 +18,7 @@
 
 import Foundation
 import UserNotifications
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 

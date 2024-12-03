@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {

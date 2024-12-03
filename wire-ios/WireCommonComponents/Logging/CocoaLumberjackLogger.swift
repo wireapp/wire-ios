@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import WireLogging
 import WireSystem
 import WireLogging
 

@@ -18,6 +18,7 @@
 
 import WireAnalytics
 import WireDatadog
+import WireLogging
 import WireSystem
 import WireLogging
 
@@ -49,7 +50,7 @@ struct NewWireDatadogLogger: WireLoggingProvider {
     }
 }
 
-extension WireDatadog: WireSystem.LoggerProtocol {
+extension WireDatadog: LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(
             level: .debug,

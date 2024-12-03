@@ -18,6 +18,7 @@
 
 import AppAuth
 import Foundation
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 import WireUtilities

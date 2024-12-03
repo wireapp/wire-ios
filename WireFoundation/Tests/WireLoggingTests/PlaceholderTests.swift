@@ -16,27 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
-import WireLogging
+import XCTest
 
-public extension NSManagedObjectContext {
+@testable import WireLogging
 
-    @objc
-    func tearDownCryptoStack() {
-        proteusProvider.perform(
-            withProteusService: { _ in },
-            withKeyStore: { keyStore in keyStore.deleteAndCreateNewBox() }
-        )
+final class PlaceholderTests: XCTestCase {
 
-        proteusService = nil
-        mlsService = nil
-        do {
-            try coreCrypto?.tearDown()
-        } catch {
-            OldWireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
-        }
-        coreCrypto = nil
-    }
-
+    func testNothing() {}
 }

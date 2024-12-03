@@ -21,6 +21,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireLogging
 import WireNotificationEngine
 import WireRequestStrategy
 import WireSyncEngine

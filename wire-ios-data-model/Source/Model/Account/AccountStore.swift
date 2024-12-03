@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 private let log = OldWireLogger(tag: "Accounts")

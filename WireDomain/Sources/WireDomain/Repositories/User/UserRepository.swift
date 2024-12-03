@@ -20,6 +20,7 @@ import Foundation
 import WireAPI
 import WireDataModel
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.

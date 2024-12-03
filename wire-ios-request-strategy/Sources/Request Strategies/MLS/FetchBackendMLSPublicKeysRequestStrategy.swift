@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStrategy {
 

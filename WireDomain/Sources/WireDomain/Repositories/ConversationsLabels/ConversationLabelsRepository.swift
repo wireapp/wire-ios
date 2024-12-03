@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitates access to conversation labels related domain objects.

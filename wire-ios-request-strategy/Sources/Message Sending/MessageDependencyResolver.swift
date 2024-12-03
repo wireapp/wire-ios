@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MessageDependencyResolverInterface {

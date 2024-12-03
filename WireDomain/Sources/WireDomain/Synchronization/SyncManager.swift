@@ -20,6 +20,7 @@ import CoreData
 import Foundation
 import WireAPI
 import WireDataModel
+import WireLogging
 import WireSystem
 
 protocol SyncManagerProtocol {

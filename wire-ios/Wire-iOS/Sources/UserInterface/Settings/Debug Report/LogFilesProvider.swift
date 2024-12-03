@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSystem
 import ZipArchive
 

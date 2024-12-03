@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import struct WireSystem.OldWireLogger
+import WireLogging
 
 /// A placeholder container for AVSVideo to start the rendering only if the view is instantiated and setup.
 final class AVSVideoContainerView: UIView {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public protocol NotificationStreamSyncDelegate: AnyObject {
     func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool)

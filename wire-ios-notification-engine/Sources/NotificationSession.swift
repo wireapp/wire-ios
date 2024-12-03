@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 public enum NotificationSessionError: LocalizedError {

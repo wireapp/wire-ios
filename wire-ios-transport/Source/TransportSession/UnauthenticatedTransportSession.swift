@@ -18,7 +18,7 @@
 
 import CoreFoundation
 import Security
-import WireSystem
+import WireLogging
 
 public enum EnqueueResult {
     case success

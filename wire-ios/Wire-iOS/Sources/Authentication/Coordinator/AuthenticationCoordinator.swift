@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
 

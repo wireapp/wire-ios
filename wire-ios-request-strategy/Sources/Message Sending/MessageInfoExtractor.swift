@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 enum MessageInfoExtractorError: Error {
     case missingConversation

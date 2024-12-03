@@ -18,7 +18,9 @@
 
 import WireCryptobox
 import WireDataModel
+import WireLogging
 import WireTesting
+
 @testable import WireRequestStrategy
 
 class MessagingTestBase: ZMTBaseTest {

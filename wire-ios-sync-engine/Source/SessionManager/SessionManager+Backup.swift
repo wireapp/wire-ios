@@ -20,6 +20,7 @@ import Foundation
 import WireAnalytics
 import WireCryptobox
 import WireDataModel
+import WireLogging
 import WireUtilities
 import ZipArchive
 

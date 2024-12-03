@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 public struct OldWireLogger: LoggerProtocol, Sendable {
 
     public static func initialize(loggers: [any LoggerProtocol]) {
@@ -27,7 +29,7 @@ public struct OldWireLogger: LoggerProtocol, Sendable {
         provider = AggregatedLogger(loggers: loggers)
     }
 
-    private static nonisolated(unsafe) var provider: (any LoggerProtocol)?
+    private nonisolated(unsafe) static var provider: (any LoggerProtocol)?
 
     public let tag: String
 

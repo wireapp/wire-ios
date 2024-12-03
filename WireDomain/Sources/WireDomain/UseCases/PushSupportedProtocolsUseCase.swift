@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireDataModel
+import WireLogging
 import WireSystem
 
 // sourcery: AutoMockable

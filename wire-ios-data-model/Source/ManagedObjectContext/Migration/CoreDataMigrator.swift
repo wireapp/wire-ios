@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import WireLogging
 
 protocol CoreDataMigratorProtocol {
     associatedtype DatabaseVersion
