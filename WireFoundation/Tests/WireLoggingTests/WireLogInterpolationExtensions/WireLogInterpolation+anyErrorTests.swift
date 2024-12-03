@@ -57,7 +57,7 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
 
         // Then
         XCTAssertEqual(mockLogger.error_Invocations.count, 1)
-        XCTAssertEqual(mockLogger.error_Invocations.first?.content.contains("CustomError.simple"), true)
+        XCTAssert(mockLogger.error_Invocations.first?.content.contains("CustomError.simple") == true)
     }
 
     func testSimpleErrorIsLoggedWithSkippedObfuscation() {
@@ -69,7 +69,62 @@ final class WireLogInterpolationAnyErrorTests: XCTestCase {
 
         // Then
         XCTAssertEqual(mockLogger.error_Invocations.count, 1)
-        XCTAssertEqual(mockLogger.error_Invocations.first?.content.contains("CustomError.simple"), true)
+        XCTAssert(mockLogger.error_Invocations.first?.content.contains("CustomError.simple") == true)
+    }
+
+    func testWrappingErrorIsLoggedWithObfuscation() {
+        // Given
+        let error = CustomError.wrapping(NSFileProviderError(.directoryNotEmpty))
+
+        // When
+        WireLogInterpolation.isObfuscationRequired = true
+        mockLogger.error("caught error: \(error)")
+        WireLogInterpolation.isObfuscationRequired = false
+
+        // Then
+        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
+        XCTAssertEqual(mockLogger.error_Invocations.first?.content, "caught error: CustomError")
+    }
+
+    func testWrappingErrorIsLoggedWithSkippedObfuscation() {
+        // Given
+        let error = CustomError.wrapping(NSFileProviderError(.directoryNotEmpty))
+
+        // When
+        mockLogger.error("caught error: \(error, skipObfuscation: true)")
+
+        // Then
+        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
+        XCTAssert(mockLogger.error_Invocations.first?.content.contains("CustomError.wrapping(Error Domain=NSFileProviderErrorDomain Code=-1007") == true)
+    }
+
+    func testContainerErrorIsLoggedWithObfuscation() {
+        // Given
+        let error = CustomError.container(.init(sensibleInformation: "Lorem Ipsum"))
+
+        // When
+        WireLogInterpolation.isObfuscationRequired = true
+        mockLogger.error("caught error: \(error)")
+        WireLogInterpolation.isObfuscationRequired = false
+
+        // Then
+        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
+        XCTAssertEqual(mockLogger.error_Invocations.first?.content, "caught error: CustomError")
+    }
+
+    func testContainerErrorIsLoggedWithSkippedObfuscation() throws {
+        // Given
+        let error = CustomError.container(.init(sensibleInformation: "Lorem Ipsum"))
+
+        // When
+        mockLogger.error("caught error: \(error, skipObfuscation: true)")
+
+        // Then
+        XCTAssertEqual(mockLogger.error_Invocations.count, 1)
+        let content = try XCTUnwrap(mockLogger.error_Invocations.first?.content)
+        XCTAssertTrue(content.contains("CustomError.container"))
+        XCTAssertTrue(content.contains("SomeType"))
+        XCTAssertTrue(content.contains("Lorem Ipsum"))
     }
 }
 
