@@ -16,7 +16,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireAnalytics",
         "identifier" : "WireAnalyticsTests",
         "name" : "WireAnalyticsTests"
       }
