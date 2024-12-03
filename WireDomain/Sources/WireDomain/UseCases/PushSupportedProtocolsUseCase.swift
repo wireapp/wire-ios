@@ -96,7 +96,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
 
     private func remotelySupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mls,
+            name: .mls,
             type: Feature.MLS.Config.self
         )
 
@@ -125,7 +125,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
 
     private func currentMigrationState() async -> ProteusToMLSMigrationState {
         let mlsMigrationFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            with: .mlsMigration,
+            name: .mlsMigration,
             type: Feature.MLSMigration.Config.self
         )
 

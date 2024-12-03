@@ -191,8 +191,8 @@ public final class UserRepository: UserRepositoryProtocol {
     public func pullSelfUser() async throws {
         let selfUser = try await selfUserAPI.getSelfUser()
 
-        await userLocalStore.persistSelfUser(
-            from: selfUser
+        await userLocalStore.persistUser(
+            userInfo: selfUser.toDomainModel()
         )
     }
 
@@ -243,7 +243,7 @@ public final class UserRepository: UserRepositoryProtocol {
             let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             for user in userList.found {
-                await userLocalStore.persistUser(from: user)
+                await userLocalStore.persistUser(userInfo: user.toDomainModel())
             }
 
         } catch {
@@ -255,7 +255,7 @@ public final class UserRepository: UserRepositoryProtocol {
         from event: UserUpdateEvent
     ) async {
         await userLocalStore.updateUser(
-            from: event
+            userUpdateInfo: event.toDomainModel()
         )
     }
 

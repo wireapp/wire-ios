@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "至少1個字元";
 "conversation.create.guidance.toolong" = "字數過多";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "允許訪客";
 "conversation.create.guests.subtitle" = "開放這個對話與團隊以外的訪客。";
 "conversation.create.services.title" = "Allow services";

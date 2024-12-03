@@ -47,14 +47,14 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 
 actor ExpiringActivityManager {
 
-    let api: ExpiringActivityInterface
-    var task: Task<Void, Error>?
+    let api: any ExpiringActivityInterface
+    var task: Task<Void, any Error>?
 
     init() {
         self.init(api: ProcessInfo.processInfo)
     }
 
-    init(api: ExpiringActivityInterface) {
+    init(api: any ExpiringActivityInterface) {
         self.api = api
     }
 
@@ -90,7 +90,7 @@ actor ExpiringActivityManager {
         }
     }
 
-    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, Error> {
+    func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
         let task = Task {
             defer {
                 WireLogger.backgroundActivity.debug("Releasing semaphore")

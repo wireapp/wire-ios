@@ -59,7 +59,9 @@ public protocol TeamRepositoryProtocol {
     /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
     /// - Parameter membershipID: The id of the team member.
 
-    func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws
+    func storeTeamMemberNeedsBackendUpdate(
+        membershipID: UUID
+    ) async throws
 
     /// Pulls and stores legalhold info locally.
 
@@ -74,39 +76,69 @@ public class TeamRepository: TeamRepositoryProtocol {
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: create TeamLocalStore
-    private let context: NSManagedObjectContext
+    private let teamLocalStore: any TeamLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         selfTeamID: UUID,
         userRepository: any UserRepositoryProtocol,
-        teamsAPI: any TeamsAPI,
-        context: NSManagedObjectContext
+        teamLocalStore: any TeamLocalStoreProtocol,
+        teamsAPI: any TeamsAPI
     ) {
         self.selfTeamID = selfTeamID
         self.userRepository = userRepository
+        self.teamLocalStore = teamLocalStore
         self.teamsAPI = teamsAPI
-        self.context = context
     }
 
     // MARK: - Public
 
     public func pullSelfTeam() async throws {
         let team = try await fetchSelfTeamRemotely()
-        await storeTeamLocally(team)
+
+        await teamLocalStore.storeTeam(
+            id: team.id,
+            name: team.name,
+            creatorID: team.creatorID,
+            logoID: team.logoID,
+            logoKey: team.logoKey
+        )
     }
 
     public func pullSelfTeamRoles() async throws {
         let teamRoles = try await fetchSelfTeamRolesRemotely()
-        try await storeTeamRolesLocally(teamRoles)
+
+        let teamRolesInfo = teamRoles.map {
+            $0.toDomainModel()
+        }
+
+        try await teamLocalStore.storeTeamRoles(
+            selfTeamID: selfTeamID,
+            teamRolesInfo: teamRolesInfo
+        )
     }
 
     public func pullSelfTeamMembers() async throws {
         let teamMembers = try await fetchSelfTeamMembersRemotely()
-        try await storeTeamMembersLocally(teamMembers)
+
+        let teamMembersInfo = teamMembers.map {
+            $0.toDomainModel()
+        }
+
+        try await teamLocalStore.storeTeamMembers(
+            selfTeamID: selfTeamID,
+            teamMembersInfo: teamMembersInfo
+        )
+    }
+
+    public func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
+        let selfUserID = await teamLocalStore.selfUserID()
+
+        return try await teamsAPI.getLegalholdInfo(
+            for: selfTeamID,
+            userID: selfUserID
+        ).status
     }
 
     public func deleteMembership(
@@ -119,17 +151,13 @@ public class TeamRepository: TeamRepositoryProtocol {
             domain: domain
         )
 
-        let member = try await context.perform {
-            guard let member = user.membership else {
-                throw TeamRepositoryError.userNotAMemberInTeam(user: userID)
-            }
-
-            return member
+        guard let member = await teamLocalStore.userMembership(
+            user: user
+        ) else {
+            throw TeamRepositoryError.userNotAMemberInTeam(user: userID)
         }
 
-        let domain = await context.perform {
-            user.domain
-        }
+        let domain = await teamLocalStore.userDomain(user: user)
 
         try await userRepository.deleteUserAccount(
             id: userID,
@@ -137,36 +165,26 @@ public class TeamRepository: TeamRepositoryProtocol {
             at: date
         )
 
-        await context.perform { [context] in
-            context.delete(member)
-        }
+        await teamLocalStore.deleteMember(member)
     }
 
     public func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
-        try await context.perform { [context] in
-
-            guard let member = Member.fetch(
-                with: membershipID,
-                in: context
-            ) else {
-                throw TeamRepositoryError.failedToFindTeamMember(membershipID)
-            }
-
-            member.needsToBeUpdatedFromBackend = true
-
-            try context.save()
+        guard let member = await teamLocalStore.fetchMember(
+            id: membershipID
+        ) else {
+            throw TeamRepositoryError.failedToFindTeamMember(membershipID)
         }
+
+        await teamLocalStore.storeMember(
+            needsBackendUpdate: true,
+            member: member
+        )
     }
 
     public func pullSelfLegalholdInfo() async throws {
         let selfUser = await userRepository.fetchSelfUser()
 
-        let (selfUserID, selfClientID) = await context.perform {
-            let selfUserID: UUID = selfUser.remoteIdentifier
-            let selfClientID = selfUser.selfClient()?.remoteIdentifier
-
-            return (selfUserID, selfClientID)
-        }
+        let (selfUserID, selfClientID) = await teamLocalStore.selfUserInfo()
 
         let selfUserLegalHold = try await fetchSelfLegalholdInfo()
 
@@ -191,11 +209,7 @@ public class TeamRepository: TeamRepositoryProtocol {
     }
 
     public func fetchSelfLegalholdInfo() async throws -> TeamMemberLegalholdInfo {
-        let selfUser = await userRepository.fetchSelfUser()
-
-        let selfUserID: UUID = await context.perform {
-            selfUser.remoteIdentifier
-        }
+        let (selfUserID, _) = await teamLocalStore.selfUserInfo()
 
         return try await teamsAPI.getLegalholdInfo(
             for: selfTeamID,
@@ -213,79 +227,11 @@ public class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
-    private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
-        let selfUser = await userRepository.fetchSelfUser()
-
-        await context.perform { [context] in
-            let team = WireDataModel.Team.fetchOrCreate(
-                with: teamAPIModel.id,
-                in: context
-            )
-
-            _ = WireDataModel.Member.getOrUpdateMember(
-                for: selfUser,
-                in: team,
-                context: context
-            )
-
-            team.name = teamAPIModel.name
-            team.creator = ZMUser.fetchOrCreate(
-                with: teamAPIModel.creatorID,
-                domain: nil,
-                in: context
-            )
-            team.pictureAssetId = teamAPIModel.logoID
-            team.pictureAssetKey = teamAPIModel.logoKey
-            team.needsToBeUpdatedFromBackend = false
-        }
-    }
-
     private func fetchSelfTeamRolesRemotely() async throws -> [WireAPI.ConversationRole] {
         do {
             return try await teamsAPI.getTeamRoles(for: selfTeamID)
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func storeTeamRolesLocally(_ roles: [WireAPI.ConversationRole]) async throws {
-        try await context.perform { [context, selfTeamID] in
-            guard let team = WireDataModel.Team.fetch(
-                with: selfTeamID,
-                in: context
-            ) else {
-                throw TeamRepositoryError.teamNotFoundLocally
-            }
-
-            let existingRoles = team.roles
-
-            let localRoles = roles.map { role in
-                let localRole = Role.fetchOrCreate(
-                    name: role.name,
-                    teamOrConversation: .team(team),
-                    context: context
-                )
-
-                localRole.name = role.name
-                localRole.team = team
-
-                for action in role.actions {
-                    let action = Action.fetchOrCreate(
-                        name: action.name,
-                        in: context
-                    )
-
-                    localRole.actions.insert(action)
-                }
-
-                return localRole
-            }
-
-            for roleToDelete in existingRoles.subtracting(localRoles) {
-                context.delete(roleToDelete)
-            }
-
-            team.needsToDownloadRoles = false
         }
     }
 
@@ -297,72 +243,6 @@ public class TeamRepository: TeamRepositoryProtocol {
             )
         } catch {
             throw TeamRepositoryError.failedToFetchRemotely(error)
-        }
-    }
-
-    private func storeTeamMembersLocally(_ teamMembers: [WireAPI.TeamMember]) async throws {
-        try await context.perform { [context, selfTeamID] in
-            guard let team = WireDataModel.Team.fetch(
-                with: selfTeamID,
-                in: context
-            ) else {
-                throw TeamRepositoryError.teamNotFoundLocally
-            }
-
-            for member in teamMembers {
-                let user = ZMUser.fetchOrCreate(
-                    with: member.userID,
-                    domain: nil,
-                    in: context
-                )
-
-                let membership = Member.getOrUpdateMember(
-                    for: user,
-                    in: team,
-                    context: context
-                )
-
-                if let permissions = member.permissions {
-                    membership.permissions = Permissions(rawValue: permissions.selfPermissions)
-                }
-
-                if let creatorID = member.creatorID {
-                    membership.createdBy = ZMUser.fetchOrCreate(
-                        with: creatorID,
-                        domain: nil,
-                        in: context
-                    )
-                }
-
-                membership.createdAt = member.creationDate
-                membership.needsToBeUpdatedFromBackend = false
-            }
-        }
-    }
-}
-
-private extension ConversationAction {
-
-    var name: String {
-        switch self {
-        case .addConversationMember:
-            "add_conversation_member"
-        case .removeConversationMember:
-            "remove_conversation_member"
-        case .modifyConversationName:
-            "modify_conversation_name"
-        case .modifyConversationMessageTimer:
-            "modify_conversation_message_timer"
-        case .modifyConversationReceiptMode:
-            "modify_conversation_receipt_mode"
-        case .modifyConversationAccess:
-            "modify_conversation_access"
-        case .modifyOtherConversationMember:
-            "modify_other_conversation_member"
-        case .leaveConversation:
-            "leave_conversation"
-        case .deleteConversation:
-            "delete_conversation"
         }
     }
 

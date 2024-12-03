@@ -41,4 +41,12 @@ public protocol ConversationsAPI {
         in domain: String
     ) async throws -> Conversation
 
+    /// Fetches the guest link for a given conversation.
+    /// - parameter conversationID: The conversation identifier.
+    /// - returns: The conversation guest link.
+
+    func getConversationGuestLink(
+        conversationID: String
+    ) async throws -> String?
+
 }

@@ -57,9 +57,10 @@ extension ConversationLocalStore {
 
     func updateMLSStatus(
         from remoteConversation: Conversation,
-        for localConversation: ZMConversation
+        for localConversation: ZMConversation,
+        isMLSEnabled: Bool
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard isMLSEnabled else { return }
 
         await updateConversationIfNeeded(
             localConversation: localConversation,

@@ -146,6 +146,7 @@ final class SelfProfileViewController: UIViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     override func viewDidAppear(_ animated: Bool) {

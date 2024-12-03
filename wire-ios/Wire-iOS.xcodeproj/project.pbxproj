@@ -39,7 +39,7 @@
 		01BC68512CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68502CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift */; };
 		01BC68652CE496A500445243 /* EmptyPlaceholderContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC68642CE496A500445243 /* EmptyPlaceholderContainerView.swift */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
-		01C488B02C8A45F80066789E /* WireAnalytics_DatadogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C488AF2C8A45F80066789E /* WireAnalytics_DatadogTests.swift */; };
+		01D2C78F2CECC41D00F05E5E /* QRCodeScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D2C78E2CECC41D00F05E5E /* QRCodeScannerViewController.swift */; };
 		01D8E71A2BA39CE900B71CB7 /* PrivacyWarningChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */; };
 		01F5EAE42B712DD7009FD25D /* LogFileDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */; };
 		06024ABC29E69A860032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */; };
@@ -1164,6 +1164,7 @@
 		CB43DBC42CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
+		CB8E51E32CF89D9B00F7F01D /* ConversationFilterSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8E51E22CF89D9B00F7F01D /* ConversationFilterSelector.swift */; };
 		D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FA292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift */; };
 		D30880FE292E521D00DDEAB0 /* CallingActionsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FD292E521D00DDEAB0 /* CallingActionsInfoViewController.swift */; };
 		D3095761283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */; };
@@ -2009,12 +2010,11 @@
 		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		016DB6DD2C261A4900DEB81B /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		01874DD62C18581C00208716 /* DeveloperToolsContextItemsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperToolsContextItemsProvider.swift; sourceTree = "<group>"; };
-		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		01A5E047297FDAB500624B65 /* updateStylekit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateStylekit; sourceTree = "<group>"; };
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
 		01BC68502CE3AF9E00445243 /* EmptyConversationSearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyConversationSearchResultsView.swift; sourceTree = "<group>"; };
 		01BC68642CE496A500445243 /* EmptyPlaceholderContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPlaceholderContainerView.swift; sourceTree = "<group>"; };
-		01C488AF2C8A45F80066789E /* WireAnalytics_DatadogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireAnalytics_DatadogTests.swift; sourceTree = "<group>"; };
+		01D2C78E2CECC41D00F05E5E /* QRCodeScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeScannerViewController.swift; sourceTree = "<group>"; };
 		01D8E7192BA39CE900B71CB7 /* PrivacyWarningChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyWarningChecker.swift; sourceTree = "<group>"; };
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
 		06024ABB29E69A850032CC31 /* ConversationMessageFailedRecipientsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageFailedRecipientsCellDescription.swift; sourceTree = "<group>"; };
@@ -3244,6 +3244,7 @@
 		CB366A8F2CC7DE410083701F /* ArchivedListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedListViewModelTests.swift; sourceTree = "<group>"; };
 		CB43DBC32CE639E800BF5AEB /* FolderPickerViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerViewControllerBuilder.swift; sourceTree = "<group>"; };
 		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB8E51E22CF89D9B00F7F01D /* ConversationFilterSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFilterSelector.swift; sourceTree = "<group>"; };
 		CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoConvert.swift"; sourceTree = "<group>"; };
 		CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
 		CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioProcessing.swift; sourceTree = "<group>"; };
@@ -3904,6 +3905,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		595C04172CDE85E800DF6C57 /* MainController */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MainController; sourceTree = "<group>"; };
+		5983A3EE2CF86F9A002006F6 /* Logging */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Logging; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6274,7 +6276,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */,
-				01A5E043297FDAB500624B65 /* README.md */,
 				01A5E045297FDAB500624B65 /* Scripts */,
 				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
 				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
@@ -6752,6 +6753,7 @@
 			children = (
 				59AF77A02CC7FB39002438D1 /* AnyMainCoordinator.swift */,
 				596184AC2CC7B5F600787AF0 /* DefaultSettingsPropertyFactoryDelegate.swift */,
+				CB8E51E22CF89D9B00F7F01D /* ConversationFilterSelector.swift */,
 				5965E9722C9B1491001D8AE1 /* ConversationListViewController+MainConversationListProtocol.swift */,
 				59E67CB12CA8C356000F1C17 /* ConversationRootViewController+MainConversationProtocol.swift */,
 				597CAEB22CA40111002A1160 /* MainCoordinator+ArchivedListViewControllerDelegate.swift */,
@@ -7272,7 +7274,6 @@
 				A923F1C32428C562003F361F /* ZipFile */,
 				25CCE9D32BA1EA09002AB21F /* OtherUserDeviceDetailsViewTests.swift */,
 				E95D482E2C57974500F342EE /* CharacterInputFieldSnapshotTests.swift */,
-				01C488AF2C8A45F80066789E /* WireAnalytics_DatadogTests.swift */,
 			);
 			path = "Wire-iOS Tests";
 			sourceTree = "<group>";
@@ -7955,6 +7956,7 @@
 			children = (
 				EE593F9B2B73C3F0008D1109 /* DeepLinksView.swift */,
 				EE593F992B73C3E6008D1109 /* DeepLinksViewModel.swift */,
+				01D2C78E2CECC41D00F05E5E /* QRCodeScannerViewController.swift */,
 			);
 			path = DeepLinks;
 			sourceTree = "<group>";
@@ -8505,6 +8507,7 @@
 				E63C65642C1B456900354BB4 /* Analytics */,
 				594211BD2C90542100576053 /* FilePreviewGenerator */,
 				594211CE2C906FEC00576053 /* FileMetaDataGenerator */,
+				5983A3EE2CF86F9A002006F6 /* Logging */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
 				EF1EB850235F008F00575DD9 /* Bundle+InfoDict.swift */,
 				5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */,
@@ -8718,6 +8721,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5983A3EE2CF86F9A002006F6 /* Logging */,
 			);
 			name = WireCommonComponents;
 			packageProductDependencies = (
@@ -10193,6 +10199,7 @@
 				5E65A7A721304B6B008BFCC0 /* UserEmailUpdateCodeSentEventHandler.swift in Sources */,
 				EF3371C22216D9D9005ED048 /* ZMUser+Self.swift in Sources */,
 				EFEE97C823229CF5007A4702 /* ConversationListCellDelegate.swift in Sources */,
+				CB8E51E32CF89D9B00F7F01D /* ConversationFilterSelector.swift in Sources */,
 				7CED30721FD97748009F0DAC /* IconStringsBuilder.swift in Sources */,
 				E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */,
 				EFABC92420208D80001F9866 /* UIViewController+removeUserConfirmationUI.swift in Sources */,
@@ -10256,6 +10263,7 @@
 				1639A85D2265FC8800868AB9 /* UIAlertController+Availability.swift in Sources */,
 				16D74BEE2B5933D000160298 /* AddUsernameStepDescription.swift in Sources */,
 				BFE57B4B1D52335A00CB0806 /* ConversationPreviewViewController.swift in Sources */,
+				01D2C78F2CECC41D00F05E5E /* QRCodeScannerViewController.swift in Sources */,
 				5E628021221ED0A60039A8AB /* ProfileActionsFactory.swift in Sources */,
 				EF2D6D43228C741500D8DBF4 /* PhotoPermissionsControllerStrategy.swift in Sources */,
 				5EBF4A2B21B958F30021CFFC /* MessageToolboxDataSource.swift in Sources */,
@@ -10557,7 +10565,6 @@
 				A93E6104233B870300CEA65F /* ConversationListHeaderViewSnapshotTests.swift in Sources */,
 				A95C76C2240E915D0047CD29 /* CompositeMessageCellTests.swift in Sources */,
 				EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */,
-				01C488B02C8A45F80066789E /* WireAnalytics_DatadogTests.swift in Sources */,
 				63C4B3BD2C359D9900C09A93 /* SettingsDebugReportViewControllerSnapshotTests.swift in Sources */,
 				E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				EF2FEDC8228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift in Sources */,

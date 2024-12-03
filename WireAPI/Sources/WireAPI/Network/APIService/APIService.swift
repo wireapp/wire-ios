@@ -53,46 +53,6 @@ public final class APIService: APIServiceProtocol {
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
 
-    /// Create a new `APIService`.
-    ///
-    /// - Parameters:
-    ///   - clientID: The id of the self client.
-    ///   - backendURL: The url of the target backend.
-    ///   - authenticationStorage: The storage for authentication objects.
-    ///   - minTLSVersion: The minimum supported TLS version.
-
-    public convenience init(
-        userID: UUID,
-        clientID: String,
-        backendURL: URL,
-        minTLSVersion: TLSVersion,
-        cookieEncryptionKey: Data,
-        keychain: any KeychainProtocol
-    ) {
-        let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = configFactory.makeRESTAPISessionConfiguration()
-        let networkService = NetworkService(baseURL: backendURL)
-        let urlSession = URLSession(configuration: configuration)
-        networkService.configure(with: urlSession)
-
-        let cookieStorage = CookieStorage(
-            userID: userID,
-            cookieEncryptionKey: cookieEncryptionKey,
-            keychain: keychain
-        )
-
-        let authenticationManager = AuthenticationManager(
-            clientID: clientID,
-            cookieStorage: cookieStorage,
-            networkService: networkService
-        )
-
-        self.init(
-            networkService: networkService,
-            authenticationManager: authenticationManager
-        )
-    }
-
     init(
         networkService: NetworkService,
         authenticationManager: any AuthenticationManagerProtocol

@@ -930,7 +930,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn {
+        if mlsFeature.isEnabled {
             mlsService.commitPendingProposalsIfNeeded()
         }
 
@@ -964,7 +964,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
-        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+        let resolver = OneOnOneResolver(
+            migrator: OneOnOneMigrator(mlsService: mlsService),
+            isMLSEnabled: mlsFeature.isEnabled
+        )
 
         return ResolveOneOnOneConversationsUseCase(
             context: context,
@@ -974,7 +977,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard mlsFeature.isEnabled else { return }
 
         let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
@@ -985,7 +988,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func performPostQuickSyncE2EIActions() {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard mlsFeature.isEnabled else { return }
 
         checkExpiredCertificateRevocationLists()
         checkE2EICertificateExpiryStatus()

@@ -151,7 +151,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
-    private let backButtonDescription = BackButtonDescription()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -206,22 +205,17 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         super.viewDidLoad()
         setupTableView()
 
-        setCustomBackButton()
         setupNavigationBarAccessibility()
-    }
-
-    private func setCustomBackButton() {
-        let backButton = backButtonDescription.create()
-        navigationItem.backBarButtonItem = UIBarButtonItem(customView: backButton)
-        backButtonDescription.buttonTapped = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
     }
 
     func configureNavigationBarAppearance() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
+        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+        navigationItem.backButtonDisplayMode = .minimal
 
         // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance

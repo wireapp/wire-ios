@@ -70,7 +70,7 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             await withThrowingTaskGroup(of: Void.self) { taskGroup in
                 for connection in connections {
                     taskGroup.addTask {
-                        try await connectionsLocalStore.storeConnection(connection)
+                        try await connectionsLocalStore.storeConnection(connection.toDomainModel())
                     }
                 }
             }
@@ -80,7 +80,7 @@ public struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     public func updateConnection(
         _ connection: Connection
     ) async throws {
-        try await connectionsLocalStore.storeConnection(connection)
+        try await connectionsLocalStore.storeConnection(connection.toDomainModel())
     }
 
 }

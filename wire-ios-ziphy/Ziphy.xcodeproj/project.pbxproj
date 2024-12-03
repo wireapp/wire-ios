@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -96,6 +96,20 @@
 		EF2B16A52107247E007572DA /* ZiphHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZiphHelper.swift; sourceTree = "<group>"; };
 		EFEFAD1D206B8BF50046724E /* ZiphySearchResultsControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphySearchResultsControllerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D2641E2CF7215E0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = DBF380631B15C0B800369FB7 /* ZiphyTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2641D2CF721580005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2641E2CF7215E0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DBF380551B15C0B800369FB7 /* Frameworks */ = {
@@ -256,6 +270,7 @@
 		DBF380681B15C0B800369FB7 /* ZiphyTests */ = {
 			isa = PBXGroup;
 			children = (
+				59D2641D2CF721580005317F /* TestPlans */,
 				5EF5CDBB20F2005700CC98B0 /* MockResponses */,
 				5EF4A6D920F3A99F00A9EF22 /* Mocks */,
 				5EF5CDB720F1F99100CC98B0 /* ZiphyRequestGeneratorTests.swift */,
@@ -320,6 +335,9 @@
 			);
 			dependencies = (
 				DBF380671B15C0B800369FB7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D2641D2CF721580005317F /* TestPlans */,
 			);
 			name = ZiphyTests;
 			productName = ziphyTests;
@@ -534,7 +552,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;

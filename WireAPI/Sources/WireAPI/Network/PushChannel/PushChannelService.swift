@@ -35,44 +35,19 @@ public protocol PushChannelServiceProtocol {
 public final class PushChannelService: PushChannelServiceProtocol {
 
     private let networkService: NetworkService
-    private let authenticationStorage: any AuthenticationStorage
-
-    public convenience init(
-        backendWebSocketURL: URL,
-        authenticationStorage: any AuthenticationStorage,
-        minTLSVersion: TLSVersion
-    ) {
-        let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = factory.makeWebSocketSessionConfiguration()
-        let networkService = NetworkService(baseURL: backendWebSocketURL)
-        let urlSession = URLSession(
-            configuration: configuration,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: urlSession)
-
-        self.init(
-            networkService: networkService,
-            authenticationStorage: authenticationStorage
-        )
-    }
+    private let authenticationManager: any AuthenticationManagerProtocol
 
     init(
         networkService: NetworkService,
-        authenticationStorage: any AuthenticationStorage
+        authenticationManager: any AuthenticationManagerProtocol
     ) {
         self.networkService = networkService
-        self.authenticationStorage = authenticationStorage
+        self.authenticationManager = authenticationManager
     }
 
     public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {
         var request = request
-
-        guard let accessToken = await authenticationStorage.fetchAccessToken() else {
-            throw PushChannelServiceError.missingAccessToken
-        }
-
+        let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
         return PushChannel(webSocket: webSocket)

@@ -29,6 +29,18 @@ public enum MessageType: Sendable {
         date: Date
     )
 
+    case participantsRemoved(
+        participants: [(id: UUID, domain: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
+
+    case participantsAdded(
+        participants: [(id: UUID, domain: String?)],
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
+
     case mlsMigrationMLSNotSupportedForSelfUser
 
     case mlsMigrationMLSNotSupportedForOtherUser(
@@ -40,13 +52,13 @@ public enum MessageType: Sendable {
         date: Date
     )
 
-    case participantRemoved(
-        participant: (id: UUID, domain: String?),
-        sender: (id: UUID, domain: String?),
+    case newConversationCreated(
         date: Date
     )
 
-    case newConversationCreated(
+    case conversationNameChanged(
+        newName: String,
+        sender: (id: UUID, domain: String?),
         date: Date
     )
 
@@ -69,9 +81,16 @@ public enum MessageType: Sendable {
         date: Date
     )
 
+
     case messageTimerUpdate(
         sender: (id: UUID, domain: String?),
         date: Date,
         timeoutValue: Double
+    )
+
+    case readReceiptsStatus(
+        isEnabled: Bool,
+        sender: (id: UUID, domain: String?),
+        date: Date
     )
 }

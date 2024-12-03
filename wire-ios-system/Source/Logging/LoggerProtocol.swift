@@ -33,7 +33,7 @@ public protocol LoggerProtocol {
 
 extension LoggerProtocol {
 
-    func attributesDescription(from attributes: LogAttributes) -> String {
+    public func attributesDescription(from attributes: LogAttributes) -> String {
         var logAttributes = attributes
 
         // drop attributes used for visibility and category

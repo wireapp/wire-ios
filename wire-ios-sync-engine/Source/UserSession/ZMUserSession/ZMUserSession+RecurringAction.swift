@@ -23,7 +23,11 @@ extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
-            guard DeveloperFlag.enableMLSSupport.isOn else { return }
+            guard
+                let self,
+                mlsFeature.isEnabled else {
+                return
+            }
 
             Task { [weak self] in
                 do {

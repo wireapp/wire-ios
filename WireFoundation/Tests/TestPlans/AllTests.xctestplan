@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "CCB02EA6-05CA-4923-B7E1-D3AB9673703B",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireFoundation",
+        "identifier" : "WireFoundationTests",
+        "name" : "WireFoundationTests"
+      }
+    }
+  ],
+  "version" : 1
+}

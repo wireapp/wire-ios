@@ -181,7 +181,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             withConfiguration: symbolConfiguration
         )!
 
-        var selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
+        let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
         case .favorites, .groups, .oneOnOne, .folder:
             filledFilterImage
         case .none:
@@ -341,7 +341,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileViewControllerBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }

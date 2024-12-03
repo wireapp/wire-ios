@@ -47,7 +47,7 @@ public final class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public final class ZMSLog: NSObject {
+public final class ZMSLog: NSObject, Sendable {
 
     public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (

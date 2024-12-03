@@ -1,0 +1,80 @@
+{
+  "configurations" : [
+    {
+      "id" : "F53C527D-E732-453A-9EFC-0D235CF0A426",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-NSShowNonLocalizedStrings YES"
+      }
+    ],
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireMainNavigationUITests",
+        "name" : "WireMainNavigationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireConversationListUITests",
+        "name" : "WireConversationListUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

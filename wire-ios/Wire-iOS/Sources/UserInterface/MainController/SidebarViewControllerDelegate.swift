@@ -42,7 +42,9 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }

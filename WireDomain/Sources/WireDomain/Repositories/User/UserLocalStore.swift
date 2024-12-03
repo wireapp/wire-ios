@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
-import WireAPI
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -52,32 +50,19 @@ public protocol UserLocalStoreProtocol {
         domain: String?
     ) async -> ZMUser
 
+    /// Fetches or creates users locally.
+    ///
+    /// - parameters:
+    ///     - userIDs: The users id to fetch or create locally.
+    /// - returns: A list of users fetched or created locally.
+
+    func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser>
+
     /// Removes user push token from storage.
 
     func deletePushToken()
-
-    /// Fetches or creates a user client locally.
-    ///
-    /// - parameters:
-    ///     - id: The user client id to find or create locally.
-    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
-
-    func fetchOrCreateUserClient(
-        id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
-
-    /// Updates the user client informations locally.
-    ///
-    /// - parameters:
-    ///     - localClient: The user client to update locally.
-    ///     - remoteClient: The up-to-date remote user client.
-    ///     - isNewClient: A flag indicating whether the user client is new.
-
-    func updateUserClient(
-        _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.SelfUserClient,
-        isNewClient: Bool
-    ) async throws
 
     /// Adds a legal hold request to self.
     ///
@@ -133,15 +118,14 @@ public protocol UserLocalStoreProtocol {
 
     func markAccountAsDeleted(for user: ZMUser) async
 
+    // TODO: [WPB-10727] Merge these two methods into a single method
+    func persistUser(userInfo: NewUserInfo) async
+    func updateUser(userUpdateInfo: UserUpdateInfo) async
+
     /// Fetches all user IDs that have a one on one conversation
     /// - returns: A list of users' qualified IDs.
 
     func fetchAllUserIDsWithOneOnOneConversation() async throws -> [WireDataModel.QualifiedID]
-
-    // TODO: [WPB-10727] Merge these methods into a single method (also no API objects should be passed to local store)
-    func persistSelfUser(from selfUser: WireAPI.SelfUser) async
-    func persistUser(from user: WireAPI.User) async
-    func updateUser(from event: UserUpdateEvent) async
 }
 
 public final class UserLocalStore: UserLocalStoreProtocol {
@@ -280,20 +264,21 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func fetchOrCreateUserClient(
-        id: String
-    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
+    public func fetchOrCreateUsers(
+        userIDs: [(id: UUID, domain: String?)]
+    ) async -> Set<ZMUser> {
+
         await context.perform { [context] in
-            if let existingClient = UserClient.fetchExistingUserClient(
-                with: id,
-                in: context
-            ) {
-                return (existingClient, false)
-            } else {
-                let newClient = UserClient.insertNewObject(in: context)
-                newClient.remoteIdentifier = id
-                return (newClient, true)
+
+            let users = userIDs.map {
+                ZMUser.fetchOrCreate(
+                    with: $0.id,
+                    domain: $0.domain,
+                    in: context
+                )
             }
+
+            return Set(users)
         }
     }
 
@@ -316,84 +301,52 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: refactor, do not pass API object (WireAPI.UserClient) directly, merge this method with updateUser method.
-    public func persistUser(from user: WireAPI.User) async {
+    public func persistUser(userInfo: NewUserInfo) async {
         let persistedUser = await fetchOrCreateUser(
-            id: user.id.uuid,
-            domain: user.id.domain
-        )
-
-        let previewProfileAssetIdentifier = user.assets.first(where: { $0.size == .preview })?.key
-        let completeProfileAssetIdentifier = user.assets.first(where: { $0.size == .complete })?.key
-
-        await updateUserMetadata(
-            persistedUser,
-            deleted: user.deleted == true,
-            name: user.name,
-            handle: user.handle,
-            teamID: user.teamID,
-            accentID: user.accentID,
-            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
-            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
-            email: user.email,
-            expiresAt: user.expiresAt,
-            serviceIdentifier: user.service?.id.transportString(),
-            providerIdentifier: user.service?.provider.transportString(),
-            supportedProtocols: user.supportedProtocols?.toDomainModel() ?? [.proteus]
-        )
-    }
-
-    public func persistSelfUser(
-        from selfUser: WireAPI.SelfUser
-    ) async {
-        let persistedSelfUser = await fetchSelfUser()
-        let previewProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .preview })?.key
-        let completeProfileAssetIdentifier = selfUser.assets?.first(where: { $0.size == .complete })?.key
-
-        await updateUserMetadata(
-            persistedSelfUser,
-            deleted: selfUser.deleted == true,
-            name: selfUser.name,
-            handle: selfUser.handle,
-            teamID: selfUser.teamID,
-            accentID: selfUser.accentID,
-            previewProfileAssetIdentifier: previewProfileAssetIdentifier,
-            completeProfileAssetIdentifier: completeProfileAssetIdentifier,
-            email: selfUser.email,
-            expiresAt: selfUser.expiresAt,
-            serviceIdentifier: selfUser.service?.id.transportString(),
-            providerIdentifier: selfUser.service?.provider.transportString(),
-            supportedProtocols: selfUser.supportedProtocols?.toDomainModel() ?? [.proteus]
+            id: userInfo.userID.uuid,
+            domain: userInfo.userID.domain
         )
 
         await context.perform {
-            persistedSelfUser.remoteIdentifier = selfUser.qualifiedID.uuid
-            persistedSelfUser.domain = selfUser.qualifiedID.domain
-            persistedSelfUser.managedBy = selfUser.managedBy?.rawValue
+            guard userInfo.deleted == false else {
+                return persistedUser.markAccountAsDeleted(at: Date())
+            }
+
+            persistedUser.name = userInfo.name
+            persistedUser.handle = userInfo.handle
+            persistedUser.teamIdentifier = userInfo.teamID
+            persistedUser.accentColorValue = Int16(userInfo.accentID)
+            persistedUser.previewProfileAssetIdentifier = userInfo.previewAssetKey
+            persistedUser.previewProfileAssetIdentifier = userInfo.completeAssetKey
+            persistedUser.emailAddress = userInfo.email
+            persistedUser.expiresAt = userInfo.expiresAt
+            persistedUser.serviceIdentifier = userInfo.serviceID?.transportString()
+            persistedUser.providerIdentifier = userInfo.serviceProvider?.transportString()
+            persistedUser.supportedProtocols = userInfo.supportedProtocols ?? [.proteus]
+            persistedUser.needsToBeUpdatedFromBackend = false
         }
     }
 
     // TODO: [WPB-10727] reuse `updateUserMetadata` from mentioned ticket's implementation to avoid code duplication
-    public func updateUser(from event: UserUpdateEvent) async {
+    public func updateUser(userUpdateInfo: UserUpdateInfo) async {
         let user = await fetchOrCreateUser(
-            id: event.userID
+            id: userUpdateInfo.userID
         )
 
         await context.perform {
-            if let name = event.name {
+            if let name = userUpdateInfo.name {
                 user.name = name
             }
 
-            if let email = event.email {
+            if let email = userUpdateInfo.email {
                 user.emailAddress = email
             }
 
-            if let handle = event.handle {
+            if let handle = userUpdateInfo.handle {
                 user.handle = handle
             }
 
-            if let accentColor = event.accentColorID {
+            if let accentColor = userUpdateInfo.accentColorID {
                 user.accentColorValue = Int16(accentColor)
             }
 
@@ -406,13 +359,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             /// changes to its assets
             /// we don't want to update them and keep these changes as is until they're synced.
             if !user.hasLocalModifications(forKeys: assetKeys) {
-                let previewAssetKey = event.assets?
-                    .first(where: { $0.size == .preview })
-                    .map(\.key)
+                let previewAssetKey = userUpdateInfo.previewAssetKey
 
-                let completeAssetKey = event.assets?
-                    .first(where: { $0.size == .complete })
-                    .map(\.key)
+                let completeAssetKey = userUpdateInfo.completeAssetKey
 
                 if let previewAssetKey {
                     user.previewProfileAssetIdentifier = previewAssetKey
@@ -423,105 +372,9 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 }
             }
 
-            user.supportedProtocols = event.supportedProtocols?.toDomainModel() ?? [.proteus]
+            user.supportedProtocols = userUpdateInfo.supportedProtocols ?? [.proteus]
 
             user.isPendingMetadataRefresh = false
         }
     }
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: refactor, do not pass API object (WireAPI.UserClient) directly
-    public func updateUserClient(
-        _ localClient: WireDataModel.UserClient,
-        from remoteClient: WireAPI.SelfUserClient,
-        isNewClient: Bool
-    ) async throws {
-        await context.perform { [context] in
-
-            localClient.label = remoteClient.label
-            localClient.type = remoteClient.type.toDomainModel()
-            localClient.model = remoteClient.model
-            localClient.deviceClass = remoteClient.deviceClass?.toDomainModel()
-            localClient.activationDate = remoteClient.activationDate
-            localClient.lastActiveDate = remoteClient.lastActiveDate
-            localClient.remoteIdentifier = remoteClient.id
-
-            let selfUser = ZMUser.selfUser(in: context)
-            localClient.user = localClient.user ?? selfUser
-
-            if isNewClient {
-                localClient.needsSessionMigration = selfUser.domain == nil
-            }
-
-            if localClient.isLegalHoldDevice, isNewClient {
-                selfUser.legalHoldRequest = nil
-                selfUser.needsToAcknowledgeLegalHoldStatus = true
-            }
-
-            if !localClient.isSelfClient() {
-                localClient.mlsPublicKeys = .init(
-                    ed25519: remoteClient.mlsPublicKeys?.ed25519,
-                    ed448: remoteClient.mlsPublicKeys?.ed448,
-                    p256: remoteClient.mlsPublicKeys?.p256,
-                    p384: remoteClient.mlsPublicKeys?.p384,
-                    p521: remoteClient.mlsPublicKeys?.p512
-                )
-            }
-
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
-
-            if selfClient != nil, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
-            }
-
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
-        }
-    }
-
-    // MARK: - Private
-
-    private func updateUserMetadata(
-        _ user: ZMUser,
-        deleted: Bool,
-        name: String,
-        handle: String?,
-        teamID: UUID?,
-        accentID: Int,
-        previewProfileAssetIdentifier: String?,
-        completeProfileAssetIdentifier: String?,
-        email: String?,
-        expiresAt: Date?,
-        serviceIdentifier: String?,
-        providerIdentifier: String?,
-        supportedProtocols: Set<WireDataModel.MessageProtocol>
-    ) async {
-        await context.perform {
-            guard deleted == false else {
-                return user.markAccountAsDeleted(at: .now)
-            }
-
-            user.name = name
-            user.handle = handle
-            user.teamIdentifier = teamID
-            user.accentColorValue = Int16(accentID)
-            user.previewProfileAssetIdentifier = previewProfileAssetIdentifier
-            user.completeProfileAssetIdentifier = completeProfileAssetIdentifier
-            user.emailAddress = email
-            user.expiresAt = expiresAt
-            user.serviceIdentifier = serviceIdentifier
-            user.providerIdentifier = providerIdentifier
-            user.supportedProtocols = supportedProtocols
-            user.needsToBeUpdatedFromBackend = false
-        }
-    }
-
 }

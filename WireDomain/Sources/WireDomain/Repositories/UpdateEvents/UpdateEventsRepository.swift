@@ -85,10 +85,6 @@ protocol UpdateEventsRepositoryProtocol {
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
-    enum Key: String, DefaultsKey {
-        case lastEventID
-    }
-
     // MARK: - Properties
 
     private let userID: UUID
@@ -96,11 +92,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let updateEventsAPI: any UpdateEventsAPI
     private let pushChannel: any PushChannelProtocol
     private let updateEventDecryptor: any UpdateEventDecryptorProtocol
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: create UpdateEventsLocalStore
-    private let eventContext: NSManagedObjectContext
-    private let storage: PrivateUserDefaults<Key>
-
+    private let updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
@@ -112,19 +104,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         updateEventsAPI: any UpdateEventsAPI,
         pushChannel: any PushChannelProtocol,
         updateEventDecryptor: any UpdateEventDecryptorProtocol,
-        eventContext: NSManagedObjectContext,
-        sharedUserDefaults: UserDefaults
+        updateEventsLocalStore: any UpdateEventsLocalStoreProtocol
     ) {
         self.userID = userID
         self.selfClientID = selfClientID
         self.updateEventsAPI = updateEventsAPI
         self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
-        self.eventContext = eventContext
-        self.storage = PrivateUserDefaults(
-            userID: userID,
-            storage: sharedUserDefaults
-        )
+        self.updateEventsLocalStore = updateEventsLocalStore
     }
 
     // MARK: - Pull pending events
@@ -132,12 +119,12 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func pullPendingEvents() async throws {
         WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
-        guard let lastEventID = storage.getUUID(forKey: .lastEventID) else {
+        guard let lastEventID = updateEventsLocalStore.lastEventID() else {
             throw UpdateEventsRepositoryError.lastEventIDMissing
         }
 
         // We'll insert new events from this index.
-        var currentIndex = try await indexOfLastEventEnvelope() + 1
+        var currentIndex = try await updateEventsLocalStore.indexOfLastEventEnvelope() + 1
 
         // Events are fetched in batches.
         for try await envelopes in updateEventsAPI.getUpdateEvents(
@@ -168,8 +155,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                     attributes: [.eventEnvelopeID: envelope.id]
                 )
 
-                try await persistEventEnvelope(
-                    decryptedEnvelope,
+                let decryptedEnvelopeData = try encoder.encode(decryptedEnvelope)
+
+                try await updateEventsLocalStore.persistEventEnvelope(
+                    decryptedEnvelopeData,
                     index: currentIndex
                 )
 
@@ -192,47 +181,11 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         storeLastEventEnvelopeID(lastEvent.id)
     }
 
-    private func indexOfLastEventEnvelope() async throws -> Int64 {
-        try await eventContext.perform { [eventContext] in
-            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
-            request.fetchBatchSize = 1
-            let lastEnvelope = try eventContext.fetch(request).first
-            return lastEnvelope?.sortIndex ?? 0
-        }
-    }
-
-    private func persistEventEnvelope(
-        _ eventEnvelope: UpdateEventEnvelope,
-        index: Int64
-    ) async throws {
-        try await eventContext.perform { [eventContext, encoder] in
-            let data = try encoder.encode(eventEnvelope)
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = data
-            storedEventEnvelope.sortIndex = index
-            try eventContext.save()
-        }
-    }
-
     // MARK: - Fetch pending events
 
     func fetchNextPendingEvents(limit: UInt) async throws -> [UpdateEventEnvelope] {
-        let payloads = try await fetchStoredEventEnvelopePayloads(limit: limit)
+        let payloads = try await updateEventsLocalStore.fetchStoredEventEnvelopePayloads(limit: limit)
         return try decodeEventEnvelopes(payloads)
-    }
-
-    private func fetchStoredEventEnvelopePayloads(limit: UInt) async throws -> [Data] {
-        try await eventContext.perform { [eventContext] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                request.returnsObjectsAsFaults = false
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                return storedEventEnvelopes.map(\.data)
-            } catch {
-                throw UpdateEventsRepositoryError.failedToFetchStoredEvents(error)
-            }
-        }
     }
 
     private func decodeEventEnvelopes(_ payloads: [Data]) throws -> [UpdateEventEnvelope] {
@@ -248,18 +201,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Delete pending events
 
     func deleteNextPendingEvents(limit: UInt) async throws {
-        try await eventContext.perform { [eventContext] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
-                storedEventEnvelopes.forEach(eventContext.delete)
-                try eventContext.save()
-            } catch {
-                throw UpdateEventsRepositoryError.failedToDeleteStoredEvents(error)
-            }
-        }
+        try await updateEventsLocalStore.deleteNextPendingEvents(limit: limit)
     }
 
     // MARK: - Live events
@@ -294,7 +236,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             attributes: [.eventEnvelopeID: id]
         )
 
-        storage.setUUID(id, forKey: .lastEventID)
+        updateEventsLocalStore.storeLastEventID(id: id)
     }
 
 }
