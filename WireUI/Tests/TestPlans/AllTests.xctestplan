@@ -21,58 +21,58 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSidebarUITests",
-        "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireDesignTests",
-        "name" : "WireDesignTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireUI",
         "identifier" : "WireMainNavigationUITests",
         "name" : "WireMainNavigationUITests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSettingsUITests",
+        "name" : "WireSettingsUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
         "identifier" : "WireMoveToFolderUITests",
         "name" : "WireMoveToFolderUITests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireUI",
         "identifier" : "WireAccountImageUITests",
         "name" : "WireAccountImageUITests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireUI",
         "identifier" : "WireConversationListUITests",
         "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "WireSettingsUITests",
-        "name" : "WireSettingsUITests"
       }
     }
   ],
