@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireLogging
+import WireSystem
 
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {

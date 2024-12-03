@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLogging
 import WireCryptobox
+import WireLogging
 
 @objc(ZMGenericMessageData)
 @objcMembers

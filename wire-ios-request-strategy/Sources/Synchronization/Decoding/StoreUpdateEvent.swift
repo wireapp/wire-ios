@@ -17,8 +17,8 @@
 //
 
 import CoreData
-import WireLogging
 import Foundation
+import WireLogging
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 @objc
 public enum ZMUpdateEventsPolicy: Int {

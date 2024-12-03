@@ -19,8 +19,8 @@
 import Foundation
 import UserNotifications
 import WireCommonComponents
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 final class NotificationService: UNNotificationServiceExtension {
 

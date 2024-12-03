@@ -18,8 +18,8 @@
 
 import WireAnalytics
 import WireDatadog
-import WireSystem
 import WireLogging
+import WireSystem
 
 extension WireDatadog: LoggerProtocol {
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

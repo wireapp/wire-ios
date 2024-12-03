@@ -18,8 +18,8 @@
 
 import CoreLocation
 import Foundation
-import WireLogging
 import WireCryptobox
+import WireLogging
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"

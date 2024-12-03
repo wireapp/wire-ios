@@ -18,8 +18,8 @@
 
 import Foundation
 import WireAPI
-import WireLogging
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.

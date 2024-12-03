@@ -17,8 +17,8 @@
 //
 
 import WireAPI
-import WireSystem
 import WireLogging
+import WireSystem
 
 /// Process conversation receipt mode update events.
 

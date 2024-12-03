@@ -19,8 +19,8 @@
 import Combine
 import Foundation
 import WireCoreCrypto
-import WireLogging
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {

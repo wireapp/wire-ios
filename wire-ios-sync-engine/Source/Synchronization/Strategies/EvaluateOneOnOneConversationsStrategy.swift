@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireRequestStrategy
 import WireLogging
+import WireRequestStrategy
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 

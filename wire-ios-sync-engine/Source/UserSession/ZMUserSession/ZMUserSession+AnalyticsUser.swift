@@ -18,8 +18,8 @@
 
 import Foundation
 import WireAnalytics
-import WireLogging
 import WireDataModel
+import WireLogging
 
 extension ZMUserSession: AnalyticsEventTrackerProvider {
 

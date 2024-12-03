@@ -18,11 +18,11 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
-import WireLogging
 import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireLogging
 import WireSyncEngine
 
 enum ApplicationLaunchType {

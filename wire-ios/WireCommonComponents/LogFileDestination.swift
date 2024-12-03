@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireLogging
+import WireSystem
 
 public enum LogFileDestination: CaseIterable, FileLoggerDestination {
 

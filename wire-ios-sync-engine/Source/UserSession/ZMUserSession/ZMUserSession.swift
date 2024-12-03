@@ -17,10 +17,10 @@
 //
 
 import Combine
-import WireLogging
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 

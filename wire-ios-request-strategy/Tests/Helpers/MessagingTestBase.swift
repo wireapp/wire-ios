@@ -18,8 +18,8 @@
 
 import WireCryptobox
 import WireDataModel
-import WireTesting
 import WireLogging
+import WireTesting
 
 @testable import WireRequestStrategy
 

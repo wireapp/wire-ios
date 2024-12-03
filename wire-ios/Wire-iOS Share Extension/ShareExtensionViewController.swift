@@ -22,11 +22,11 @@ import Social
 import UIKit
 import UniformTypeIdentifiers
 import WireCommonComponents
-import WireLogging
 import WireCoreCrypto
 import WireDataModel
 import WireDesign
 import WireLinkPreview
+import WireLogging
 import WireShareEngine
 
 typealias Completion = () -> Void

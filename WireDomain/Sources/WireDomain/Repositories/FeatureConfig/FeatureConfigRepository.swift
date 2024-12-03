@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireLogging
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Facilitates access to feature configs related domain objects.
 protocol FeatureConfigRepositoryProtocol {

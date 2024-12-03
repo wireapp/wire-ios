@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import avs
 import SwiftUI
 import UIKit
@@ -24,6 +23,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine

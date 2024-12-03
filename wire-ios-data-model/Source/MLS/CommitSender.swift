@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireLogging
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol CommitSending {

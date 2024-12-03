@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLogging
 import PushKit
+import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 

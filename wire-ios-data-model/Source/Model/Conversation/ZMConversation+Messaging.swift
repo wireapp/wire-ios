@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireLogging
+import WireUtilities
 
 public extension ZMConversation {
 

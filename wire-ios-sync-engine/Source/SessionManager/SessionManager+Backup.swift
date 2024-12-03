@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireLogging
 import WireAnalytics
 import WireCryptobox
 import WireDataModel
+import WireLogging
 import WireUtilities
 import ZipArchive
 

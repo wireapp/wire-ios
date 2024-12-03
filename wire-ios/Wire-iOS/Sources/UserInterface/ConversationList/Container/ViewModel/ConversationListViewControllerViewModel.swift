@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import UIKit
 import UserNotifications
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine

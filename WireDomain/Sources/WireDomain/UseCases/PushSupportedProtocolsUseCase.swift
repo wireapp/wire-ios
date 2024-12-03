@@ -18,8 +18,8 @@
 
 import WireAPI
 import WireDataModel
-import WireSystem
 import WireLogging
+import WireSystem
 
 // sourcery: AutoMockable
 /// Calculates and pushes the supported protocols to the backend

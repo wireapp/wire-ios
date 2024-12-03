@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLogging
 import WireDataModel
+import WireLogging
 import WireSystem
 
 public enum ConversationDeletionError: Error {

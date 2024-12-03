@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import Foundation
 import WireDataModel
+import WireLogging
 import WireUtilities
 
 struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider {

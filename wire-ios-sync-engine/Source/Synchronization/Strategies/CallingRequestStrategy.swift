@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireLogging
 import Foundation
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 
 @objcMembers

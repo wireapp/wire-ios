@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import avs
 import Foundation
 import MediaPlayer
+import WireLogging
 import WireSyncEngine
 
 enum PlayingState: UInt, CustomStringConvertible {

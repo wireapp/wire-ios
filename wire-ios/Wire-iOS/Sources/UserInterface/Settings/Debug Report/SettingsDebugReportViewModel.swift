@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireLogging
 import MessageUI
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 final class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {

@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireLogging
 import WireCoreCrypto
+import WireLogging
 
 public protocol E2EIRepositoryInterface {
 

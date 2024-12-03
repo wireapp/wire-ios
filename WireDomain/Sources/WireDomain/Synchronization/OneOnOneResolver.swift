@@ -18,8 +18,8 @@
 
 import CoreData
 import WireAPI
-import WireLogging
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
