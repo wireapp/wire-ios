@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 public struct WireLogger: LoggerProtocol, Sendable {
 
     public static func initialize(loggers: [any LoggerProtocol]) {

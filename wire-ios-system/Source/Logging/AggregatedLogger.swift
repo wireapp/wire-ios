@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 final class AggregatedLogger: LoggerProtocol {
     private var loggers: [any LoggerProtocol]
 

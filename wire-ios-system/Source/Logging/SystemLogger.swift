@@ -18,6 +18,7 @@
 
 import Foundation
 import OSLog
+import WireLogging
 
 public protocol FileLoggerDestination {
     var log: URL? { get }

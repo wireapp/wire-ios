@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// A `Flow` is a structured log class that reports the progress
 /// of a particular flow of code, marking the start, middle, and end
