@@ -52,7 +52,7 @@ public protocol ConversationRepositoryProtocol {
     ///     - timestamp: The date the conversation was created or last modified.
 
     func storeConversation(
-        _ conversation: WireAPI.Conversation,
+        _ conversation: WireDomain.Conversation,
         timestamp: Date
     ) async
 
@@ -264,7 +264,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await conversationsLocalStore.storeConversation(
-            conversation,
+            conversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: backendInfo.isFederationEnabled,
             isMLSEnabled: backendInfo.isMLSEnabled
@@ -292,7 +292,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func storeConversation(
-        _ conversation: WireAPI.Conversation,
+        _ conversation: Conversation,
         timestamp: Date
     ) async {
         await conversationsLocalStore.storeConversation(
@@ -335,7 +335,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for conversation in foundConversations {
                 taskGroup.addTask { [self] in
                     await storeConversation(
-                        conversation,
+                        conversation.toDomainModel(),
                         timestamp: .now
                     )
                 }
@@ -345,7 +345,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 taskGroup.addTask { [self] in
                     await conversationsLocalStore.storeConversation(
                         needsBackendUpdate: true,
-                        qualifiedId: id
+                        conversationID: id.uuid,
+                        conversationDomain: id.domain
                     )
                 }
             }
@@ -353,7 +354,8 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for id in failedConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
                     await conversationsLocalStore.storeFailedConversation(
-                        withQualifiedId: id
+                        conversationID: id.uuid,
+                        conversationDomain: id.domain
                     )
                 }
             }
@@ -375,7 +377,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await conversationsLocalStore.storeConversation(
-            mlsConversation,
+            mlsConversation.toDomainModel(),
             timestamp: .now,
             isFederationEnabled: backendInfo.isFederationEnabled,
             isMLSEnabled: backendInfo.isMLSEnabled

@@ -52,7 +52,7 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         }
 
         await repository.storeConversation(
-            conversation,
+            conversation.toDomainModel(),
             timestamp: timestamp
         )
     }

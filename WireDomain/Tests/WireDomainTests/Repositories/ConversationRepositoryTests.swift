@@ -141,7 +141,8 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: []
         )
 
-        conversationsLocalStore.storeConversationNeedsBackendUpdateQualifiedId_MockMethod = { _, _ in }
+        conversationsLocalStore
+            .storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
 
         // When
 
@@ -151,7 +152,11 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.storeConversationNeedsBackendUpdateQualifiedId_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsLocalStore.storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
+                .count,
+            1
+        )
     }
 
     func testPullFailedConversations_It_Invokes_Local_Store_And_Conversation_API_Methods() async throws {
@@ -171,7 +176,7 @@ final class ConversationRepositoryTests: XCTestCase {
             failed: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)]
         )
 
-        conversationsLocalStore.storeFailedConversationWithQualifiedId_MockMethod = { _ in }
+        conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -181,7 +186,10 @@ final class ConversationRepositoryTests: XCTestCase {
 
         XCTAssertEqual(conversationsAPI.getLegacyConversationIdentifiers_Invocations.count, 1)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations.count, 1)
-        XCTAssertEqual(conversationsLocalStore.storeFailedConversationWithQualifiedId_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_Invocations.count,
+            1
+        )
     }
 
     func testPullMLSOneToOneConversation_It_Invokes_Local_Store_And_API_Methods() async throws {
@@ -379,7 +387,7 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         await sut.storeConversation(
-            Scaffolding.conversation,
+            Scaffolding.conversation.toDomainModel(),
             timestamp: .now
         )
 

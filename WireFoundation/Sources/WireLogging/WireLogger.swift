@@ -29,7 +29,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
         provider = AggregatedLogger(loggers: loggers)
     }
 
-    private static nonisolated(unsafe) var provider: (any LoggerProtocol)?
+    private nonisolated(unsafe) static var provider: (any LoggerProtocol)?
 
     public let tag: String
 
