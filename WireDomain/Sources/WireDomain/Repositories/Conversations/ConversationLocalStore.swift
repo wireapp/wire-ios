@@ -275,6 +275,33 @@ public protocol ConversationLocalStoreProtocol {
         newName: String,
         conversation: ZMConversation
     ) async
+    
+    /// Updates or creates a MLS group locally.
+    /// - Parameters:
+    ///     - groupID: The MLS group ID.
+
+    func updateOrCreateMLSGroup(
+        groupID: MLSGroupID
+    ) async
+    
+    /// Stores the conversation MLS group ID and marks the mls status as ready.
+    /// - Parameters:
+    ///     - mlsGroupID: The MLS group ID related to the conversation.
+    ///     - conversation: The conversation to update the properties for.
+
+    func storeMLSConversationEstablished(
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async
+    
+    /// Fetches the other user qualified id (not self user) in a 1:1 conversation.
+    /// - Parameters:
+    ///     - conversation: The 1:1 conversation self and other user should be part of.
+    /// - returns: The other user `QualifiedID`.
+    
+    func fetchOtherUserIDInOneOnOneConversation(
+        conversation: ZMConversation
+    ) async -> WireDataModel.QualifiedID?
 
 }
 
@@ -309,6 +336,61 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+    
+    public func storeMLSConversationEstablished(
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.mlsStatus = .ready
+            conversation.mlsGroupID = mlsGroupID
+        }
+    }
+    
+    public func updateOrCreateMLSGroup(
+        groupID: MLSGroupID
+    ) async {
+        await context.perform { [context] in
+            
+            MLSGroup.updateOrCreate(
+                id: groupID,
+                inSyncContext: context
+            ) {
+                $0.lastKeyMaterialUpdate = .now
+            }
+        }
+    }
+    
+    public func fetchOtherUserIDInOneOnOneConversation(
+        conversation: ZMConversation
+    ) async -> WireDataModel.QualifiedID? {
+        await context.perform {
+            guard conversation.conversationType == .oneOnOne else {
+                WireLogger.conversation.info(
+                    "conversation type is not expected 'oneOnOne', aborting."
+                )
+                
+                return nil
+            }
+
+            guard
+                let otherUser = conversation.localParticipantsExcludingSelf.first,
+                let otherUserID = otherUser.remoteIdentifier,
+                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+            else {
+                WireLogger.conversation.warn(
+                    "failed to retrieve other user in 1:1 conversation"
+                )
+                
+                return nil
+            }
+
+            return QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+        }
+    }
 
     public func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
