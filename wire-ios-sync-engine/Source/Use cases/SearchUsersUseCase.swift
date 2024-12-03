@@ -21,7 +21,6 @@ import WireUtilities
 
 // sourcery: AutoMockable
 public protocol SearchUsersUseCaseProtocol {
-
     func invoke(
         query: String,
         options: SearchOptions,
@@ -80,6 +79,12 @@ public class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         )
 
         return try await withCheckedThrowingContinuation { continuation in
+            guard !Task.isCancelled else {
+                continuation.resume(throwing: CancellationError())
+                self.activeSearchTask = nil
+                return
+            }
+
             let task = searchDirectory.perform(request)
             task.addResultHandler { result, isCompleted in
                 if isCompleted {
