@@ -17,7 +17,11 @@
 //
 
 public struct WireLogMessage: ExpressibleByStringInterpolation, ExpressibleByStringLiteral {
-    public let interpolation: WireLogInterpolation
+
+    public var content: String { interpolation.content }
+    public var attributes: [WireLoggerAttribute] { interpolation.attributes }
+
+    let interpolation: WireLogInterpolation
 
     public init(stringLiteral value: StaticString) {
         var interpolation = WireLogInterpolation(literalCapacity: 1, interpolationCount: 0)

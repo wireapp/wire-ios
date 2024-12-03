@@ -29,17 +29,17 @@ struct NewWireDatadogLogger: WireLoggingProvider {
     func log(level: Level, message: WireLogMessage) {
         switch level {
         case .debug:
-            logger.debug(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.debug(message.content, attributes: [.tag: tag.rawValue])
         case .info:
-            logger.info(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.info(message.content, attributes: [.tag: tag.rawValue])
         case .notice:
-            logger.notice(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.notice(message.content, attributes: [.tag: tag.rawValue])
         case .warn:
-            logger.warn(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.warn(message.content, attributes: [.tag: tag.rawValue])
         case .error:
-            logger.error(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.error(message.content, attributes: [.tag: tag.rawValue])
         case .critical:
-            logger.critical(message.interpolation.content, attributes: [.tag: tag.rawValue])
+            logger.critical(message.content, attributes: [.tag: tag.rawValue])
         }
     }
 }
