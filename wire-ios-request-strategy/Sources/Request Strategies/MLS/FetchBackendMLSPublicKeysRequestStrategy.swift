@@ -88,6 +88,9 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
 
                     WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
                 } catch {
+                    // If we get an error while fetching MLS public keys,
+                    // it shouldn't fail the current phase. This is expected behavior for some customers.
+                    // More details here: https://wearezeta.atlassian.net/browse/WPB-14455
                     BackendInfo.isMLSEnabled = false
 
                     WireLogger.mls.info("slow sync can't fetch backend MLS public keys!")
