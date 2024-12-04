@@ -92,7 +92,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     payload: payload
                 )
 
-            case .v6:
+            case .v6, .v7:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation

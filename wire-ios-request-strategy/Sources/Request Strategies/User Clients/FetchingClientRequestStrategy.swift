@@ -404,7 +404,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             completionHandler()
             return
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
+        case .v1, .v2, .v3, .v4, .v5, .v6, .v7:
             WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 completionHandler()
