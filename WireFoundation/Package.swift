@@ -9,8 +9,6 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireLogging", targets: ["WireLogging"]),
-        .library(name: "WireLoggingSupport", targets: ["WireLoggingSupport"]),
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
@@ -30,17 +28,6 @@ let package = Package(
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
 
-        .target(name: "WireLogging"),
-        .target(
-            name: "WireLoggingSupport",
-            dependencies: ["WireLogging"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
-        ),
-        .testTarget(
-            name: "WireLoggingTests",
-            dependencies: ["WireLogging", "WireLoggingSupport", "WireTestingPackage"]
-        ),
-
         .target(
             name: "WireTestingPackage",
             dependencies: [
@@ -53,7 +40,6 @@ let package = Package(
 )
 
 for target in package.targets {
-    guard target.type != .plugin else { continue }
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("FullTypedThrows"),
