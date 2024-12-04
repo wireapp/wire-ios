@@ -21,7 +21,7 @@ import Foundation
 
 struct ServerTrustValidator: Sendable {
 
-    enum Error: Swift.Error {
+    enum Failure: Error {
         case cannotLoadCertificate
         case cannotRetrievePublicKey
         case evaluatingServerTrustFailed((any Swift.Error)?)
@@ -54,7 +54,7 @@ struct ServerTrustValidator: Sendable {
 
         let publicKeys = try matches.map { try Self.certificateKey(for: $0) }
         guard publicKeys.contains(publicKey) else {
-            throw Error.noMatchingPublicKey
+            throw Failure.noMatchingPublicKey
         }
     }
 
@@ -70,7 +70,7 @@ struct ServerTrustValidator: Sendable {
                     if success {
                         continuation.resume()
                     } else {
-                        continuation.resume(throwing: Error.evaluatingServerTrustFailed(error))
+                        continuation.resume(throwing: Failure.evaluatingServerTrustFailed(error))
                     }
                 }
             }
@@ -91,7 +91,7 @@ struct ServerTrustValidator: Sendable {
               let trust = secTrust,
               let result = SecTrustCopyKey(trust)
         else {
-            throw Error.noPublicKeyOnServerTrust
+            throw Failure.noPublicKeyOnServerTrust
         }
 
         return result
@@ -99,11 +99,11 @@ struct ServerTrustValidator: Sendable {
 
     private static func certificateKey(for value: PinnedKey) throws -> SecKey {
         guard let certificate = SecCertificateCreateWithData(nil, value.key as CFData) else {
-            throw Error.cannotLoadCertificate
+            throw Failure.cannotLoadCertificate
         }
 
         guard let publicKey = SecCertificateCopyKey(certificate) else {
-            throw Error.cannotRetrievePublicKey
+            throw Failure.cannotRetrievePublicKey
         }
 
         return publicKey
