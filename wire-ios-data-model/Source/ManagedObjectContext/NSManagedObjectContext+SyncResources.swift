@@ -19,35 +19,35 @@
 import Foundation
 
 // This contains some methods to pass the information through the persistence store metadata
-// that we need a slow sync after
+// that we need a sync resources after
 public extension NSManagedObjectContext {
 
-    private var migrationsNeedToSlowSyncKey: String {
-        "migrationsNeedToSlowSync"
+    private var migrationsNeedToSyncResourcesKey: String {
+        "migrationsNeedToSyncResources"
     }
 
-    internal enum MigrationNeedsSlowSyncError: Error {
+    internal enum migrationsNeedToSyncResourcesError: Error {
         case couldNotPersistMetadata
     }
 
-    /// use to trigger slow sync after some CoreData migrations
-    func setMigrationNeedsSlowSync() throws {
-        setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
+    /// use to trigger sync resources after some CoreData migrations
+    func setMigrationNeedsSyncResources() throws {
+        setPersistentStoreMetadata(1, key: migrationsNeedToSyncResourcesKey)
         if !makeMetadataPersistent() {
             throw MigrationNeedsSlowSyncError.couldNotPersistMetadata
         }
     }
 
-    /// checks if we need a slowSync after migrations
-    func readMigrationNeedsSlowSyncFlag() -> Bool {
-        let value = (persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
+    /// checks if we need a syncResources after migrations
+    func readMigrationNeedsSyncResourcesFlag() -> Bool {
+        let value = (persistentStoreMetadata(forKey: migrationsNeedToSyncResourcesKey) as? Int) ?? 0
         return value == 1
     }
 
-    /// Reset migration needs slow sync flag
-    func resetMigrationNeedsSlowSyncFlagIfNeeded() {
-        if readMigrationNeedsSlowSyncFlag() {
-            setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
+    /// Reset migration needs syncResources flag
+    func resetMigrationNeedsSyncResoucesFlagIfNeeded() {
+        if readMigrationNeedsSyncResourcesFlag() {
+            setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSyncResourcesKey)
         }
     }
 }

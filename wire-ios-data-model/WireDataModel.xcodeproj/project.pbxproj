@@ -33,6 +33,10 @@
 		0179629F2B83FCB200D6C7B6 /* NSManagedObjectContext+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0179629B2B83FCA800D6C7B6 /* NSManagedObjectContext+Migration.swift */; };
 		017962A82B85071B00D6C7B6 /* store2-112-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */; };
 		0179BC822BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */; };
+		017B55772CFFA6B8005FFBD4 /* ForceSyncResourcesPostAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017B55752CFFA6B8005FFBD4 /* ForceSyncResourcesPostAction.swift */; };
+		017B55792CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */; };
+		017B557D2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */; };
+		017B55A92CFFC310005FFBD4 /* store2-120-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		01B6A8A02B16268300E409A0 /* store2-111-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */; };
@@ -940,6 +944,11 @@
 		017962A72B85071B00D6C7B6 /* store2-112-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-112-0.wiredatabase"; sourceTree = "<group>"; };
 		017962AB2B853C8600D6C7B6 /* Databases Changelog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Databases Changelog.md"; sourceTree = "<group>"; };
 		0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseRemoteIdentifierUniquenessTests.swift; sourceTree = "<group>"; };
+		017B55732CFFA599005FFBD4 /* zmessaging2.120.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.120.0.xcdatamodel; sourceTree = "<group>"; };
+		017B55752CFFA6B8005FFBD4 /* ForceSyncResourcesPostAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForceSyncResourcesPostAction.swift; sourceTree = "<group>"; };
+		017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SyncResources.swift"; sourceTree = "<group>"; };
+		017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ForceSyncResources.swift"; sourceTree = "<group>"; };
+		017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-120-0.wiredatabase"; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		017F67952C207EDB00B6E02D /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		017F67962C207EDB00B6E02D /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
@@ -1940,6 +1949,14 @@
 			path = "Source/ManagedObjectContext/Migration/110-111";
 			sourceTree = SOURCE_ROOT;
 		};
+		017B55762CFFA6B8005FFBD4 /* 119-120 */ = {
+			isa = PBXGroup;
+			children = (
+				017B55752CFFA6B8005FFBD4 /* ForceSyncResourcesPostAction.swift */,
+			);
+			path = "119-120";
+			sourceTree = "<group>";
+		};
 		06034B6B26A8D31F003624B4 /* FileSharing */ = {
 			isa = PBXGroup;
 			children = (
@@ -2421,21 +2438,6 @@
 			path = ConversationRole;
 			sourceTree = "<group>";
 		};
-		BF10B5941E64591600E7036E /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				BF10B59E1E645A3A00E7036E /* Events */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		BF10B59E1E645A3A00E7036E /* Events */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Events;
-			sourceTree = "<group>";
-		};
 		BF1B98051EC313D100DE033B /* Teams */ = {
 			isa = PBXGroup;
 			children = (
@@ -2502,6 +2504,7 @@
 		E6A5BBA22B0E329800ACC236 /* Migration */ = {
 			isa = PBXGroup;
 			children = (
+				017B55762CFFA6B8005FFBD4 /* 119-120 */,
 				01586D412CAED03900C3BCE1 /* 118-119 */,
 				162F85A72BC58810007E2CB6 /* 115-116 */,
 				EE85C8AC2B55799F00D3182D /* 113-114 */,
@@ -2780,6 +2783,7 @@
 				F9A705CC1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.h */,
 				F9A705CD1CAEE01D00C2F5FE /* NSManagedObjectContext+zmessaging.m */,
 				0179629B2B83FCA800D6C7B6 /* NSManagedObjectContext+Migration.swift */,
+				017B55782CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift */,
 				54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */,
 				0649D1C424F6A542001DDC78 /* NSManagedObjectContext+ZMKeyValueStore.swift */,
 				F93265201D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift */,
@@ -2827,7 +2831,6 @@
 				F9A705F01CAEE01D00C2F5FE /* Message */,
 				F9A706031CAEE01D00C2F5FE /* User */,
 				F9A706141CAEE01D00C2F5FE /* UserClient */,
-				BF10B5941E64591600E7036E /* Analytics */,
 				F9A706191CAEE01D00C2F5FE /* ZMManagedObject+Internal.h */,
 				F9A7061A1CAEE01D00C2F5FE /* ZMManagedObject.m */,
 				1600D93B267A80D700970F99 /* ZMManagedObject+Fetching.swift */,
@@ -3189,6 +3192,7 @@
 				6391A7FB2A6FD7C900832665 /* DatabaseMigrationTests+UserClientUniqueness.swift */,
 				017962972B83FC1400D6C7B6 /* DatabaseMigrationTests+ConversationUniqueness.swift */,
 				017962962B83FC1400D6C7B6 /* DatabaseMigrationTests+TeamUniqueness.swift */,
+				017B557C2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift */,
 				017962952B83FC1400D6C7B6 /* DatabaseMigrationTests+UserUniqueness.swift */,
 				EE85C8B12B557C3D00D3182D /* DatabaseMigrationTests+OneOnOneConversation.swift */,
 				01F5AECD2CAC20BE00B01069 /* DatabaseMigrationTests+FixDuplicateOneOnOneConversations.swift */,
@@ -3664,6 +3668,7 @@
 			isa = PBXGroup;
 			children = (
 				01586D432CAED2B200C3BCE1 /* store2-119-0.wiredatabase */,
+				017B55A82CFFC310005FFBD4 /* store2-120-0.wiredatabase */,
 				E6BB79582C36EBE0003B821B /* store2-118-0.wiredatabase */,
 				16058B2D2BDBAF73003C82C2 /* store2-117-0.wiredatabase */,
 				162F85AA2BC58DF8007E2CB6 /* store2-116-0.wiredatabase */,
@@ -3950,6 +3955,7 @@
 				4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */,
 				54BAB40B24A4FA0800EBC400 /* store2-82-0.wiredatabase in Resources */,
 				EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */,
+				017B55A92CFFC310005FFBD4 /* store2-120-0.wiredatabase in Resources */,
 				06A0E60B281AE65D00E5F822 /* store2-99-0.wiredatabase in Resources */,
 				0604F8002651CAFE0016A71E /* store2-91-0.wiredatabase in Resources */,
 				163CE64E25ACE5DB0013C12D /* store2-89-0.wiredatabase in Resources */,
@@ -4096,6 +4102,7 @@
 				EE30F45B2592A357000FC69C /* AppLockController.PasscodeKeychainItem.swift in Sources */,
 				54563B761E0161730089B1D7 /* ZMMessage+Categorization.swift in Sources */,
 				E6067C002BAD9461005A7474 /* OneOnOneResolverError.swift in Sources */,
+				017B55772CFFA6B8005FFBD4 /* ForceSyncResourcesPostAction.swift in Sources */,
 				1670D0172317F92B003A143B /* ZMConversation+Team.swift in Sources */,
 				EED6C7142A30B94100CB8B60 /* MLSUserID.swift in Sources */,
 				EE28991E26B4422800E7BAF0 /* Feature.ConferenceCalling.swift in Sources */,
@@ -4498,6 +4505,7 @@
 				066A96FF25A88E510083E317 /* BiometricsState.swift in Sources */,
 				EEFC3EE72208311200D3091A /* ZMConversation+HasMessages.swift in Sources */,
 				16DF3B5D2285B13100D09365 /* UserClientType.swift in Sources */,
+				017B55792CFFB560005FFBD4 /* NSManagedObjectContext+SyncResources.swift in Sources */,
 				5986A08F2C6B744300299181 /* TextMessage.swift in Sources */,
 				54E3EE431F6194A400A261E3 /* ZMAssetClientMessage+GenericMessage.swift in Sources */,
 				5E39FC67225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift in Sources */,
@@ -4572,6 +4580,7 @@
 				F9A708441CAEEB7500C2F5FE /* ZMConnectionTests.m in Sources */,
 				F9FD75761E2E79BF00B4558B /* ConversationListObserverTests.swift in Sources */,
 				BF3493EB1EC34C0B00B0C314 /* TeamTests.swift in Sources */,
+				017B557D2CFFBCF5005FFBD4 /* DatabaseMigrationTests+ForceSyncResources.swift in Sources */,
 				F9A7085C1CAEED1B00C2F5FE /* ZMBaseManagedObjectTest.m in Sources */,
 				1670D01E231825BE003A143B /* ZMUserTests+Permissions.swift in Sources */,
 				59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */,
@@ -5214,6 +5223,7 @@
 		E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				017B55732CFFA599005FFBD4 /* zmessaging2.120.0.xcdatamodel */,
 				01586D3F2CAECE8B00C3BCE1 /* zmessaging2.119.0.xcdatamodel */,
 				E6BB79552C36DDA9003B821B /* zmessaging2.118.0.xcdatamodel */,
 				16058B262BDA8987003C82C2 /* zmessaging2.117.0.xcdatamodel */,
@@ -5255,7 +5265,7 @@
 				E6F443102B16294000D2B08A /* zmessaging2.81.0.xcdatamodel */,
 				E6F443182B16294000D2B08A /* zmessaging2.80.0.xcdatamodel */,
 			);
-			currentVersion = 01586D3F2CAECE8B00C3BCE1 /* zmessaging2.119.0.xcdatamodel */;
+			currentVersion = 017B55732CFFA599005FFBD4 /* zmessaging2.120.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
