@@ -18,7 +18,9 @@
 
 import Foundation
 
-struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+// TODO: [WPB-9612] make internal
+// This is public for testing purposes.
+public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
     let id: UUID
     let payload: [UpdateEventDecodingProxy]?
