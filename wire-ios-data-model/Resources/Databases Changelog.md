@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.120.0
+
+PostAction to fix issue with federation migration. It triggers a resyncResources to make sure users and conversations get the domain.
+
 ### 2.119.0
 
 * removed phoneNumber from User entity
