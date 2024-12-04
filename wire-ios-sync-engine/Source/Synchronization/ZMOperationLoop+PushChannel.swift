@@ -32,7 +32,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
             // fix it. Once we're sure it works, we should remove this.
             do {
                 let decoder = JSONDecoder.defaultDecoder
-                _ = try decoder.decode(UpdateEventEnvelope.self, from: data)
+                _ = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
             } catch {
                 WireLogger.updateEvent.error("failed to decode 'UpdateEventEnvelope': \(error)")
             }
