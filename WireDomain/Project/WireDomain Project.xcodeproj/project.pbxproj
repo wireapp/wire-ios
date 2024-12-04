@@ -19,7 +19,6 @@
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
 		C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */; };
-		C9D57A8A2CF732A500012A0E /* (null) in Sources */ = {isa = PBXBuildFile; };
 		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 /* End PBXBuildFile section */
@@ -356,14 +355,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		01D0DCAC2C1C8C880076CB1C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9D57A8A2CF732A500012A0E /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
