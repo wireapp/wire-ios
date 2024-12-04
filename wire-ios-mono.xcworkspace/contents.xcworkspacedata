@@ -131,6 +131,9 @@
       location = "group:WireFoundation">
    </FileRef>
    <FileRef
+      location = "group:WireLogging">
+   </FileRef>
+   <FileRef
       location = "group:WirePlugins">
    </FileRef>
 </Workspace>
