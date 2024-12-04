@@ -275,7 +275,7 @@ public protocol ConversationLocalStoreProtocol {
         newName: String,
         conversation: ZMConversation
     ) async
-    
+
     /// Updates or creates a MLS group locally.
     /// - Parameters:
     ///     - groupID: The MLS group ID.
@@ -283,7 +283,7 @@ public protocol ConversationLocalStoreProtocol {
     func updateOrCreateMLSGroup(
         groupID: MLSGroupID
     ) async
-    
+
     /// Stores the conversation MLS group ID and marks the mls status as ready.
     /// - Parameters:
     ///     - mlsGroupID: The MLS group ID related to the conversation.
@@ -293,12 +293,12 @@ public protocol ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async
-    
+
     /// Fetches the other user qualified id (not self user) in a 1:1 conversation.
     /// - Parameters:
     ///     - conversation: The 1:1 conversation self and other user should be part of.
     /// - returns: The other user `QualifiedID`.
-    
+
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
@@ -336,7 +336,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
-    
+
     public func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
         conversation: ZMConversation
@@ -346,12 +346,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mlsGroupID = mlsGroupID
         }
     }
-    
+
     public func updateOrCreateMLSGroup(
         groupID: MLSGroupID
     ) async {
         await context.perform { [context] in
-            
+
             MLSGroup.updateOrCreate(
                 id: groupID,
                 inSyncContext: context
@@ -360,7 +360,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             }
         }
     }
-    
+
     public func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID? {
@@ -369,7 +369,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 WireLogger.conversation.info(
                     "conversation type is not expected 'oneOnOne', aborting."
                 )
-                
+
                 return nil
             }
 
@@ -381,7 +381,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 WireLogger.conversation.warn(
                     "failed to retrieve other user in 1:1 conversation"
                 )
-                
+
                 return nil
             }
 

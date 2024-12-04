@@ -430,11 +430,11 @@ final class ConversationLocalStoreTests: XCTestCase {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
     }
-    
+
     func testStoreMLSConversationEstablished_It_Sets_MLS_Status_Ready_And_Updates_MLS_Group_ID() async throws {
-        
+
         // Mock
-        
+
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
@@ -442,70 +442,70 @@ final class ConversationLocalStoreTests: XCTestCase {
                 in: context
             )
         }
-        
+
         let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
-        
+
         // When
-        
+
         await sut.storeMLSConversationEstablished(
             mlsGroupID: mlsGroupID,
             conversation: conversation
         )
-        
+
         // Then
-        
+
         await context.perform {
             XCTAssertEqual(conversation.mlsStatus, .ready)
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
         }
     }
-    
+
     func testUpdateOrCreateMLSGroup_It_Creates_MLS_Group_Locally() async throws {
-        
+
         // Mock
-        
+
         let mlsGroupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
-        
+
         // When
-        
+
         await sut.updateOrCreateMLSGroup(groupID: mlsGroupID)
-        
+
         // Then
-        
+
         try await context.perform { [context] in
             let mlsGroupRequest = MLSGroup.fetchRequest()
             let mlsGroup = try context.fetch(mlsGroupRequest)
                 .compactMap { $0 as? MLSGroup }.first
-            
+
             XCTAssertEqual(mlsGroup?.id, mlsGroupID)
         }
     }
-    
+
     func testFetchOtherUserIDInOneOnOneConversation_It_Returns_The_Other_User_Qualified_ID() async {
-        
+
         // Mock
-        
+
         let conversation = await context.perform { [self] in
             let conversation = modelHelper.createMLSConversation(
                 conversationType: .oneOnOne,
                 in: context
             )
-            
+
             let selfUser = modelHelper.createSelfUser(in: context)
             let otherUser = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain, in: context)
             conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]))
-            
+
             return conversation
         }
-        
+
         // When
-        
+
         let qualifiedID = await sut.fetchOtherUserIDInOneOnOneConversation(
             conversation: conversation
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(qualifiedID?.uuid, Scaffolding.otherUserID)
         XCTAssertEqual(qualifiedID?.domain, Scaffolding.domain)
     }

@@ -50,7 +50,6 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
         mlsService = MockMLSServiceInterface()
         mlsDecryptionService = MockMLSDecryptionServiceInterface()
         oneOnOneResolver = MockOneOnOneResolverProtocol()
-        
 
         sut = ConversationMLSWelcomeEventProcessor(
             conversationRepository: conversationRepository,
@@ -78,7 +77,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Repository_Local_Store_And_MLS_Services_Methods() async throws {
-       
+
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -105,7 +104,10 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
+            1
+        )
         XCTAssertEqual(conversationLocalStore.updateOrCreateMLSGroupGroupID_Invocations.count, 1)
         XCTAssertEqual(mlsService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.fetchOtherUserIDInOneOnOneConversationConversation_Invocations.count, 1)
@@ -127,4 +129,3 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
     }
 
 }
-

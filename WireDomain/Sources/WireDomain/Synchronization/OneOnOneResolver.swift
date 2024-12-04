@@ -23,11 +23,11 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 public protocol OneOnOneResolverProtocol {
-    
+
     func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws
-    
+
     func resolveAllOneOnOneConversations() async throws
 }
 
