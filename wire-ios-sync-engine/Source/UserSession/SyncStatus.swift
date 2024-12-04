@@ -126,7 +126,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     /// Sync the resources: Teams, Users, Conversations...
-    func resyncResources() {
+    public func resyncResources() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Set the status.
