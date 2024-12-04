@@ -55,7 +55,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
         }
 
-        let components = URLComponents(string: "\(pathPrefix)\(basePath)/one2one/\(domain)/\(userID)")
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/one2one/\(domain)/\(userID)") // TODO: path must be adjusted for v7+
 
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")

@@ -332,7 +332,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         let response = response(
             forProtobufData: messageData,
             path: requestPath,
-            method: ZMTransportRequestMethod.post,
+            method: ZMTransportRequestMethod.post, // TODO: remove `ZMTransportRequestMethod`?
             apiVersion: .v0
         )
 

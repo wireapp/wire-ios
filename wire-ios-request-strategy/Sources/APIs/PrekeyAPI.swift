@@ -140,6 +140,10 @@ class PrekeyAPIV6: PrekeyAPIV5 {
     }
 }
 
+final class PrekeyAPIV7: PrekeyAPIV6 {
+    override var apiVersion: APIVersion { .v7 }
+}
+
 extension Collection<QualifiedClientID> {
 
     var clientListByUserID: Payload.ClientListByUserID {

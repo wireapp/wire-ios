@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireSyncEngine
 
 class UserProfileUpdateRequestStrategyTests: MessagingTest {
@@ -160,33 +161,35 @@ extension UserProfileUpdateRequestStrategyTests {
 
     func testThatItCreatesARequestToFindHandleSuggestion() {
 
-        // GIVEN
-        userProfileUpdateStatus.suggestHandles()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck else {
-            XCTFail()
-            return
-        }
+        for apiVersion in APIVersion.allCases { // TODO: check
+            // GIVEN
+            userProfileUpdateStatus.suggestHandles()
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+            guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck else {
+                XCTFail()
+                return
+            }
 
-        // WHEN
-        let possibleRequest = sut.nextRequest(for: .v0)
+            // WHEN
+            let possibleRequest = sut.nextRequest(for: .v0)
 
-        // THEN
-        guard let request = possibleRequest else {
-            XCTFail()
-            return
-        }
+            // THEN
+            guard let request = possibleRequest else {
+                XCTFail()
+                return
+            }
 
-        XCTAssertEqual(request.method, .post)
-        XCTAssertEqual(request.path, "/users/handles")
-        guard let payloadDictionary = request.payload?.asDictionary(),
-              let payloadHandles = payloadDictionary["handles"] as? [String]
-        else {
-            XCTFail()
-            return
+            XCTAssertEqual(request.method, .post)
+            XCTAssertEqual(request.path, "/users/handles")
+            guard let payloadDictionary = request.payload?.asDictionary(),
+                  let payloadHandles = payloadDictionary["handles"] as? [String]
+            else {
+                XCTFail()
+                return
+            }
+            XCTAssertEqual(payloadHandles, handles)
+            XCTAssertEqual(payloadDictionary["return"] as? Int, 1)
         }
-        XCTAssertEqual(payloadHandles, handles)
-        XCTAssertEqual(payloadDictionary["return"] as? Int, 1)
     }
 }
 

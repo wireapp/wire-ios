@@ -47,8 +47,11 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             return nil
         }
 
+        let path = apiVersion >= .v7
+        ? "/one2one-conversations/\(domain)/\(userID)"
+        : "/conversations/one2one/\(domain)/\(userID)"
         return ZMTransportRequest(
-            getFromPath: "/conversations/one2one/\(domain)/\(userID)",
+            getFromPath: path,
             apiVersion: apiVersion.rawValue
         )
     }
