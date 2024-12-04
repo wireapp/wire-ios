@@ -16,36 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-/// Associates a list of `hosts` with a public `key`.
+@testable import WireAPI
 
-public struct PinnedKey: Sendable {
+final class PinnedKeyTests: XCTestCase {
 
-    public enum Host: Sendable {
-        case endsWith(String)
-        case equals(String)
-    }
+    func testMatches() throws {
+        // GIVEN
+        let sut = PinnedKey(
+            key: Data(),
+            hosts: [
+                .equals("foo.example.com"),
+                .equals("bar.example.com"),
+                .endsWith("example.net")
+            ]
+        )
 
-    let key: Data
-    let hosts: [Host]
-
-    public init(key: Data, hosts: [Host]) {
-        self.key = key
-        self.hosts = hosts
-    }
-
-    /// Returns `true` if `host` matches any of the `hosts` in `self`.
-
-    func matches(host: String) -> Bool {
-        hosts.contains {
-            switch $0 {
-            case let .endsWith(suffix):
-                host.hasSuffix(suffix)
-            case let .equals(value):
-                host == value
-            }
-        }
+        // WHEN, THEN
+        XCTAssertTrue(sut.matches(host: "bar.example.com"))
+        XCTAssertFalse(sut.matches(host: "something.bar.example.com"))
+        XCTAssertTrue(sut.matches(host: "example.net"))
+        XCTAssertTrue(sut.matches(host: "something.example.net"))
+        XCTAssertFalse(sut.matches(host: "example.net.something"))
     }
 
 }

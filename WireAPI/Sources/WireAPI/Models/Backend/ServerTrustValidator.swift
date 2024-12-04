@@ -110,23 +110,3 @@ struct ServerTrustValidator: Sendable {
     }
 
 }
-
-// MARK: - Helpers
-
-private extension PinnedKey {
-    func matches(host: String) -> Bool {
-        let matchingHosts = hosts.filter { $0.matches(host: host) }
-        return !matchingHosts.isEmpty
-    }
-}
-
-private extension PinnedKey.Host {
-    func matches(host: String) -> Bool {
-        switch rule {
-        case .endsWith:
-            host.hasSuffix(value)
-        case .equals:
-            host == value
-        }
-    }
-}
