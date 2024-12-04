@@ -157,7 +157,7 @@ final class ConversationCreationController: UIViewController {
         self.userSession = userSession
         self.mlsFeature = mlsFeature
         self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol.toMessageProtocol,
+            encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
 
@@ -500,15 +500,20 @@ extension ConversationCreationController {
     }
 }
 
-extension Feature.MLS.Config.MessageProtocol {
-    var toMessageProtocol: MessageProtocol {
-        switch self {
+extension UserSession {
+
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
         case .proteus:
-            .proteus
+            return .proteus
         case .mls:
-            .mls
+            return .mls
         case .mixed:
-            .mixed
+            return .mixed
         }
     }
+
 }
