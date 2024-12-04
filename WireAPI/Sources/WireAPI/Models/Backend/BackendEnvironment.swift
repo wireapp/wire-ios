@@ -18,6 +18,8 @@
 
 import Foundation
 
+/// A collection of data for connecting to a given backend environment (e.g. Production, Staging, etc).
+
 public struct BackendEnvironment {
 
     /// The `URL` of the backend.
