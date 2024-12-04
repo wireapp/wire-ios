@@ -107,13 +107,14 @@ extension NetworkService: URLSessionWebSocketDelegate {
 
 }
 
-extension NetworkService: URLSessionDataDelegate {
+extension NetworkService: URLSessionTaskDelegate {
 
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         didCompleteWithError error: (any Error)?
     ) {
+        // NOTE: This method is not called when when using async/await APIs.
         if let error {
             print("task did complete with error: \(error)")
         } else {
