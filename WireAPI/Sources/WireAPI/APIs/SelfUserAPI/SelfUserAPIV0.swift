@@ -20,27 +20,40 @@ import Foundation
 
 class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
-
+    
     var apiVersion: APIVersion {
         .v0
     }
+    
+    var resourcePath: String {
+        "\(pathPrefix)/self/"
+    }
 
     func getSelfUser() async throws -> SelfUser {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/self",
-            method: .get
-        )
+        let components = URLComponents(string: self.resourcePath)
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw SelfUserAPIError.invalidURL
+        }
+        
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await self.apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: SelfUserV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
