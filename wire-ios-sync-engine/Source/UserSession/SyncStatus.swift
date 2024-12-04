@@ -128,14 +128,9 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     func resyncResources() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-<<<<<<< HEAD
-        // Set the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-=======
         // If we don't have a last event id, we need to get that first, otherwise the quick sync will fetch all events in the notification queue.
         currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID.nextPhase : .fetchingLastUpdateEventID
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
->>>>>>> 551b3c84f8 (fix: slow sync instead of resync in case of no last event id - WPB-14794 (#2245))
         log("resyncResources")
         syncStateDelegate?.didStartSlowSync()
     }
