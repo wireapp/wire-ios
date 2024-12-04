@@ -130,7 +130,10 @@ extension NetworkService: URLSessionDataDelegate {
         let protectionSpace = challenge.protectionSpace
 
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            guard let trust = challenge.protectionSpace.serverTrust else { fatalError("Missing server trust") }
+            guard let trust = challenge.protectionSpace.serverTrust else {
+                // If this is missing it is Apple breaking its API contract so crash.
+                fatalError("Missing server trust")
+            }
 
             do {
                 try await serverTrustValidator.validate(trust: trust, host: protectionSpace.host)
