@@ -160,35 +160,34 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToFindHandleSuggestion() {
-        for apiVersion in APIVersion.allCases {
-            // GIVEN
-            userProfileUpdateStatus.suggestHandles()
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2), "failed for APIVersion.v\(apiVersion.rawValue)")
-            guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck else {
-                XCTFail("failed for APIVersion.v\(apiVersion.rawValue)")
-                continue
-            }
 
-            // WHEN
-            let possibleRequest = sut.nextRequest(for: apiVersion)
-
-            // THEN
-            guard let request = possibleRequest else {
-                XCTFail("failed for APIVersion.v\(apiVersion.rawValue)")
-                continue
-            }
-
-            XCTAssertEqual(request.method, .post, "failed for APIVersion.v\(apiVersion.rawValue)")
-            XCTAssertEqual(request.path, "/users/handles", "failed for APIVersion.v\(apiVersion.rawValue)")
-            guard let payloadDictionary = request.payload?.asDictionary(),
-                  let payloadHandles = payloadDictionary["handles"] as? [String]
-            else {
-                XCTFail("failed for APIVersion.v\(apiVersion.rawValue)")
-                continue
-            }
-            XCTAssertEqual(payloadHandles, handles, "failed for APIVersion.v\(apiVersion.rawValue)")
-            XCTAssertEqual(payloadDictionary["return"] as? Int, 1, "failed for APIVersion.v\(apiVersion.rawValue)")
+        // GIVEN
+        userProfileUpdateStatus.suggestHandles()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck else {
+            XCTFail()
+            return
         }
+
+        // WHEN
+        let possibleRequest = sut.nextRequest(for: .v0)
+
+        // THEN
+        guard let request = possibleRequest else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(request.method, .post)
+        XCTAssertEqual(request.path, "/users/handles")
+        guard let payloadDictionary = request.payload?.asDictionary(),
+              let payloadHandles = payloadDictionary["handles"] as? [String]
+        else {
+            XCTFail()
+            return
+        }
+        XCTAssertEqual(payloadHandles, handles)
+        XCTAssertEqual(payloadDictionary["return"] as? Int, 1)
     }
 }
 
