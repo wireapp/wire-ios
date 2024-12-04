@@ -37,7 +37,7 @@ class PrekeyAPIV0: PrekeyAPI {
         self.httpClient = httpClient
     }
 
-    open var apiVersion: APIVersion {
+    var apiVersion: APIVersion {
         .v0
     }
 
