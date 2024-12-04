@@ -220,7 +220,7 @@ final class CallGridViewController: UIViewController {
         maximizedView = shouldMaximize ? view : nil
         view.isMaximized = shouldMaximize
         updateGrid(with: streams)
-//        self.requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
+        self.requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
         updateHint(for: .maximizationChanged(stream: view.stream, maximized: view.isMaximized))
     }
 
