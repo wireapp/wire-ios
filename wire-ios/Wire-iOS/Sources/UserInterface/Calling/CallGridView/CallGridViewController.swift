@@ -419,7 +419,7 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
-        var clientsWithVideo = dataSource[startIndex ..< endIndex]
+        let clientsWithVideo = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
                 
         let oneStreamDisplayed = clientsWithVideo.count == 1
