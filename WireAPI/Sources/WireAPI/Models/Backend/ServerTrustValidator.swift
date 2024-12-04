@@ -43,16 +43,16 @@ struct ServerTrustValidator: Sendable {
     /// - Note: If no pinned keys are found for the `host`, the server certificate is trusted.
 
     func validate(trust: SecTrust, host: String) async throws {
-        let matches = pinnedKeys.filter { $0.matches(host: host) }
+        let matchingKeys = pinnedKeys.filter { $0.matches(host: host) }
 
         // If no keys are pinned for `host`, we trust the server certificate
-        guard !matches.isEmpty else { return }
+        guard !matchingKeys.isEmpty else { return }
 
         try await Self.verifyServerCertificateTrusted(trust)
 
         let publicKey = try Self.publicKeyAssociatedWithServerTrust(trust)
 
-        let publicKeys = try matches.map { try Self.certificateKey(for: $0) }
+        let publicKeys = try matchingKeys.map { try Self.certificateKey(for: $0) }
         guard publicKeys.contains(publicKey) else {
             throw Failure.noMatchingPublicKey
         }
