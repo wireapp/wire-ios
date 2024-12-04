@@ -15,23 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SourceryPlugin"
-               BuildableName = "SourceryPlugin"
-               BlueprintName = "SourceryPlugin"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SwiftGenPlugin"
-               BuildableName = "SwiftGenPlugin"
-               BlueprintName = "SwiftGenPlugin"
+               BlueprintIdentifier = "WireLogging"
+               BuildableName = "WireLogging"
+               BlueprintName = "WireLogging"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SourceryPlugin"
-            BuildableName = "SourceryPlugin"
-            BlueprintName = "SourceryPlugin"
+            BlueprintIdentifier = "WireLogging"
+            BuildableName = "WireLogging"
+            BlueprintName = "WireLogging"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
