@@ -18,13 +18,13 @@
 
 import Foundation
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 class ConnectionsAPITests: XCTestCase {
-    
+
     private var apiSnapshotHelper: APIServiceSnapshotHelper<any ConnectionsAPI>!
-    
+
     // MARK: - Setup
 
     override func setUp() {
@@ -87,7 +87,7 @@ class ConnectionsAPITests: XCTestCase {
 
     func testGetConnections_FailureResponse_400_V0() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
@@ -113,13 +113,13 @@ class ConnectionsAPITests: XCTestCase {
         // Given
         // We fake responses with 1 element per page even if batchSize is 500
         // pager is driven by has_more attribute in response
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.0"),
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.1"),
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.2")
         ])
-        
+
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // WHEN
             let pager = try await sut.getConnections()
@@ -128,7 +128,7 @@ class ConnectionsAPITests: XCTestCase {
                 // this will trigger the fetch when we wait for the page
             }
         }
-        
+
         // THEN
         let invokedRequest = apiService.executeRequestRequiringAccessToken_Invocations
         XCTAssertEqual(invokedRequest.count, 3)

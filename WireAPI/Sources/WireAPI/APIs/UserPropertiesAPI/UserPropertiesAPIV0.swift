@@ -29,7 +29,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     var resourcePath: String {
         "\(pathPrefix)/properties/"
     }
@@ -72,17 +72,17 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
         forKey key: UserProperty.Key
     ) async throws -> UserProperty {
         let components = URLComponents(string: resourcePath + key.rawValue)
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw UserPropertiesAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

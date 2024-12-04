@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class FeatureConfigsAPITests: XCTestCase {
 
@@ -53,7 +53,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V0() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV0")
         ])
@@ -78,7 +78,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         ])
 
         let supportedVersions: [APIVersion] = [.v1, .v2, .v3]
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -93,12 +93,12 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_No_Team() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-team"
         )
-        
+
         let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
@@ -114,7 +114,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             statusCode: .forbidden,
             label: "no-team-member"
         )
-        
+
         let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
@@ -130,7 +130,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             statusCode: .forbidden,
             label: "operation-denied"
         )
-        
+
         let sut = FeatureConfigsAPIV0(apiService: apiService)
 
         // Then
@@ -149,7 +149,7 @@ final class FeatureConfigsAPITests: XCTestCase {
         ])
 
         let supportedVersions: [APIVersion] = [.v4, .v5]
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -169,9 +169,9 @@ final class FeatureConfigsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV6")
         ])
-        
+
         let supportedVersions = APIVersion.v6.andNextVersions
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When
@@ -425,11 +425,11 @@ extension FeatureConfigsAPITests {
 
 }
 
-//private extension APIVersion {
+// private extension APIVersion {
 //
 //    func buildAPI(client: any APIServiceProtocol) -> any FeatureConfigsAPI {
 //        let builder = FeatureConfigsAPIBuilder(apiService: apiService)
 //        return builder.makeAPI(for: self)
 //    }
 //
-//}
+// }

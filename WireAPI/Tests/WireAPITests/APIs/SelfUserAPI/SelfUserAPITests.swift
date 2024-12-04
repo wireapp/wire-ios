@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class SelfUserAPITests: XCTestCase {
 
@@ -67,7 +67,7 @@ final class SelfUserAPITests: XCTestCase {
 
         for sut in suts {
             // Then
-            await self.XCTAssertThrowsErrorAsync(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+            await XCTAssertThrowsErrorAsync(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
                 // When
                 try await sut.pushSupportedProtocols([.mls])
             }
@@ -83,12 +83,12 @@ final class SelfUserAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetSelfUserSuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
             let result = try await sut.getSelfUser()
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -103,7 +103,7 @@ final class SelfUserAPITests: XCTestCase {
             statusCode: .notFound,
             label: "not-found"
         )
-        
+
         let sut = SelfUserAPIV0(apiService: apiService)
 
         // Then
@@ -117,7 +117,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testGetSelfUser_SuccessResponse_200_V4_Then_VerifyRequests() async throws {
         // Given
-        
+
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetSelfUserSuccessResponseV4")
         ])
@@ -126,7 +126,7 @@ final class SelfUserAPITests: XCTestCase {
         try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
             // When
             let result = try await sut.getSelfUser()
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -142,9 +142,9 @@ final class SelfUserAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, nil)
         ])
-        
+
         let supportedVersions = APIVersion.v5.andNextVersions
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions, apiService: apiService) { sut in
             // When

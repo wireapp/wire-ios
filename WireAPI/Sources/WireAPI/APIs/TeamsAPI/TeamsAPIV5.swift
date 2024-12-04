@@ -33,12 +33,12 @@ class TeamsAPIV5: TeamsAPIV4 {
             assertionFailure("generated an invalid url")
             throw TeamsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
@@ -60,12 +60,12 @@ class TeamsAPIV5: TeamsAPIV4 {
             assertionFailure("generated an invalid url")
             throw TeamsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
@@ -85,17 +85,17 @@ class TeamsAPIV5: TeamsAPIV4 {
     ) async throws -> [TeamMember] {
         var components = URLComponents(string: "\(basePath(for: teamID))/members")
         components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw TeamsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
@@ -119,12 +119,12 @@ class TeamsAPIV5: TeamsAPIV4 {
             assertionFailure("generated an invalid url")
             throw TeamsAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

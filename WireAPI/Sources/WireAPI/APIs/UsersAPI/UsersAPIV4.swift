@@ -26,17 +26,17 @@ class UsersAPIV4: UsersAPIV3 {
 
     override func getUser(for userID: UserID) async throws -> User {
         let components = URLComponents(string: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw UsersAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )
@@ -49,20 +49,20 @@ class UsersAPIV4: UsersAPIV3 {
 
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
-        
+
         let components = URLComponents(string: "\(pathPrefix)/list-users")
-        
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw UsersAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.post)
             .withBody(body, contentType: .json)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

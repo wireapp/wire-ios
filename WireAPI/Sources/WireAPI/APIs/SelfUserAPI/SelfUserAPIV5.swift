@@ -28,20 +28,20 @@ class SelfUserAPIV5: SelfUserAPIV4 {
         let encoder = JSONEncoder.defaultEncoder
         let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
         let body = try encoder.encode(payload)
-        
-        let components = URLComponents(string: self.resourcePath + "supported-protocols")
-        
+
+        let components = URLComponents(string: resourcePath + "supported-protocols")
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw SelfUserAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.put)
             .withBody(body, contentType: .json)
             .build()
 
-        let (_, response) = try await self.apiService.executeRequest(
+        let (_, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

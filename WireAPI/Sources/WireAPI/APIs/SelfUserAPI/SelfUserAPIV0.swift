@@ -25,28 +25,28 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
     }
-    
+
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     var resourcePath: String {
         "\(pathPrefix)/self/"
     }
 
     func getSelfUser() async throws -> SelfUser {
-        let components = URLComponents(string: self.resourcePath)
-        
+        let components = URLComponents(string: resourcePath)
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw SelfUserAPIError.invalidURL
         }
-        
+
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

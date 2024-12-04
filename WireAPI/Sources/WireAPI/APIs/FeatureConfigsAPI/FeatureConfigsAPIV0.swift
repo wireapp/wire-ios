@@ -29,7 +29,7 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     var resourcePath: String {
         "\(pathPrefix)/feature-configs/"
     }
@@ -37,8 +37,8 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
     // MARK: - Get all feature configs
 
     func getFeatureConfigs() async throws -> [FeatureConfig] {
-        let components = URLComponents(string: self.resourcePath)
-        
+        let components = URLComponents(string: resourcePath)
+
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")
             throw FeatureConfigsAPIError.invalidURL
@@ -47,8 +47,8 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
         let request = URLRequestBuilder(url: url)
             .withMethod(.get)
             .build()
-        
-        let (data, response) = try await self.apiService.executeRequest(
+
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class TeamsAPITests: XCTestCase {
 
@@ -76,12 +76,12 @@ final class TeamsAPITests: XCTestCase {
         ])
 
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
             let result = try await sut.getTeam(for: teamID)
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -130,17 +130,17 @@ final class TeamsAPITests: XCTestCase {
     }
 
     func testGetTeamRolesForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
-        
+
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamRolesSuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
             let result = try await sut.getTeamRoles(for: .mockID1)
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -194,7 +194,7 @@ final class TeamsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamMembersSuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
@@ -202,7 +202,7 @@ final class TeamsAPITests: XCTestCase {
                 for: .mockID1,
                 maxResults: 2000
             )
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -226,7 +226,7 @@ final class TeamsAPITests: XCTestCase {
     }
 
     func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
-        
+
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
@@ -288,14 +288,14 @@ final class TeamsAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetLegalHoldInfoSuccessResponseV0")
         ])
-        
+
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
             let result = try await sut.getLegalholdInfo(
                 for: .mockID1,
                 userID: .mockID2
             )
-            
+
             // Then
             XCTAssertEqual(
                 result,
@@ -334,11 +334,11 @@ final class TeamsAPITests: XCTestCase {
         ])
 
         let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
-        
+
         try await apiSnapshotHelper.verifyRequest(for: [.v2], apiService: apiService) { sut in
             // When
             let result = try await sut.getTeam(for: teamID)
-            
+
             // Then
             XCTAssertEqual(
                 result,

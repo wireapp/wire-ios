@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class UsersAPITests: XCTestCase {
 

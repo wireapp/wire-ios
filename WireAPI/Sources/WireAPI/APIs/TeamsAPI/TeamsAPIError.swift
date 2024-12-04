@@ -49,7 +49,7 @@ public enum TeamsAPIError: Error {
     /// A request was deemed invalid by the server.
 
     case invalidRequest
-    
+
     /// A request url is not invalid.
 
     case invalidURL

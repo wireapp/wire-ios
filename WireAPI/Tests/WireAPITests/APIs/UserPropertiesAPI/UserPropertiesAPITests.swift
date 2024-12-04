@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPISupport
 @testable import WireAPI
+@testable import WireAPISupport
 
 final class UserPropertiesAPITests: XCTestCase {
 
@@ -68,7 +68,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetUserReceiptModePropertySuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
@@ -87,7 +87,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetUserTypingIndicatorModePropertySuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
@@ -106,7 +106,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetUserLabelsPropertySuccessResponseV0")
         ])
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
@@ -127,7 +127,7 @@ final class UserPropertiesAPITests: XCTestCase {
         )
 
         let sut = UserPropertiesAPIV4(apiService: apiService)
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
             // When
