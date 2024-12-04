@@ -86,9 +86,9 @@ extension VoiceChannel {
         if callHasTwoParticipants, sortedStreamsList.count == 1 {
             // here's it's one on one
             var selfStreamQuality = selfStream
-            selfStreamQuality.highQuality = true
+//            selfStreamQuality.highQuality = true
             var otherStream = sortedStreamsList.first!
-            otherStream.highQuality = true
+//            otherStream.highQuality = true
             return (selfStreamQuality, [otherStream])
         } else {
             return (nil, [selfStream] + sortedStreamsList)
