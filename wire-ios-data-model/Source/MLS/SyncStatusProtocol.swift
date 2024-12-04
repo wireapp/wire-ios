@@ -21,6 +21,7 @@ import Foundation
 public protocol SyncStatusProtocol {
 
     func performQuickSync() async
+    func resyncResources()
     func forceSlowSync()
 
 }
