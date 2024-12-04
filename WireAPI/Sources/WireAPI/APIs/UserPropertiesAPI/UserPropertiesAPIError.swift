@@ -29,5 +29,9 @@ public enum UserPropertiesAPIError: Error {
     /// Provided key is invalid
 
     case invalidKey
+    
+    /// A request url is not invalid.
+
+    case invalidURL
 
 }
