@@ -24,13 +24,7 @@ import Foundation
 
 public enum APIVersion: UInt, CaseIterable, Comparable {
 
-    case v0
-    case v1
-    case v2
-    case v3
-    case v4
-    case v5
-    case v6
+    case v0, v1, v2, v3, v4, v5, v6, v7
 
     /// API versions considered production ready by the client.
     ///
@@ -42,7 +36,7 @@ public enum APIVersion: UInt, CaseIterable, Comparable {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5]
+    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7]
 
     /// API versions currently under development and not suitable for production
     /// environments.
