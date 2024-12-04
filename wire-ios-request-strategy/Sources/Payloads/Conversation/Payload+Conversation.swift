@@ -180,7 +180,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4, .v5, .v6:
+            case .v3, .v4, .v5, .v6, .v7:
                 if legacyAccessRole == nil {
                     try container.encodeIfPresent(accessRoles, forKey: .accessRole)
                 } else {
