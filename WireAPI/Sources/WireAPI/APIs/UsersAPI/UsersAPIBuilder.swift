@@ -57,5 +57,4 @@ public struct UsersAPIBuilder {
             UsersAPIV7(httpClient: httpClient)
         }
     }
-
 }
