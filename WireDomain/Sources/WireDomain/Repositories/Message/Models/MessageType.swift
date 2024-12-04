@@ -81,10 +81,15 @@ public enum MessageType: Sendable {
         date: Date
     )
 
+    case messageTimerUpdate(
+        sender: (id: UUID, domain: String?),
+        date: Date,
+        timeoutValue: Double
+    )
+
     case readReceiptsStatus(
         isEnabled: Bool,
         sender: (id: UUID, domain: String?),
         date: Date
     )
-
 }

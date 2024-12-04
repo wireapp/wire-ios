@@ -26,7 +26,7 @@ extension ConversationLocalStore {
     // MARK: - Conversation status
 
     func updateConversationStatus(
-        from remoteConversation: WireAPI.Conversation,
+        from remoteConversation: Conversation,
         for localConversation: ZMConversation
     ) {
         if let readReceiptMode = remoteConversation.readReceiptMode {
@@ -36,13 +36,13 @@ extension ConversationLocalStore {
         if let accessModes = remoteConversation.access {
             if let accessRoles = remoteConversation.accessRoles {
                 localConversation.updateAccessStatus(
-                    accessModes: accessModes.map(\.rawValue),
-                    accessRoles: accessRoles.map(\.rawValue)
+                    accessModes: accessModes,
+                    accessRoles: accessRoles
                 )
             } else if let accessRole = remoteConversation.legacyAccessRole {
-                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole.toDomainModel())
+                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole)
                 localConversation.updateAccessStatus(
-                    accessModes: accessModes.map(\.rawValue),
+                    accessModes: accessModes,
                     accessRoles: accessRoles.map(\.rawValue)
                 )
             }
@@ -56,7 +56,7 @@ extension ConversationLocalStore {
     // MARK: - MLS status
 
     func updateMLSStatus(
-        from remoteConversation: WireAPI.Conversation,
+        from remoteConversation: Conversation,
         for localConversation: ZMConversation,
         isMLSEnabled: Bool
     ) async {
@@ -64,7 +64,9 @@ extension ConversationLocalStore {
 
         await updateConversationIfNeeded(
             localConversation: localConversation,
-            fallbackGroupID: remoteConversation.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil
+            fallbackGroupID: remoteConversation.mlsGroupID.map {
+                .init(base64Encoded: $0)
+            } ?? nil
         )
     }
 
@@ -97,7 +99,9 @@ extension ConversationLocalStore {
         let conversationExists: Bool
 
         do {
-            conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
+            conversationExists = try await mlsService.conversationExists(
+                groupID: mlsGroupID
+            )
         } catch {
             conversationExists = false
         }
@@ -109,5 +113,4 @@ extension ConversationLocalStore {
             context.saveOrRollback()
         }
     }
-
 }
