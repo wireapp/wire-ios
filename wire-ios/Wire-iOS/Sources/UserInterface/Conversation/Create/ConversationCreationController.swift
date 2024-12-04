@@ -507,12 +507,10 @@ extension UserSession {
             return .proteus
         }
         switch mlsFeature.config.defaultProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             return .proteus
         case .mls:
             return .mls
-        case .mixed:
-            return .mixed
         }
     }
 
