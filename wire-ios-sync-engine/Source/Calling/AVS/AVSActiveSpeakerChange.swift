@@ -55,6 +55,5 @@ private extension AVSClient {
     init(activeSpeaker: AVSActiveSpeakersChange.ActiveSpeaker) {
         userId = activeSpeaker.userId
         clientId = activeSpeaker.clientId
-        streamQuality = AVSStreamQuality.any.rawValue // TODO: check this
     }
 }

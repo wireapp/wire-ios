@@ -53,7 +53,7 @@ final class CallGridViewController: UIViewController {
         PinchToZoomRule(isOneToOneCall: configuration.callHasTwoParticipants)
     }
 
-    private var visibleClientsSharingVideo: [AVSClient] = []
+    private var visibleClientsSharingVideo: [AVSClientVideoStream] = []
     private var dataSource: [Stream] = []
     private let gridView = GridView(maxItemsPerPage: maxItemsPerPage)
     private let thumbnailViewController = PinnableThumbnailViewController()
@@ -424,11 +424,11 @@ final class CallGridViewController: UIViewController {
                 
         let oneStreamDisplayed = clientsWithVideo.count == 1
         let clientStreams = clientsWithVideo
-            .map { stream in
-                var newClient = stream.streamId
-                newClient.changeQuality(oneStreamDisplayed ? .high : .low)             
-                WireLogger.calling.debug("🤓 stream: \(newClient.clientId) : oneStreamDisplayed: \(oneStreamDisplayed), highQuality: \(newClient.avsStreamQuality)")
-                return newClient
+            .map { client in
+                let stream = AVSClientVideoStream(client: client.streamId,
+                                                           quality: oneStreamDisplayed ? .high : .low)
+                WireLogger.calling.debug("🤓 stream: \(stream.clientId), oneStreamDisplayed: \(oneStreamDisplayed), quality: \(stream.quality)")
+                return stream
             }
 
         guard Set(clientStreams) != Set(visibleClientsSharingVideo) else { return }

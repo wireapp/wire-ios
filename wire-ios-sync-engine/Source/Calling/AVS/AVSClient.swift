@@ -20,27 +20,12 @@ import Foundation
 
 /// Used to identify a participant in a call.
 
-public enum AVSStreamQuality: Int, Codable {
-    case any = 0 // any resolution (avs decides)
-    case low = 1 // low quality resolution
-    case high = 2 // high quality resolution
-    
-    var debugDescription: String {
-        String(describing: self)
-    }
-}
-
 public struct AVSClient: Hashable {
 
     public let userId: String
     public let clientId: String
     public var isMemberOfSubconversation = false
-    var streamQuality: Int
 
-    public var avsStreamQuality: AVSStreamQuality {
-        AVSStreamQuality(rawValue: streamQuality) ?? .any
-    }
-    
     init?(userClient: UserClient) {
         guard
             let userId = userClient.user?.avsIdentifier,
@@ -75,18 +60,13 @@ public struct AVSClient: Hashable {
     public init(
         userId: AVSIdentifier,
         clientId: String,
-        isMemberOfSubconversation: Bool = false,
-        streamQuality: AVSStreamQuality = .any
+        isMemberOfSubconversation: Bool = false
     ) {
         self.userId = userId.serialized
         self.clientId = clientId
         self.isMemberOfSubconversation = isMemberOfSubconversation
-        self.streamQuality = streamQuality.rawValue
     }
-    
-    public mutating func changeQuality(_ quality: AVSStreamQuality) {
-        self.streamQuality = quality.rawValue
-    }
+
 }
 
 extension AVSClient: Codable {
@@ -96,7 +76,6 @@ extension AVSClient: Codable {
         case userId = "userid"
         case clientId = "clientid"
         case isMemberOfSubconversation = "in_subconv"
-        case streamQuality = "quality"
 
     }
 
@@ -106,8 +85,6 @@ extension AVSClient: Codable {
         self.clientId = try container.decode(String.self, forKey: .clientId)
         self.isMemberOfSubconversation = try container
             .decodeIfPresent(Bool.self, forKey: .isMemberOfSubconversation) ?? false
-        self.streamQuality = try container
-            .decodeIfPresent(Int.self, forKey: .streamQuality) ?? AVSStreamQuality.any.rawValue
     }
 }
 

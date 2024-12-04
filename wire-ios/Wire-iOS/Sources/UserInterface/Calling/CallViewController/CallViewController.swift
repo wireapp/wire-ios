@@ -599,7 +599,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
 extension CallViewController: CallGridViewControllerDelegate {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {
         switch action {
-        case let .requestVideoStreamsForClients(clients): voiceChannel.request(videoStreams: clients)
+            case let .requestVideoStreamsForClients(clients): voiceChannel.request(videoStreams: clients)
         }
     }
 }

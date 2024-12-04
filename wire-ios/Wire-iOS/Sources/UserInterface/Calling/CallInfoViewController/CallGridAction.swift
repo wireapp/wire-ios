@@ -20,5 +20,5 @@ import WireSyncEngine
 
 // The actions `CallGridViewController` can perform.
 enum CallGridAction {
-    case requestVideoStreamsForClients(_ clients: [AVSClient])
+    case requestVideoStreamsForClients(_ clients: [AVSClientVideoStream])
 }
