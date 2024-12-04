@@ -20,32 +20,45 @@ import Foundation
 
 class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
         .v0
     }
+    
+    var resourcePath: String {
+        "\(pathPrefix)/feature-configs/"
+    }
 
     // MARK: - Get all feature configs
 
     func getFeatureConfigs() async throws -> [FeatureConfig] {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/feature-configs",
-            method: .get
-        )
+        let components = URLComponents(string: self.resourcePath)
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw FeatureConfigsAPIError.invalidURL
+        }
 
-        let response = try await httpClient.executeRequest(request)
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+        
+        let (data, response) = try await self.apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: FeatureConfigsResponseAPIV0.self)
             .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
             .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
 }

@@ -21,6 +21,10 @@ import Foundation
 /// Errors originating from `FeatureConfigsAPI`.
 
 public enum FeatureConfigsAPIError: Error {
+    
+    /// A request url is not invalid.
+
+    case invalidURL
 
     /// Insufficient permissions
 
