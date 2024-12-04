@@ -459,10 +459,9 @@ extension ConversationCreationController {
         -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+        let proteus = userSession.defaultProtocol == .proteus ? Localizable.ProtocolSelection
             .proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+        let mls = userSession.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
             .ProtocolSelection.mls
 
         let alert = UIAlertController(
