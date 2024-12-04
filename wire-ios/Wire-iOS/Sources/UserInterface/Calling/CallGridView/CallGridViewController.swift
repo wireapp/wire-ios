@@ -216,11 +216,11 @@ final class CallGridViewController: UIViewController {
         guard allowMaximizationToggling(for: view.stream) else { return }
 
         let shouldMaximize = !isMaximized(stream: view.stream)
-        
+
         maximizedView = shouldMaximize ? view : nil
         view.isMaximized = shouldMaximize
         updateGrid(with: streams)
-        self.requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
+        requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
         updateHint(for: .maximizationChanged(stream: view.stream, maximized: view.isMaximized))
     }
 
@@ -421,14 +421,14 @@ final class CallGridViewController: UIViewController {
 
         let clientsWithVideo = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
-                
-        let oneStreamDisplayed = clientsWithVideo.count == 1
+
+        let oneStreamDisplayedExcludingSelf = clientsWithVideo.count == 1
         let clientStreams = clientsWithVideo
             .map { client in
-                let stream = AVSClientVideoStream(client: client.streamId,
-                                                           quality: oneStreamDisplayed ? .high : .low)
-                WireLogger.calling.debug("🤓 stream: \(stream.clientId), oneStreamDisplayed: \(oneStreamDisplayed), quality: \(stream.quality)")
-                return stream
+                AVSClientVideoStream(
+                    client: client.streamId,
+                    quality: oneStreamDisplayedExcludingSelf ? .high : .low
+                )
             }
 
         // avoid requesting videos if videos did not change

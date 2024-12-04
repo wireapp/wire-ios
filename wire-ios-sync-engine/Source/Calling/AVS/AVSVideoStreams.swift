@@ -32,7 +32,7 @@ public enum AVSStreamQuality: Int, Codable {
     case any = 0 // any resolution (avs decides)
     case low = 1 // low quality resolution
     case high = 2 // high quality resolution
-    
+
     var debugDescription: String {
         String(describing: self)
     }
@@ -42,7 +42,7 @@ public struct AVSClientVideoStream: Encodable, Equatable, Hashable {
     public let userId: String
     public let clientId: String
     public let quality: AVSStreamQuality
-    
+
     enum CodingKeys: String, CodingKey {
         case userId = "userid"
         case clientId = "clientid"
@@ -57,7 +57,7 @@ public struct AVSClientVideoStream: Encodable, Equatable, Hashable {
         self.clientId = client.clientId
         self.quality = quality
     }
-    
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(userId, forKey: .userId)

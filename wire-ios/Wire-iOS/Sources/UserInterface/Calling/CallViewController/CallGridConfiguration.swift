@@ -73,7 +73,7 @@ extension VoiceChannel {
             from: streams,
             createIfNeeded: videoGridPresentationMode.needsSelfStream
         )
-   
+
         return arrangeStreams(for: selfStream, participantsStreams: streams)
     }
 
