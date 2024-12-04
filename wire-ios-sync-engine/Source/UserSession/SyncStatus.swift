@@ -120,6 +120,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         log("slow sync")
         syncStateDelegate?.didStartSlowSync()
     }
@@ -130,6 +131,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Set the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         log("resyncResources")
         syncStateDelegate?.didStartSlowSync()
     }
