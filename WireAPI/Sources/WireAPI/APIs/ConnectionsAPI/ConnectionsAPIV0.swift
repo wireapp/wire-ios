@@ -24,10 +24,10 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         static let batchSize = 500
     }
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -44,18 +44,28 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try JSONEncoder.defaultEncoder.encode(params)
+            
+            let components = URLComponents(string: self.resourcePath)
+            
+            guard let url = components?.url else {
+                assertionFailure("generated an invalid url")
+                throw ConnectionsAPIError.invalidURL
+            }
+            
+            let request = URLRequestBuilder(url: url)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
 
-            let request = HTTPRequest(
-                path: self.resourcePath,
-                method: .post,
-                body: body
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-            let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
                 .success(code: .ok, type: PaginatedConnectionListV0.self)
                 .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 }
