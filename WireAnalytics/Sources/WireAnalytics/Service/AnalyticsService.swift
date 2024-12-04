@@ -44,7 +44,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     public convenience init(
         config: Config?,
-        logger: @escaping (String) -> Void
+        logger: @escaping (String) -> Void // TODO: [WPB-11881] import WireLogging and remove this workaround
     ) {
         self.init(
             config: config,
