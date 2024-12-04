@@ -24,11 +24,11 @@ extension Notification.Name {
 }
 
 extension AVPlayerViewController {
-    open override var prefersStatusBarHidden: Bool {
+    override var prefersStatusBarHidden: Bool {
         true
     }
 
-    open override func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         guard isBeingDismissed else {
             return
