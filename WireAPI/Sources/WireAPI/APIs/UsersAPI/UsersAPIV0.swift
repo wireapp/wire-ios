@@ -20,10 +20,10 @@ import Foundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     var apiVersion: APIVersion {
@@ -33,32 +33,51 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     // MARK: - Get team
 
     func getUser(for userID: UserID) async throws -> User {
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())",
-            method: .get
-        )
+        let components = URLComponents(string: "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())")
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UsersAPIError.invalidURL
+        }
+        
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await self.apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: UserResponseV0.self)
             .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/list-users",
-            method: .post,
-            body: body
-        )
+        
+        let components = URLComponents(string: "\(pathPrefix)/list-users")
+        
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UsersAPIError.invalidURL
+        }
+        
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await self.apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         return try ResponseParser()
             .success(code: .ok, type: ListUsersResponseV0.self)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 }
 
