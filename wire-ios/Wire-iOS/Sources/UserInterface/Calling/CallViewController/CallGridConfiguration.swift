@@ -73,7 +73,7 @@ extension VoiceChannel {
             from: streams,
             createIfNeeded: videoGridPresentationMode.needsSelfStream
         )
-
+   
         return arrangeStreams(for: selfStream, participantsStreams: streams)
     }
 
@@ -84,7 +84,12 @@ extension VoiceChannel {
             return (nil, sortedStreamsList)
         }
         if callHasTwoParticipants, sortedStreamsList.count == 1 {
-            return (selfStream, sortedStreamsList)
+            // here's it's one on one
+            var selfStreamQuality = selfStream
+            selfStreamQuality.highQuality = true
+            var otherStream = sortedStreamsList.first!
+            otherStream.highQuality = true
+            return (selfStreamQuality, [otherStream])
         } else {
             return (nil, [selfStream] + sortedStreamsList)
         }
@@ -126,7 +131,7 @@ extension VoiceChannel {
                 callParticipantState: participant.state,
                 activeSpeakerState: participant.activeSpeakerState,
                 isPaused: participant.state.videoState?.isPaused ?? false,
-                isFullscreen: false
+                highQuality: false
             )
         }
     }
@@ -160,7 +165,7 @@ extension VoiceChannel {
             ),
             activeSpeakerState: .inactive,
             isPaused: isPaused,
-            isFullscreen: false
+            highQuality: false
         )
     }
 

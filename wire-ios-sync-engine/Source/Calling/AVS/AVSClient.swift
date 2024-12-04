@@ -24,6 +24,10 @@ public enum AVSStreamQuality: Int, Codable {
     case any = 0 // any resolution (avs decides)
     case low = 1 // low quality resolution
     case high = 2 // high quality resolution
+    
+    var debugDescription: String {
+        String(describing: self)
+    }
 }
 
 public struct AVSClient: Hashable {
