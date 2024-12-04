@@ -87,18 +87,19 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
             groupID: groupID
         )
         
+        // Ensures we have MLS valid key packages published otherwise the user can’t be added to any new groups.
         await mlsService.uploadKeyPackagesIfNeeded()
-        
-        let otherUserQualifiedID = await conversationLocalStore.fetchOtherUserIDInOneOnOneConversation(
-            conversation: conversation
-        )
-        
-        guard let otherUserQualifiedID else {
-            return
-        }
         
         do {
             // We need to resolve the now MLS 1:1 conversation with the other user
+            let otherUserQualifiedID = await conversationLocalStore.fetchOtherUserIDInOneOnOneConversation(
+                conversation: conversation
+            )
+            
+            guard let otherUserQualifiedID else {
+                return
+            }
+            
             try await oneOnOneResolver.resolveOneOnOneConversation(with: otherUserQualifiedID)
             WireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
