@@ -24,7 +24,14 @@ import Foundation
 
 public enum APIVersion: UInt, CaseIterable, Comparable {
 
-    case v0, v1, v2, v3, v4, v5, v6, v7
+    case v0
+    case v1
+    case v2
+    case v3
+    case v4
+    case v5
+    case v6
+    case v7
 
     /// API versions considered production ready by the client.
     ///
