@@ -40,8 +40,6 @@ final class ConversationCreationController: UIViewController {
 
     private let userSession: UserSession
 
-    private let mlsFeature: Feature.MLS
-
     private let collectionViewController = SectionCollectionViewController()
 
     private var preSelectedParticipants: UserSet?
@@ -150,12 +148,10 @@ final class ConversationCreationController: UIViewController {
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession,
-        mlsFeature: Feature.MLS
+        userSession: UserSession
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-        self.mlsFeature = mlsFeature
         self.values = ConversationCreationValues(
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
@@ -463,6 +459,7 @@ extension ConversationCreationController {
         -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
+        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
         let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
             .proteusDefault : Localizable.ProtocolSelection.proteus
         let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
