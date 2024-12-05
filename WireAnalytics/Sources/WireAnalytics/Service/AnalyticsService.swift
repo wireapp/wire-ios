@@ -44,13 +44,12 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ///   - config: A config containing the authentication key and server host.
     ///   - logger: A function that logs a message on behalf of the service.
 
-    @MainActor
-    public convenience init(config: Config?) {
+    public convenience init(config: Config?, deviceModel: String, deviceOS: String) {
         self.init(
             config: config,
             baseSegmentation: [
-                .deviceModel(UIDevice.current.model),
-                .deviceOS(UIDevice.current.systemVersion)
+                .deviceModel(deviceModel),
+                .deviceOS(deviceOS)
             ],
             countlyProvider: { Countly.sharedInstance() }
         )

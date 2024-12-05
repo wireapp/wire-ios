@@ -546,7 +546,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        self.analyticsService = AnalyticsService(config: analyticsConfig)
+        self.analyticsService = AnalyticsService(
+            config: analyticsConfig,
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion
+        )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
             Task { [analyticsService] in

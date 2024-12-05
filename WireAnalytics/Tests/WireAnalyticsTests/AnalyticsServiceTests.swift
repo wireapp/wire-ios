@@ -59,10 +59,9 @@ class AnalyticsServiceTests: XCTestCase {
 
     // MARK: - Tests
 
-    @MainActor
     func testEnableTracking_service_is_not_configured() async throws {
         // Given a service with no config.
-        let sut = AnalyticsService(config: nil)
+        let sut = AnalyticsService(config: nil, deviceModel: "", deviceOS: "")
 
         do {
             // When tracking is enabled.
