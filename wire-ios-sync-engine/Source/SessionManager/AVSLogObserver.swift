@@ -29,6 +29,6 @@ final class AVSLogObserver: AVSLogger {
     // MARK: - AVSLogger
 
     func log(message: String) {
-        OldWireLogger.avs.info(SanitizedString(stringLiteral: message).safeForLoggingDescription, attributes: .safePublic)
+        WireLogger.avs.info(SanitizedString(stringLiteral: message).safeForLoggingDescription, attributes: .safePublic)
     }
 }

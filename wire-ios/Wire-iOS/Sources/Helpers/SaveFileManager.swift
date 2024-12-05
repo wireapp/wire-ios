@@ -27,7 +27,7 @@ protocol SaveFileActions {
 final class SaveFileManager: NSObject, SaveFileActions {
     private var pendingSaveURL: URL?
 
-    private let logger: LoggerProtocol = OldWireLogger.e2ei
+    private let logger: LoggerProtocol = WireLogger.e2ei
     private let systemSaveFilePresenter: SystemSaveFilePresenting
 
     init(systemFileSavePresenter: SystemSaveFilePresenting) {

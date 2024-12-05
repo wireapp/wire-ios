@@ -49,7 +49,7 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             return nil
         }
 
-        OldWireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: start evaluate one on one conversations!")
+        WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: start evaluate one on one conversations!")
 
         precondition(managedObjectContext.zm_isSyncContext, "can only execute on syncContext!")
         let syncContext = managedObjectContext
@@ -90,12 +90,12 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
     }
 
     private func failCurrentSyncPhase(errorMessage: String) {
-        OldWireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")
+        WireLogger.conversation.error("EvaluateOneOnOneConversationsStrategy: \(errorMessage)!")
         syncProgress.failCurrentSyncPhase(phase: syncPhase)
     }
 
     private func finishCurrentSyncPhase() {
-        OldWireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
+        WireLogger.conversation.info("EvaluateOneOnOneConversationsStrategy: finishCurrentSyncPhase!")
         syncProgress.finishCurrentSyncPhase(phase: syncPhase)
     }
 }

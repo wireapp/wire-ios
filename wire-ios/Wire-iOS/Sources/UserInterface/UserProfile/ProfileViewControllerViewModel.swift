@@ -192,7 +192,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             case let .success(conversation):
                 self?.transition(to: conversation)
             case let .failure(error):
-                OldWireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
+                WireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
                 guard let username = self?.user.name else { return }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
             }

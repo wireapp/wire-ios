@@ -30,7 +30,7 @@ extension ZMConversation: Conversation {
         do {
             return try appendText(content: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
         } catch {
-            OldWireLogger.messageProcessing
+            WireLogger.messageProcessing
                 .warn("Failed to append text message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
@@ -40,7 +40,7 @@ extension ZMConversation: Conversation {
         do {
             return try appendImage(from: data) as? Sendable
         } catch {
-            OldWireLogger.messageProcessing
+            WireLogger.messageProcessing
                 .warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
@@ -50,7 +50,7 @@ extension ZMConversation: Conversation {
         do {
             return try appendFile(with: metadata) as? Sendable
         } catch {
-            OldWireLogger.messageProcessing
+            WireLogger.messageProcessing
                 .warn("Failed to append file message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }
@@ -60,7 +60,7 @@ extension ZMConversation: Conversation {
         do {
             return try appendLocation(with: location) as? Sendable
         } catch {
-            OldWireLogger.messageProcessing
+            WireLogger.messageProcessing
                 .warn("Failed to append location message from Share Ext. Reason: \(error.localizedDescription)")
             return nil
         }

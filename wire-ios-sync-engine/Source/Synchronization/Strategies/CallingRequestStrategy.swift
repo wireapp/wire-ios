@@ -356,7 +356,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             if overMLSSelfConversation, conversation.messageProtocol == .mls {
                 guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext)
                 else {
-                    OldWireLogger.mls.error("missing self conversation for sending message to own clients")
+                    WireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
                     return
                 }
@@ -476,7 +476,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        OldWireLogger.mls
+                        WireLogger.mls
                             .error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }

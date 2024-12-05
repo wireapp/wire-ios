@@ -42,7 +42,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
     }
 
-    private let logger = OldWireLogger.e2ei
+    private let logger = WireLogger.e2ei
 
     // MARK: - Life cycle
 
@@ -97,7 +97,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     public func checkExpiredCRLs() async {
 
-        OldWireLogger.e2ei.info("checking expired CRLs")
+        WireLogger.e2ei.info("checking expired CRLs")
 
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()

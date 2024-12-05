@@ -290,7 +290,7 @@ extension Array where Element: UserClientType {
                 return self
             }
         } catch {
-            OldWireLogger.e2ei.error(error.localizedDescription)
+            WireLogger.e2ei.error(error.localizedDescription)
             return self
         }
     }

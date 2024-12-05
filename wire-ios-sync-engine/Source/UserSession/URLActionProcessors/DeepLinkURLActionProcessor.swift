@@ -244,7 +244,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             upToDateConversation.joinNewMLSGroup(id: groupId) { error in
                 if let error {
-                    OldWireLogger.mls.debug("failed to join MLS group: \(error)")
+                    WireLogger.mls.debug("failed to join MLS group: \(error)")
                     completion(.failure(error))
                 } else {
                     completion(.success(upToDateConversation))

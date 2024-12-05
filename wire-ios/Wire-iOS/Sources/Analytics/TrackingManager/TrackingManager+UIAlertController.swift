@@ -83,7 +83,7 @@ extension TrackingManager {
 
     private func presentPrivacyPolicy() {
         guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            OldWireLogger.ui.error("No topmost view controller found.")
+            WireLogger.ui.error("No topmost view controller found.")
             return
         }
 

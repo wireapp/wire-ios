@@ -48,7 +48,7 @@ extension ZClientViewController: StartUIDelegate {
 
                 }
             } catch {
-                OldWireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
+                WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
             }
         }
     }

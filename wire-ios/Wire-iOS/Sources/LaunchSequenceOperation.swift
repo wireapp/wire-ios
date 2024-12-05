@@ -105,7 +105,7 @@ final class BackendInfoOperation: LaunchSequenceOperation {
         BackendInfo.storage = .applicationGroup
 
         if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIVersion {
-            OldWireLogger.environment.info("automation helper will set preferred api version to \(preferredVersion)")
+            WireLogger.environment.info("automation helper will set preferred api version to \(preferredVersion)")
             BackendInfo.preferredAPIVersion = preferredVersion
         }
     }

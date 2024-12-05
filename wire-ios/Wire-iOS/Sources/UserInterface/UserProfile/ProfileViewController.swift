@@ -512,7 +512,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicate.createdTeams = original.createdTeams
             context.saveOrRollback()
 
-            OldWireLogger.conversation
+            WireLogger.conversation
                 .debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
         }
     }
@@ -522,7 +522,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
               let context = (viewModel.userSession as? ZMUserSession)?.syncContext,
               let team = user.team else {
             assertionFailure("couldn't get context or has no team to duplicateTeam")
-            OldWireLogger.conversation.debug("can't duplicate team")
+            WireLogger.conversation.debug("can't duplicate team")
             return
         }
 
@@ -538,7 +538,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
             context.saveOrRollback()
 
-            OldWireLogger.conversation
+            WireLogger.conversation
                 .debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
     }

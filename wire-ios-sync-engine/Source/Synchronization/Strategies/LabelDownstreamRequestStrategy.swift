@@ -84,7 +84,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
     func update(with transportData: Data) {
         guard let labelResponse = try? jsonDecoder.decode(LabelPayload.self, from: transportData) else {
-            OldWireLogger.eventProcessing.error("Can't apply label update due to malformed JSON")
+            WireLogger.eventProcessing.error("Can't apply label update due to malformed JSON")
             return
         }
 
@@ -144,7 +144,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
             guard let value = event.payload["value"],
                   let data = try? JSONSerialization.data(withJSONObject: value, options: []) else {
-                OldWireLogger.eventProcessing.error("Skipping label update due to missing value field")
+                WireLogger.eventProcessing.error("Skipping label update due to missing value field")
                 continue
             }
 

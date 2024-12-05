@@ -32,7 +32,7 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
-        OldWireLogger.sessionManager.debug("Client registration was successful")
+        WireLogger.sessionManager.debug("Client registration was successful")
 
         if configuration.encryptionAtRestEnabledByDefault {
             do {

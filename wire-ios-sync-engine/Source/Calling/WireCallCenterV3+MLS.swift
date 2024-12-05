@@ -161,7 +161,7 @@ extension WireCallCenterV3 {
                         selfClientID: selfClientID
                     )
                 } catch {
-                    OldWireLogger.calling.warn("failed to leave stale conference if needed: \(String(describing: error))")
+                    WireLogger.calling.warn("failed to leave stale conference if needed: \(String(describing: error))")
                 }
             }
         }
@@ -186,7 +186,7 @@ extension WireCallCenterV3 {
 
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else {
-                OldWireLogger.calling.error("failed to leave subconversation: mlsService is missing")
+                WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
                 assertionFailure("mlsService is nil")
                 return
             }
@@ -199,7 +199,7 @@ extension WireCallCenterV3 {
                         subconversationType: .conference
                     )
                 } catch {
-                    OldWireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
+                    WireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
                 }
             }
         }

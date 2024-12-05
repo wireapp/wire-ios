@@ -28,7 +28,7 @@ extension SessionManager: VoIPPushManagerDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        OldWireLogger.notifications.info("processing incoming (real) voIP push payload: \(payload)")
+        WireLogger.notifications.info("processing incoming (real) voIP push payload: \(payload)")
 
         // We were given some time to run, resume background task creation.
         BackgroundActivityFactory.shared.resume()
@@ -39,22 +39,22 @@ extension SessionManager: VoIPPushManagerDelegate {
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
                 expirationHandler: {
-                    OldWireLogger.notifications.warn("Processing push payload expired: \(payload)")
+                    WireLogger.notifications.warn("Processing push payload expired: \(payload)")
                 }
             )
         else {
-            OldWireLogger.notifications.warn("Aborted processing of payload: \(payload)")
+            WireLogger.notifications.warn("Aborted processing of payload: \(payload)")
             return completion()
         }
 
         withSession(for: account, perform: { userSession in
-            OldWireLogger.notifications.info(
+            WireLogger.notifications.info(
                 "Forwarding push payload to user session with account \(account.userIdentifier)",
                 attributes: .safePublic
             )
 
             userSession.receivedPushNotification(with: payload, completion: {
-                OldWireLogger.notifications.info("Processing push payload completed")
+                WireLogger.notifications.info("Processing push payload completed")
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completion()
             })
@@ -62,13 +62,13 @@ extension SessionManager: VoIPPushManagerDelegate {
     }
 
     public func processPendingCallEvents(accountID: UUID) {
-        OldWireLogger.calling.info("process pending call events preemptively")
+        WireLogger.calling.info("process pending call events preemptively")
 
         guard
             let account = accountManager.account(with: accountID),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
         else {
-            OldWireLogger.calling.error("failed to process pending call events preemptively")
+            WireLogger.calling.error("failed to process pending call events preemptively")
             return
         }
 

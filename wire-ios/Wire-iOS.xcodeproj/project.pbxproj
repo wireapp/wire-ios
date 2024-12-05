@@ -378,6 +378,11 @@
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
+		597476142D01A1E4005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476132D01A1E4005E891A /* WireLegacyLogging.swift */; };
+		597476162D01A3D2005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476152D01A3D2005E891A /* WireLegacyLogging.swift */; };
+		597476182D01A69B005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476172D01A696005E891A /* WireLegacyLogging.swift */; };
+		5974761A2D01A6D2005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476192D01A6CF005E891A /* WireLegacyLogging.swift */; };
+		5974761B2D01A6D2005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476192D01A6CF005E891A /* WireLegacyLogging.swift */; };
 		597949C72BEA7B90008BDB69 /* AccountSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949C62BEA7B90008BDB69 /* AccountSelector.swift */; };
 		597949C92BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949C82BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift */; };
 		59797A462C6F98880044882D /* ZClientControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59797A452C6F98880044882D /* ZClientControllerBuilder.swift */; };
@@ -2366,6 +2371,10 @@
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
 		596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreImageBasedImageTransformer.swift; sourceTree = "<group>"; };
+		597476132D01A1E4005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
+		597476152D01A3D2005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
+		597476172D01A696005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
+		597476192D01A6CF005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		597949C62BEA7B90008BDB69 /* AccountSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountSelector.swift; sourceTree = "<group>"; };
 		597949C82BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+AccountSelector.swift"; sourceTree = "<group>"; };
 		59797A452C6F98880044882D /* ZClientControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZClientControllerBuilder.swift; sourceTree = "<group>"; };
@@ -4121,6 +4130,7 @@
 				065A5AE0279B07AC002D4D1E /* NotificationService.swift */,
 				EE3D7AE328AD4FB500D0A37E /* LegacyNotificationService.swift */,
 				EE7C422628B47CFC00CE018B /* Logger.swift */,
+				597476192D01A6CF005E891A /* WireLegacyLogging.swift */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
 			);
 			path = "Wire Notification Service Extension";
@@ -4776,6 +4786,7 @@
 		5E144FF9213E92A700B65E14 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				597476172D01A696005E891A /* WireLegacyLogging.swift */,
 				BFBE45761E36205F009FBF60 /* Error+Logging.swift */,
 				D5D8977E201A121900FAF69C /* Account+ShareExtensionDisplayName.swift */,
 				BF6EC9091EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift */,
@@ -6441,6 +6452,7 @@
 				160FD05321085F3900C517B5 /* ImageCache.swift */,
 				EE88E00523FAC9EA00D24703 /* SelfUser.swift */,
 				87F18BC71E02E7BF00C69D9B /* Reusable.swift */,
+				597476132D01A1E4005E891A /* WireLegacyLogging.swift */,
 				A90E4AC02381E6D600468F31 /* UIControlState+ExpandState.swift */,
 				87AAE41C1E42399E00E1D13A /* UIFont+DynamicType.swift */,
 				16A5FE24215CB64D00AEEBBD /* UIFont+Weight.swift */,
@@ -8526,6 +8538,7 @@
 				CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */,
 				8778AAEC1F6BC6AD0022F53F /* AppLock.swift */,
 				7C98DCFF1FC32F41005C0042 /* SettingsPropertyName.swift */,
+				597476152D01A3D2005E891A /* WireLegacyLogging.swift */,
 				BFB332671E3A2D95003B0CD2 /* ExtensionSettings.swift */,
 				161541BB1E28FFAE00AC2FFB /* CircularProgressView.swift */,
 				63F65EF92464426200534A69 /* TimedCircularProgressView.swift */,
@@ -9098,6 +9111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE7C422728B47CFC00CE018B /* Logger.swift in Sources */,
+				5974761B2D01A6D2005E891A /* WireLegacyLogging.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
 				EE3D7AE428AD4FB500D0A37E /* LegacyNotificationService.swift in Sources */,
 			);
@@ -9120,6 +9134,7 @@
 				BF96A6C61E2FA1790057974A /* UnsentSendable.swift in Sources */,
 				06F9864425CBFA6E005572C5 /* UIButton+SetIcon.swift in Sources */,
 				5E144FFF213EA0EC00B65E14 /* PreviewImageView.swift in Sources */,
+				597476182D01A69B005E891A /* WireLegacyLogging.swift in Sources */,
 				5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */,
 				06F9864625CC146B005572C5 /* UIView+ConstraintFactory.swift in Sources */,
 				BFBE45771E36205F009FBF60 /* Error+Logging.swift in Sources */,
@@ -9241,6 +9256,7 @@
 				872C823E214AA12100236A76 /* NSAttributedString+Mentions.swift in Sources */,
 				63F2398F269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift in Sources */,
 				EF6ACA7A213169540064047B /* ConfirmAssetViewController.swift in Sources */,
+				597476142D01A1E4005E891A /* WireLegacyLogging.swift in Sources */,
 				63B2366F251B634C009EDB02 /* UIAlertController+OutdatedClient.swift in Sources */,
 				A949418B23E09AFB001B0373 /* ConversationContentViewController.swift in Sources */,
 				5E39FC61225CBBEF00C682B8 /* PasscodeRules+Shared.swift in Sources */,
@@ -10647,6 +10663,7 @@
 				162AE748219B26AF00581D98 /* ConversationSystemMessageTests.swift in Sources */,
 				EF1CB6F522B39CC0004CB458 /* ZMConversation+Mock.swift in Sources */,
 				EF01D28022B136A9009754B2 /* Data+FingerprintStringTests.swift in Sources */,
+				5974761A2D01A6D2005E891A /* WireLegacyLogging.swift in Sources */,
 				EE34D6E32433767500F5BD1C /* TeamMetadataRefresherTests.swift in Sources */,
 				EF91A0561FF3A05A00FE2F53 /* GiphySearchViewControllerTests.swift in Sources */,
 				EF2D6D38228C1FB300D8DBF4 /* MockPhotoLibrary.swift in Sources */,
@@ -10809,6 +10826,7 @@
 				F15650BF21DD08F100210504 /* AVAsset+VideoConvert.swift in Sources */,
 				594211C72C9057F700576053 /* AggregateFilePreviewGenerator.swift in Sources */,
 				F15650C421DD0AB200210504 /* UIApplication+ShareExtension.swift in Sources */,
+				597476162D01A3D2005E891A /* WireLegacyLogging.swift in Sources */,
 				7C525EBF23603C9100396C42 /* Bundle+SSO.swift in Sources */,
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,
 				F15650B221DD018700210504 /* Bundle+Identifiers.swift in Sources */,

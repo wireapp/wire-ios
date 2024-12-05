@@ -84,10 +84,10 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
                 do {
                     try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)
                 } catch {
-                    OldWireLogger.proteus.error("cannot establishSession while getting fingerprint: \(error)")
+                    WireLogger.proteus.error("cannot establishSession while getting fingerprint: \(error)")
                 }
             } else {
-                OldWireLogger.backend.warn("apiVersion not resolved, cannot establishSession")
+                WireLogger.backend.warn("apiVersion not resolved, cannot establishSession")
             }
         }
 
@@ -100,7 +100,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         }
 
         guard canPerform else {
-            OldWireLogger.proteus.error("cannot get localFingerprint, proteusProvider not ready")
+            WireLogger.proteus.error("cannot get localFingerprint, proteusProvider not ready")
             return nil
         }
 
@@ -120,7 +120,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
                     let fingerprint = try await proteusService.localFingerprint()
                     fingerprintData = fingerprint.utf8Data
                 } catch {
-                    OldWireLogger.proteus.error("Cannot fetch local fingerprint")
+                    WireLogger.proteus.error("Cannot fetch local fingerprint")
                 }
             },
             withKeyStore: { keyStore in
@@ -145,7 +145,7 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
                     let fingerprint = try await proteusService.remoteFingerprint(forSession: sessionId)
                     fingerprintData = fingerprint.utf8Data
                 } catch {
-                    OldWireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
+                    WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
                 }
             },
             withKeyStore: { keyStore in

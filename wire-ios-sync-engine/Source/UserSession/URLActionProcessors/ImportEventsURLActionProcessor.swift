@@ -78,7 +78,7 @@ class ImportEventsURLActionProcessor: URLActionProcessor {
         let end = DispatchTime.now()
         let elapsedTimeInMilliSeconds = Double(end.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000
 
-        OldWireLogger.eventProcessing.info("It took \(elapsedTimeInMilliSeconds) ms to import \(events.count) event(s)")
+        WireLogger.eventProcessing.info("It took \(elapsedTimeInMilliSeconds) ms to import \(events.count) event(s)")
     }
 
     private func updateEventsFromJSON(_ eventsData: Data) -> [ZMUpdateEvent] {

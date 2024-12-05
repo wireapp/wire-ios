@@ -65,7 +65,7 @@ extension ZMMessage: Sendable {
         let attributes: LogAttributes = [.nonce: nonce?.safeForLoggingDescription ?? "<nil>"]
             .merging(.safePublic, uniquingKeysWith: { _, new in new })
 
-        OldWireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
+        WireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
         expire(withReason: .cancelled)
     }
 

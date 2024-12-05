@@ -20,11 +20,13 @@ import Foundation
 import WireLogging
 import WireSystem
 import WireLogging
-
-private typealias AggregatedLoggingProvider = WireLogging.AggregatedLoggingProvider
+import WireLegacyLogging
 
 /// Namespace for analytics tools.
 public enum WireAnalytics {
+
+    private typealias WireLogger = WireLogging.WireLogger
+    private typealias LegacyLogger = WireLegacyLogging.WireLogger
 
     private static let isSetUpLock = NSLock()
     private static var isSetUp = false
@@ -62,7 +64,7 @@ public enum WireAnalytics {
         }
 
         // TODO: clean up
-        OldWireLogger.initialize(
+        LegacyLogger.initialize(
             loggers: [
                 SystemLogger(),
                 cocoaLumberjackLogger,
@@ -71,7 +73,7 @@ public enum WireAnalytics {
         )
 
         // pass tags to Datadog through WireLogger
-        OldWireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
-        OldWireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
+        LegacyLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        LegacyLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
 }

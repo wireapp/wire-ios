@@ -31,7 +31,7 @@ protocol OAuthUseCaseInterface {
 
 class OAuthUseCase: OAuthUseCaseInterface {
 
-    private let logger = OldWireLogger.e2ei
+    private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
     private var targetViewController: () -> UIViewController
 

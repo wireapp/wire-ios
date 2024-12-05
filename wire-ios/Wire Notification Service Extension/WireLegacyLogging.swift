@@ -18,7 +18,4 @@
 
 import WireLegacyLogging
 
-typealias Flow = WireLegacyLogging.Flow
 typealias WireLogger = WireLegacyLogging.WireLogger
-typealias LogAttributesKey = WireLegacyLogging.LogAttributesKey
-typealias LogConvertible = WireLegacyLogging.LogConvertible

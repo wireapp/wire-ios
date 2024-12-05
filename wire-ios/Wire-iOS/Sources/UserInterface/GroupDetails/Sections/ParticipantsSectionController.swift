@@ -260,7 +260,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
         let unexpectedCellHandler: () -> UICollectionViewCell = {
             let message = "Unexpected collection view cell type: \(String(describing: cell.self))"
-            OldWireLogger.conversation.error(message)
+            WireLogger.conversation.error(message)
             assertionFailure(message)
             return cell
         }

@@ -81,7 +81,7 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
 
     var enabled: Bool {
         didSet {
-            OldWireLogger.backend.debug("did set reachability enabled: \(enabled)")
+            WireLogger.backend.debug("did set reachability enabled: \(enabled)")
             if safeReachability == nil, enabled {
                 safeReachability = reachabilityClosure()
                 NotificationCenter.default.post(
@@ -99,9 +99,9 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
     private var safeReachability: Reachability? {
         didSet {
             if safeReachability == nil {
-                OldWireLogger.backend.debug("did clear reachbility provider")
+                WireLogger.backend.debug("did clear reachbility provider")
             } else {
-                OldWireLogger.backend.debug("did set reachbility provider")
+                WireLogger.backend.debug("did set reachbility provider")
             }
         }
     }

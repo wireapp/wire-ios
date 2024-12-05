@@ -284,7 +284,7 @@ final class ZClientViewController: UIViewController {
             do {
                 try await trackingManager?.firstTimeRequestToEnableAnalytics()
             } catch {
-                OldWireLogger.analytics.error("failed to first time enable analytics: \(error)")
+                WireLogger.analytics.error("failed to first time enable analytics: \(error)")
             }
         }
     }
@@ -766,7 +766,7 @@ final class ZClientViewController: UIViewController {
                 account: account
             ).mapToAccountImageSource()
         } catch {
-            OldWireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+            WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
         }
     }
 
@@ -780,7 +780,7 @@ final class ZClientViewController: UIViewController {
             let isE2EICertified = try await userSession.isSelfUserE2EICertifiedUseCase.invoke()
             cachedAccountInfo.isE2EICertified = isE2EICertified
         } catch {
-            OldWireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
+            WireLogger.ui.error("Failed to update user's account info for the sidebar: \(String(reflecting: error))")
         }
     }
 

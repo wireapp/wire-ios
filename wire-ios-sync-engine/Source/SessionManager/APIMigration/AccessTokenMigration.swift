@@ -44,7 +44,7 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     }
 
     func perform(withTokenRenewer tokenRenewer: AccessTokenRenewing, clientID: String) async throws {
-        OldWireLogger.apiMigration.info("performing access token migration for clientID \(clientID)")
+        WireLogger.apiMigration.info("performing access token migration for clientID \(clientID)")
 
         tokenRenewer.setAccessTokenRenewalObserver(self)
 
@@ -58,13 +58,13 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     }
 
     func accessTokenRenewalDidSucceed() {
-        OldWireLogger.apiMigration.info("successfully renewed access token")
+        WireLogger.apiMigration.info("successfully renewed access token")
         continuation?.resume()
         teardownContinuation()
     }
 
     func accessTokenRenewalDidFail() {
-        OldWireLogger.apiMigration.warn("failed to renew access token")
+        WireLogger.apiMigration.warn("failed to renew access token")
         continuation?.resume(throwing: Self.Error.failedToRenewAccessToken)
         teardownContinuation()
     }

@@ -146,7 +146,7 @@ extension SessionManager {
 
             let decryptedURL = SessionManager.temporaryURL(for: location)
 
-            OldWireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
+            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {
                 try SessionManager.decrypt(

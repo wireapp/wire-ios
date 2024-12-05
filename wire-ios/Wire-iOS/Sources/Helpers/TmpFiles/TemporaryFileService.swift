@@ -38,6 +38,6 @@ final class TemporaryFileService: TemporaryFileServiceInterface {
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }
-        OldWireLogger.localStorage.debug("clearing temp directory!!")
+        WireLogger.localStorage.debug("clearing temp directory!!")
     }
 }
