@@ -20,5 +20,7 @@ import XCTest
 @testable import WireIndividualToTeamMigrationUI
 
 class WireIndividualToTeamMigrationTests: XCTestCase {
-    func testExample() {}
+    func testExample() throws {
+        throw XCTSkip("[WPB-14864] Not yet implemented")
+    }
 }
