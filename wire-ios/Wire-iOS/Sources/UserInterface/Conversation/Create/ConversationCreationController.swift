@@ -495,19 +495,3 @@ extension ConversationCreationController {
         return alert
     }
 }
-
-extension UserSession {
-
-    var defaultProtocol: MessageProtocol {
-        guard mlsFeature.isEnabled else {
-            return .proteus
-        }
-        switch mlsFeature.config.defaultProtocol {
-        case .proteus, .mixed:
-            return .proteus
-        case .mls:
-            return .mls
-        }
-    }
-
-}

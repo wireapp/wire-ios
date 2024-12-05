@@ -18,12 +18,24 @@
 
 public extension UserSession {
 
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
+        case .proteus, .mixed:
+            return .proteus
+        case .mls:
+            return .mls
+        }
+    }
+
     var isFederationUsageAllowed: Bool {
         guard BackendInfo.isMLSEnabled else {
             // If there is no MLS removal key configured,federation search is allowed.
             return true
         }
-        return mlsFeature.config.defaultProtocol != .proteus
+        return defaultProtocol != .proteus
     }
 
 }
