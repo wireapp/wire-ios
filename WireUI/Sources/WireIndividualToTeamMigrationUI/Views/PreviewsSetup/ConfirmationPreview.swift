@@ -20,14 +20,16 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
-#Preview {
+@MainActor
+@ViewBuilder
+func confirmationPreview() -> some View {
     PageContainer(
         content: {
-            CompletionView(profileName: "Some User", teamName: "Some Team") { _ in }
+            ConfirmationView { _ in }
         },
-        step: 4,
+        step: 3,
         stepCount: 4,
-        stepTitle: String.formated(key: "individualToTeam.completion.title", bundle: .module, "Some User")
+        stepTitle: String.localized(key: "individualToTeam.confirmation.title", bundle: .module)
     )
     .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 }

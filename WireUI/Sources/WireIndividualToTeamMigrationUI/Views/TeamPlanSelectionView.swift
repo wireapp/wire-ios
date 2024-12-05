@@ -70,3 +70,7 @@ struct TeamPlanSelectionView: View {
         }
     }
 }
+
+#Preview {
+    teamPlanSelectionPreview()
+}

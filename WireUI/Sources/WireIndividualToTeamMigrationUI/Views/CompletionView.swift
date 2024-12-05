@@ -60,3 +60,7 @@ struct CompletionView: View {
         }
     }
 }
+
+#Preview {
+    completionPreview()
+}

@@ -20,17 +20,7 @@ import Foundation
 import WireAPI
 import WireSystem
 
-public struct IndividualToTeamMigrationResult {
-    public let teamID: UUID
-    public let teamName: String
-
-    public init(teamID: UUID, teamName: String) {
-        self.teamID = teamID
-        self.teamName = teamName
-    }
-}
-
-public struct IndividualToTeamMigrationUseCase {
+public struct IndividualToTeamMigrationUseCaseImplementation: IndividualToTeamMigrationUseCase {
     private let accountsAPI: AccountsAPI
     private let logger: WireLogger = .individualToTeamMigration
 

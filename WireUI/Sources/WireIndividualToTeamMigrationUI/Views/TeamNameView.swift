@@ -54,3 +54,7 @@ struct TeamNameView: View {
         }
     }
 }
+
+#Preview {
+    teamNamePreview()
+}

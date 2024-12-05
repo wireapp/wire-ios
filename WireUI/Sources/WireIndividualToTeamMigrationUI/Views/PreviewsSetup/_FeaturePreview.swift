@@ -36,6 +36,7 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
         IndividualToTeamMigrationViewController(
             features: features,
             useCase: MockUseCase(),
+            userProfileName: "Some User",
             actionCallback: { _ in }
         )
     }
@@ -45,7 +46,9 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
     }
 }
 
-#Preview {
+@MainActor
+@ViewBuilder
+func featurePreview() -> some View {
     FeaturePreviewContainer(features: [
         .init(
             id: "console",
