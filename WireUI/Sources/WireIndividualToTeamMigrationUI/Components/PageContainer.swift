@@ -40,16 +40,18 @@ struct PageContainer<Content: View>: View {
     }
 
     var body: some View {
-        VStack {
-            Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
-                .wireTextStyle(.subline1)
-                .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
-            Spacer()
-                .frame(height: 12)
-            Text(stepTitle)
-                .wireTextStyle(.h2)
-            Spacer(minLength: 36)
-            content
+        ScrollView {
+            VStack {
+                Text(String.formated(key: "individualToTeam.progressCount", bundle: .module, step, stepCount))
+                    .wireTextStyle(.subline1)
+                    .foregroundStyle(Color(uiColor: ColorTheme.Base.secondaryText))
+                Spacer()
+                    .frame(height: 12)
+                Text(stepTitle)
+                    .wireTextStyle(.h2)
+                Spacer(minLength: 36)
+                content
+            }
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 24)

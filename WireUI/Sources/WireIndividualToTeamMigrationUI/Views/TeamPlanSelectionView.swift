@@ -56,8 +56,7 @@ struct TeamPlanSelectionView: View {
                 action: {},
                 label: {
                     Text(String.localized(key: "individualToTeam.planSelection.url", bundle: .module))
-//                        .tint(.primary)
-//                        .underline()
+                        .lineLimit(nil)
                 }
             )
             .wireButtonStyle(.tertiary)
