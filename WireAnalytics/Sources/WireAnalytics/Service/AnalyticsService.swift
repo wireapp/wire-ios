@@ -64,7 +64,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         self.baseSegmentation = baseSegmentation
         self.countlyProvider = countlyProvider
 
-        logger = .analytics
+        self.logger = .analytics
     }
 
     // MARK: - Enable / disable
