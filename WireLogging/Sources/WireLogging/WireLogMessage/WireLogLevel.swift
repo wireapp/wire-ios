@@ -16,13 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireDatadog {
-    enum LogLevel: String, Codable {
-        case debug
-        case info
-        case notice
-        case warn
-        case error
-        case critical
-    }
+public enum WireLogLevel {
+    case debug, info, notice, warn, error, critical
 }

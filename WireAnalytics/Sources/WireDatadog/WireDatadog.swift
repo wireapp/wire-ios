@@ -104,7 +104,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireDatadog.LogLevel,
+        level: WireLogLevel,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]
@@ -113,8 +113,10 @@ public final class WireDatadog {
         finalAttributes["build_number"] = buildNumber
         finalAttributes["version"] = buildVersion
 
+        let level = level.mapToDatadogLogLevel()
+
         logger?.log(
-            level: level.datadogLevel, // TODO: [WPB-11881] review this when WireLogger is available as package
+            level: level,
             message: message,
             error: error,
             attributes: finalAttributes
@@ -148,8 +150,8 @@ public final class WireDatadog {
     }
 }
 
-extension WireDatadog.LogLevel {
-    var datadogLevel: LogLevel {
+extension WireLogLevel {
+    func mapToDatadogLogLevel() -> LogLevel {
         switch self {
         case .debug:
             .debug

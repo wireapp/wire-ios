@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLogging
 
 public final class WireDatadog {
 
@@ -40,7 +41,7 @@ public final class WireDatadog {
     }
 
     public func log(
-        level: WireDatadog.LogLevel,
+        level: WireLogLevel,
         message: String,
         error: (any Error)? = nil,
         attributes: [String: any Encodable]

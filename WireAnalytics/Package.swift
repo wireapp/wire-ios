@@ -31,7 +31,7 @@ let package = Package(
         ),
         .target(
             name: "WireDatadog",
-            dependencies: datadogDependencies(),
+            dependencies: datadogDependencies() + ["WireLogging"],
             path: "Sources/WireDatadog",
             sources: datadogFiles(),
             swiftSettings: swiftSettings

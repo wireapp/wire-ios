@@ -27,12 +27,10 @@ class AnalyticsServiceTests: XCTestCase {
     private var countly: MockCountlyProtocol!
 
     override func setUpWithError() throws {
-        try super.setUpWithError()
         countly = MockCountlyProtocol()
         sut = AnalyticsService(
             config: Scaffolding.config,
             baseSegmentation: Scaffolding.baseSegmentation,
-            logger: { print($0) },
             countlyProvider: { self.countly }
         )
 
@@ -48,7 +46,6 @@ class AnalyticsServiceTests: XCTestCase {
     override func tearDown() {
         countly = nil
         sut = nil
-        super.tearDown()
     }
 
     func resetMockInvocations() {
@@ -64,10 +61,7 @@ class AnalyticsServiceTests: XCTestCase {
 
     func testEnableTracking_service_is_not_configured() async throws {
         // Given a service with no config.
-        let sut = AnalyticsService(
-            config: nil,
-            logger: { print($0) }
-        )
+        let sut = AnalyticsService(config: nil)
 
         do {
             // When tracking is enabled.
