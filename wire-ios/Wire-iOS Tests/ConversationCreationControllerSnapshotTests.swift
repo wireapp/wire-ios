@@ -78,21 +78,20 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     }
 
     func testTeamGroupOptions_withoutServices() {
-        let mls = Feature.MLS(status: .enabled, config: .init(defaultProtocol: .mls))
-        createSut(isTeamMember: true)
+        createSut(isTeamMember: true, messageProtocol: .mls)
 
         snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Helper Method
 
-    private func createSut(isTeamMember: Bool) {
+    private func createSut(isTeamMember: Bool, messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus) {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)
         mockUserSession.mlsFeature = .init(
             status: .enabled,
             config: .init(
-                defaultProtocol: .mls,
+                defaultProtocol: messageProtocol,
                 defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
         )
 
