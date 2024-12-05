@@ -151,9 +151,7 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
                     conversations = try fetchConversations(with: conversationId, domain: domain, in: context)
                     XCTAssertEqual(conversations.count, 1)
 
-                    XCTAssertTrue(context.readAndResetSlowSyncFlag())
-                    // the flag has been consumed
-                    XCTAssertFalse(context.readAndResetSlowSyncFlag())
+                    XCTAssertTrue(context.readMigrationNeedsSlowSyncFlag())
                 }
             },
             for: self

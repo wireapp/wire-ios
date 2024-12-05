@@ -18,20 +18,16 @@
 
 import Foundation
 
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+final class ForceSyncResourcesPostAction: CoreDataMigrationAction {
 
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false
-        )
+    override func execute(in context: NSManagedObjectContext) {
+        do {
+            try context.setMigrationNeedsSyncResources()
+        } catch {
+            WireLogger.localStorage.error(
+                "Failed to trigger syncResources for federation migration issue: \(error.localizedDescription)",
+                attributes: .safePublic
+            )
+        }
     }
-
 }
