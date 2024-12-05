@@ -21,8 +21,8 @@ import Foundation
 
 struct ServerTrustValidator: Sendable {
 
-    enum Failure: Error {
-        case evaluatingServerTrustFailed((any Swift.Error)?)
+    enum Failure: Error, Equatable {
+        case evaluatingServerTrustFailed
         case noPublicKeyOnServerTrust
         case noMatchingPublicKey
     }
@@ -67,7 +67,8 @@ struct ServerTrustValidator: Sendable {
                     if success {
                         continuation.resume()
                     } else {
-                        continuation.resume(throwing: Failure.evaluatingServerTrustFailed(error))
+                        print("Server trust evaluation failed: \(String(describing: error))")
+                        continuation.resume(throwing: Failure.evaluatingServerTrustFailed)
                     }
                 }
             }

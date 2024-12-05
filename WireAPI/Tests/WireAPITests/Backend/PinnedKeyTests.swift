@@ -37,7 +37,7 @@ final class PinnedKeyTests: XCTestCase {
     func testMatches() throws {
         // GIVEN
         let sut = try PinnedKey(
-            key: try PublicKeys.loadJSON(fileName: "public-keys").wire,
+            key: try PublicKeys.wire,
             hosts: [
                 .equals("foo.example.com"),
                 .equals("bar.example.com"),
@@ -53,10 +53,4 @@ final class PinnedKeyTests: XCTestCase {
         XCTAssertFalse(sut.matches(host: "example.net.something"))
     }
 
-}
-
-// MARK: - Test Data
-
-private struct PublicKeys: Decodable {
-    let wire: Data
 }
