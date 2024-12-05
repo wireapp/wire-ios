@@ -360,7 +360,11 @@ public final class ProteusService: ProteusServiceInterface {
 private extension CoreCryptoProtocol {
 
     var lastProteusError: ProteusError {
-        ProteusError(proteusCode: proteusLastErrorCode())
+        guard let proteusCode = proteusLastErrorCode() else {
+            return .unknown
+        }
+
+        return ProteusError(proteusCode: proteusCode)
     }
 
 }

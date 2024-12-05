@@ -117,7 +117,7 @@ public enum ProteusError: Int, Error, Equatable {
     /// Initialise from a proteus code.
     /// See: https://github.com/wireapp/proteus/blob/2.x/crates/proteus-traits/src/lib.rs
 
-    init(proteusCode: UInt32) {
+    init(proteusCode: UInt16) {
         switch proteusCode {
         case 501:
             self = .storageError
