@@ -18,9 +18,7 @@
 
 import Foundation
 
-//typealias AggregatedLogger = LegacyAggregatedLogger
-
-final class LegacyAggregatedLogger: LoggerProtocol {
+final class AggregatedLogger: LoggerProtocol {
     private var loggers: [any LoggerProtocol]
 
     init(loggers: [any LoggerProtocol]) {
@@ -37,49 +35,49 @@ final class LegacyAggregatedLogger: LoggerProtocol {
         loggers.reduce(into: []) { $0 += $1.logFiles }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.debug(message, attributes: mergedAttributes)
         }
     }
 
-    func info(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.info(message, attributes: mergedAttributes)
         }
     }
 
-    func notice(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.notice(message, attributes: mergedAttributes)
         }
     }
 
-    func warn(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.warn(message, attributes: mergedAttributes)
         }
     }
 
-    func error(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.error(message, attributes: mergedAttributes)
         }
     }
 
-    func critical(_ message: any LogConvertible, attributes: LegacyLogAttributes...) {
+    func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         let mergedAttributes = flattenArray(attributes)
         loggers.forEach {
             $0.critical(message, attributes: mergedAttributes)
         }
     }
 
-    func addTag(_ key: LegacyLogAttributesKey, value: String?) {
+    func addTag(_ key: LogAttributesKey, value: String?) {
         loggers.forEach {
             $0.addTag(key, value: value)
         }
