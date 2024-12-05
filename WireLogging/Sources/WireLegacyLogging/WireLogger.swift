@@ -18,11 +18,11 @@
 
 public import Foundation
 
-public struct OldWireLogger: LoggerProtocol, Sendable {
+public struct WireLogger: LoggerProtocol, Sendable {
 
     public static func initialize(loggers: [any LoggerProtocol]) {
         guard provider == nil else {
-            assertionFailure("OldWireLogger.initialize called more than once")
+            assertionFailure("WireLogger.initialize called more than once")
             return
         }
 

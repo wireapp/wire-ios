@@ -94,7 +94,6 @@
 				591B6E892C8B0A33009F8A7B /* ZipArchive.xcframework in Frameworks */,
 				5953781C2CFF42E900920B59 /* WireLogging in Frameworks */,
 				013334BC2C204AB0002D97DB /* CocoaLumberjackSwift in Frameworks */,
-				595375FC2CFE02F200920B59 /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

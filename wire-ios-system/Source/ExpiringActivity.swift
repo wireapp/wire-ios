@@ -66,19 +66,19 @@ actor ExpiringActivityManager {
                     let semaphore = DispatchSemaphore(value: 0)
                     Task {
                         do {
-                            OldWireLogger.backgroundActivity.debug("Start of activity: \(reason)")
+                            WireLogger.backgroundActivity.debug("Start of activity: \(reason)")
                             try await self.startWork(block: block, semaphore: semaphore).value
-                            OldWireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
+                            WireLogger.backgroundActivity.debug("Expiring activity completed: \(reason)")
                             continuation.resume()
                         } catch {
-                            OldWireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
+                            WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
                             continuation.resume(throwing: error)
                         }
 
                     }
                     semaphore.wait()
                 } else {
-                    OldWireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
+                    WireLogger.backgroundActivity.warn("Background activity is expiring: \(reason)")
                     Task {
                         do {
                             try await self.stopWork()
@@ -94,7 +94,7 @@ actor ExpiringActivityManager {
     func startWork(block: @escaping () async throws -> Void, semaphore: DispatchSemaphore) -> Task<Void, any Error> {
         let task = Task {
             defer {
-                OldWireLogger.backgroundActivity.debug("Releasing semaphore")
+                WireLogger.backgroundActivity.debug("Releasing semaphore")
                 semaphore.signal()
             }
             try await block()
