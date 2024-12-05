@@ -17,5 +17,10 @@
 //
 
 public enum WireLogLevel {
-    case debug, info, notice, warn, error, critical
+    case debug
+    case info
+    case notice
+    case warn
+    case error
+    case critical
 }
