@@ -57,6 +57,7 @@ private func contentView(
         Text(String.localized(key: "individualToTeam.banner.body", bundle: .module))
             .wireTextStyle(.subline1)
             .lineLimit(nil)
+        
         Button(
             action: { actionCallback(.createWireTeam) },
             label: {
@@ -64,6 +65,7 @@ private func contentView(
             }
         )
         .wireButtonStyle(.secondary)
+        .fixedSize()
     }
 }
 
