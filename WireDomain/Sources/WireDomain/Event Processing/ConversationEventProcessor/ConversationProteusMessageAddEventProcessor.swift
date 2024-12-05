@@ -101,7 +101,9 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             date: date
         )
 
-        await conversationLocalStore.addParticipant(
+        // Verifies that a sender of an update event is part of the conversation. If they are not,
+        // it means that our local state is out of sync and we need to update the list of participants.
+        await conversationLocalStore.addParticipantIfNeeded(
             participantID: senderID.uuid,
             participantDomain: senderID.domain,
             in: conversation,

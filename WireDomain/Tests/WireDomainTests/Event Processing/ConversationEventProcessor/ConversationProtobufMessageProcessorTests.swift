@@ -28,6 +28,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
     private var sut: ConversationProtobufMessageProcessor!
     private var messageLocalStore: MockMessageLocalStoreProtocol!
     private var userLocalStore: MockUserLocalStoreProtocol!
+    private var conversationLocalStore: MockConversationLocalStoreProtocol!
 
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -42,17 +43,20 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
+        conversationLocalStore = MockConversationLocalStoreProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = ConversationProtobufMessageProcessor(
             messageLocalStore: messageLocalStore,
+            conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore
         )
     }
 
     override func tearDown() async throws {
         messageLocalStore = nil
+        conversationLocalStore = nil
         userLocalStore = nil
         modelHelper = nil
         coreDataStack = nil

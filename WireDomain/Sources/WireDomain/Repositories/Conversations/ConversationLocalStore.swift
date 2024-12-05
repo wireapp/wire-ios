@@ -309,11 +309,33 @@ public protocol ConversationLocalStoreProtocol {
         date: Date
     ) async
 
-    func addParticipant(
+    func addParticipantIfNeeded(
         participantID: UUID,
         participantDomain: String?,
         in conversation: ZMConversation,
         date: Date
+    ) async
+    
+    /// Updates last read message timestamp.
+    /// - Parameters:
+    ///     - lastReadMessage: The last read message protobuf object.
+    ///     - conversation: The conversation the message is derived from.
+    ///
+
+    func updateLastReadMessageTimestamp(
+        _ lastReadMessage: LastRead,
+        in conversation: ZMConversation
+    ) async
+
+    /// Updates cleared message timestamp.
+    /// - Parameters:
+    ///     - clearedMessage: The cleared message protobuf object.
+    ///     - conversation: The conversation the message is derived from.
+    ///
+
+    func updateClearedMessageTimestamp(
+        _ clearedMessage: Cleared,
+        in conversation: ZMConversation
     ) async
 }
 
@@ -345,6 +367,38 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+    
+    public func updateLastReadMessageTimestamp(
+        _ lastReadMessage: LastRead,
+        in conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            guard conversation.isSelfConversation else {
+                return
+            }
+
+            ZMConversation.updateConversation(
+                withLastReadFromSelfConversation: lastReadMessage,
+                in: context
+            )
+        }
+    }
+
+    public func updateClearedMessageTimestamp(
+        _ clearedMessage: Cleared,
+        in conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            guard conversation.isSelfConversation else {
+                return
+            }
+
+            ZMConversation.updateConversation(
+                withClearedFromSelfConversation: clearedMessage,
+                in: context
+            )
+        }
+    }
     
     public func mlsConversationInfo(
         conversation: ZMConversation
@@ -678,14 +732,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func addParticipant(
+    public func addParticipantIfNeeded(
         participantID: UUID,
         participantDomain: String?,
         in conversation: ZMConversation,
         date: Date
     ) async {
-        // Verifies that a sender of an update event is part of the conversation. If they are not,
-        // it means that our local state is out of sync and we need to update the list of participants.
         guard let participant = try? await userLocalStore.fetchUser(
             id: participantID,
             domain: participantDomain

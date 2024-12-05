@@ -42,6 +42,7 @@ public protocol ConversationProtobufMessageProcessorProtocol {
 struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
+    let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
     func processProtobufMessage(
@@ -63,14 +64,14 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
         switch content {
         case .lastRead:
 
-            await messageLocalStore.updateLastReadMessageTimestamp(
+            await conversationLocalStore.updateLastReadMessageTimestamp(
                 message.lastRead,
                 in: conversation
             )
 
         case .cleared:
 
-            await messageLocalStore.updateClearedMessageTimestamp(
+            await conversationLocalStore.updateClearedMessageTimestamp(
                 message.cleared,
                 in: conversation
             )

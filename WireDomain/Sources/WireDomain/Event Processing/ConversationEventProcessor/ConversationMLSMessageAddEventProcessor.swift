@@ -33,6 +33,10 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 }
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
+    
+    enum Failure: Error {
+        case mlsConversationNotFound
+    }
 
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let messageLocalStore: any MessageLocalStoreProtocol
@@ -52,7 +56,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         }
 
         for decryptedMessage in decryptedMessages {
-            await processDecryptedMessage(
+            try await processDecryptedMessage(
                 decryptedMessage,
                 conversationID: conversationID,
                 senderID: senderID,
@@ -66,14 +70,12 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         conversationID: ConversationID,
         senderID: UserID,
         date: Date?
-    ) async {
+    ) async throws {
         guard let conversation = await conversationLocalStore.fetchConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         ) else {
-            return WireLogger.proteus.error(
-                "failed to add MLS message: conversation not found in db"
-            )
+            throw Failure.mlsConversationNotFound
         }
 
         let logAttributes: LogAttributes = [
@@ -114,7 +116,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             date: date ?? .now
         )
 
-        await conversationLocalStore.addParticipant(
+        // Verifies that a sender of an update event is part of the conversation. If they are not,
+        // it means that our local state is out of sync and we need to update the list of participants.
+        await conversationLocalStore.addParticipantIfNeeded(
             participantID: senderID.uuid,
             participantDomain: senderID.domain,
             in: conversation,

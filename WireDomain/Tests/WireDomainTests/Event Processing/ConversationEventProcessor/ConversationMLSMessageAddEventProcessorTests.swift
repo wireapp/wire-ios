@@ -79,7 +79,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_MockMethod = { _, _, _ in }
-        conversationLocalStore.addParticipantParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
+        conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod = { _, _, _, _ in }
         messageLocalStore.canAddMessageConversationSenderIDLogAttributes_MockValue = true
         protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod = { _, _, _, _, _, _, _, _ in }
 
@@ -93,7 +93,7 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderIDLogAttributes_Invocations.count, 1)
         XCTAssertEqual(protobufMessageProcessor.processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.updateSecurityLevelAfterReceivingMessageConversationGenericMessageDate_Invocations.count, 1)
-        XCTAssertEqual(conversationLocalStore.addParticipantParticipantIDParticipantDomainInDate_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {

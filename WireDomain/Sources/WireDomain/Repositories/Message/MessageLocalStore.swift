@@ -68,28 +68,6 @@ public protocol MessageLocalStoreProtocol {
         logAttributes: LogAttributes
     ) async -> Bool
 
-    /// Updates last read message timestamp.
-    /// - Parameters:
-    ///     - lastReadMessage: The last read message protobuf object.
-    ///     - conversation: The conversation the message is derived from.
-    ///
-
-    func updateLastReadMessageTimestamp(
-        _ lastReadMessage: LastRead,
-        in conversation: ZMConversation
-    ) async
-
-    /// Updates cleared message timestamp.
-    /// - Parameters:
-    ///     - clearedMessage: The cleared message protobuf object.
-    ///     - conversation: The conversation the message is derived from.
-    ///
-
-    func updateClearedMessageTimestamp(
-        _ clearedMessage: Cleared,
-        in conversation: ZMConversation
-    ) async
-
     /// Deletes a given message from all of the self user's devices.
     /// - Parameters:
     ///     - hiddenMessage: The hidden message protobuf object.
@@ -310,38 +288,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
-            )
-        }
-    }
-
-    public func updateLastReadMessageTimestamp(
-        _ lastReadMessage: LastRead,
-        in conversation: ZMConversation
-    ) async {
-        await context.perform { [context] in
-            guard conversation.isSelfConversation else {
-                return
-            }
-
-            ZMConversation.updateConversation(
-                withLastReadFromSelfConversation: lastReadMessage,
-                in: context
-            )
-        }
-    }
-
-    public func updateClearedMessageTimestamp(
-        _ clearedMessage: Cleared,
-        in conversation: ZMConversation
-    ) async {
-        await context.perform { [context] in
-            guard conversation.isSelfConversation else {
-                return
-            }
-
-            ZMConversation.updateConversation(
-                withClearedFromSelfConversation: clearedMessage,
-                in: context
             )
         }
     }

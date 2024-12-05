@@ -624,19 +624,49 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversation, genericMessage, date)
     }
 
-    // MARK: - addParticipant
+    // MARK: - addParticipantIfNeeded
 
-    public var addParticipantParticipantIDParticipantDomainInDate_Invocations: [(participantID: UUID, participantDomain: String?, conversation: ZMConversation, date: Date)] = []
-    public var addParticipantParticipantIDParticipantDomainInDate_MockMethod: ((UUID, String?, ZMConversation, Date) async -> Void)?
+    public var addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations: [(participantID: UUID, participantDomain: String?, conversation: ZMConversation, date: Date)] = []
+    public var addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod: ((UUID, String?, ZMConversation, Date) async -> Void)?
 
-    public func addParticipant(participantID: UUID, participantDomain: String?, in conversation: ZMConversation, date: Date) async {
-        addParticipantParticipantIDParticipantDomainInDate_Invocations.append((participantID: participantID, participantDomain: participantDomain, conversation: conversation, date: date))
+    public func addParticipantIfNeeded(participantID: UUID, participantDomain: String?, in conversation: ZMConversation, date: Date) async {
+        addParticipantIfNeededParticipantIDParticipantDomainInDate_Invocations.append((participantID: participantID, participantDomain: participantDomain, conversation: conversation, date: date))
 
-        guard let mock = addParticipantParticipantIDParticipantDomainInDate_MockMethod else {
-            fatalError("no mock for `addParticipantParticipantIDParticipantDomainInDate`")
+        guard let mock = addParticipantIfNeededParticipantIDParticipantDomainInDate_MockMethod else {
+            fatalError("no mock for `addParticipantIfNeededParticipantIDParticipantDomainInDate`")
         }
 
         await mock(participantID, participantDomain, conversation, date)
+    }
+
+    // MARK: - updateLastReadMessageTimestamp
+
+    public var updateLastReadMessageTimestampIn_Invocations: [(lastReadMessage: LastRead, conversation: ZMConversation)] = []
+    public var updateLastReadMessageTimestampIn_MockMethod: ((LastRead, ZMConversation) async -> Void)?
+
+    public func updateLastReadMessageTimestamp(_ lastReadMessage: LastRead, in conversation: ZMConversation) async {
+        updateLastReadMessageTimestampIn_Invocations.append((lastReadMessage: lastReadMessage, conversation: conversation))
+
+        guard let mock = updateLastReadMessageTimestampIn_MockMethod else {
+            fatalError("no mock for `updateLastReadMessageTimestampIn`")
+        }
+
+        await mock(lastReadMessage, conversation)
+    }
+
+    // MARK: - updateClearedMessageTimestamp
+
+    public var updateClearedMessageTimestampIn_Invocations: [(clearedMessage: Cleared, conversation: ZMConversation)] = []
+    public var updateClearedMessageTimestampIn_MockMethod: ((Cleared, ZMConversation) async -> Void)?
+
+    public func updateClearedMessageTimestamp(_ clearedMessage: Cleared, in conversation: ZMConversation) async {
+        updateClearedMessageTimestampIn_Invocations.append((clearedMessage: clearedMessage, conversation: conversation))
+
+        guard let mock = updateClearedMessageTimestampIn_MockMethod else {
+            fatalError("no mock for `updateClearedMessageTimestampIn`")
+        }
+
+        await mock(clearedMessage, conversation)
     }
 
 }
@@ -1000,36 +1030,6 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         } else {
             fatalError("no mock for `canAddMessageConversationSenderIDLogAttributes`")
         }
-    }
-
-    // MARK: - updateLastReadMessageTimestamp
-
-    public var updateLastReadMessageTimestampIn_Invocations: [(lastReadMessage: LastRead, conversation: ZMConversation)] = []
-    public var updateLastReadMessageTimestampIn_MockMethod: ((LastRead, ZMConversation) async -> Void)?
-
-    public func updateLastReadMessageTimestamp(_ lastReadMessage: LastRead, in conversation: ZMConversation) async {
-        updateLastReadMessageTimestampIn_Invocations.append((lastReadMessage: lastReadMessage, conversation: conversation))
-
-        guard let mock = updateLastReadMessageTimestampIn_MockMethod else {
-            fatalError("no mock for `updateLastReadMessageTimestampIn`")
-        }
-
-        await mock(lastReadMessage, conversation)
-    }
-
-    // MARK: - updateClearedMessageTimestamp
-
-    public var updateClearedMessageTimestampIn_Invocations: [(clearedMessage: Cleared, conversation: ZMConversation)] = []
-    public var updateClearedMessageTimestampIn_MockMethod: ((Cleared, ZMConversation) async -> Void)?
-
-    public func updateClearedMessageTimestamp(_ clearedMessage: Cleared, in conversation: ZMConversation) async {
-        updateClearedMessageTimestampIn_Invocations.append((clearedMessage: clearedMessage, conversation: conversation))
-
-        guard let mock = updateClearedMessageTimestampIn_MockMethod else {
-            fatalError("no mock for `updateClearedMessageTimestampIn`")
-        }
-
-        await mock(clearedMessage, conversation)
     }
 
     // MARK: - deleteMessageForSelf
