@@ -660,6 +660,7 @@
 		EEBF69ED28A2724800195771 /* ZMConversationTests+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */; };
 		EEBFA2E829D1D94B0004E8B4 /* ProteusError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBFA2E729D1D94B0004E8B4 /* ProteusError.swift */; };
 		EEC47ED627A81EF60020B599 /* Feature+ClassifiedDomains.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */; };
+		EEC737B42D01AECC003C0FC9 /* CoreCryptoLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC737B32D01AECC003C0FC9 /* CoreCryptoLogger.swift */; };
 		EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */; };
 		EEC794F62A384464008E1A3B /* MLSEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */; };
 		EEC794F82A385359008E1A3B /* MLSDecryptionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */; };
@@ -1604,6 +1605,7 @@
 		EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+MLS.swift"; sourceTree = "<group>"; };
 		EEBFA2E729D1D94B0004E8B4 /* ProteusError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusError.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
+		EEC737B32D01AECC003C0FC9 /* CoreCryptoLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoLogger.swift; sourceTree = "<group>"; };
 		EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionService.swift; sourceTree = "<group>"; };
 		EEC794F52A384464008E1A3B /* MLSEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionService.swift; sourceTree = "<group>"; };
 		EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionServiceTests.swift; sourceTree = "<group>"; };
@@ -2686,6 +2688,7 @@
 				63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */,
 				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
 				63B1334629A503D000009D84 /* CoreCryptoKeyProvider.swift */,
+				EEC737B32D01AECC003C0FC9 /* CoreCryptoLogger.swift */,
 				16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */,
 				0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */,
 			);
@@ -4182,6 +4185,7 @@
 				E6E504382BC542C5004948E7 /* EARKeyRepository.swift in Sources */,
 				6308F8A22A273C0B0072A177 /* BaseFetchMLSGroupInfoAction.swift in Sources */,
 				63C4B3C42C35B10000C09A93 /* ConversationList+Shareable.swift in Sources */,
+				EEC737B42D01AECC003C0FC9 /* CoreCryptoLogger.swift in Sources */,
 				BF8F3A831E4B61C70079E9E7 /* TextSearchQuery.swift in Sources */,
 				5E771F382080BB0000575629 /* PBMessage+Validation.swift in Sources */,
 				16313D621D227DC1001B2AB3 /* LinkPreview+ProtocolBuffer.swift in Sources */,
