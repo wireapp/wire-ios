@@ -2356,20 +2356,15 @@
 				EE74E4DD2A37B28C00B63E6E /* SubconversationGroupIDRepository.swift */,
 				63B1334229A503D000009D84 /* BackendMLSPublicKeys.swift */,
 				63B1334329A503D000009D84 /* MessageProtocol.swift */,
-				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
 				63B1334529A503D000009D84 /* MLSClientID.swift */,
-				0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */,
-				63B1334629A503D000009D84 /* CoreCryptoKeyProvider.swift */,
 				63B1334729A503D000009D84 /* SyncStatusProtocol.swift */,
 				63B1334829A503D000009D84 /* Actions */,
 				63B1335029A503D000009D84 /* MLSGroupStatus.swift */,
-				63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */,
 				63B1335329A503D000009D84 /* StaleMLSKeyMaterialDetector.swift */,
 				63BEF5862A2636BC00F482E8 /* MLSConferenceInfo.swift */,
 				63F0781129F6C59D0031E19D /* MLSSubgroup.swift */,
 				06EB77A02B29E09F00A64DD8 /* MLSVerificationStatus.swift */,
 				E662328A2BF4911E002B680A /* MLSGroupVerification.swift */,
-				16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */,
 				6326E4752AEBB936006EEA28 /* Migration */,
 				639971AD2B2732E6009DD5CF /* CommitSender.swift */,
 				639971B12B2734C0009DD5CF /* ExternalCommitError.swift */,
@@ -2683,6 +2678,18 @@
 				EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */,
 			);
 			path = ClassifiedDomains;
+			sourceTree = "<group>";
+		};
+		EEC737B22D01ADAA003C0FC9 /* Core Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				63B1335129A503D000009D84 /* CoreCryptoCallbacks.swift */,
+				63B1334429A503D000009D84 /* CoreCryptoConfiguration.swift */,
+				63B1334629A503D000009D84 /* CoreCryptoKeyProvider.swift */,
+				16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */,
+				0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */,
+			);
+			path = "Core Crypto";
 			sourceTree = "<group>";
 		};
 		EEC80B5A29B60F7200099727 /* Legacy */ = {
@@ -3523,6 +3530,7 @@
 				638941EC2AF4FD170051ABFD /* UseCases */,
 				1639A81122608FEB00868AB9 /* Patches */,
 				F9A705C91CAEE01D00C2F5FE /* ManagedObjectContext */,
+				EEC737B22D01ADAA003C0FC9 /* Core Crypto */,
 				63B1333929A503D000009D84 /* MLS */,
 				63B1333629A503D000009D84 /* Proteus */,
 				F9A705D41CAEE01D00C2F5FE /* Model */,
