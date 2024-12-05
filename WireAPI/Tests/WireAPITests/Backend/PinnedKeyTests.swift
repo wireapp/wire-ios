@@ -22,6 +22,18 @@ import XCTest
 
 final class PinnedKeyTests: XCTestCase {
 
+    func testInit_withInvalidKeyData() {
+        // GIVEN, WHEN, THEN
+        XCTAssertThrowsError(
+            try PinnedKey(
+                key: Data(),
+                hosts: [.equals("foo.example.com")]
+            )
+        ) { error in
+            XCTAssertEqual(error as? PinnedKey.Failure, .invalidKeyData)
+        }
+    }
+
     func testMatches() throws {
         // GIVEN
         let sut = try PinnedKey(

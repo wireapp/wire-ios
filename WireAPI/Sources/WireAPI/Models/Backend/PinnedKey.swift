@@ -23,9 +23,8 @@ import Foundation
 
 public struct PinnedKey: Sendable {
 
-    enum Failure: Error {
-        case cannotLoadCertificate
-        case cannotRetrievePublicKey
+    public enum Failure: Error {
+        case invalidKeyData
     }
 
     public enum Host: Sendable {
@@ -36,7 +35,7 @@ public struct PinnedKey: Sendable {
     let key: SecKey
     let hosts: [Host]
 
-    public init(key: Data, hosts: [Host]) throws {
+    public init(key: Data, hosts: [Host]) throws(Failure) {
         self.key = try Self.key(for: key)
         self.hosts = hosts
     }
@@ -56,13 +55,12 @@ public struct PinnedKey: Sendable {
 
     // MARK: - Private
 
-    private static func key(for data: Data) throws -> SecKey {
-        guard let certificate = SecCertificateCreateWithData(nil, data as CFData) else {
-            throw Failure.cannotLoadCertificate
-        }
-
-        guard let publicKey = SecCertificateCopyKey(certificate) else {
-            throw Failure.cannotRetrievePublicKey
+    private static func key(for data: Data) throws(Failure) -> SecKey {
+        guard
+            let certificate = SecCertificateCreateWithData(nil, data as CFData),
+            let publicKey = SecCertificateCopyKey(certificate)
+        else {
+            throw Failure.invalidKeyData
         }
 
         return publicKey
