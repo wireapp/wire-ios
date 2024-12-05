@@ -3,6 +3,14 @@ class Framework
     
     def self.all 
         all_folders = [
+            "WireAPI",
+            "WireAPI",
+            "WireAnalytics",
+            "WireDomain",
+            "WireFoundation",
+            "WireLogging",
+            "WireUI",
+            "WireUI",
             "wire-ios",
             "wire-ios-canvas",
             "wire-ios-cryptobox",
@@ -20,12 +28,6 @@ class Framework
             "wire-ios-transport",
             "wire-ios-utilities",
             "wire-ios-ziphy",
-            "WireAnalytics",
-            "WireAPI",
-            "WireDomain",
-            "WireFoundation",
-            "WireLogging",
-            "WireUI",
         ]
 
         frameworks = all_folders.reduce({}) do |hash, framework| 
