@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+public import WireLogging
+
 import CryptoKit
 import DatadogCore
 import DatadogCrashReporting
@@ -23,7 +26,6 @@ import DatadogLogs
 import DatadogRUM
 import DatadogTrace
 import UIKit
-import WireLogging
 
 public final class WireDatadog {
 

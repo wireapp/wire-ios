@@ -59,6 +59,7 @@ class AnalyticsServiceTests: XCTestCase {
 
     // MARK: - Tests
 
+    @MainActor
     func testEnableTracking_service_is_not_configured() async throws {
         // Given a service with no config.
         let sut = AnalyticsService(config: nil)
@@ -72,6 +73,7 @@ class AnalyticsServiceTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testEnableTracking_succeeds() async throws {
         // When tracking is enabled.
         try await sut.enableTracking()
@@ -104,6 +106,7 @@ class AnalyticsServiceTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testDisableTracking_succeeds() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -144,6 +147,7 @@ class AnalyticsServiceTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testSwitchUser_user_is_same() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -162,6 +166,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.beginSession_Invocations.count, 0)
     }
 
+    @MainActor
     func testSwitchUser_succeeds() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -205,6 +210,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.beginSession_Invocations.count, 1)
     }
 
+    @MainActor
     func testUpdateCurrentUser_no_current_user() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -219,6 +225,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
     }
 
+    @MainActor
     func testUpdateCurrentUser_no_change() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -235,6 +242,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
     }
 
+    @MainActor
     func testUpdateCurrentUser_with_change() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -282,6 +290,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
     }
 
+    @MainActor
     func testTrackEvent_no_current_user() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()
@@ -295,6 +304,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
     }
 
+    @MainActor
     func testTrackEvent_succeeds() async throws {
         // Given tracking is enabled.
         try await sut.enableTracking()

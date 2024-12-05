@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import Foundation
 import PackageDescription
@@ -26,15 +26,13 @@ let package = Package(
             dependencies: [
                 .product(name: "Countly", package: "countly-sdk-ios"),
                 "WireLogging"
-            ],
-            swiftSettings: swiftSettings
+            ]
         ),
         .target(
             name: "WireDatadog",
             dependencies: datadogDependencies() + ["WireLogging"],
             path: "Sources/WireDatadog",
-            sources: datadogFiles(),
-            swiftSettings: swiftSettings
+            sources: datadogFiles()
         ),
         .target(
             name: "WireAnalyticsSupport",
@@ -80,8 +78,10 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
     }
 }
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
-]
+for target in package.targets {
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("FullTypedThrows"),
+        .enableUpcomingFeature("ExistentialAny")
+    ]
+}
