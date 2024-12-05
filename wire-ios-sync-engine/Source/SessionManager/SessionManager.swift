@@ -546,10 +546,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        self.analyticsService = AnalyticsService(
-            config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
-        )
+        self.analyticsService = AnalyticsService(config: analyticsConfig)
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
             Task { [analyticsService] in

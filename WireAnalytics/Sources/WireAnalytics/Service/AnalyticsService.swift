@@ -31,7 +31,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     private var countly: (any CountlyProtocol)?
     private var currentUser: AnalyticsUser?
     private let baseSegmentation: Set<SegmentationEntry>
-    private let logger: (String) -> Void
+    private let logger: WireLogger
 
     // MARK: - Life cycle
 
@@ -43,17 +43,13 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ///   - config: A config containing the authentication key and server host.
     ///   - logger: A function that logs a message on behalf of the service.
 
-    public convenience init(
-        config: Config?,
-        logger: @escaping (String) -> Void // TODO: [WPB-11881] import WireLogging and remove this workaround
-    ) {
+    public convenience init(config: Config?) {
         self.init(
             config: config,
             baseSegmentation: [
                 .deviceModel(UIDevice.current.model),
                 .deviceOS(UIDevice.current.systemVersion)
             ],
-            logger: logger,
             countlyProvider: { Countly.sharedInstance() }
         )
     }
@@ -61,13 +57,13 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     init(
         config: Config?,
         baseSegmentation: Set<SegmentationEntry>,
-        logger: @escaping (String) -> Void,
         countlyProvider: @escaping () -> any CountlyProtocol
     ) {
         self.config = config
         self.baseSegmentation = baseSegmentation
-        self.logger = logger
         self.countlyProvider = countlyProvider
+
+        logger = .analytics
     }
 
     // MARK: - Enable / disable
@@ -91,7 +87,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             throw AnalyticsServiceError.serviceIsNotConfigured
         }
 
-        logger("enabling tracking")
+        logger.debug("enabling tracking")
 
         let countly = countlyProvider()
         self.countly = countly
@@ -112,7 +108,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             throw AnalyticsServiceError.serviceIsNotConfigured
         }
 
-        logger("disabling tracking")
+        logger.debug("disabling tracking")
 
         countly.endSession()
         try clearCurrentUser()
@@ -135,7 +131,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             return
         }
 
-        logger("switching user")
+        logger.debug("switching user")
 
         countly.endSession()
 
@@ -162,7 +158,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             return
         }
 
-        logger("updating current user")
+        logger.debug("updating current user")
 
         try pushUser(
             user,
@@ -204,7 +200,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     }
 
     private func clearCurrentUser() throws {
-        logger("clearing current user")
+        logger.debug("clearing current user")
 
         try pushUser(
             nil,
@@ -233,7 +229,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
             ($0.key, $0.value)
         })
 
-        logger("tracking event: \(event)")
+        logger.debug("tracking event: \(event)")
 
         countly.recordEvent(
             event.name,
