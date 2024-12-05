@@ -514,10 +514,7 @@ final class ClientListViewController: UIViewController,
     private func updateCertificates(for userClients: [UserClient]) async {
         guard
             let userSession,
-            let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID(),
-            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus
-            // the following line must be executed o the main thread
-            userSession.e2eiFeature.isEnabled
+            let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID()
         else {
             return
         }
@@ -543,9 +540,11 @@ final class ClientListViewController: UIViewController,
 
             for (client, mlsClientId) in mlsClients {
                 if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {
-                    client.e2eIdentityCertificate = e2eiCertificate
+                    if userSession.e2eiFeature.isEnabled {
+                        client.e2eIdentityCertificate = e2eiCertificate
+                    }
+                    client.mlsThumbPrint = e2eiCertificate.mlsThumbprint
                 }
-                client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
             }
 
         } catch {
