@@ -17,21 +17,27 @@
 //
 
 import Foundation
+@preconcurrency import Security
 
 /// Associates a list of `hosts` with a public `key`.
 
 public struct PinnedKey: Sendable {
+
+    enum Failure: Error {
+        case cannotLoadCertificate
+        case cannotRetrievePublicKey
+    }
 
     public enum Host: Sendable {
         case endsWith(String)
         case equals(String)
     }
 
-    let key: Data
+    let key: SecKey
     let hosts: [Host]
 
-    public init(key: Data, hosts: [Host]) {
-        self.key = key
+    public init(key: Data, hosts: [Host]) throws {
+        self.key = try Self.key(for: key)
         self.hosts = hosts
     }
 
@@ -46,6 +52,20 @@ public struct PinnedKey: Sendable {
                 host == value
             }
         }
+    }
+
+    // MARK: - Private
+
+    private static func key(for data: Data) throws -> SecKey {
+        guard let certificate = SecCertificateCreateWithData(nil, data as CFData) else {
+            throw Failure.cannotLoadCertificate
+        }
+
+        guard let publicKey = SecCertificateCopyKey(certificate) else {
+            throw Failure.cannotRetrievePublicKey
+        }
+
+        return publicKey
     }
 
 }
