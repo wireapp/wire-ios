@@ -44,7 +44,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
-
+        setLogger(logger: CoreCryptoLoggerProxy(), level: .info)
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
