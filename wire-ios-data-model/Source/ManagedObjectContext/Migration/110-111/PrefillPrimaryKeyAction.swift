@@ -45,7 +45,7 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
             }
         } catch {
-            OldWireLogger.localStorage
+            WireLogger.localStorage
                 .error(
                     "error fetching data \(entityName) during PrefillPrimaryKeyAction: \(error.localizedDescription)"
                 )

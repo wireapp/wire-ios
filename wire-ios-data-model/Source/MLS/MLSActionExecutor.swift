@@ -223,13 +223,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
-                OldWireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("adding members to group (\(groupID.safeForLoggingDescription))...")
                 let bundle = try await commitBundle(for: .addMembers(invitees), in: groupID)
                 let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                OldWireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
+                WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                OldWireLogger.mls
+                WireLogger.mls
                     .info(
                         "failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                     )
@@ -241,13 +241,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
-                OldWireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("removing clients from group (\(groupID.safeForLoggingDescription))...")
                 let bundle = try await commitBundle(for: .removeClients(clients), in: groupID)
                 let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                OldWireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
+                WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                OldWireLogger.mls
+                WireLogger.mls
                     .info(
                         "error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                     )
@@ -259,13 +259,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
-                OldWireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))...")
                 let bundle = try await commitBundle(for: .updateKeyMaterial, in: groupID)
                 let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                OldWireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
+                WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                OldWireLogger.mls
+                WireLogger.mls
                     .info(
                         "error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                     )
@@ -277,16 +277,16 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
-                OldWireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
+                WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
                 let bundle = try await commitBundle(for: .proposal, in: groupID)
                 let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                OldWireLogger.mls
+                WireLogger.mls
                     .info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch CommitError.noPendingProposals {
                 throw CommitError.noPendingProposals
             } catch {
-                OldWireLogger.mls
+                WireLogger.mls
                     .info(
                         "error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                     )
@@ -298,13 +298,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {
             do {
-                OldWireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
                 let bundle = try await commitBundle(for: .joinGroup(groupInfo), in: groupID)
                 let result = try await commitSender.sendExternalCommitBundle(bundle, for: groupID)
-                OldWireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
+                WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
                 return result
             } catch {
-                OldWireLogger.mls
+                WireLogger.mls
                     .info(
                         "error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))"
                     )
@@ -327,7 +327,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
         do {
-            OldWireLogger.mls
+            WireLogger.mls
                 .info(
                     "generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))..."
                 )
@@ -407,7 +407,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         } catch CommitError.noPendingProposals {
             throw CommitError.noPendingProposals
         } catch {
-            OldWireLogger.mls
+            WireLogger.mls
                 .warn(
                     "failed: generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                 )

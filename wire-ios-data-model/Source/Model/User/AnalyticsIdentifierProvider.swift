@@ -53,7 +53,7 @@ public struct AnalyticsIdentifierProvider {
         do {
             try ZMConversation.sendMessageToSelfClients(message, in: context)
         } catch {
-            OldWireLogger.messaging
+            WireLogger.messaging
                 .error("Error broadcasting analytics ID: \(identifier.safeForLoggingDescription) \(error)")
         }
     }

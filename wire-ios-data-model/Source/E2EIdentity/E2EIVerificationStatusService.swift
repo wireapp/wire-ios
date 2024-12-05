@@ -73,7 +73,7 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
                 try await $0.e2eiConversationState(conversationId: groupID.data).toMLSVerificationStatus()
             }
         } catch {
-            OldWireLogger.e2ei
+            WireLogger.e2ei
                 .warn("can't get conversation \(groupID.safeForLoggingDescription) verification state: \(error)")
 
             throw E2EIVerificationStatusError.failedToFetchVerificationStatus

@@ -116,7 +116,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             do {
                 try await migrateConversation(with: groupID, commit: commit)
             } catch {
-                OldWireLogger.e2ei.warn("failed to rotate keys for group: \(String(describing: error))")
+                WireLogger.e2ei.warn("failed to rotate keys for group: \(String(describing: error))")
             }
         }
 

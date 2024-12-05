@@ -36,7 +36,7 @@ final class MessageSendingStatusPayloadProcessor {
     ) async -> [ZMUser: [UserClient]] {
         let context = message.context
         let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
-            OldWireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
+            WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
             return (
                 payload.deleted.fetchClients(in: context),
@@ -47,11 +47,11 @@ final class MessageSendingStatusPayloadProcessor {
         }
 
         if !deletedClients.isEmpty {
-            OldWireLogger.messaging.debug("detected deleted clients")
+            WireLogger.messaging.debug("detected deleted clients")
         }
 
         if !missingClients.isEmpty {
-            OldWireLogger.messaging.debug("detected missing clients")
+            WireLogger.messaging.debug("detected missing clients")
         }
 
         for deletedClient in deletedClients.values.flatMap({ $0 }) {
@@ -66,7 +66,7 @@ final class MessageSendingStatusPayloadProcessor {
 
         await context.perform {
             if !redundantUsers.isEmpty {
-                OldWireLogger.messaging.debug("detected redundant users")
+                WireLogger.messaging.debug("detected redundant users")
 
                 // if the BE tells us that these users are not in the
                 // conversation anymore, it means that we are out of sync

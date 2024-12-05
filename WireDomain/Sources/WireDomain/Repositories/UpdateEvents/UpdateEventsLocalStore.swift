@@ -153,7 +153,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 let storedEventEnvelopes = try context.fetch(request)
-                OldWireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
+                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
                 storedEventEnvelopes.forEach(context.delete)
                 try context.save()
             } catch {

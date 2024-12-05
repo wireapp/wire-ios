@@ -105,6 +105,7 @@
 		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		59537CD92CFF7ED800920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CD82CFF7ED800920B59 /* WireLogging */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
+		597476062D019C7A005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476052D019C7A005E891A /* WireLegacyLogging.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
 		59FFFB7A2B74E539008F0E1B /* Date+TransportCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB792B74E539008F0E1B /* Date+TransportCodingTests.swift */; };
@@ -323,6 +324,7 @@
 		54EA3E6B1BEA65B80071592B /* Fakes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fakes.h; sourceTree = "<group>"; };
 		54EA3E6C1BEA65B80071592B /* Fakes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fakes.m; sourceTree = "<group>"; };
 		596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEventTypeTests.swift; sourceTree = "<group>"; };
+		597476052D019C7A005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TransportCoding.swift"; sourceTree = "<group>"; };
 		59FFFB772B74E17C008F0E1B /* TransportCoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportCoding.swift; sourceTree = "<group>"; };
 		59FFFB792B74E539008F0E1B /* Date+TransportCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TransportCodingTests.swift"; sourceTree = "<group>"; };
@@ -734,6 +736,7 @@
 				54CAD7081BB54097006FF8E9 /* ZMTLogging.h */,
 				01D97B0F294CB921001A04BD /* RequestLog.swift */,
 				01D97B11294CB98F001A04BD /* ResponseLog.swift */,
+				597476052D019C7A005E891A /* WireLegacyLogging.swift */,
 			);
 			path = Logging;
 			sourceTree = "<group>";
@@ -1158,6 +1161,7 @@
 				F91EAAC81D8860380010ACBE /* Collections+ZMSafeTypes.swift in Sources */,
 				871667FE1BB2CD1E009C6EEA /* ZMKeychain.m in Sources */,
 				54C3EC5F243E2988000B9230 /* RequestAvailableNotification.swift in Sources */,
+				597476062D019C7A005E891A /* WireLegacyLogging.swift in Sources */,
 				5499FFD61B31C66D00835C8B /* ZMWebSocket.m in Sources */,
 				E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */,
 				F1D1282021C2665E0090045E /* BackendEndpoints.swift in Sources */,

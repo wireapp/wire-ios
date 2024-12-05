@@ -118,7 +118,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     // MARK: - Pull pending events
 
     func pullPendingEvents() async throws {
-        OldWireLogger.sync.debug("pulling pending events")
+        WireLogger.sync.debug("pulling pending events")
         // We want all events since this event.
         guard let lastEventID = updateEventsLocalStore.lastEventID() else {
             throw UpdateEventsRepositoryError.lastEventIDMissing
@@ -134,7 +134,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         ) {
             let batchCount = envelopes.count
             var count = 0
-            OldWireLogger.sync.debug("received batch of \(batchCount) envelopes")
+            WireLogger.sync.debug("received batch of \(batchCount) envelopes")
 
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
@@ -142,7 +142,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
             for envelope in envelopes {
                 count += 1
 
-                OldWireLogger.sync.debug(
+                WireLogger.sync.debug(
                     "decrypting envelope (\(count) of \(batchCount))",
                     attributes: [.eventEnvelopeID: envelope.id]
                 )
@@ -151,7 +151,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
 
-                OldWireLogger.sync.debug(
+                WireLogger.sync.debug(
                     "persisting envelope (\(count) of \(batchCount)",
                     attributes: [.eventEnvelopeID: envelope.id]
                 )
@@ -210,7 +210,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         try pushChannel.open().compactMap {
             do {
-                OldWireLogger.sync.debug(
+                WireLogger.sync.debug(
                     "decrypting live event",
                     attributes: [.eventEnvelopeID: $0.id]
                 )
@@ -218,7 +218,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 envelope.events = try await self.updateEventDecryptor.decryptEvents(in: envelope)
                 return envelope
             } catch {
-                OldWireLogger.sync.error(
+                WireLogger.sync.error(
                     "failed to decrypt live event, dropping: \(error)",
                     attributes: [.eventEnvelopeID: $0.id]
                 )
@@ -232,7 +232,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {
-        OldWireLogger.sync.debug(
+        WireLogger.sync.debug(
             "storing last event id",
             attributes: [.eventEnvelopeID: id]
         )

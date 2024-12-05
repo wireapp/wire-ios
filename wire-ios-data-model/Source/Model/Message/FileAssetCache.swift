@@ -804,7 +804,7 @@ public final class FileAssetCache: NSObject {
         do {
             try cache.deleteAssetsOlderThan(date)
         } catch {
-            OldWireLogger.assets.error("Error trying to delete assets older than \(date): \(error)")
+            WireLogger.assets.error("Error trying to delete assets older than \(date): \(error)")
         }
     }
 
@@ -891,14 +891,14 @@ private struct FileCache: Cache {
                 data = try Data(contentsOf: url, options: .mappedIfSafe)
             } catch let error as NSError {
                 if error.code != NSFileReadNoSuchFileError {
-                    OldWireLogger.assets.error("\(error)")
+                    WireLogger.assets.error("\(error)")
                 }
             }
         }
 
         if let error {
             if error.code != NSFileReadNoSuchFileError {
-                OldWireLogger.assets.error("Failed reading asset data for key = \(key): \(error)")
+                WireLogger.assets.error("Failed reading asset data for key = \(key): \(error)")
             }
         }
 
@@ -927,7 +927,7 @@ private struct FileCache: Cache {
         }
 
         if let error {
-            OldWireLogger.assets.error("Failed storing asset data for key = \(key): \(error)")
+            WireLogger.assets.error("Failed storing asset data for key = \(key): \(error)")
         }
     }
 
@@ -955,7 +955,7 @@ private struct FileCache: Cache {
         }
 
         if let error {
-            OldWireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
+            WireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
         }
     }
 
@@ -970,13 +970,13 @@ private struct FileCache: Cache {
                 try FileManager.default.removeItem(at: url)
             } catch let error as NSError {
                 if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
-                    OldWireLogger.assets.error("Can't delete file \(url.pathComponents.last!): \(error)")
+                    WireLogger.assets.error("Can't delete file \(url.pathComponents.last!): \(error)")
                 }
             }
         }
 
         if let error {
-            OldWireLogger.assets.error("Failed deleting asset data for key = \(key): \(error)")
+            WireLogger.assets.error("Failed deleting asset data for key = \(key): \(error)")
         }
     }
 

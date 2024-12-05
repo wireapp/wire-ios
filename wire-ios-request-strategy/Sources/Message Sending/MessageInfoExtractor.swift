@@ -211,7 +211,7 @@ struct MessageInfoExtractor {
                 guard let sessionID = $0.proteusSessionID,
                       $0.remoteIdentifier != selfClientID else {
                     // skips self client session
-                    OldWireLogger.proteus
+                    WireLogger.proteus
                         .warn(
                             "skips cliend id: \(String(describing: $0.remoteIdentifier)), proteusSession id: \(String(describing: $0.proteusSessionID))"
                         )
@@ -220,7 +220,7 @@ struct MessageInfoExtractor {
 
                 guard !$0.failedToEstablishSession else {
                     let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-                    OldWireLogger.proteus
+                    WireLogger.proteus
                         .error(
                             "Failed to encrypt payload: session couldn't be established with client: \(String(describing: $0.remoteIdentifier))"
                         )

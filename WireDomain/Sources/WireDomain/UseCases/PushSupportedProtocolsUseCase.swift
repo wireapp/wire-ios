@@ -40,7 +40,7 @@ public struct PushSupportedProtocolsUseCase: PushSupportedProtocolsUseCaseProtoc
     let userRepository: any UserRepositoryProtocol
     let userClientsRepository: any UserClientsRepositoryProtocol
 
-    private let logger = OldWireLogger(tag: "supported-protocols")
+    private let logger = WireLogger(tag: "supported-protocols")
 
     public func invoke() async throws {
         let supportedProtocols = await calculateSupportedProtocols()

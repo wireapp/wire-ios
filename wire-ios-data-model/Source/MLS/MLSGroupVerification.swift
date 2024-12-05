@@ -75,7 +75,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
-            return OldWireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
+            return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
         }
 
         await updateConversation(conversation, with: groupID)
@@ -85,7 +85,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         do {
             try await updateVerificationStatus.invoke(for: conversation, groupID: groupID)
         } catch {
-            OldWireLogger.e2ei
+            WireLogger.e2ei
                 .warn(
                     "failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))"
                 )
@@ -93,7 +93,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     }
 
     public func updateAllConversations() async {
-        OldWireLogger.e2ei.info("updating all MLS conversations verification status")
+        WireLogger.e2ei.info("updating all MLS conversations verification status")
 
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
             let conversations = ZMConversation.fetchMLSConversations(in: syncContext)

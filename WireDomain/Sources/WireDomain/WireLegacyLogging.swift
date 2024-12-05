@@ -16,18 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireLogging
+import WireLegacyLogging
 
-@objc
-public extension ZMAccessTokenHandler {
-
-    func logDebug(_ message: String) {
-        WireLogger.authentication.debug(message)
-    }
-
-    func logError(_ message: String) {
-        WireLogger.authentication.error(message)
-    }
-
-}
+typealias WireLogger = WireLegacyLogging.WireLogger
+typealias Flow = WireLegacyLogging.Flow

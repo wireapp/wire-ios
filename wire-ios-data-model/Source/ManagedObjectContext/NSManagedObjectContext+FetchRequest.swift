@@ -26,7 +26,7 @@ public extension NSManagedObjectContext {
         do {
             return try fetch(request)
         } catch {
-            OldWireLogger.localStorage
+            WireLogger.localStorage
                 .error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
             assertionFailure("Error in fetching \(error.localizedDescription)")
             return []
@@ -38,7 +38,7 @@ public extension NSManagedObjectContext {
         do {
             return try count(for: request)
         } catch {
-            OldWireLogger.localStorage
+            WireLogger.localStorage
                 .error("CoreData: Error in counting for request : \(request), \(error.localizedDescription)")
             assertionFailure("Error in fetching \(error.localizedDescription)")
             return 0

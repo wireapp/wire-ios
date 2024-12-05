@@ -74,6 +74,7 @@
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
 		596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */; };
+		597476042D019C55005E891A /* WireLegacyLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597476032D019C55005E891A /* WireLegacyLogging.swift */; };
 		598E86B62BF4D64100FC5438 /* WireUtilitiesSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */; };
 		59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C592C89CB1F00EA7999 /* WireFoundation */; };
@@ -273,6 +274,7 @@
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
 		596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+GroupQueue.swift"; sourceTree = "<group>"; };
+		597476032D019C55005E891A /* WireLegacyLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLegacyLogging.swift; sourceTree = "<group>"; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireUtilitiesSupport.h; sourceTree = "<group>"; };
 		598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
@@ -537,6 +539,7 @@
 				EE16270F250BA12900D35062 /* VolatileData.swift */,
 				A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */,
 				63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */,
+				597476032D019C55005E891A /* WireLegacyLogging.swift */,
 				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
 				636F70462A65AD7800E086B6 /* TimerManager.swift */,
 				E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */,
@@ -1117,6 +1120,7 @@
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
+				597476042D019C55005E891A /* WireLegacyLogging.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */,
 				A94DA30826BC239400CC626C /* Data+Image.swift in Sources */,

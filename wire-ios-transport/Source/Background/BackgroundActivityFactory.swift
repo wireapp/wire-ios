@@ -128,7 +128,7 @@ public final class BackgroundActivityFactory: NSObject {
     public func resume() {
         isolationQueue.sync {
             if currentBackgroundTask == UIBackgroundTaskIdentifier.invalid {
-                OldWireLogger.backgroundActivity.info(
+                WireLogger.backgroundActivity.info(
                     "Resume: currentBackgroundTask is invalid, setting it to nil",
                     attributes: .safePublic
                 )
@@ -175,7 +175,7 @@ public final class BackgroundActivityFactory: NSObject {
             if currentBackgroundTask == nil {
                 let task = activityManager.beginBackgroundTask(withName: name, expirationHandler: handleExpiration)
                 guard task != UIBackgroundTaskIdentifier.invalid else {
-                    OldWireLogger.backgroundActivity.info(
+                    WireLogger.backgroundActivity.info(
                         "Start activity <\(activityName)>: failed to begin new background task",
                         attributes: .safePublic
                     )
@@ -192,7 +192,7 @@ public final class BackgroundActivityFactory: NSObject {
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
         guard let activityManager else {
-            OldWireLogger.backgroundActivity.warn(
+            WireLogger.backgroundActivity.warn(
                 "Handle expiration: failed, activityManager is nil",
                 attributes: .safePublic
             )
@@ -231,7 +231,7 @@ public final class BackgroundActivityFactory: NSObject {
                 ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)
             } else {
-                OldWireLogger.backgroundActivity.warn(
+                WireLogger.backgroundActivity.warn(
                     "Finishing background task: failed, activityManager is nil",
                     attributes: .safePublic
                 )
@@ -277,7 +277,7 @@ public final class BackgroundActivityFactory: NSObject {
             repeats: false,
             block: { [weak self] timer in
                 self?.mainQueue.async { [weak self] in
-                    OldWireLogger.backgroundActivity.info(
+                    WireLogger.backgroundActivity.info(
                         "Handle expiration when the background task has timed out",
                         attributes: .safePublic
                     )

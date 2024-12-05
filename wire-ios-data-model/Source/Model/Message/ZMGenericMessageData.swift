@@ -115,7 +115,7 @@ public class ZMGenericMessageData: ZMManagedObject {
         do {
             return try moc.encryptData(data: data)
         } catch let error as NSManagedObjectContext.EncryptionError {
-            OldWireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
+            WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
             throw ProcessingError.failedToEncrypt(reason: error)
         }
     }
@@ -126,7 +126,7 @@ public class ZMGenericMessageData: ZMManagedObject {
         do {
             return try moc.decryptData(data: data, nonce: nonce)
         } catch let error as NSManagedObjectContext.EncryptionError {
-            OldWireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
+            WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
             throw ProcessingError.failedToDecrypt(reason: error)
         }
     }

@@ -41,17 +41,17 @@ public class CoreCryptoKeyProvider {
     private func fetchCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
         let key: Data = try KeychainManager.fetchItem(item)
-        OldWireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
+        WireLogger.coreCrypto.info("Core crypto key exists: \(key.base64String()). Returning...")
         return key
     }
 
     private func createCoreCryptoKey() throws -> Data {
         let item = CoreCryptoKeychainItem()
-        OldWireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
+        WireLogger.coreCrypto.info("Core crypto key doesn't exist. Creating...")
         let key = try KeychainManager.generateKey(numberOfBytes: 32)
-        OldWireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
+        WireLogger.coreCrypto.info("Created core crypto key: \(key.base64String()). Storing...")
         try KeychainManager.storeItem(item, value: key)
-        OldWireLogger.coreCrypto.info("Stored core crypto key. Returning...")
+        WireLogger.coreCrypto.info("Stored core crypto key. Returning...")
         return key
     }
 
@@ -60,11 +60,11 @@ public class CoreCryptoKeyProvider {
 
         do {
             _ = try KeychainManager.fetchItem(legacyItem) as Data
-            OldWireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
+            WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
             try KeychainManager.deleteItem(legacyItem)
-            OldWireLogger.coreCrypto.info("Deleted legacy core crypto key")
+            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
         } catch let KeychainManager.Error.failedToDeleteItemFromKeychain(error) {
-            OldWireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
+            WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
         } catch {
             // key was not found. no action needed
         }

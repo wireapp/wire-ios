@@ -75,7 +75,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
                 guard let self, !Task.isCancelled else { return }
 
-                OldWireLogger.featureConfigs.info("slow sync start fetch feature config!")
+                WireLogger.featureConfigs.info("slow sync start fetch feature config!")
 
                 do {
                     // perform action notifies the registered action handler `GetFeatureConfigsActionHandler`.
@@ -85,13 +85,13 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
                     var action = GetFeatureConfigsAction()
                     try await action.perform(in: managedObjectContext.notificationContext)
 
-                    OldWireLogger.featureConfigs.info("slow sync finished fetch feature config!")
+                    WireLogger.featureConfigs.info("slow sync finished fetch feature config!")
 
                     await managedObjectContext.perform {
                         syncStatus.finishCurrentSyncPhase(phase: syncPhase)
                     }
                 } catch {
-                    OldWireLogger.featureConfigs.error("slow sync failed fetch feature config!")
+                    WireLogger.featureConfigs.error("slow sync failed fetch feature config!")
 
                     await managedObjectContext.perform {
                         syncStatus.failCurrentSyncPhase(phase: syncPhase)
@@ -129,7 +129,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         }
 
         do {
-            OldWireLogger.featureConfigs.info("Process update event '\(name)'")
+            WireLogger.featureConfigs.info("Process update event '\(name)'")
 
             let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
             let repository = FeatureRepository(context: managedObjectContext)
@@ -141,9 +141,9 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
                 repository: repository
             )
 
-            OldWireLogger.featureConfigs.info("Finished processing update event \(name)")
+            WireLogger.featureConfigs.info("Finished processing update event \(name)")
         } catch {
-            OldWireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
+            WireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
         }
     }
 

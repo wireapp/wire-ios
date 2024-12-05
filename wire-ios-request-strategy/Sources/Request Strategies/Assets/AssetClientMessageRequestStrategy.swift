@@ -73,7 +73,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
         let logAttributesBuilder = MessageLogAttributesBuilder(context: managedObjectContext)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
-        OldWireLogger.messaging.debug("inserting message", attributes: logAttributes)
+        WireLogger.messaging.debug("inserting message", attributes: logAttributes)
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
@@ -85,7 +85,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 try await messageSender.sendMessage(message: object)
 
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
-                OldWireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
+                WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
 
                 await managedObjectContext.perform {
                     object.markAsSent()
@@ -93,7 +93,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 }
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
-                OldWireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
+                WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
 
                 await managedObjectContext.perform {
                     object.expire(withReason: .other)

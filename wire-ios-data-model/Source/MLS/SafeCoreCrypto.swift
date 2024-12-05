@@ -79,7 +79,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             try await coreCrypto.restoreFromDisk()
         } catch {
-            OldWireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)", attributes: .safePublic)
+            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)", attributes: .safePublic)
         }
     }
 }

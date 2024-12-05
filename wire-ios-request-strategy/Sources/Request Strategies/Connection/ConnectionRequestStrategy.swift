@@ -261,7 +261,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     _ = context.saveOrRollback()
                 }
             } catch {
-                OldWireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
+                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                 assertionFailure("Error resolving one-on-one conversation: \(error)")
             }
         }
@@ -301,7 +301,7 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             let userID = identifiers.first,
             let connection = ZMConnection.fetch(userID: userID, domain: nil, in: context)
         else {
-            OldWireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
+            WireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
             return
         }
 
@@ -367,7 +367,7 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let qualifiedID = identifiers.first,
             let connection = ZMConnection.fetch(userID: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
         else {
-            OldWireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
+            WireLogger.eventProcessing.error("Can't update connection since it was found, aborting...")
             return
         }
 

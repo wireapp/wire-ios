@@ -47,7 +47,7 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         )
 
         guard existingConversation == nil else {
-            OldWireLogger.eventProcessing.warn("Conversation already exists, aborting...")
+            WireLogger.eventProcessing.warn("Conversation already exists, aborting...")
             return
         }
 

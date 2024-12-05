@@ -34,14 +34,14 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var clientID: String? {
         didSet {
-            OldWireLogger.pushChannel.debug("Setting client ID")
+            WireLogger.pushChannel.debug("Setting client ID")
             scheduleOpen()
         }
     }
 
     var accessToken: AccessToken? {
         didSet {
-            OldWireLogger.pushChannel.debug("Setting access token")
+            WireLogger.pushChannel.debug("Setting access token")
         }
     }
 
@@ -87,7 +87,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
-        OldWireLogger.backend
+        WireLogger.backend
             .debug(
                 "reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)"
             )
@@ -95,7 +95,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
 
         guard didGoOnline else { return }
-        OldWireLogger.backend.debug("reachability did change. didGoOnline", attributes: .safePublic)
+        WireLogger.backend.debug("reachability did change. didGoOnline", attributes: .safePublic)
 
         scheduleOpen()
     }
@@ -112,7 +112,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func close() {
-        OldWireLogger.pushChannel.info("Push channel was closed")
+        WireLogger.pushChannel.info("Push channel was closed")
 
         scheduler.performGroupedBlock {
             self.webSocket?.disconnect()
@@ -126,7 +126,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
             let accessToken,
             let websocketURL
         else {
-            OldWireLogger.pushChannel.warn("Can't connect websocket")
+            WireLogger.pushChannel.warn("Can't connect websocket")
             return
         }
 
@@ -165,7 +165,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
         ]
-        OldWireLogger.pushChannel.info(
+        WireLogger.pushChannel.info(
             "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
             attributes: attributes,
             .safePublic
@@ -185,10 +185,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
     private func scheduleOpenInternal() {
         guard canOpenConnection else {
-            OldWireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
             return
         }
-        OldWireLogger.pushChannel.debug("Schedule opening..")
+        WireLogger.pushChannel.debug("Schedule opening..")
         scheduler.add(ZMOpenPushChannelRequest())
     }
 
@@ -234,7 +234,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 extension StarscreamPushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
-        OldWireLogger.pushChannel.debug("Sending ping")
+        WireLogger.pushChannel.debug("Sending ping")
         webSocket?.write(ping: Data())
         schedulePingTimer()
     }
@@ -246,15 +246,15 @@ extension StarscreamPushChannel: WebSocketDelegate {
         switch event {
 
         case .connected:
-            OldWireLogger.pushChannel.debug("Sending ping")
+            WireLogger.pushChannel.debug("Sending ping")
             onOpen()
         case .disconnected:
-            OldWireLogger.pushChannel.debug("Websocket disconnected")
+            WireLogger.pushChannel.debug("Websocket disconnected")
             onClose()
         case .text:
             break
         case let .binary(data):
-            OldWireLogger.pushChannel.debug("Received data")
+            WireLogger.pushChannel.debug("Received data")
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
             }

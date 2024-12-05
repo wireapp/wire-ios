@@ -116,16 +116,16 @@ public actor CommitSender: CommitSending {
     ) async throws -> [ZMUpdateEvent] {
 
         do {
-            OldWireLogger.mls.info("sending commit bundle for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("sending commit bundle for group (\(groupID.safeForLoggingDescription))")
             let events = try await sendCommitBundle(bundle)
 
-            OldWireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
             try await mergeCommit(in: groupID)
 
             return events
 
         } catch let error as SendCommitBundleAction.Failure {
-            OldWireLogger.mls.warn("failed to send commit bundle: \(String(describing: error))")
+            WireLogger.mls.warn("failed to send commit bundle: \(String(describing: error))")
 
             let recoveryStrategy = CommitError.RecoveryStrategy(from: error)
 
@@ -143,16 +143,16 @@ public actor CommitSender: CommitSending {
     ) async throws -> [ZMUpdateEvent] {
 
         do {
-            OldWireLogger.mls.info("sending external commit bundle for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("sending external commit bundle for group (\(groupID.safeForLoggingDescription))")
             let events = try await sendCommitBundle(bundle)
 
-            OldWireLogger.mls.info("merging pending group for (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("merging pending group for (\(groupID.safeForLoggingDescription))")
             try await mergePendingGroup(in: groupID)
 
             return events
 
         } catch let error as SendCommitBundleAction.Failure {
-            OldWireLogger.mls.warn("failed to send external commit bundle: \(String(describing: error))")
+            WireLogger.mls.warn("failed to send external commit bundle: \(String(describing: error))")
 
             let recoveryStrategy = ExternalCommitError.RecoveryStrategy(from: error)
 
@@ -182,7 +182,7 @@ public actor CommitSender: CommitSending {
 
     private func mergeCommit(in groupID: MLSGroupID) async throws {
         do {
-            OldWireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
             // No need to handle buffered messages here. We will not run into a scenario where we need to handle
             // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
             // operations and therefore we will never attempt to decrypt a message while sending a commit.
@@ -191,26 +191,26 @@ public actor CommitSender: CommitSending {
             }
             onEpochChangedSubject.send(groupID)
         } catch {
-            OldWireLogger.mls.error("failed to merge commit for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.error("failed to merge commit for group (\(groupID.safeForLoggingDescription))")
             throw CommitError.failedToMergeCommit
         }
     }
 
     private func discardPendingCommit(in groupID: MLSGroupID) async throws {
         do {
-            OldWireLogger.mls.info("discarding pending commit for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("discarding pending commit for group (\(groupID.safeForLoggingDescription))")
             try await coreCrypto.perform {
                 try await $0.clearPendingCommit(conversationId: groupID.data)
             }
         } catch {
-            OldWireLogger.mls.error("failed to discard pending commit for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.error("failed to discard pending commit for group (\(groupID.safeForLoggingDescription))")
             throw CommitError.failedToClearCommit
         }
     }
 
     private func mergePendingGroup(in groupID: MLSGroupID) async throws {
         do {
-            OldWireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
             // No need to handle buffered messages here. We will not run into a scenario where we need to handle
             // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
             // operations and therefore we will never attempt to decrypt a message while sending a commit.
@@ -220,19 +220,19 @@ public actor CommitSender: CommitSending {
                 )
             }
         } catch {
-            OldWireLogger.mls.error("failed to merge pending group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.error("failed to merge pending group (\(groupID.safeForLoggingDescription))")
             throw ExternalCommitError.failedToMergePendingGroup
         }
     }
 
     private func clearPendingGroup(in groupID: MLSGroupID) async throws {
         do {
-            OldWireLogger.mls.info("clearing pending group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("clearing pending group (\(groupID.safeForLoggingDescription))")
             try await coreCrypto.perform {
                 try await $0.clearPendingGroupFromExternalCommit(conversationId: groupID.data)
             }
         } catch {
-            OldWireLogger.mls.error("failed to clear pending group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.error("failed to clear pending group (\(groupID.safeForLoggingDescription))")
             throw ExternalCommitError.failedToClearPendingGroup
         }
     }

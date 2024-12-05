@@ -70,18 +70,18 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
         coreCrypto: SafeCoreCryptoProtocol
     ) async throws {
         do {
-            OldWireLogger.proteus.info("migrating cryptobox data...")
+            WireLogger.proteus.info("migrating cryptobox data...")
             let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
             try await coreCrypto.perform { try await $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
-            OldWireLogger.proteus.info("migrating cryptobox data... success")
+            WireLogger.proteus.info("migrating cryptobox data... success")
         } catch {
             throw Failure.failedToMigrateData
         }
 
         do {
-            OldWireLogger.proteus.info("removing legacy cryptobox data...")
+            WireLogger.proteus.info("removing legacy cryptobox data...")
             try removeDirectory(in: accountDirectory)
-            OldWireLogger.proteus.info("removing legacy cryptobox data... success")
+            WireLogger.proteus.info("removing legacy cryptobox data... success")
         } catch {
             throw Failure.failedToDeleteLegacyData
         }

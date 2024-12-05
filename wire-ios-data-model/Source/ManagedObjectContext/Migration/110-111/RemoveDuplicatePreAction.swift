@@ -45,12 +45,12 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             for object in objectsWithNil {
                 context.delete(object)
             }
-            OldWireLogger.localStorage.info(
+            WireLogger.localStorage.info(
                 "Deleted \(objectsWithNil.count) \(entityName) objects with no remoteIdentifierData",
                 attributes: .safePublic
             )
         } catch {
-            OldWireLogger.localStorage.error(
+            WireLogger.localStorage.error(
                 "error fetching object \(entityName) with no remoteIdentifierData \(error.localizedDescription)",
                 attributes: .safePublic
             )
@@ -76,7 +76,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             }
         }
 
-        OldWireLogger.localStorage.info(
+        WireLogger.localStorage.info(
             "found \(duplicates.count) different duplicate(s) of \(entityName)",
             attributes: .safePublic
         )
@@ -85,19 +85,19 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
         duplicates.forEach { (key, objects: [NSManagedObject]) in
             guard objects.count > 1 else {
-                OldWireLogger.localStorage.info(
+                WireLogger.localStorage.info(
                     "skipping object with different domain if any: \(key)",
                     attributes: .safePublic
                 )
                 return
             }
-            OldWireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
+            WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
             // for now we just keep one object and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend will recover the data from backend
             objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
             objects.dropFirst().forEach(context.delete)
 
-            OldWireLogger.localStorage.warn(
+            WireLogger.localStorage.warn(
                 "removed \(objects.count - 1) occurence of duplicate \(entityName) for key \(key)",
                 attributes: .safePublic
             )
@@ -119,7 +119,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
         do {
             try context.setMigrationNeedsSlowSync()
         } catch {
-            OldWireLogger.localStorage.error(
+            WireLogger.localStorage.error(
                 "Failed to trigger slow sync on migration \(entityName): \(error.localizedDescription)",
                 attributes: .safePublic
             )

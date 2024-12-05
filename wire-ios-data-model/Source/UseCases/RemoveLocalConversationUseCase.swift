@@ -54,11 +54,11 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
         }
 
         guard let groupID else {
-            return OldWireLogger.mls.warn("failed to wipe conversation: missing group ID")
+            return WireLogger.mls.warn("failed to wipe conversation: missing group ID")
         }
 
         guard let mlsService else {
-            return OldWireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
+            return WireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
         }
 
         try await mlsService.wipeGroup(groupID)

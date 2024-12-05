@@ -28,7 +28,7 @@ public final class ProteusService: ProteusServiceInterface {
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private let logger = OldWireLogger.proteus
+    private let logger = WireLogger.proteus
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {

@@ -162,7 +162,7 @@ public final class AppLockController: AppLockType {
         description: String,
         callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
-        OldWireLogger.appLock.info("evaluating authentication for app lock")
+        WireLogger.appLock.info("evaluating authentication for app lock")
 
         let policy = passcodePreference.policy
         let context = authenticationContext
@@ -173,21 +173,21 @@ public final class AppLockController: AppLockType {
         // the device passcode isn't considered secure enough, then ask for the custom passcode
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context), !passcodePreference.allowsDevicePasscode {
-            OldWireLogger.appLock.info("need custom passcode because biometrics changed")
+            WireLogger.appLock.info("need custom passcode because biometrics changed")
             callback(.needCustomPasscode)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
         if !canEvaluatePolicy, passcodePreference.allowsCustomPasscode {
-            OldWireLogger.appLock.info("need custom passcode because device auth is not possible")
+            WireLogger.appLock.info("need custom passcode because device auth is not possible")
             callback(.needCustomPasscode)
             return
         }
 
         guard canEvaluatePolicy else {
             callback(.unavailable)
-            OldWireLogger.appLock.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
+            WireLogger.appLock.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
             return
         }
 
@@ -202,7 +202,7 @@ public final class AppLockController: AppLockType {
                 self.state = .unlocked
             }
 
-            OldWireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
+            WireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
             callback(result)
         }
     }

@@ -35,7 +35,7 @@ public extension ZMConversation {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationConsideredUnread())
 
         if let conversations = managedObjectContext.fetchOrAssert(request: fetchRequest) as? [ZMConversation] {
-            OldWireLogger.badgeCount.info("calculate last unread messages for \(conversations.count) conversations")
+            WireLogger.badgeCount.info("calculate last unread messages for \(conversations.count) conversations")
             conversations.forEach { $0.calculateLastUnreadMessages() }
         }
     }

@@ -103,7 +103,7 @@ extension EventDecoder {
         }
 
         guard proteusProvider.canPerform else {
-            OldWireLogger.proteus.warn("ignore decrypting events because it is not safe")
+            WireLogger.proteus.warn("ignore decrypting events because it is not safe")
             return []
         }
 
@@ -127,7 +127,7 @@ extension EventDecoder {
         )
 
         if !events.isEmpty {
-            OldWireLogger.eventProcessing.info("Decrypted/Stored \(events.count) event(s)")
+            WireLogger.eventProcessing.info("Decrypted/Stored \(events.count) event(s)")
         }
 
         return decryptedEvents
@@ -308,7 +308,7 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?
     ) {
         for (idx, event) in decryptedEvents.enumerated() {
-            OldWireLogger.updateEvent.info("store event", attributes: event.logAttributes)
+            WireLogger.updateEvent.info("store event", attributes: event.logAttributes)
 
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,
@@ -321,7 +321,7 @@ extension EventDecoder {
         do {
             try eventMOC.save()
         } catch {
-            OldWireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
+            WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
         }
     }
 
@@ -342,11 +342,11 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
-            OldWireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
+            WireLogger.updateEvent.debug("EventDecoder: process events finished", attributes: .safePublic)
             return
         }
 
-        OldWireLogger.updateEvent.debug(
+        WireLogger.updateEvent.debug(
             "EventDecoder: process batch of \(events.storedEvents.count) events",
             attributes: .safePublic
         )
@@ -388,7 +388,7 @@ extension EventDecoder {
         block: ConsumeBlock
     ) async {
         if !events.isEmpty {
-            OldWireLogger.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
+            WireLogger.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
         await block(filterInvalidEvents(from: events))
@@ -396,7 +396,7 @@ extension EventDecoder {
         await eventMOC.perform { [eventMOC] in
             storedEvents.forEach { storedEvent in
                 eventMOC.delete(storedEvent)
-                OldWireLogger.eventProcessing.info(
+                WireLogger.eventProcessing.info(
                     "delete stored event",
                     attributes: [LogAttributesKey.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"]
                 )
@@ -404,7 +404,7 @@ extension EventDecoder {
             do {
                 try eventMOC.save()
             } catch {
-                OldWireLogger.eventProcessing
+                WireLogger.eventProcessing
                     .critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
         }
@@ -427,7 +427,7 @@ private extension EventDecoder {
                let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
-                    OldWireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)
+                    WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)
                 }
                 return included
             }

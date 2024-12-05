@@ -533,7 +533,7 @@ public final class MLSService: MLSServiceInterface {
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
-    private let logger = OldWireLogger.mls
+    private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
     private let featureRepository: FeatureRepositoryInterface
@@ -779,11 +779,11 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {
-        OldWireLogger.mls.info("beginning to update key material for all stale groups")
+        WireLogger.mls.info("beginning to update key material for all stale groups")
 
         let staleGroups = staleKeyMaterialDetector.groupsWithStaleKeyingMaterial
 
-        OldWireLogger.mls.info("found \(staleGroups.count) groups with stale key material")
+        WireLogger.mls.info("found \(staleGroups.count) groups with stale key material")
 
         for staleGroup in staleGroups {
             try? await updateKeyMaterial(for: staleGroup)
@@ -799,12 +799,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            OldWireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
+            WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
-            OldWireLogger.mls
+            WireLogger.mls
                 .warn(
                     "failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
                 )
@@ -1255,7 +1255,7 @@ public final class MLSService: MLSServiceInterface {
                     do {
                         try await self.joinByExternalCommit(groupID: pendingGroup)
                     } catch {
-                        OldWireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
+                        WireLogger.mls.error("Failed to join pending group (\(pendingGroup): \(error)")
                     }
                 }
             }

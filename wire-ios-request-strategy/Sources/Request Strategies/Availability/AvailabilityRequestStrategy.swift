@@ -63,7 +63,7 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             do {
                 try await messageSender.broadcastMessage(message: proteusMessage)
             } catch {
-                OldWireLogger.userClient.error("Failed to update user Status with broadcast message: \(error)")
+                WireLogger.userClient.error("Failed to update user Status with broadcast message: \(error)")
             }
             await context.perform { [self] in
                 completion()

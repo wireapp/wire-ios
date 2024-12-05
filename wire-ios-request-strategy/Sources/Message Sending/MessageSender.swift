@@ -71,7 +71,7 @@ public final class MessageSender: MessageSenderInterface {
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
-        OldWireLogger.messaging.debug("broadcast message", attributes: logAttributes)
+        WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
 
@@ -80,21 +80,21 @@ public final class MessageSender: MessageSenderInterface {
             try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            OldWireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
+            WireLogger.messaging.warn("broadcast message failed: \(error)", attributes: logAttributes)
             throw error
         }
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
-        OldWireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
+        WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
         await quickSyncObserver.waitForQuickSyncToFinish()
-        OldWireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
+        WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            OldWireLogger.messaging.debug(
+            WireLogger.messaging.debug(
                 "send message - resolve dependencies finished",
                 attributes: logAttributes
             )
@@ -102,14 +102,14 @@ public final class MessageSender: MessageSenderInterface {
 
             try await attemptToSend(message: message)
 
-            OldWireLogger.messaging.debug(
+            WireLogger.messaging.debug(
                 "send message - attemptToSend duration: \(timePoint.elapsedTime)",
                 attributes: logAttributes
             )
 
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
-            OldWireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
+            WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
             throw error
         }
 
@@ -191,7 +191,7 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         let logAttributes = await logAttributesBuilder.logAttributes(message)
-        OldWireLogger.messaging.debug(
+        WireLogger.messaging.debug(
             "send message - via proteus",
             attributes: logAttributes
         )
@@ -241,7 +241,7 @@ public final class MessageSender: MessageSenderInterface {
         response: ZMTransportResponse
     ) async {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
-        OldWireLogger.messaging.debug(
+        WireLogger.messaging.debug(
             "send message - via proteus succeeded",
             attributes: logAttributes
         )
@@ -273,7 +273,7 @@ public final class MessageSender: MessageSenderInterface {
             }
 
             if await context.perform({ message.isExpired }) {
-                OldWireLogger.messaging.warn(
+                WireLogger.messaging.warn(
                     "attempt to send with proteus failed - missing clients and message is expired",
                     attributes: logAttributes
                 )
@@ -285,13 +285,13 @@ public final class MessageSender: MessageSenderInterface {
         default:
             if case .tryAgainLater = failure.response?.result {
                 if await context.perform({ message.isExpired }) {
-                    OldWireLogger.messaging.warn(
+                    WireLogger.messaging.warn(
                         "attempt to send with proteus failed - message is expired and try again later",
                         attributes: logAttributes
                     )
                     throw MessageSendError.messageExpired
                 } else {
-                    OldWireLogger.messaging.warn(
+                    WireLogger.messaging.warn(
                         "attempt to send with proteus failed - try again later",
                         attributes: logAttributes
                     )

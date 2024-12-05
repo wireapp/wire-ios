@@ -26,7 +26,7 @@ extension EventDecoder {
         context: NSManagedObjectContext
     ) async {
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
-            OldWireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
@@ -48,7 +48,7 @@ extension EventDecoder {
                 context.saveOrRollback()
             }
         } catch {
-            OldWireLogger.mls.warn("failed to decrypt mls welcome message: \(String(describing: error))")
+            WireLogger.mls.warn("failed to decrypt mls welcome message: \(String(describing: error))")
             return
         }
     }
@@ -57,17 +57,17 @@ extension EventDecoder {
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
     ) async -> [ZMUpdateEvent] {
-        OldWireLogger.mls.info("decrypting mls message")
+        WireLogger.mls.info("decrypting mls message")
 
         guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
-            OldWireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
         let decoder = EventPayloadDecoder()
         guard let payload = try? decoder
             .decode(Payload.UpdateConversationMLSMessageAdd.self, from: updateEvent.payload) else {
-            OldWireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
+            WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return []
         }
 
@@ -76,12 +76,12 @@ extension EventDecoder {
             conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
 
             guard let conversation else {
-                OldWireLogger.mls.error("failed to decrypt mls message: conversation not found in db")
+                WireLogger.mls.error("failed to decrypt mls message: conversation not found in db")
                 return nil
             }
 
             guard conversation.mlsStatus == .ready else {
-                OldWireLogger.mls
+                WireLogger.mls
                     .warn(
                         "failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))"
                     )
@@ -92,7 +92,7 @@ extension EventDecoder {
         }
 
         guard let groupID else {
-            OldWireLogger.mls.error("failed to decrypt mls message: missing MLS group ID")
+            WireLogger.mls.error("failed to decrypt mls message: missing MLS group ID")
             return []
         }
 
@@ -104,7 +104,7 @@ extension EventDecoder {
             )
 
             if results.isEmpty {
-                OldWireLogger.mls.info("successfully decrypted mls message but no result was returned")
+                WireLogger.mls.info("successfully decrypted mls message but no result was returned")
                 return []
             }
 
@@ -135,7 +135,7 @@ extension EventDecoder {
             return events
 
         } catch {
-            OldWireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
+            WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
             return []
         }
     }

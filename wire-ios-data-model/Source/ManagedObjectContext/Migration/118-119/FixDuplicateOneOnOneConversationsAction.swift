@@ -44,7 +44,7 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
             let theOneOnOneConversation = sortedConversations.removeFirst()
             user.oneOnOneConversation = theOneOnOneConversation
 
-            OldWireLogger.localStorage.debug(
+            WireLogger.localStorage.debug(
                 "Fixing oneOnOne conversation",
                 attributes: [.conversationId: theOneOnOneConversation.remoteIdentifier.safeForLoggingDescription]
             )

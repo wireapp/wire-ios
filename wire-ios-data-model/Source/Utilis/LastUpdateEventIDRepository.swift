@@ -63,7 +63,7 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     }
 
     public func storeLastEventID(_ id: UUID?) {
-        OldWireLogger.sync.info(
+        WireLogger.sync.info(
             "store last event id",
             attributes: [.lastEventID: String(describing: id?.safeForLoggingDescription ?? "<nil>")]
         )

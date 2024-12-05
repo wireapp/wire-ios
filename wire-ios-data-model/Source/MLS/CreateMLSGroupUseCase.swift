@@ -21,7 +21,7 @@ import WireLogging
 
 struct CreateMLSGroupUseCase {
 
-    private let logger = OldWireLogger.mls
+    private let logger = WireLogger.mls
 
     private let parentGroupID: MLSGroupID?
     private let removalKeys: BackendMLSPublicKeys?

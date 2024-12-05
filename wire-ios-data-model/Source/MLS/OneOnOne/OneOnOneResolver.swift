@@ -64,7 +64,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                         try await self.resolveOneOnOneConversation(with: userID, in: context)
                     } catch {
                         // skip conversation migration for this user
-                        OldWireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
                     }
                 }
             }
@@ -76,7 +76,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        OldWireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
+        WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
         let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
@@ -107,7 +107,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async -> OneOnOneConversationResolution {
-        OldWireLogger.conversation.debug("no common protocols found")
+        WireLogger.conversation.debug("no common protocols found")
 
         await context.perform {
             guard
@@ -149,7 +149,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        OldWireLogger.conversation.debug("should resolve to mls 1-1 conversation")
+        WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
         guard let migrator else {
             throw OneOnOneResolverError.migratorNotFound
@@ -194,7 +194,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async -> OneOnOneConversationResolution {
-        OldWireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
         await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
         return .noAction
     }
@@ -211,7 +211,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 .fetch(request)
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        OldWireLogger.conversation.error("missing user's qualifiedID to resolve 1-1 conversation!")
+                        WireLogger.conversation.error("missing user's qualifiedID to resolve 1-1 conversation!")
                         return nil
                     }
                     return userID
