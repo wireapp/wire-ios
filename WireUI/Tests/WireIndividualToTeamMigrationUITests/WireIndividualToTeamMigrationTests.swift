@@ -17,7 +17,7 @@
 //
 
 import XCTest
-@testable import WireIndividualToTeamMigration
+@testable import WireIndividualToTeamMigrationUI
 
 class WireIndividualToTeamMigrationTests: XCTestCase {
     func testExample() {}
