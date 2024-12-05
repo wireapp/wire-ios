@@ -41,8 +41,6 @@ final class ConversationCreationController: UIViewController {
 
     private let userSession: UserSession
 
-    private let mlsFeature: Feature.MLS
-
     private let collectionViewController = SectionCollectionViewController()
 
     private var preSelectedParticipants: UserSet?
@@ -151,14 +149,12 @@ final class ConversationCreationController: UIViewController {
 
     init(
         preSelectedParticipants: UserSet?,
-        userSession: UserSession,
-        mlsFeature: Feature.MLS
+        userSession: UserSession
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-        self.mlsFeature = mlsFeature
         self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol.toMessageProtocol,
+            encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
 
@@ -464,9 +460,9 @@ extension ConversationCreationController {
         -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+        let proteus = userSession.defaultProtocol == .proteus ? Localizable.ProtocolSelection
             .proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+        let mls = userSession.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
             .ProtocolSelection.mls
 
         let alert = UIAlertController(
@@ -501,15 +497,18 @@ extension ConversationCreationController {
     }
 }
 
-extension Feature.MLS.Config.MessageProtocol {
-    var toMessageProtocol: MessageProtocol {
-        switch self {
-        case .proteus:
-            .proteus
+extension UserSession {
+
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
+        case .proteus, .mixed:
+            return .proteus
         case .mls:
-            .mls
-        case .mixed:
-            .mixed
+            return .mls
         }
     }
+
 }
