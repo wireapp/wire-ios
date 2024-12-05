@@ -18,29 +18,31 @@
 
 public import Foundation
 
-public protocol LoggerProtocol {
+//public typealias LoggerProtocol = LegacyLoggerProtocol
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...)
-    func info(_ message: any LogConvertible, attributes: LogAttributes...)
-    func notice(_ message: any LogConvertible, attributes: LogAttributes...)
-    func warn(_ message: any LogConvertible, attributes: LogAttributes...)
-    func error(_ message: any LogConvertible, attributes: LogAttributes...)
-    func critical(_ message: any LogConvertible, attributes: LogAttributes...)
+public protocol LegacyLoggerProtocol {
+
+    func debug(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
+    func info(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
+    func notice(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
+    func warn(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
+    func error(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
+    func critical(_ message: any LegacyLogConvertible, attributes: LegacyLogAttributes...)
 
     var logFiles: [URL] { get }
 
     /// Add an attribute, value to each logs - DataDog only
-    func addTag(_ key: LogAttributesKey, value: String?)
+    func addTag(_ key: LegacyLogAttributesKey, value: String?)
 }
 
 public extension LoggerProtocol {
 
-    func attributesDescription(from attributes: LogAttributes) -> String {
+    func attributesDescription(from attributes: LegacyLogAttributes) -> String {
         var logAttributes = attributes
 
         // drop attributes used for visibility and category
-        logAttributes.removeValue(forKey: LogAttributesKey.public)
-        logAttributes.removeValue(forKey: LogAttributesKey.tag)
+        logAttributes.removeValue(forKey: LegacyLogAttributesKey.public)
+        logAttributes.removeValue(forKey: LegacyLogAttributesKey.tag)
 
         guard !logAttributes.isEmpty else {
             return ""
@@ -57,8 +59,8 @@ public extension LoggerProtocol {
 
     /// helper method to transform attributes array to single LogAttributes
     /// - note: if same key is contained accross multiple attributes, the latest one is taken
-    func flattenArray(_ attributes: [LogAttributes]) -> LogAttributes {
-        var mergedAttributes: LogAttributes = [:]
+    func flattenArray(_ attributes: [LegacyLogAttributes]) -> LegacyLogAttributes {
+        var mergedAttributes: LegacyLogAttributes = [:]
         attributes.forEach {
             mergedAttributes.merge($0) { _, new in new }
         }

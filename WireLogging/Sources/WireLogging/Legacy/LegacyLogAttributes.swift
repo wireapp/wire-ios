@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public typealias LogAttributes = [LogAttributesKey: any Encodable]
+//public typealias LogAttributes = LegacyLogAttributes
+//public typealias LogAttributesKey = LegacyLogAttributesKey
 
-public enum LogAttributesKey: String, Comparable, Sendable {
+public typealias LegacyLogAttributes = [LegacyLogAttributesKey: any Encodable]
+
+public enum LegacyLogAttributesKey: String, Comparable, Sendable {
 
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"
@@ -37,11 +40,11 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case processId = "process_id"
     case processName = "process_name"
 
-    public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 }
 
-public extension LogAttributes {
-    static let safePublic = [LogAttributesKey.public: true]
+public extension LegacyLogAttributes {
+    static let safePublic = [LegacyLogAttributesKey.public: true]
 }

@@ -17,7 +17,8 @@
 //
 
 import Foundation
-import WireLogging
+
+//public typealias Flow = LegacyFlow
 
 /// A `Flow` is a structured log class that reports the progress
 /// of a particular flow of code, marking the start, middle, and end
@@ -25,7 +26,7 @@ import WireLogging
 ///
 /// It reports the flow events via a `WireLogger` instance using a specified tag.
 
-open class Flow {
+open class LegacyFlow {
 
     // MARK: - Properties
 

@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol LogConvertible {
+//public typealias LogConvertible = LegacyLogConvertible
+
+public protocol LegacyLogConvertible {
 
     var logDescription: String { get }
 
 }
 
-extension String: LogConvertible {
+extension String: LegacyLogConvertible {
 
     public var logDescription: String {
         self
