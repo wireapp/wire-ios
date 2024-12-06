@@ -42,7 +42,10 @@ final class Assembly {
     }
 
     private lazy var keychain: some KeychainProtocol = Keychain()
-    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
+    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
+        minTLSVersion: minTLSVersion,
+        proxySettings: backendEnvironment.proxySettings
+    )
 
     private lazy var apiService: some APIServiceProtocol = APIService(
         networkService: apiNetworkService,
