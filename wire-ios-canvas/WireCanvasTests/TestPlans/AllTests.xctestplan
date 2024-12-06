@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "8E78A18F-634E-4B32-9CDC-409051E08446",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireCanvas.xcodeproj",
+        "identifier" : "01E9445F2D01805B006921E4",
+        "name" : "WireCanvasTests"
+      }
+    }
+  ],
+  "version" : 1
+}
