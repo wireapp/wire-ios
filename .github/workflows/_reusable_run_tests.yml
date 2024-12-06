@@ -148,7 +148,7 @@ jobs:
             build/reports/*.junit
             artifacts/**/*.junit
 
-      - name: Prepare visual representation of test results # to move to caller workflow
+      - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
         if: always()
         with:
