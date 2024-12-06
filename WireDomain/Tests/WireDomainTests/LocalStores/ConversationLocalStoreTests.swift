@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
@@ -39,6 +40,8 @@ final class ConversationLocalStoreTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
+    
+    private var subscription: AnyCancellable?
 
     override func setUp() async throws {
         mlsService = MockMLSServiceInterface()
@@ -64,6 +67,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         modelHelper = nil
         userLocalStore = nil
         messageLocalStore = nil
+        subscription = nil
     }
 
     // MARK: - Tests
@@ -431,6 +435,46 @@ final class ConversationLocalStoreTests: XCTestCase {
         await context.perform {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
+    }
+    
+    func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
+
+        let (userObjectID, conversationObjectID) = try await context.perform { [self] in
+            let user = modelHelper.createUser(in: context)
+            let conversation = modelHelper.createGroupConversation(in: context)
+
+            try context.obtainPermanentIDs(for: [user, conversation])
+
+            return (user.objectID, conversation.objectID)
+
+        }
+        
+
+        let expectation = XCTestExpectation()
+
+        let typingUsersInfo = ConversationTypingUsersInfo(
+            users: Set([userObjectID]),
+            conversationID: conversationObjectID
+        )
+
+        subscription = NotificationCenter.default.publisher(for: .typingNotification)
+            .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
+            .sink { typingUsers in
+                // Then
+                XCTAssertEqual(typingUsers.first?.objectID, userObjectID)
+                expectation.fulfill()
+            }
+
+        // When
+
+        await sut.updateTypingUsers(
+            conversationID: conversationObjectID,
+            usersID: Set([userObjectID])
+        )
+
+        // Then
+
+        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
     private enum Scaffolding {
