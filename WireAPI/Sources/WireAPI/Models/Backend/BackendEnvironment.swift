@@ -34,16 +34,22 @@ public struct BackendEnvironment {
 
     let pinnedKeys: [PinnedKey]
 
+    /// The proxy settings for the backend if any.
+
+    let proxySettings: ProxySettings?
+
     /// Creates a new `BackendEnvironment`.
     ///
     /// - Parameter url: The `URL` of the backend.
     /// - Parameter webSocketURL: The `URL` of the WebSocket endpoint.
     /// - Parameter pinnedKeys: The pinned keys for the backend for use with certificate pinning.
+    /// - Parameter proxySettings: The proxy settings for the backend if any.
 
-    public init(url: URL, webSocketURL: URL, pinnedKeys: [PinnedKey]) {
+    public init(url: URL, webSocketURL: URL, pinnedKeys: [PinnedKey], proxySettings: ProxySettings?) {
         self.url = url
         self.webSocketURL = webSocketURL
         self.pinnedKeys = pinnedKeys
+        self.proxySettings = proxySettings
     }
 
 }
