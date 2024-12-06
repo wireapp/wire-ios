@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 private let NSManagedObjectContextFileAssetCacheKey = "zm_fileAssetCache"
 

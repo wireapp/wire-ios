@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 struct RequestLog: Codable {
     var method: String
@@ -164,7 +165,7 @@ extension WireLogger {
     }
 }
 
-extension WireLoggerObjc {
+extension WireLoggerObjC {
     static func logRequest(_ request: NSURLRequest) {
         WireLogger.network.log(request: request)
     }
