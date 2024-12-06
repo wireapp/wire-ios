@@ -18,7 +18,7 @@
 
 extension WireLogInterpolation {
 
-    public mutating func appendInterpolation(_ error: any Error, skipObfuscation: Bool = false) {
+    public mutating func appendInterpolation<E: Error>(_ error: E, skipObfuscation: Bool = false) {
         if !skipObfuscation, isObfuscationRequired {
             writeText(String(describing: type(of: error)))
         } else {
