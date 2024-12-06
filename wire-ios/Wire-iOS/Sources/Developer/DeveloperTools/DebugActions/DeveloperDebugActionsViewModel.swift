@@ -187,7 +187,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 }
 
                 logger.debug("deleted domains of conversations...")
-                let conversations = try syncContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+                let conversations = try syncContext
+                    .fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
 
                 for conversation in conversations where conversation.conversationType.isOne(of: .oneOnOne, .group) {
                     conversation.domain = nil
