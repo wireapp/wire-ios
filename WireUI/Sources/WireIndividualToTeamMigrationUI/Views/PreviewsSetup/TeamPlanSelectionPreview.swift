@@ -22,7 +22,7 @@ import WireFoundation
 
 @MainActor
 @ViewBuilder
-func teamPlanSelectionPreview() -> some View{
+func teamPlanSelectionPreview() -> some View {
     let features: [TeamPlanFeature] = [
         .init(
             id: "console",

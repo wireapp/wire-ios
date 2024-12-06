@@ -98,7 +98,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     }
 
     let actionCallback: @Sendable (Action) -> Void
-    lazy var blockingActivityIndicator: BlockingActivityIndicator = BlockingActivityIndicator(
+    lazy var blockingActivityIndicator: BlockingActivityIndicator = .init(
         view: view,
         accessibilityAnnouncement: .localizedAccessibilityLabel(key: "loading", bundle: .module)
     )
@@ -167,7 +167,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
-        case .toConfirmation(let teamName):
+        case let .toConfirmation(teamName):
             let vc = hostedView(
                 for: .confirmation(teamName: teamName),
                 stepIndex: childController.viewControllers.count + 1,
@@ -175,11 +175,11 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
-        case .toTeamCreation(teamName: let teamName):
+        case let .toTeamCreation(teamName: teamName):
             createTeam(named: teamName)
-        case .toError(let error):
+        case let .toError(error):
             displayError(error)
-        case .toCompletion(let teamName):
+        case let .toCompletion(teamName):
             let vc = hostedView(
                 for: .completion(profileName: userProfileName, teamName: teamName),
                 stepIndex: childController.viewControllers.count + 1,
@@ -216,7 +216,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 body: "You've created or joined a team with this email address on another device.",
                 action: "Ok"
             )
-        case .generic(let error):
+        case let .generic(error):
             displayError(error)
         }
     }
@@ -301,7 +301,7 @@ private func viewFor(
                 transitionCallback(.toConfirmation(teamName: teamName))
             }
         }
-    case .confirmation(let teamName):
+    case let .confirmation(teamName):
         ConfirmationView { action in
             switch action {
             case .continue:

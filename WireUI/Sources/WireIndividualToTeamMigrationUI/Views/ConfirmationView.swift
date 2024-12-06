@@ -57,7 +57,6 @@ struct ConfirmationView: View {
     }
 }
 
-
 #Preview {
     confirmationPreview()
 }

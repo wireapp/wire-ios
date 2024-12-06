@@ -44,7 +44,6 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
     private var teamMigrationBanner: UIViewController?
-    
 
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
@@ -67,25 +66,25 @@ final class SelfProfileViewController: UIViewController {
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
-        
+
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser,
             trackingManager: trackingManager
         )
-        
+
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
-        
+
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
-        
+
         self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-        
+
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -100,10 +99,10 @@ final class SelfProfileViewController: UIViewController {
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        
+
         self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
-        
+
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
@@ -188,17 +187,19 @@ final class SelfProfileViewController: UIViewController {
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
-    
+
         if let teamMigrationBanner {
             teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                
 
                 // teamMigrationBanner
                 teamMigrationBanner.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-                teamMigrationBanner.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+                teamMigrationBanner.view.topAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.topAnchor,
+                    constant: 20
+                ),
                 teamMigrationBanner.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-                
+
                 profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
             ])
 
@@ -207,10 +208,10 @@ final class SelfProfileViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            
+
             // profileLayoutGuide
             profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
-            
+
             // profileView
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileLayoutGuide.topAnchor),
