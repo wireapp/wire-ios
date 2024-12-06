@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import WireLogging
 
 enum SearchGroup: Int {
     case people
