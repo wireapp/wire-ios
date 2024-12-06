@@ -21,6 +21,7 @@ import UIKit
 import WireDesign
 import WireDomainAPI
 import WireFoundation
+import WireReusableUIComponents
 
 public class IndividualToTeamMigrationViewController: UIViewController {
     public enum Action: Sendable {
@@ -32,7 +33,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     enum Step: Sendable {
         case teamPlanSelection(features: [TeamPlanFeature])
         case teamName
-        case confirmation
+        case confirmation(teamName: String)
         case completion(profileName: String, teamName: String)
 
         var title: String {
@@ -88,21 +89,29 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case dismissCancellationAlert
         case toPlans
         case toTeamName
-        case toConfirmation
-        case toCompletion
+        case toConfirmation(teamName: String)
+        case toTeamCreation(teamName: String)
+        case toError(error: any Error)
+        case toCompletion(teamName: String)
         case toApp
         case toTeamManagement
     }
 
     let actionCallback: @Sendable (Action) -> Void
+    lazy var blockingActivityIndicator: BlockingActivityIndicator = BlockingActivityIndicator(
+        view: view,
+        accessibilityAnnouncement: "creating team"
+    )
     let childController: UINavigationController
     var currentStep: Step
     let features: [TeamPlanFeature]
     let useCase: any IndividualToTeamMigrationUseCase
+    let userProfileName: String
 
     public init(
         features: [TeamPlanFeature],
         useCase: any IndividualToTeamMigrationUseCase,
+        userProfileName: String,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.actionCallback = actionCallback
@@ -110,6 +119,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         self.childController = UINavigationController()
         self.features = features
         self.useCase = useCase
+        self.userProfileName = userProfileName
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -157,17 +167,21 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
-        case .toConfirmation:
+        case .toConfirmation(let teamName):
             let vc = hostedView(
-                for: .confirmation,
+                for: .confirmation(teamName: teamName),
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true)
-        case .toCompletion:
+        case .toTeamCreation(teamName: let teamName):
+            createTeam(named: teamName)
+        case .toError(let error):
+            displayError(error)
+        case .toCompletion(let teamName):
             let vc = hostedView(
-                for: .completion(profileName: "Profile Name", teamName: "Some Team"),
+                for: .completion(profileName: userProfileName, teamName: teamName),
                 stepIndex: childController.viewControllers.count + 1,
                 stepCount: 4,
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
@@ -178,6 +192,24 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         case .toTeamManagement:
             actionCallback(.completionGoToTeamManagement)
         }
+    }
+
+    private func createTeam(named teamName: String) {
+        blockingActivityIndicator.start()
+        Task {
+            do {
+                let migrationResult = try await useCase.invoke(teamName: teamName)
+                transition(to: .toCompletion(teamName: migrationResult.teamName))
+                blockingActivityIndicator.stop()
+            } catch {
+                transition(to: .toError(error: error))
+                blockingActivityIndicator.stop()
+            }
+        }
+    }
+
+    private func displayError(_ error: some Error) {
+        // Display error UI
     }
 }
 
@@ -204,6 +236,7 @@ private func hostedView(
             stepCount: stepCount,
             stepTitle: step.title
         )
+        .ignoresSafeArea(.container, edges: .bottom)
     )
     vc.title = step.title
     vc.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
@@ -220,7 +253,7 @@ private func hostedView(
 
 @MainActor
 @ViewBuilder
-func viewFor(
+private func viewFor(
     step: IndividualToTeamMigrationViewController.Step,
     stepIndex: Int,
     stepCount: Int,
@@ -243,14 +276,14 @@ func viewFor(
         TeamNameView { action in
             switch action {
             case let .continue(teamName):
-                transitionCallback(.toConfirmation)
+                transitionCallback(.toConfirmation(teamName: teamName))
             }
         }
-    case .confirmation:
+    case .confirmation(let teamName):
         ConfirmationView { action in
             switch action {
             case .continue:
-                transitionCallback(.toCompletion)
+                transitionCallback(.toTeamCreation(teamName: teamName))
             }
         }
     case let .completion(profileName, teamName):
@@ -263,4 +296,8 @@ func viewFor(
             }
         }
     }
+}
+
+#Preview {
+    featurePreview()
 }
