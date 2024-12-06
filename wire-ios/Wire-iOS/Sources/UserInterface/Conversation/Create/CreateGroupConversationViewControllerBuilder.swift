@@ -32,8 +32,7 @@ final class CreateGroupConversationViewControllerBuilder: CreateGroupConversatio
     func build() -> UIViewController {
         let viewController = ConversationCreationController(
             preSelectedParticipants: nil,
-            userSession: userSession,
-            mlsFeature: userSession.makeGetMLSFeatureUseCase().invoke()
+            userSession: userSession
         )
         viewController.delegate = delegate
         return viewController

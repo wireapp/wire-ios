@@ -49,6 +49,34 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLogging"
+               BuildableName = "WireLogging"
+               BlueprintName = "WireLogging"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLoggingSupport"
+               BuildableName = "WireLoggingSupport"
+               BlueprintName = "WireLoggingSupport"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -70,6 +98,16 @@
                BlueprintIdentifier = "WireFoundationTests"
                BuildableName = "WireFoundationTests"
                BlueprintName = "WireFoundationTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLoggingTests"
+               BuildableName = "WireLoggingTests"
+               BlueprintName = "WireLoggingTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

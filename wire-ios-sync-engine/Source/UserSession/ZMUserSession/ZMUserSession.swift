@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 
@@ -873,6 +874,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     public func didFinishSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
+
+            managedObjectContext.resetMigrationNeedsSlowSyncFlagIfNeeded()
+            managedObjectContext.resetMigrationNeedsSyncResoucesFlagIfNeeded()
 
             hasCompletedInitialSync = true
             notificationDispatcher.isEnabled = true

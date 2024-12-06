@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -1029,18 +1030,21 @@ public final class SessionManager: NSObject, SessionManagerType {
                     with: coreDataStack
                 )
 
-                triggerSlowSyncIfNeeded(with: userSession)
+                triggerMigrationsNeedsActionsIfNeeded(with: userSession)
 
                 onCompletion(userSession)
             }
         )
     }
 
-    private func triggerSlowSyncIfNeeded(with userSession: ZMUserSession) {
+    /// Executes post migration slow sync or sync resources
+    private func triggerMigrationsNeedsActionsIfNeeded(with userSession: ZMUserSession) {
         let context = userSession.syncContext
         context.perform {
-            if context.readAndResetSlowSyncFlag() {
+            if context.readMigrationNeedsSlowSyncFlag() {
                 userSession.syncStatus.forceSlowSync()
+            } else if context.readMigrationNeedsSyncResourcesFlag() {
+                userSession.syncStatus.resyncResources()
             }
         }
     }

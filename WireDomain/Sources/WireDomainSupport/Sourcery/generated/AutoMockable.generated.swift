@@ -253,10 +253,10 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
-    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireAPI.Conversation, Date, Bool, Bool) async -> Void)?
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool)] = []
+    public var storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod: ((WireDomain.Conversation, Date, Bool, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date, isFederationEnabled: Bool, isMLSEnabled: Bool) async {
         storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.append((conversation: conversation, timestamp: timestamp, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled))
 
         guard let mock = storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod else {
@@ -268,32 +268,32 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
-    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
+    public var storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations: [(needsBackendUpdate: Bool, conversationID: UUID, conversationDomain: String)] = []
+    public var storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod: ((Bool, UUID, String) async -> Void)?
 
-    public func storeConversation(needsBackendUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
-        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsBackendUpdate: needsBackendUpdate, qualifiedId: qualifiedId))
+    public func storeConversation(needsBackendUpdate: Bool, conversationID: UUID, conversationDomain: String) async {
+        storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations.append((needsBackendUpdate: needsBackendUpdate, conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
-            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        guard let mock = storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateConversationIDConversationDomain`")
         }
 
-        await mock(needsBackendUpdate, qualifiedId)
+        await mock(needsBackendUpdate, conversationID, conversationDomain)
     }
 
     // MARK: - storeFailedConversation
 
-    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
-    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+    public var storeFailedConversationConversationIDConversationDomain_Invocations: [(conversationID: UUID, conversationDomain: String)] = []
+    public var storeFailedConversationConversationIDConversationDomain_MockMethod: ((UUID, String) async -> Void)?
 
-    public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
-        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+    public func storeFailedConversation(conversationID: UUID, conversationDomain: String) async {
+        storeFailedConversationConversationIDConversationDomain_Invocations.append((conversationID: conversationID, conversationDomain: conversationDomain))
 
-        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
-            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        guard let mock = storeFailedConversationConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeFailedConversationConversationIDConversationDomain`")
         }
 
-        await mock(qualifiedId)
+        await mock(conversationID, conversationDomain)
     }
 
     // MARK: - fetchMLSConversation
@@ -483,6 +483,39 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         }
 
         await mock(conversation, users, initiatingUser)
+    }
+
+    // MARK: - conversationMessageDestructionTimeout
+
+    public var conversationMessageDestructionTimeout_Invocations: [ZMConversation] = []
+    public var conversationMessageDestructionTimeout_MockMethod: ((ZMConversation) async -> MessageDestructionTimeoutValue)?
+    public var conversationMessageDestructionTimeout_MockValue: MessageDestructionTimeoutValue?
+
+    public func conversationMessageDestructionTimeout(_ conversation: ZMConversation) async -> MessageDestructionTimeoutValue {
+        conversationMessageDestructionTimeout_Invocations.append(conversation)
+
+        if let mock = conversationMessageDestructionTimeout_MockMethod {
+            return await mock(conversation)
+        } else if let mock = conversationMessageDestructionTimeout_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationMessageDestructionTimeout`")
+        }
+    }
+
+    // MARK: - storeConversation
+
+    public var storeConversationTimeoutValueFor_Invocations: [(timeoutValue: Double, conversation: ZMConversation)] = []
+    public var storeConversationTimeoutValueFor_MockMethod: ((Double, ZMConversation) async -> Void)?
+
+    public func storeConversation(timeoutValue: Double, for conversation: ZMConversation) async {
+        storeConversationTimeoutValueFor_Invocations.append((timeoutValue: timeoutValue, conversation: conversation))
+
+        guard let mock = storeConversationTimeoutValueFor_MockMethod else {
+            fatalError("no mock for `storeConversationTimeoutValueFor`")
+        }
+
+        await mock(timeoutValue, conversation)
     }
 
     // MARK: - fetchOrCreateRole
@@ -735,10 +768,10 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - storeConversation
 
-    public var storeConversationTimestamp_Invocations: [(conversation: WireAPI.Conversation, timestamp: Date)] = []
-    public var storeConversationTimestamp_MockMethod: ((WireAPI.Conversation, Date) async -> Void)?
+    public var storeConversationTimestamp_Invocations: [(conversation: WireDomain.Conversation, timestamp: Date)] = []
+    public var storeConversationTimestamp_MockMethod: ((WireDomain.Conversation, Date) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, timestamp: Date) async {
+    public func storeConversation(_ conversation: WireDomain.Conversation, timestamp: Date) async {
         storeConversationTimestamp_Invocations.append((conversation: conversation, timestamp: timestamp))
 
         guard let mock = storeConversationTimestamp_MockMethod else {

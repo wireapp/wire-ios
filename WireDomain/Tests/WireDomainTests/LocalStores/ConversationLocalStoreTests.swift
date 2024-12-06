@@ -79,7 +79,7 @@ final class ConversationLocalStoreTests: XCTestCase {
         // When
 
         await sut.storeConversation(
-            groupConversation,
+            groupConversation.toDomainModel(),
             timestamp: .distantPast,
             isFederationEnabled: false,
             isMLSEnabled: true
@@ -109,7 +109,8 @@ final class ConversationLocalStoreTests: XCTestCase {
         // When
 
         await sut.storeFailedConversation(
-            withQualifiedId: qualifiedID
+            conversationID: id,
+            conversationDomain: domain
         )
 
         // Then
@@ -142,7 +143,8 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         await sut.storeConversation(
             needsBackendUpdate: true,
-            qualifiedId: qualifiedID
+            conversationID: id,
+            conversationDomain: domain
         )
 
         // Then

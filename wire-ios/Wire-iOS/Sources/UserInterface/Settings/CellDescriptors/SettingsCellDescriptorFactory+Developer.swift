@@ -128,7 +128,7 @@ extension SettingsCellDescriptorFactory {
             Button(
                 title: "Trigger resyncResources",
                 isDestructive: false,
-                selectAction: DebugActions.triggerResyncResources
+                selectAction: { _ in DebugActions.triggerResyncResources() }
             )
         )
 

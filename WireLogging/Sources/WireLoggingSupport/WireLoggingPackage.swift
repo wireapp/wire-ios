@@ -16,23 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/// Class to proxy WireLogger methods to Objective-C
-@objcMembers
-public final class WireLoggerObjc: NSObject {
-
-    static func assertionDumpLog(_ message: String) {
-        WireLogger.system.critical(message, attributes: .safePublic)
-    }
-
-    @objc(logReceivedUpdateEventWithId:)
-    static func logReceivedUpdateEvent(eventId: String) {
-        WireLogger.updateEvent.info("received event", attributes: [.eventId: eventId], .safePublic)
-    }
-
-    @objc(logSaveCoreDataError:)
-    static func logSaveCoreData(error: any Error) {
-        WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
-    }
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script
