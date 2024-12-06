@@ -92,7 +92,8 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
             status: .enabled,
             config: .init(
                 defaultProtocol: messageProtocol,
-                defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+                defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            )
         )
 
         sut = ConversationCreationController(
