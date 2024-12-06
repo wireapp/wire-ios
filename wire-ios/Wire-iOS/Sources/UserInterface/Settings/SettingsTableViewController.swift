@@ -204,6 +204,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+
         setupNavigationBarAccessibility()
     }
 
@@ -211,6 +212,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
+
+        let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
+        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+        navigationItem.backButtonDisplayMode = .minimal
 
         // Configure appearance for different states
         navigationController?.navigationBar.standardAppearance = appearance

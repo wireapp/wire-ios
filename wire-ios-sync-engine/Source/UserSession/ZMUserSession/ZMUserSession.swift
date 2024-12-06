@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 
@@ -874,6 +875,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
+            managedObjectContext.resetMigrationNeedsSlowSyncFlagIfNeeded()
+            managedObjectContext.resetMigrationNeedsSyncResoucesFlagIfNeeded()
+
             hasCompletedInitialSync = true
             notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
@@ -930,7 +934,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn {
+        if mlsFeature.isEnabled {
             mlsService.commitPendingProposalsIfNeeded()
         }
 
@@ -964,7 +968,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext)
         -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
-        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+        let resolver = OneOnOneResolver(
+            migrator: OneOnOneMigrator(mlsService: mlsService),
+            isMLSEnabled: mlsFeature.isEnabled
+        )
 
         return ResolveOneOnOneConversationsUseCase(
             context: context,
@@ -974,7 +981,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard mlsFeature.isEnabled else { return }
 
         let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
@@ -985,7 +992,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     private func performPostQuickSyncE2EIActions() {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard mlsFeature.isEnabled else { return }
 
         checkExpiredCertificateRevocationLists()
         checkE2EICertificateExpiryStatus()

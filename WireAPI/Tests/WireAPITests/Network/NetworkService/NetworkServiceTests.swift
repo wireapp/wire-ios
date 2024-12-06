@@ -47,7 +47,7 @@ final class NetworkServiceTests: XCTestCase {
         let invalidRequest = Scaffolding.invalidRequest
 
         // Then
-        await XCTAssertThrowsError(NetworkServiceError.invalidRequest) {
+        await XCTAssertThrowsErrorAsync(NetworkServiceError.invalidRequest) {
             // When
             try await self.sut.executeRequest(invalidRequest)
         }
@@ -63,7 +63,7 @@ final class NetworkServiceTests: XCTestCase {
         }
 
         // Then
-        await XCTAssertThrowsError(NetworkServiceError.notAHTTPURLResponse) {
+        await XCTAssertThrowsErrorAsync(NetworkServiceError.notAHTTPURLResponse) {
             // When
             try await self.sut.executeRequest(request)
         }

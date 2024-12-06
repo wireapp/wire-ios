@@ -146,6 +146,7 @@ final class SelfProfileViewController: UIViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -208,13 +209,12 @@ final class SelfProfileViewController: UIViewController {
     private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertController = profileImagePicker.selectProfileImage()
+        let imageView = profileHeaderViewController.imageView
+        let alertController = profileImagePicker.selectProfileImage(
+            popoverConfiguration: .sourceView(sourceView: imageView, sourceRect: .null)
+        )
         if let popoverPresentationController = alertController.popoverPresentationController {
-            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
-            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(
-                dx: -4,
-                dy: -4
-            )
+            popoverPresentationController.sourceView = imageView
         }
         present(alertController, animated: true)
     }

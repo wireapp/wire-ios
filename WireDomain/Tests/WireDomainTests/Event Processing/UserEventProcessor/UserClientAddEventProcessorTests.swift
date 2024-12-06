@@ -66,11 +66,11 @@ final class UserClientAddEventProcessorTests: XCTestCase {
             modelHelper.createSelfClient(in: context)
         }
 
-        userClientsRepository.fetchOrCreateClientWith_MockMethod = { _ in
+        userClientsRepository.fetchOrCreateClientId_MockMethod = { _ in
             (userClient, true)
         }
 
-        userClientsRepository.updateClientWithFromIsNewClient_MockMethod = { _, _, _ in }
+        userClientsRepository.updateClientIdFromIsNewClient_MockMethod = { _, _, _ in }
 
         // When
 
@@ -78,8 +78,8 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userClientsRepository.fetchOrCreateClientWith_Invocations.count, 1)
-        XCTAssertEqual(userClientsRepository.updateClientWithFromIsNewClient_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.fetchOrCreateClientId_Invocations.count, 1)
+        XCTAssertEqual(userClientsRepository.updateClientIdFromIsNewClient_Invocations.count, 1)
     }
 
     private enum Scaffolding {

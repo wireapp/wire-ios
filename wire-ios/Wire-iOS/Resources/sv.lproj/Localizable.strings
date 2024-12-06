@@ -37,6 +37,7 @@
 "general.on" = "På";
 "general.loading" = "Laddar…";
 "general.paste" = "Klistra in";
+"general.or" = "eller";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -156,6 +157,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "Du deltar inte i någon gruppkonversation än.\nStarta en ny konversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Inga resultat hittades.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Ny konversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Starta en ny konversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i kontakter";
@@ -326,7 +334,6 @@
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
 "conversation.create.options.title" = "KONVERSATIONSALTERNATIV";
-"conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
 "conversation.create.services.title" = "Tillåt tjänster";

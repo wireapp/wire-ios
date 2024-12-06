@@ -37,6 +37,7 @@
 "general.on" = "Вкл.";
 "general.loading" = "Загрузка…";
 "general.paste" = "Вставить";
+"general.or" = "или";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -155,7 +156,14 @@
 "conversation_list.empty_placeholder.favorite.link" = "Как помечать беседы как избранные";
 "conversation_list.empty_placeholder.group.subheadline" = "Вы еще не участвуете ни в одной групповой беседе. Начните новую!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "У вас пока нет контактов. Ищите друзей в %@ и общайтесь.";
-"conversation_list.empty_placeholder.oneonone.button" = "Связаться с друзьями";
+"conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Не удалось найти ни одной беседы.\n\nСвяжитесь с пользователями или начните новую групповую беседу:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Ничего не найдено.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Новая беседа";
+"conversation_list.empty_placeholder.search.button.ipad" = "Начать новую беседу";
+"conversation_list.empty_placeholder.search.connect_button" = "Связаться с пользователями";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
@@ -326,7 +334,6 @@
 "conversation.create.guidance.empty" = "Не менее 1 символа";
 "conversation.create.guidance.toolong" = "Слишком много символов";
 "conversation.create.options.title" = "НАСТРОЙКИ БЕСЕДЫ";
-"conversation.create.options.subtitle" = "Гости: %@, Сервисы: %@, Отчеты о прочтении: %@";
 "conversation.create.guests.title" = "Разрешить гостей";
 "conversation.create.guests.subtitle" = "Открыть эту беседу для пользователей не из вашей команды.";
 "conversation.create.services.title" = "Разрешить сервисы";

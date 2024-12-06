@@ -39,11 +39,15 @@ public extension NSManagedObjectContext {
     }
 
     /// checks if we need a slowSync after migrations
-    /// - Note: this cleans up after reading the value
-    func readAndResetSlowSyncFlag() -> Bool {
+    func readMigrationNeedsSlowSyncFlag() -> Bool {
         let value = (persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
-        setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
         return value == 1
     }
 
+    /// Reset migration needs slow sync flag
+    func resetMigrationNeedsSlowSyncFlagIfNeeded() {
+        if readMigrationNeedsSlowSyncFlag() {
+            setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
+        }
+    }
 }

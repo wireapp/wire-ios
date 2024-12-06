@@ -104,7 +104,7 @@ final class ShareContactsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         setupViews()
         createConstraints()
 

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireLogging
 import WireSystem
 
 enum NetworkStatusViewState {
@@ -118,7 +119,7 @@ final class NetworkStatusView: UIView {
         }
 
         self.state = .online
-        backgroundColor = SemanticColors.View.backgroundDefault
+        backgroundColor = ColorTheme.Backgrounds.surface
         createConstraints()
     }
 

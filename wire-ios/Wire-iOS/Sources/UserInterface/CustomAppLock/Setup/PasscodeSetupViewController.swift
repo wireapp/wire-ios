@@ -26,8 +26,6 @@ protocol PasscodeSetupUserInterface: AnyObject {
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool)
 }
 
-// TODO: [WPB-11836] fix issues with large font sizes (content is not scrolling)
-
 final class PasscodeSetupViewController: UIViewController {
 
     enum Context {
@@ -97,12 +95,19 @@ final class PasscodeSetupViewController: UIViewController {
     private let useCompactLayout: Bool
 
     private lazy var infoLabel: UILabel = {
-        let style = DownStyle.infoLabelStyle(compact: useCompactLayout)
-        let label = UILabel()
-        label.configMultipleLineLabel()
-        label.attributedText = .markdown(from: context.infoLabelString, style: style)
+        let label = DynamicFontLabel(
+            fontSpec: .normalRegularFont,
+            color: ColorTheme.Backgrounds.onSurfaceVariant
+        )
         label.textAlignment = .center
+        label.configMultipleLineLabel()
         return label
+    }()
+
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
     }()
 
     private let validationLabels: [PasscodeError: UILabel] = PasscodeError
@@ -142,12 +147,22 @@ final class PasscodeSetupViewController: UIViewController {
         setupViews()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        passcodeTextField.becomeFirstResponder()
+    }
+
+    // MARK: - setup views
+
     private func setupViews() {
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        view.addSubview(contentView)
+        setupScrollView()
+        scrollView.addSubview(contentView)
 
         stackView.distribution = .fill
+        infoLabel.text = context.infoLabelString
 
         contentView.addSubview(stackView)
 
@@ -179,29 +194,44 @@ final class PasscodeSetupViewController: UIViewController {
         createConstraints()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    private func setupScrollView() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
 
-        passcodeTextField.becomeFirstResponder()
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        NSLayoutConstraint.activate([
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     private func createConstraints() {
 
         [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        let widthConstraint = contentView.createContentWidthConstraint()
+        let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
+        let contentLayoutGuide = scrollView.contentLayoutGuide
 
         let contentPadding: CGFloat = 24
 
         NSLayoutConstraint.activate([
             // content view
-            widthConstraint,
+            heightConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
-            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
-            contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),
+            contentView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor),
+            contentView.leadingAnchor.constraint(
+                greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor,
+                constant: contentPadding
+            ),
+            contentView.trailingAnchor.constraint(
+                lessThanOrEqualTo: contentLayoutGuide.trailingAnchor,
+                constant: -contentPadding
+            ),
+            contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
             // stack view
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -341,22 +371,4 @@ extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate 
             .automatic
         }
     }
-}
-
-private extension DownStyle {
-
-    static func infoLabelStyle(compact: Bool) -> DownStyle {
-        let style = DownStyle()
-        style.baseFont = compact ? FontSpec.smallRegularFont.font! : FontSpec.normalRegularFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.minimumLineHeight = compact ? 14 : 20
-        paragraphStyle.maximumLineHeight = compact ? 14 : 20
-        paragraphStyle.paragraphSpacing = compact ? 14 : 20
-        style.baseParagraphStyle = paragraphStyle
-
-        return style
-    }
-
 }

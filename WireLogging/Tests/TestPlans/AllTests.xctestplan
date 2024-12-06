@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "05E04B85-C1D7-4249-9719-C90D5164A909",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "language" : "en"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireLogging",
+        "identifier" : "WireLoggingTests",
+        "name" : "WireLoggingTests"
+      }
+    }
+  ],
+  "version" : 1
+}

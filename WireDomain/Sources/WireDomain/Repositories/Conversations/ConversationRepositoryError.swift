@@ -34,4 +34,8 @@ enum ConversationRepositoryError: Error {
 
     case mlsConversationShouldHaveAGroupID
 
+    /// Unable to fetch conversation guest link
+
+    case failedToFetchGuestLink(Error)
+
 }

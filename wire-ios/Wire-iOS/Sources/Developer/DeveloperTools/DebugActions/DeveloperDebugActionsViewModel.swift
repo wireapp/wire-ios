@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
@@ -27,6 +28,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private let selfClient: UserClient?
+
+    private let logger = WireLogger(tag: "developer")
 
     // MARK: - Initialize
 
@@ -40,10 +43,12 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         buttons = [
             .init(title: "Send debug logs", action: sendDebugLogs),
             .init(title: "Perform quick sync", action: performQuickSync),
+            .init(title: "Resync resources", action: resyncResources),
             .init(title: "Break next quick sync", action: breakNextQuickSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
-            .init(title: "Update MLS migration status", action: updateMLSMigrationStatus)
+            .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
+            .init(title: "Delete domains in the database", action: deleteDomains)
         ]
     }
 
@@ -86,6 +91,12 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         Task {
             await userSession.syncStatus.performQuickSync()
         }
+    }
+
+    // MARK: Resync resources
+
+    private func resyncResources() {
+        DebugActions.triggerResyncResources()
     }
 
     // MARK: Proteus to MLS migration
@@ -156,6 +167,39 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 }
                 .first?
                 .qualifiedID
+        }
+    }
+
+    // MARK: Delete domains
+
+    private func deleteDomains() {
+        guard let syncContext = userSession?.syncContext else {
+            logger.error("failed to delete domains: no sync context")
+            return
+        }
+
+        syncContext.perform { [logger] in
+            do {
+                logger.debug("deleted domains of users...")
+                let users = try syncContext.fetch(NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
+
+                for user in users where !user.isSelfUser {
+                    user.domain = nil
+                }
+
+                logger.debug("deleted domains of conversations...")
+                let conversations = try syncContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+
+                for conversation in conversations where conversation.conversationType.isOne(of: .oneOnOne, .group) {
+                    conversation.domain = nil
+                }
+
+                try syncContext.save()
+                logger.debug("successfully deleted domains")
+
+            } catch {
+                logger.error("failed to delete domains: \(error.localizedDescription)")
+            }
         }
     }
 

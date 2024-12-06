@@ -76,10 +76,87 @@ extension WireAPI.ConversationMemberLeaveReason {
 
     func toDomainModel() -> ZMSystemMessageType {
         switch self {
-        case .userDeleted, .left:
+        case .userDeleted, .userLeft:
             .teamMemberLeave
-        case .removed:
+        case .userRemoved:
             .participantsRemoved
         }
     }
+}
+
+extension WireAPI.ConversationType {
+
+    func toDomainModel() -> WireDataModel.BackendConversationType {
+        switch self {
+        case .group:
+            .group
+        case .self:
+            .`self`
+        case .oneOnOne:
+            .oneOnOne
+        case .connection:
+            .connection
+        }
+    }
+
+}
+
+extension WireAPI.Conversation.Members {
+
+    func toDomainModel() -> WireDomain.Conversation.Members {
+        .init(
+            others: others.map { $0.toDomainModel() },
+            selfMember: selfMember.toDomainModel()
+        )
+    }
+
+}
+
+extension WireAPI.Conversation.Member {
+
+    func toDomainModel() -> WireDomain.Conversation.Members.Member {
+        .init(
+            qualifiedID: qualifiedID?.toDomainModel(),
+            id: id,
+            qualifiedTarget: qualifiedTarget?.toDomainModel(),
+            target: target,
+            conversationRole: conversationRole,
+            service: (service != nil) ? (service!.id, service!.provider) : nil,
+            archived: archived,
+            archivedReference: archivedReference,
+            hidden: hidden,
+            hiddenReference: hiddenReference,
+            mutedStatus: mutedStatus,
+            mutedReference: mutedReference
+        )
+    }
+
+}
+
+extension WireAPI.Conversation {
+
+    func toDomainModel() -> WireDomain.Conversation {
+        .init(
+            id: id,
+            qualifiedID: qualifiedID?.toDomainModel(),
+            teamID: teamID,
+            type: type?.toDomainModel(),
+            messageProtocol: messageProtocol?.toDomainModel(),
+            mlsGroupID: mlsGroupID,
+            cipherSuite: cipherSuite?.toDomainModel(),
+            epoch: epoch,
+            epochTimestamp: epochTimestamp,
+            creator: creator,
+            members: members?.toDomainModel(),
+            name: name,
+            messageTimer: messageTimer,
+            readReceiptMode: readReceiptMode,
+            access: access?.map(\.rawValue),
+            accessRoles: accessRoles?.map(\.rawValue),
+            legacyAccessRole: legacyAccessRole?.toDomainModel(),
+            lastEvent: lastEvent,
+            lastEventTime: lastEventTime
+        )
+    }
+
 }

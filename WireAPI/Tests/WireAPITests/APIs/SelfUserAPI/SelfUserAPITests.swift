@@ -70,7 +70,7 @@ final class SelfUserAPITests: XCTestCase {
             for sut in suts {
                 taskGroup.addTask {
                     // Then
-                    await self.XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+                    await self.XCTAssertThrowsErrorAsync(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
                         // When
                         try await sut.pushSupportedProtocols([.mls])
                     }
@@ -135,7 +135,7 @@ final class SelfUserAPITests: XCTestCase {
         let sut = SelfUserAPIV0(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError {
+        await XCTAssertThrowsErrorAsync {
             // When
             try await sut.getSelfUser()
         }
@@ -181,7 +181,7 @@ final class SelfUserAPITests: XCTestCase {
         let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError {
+        await XCTAssertThrowsErrorAsync {
             // When
             try await sut.pushSupportedProtocols([.mls])
         }

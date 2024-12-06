@@ -137,7 +137,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             quickSyncObserver: quickSyncObserver,
             context: syncMOC
         )
-        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+        let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
+        let oneOnOneResolver = OneOnOneResolver(
+            migrator: OneOnOneMigrator(mlsService: mlsService),
+            isMLSEnabled: mlsFeature.isEnabled
+        )
 
         return [
 
@@ -351,6 +355,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory
             ),
             FeatureConfigRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
+            FetchBackendMLSPublicKeysRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus

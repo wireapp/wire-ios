@@ -22,6 +22,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -57,6 +58,10 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
         _ viewModel: ConversationListViewController
             .ViewModel
+    )
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
     )
 }
 

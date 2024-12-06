@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
@@ -409,6 +410,7 @@ final class ProfileHeaderViewController: UIViewController {
         let qrCodeView = QRCodeView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
         hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
+
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
             action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)

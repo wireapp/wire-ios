@@ -37,6 +37,7 @@
 "general.on" = "An";
 "general.loading" = "Wird geladen…";
 "general.paste" = "Einfügen";
+"general.or" = "oder";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -156,6 +157,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "Bislang sind Sie an keiner Gruppenunterhaltung beteiligt.\nBeginnen Sie eine neue Unterhaltung!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "Sie haben noch keine Kontakte. Suchen Sie nach Personen auf {{brandName}} und treten Sie in Kontakt.";
 "conversation_list.empty_placeholder.oneonone.button" = "Mit Personen verbinden";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "Es konnten keine Unterhaltungen gefunden werden.\n\nVerbinden Sie sich mit Personen oder erstellen Sie eine neue Gruppe:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "Keine Ergebnisse gefunden.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "Neue Unterhaltung";
+"conversation_list.empty_placeholder.search.button.ipad" = "Beginnen Sie eine neue Unterhaltung";
+"conversation_list.empty_placeholder.search.connect_button" = "Mit Personen verbinden";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
@@ -326,7 +334,6 @@
 "conversation.create.guidance.empty" = "Mindestens 1 Zeichen";
 "conversation.create.guidance.toolong" = "Zu viele Zeichen";
 "conversation.create.options.title" = "UNTERHALTUNGSOPTIONEN";
-"conversation.create.options.subtitle" = "Gäste: %@, Dienste: %@, Lesebestätigungen: %@";
 "conversation.create.guests.title" = "Gäste zulassen";
 "conversation.create.guests.subtitle" = "Öffnen Sie diese Unterhaltung für Personen außerhalb Ihres Teams.";
 "conversation.create.services.title" = "Dienste zulassen";

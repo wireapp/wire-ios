@@ -38,6 +38,20 @@ struct URLRequestBuilder {
         request
     }
 
+    func withQueryItem(
+        name: String,
+        value: String
+    ) -> Self {
+        withCopy {
+            let queryItem = URLQueryItem(
+                name: name,
+                value: value
+            )
+
+            $0.request.url?.append(queryItems: [queryItem])
+        }
+    }
+
     func withMethod(_ method: HTTPMethod) -> Self {
         withCopy {
             $0.request.httpMethod = method.rawValue
@@ -63,6 +77,35 @@ struct URLRequestBuilder {
                 contentType.rawValue,
                 forHTTPHeaderField: "Accept"
             )
+        }
+    }
+
+    func addingHeader(
+        field: String,
+        value: String
+    ) -> Self {
+        addingHeaders([field: value])
+    }
+
+    func addingHeaders(_ headers: [String: String]) -> Self {
+        withCopy {
+            for (field, value) in headers {
+                $0.request.addValue(
+                    value,
+                    forHTTPHeaderField: field
+                )
+            }
+        }
+    }
+
+    func withCookies(_ cookies: [HTTPCookie]) -> Self {
+        withCopy {
+            for (field, value) in HTTPCookie.requestHeaderFields(with: cookies) {
+                $0.request.addValue(
+                    value,
+                    forHTTPHeaderField: field
+                )
+            }
         }
     }
 

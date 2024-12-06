@@ -22,6 +22,7 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireLogging
 import WireSyncEngine
 
 enum ApplicationLaunchType {
@@ -97,8 +98,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    )
-        -> Bool {
+    ) -> Bool {
 
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
@@ -109,13 +109,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         mainWindow = .init(windowScene: windowScene)
 
+        setNavigationAppearance()
         // enable logs
         _ = Settings.shared
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
 
-        // Set up Datadog as logger
-        WireAnalytics.Datadog.enable()
+        // Set up Datadog and other loggers
+        WireAnalytics.setup()
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -128,6 +129,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         return true
+    }
+
+    private func setNavigationAppearance() {
+        let backIndicator = UIImage(resource: mainWindow.isRightToLeft == true ? .forwardArrow : .backArrow)
+        UINavigationBar.appearance().backIndicatorImage = backIndicator
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = backIndicator
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
