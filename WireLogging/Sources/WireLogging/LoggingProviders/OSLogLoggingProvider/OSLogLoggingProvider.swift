@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import os
+import os
 
 public struct OSLogLoggingProvider: WireLoggingProvider {
 
@@ -24,13 +24,9 @@ public struct OSLogLoggingProvider: WireLoggingProvider {
 
     private var logger: Logger
 
-    // TODO: tag + subsystem as arguments
-    public init(
-        tag: Tag,
-        logger: Logger
-    ) {
+    public init(tag: Tag, subsystem: String) {
         self.tag = tag
-        self.logger = logger
+        logger = .init(subsystem: subsystem, category: tag.rawValue)
     }
 
     public func log(level: Level, message: WireLogMessage) {

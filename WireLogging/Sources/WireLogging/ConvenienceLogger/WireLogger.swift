@@ -22,7 +22,7 @@ public struct WireLogger: WireLoggerProtocol {
     private typealias Level = WireLogLevel
 
     public var tag: Tag
-    public var provider: any WireLoggingProvider
+    public var providers: [any WireLoggingProvider]
 
     public func debug(_ message: WireLogMessage) {
         log(.debug, message)
@@ -49,7 +49,8 @@ public struct WireLogger: WireLoggerProtocol {
     }
 
     private func log(_ level: Level, _ message: WireLogMessage) {
-        provider
-            .log(level: level, message: message)
+        providers.forEach { provider in
+            provider.log(level: level, message: message)
+        }
     }
 }

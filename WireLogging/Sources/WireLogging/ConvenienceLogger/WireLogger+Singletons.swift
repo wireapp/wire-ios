@@ -18,10 +18,10 @@
 
 extension WireLogger {
 
-    nonisolated(unsafe) private static var providerBuilder: ((Tag) -> any WireLoggingProvider)!
+    nonisolated(unsafe) private static var providerBuilder: ((Tag) -> [any WireLoggingProvider])!
 
     /// This method is supposed to be called very early on app start, before any other interaction with ``WireLogger``.
-    public static func setup(_ providerBuilder: @escaping (Tag) -> any WireLoggingProvider) {
+    public static func setup(_ providerBuilder: @escaping (Tag) -> [any WireLoggingProvider]) {
         guard self.providerBuilder == nil else {
             fatalError("WireLogger is already set up")
         }
@@ -72,7 +72,7 @@ extension WireLogger {
 }
 
 private extension WireLogger {
-    init(tag: Tag, _ providerBuilder: (Tag) -> any WireLoggingProvider) {
-        self.init(tag: tag, provider: providerBuilder(tag))
+    init(tag: Tag, _ providersBuilder: (Tag) -> [any WireLoggingProvider]) {
+        self.init(tag: tag, providers: providersBuilder(tag))
     }
 }
