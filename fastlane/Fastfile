@@ -78,6 +78,7 @@ platform :ios do
        run_tests_frameworks(schemas, options)
     end
 
+    desc "Test one framework only"
     lane :select_framework do |options|
         frameworks = Framework.all.values
         framework_options = frameworks.map { |f| f.scheme }
