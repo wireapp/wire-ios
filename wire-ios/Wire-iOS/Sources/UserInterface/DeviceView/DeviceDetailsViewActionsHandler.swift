@@ -147,29 +147,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             authenticate: oauthUseCase.invoke
         )
     }
-
-    @MainActor
-    private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
-        guard let mlsClientID = MLSClientID(userClient: userClient),
-              let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
-            logger.error("MLSGroupID for self was not found")
-            return nil
-        }
-        return try await userSession.getE2eIdentityCertificates.invoke(
-            mlsGroupId: mlsGroupId,
-            clientIds: [mlsClientID]
-        ).first
-    }
-
-    @MainActor
-    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
-        await contextProvider.syncContext.perform { [weak self] in
-            guard let self else {
-                return nil
-            }
-            return ZMConversation.fetchSelfMLSConversation(in: contextProvider.syncContext)?.mlsGroupID
-        }
-    }
 }
 
 extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
