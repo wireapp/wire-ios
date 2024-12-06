@@ -52,7 +52,7 @@
 #import <WireDataModel/ZMUpdateEvent+WireDataModel.h>
 #import <WireDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>
 
-#import <WireDataModel/ZMAddressBookContact.h>
+//#import <WireDataModel/ZMAddressBookContact.h>
 
 #import <WireDataModel/NSString+ZMPersonName.h>
 

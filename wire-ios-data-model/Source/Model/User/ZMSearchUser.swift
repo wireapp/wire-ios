@@ -98,7 +98,6 @@ public class ZMSearchUser: NSObject, UserType {
     public var assetKeys: SearchUserAssetKeys?
     public var remoteIdentifier: UUID!
     public var teamIdentifier: UUID?
-    @objc public var contact: ZMAddressBookContact?
     @objc public var user: ZMUser?
     public private(set) var hasDownloadedFullUserProfile: Bool = false
 
@@ -405,18 +404,6 @@ public class ZMSearchUser: NSObject, UserType {
         user?.canCreateMLSGroups == true
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let otherSearchUser = object as? ZMSearchUser else { return false }
-
-        if let lhsRemoteIdentifier = remoteIdentifier, let rhsRemoteIdentifier = otherSearchUser.remoteIdentifier {
-            return lhsRemoteIdentifier == rhsRemoteIdentifier
-        } else if let lhsContact = contact, let rhsContact = otherSearchUser.contact, otherSearchUser.user == nil {
-            return lhsContact == rhsContact
-        }
-
-        return false
-    }
-
     public override var hash: Int {
         remoteIdentifier?.hashValue ?? super.hash
     }
@@ -475,7 +462,6 @@ public class ZMSearchUser: NSObject, UserType {
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
         user existingUser: ZMUser? = nil,
-        contact: ZMAddressBookContact? = nil,
         searchUsersCache: SearchUsersCache?
     ) {
 
@@ -489,7 +475,6 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
         self.teamIdentifier = existingUser?.teamIdentifier ?? teamIdentifier
-        self.contact = contact
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
 
@@ -519,27 +504,6 @@ public class ZMSearchUser: NSObject, UserType {
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,
             user: user,
-            searchUsersCache: searchUsersCache
-        )
-    }
-
-    @objc
-    public convenience init(
-        contextProvider: ContextProvider,
-        contact: ZMAddressBookContact,
-        user: ZMUser? = nil,
-        searchUsersCache: SearchUsersCache?
-    ) {
-        self.init(
-            contextProvider: contextProvider,
-            name: contact.name,
-            handle: user?.handle,
-            accentColor: nil,
-            remoteIdentifier: user?.remoteIdentifier,
-            domain: user?.domain,
-            teamIdentifier: user?.teamIdentifier,
-            user: user,
-            contact: contact,
             searchUsersCache: searchUsersCache
         )
     }
