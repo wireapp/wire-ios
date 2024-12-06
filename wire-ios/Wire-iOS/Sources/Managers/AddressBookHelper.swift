@@ -16,73 +16,73 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Contacts
-import UIKit
-import WireSyncEngine
-
-protocol AddressBookHelperProtocol: AnyObject {
-    var isAddressBookAccessGranted: Bool { get }
-    var isAddressBookAccessUnknown: Bool { get }
-    var isAddressBookAccessDisabled: Bool { get }
-    var accessStatusDidChangeToGranted: Bool { get }
-
-    static var sharedHelper: AddressBookHelperProtocol { get }
-
-    func requestPermissions(_ callback: ((Bool) -> Void)?)
-    func persistCurrentAccessStatus()
-}
-
-/// Allows access to address book for search
-final class AddressBookHelper: AddressBookHelperProtocol {
-
-    /// Singleton
-    static var sharedHelper: AddressBookHelperProtocol = AddressBookHelper()
-
-    // MARK: - Constants
-
-    private let addressBookLastAccessStatusKey = "AddressBookLastAccessStatus"
-
-    // MARK: - Permissions
-
-    var isAddressBookAccessUnknown: Bool {
-        CNContactStore.authorizationStatus(for: .contacts) == .notDetermined
-    }
-
-    var isAddressBookAccessGranted: Bool {
-        CNContactStore.authorizationStatus(for: .contacts) == .authorized
-    }
-
-    var isAddressBookAccessDisabled: Bool {
-        CNContactStore.authorizationStatus(for: .contacts) == .denied
-    }
-
-    /// Request access to the user. Will asynchronously invoke the callback passing as argument
-    /// whether access was granted.
-    func requestPermissions(_ callback: ((Bool) -> Void)?) {
-        CNContactStore().requestAccess(for: .contacts, completionHandler: { [weak self] authorized, _ in
-            DispatchQueue.main.async {
-                self?.persistCurrentAccessStatus()
-                callback?(authorized)
-            }
-        })
-    }
-
-    // MARK: – Access Status Change Detection
-
-    func persistCurrentAccessStatus() {
-        let status = CNContactStore.authorizationStatus(for: .contacts).rawValue as Int
-        UserDefaults.standard.set(NSNumber(value: status), forKey: addressBookLastAccessStatusKey)
-    }
-
-    private var lastAccessStatus: CNAuthorizationStatus? {
-        guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber
-        else { return nil }
-        return CNAuthorizationStatus(rawValue: value.intValue)
-    }
-
-    var accessStatusDidChangeToGranted: Bool {
-        guard let lastStatus = lastAccessStatus else { return false }
-        return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
-    }
-
-}
+//import Contacts
+//import UIKit
+//import WireSyncEngine
+//
+//protocol AddressBookHelperProtocol: AnyObject {
+//    var isAddressBookAccessGranted: Bool { get }
+//    var isAddressBookAccessUnknown: Bool { get }
+//    var isAddressBookAccessDisabled: Bool { get }
+//    var accessStatusDidChangeToGranted: Bool { get }
+//
+//    static var sharedHelper: AddressBookHelperProtocol { get }
+//
+//    func requestPermissions(_ callback: ((Bool) -> Void)?)
+//    func persistCurrentAccessStatus()
+//}
+//
+///// Allows access to address book for search
+//final class AddressBookHelper: AddressBookHelperProtocol {
+//
+//    /// Singleton
+//    static var sharedHelper: AddressBookHelperProtocol = AddressBookHelper()
+//
+//    // MARK: - Constants
+//
+//    private let addressBookLastAccessStatusKey = "AddressBookLastAccessStatus"
+//
+//    // MARK: - Permissions
+//
+//    var isAddressBookAccessUnknown: Bool {
+//        CNContactStore.authorizationStatus(for: .contacts) == .notDetermined
+//    }
+//
+//    var isAddressBookAccessGranted: Bool {
+//        CNContactStore.authorizationStatus(for: .contacts) == .authorized
+//    }
+//
+//    var isAddressBookAccessDisabled: Bool {
+//        CNContactStore.authorizationStatus(for: .contacts) == .denied
+//    }
+//
+//    /// Request access to the user. Will asynchronously invoke the callback passing as argument
+//    /// whether access was granted.
+//    func requestPermissions(_ callback: ((Bool) -> Void)?) {
+//        CNContactStore().requestAccess(for: .contacts, completionHandler: { [weak self] authorized, _ in
+//            DispatchQueue.main.async {
+//                self?.persistCurrentAccessStatus()
+//                callback?(authorized)
+//            }
+//        })
+//    }
+//
+//    // MARK: – Access Status Change Detection
+//
+//    func persistCurrentAccessStatus() {
+//        let status = CNContactStore.authorizationStatus(for: .contacts).rawValue as Int
+//        UserDefaults.standard.set(NSNumber(value: status), forKey: addressBookLastAccessStatusKey)
+//    }
+//
+//    private var lastAccessStatus: CNAuthorizationStatus? {
+//        guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber
+//        else { return nil }
+//        return CNAuthorizationStatus(rawValue: value.intValue)
+//    }
+//
+//    var accessStatusDidChangeToGranted: Bool {
+//        guard let lastStatus = lastAccessStatus else { return false }
+//        return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
+//    }
+//
+//}

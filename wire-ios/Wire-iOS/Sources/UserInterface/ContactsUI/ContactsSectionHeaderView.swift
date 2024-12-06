@@ -16,58 +16,58 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
-    let label: UILabel = {
-        let label = UILabel()
-        label.font = .smallSemiboldFont
-        label.textColor = .from(scheme: .textForeground, variant: .dark)
-
-        return label
-    }()
-
-    static let height: CGFloat = 20
-
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
-
-        let blurEffect = UIBlurEffect(style: .light)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = bounds
-        blurEffectView.backgroundColor = .clear
-
-        backgroundView = blurEffectView
-
-        setupSubviews()
-        setupConstraints()
-        setupStyle()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupSubviews() {
-        contentView.addSubview(label)
-    }
-
-    func setupStyle() {
-        textLabel?.isHidden = true
-    }
-
-    private func setupConstraints() {
-
-        label.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            label.centerYAnchor.constraint(equalTo: centerYAnchor),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
-        ])
-    }
-
-    override var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
-    }
-
-}
+//import UIKit
+//
+//final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
+//    let label: UILabel = {
+//        let label = UILabel()
+//        label.font = .smallSemiboldFont
+//        label.textColor = .from(scheme: .textForeground, variant: .dark)
+//
+//        return label
+//    }()
+//
+//    static let height: CGFloat = 20
+//
+//    override init(reuseIdentifier: String?) {
+//        super.init(reuseIdentifier: reuseIdentifier)
+//
+//        let blurEffect = UIBlurEffect(style: .light)
+//        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+//        blurEffectView.frame = bounds
+//        blurEffectView.backgroundColor = .clear
+//
+//        backgroundView = blurEffectView
+//
+//        setupSubviews()
+//        setupConstraints()
+//        setupStyle()
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    private func setupSubviews() {
+//        contentView.addSubview(label)
+//    }
+//
+//    func setupStyle() {
+//        textLabel?.isHidden = true
+//    }
+//
+//    private func setupConstraints() {
+//
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+//            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
+//        ])
+//    }
+//
+//    override var intrinsicContentSize: CGSize {
+//        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
+//    }
+//
+//}

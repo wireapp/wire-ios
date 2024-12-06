@@ -19,162 +19,162 @@
 import UIKit
 import WireDesign
 
-final class ContactsViewController: UIViewController {
-
-    let dataSource = ContactsDataSource()
-
-    typealias PeoplePicker = L10n.Localizable.Peoplepicker
-    typealias ContactsUI  = L10n.Localizable.ContactsUi
-    typealias LabelColors = SemanticColors.Label
-    typealias ViewColors = SemanticColors.View
-
-    let bottomContainerView = UIView()
-    let bottomContainerSeparatorView = UIView()
-    let noContactsLabel = DynamicFontLabel(
-        text: PeoplePicker.noContactsTitle,
-        style: .body1,
-        color: LabelColors.textSettingsPasswordPlaceholder
-    )
-    let searchHeaderViewController = SearchHeaderViewController(userSelection: .init())
-    let separatorView = UIView()
-    let tableView = UITableView()
-    let inviteOthersButton = ZMButton(
-        style: .accentColorTextButtonStyle,
-        cornerRadius: 16,
-        fontSpec: .normalSemiboldFont
-    )
-    let emptyResultsLabel = DynamicFontLabel(
-        text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
-        style: .body1,
-        color: LabelColors.textSettingsPasswordPlaceholder
-    )
-
-    // MARK: - Life Cycle
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        dataSource.delegate = self
-        tableView.dataSource = dataSource
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupViews()
-        setupLayout()
-        setupStyle()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupNavigationBarTitle(ContactsUI.title.capitalized)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        showKeyboardIfNeeded()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        _ = searchHeaderViewController.tokenField.resignFirstResponder()
-    }
-
-    // MARK: - Setup
-
-    private func setupViews() {
-        setupSearchHeader()
-        view.addSubview(separatorView)
-        setupTableView()
-        setupEmptyResultsLabel()
-        setupNoContactsLabel()
-        setupBottomContainer()
-    }
-
-    private func setupSearchHeader() {
-        searchHeaderViewController.delegate = self
-        searchHeaderViewController.allowsMultipleSelection = false
-        searchHeaderViewController.view.backgroundColor = ViewColors.backgroundDefault
-        addToSelf(searchHeaderViewController)
-    }
-
-    private func setupTableView() {
-        tableView.dataSource = dataSource
-        tableView.delegate = self
-        tableView.allowsSelection = false
-        tableView.rowHeight = 52
-        tableView.keyboardDismissMode = .onDrag
-        tableView.sectionIndexMinimumDisplayRowCount = Int(ContactsDataSource.MinimumNumberOfContactsToDisplaySections)
-        ContactsCell.register(in: tableView)
-        ContactsSectionHeaderView.register(in: tableView)
-
-        let bottomContainerHeight: CGFloat = 56.0 + view.safeAreaInsets.bottom
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomContainerHeight, right: 0)
-        view.addSubview(tableView)
-    }
-
-    private func setupEmptyResultsLabel() {
-        emptyResultsLabel.textAlignment = .center
-        view.addSubview(emptyResultsLabel)
-    }
-
-    private func setupNoContactsLabel() {
-        view.addSubview(noContactsLabel)
-    }
-
-    private func setupBottomContainer() {
-        view.addSubview(bottomContainerView)
-        bottomContainerView.addSubview(bottomContainerSeparatorView)
-
-        inviteOthersButton.addTarget(self, action: #selector(sendIndirectInvite), for: .touchUpInside)
-        inviteOthersButton.setTitle(ContactsUI.inviteOthers.capitalized, for: .normal)
-        bottomContainerView.addSubview(inviteOthersButton)
-
-    }
-
-    private func setupStyle() {
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.separatorStyle = .none
-        tableView.sectionIndexBackgroundColor = .clear
-        tableView.sectionIndexColor = .accent()
-
-        bottomContainerSeparatorView.backgroundColor = ViewColors.backgroundSeparatorCell
-        bottomContainerView.backgroundColor = ViewColors.backgroundUserCell
-    }
-
-    // MARK: - Methods
-
-    private func showKeyboardIfNeeded() {
-        if tableView.numberOfTotalRows > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
-            _ = searchHeaderViewController.tokenField.becomeFirstResponder()
-        }
-    }
-
-    func updateEmptyResults(hasResults: Bool) {
-        let searchQueryExist = !dataSource.searchQuery.isEmpty
-        noContactsLabel.isHidden = hasResults || searchQueryExist
-        setEmptyResultsHidden(hasResults)
-    }
-
-    private func setEmptyResultsHidden(_ hidden: Bool) {
-        let completion: (Bool) -> Void = { _ in
-            self.emptyResultsLabel.isHidden = hidden
-            self.tableView.isHidden = !hidden
-        }
-
-        UIView.animate(
-            withDuration: 0.25,
-            delay: 0,
-            options: .beginFromCurrentState,
-            animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
-            completion: completion
-        )
-    }
-}
+//final class ContactsViewController: UIViewController {
+//
+//    let dataSource = ContactsDataSource()
+//
+//    typealias PeoplePicker = L10n.Localizable.Peoplepicker
+//    typealias ContactsUI  = L10n.Localizable.ContactsUi
+//    typealias LabelColors = SemanticColors.Label
+//    typealias ViewColors = SemanticColors.View
+//
+//    let bottomContainerView = UIView()
+//    let bottomContainerSeparatorView = UIView()
+//    let noContactsLabel = DynamicFontLabel(
+//        text: PeoplePicker.noContactsTitle,
+//        style: .body1,
+//        color: LabelColors.textSettingsPasswordPlaceholder
+//    )
+//    let searchHeaderViewController = SearchHeaderViewController(userSelection: .init())
+//    let separatorView = UIView()
+//    let tableView = UITableView()
+//    let inviteOthersButton = ZMButton(
+//        style: .accentColorTextButtonStyle,
+//        cornerRadius: 16,
+//        fontSpec: .normalSemiboldFont
+//    )
+//    let emptyResultsLabel = DynamicFontLabel(
+//        text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
+//        style: .body1,
+//        color: LabelColors.textSettingsPasswordPlaceholder
+//    )
+//
+//    // MARK: - Life Cycle
+//
+//    init() {
+//        super.init(nibName: nil, bundle: nil)
+//
+//        dataSource.delegate = self
+//        tableView.dataSource = dataSource
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        setupViews()
+//        setupLayout()
+//        setupStyle()
+//    }
+//
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        setupNavigationBarTitle(ContactsUI.title.capitalized)
+//    }
+//
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        showKeyboardIfNeeded()
+//    }
+//
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        _ = searchHeaderViewController.tokenField.resignFirstResponder()
+//    }
+//
+//    // MARK: - Setup
+//
+//    private func setupViews() {
+//        setupSearchHeader()
+//        view.addSubview(separatorView)
+//        setupTableView()
+//        setupEmptyResultsLabel()
+//        setupNoContactsLabel()
+//        setupBottomContainer()
+//    }
+//
+//    private func setupSearchHeader() {
+//        searchHeaderViewController.delegate = self
+//        searchHeaderViewController.allowsMultipleSelection = false
+//        searchHeaderViewController.view.backgroundColor = ViewColors.backgroundDefault
+//        addToSelf(searchHeaderViewController)
+//    }
+//
+//    private func setupTableView() {
+//        tableView.dataSource = dataSource
+//        tableView.delegate = self
+//        tableView.allowsSelection = false
+//        tableView.rowHeight = 52
+//        tableView.keyboardDismissMode = .onDrag
+//        tableView.sectionIndexMinimumDisplayRowCount = Int(ContactsDataSource.MinimumNumberOfContactsToDisplaySections)
+//        ContactsCell.register(in: tableView)
+//        ContactsSectionHeaderView.register(in: tableView)
+//
+//        let bottomContainerHeight: CGFloat = 56.0 + view.safeAreaInsets.bottom
+//        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomContainerHeight, right: 0)
+//        view.addSubview(tableView)
+//    }
+//
+//    private func setupEmptyResultsLabel() {
+//        emptyResultsLabel.textAlignment = .center
+//        view.addSubview(emptyResultsLabel)
+//    }
+//
+//    private func setupNoContactsLabel() {
+//        view.addSubview(noContactsLabel)
+//    }
+//
+//    private func setupBottomContainer() {
+//        view.addSubview(bottomContainerView)
+//        bottomContainerView.addSubview(bottomContainerSeparatorView)
+//
+//        inviteOthersButton.addTarget(self, action: #selector(sendIndirectInvite), for: .touchUpInside)
+//        inviteOthersButton.setTitle(ContactsUI.inviteOthers.capitalized, for: .normal)
+//        bottomContainerView.addSubview(inviteOthersButton)
+//
+//    }
+//
+//    private func setupStyle() {
+//        view.backgroundColor = SemanticColors.View.backgroundDefault
+//
+//        tableView.backgroundColor = SemanticColors.View.backgroundDefault
+//        tableView.separatorStyle = .none
+//        tableView.sectionIndexBackgroundColor = .clear
+//        tableView.sectionIndexColor = .accent()
+//
+//        bottomContainerSeparatorView.backgroundColor = ViewColors.backgroundSeparatorCell
+//        bottomContainerView.backgroundColor = ViewColors.backgroundUserCell
+//    }
+//
+//    // MARK: - Methods
+//
+//    private func showKeyboardIfNeeded() {
+//        if tableView.numberOfTotalRows > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
+//            _ = searchHeaderViewController.tokenField.becomeFirstResponder()
+//        }
+//    }
+//
+//    func updateEmptyResults(hasResults: Bool) {
+//        let searchQueryExist = !dataSource.searchQuery.isEmpty
+//        noContactsLabel.isHidden = hasResults || searchQueryExist
+//        setEmptyResultsHidden(hasResults)
+//    }
+//
+//    private func setEmptyResultsHidden(_ hidden: Bool) {
+//        let completion: (Bool) -> Void = { _ in
+//            self.emptyResultsLabel.isHidden = hidden
+//            self.tableView.isHidden = !hidden
+//        }
+//
+//        UIView.animate(
+//            withDuration: 0.25,
+//            delay: 0,
+//            options: .beginFromCurrentState,
+//            animations: { self.emptyResultsLabel.alpha = hidden ? 0 : 1 },
+//            completion: completion
+//        )
+//    }
+//}

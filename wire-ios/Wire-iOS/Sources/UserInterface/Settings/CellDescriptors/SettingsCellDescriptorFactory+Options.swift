@@ -70,10 +70,10 @@ extension SettingsCellDescriptorFactory {
         return SettingsSectionDescriptor(
             cellDescriptors: [settingsButton],
             header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
-            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
-            visibilityAction: { _ in
-                AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
-            }
+            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title
+//            visibilityAction: { _ in
+//                AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
+//            }
         )
     }
 

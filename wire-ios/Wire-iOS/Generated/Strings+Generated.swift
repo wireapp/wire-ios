@@ -4449,8 +4449,6 @@ internal enum L10n {
       internal static let hideSearchResult = L10n.tr("Localizable", "peoplepicker.hide_search_result", fallback: "Hide")
       /// Hiding…
       internal static let hideSearchResultProgress = L10n.tr("Localizable", "peoplepicker.hide_search_result_progress", fallback: "Hiding…")
-      /// Invite more people
-      internal static let inviteMorePeople = L10n.tr("Localizable", "peoplepicker.invite_more_people", fallback: "Invite more people")
       /// Invite people to join the team
       internal static let inviteTeamMembers = L10n.tr("Localizable", "peoplepicker.invite_team_members", fallback: "Invite people to join the team")
       /// No Contacts.

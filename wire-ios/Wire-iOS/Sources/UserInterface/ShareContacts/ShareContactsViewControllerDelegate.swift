@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-protocol ShareContactsViewControllerDelegate: AnyObject {
-    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
-    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
-}
+//protocol ShareContactsViewControllerDelegate: AnyObject {
+//    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController)
+//    func shareContactsViewControllerDidFinish(_ viewController: ShareContactsViewController)
+//}
