@@ -107,15 +107,16 @@ final class SelfProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         if selfUser.isTeamMember {
-            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-               actionCallback: { [weak self] _ in
-                   self?.userDidTapCreateTeam()
-               }
-           )
-           
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
+        } else {
+            // TODO: [WPB-11270] show banner
+//            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+//               actionCallback: { [weak self] _ in
+//                   self?.userDidTapCreateTeam()
+//               }
+//           )
         }
     }
 
