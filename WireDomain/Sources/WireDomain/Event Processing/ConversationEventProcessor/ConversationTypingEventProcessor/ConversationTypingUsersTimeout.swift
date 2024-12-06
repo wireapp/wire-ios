@@ -20,21 +20,21 @@ import WireDataModel
 
 /// Keeping track of typing users timeouts
 final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
-    
+
     struct Key: Hashable {
         let userObjectID: NSManagedObjectID
         let conversationObjectID: NSManagedObjectID
     }
 
     static let defaultTimeout: TimeInterval = 60
-    
+
     private var timeouts = [Key: Date]()
     private var nextPruneDate: Date?
     private var expirationTimer: ZMTimer?
-   
+
     typealias VoidClosure = () async -> Void
     var timerFiredCallback: VoidClosure?
-    
+
     var firstTimeout: Date? {
         timeouts.values.min()
     }
@@ -84,10 +84,10 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
         keysToRemove.forEach {
             timeouts.removeValue(forKey: $0)
         }
-        
+
         return Set(keysToRemove.map(\.conversationObjectID))
     }
-    
+
     /// Updates next prune date and fire a timer at that specific date.
     /// When timer fires, the provided callback will be called - see `timerDidFire`
 
@@ -104,13 +104,12 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
         expirationTimer?.fire(at: date)
         nextPruneDate = date
     }
-    
-    
+
     func timerDidFire(_ timer: ZMTimer!) {
         guard timer === expirationTimer else {
             return
         }
-        
+
         Task { [timerFiredCallback] in
             await timerFiredCallback?()
         }

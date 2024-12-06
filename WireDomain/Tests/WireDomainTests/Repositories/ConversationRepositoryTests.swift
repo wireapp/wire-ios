@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-import Combine
 @testable import WireAPI
 @testable import WireDomain
 
@@ -47,7 +47,7 @@ final class ConversationRepositoryTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     private var subscription: AnyCancellable?
 
     override func setUp() async throws {
@@ -784,26 +784,26 @@ final class ConversationRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
-        
+
         let (user, conversation) = try await context.perform { [self] in
             let user = modelHelper.createUser(in: context)
             let conversation = modelHelper.createGroupConversation(in: context)
-            
+
             try context.obtainPermanentIDs(for: [user, conversation])
-            
+
             return (user, conversation)
-            
+
         }
-        
+
         let expectation = XCTestExpectation()
-        
+
         let typingUsersInfo = ConversationTypingUsersInfo(
             users: Set([user.objectID]),
             conversationID: conversation.objectID
         )
-        
+
         subscription = NotificationCenter.default.publisher(for: .typingNotification)
             .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
             .sink { typingUsers in
@@ -811,15 +811,15 @@ final class ConversationRepositoryTests: XCTestCase {
                 XCTAssertEqual(typingUsers.first?.objectID, user.objectID)
                 expectation.fulfill()
             }
-        
+
         // When
-        
+
         await sut.updateTypingUsers([typingUsersInfo])
-        
+
         // Then
-        
+
         await fulfillment(of: [expectation], timeout: 5.0)
-        
+
     }
 
     private func internalTest_checkLastMessage(

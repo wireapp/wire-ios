@@ -32,46 +32,46 @@ protocol ConversationTypingEventProcessorProtocol {
 }
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
-    
+
     let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userRepository: any UserRepositoryProtocol
-    
+
     private let typingUsersTimeout = ConversationTypingUsersTimeout()
-    
+
     func processEvent(_ event: ConversationTypingEvent) async {
         let conversationID = event.conversationID
         let senderID = event.senderID
         let isTyping = event.isTyping
-        
+
         let user = await userRepository.fetchOrCreateUser(
             id: senderID.uuid,
             domain: senderID.domain
         )
-        
+
         let conversation = await conversationRepository.fetchOrCreateConversation(
             id: conversationID.uuid,
             domain: conversationID.domain
         )
-        
+
         // Since we'll be manipulating managed object IDs in `ConversationTypingUsersTimeout`
         // we need to make sure we have valid, consistent IDs for the user and conversation.
         conversationLocalStore.obtainPermanentIDs(
             user: user,
             conversation: conversation
         )
-        
+
         let userObjectID = user.objectID
         let conversationObjectID = conversation.objectID
-        
+
         let wasTyping = typingUsersTimeout.contains(
             userObjectID,
             for: conversationObjectID
         )
-        
+
         if isTyping {
             let timeout = ConversationTypingUsersTimeout.defaultTimeout // 60 sec
-            
+
             // Tracks the typing user timeout for a given conversation
             typingUsersTimeout.add(
                 userObjectID,
@@ -79,7 +79,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
                 withTimeout: Date(timeIntervalSinceNow: timeout)
             )
         }
-        
+
         // Typing status changed
         if wasTyping != isTyping {
             if !isTyping {
@@ -89,25 +89,25 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
                     for: conversationObjectID
                 )
             }
-            
+
             let userObjectIDs = typingUsersTimeout.userIds(
                 in: conversationObjectID
             )
-            
+
             let typingUsersInfo = ConversationTypingUsersInfo(
                 users: userObjectIDs,
                 conversationID: conversationObjectID
             )
-            
+
             // Updates non timed out typing users
             await conversationRepository.updateTypingUsers([typingUsersInfo])
         }
-        
+
         typingUsersTimeout.timerFiredCallback = timerDidFire
-        
+
         typingUsersTimeout.updateExpirationIfNeeded()
     }
-    
+
     /// Called when timer from `ConversationTypingUsersTimeout` fires.
     /// Untrack timed out typing users and updates valid (non timed out) typing users.
     /// Callback is fired when a new timeout value is reached in `timeouts` dictionary.
@@ -116,18 +116,16 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
         let conversationObjectIDs = typingUsersTimeout.pruneConversationsThatHaveTimoutBefore(
             date: .now
         )
-        
+
         // Map typing users for each conversation
         let typingUsersInfo: [ConversationTypingUsersInfo] = conversationObjectIDs.map {
             let userObjectIDs = typingUsersTimeout.userIds(in: $0)
             return .init(users: userObjectIDs, conversationID: $0)
         }
-        
+
         await conversationRepository.updateTypingUsers(typingUsersInfo)
-        
+
         typingUsersTimeout.updateExpirationIfNeeded()
     }
 
 }
-
-

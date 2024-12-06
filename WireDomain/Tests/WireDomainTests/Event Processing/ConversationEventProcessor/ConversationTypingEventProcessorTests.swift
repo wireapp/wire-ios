@@ -44,7 +44,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         userRepository = MockUserRepositoryProtocol()
         conversationRepository = MockConversationRepositoryProtocol()
         conversationLocalStore = MockConversationLocalStoreProtocol()
-        
+
         sut = ConversationTypingEventProcessor(
             conversationRepository: conversationRepository,
             conversationLocalStore: conversationLocalStore,
@@ -66,27 +66,27 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
     // MARK: - Tests
 
     func testProcessEvent_It_Invokes_Repo_And_Local_Store_Methods() async throws {
-        
+
         // Mock
-        
+
         let (user, conversation) = await context.perform { [self] in
             let user = modelHelper.createUser(in: context)
             let conversation = modelHelper.createGroupConversation(in: context)
-            
+
             return (user, conversation)
         }
-        
+
         userRepository.fetchOrCreateUserIdDomain_MockValue = user
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
         conversationRepository.updateTypingUsers_MockMethod = { _ in }
         conversationLocalStore.obtainPermanentIDsUserConversation_MockMethod = { _, _ in }
-        
+
         // When
-        
+
         await sut.processEvent(Scaffolding.event)
-        
+
         // Then
-        
+
         XCTAssertEqual(conversationLocalStore.obtainPermanentIDsUserConversation_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)

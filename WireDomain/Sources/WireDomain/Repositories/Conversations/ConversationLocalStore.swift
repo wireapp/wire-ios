@@ -291,13 +291,13 @@ public protocol ConversationLocalStoreProtocol {
     func mlsGroupID(
         for conversation: ZMConversation
     ) async -> MLSGroupID?
-    
+
     /// Sends a notification using the main context informing typing users
     /// have been updated for a given conversation.
     /// - Parameters:
     ///     - conversationID: The conversation managed object ID.
     ///     - usersID: The updated typing users managed object IDs.
-    
+
     func updateTypingUsers(
         conversationID: NSManagedObjectID,
         usersID: Set<NSManagedObjectID>
@@ -307,7 +307,7 @@ public protocol ConversationLocalStoreProtocol {
     /// - Parameters:
     ///     - user: The user to get the permanent managed object ID for.
     ///     - conversation: The conversation to get the permanent managed object ID for.
-    
+
     func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
@@ -481,23 +481,23 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
         }
     }
-    
+
     public func updateTypingUsers(
         conversationID: NSManagedObjectID,
         usersID: Set<NSManagedObjectID>
     ) async {
         await context.perform { [context] in
             if let conversation = context.object(with: conversationID) as? ZMConversation {
-                
+
                 let users = usersID.compactMap {
                     context.object(with: $0) as? ZMUser
                 }
-                
+
                 context.typingUsers?.update(
                     typingUsers: Set(users),
                     in: conversation
                 )
-                
+
                 self.notifyTypingUsers(
                     Set(users),
                     in: conversation
@@ -505,7 +505,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             }
         }
     }
-    
+
     public func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
@@ -846,13 +846,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Private
-    
+
     private func notifyTypingUsers(
         _ typingUsers: Set<ZMUser>,
         in conversation: ZMConversation
     ) {
         let typingNotificationUsersKey = "typingUsers"
-        
+
         NotificationInContext(
             name: .typingNotification,
             context: context.notificationContext,
