@@ -86,10 +86,12 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         // Ensure is self conversation, sender is self user and conversation is not read-only
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
-            senderID: senderID.uuid,
-            logAttributes: logAttributes
+            senderID: senderID.uuid
         ) else {
-            return
+            return WireLogger.eventProcessing.warn(
+                "Ignoring incoming message: illegal sender or conversation",
+                attributes: logAttributes
+            )
         }
 
         // Get protobuf message

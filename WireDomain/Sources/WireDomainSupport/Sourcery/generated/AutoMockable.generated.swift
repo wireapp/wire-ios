@@ -1082,19 +1082,19 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - canAddMessage
 
-    public var canAddMessageConversationSenderIDLogAttributes_Invocations: [(conversation: ZMConversation, senderID: UUID, logAttributes: LogAttributes)] = []
-    public var canAddMessageConversationSenderIDLogAttributes_MockMethod: ((ZMConversation, UUID, LogAttributes) async -> Bool)?
-    public var canAddMessageConversationSenderIDLogAttributes_MockValue: Bool?
+    public var canAddMessageConversationSenderID_Invocations: [(conversation: ZMConversation, senderID: UUID)] = []
+    public var canAddMessageConversationSenderID_MockMethod: ((ZMConversation, UUID) async -> Bool)?
+    public var canAddMessageConversationSenderID_MockValue: Bool?
 
-    public func canAddMessage(conversation: ZMConversation, senderID: UUID, logAttributes: LogAttributes) async -> Bool {
-        canAddMessageConversationSenderIDLogAttributes_Invocations.append((conversation: conversation, senderID: senderID, logAttributes: logAttributes))
+    public func canAddMessage(conversation: ZMConversation, senderID: UUID) async -> Bool {
+        canAddMessageConversationSenderID_Invocations.append((conversation: conversation, senderID: senderID))
 
-        if let mock = canAddMessageConversationSenderIDLogAttributes_MockMethod {
-            return await mock(conversation, senderID, logAttributes)
-        } else if let mock = canAddMessageConversationSenderIDLogAttributes_MockValue {
+        if let mock = canAddMessageConversationSenderID_MockMethod {
+            return await mock(conversation, senderID)
+        } else if let mock = canAddMessageConversationSenderID_MockValue {
             return mock
         } else {
-            fatalError("no mock for `canAddMessageConversationSenderIDLogAttributes`")
+            fatalError("no mock for `canAddMessageConversationSenderID`")
         }
     }
 

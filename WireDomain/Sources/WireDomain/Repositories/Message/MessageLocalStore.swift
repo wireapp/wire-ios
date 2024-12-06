@@ -108,12 +108,10 @@ public protocol MessageLocalStoreProtocol {
     /// - Parameters:
     ///     - conversation: The conversation to add the message to.
     ///     - senderID: The message sender id.
-    ///     - logAttributes: Attributes to add to the log.
 
     func canAddMessage(
         conversation: ZMConversation,
-        senderID: UUID,
-        logAttributes: LogAttributes
+        senderID: UUID
     ) async -> Bool
 
     /// Deletes a given message from all of the self user's devices.
@@ -248,33 +246,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     public func canAddMessage(
         conversation: ZMConversation,
-        senderID: UUID,
-        logAttributes: LogAttributes
+        senderID: UUID
     ) async -> Bool {
         let selfUser = await userLocalStore.fetchSelfUser()
 
         return await context.perform {
             let isSelf = conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
-
-            guard !isSelf else {
-                WireLogger.eventProcessing.debug(
-                    "Illegal sender or conversation, abort processing.",
-                    attributes: logAttributes
-                )
-
-                return false
-            }
-
-            guard !conversation.isForcedReadOnly else {
-                WireLogger.eventProcessing.warn(
-                    "Ignoring incoming message in readonly conversation.",
-                    attributes: logAttributes
-                )
-
-                return false
-            }
-
-            return true
+            return !isSelf && !conversation.isForcedReadOnly
         }
     }
     
