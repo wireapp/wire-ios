@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct IndividualToTeamMigrationResult {
+public struct IndividualToTeamMigrationResult: Sendable {
     public let teamID: UUID
     public let teamName: String
 
@@ -30,6 +30,6 @@ public struct IndividualToTeamMigrationResult {
 
 // sourcery: AutoMockable
 /// Sends a request to the backend to migrate the user to a team.
-public protocol IndividualToTeamMigrationUseCase {
+public protocol IndividualToTeamMigrationUseCase: Sendable {
     func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }
