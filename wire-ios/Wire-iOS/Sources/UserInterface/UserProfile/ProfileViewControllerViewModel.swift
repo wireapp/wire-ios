@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 import WireSystem
 

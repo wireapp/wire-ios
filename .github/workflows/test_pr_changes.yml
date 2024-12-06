@@ -51,11 +51,15 @@ jobs:
               - 'wire-ios-request-strategy/**'
             WireAPI:
               - 'WireAPI/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAPIAll.xcscheme'
             WireAnalytics:
-              - 'WireAnalytics/Sources/WireAnalytics/**'
-              - 'WireAnalytics/Sources/WireDatadog/**'
+              - 'WireAnalytics/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAnalyticsAll.xcscheme'
             WireDomain:
               - 'WireDomain/**'
+            WireLogging:
+              - 'WireLogging/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireLoggingAll.xcscheme'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:

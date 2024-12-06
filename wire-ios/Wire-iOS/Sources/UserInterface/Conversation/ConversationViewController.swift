@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine
 

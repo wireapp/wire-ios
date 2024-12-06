@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import struct WireSystem.WireLogger
+import WireLogging
 
 protocol AccessTokenRenewalObserver {
     func accessTokenRenewalDidSucceed()
