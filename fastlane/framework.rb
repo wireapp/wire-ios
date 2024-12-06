@@ -134,6 +134,8 @@ class Framework
             name
         when "WireAnalytics"
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireLogging"
+            "WireLoggingAll"
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else
