@@ -26,7 +26,7 @@ extension AnalyticsEvent.UI {
 
     static let clickedProfile = AnalyticsEvent(name: "ui.clicked-profile")
 
-    /// Click on the create a team CTA
+    /// Tap on the create a team CTA
     ///
     /// Segmentation: app_name; app_version; clicked_create_team; clicked_dismiss_cta
 
