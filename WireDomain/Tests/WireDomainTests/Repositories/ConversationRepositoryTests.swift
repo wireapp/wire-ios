@@ -799,7 +799,7 @@ final class ConversationRepositoryTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         
-        let typingUsersInfo = TypingUsersInfo(
+        let typingUsersInfo = ConversationTypingUsersInfo(
             users: Set([user.objectID]),
             conversationID: conversation.objectID
         )

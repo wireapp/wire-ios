@@ -486,28 +486,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         conversationID: NSManagedObjectID,
         usersID: Set<NSManagedObjectID>
     ) async {
-        
-        // Switching to main context
-        let uiContext = await context.perform { [context] in
-            context.zm_userInterface
-        }
-        guard let uiContext else {
-            return
-        }
-        
-        uiContext.performGroupedBlock { [weak self] in
-            if let conversation = uiContext.object(with: conversationID) as? ZMConversation {
+        await context.perform { [context] in
+            if let conversation = context.object(with: conversationID) as? ZMConversation {
                 
                 let users = usersID.compactMap {
-                    uiContext.object(with: $0) as? ZMUser
+                    context.object(with: $0) as? ZMUser
                 }
                 
-                uiContext.typingUsers?.update(
+                context.typingUsers?.update(
                     typingUsers: Set(users),
                     in: conversation
                 )
                 
-                self?.notifyTypingUsers(
+                self.notifyTypingUsers(
                     Set(users),
                     in: conversation
                 )

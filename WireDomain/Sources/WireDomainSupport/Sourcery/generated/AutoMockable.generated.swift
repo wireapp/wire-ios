@@ -877,10 +877,10 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
 
     // MARK: - updateTypingUsers
 
-    public var updateTypingUsers_Invocations: [[TypingUsersInfo]] = []
-    public var updateTypingUsers_MockMethod: (([TypingUsersInfo]) async -> Void)?
+    public var updateTypingUsers_Invocations: [[ConversationTypingUsersInfo]] = []
+    public var updateTypingUsers_MockMethod: (([ConversationTypingUsersInfo]) async -> Void)?
 
-    public func updateTypingUsers(_ typingUsersInfo: [TypingUsersInfo]) async {
+    public func updateTypingUsers(_ typingUsersInfo: [ConversationTypingUsersInfo]) async {
         updateTypingUsers_Invocations.append(typingUsersInfo)
 
         guard let mock = updateTypingUsers_MockMethod else {
