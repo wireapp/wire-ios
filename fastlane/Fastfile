@@ -269,12 +269,25 @@ platform :ios do
         UI.message "🤖 Testing schemas: #{schemas.join(', ')}"
         
         testplan = options[:testplan] || "AllTests"
+
+        failed_schemas = []
+
         schemas.each do |scheme|
             UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-            test_plan(build, scheme, testplan)
+            begin
+                test_plan(build, scheme, testplan)
+            rescue => e
+                failed_schemas << scheme
+                UI.error("Failed to test #{scheme}: #{e.message}")
+            end            
+        end
+                    
+        if failed_targets.any?
+            UI.important("The following schemas failed: #{failed_targets.join(', ')}")
+        else
+            UI.success("All tests passed successfully!")
         end
      end
- 
  
     def build_and_upload_app(options)
         options[:build_number] = generate_build_number
