@@ -14,6 +14,7 @@
 		0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0155194D2C20D29400037358 /* WireDomainSupport.framework */; };
 		017704E42CA4503C00BE69ED /* EnableAnalyticsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017704D92CA44C0D00BE69ED /* EnableAnalyticsUseCaseTests.swift */; };
 		017704E52CA4505A00BE69ED /* DisableAnalyticsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017704DB2CA44C0D00BE69ED /* DisableAnalyticsUseCaseTests.swift */; };
+		017F32C92D03AC3000471B3D /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 017F32C82D03AC3000471B3D /* WireAPI */; };
 		018A3DBC2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */; };
 		018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
@@ -1403,6 +1404,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				017F32C92D03AC3000471B3D /* WireAPI in Frameworks */,
 				0155194E2C20D29400037358 /* WireDomainSupport.framework in Frameworks */,
 				5996E8922C19CB28007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				59FFADA02C8229BB000C8085 /* WireTransportSupport.framework in Frameworks */,
@@ -2858,6 +2860,7 @@
 			packageProductDependencies = (
 				598D04382C89C70500B64D71 /* WireFoundation */,
 				01A532502CCA218A005FD421 /* WireAnalyticsSupport */,
+				017F32C82D03AC3000471B3D /* WireAPI */,
 			);
 			productName = "WireSyncEngine-iOS-Tests";
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
@@ -4099,6 +4102,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		017F32C82D03AC3000471B3D /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
+		};
 		01A532502CCA218A005FD421 /* WireAnalyticsSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAnalyticsSupport;
