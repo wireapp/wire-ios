@@ -40,7 +40,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     private var context: NSManagedObjectContext {
         stack.syncContext
     }
-    
+
     private var subscription: AnyCancellable?
 
     override func setUp() async throws {
@@ -436,7 +436,7 @@ final class ConversationLocalStoreTests: XCTestCase {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
     }
-    
+
     func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
 
         let (userObjectID, conversationObjectID) = try await context.perform { [self] in
@@ -448,7 +448,6 @@ final class ConversationLocalStoreTests: XCTestCase {
             return (user.objectID, conversation.objectID)
 
         }
-        
 
         let expectation = XCTestExpectation()
 

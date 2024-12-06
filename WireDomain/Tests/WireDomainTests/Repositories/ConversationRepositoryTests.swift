@@ -573,15 +573,13 @@ final class ConversationRepositoryTests: XCTestCase {
             )
         }
     }
-    
-    
 
     func testUpdateTypingUsers_It_Invokes_Local_Store_Method() async throws {
-        
+
         // Mock
 
         conversationsLocalStore.updateTypingUsersConversationIDUsersID_MockMethod = { _, _ in }
-        
+
         let typingUsersInfo = ConversationTypingUsersInfo(
             users: Set([NSManagedObjectID()]),
             conversationID: NSManagedObjectID()
