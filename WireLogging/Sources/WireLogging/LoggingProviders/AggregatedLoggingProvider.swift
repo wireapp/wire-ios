@@ -19,6 +19,8 @@
 // TODO: only used for building, rename!
 public struct AggregatedLoggingProvider: WireLoggingProvider {
 
+    public var tag: Tag { fatalError("TODO: delete AggregatedLoggingProvider") }
+
     let loggingSystems: [any WireLoggingProvider]
 
     public init(loggingSystems: @escaping @Sendable () -> [any WireLoggingProvider]) {

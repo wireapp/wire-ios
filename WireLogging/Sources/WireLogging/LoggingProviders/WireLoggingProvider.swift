@@ -21,5 +21,7 @@ public protocol WireLoggingProvider: Sendable {
     typealias Tag = WireLoggerTag
     typealias Level = WireLogLevel
 
+    var tag: Tag { get }
+
     func log(level: Level, message: WireLogMessage)
 }

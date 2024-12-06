@@ -20,9 +20,16 @@ public import os
 
 public struct OSLogLoggingProvider: WireLoggingProvider {
 
+    public let tag: Tag
+
     private var logger: Logger
 
-    public init(logger: Logger) {
+    // TODO: tag + subsystem as arguments
+    public init(
+        tag: Tag,
+        logger: Logger
+    ) {
+        self.tag = tag
         self.logger = logger
     }
 

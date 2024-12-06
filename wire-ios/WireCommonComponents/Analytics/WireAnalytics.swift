@@ -56,7 +56,7 @@ public enum WireAnalytics {
                     ]
                 }
                 return [
-                    OSLogLoggingProvider(logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
+                    OSLogLoggingProvider(tag: tag, logger: .init(subsystem: Bundle.main.bundleIdentifier!, category: tag.rawValue)),
                     NewCocoaLumberjackLogger(tag: tag, logger: cocoaLumberjackLogger),
                     datadogLogger
                 ]

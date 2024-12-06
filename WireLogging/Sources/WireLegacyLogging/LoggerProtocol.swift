@@ -44,8 +44,8 @@ public extension LoggerProtocol {
         var logAttributes = attributes
 
         // drop attributes used for visibility and category
-        logAttributes.removeValue(forKey: LogAttributesKey.public)
-        logAttributes.removeValue(forKey: LogAttributesKey.tag)
+        logAttributes.removeValue(forKey: .public)
+        logAttributes.removeValue(forKey: .tag)
 
         guard !logAttributes.isEmpty else {
             return ""
