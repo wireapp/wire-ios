@@ -574,6 +574,53 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testUpdateTypingUsers_It_Invokes_Local_Store_Method() async throws {
+
+        // Mock
+
+        conversationsLocalStore.updateTypingUsersConversationIDUsersID_MockMethod = { _, _ in }
+
+        let typingUsersInfo = ConversationTypingUsersInfo(
+            users: Set([NSManagedObjectID()]),
+            conversationID: NSManagedObjectID()
+        )
+
+        // When
+
+        await sut.updateTypingUsers([typingUsersInfo])
+
+        // Then
+
+        XCTAssertEqual(conversationsLocalStore.updateTypingUsersConversationIDUsersID_Invocations.count, 1)
+
+    }
+
+    private func internalTest_checkLastMessage(
+        in conversation: ZMConversation,
+        messageType: ZMSystemMessageType,
+        at timestamp: Date
+    ) throws {
+        let lastMessage = try XCTUnwrap(
+            conversation.lastMessage as? ZMSystemMessage,
+            "Last message is not system message"
+        )
+
+        XCTAssertEqual(
+            lastMessage.systemMessageType,
+            messageType, "System message is not \(messageType.rawValue): but '\(lastMessage.systemMessageType.rawValue)"
+        )
+
+        let serverTimeStamp = try XCTUnwrap(
+            lastMessage.serverTimestamp, "System message should have timestamp"
+        )
+
+        XCTAssertEqual(
+            serverTimeStamp.timeIntervalSince1970,
+            timestamp.timeIntervalSince1970,
+            accuracy: 0.1
+        )
+    }
+
     private enum Scaffolding {
 
         static let id = UUID.mockID1
