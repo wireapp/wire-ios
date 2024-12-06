@@ -23,7 +23,6 @@ import PushKit
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 
-    func processIncomingRealVoIPPush(payload: [AnyHashable: Any], completion: @escaping () -> Void)
     func processPendingCallEvents(accountID: UUID)
 
 }
@@ -119,19 +118,10 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         // We're only interested in voIP tokens.
         guard type == .voIP else { return completion() }
 
-        switch requiredPushTokenType {
-        case .standard:
-            processNSEPush(
-                payload: payload.dictionaryPayload,
-                completion: completion
-            )
-
-        case .voip:
-            processVoIPPush(
-                payload: payload.dictionaryPayload,
-                completion: completion
-            )
-        }
+        processNSEPush(
+            payload: payload.dictionaryPayload,
+            completion: completion
+        )
     }
 
     private func processNSEPush(
@@ -176,24 +166,5 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         }
 
         delegate?.processPendingCallEvents(accountID: accountID)
-    }
-
-    private func processVoIPPush(
-        payload: [AnyHashable: Any],
-        completion: @escaping () -> Void
-    ) {
-        // TODO: check this is dead code right?
-        Self.logger.debug("process voIP push, payload: \(payload)")
-
-        guard let delegate else {
-            Self.logger.info("no delegate, ignoring...")
-            return
-        }
-
-        Self.logger.info("fowarding to delegate")
-        delegate.processIncomingRealVoIPPush(
-            payload: payload,
-            completion: completion
-        )
     }
 }
