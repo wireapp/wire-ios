@@ -76,7 +76,7 @@ struct ConversationEventProcessor {
             try await memberUpdateEventProcessor.processEvent(event)
 
         case let .messageTimerUpdate(event):
-            try await messageTimerUpdateEventProcessor.processEvent(event)
+            await messageTimerUpdateEventProcessor.processEvent(event)
 
         case let .mlsMessageAdd(event):
             try await mlsMessageAddEventProcessor.processEvent(event)

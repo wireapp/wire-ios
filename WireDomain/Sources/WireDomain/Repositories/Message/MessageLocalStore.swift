@@ -343,6 +343,25 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
+        case let .messageTimerUpdate(sender, date, timeoutValue):
+
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .messageTimerUpdate,
+                sender: sender,
+                users: [sender],
+                timestamp: date,
+                messageTimer: timeoutValue
+            )
+
+            return [systemMessage]
+
         case let .conversationNameChanged(newName, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
