@@ -39,8 +39,6 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-   // var addressBookHelperType: AddressBookHelperProtocol.Type
-
     let userSession: UserSession
 
     let mainCoordinator: AnyMainCoordinator
@@ -77,11 +75,7 @@ final class StartUIViewController: UIViewController {
         return nil
     }
 
-    /// init method for injecting mock addressBookHelper
-    ///
-    /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
     init(
-       // addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
@@ -89,7 +83,6 @@ final class StartUIViewController: UIViewController {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
-       // self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(
             userSelection: UserSelection(),
             userSession: userSession,
@@ -251,27 +244,6 @@ final class StartUIViewController: UIViewController {
             hasFilter: !searchString.isEmpty
         )
     }
-
-    // MARK: - Action bar
-//
-//    @objc
-//    func inviteMoreButtonTapped(_ sender: UIButton?) {
-//        if needsAddressBookPermission {
-//            presentShareContactsViewController()
-//        } else {
-//            navigationController?.pushViewController(ContactsViewController(), animated: true)
-//        }
-//    }
-
-//    func updateActionBar() {
-//        if !(searchController.searchBar.text?.isEmpty ?? true) || userSession.selfUser.hasTeam {
-//            searchResults.searchResultsView.accessoryView = nil
-//        } else {
-//            searchResults.searchResultsView.accessoryView = quickActionsBar
-//        }
-//
-//        view.setNeedsLayout()
-//    }
 
 }
 

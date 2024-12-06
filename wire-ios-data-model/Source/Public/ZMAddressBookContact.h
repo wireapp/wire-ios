@@ -32,7 +32,7 @@ typedef NS_ENUM(int64_t, ZMInvitationStatus) {
 
 
 NS_ASSUME_NONNULL_BEGIN
-@interface ZMAddressBookContact : NSObject
+@interface ZMAddressBookContact : NSObject//
 
 @property (nonatomic, readonly) NSString *name;
 

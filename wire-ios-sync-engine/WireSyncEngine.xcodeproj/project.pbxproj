@@ -186,7 +186,6 @@
 		16ED865D23E30F7E00CB1766 /* ZMUserSesson+Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ED865C23E30F7E00CB1766 /* ZMUserSesson+Proxy.swift */; };
 		16ED865F23E3145C00CB1766 /* ZMUserSession+Clients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16ED865E23E3145C00CB1766 /* ZMUserSession+Clients.swift */; };
 		16F5F16C1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F5F16B1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift */; };
-		16F6BB381EDEA659009EA803 /* SearchResult+AddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F6BB371EDEA659009EA803 /* SearchResult+AddressBook.swift */; };
 		16FF474C1F0D54B20044C491 /* SessionManager+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */; };
 		1836188BC0E48C1AC1671FC2 /* ZMSyncStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6B0837E10BD4D5E88805E3 /* ZMSyncStrategyTests.swift */; };
 		259AAB0D2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */; };
@@ -255,14 +254,11 @@
 		549816351A432BC800A7CE2E /* ZMLoginTranscoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C11B9F19D1E4A100576A96 /* ZMLoginTranscoder.m */; };
 		549816451A432BC800A7CE2E /* ZMOperationLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D8502FFC4412F91D0CC1A4 /* ZMOperationLoop.m */; };
 		549816471A432BC800A7CE2E /* ZMSyncStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D859D47B6EBF09E4137658 /* ZMSyncStrategy.m */; };
-		54991D581DEDCF2B007E282F /* AddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54991D571DEDCF2B007E282F /* AddressBook.swift */; };
-		54991D5A1DEDD07E007E282F /* ContactAddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54991D591DEDD07E007E282F /* ContactAddressBook.swift */; };
 		54A0A6311BCE9864001A3A4C /* ZMHotFix.m in Sources */ = {isa = PBXBuildFile; fileRef = F95ECF4D1B94A553009F91BA /* ZMHotFix.m */; };
 		54A0A6321BCE9867001A3A4C /* ZMHotFixDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 54DE26B21BC56E62002B5FBC /* ZMHotFixDirectory.m */; };
 		54A170651B300696001B41A5 /* ProxiedRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A170631B300696001B41A5 /* ProxiedRequestStrategy.swift */; };
 		54A170691B300717001B41A5 /* ProxiedRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A170671B300717001B41A5 /* ProxiedRequestStrategyTests.swift */; };
 		54A227D61D6604A5009414C0 /* SynchronizationMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A227D51D6604A5009414C0 /* SynchronizationMocks.swift */; };
-		54A343471D6B589A004B65EA /* AddressBookSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A343461D6B589A004B65EA /* AddressBookSearch.swift */; };
 		54A3F24F1C08523500FE3A6B /* ZMOperationLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 85D85F3EC8565FD102AC0E5B /* ZMOperationLoop.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AB428E1DF5C5B400381F2C /* TopConversationsDirectoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AB428D1DF5C5B400381F2C /* TopConversationsDirectoryTests.swift */; };
 		54BFDF681BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54BFDF671BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift */; };
@@ -845,7 +841,6 @@
 		16ED865C23E30F7E00CB1766 /* ZMUserSesson+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSesson+Proxy.swift"; sourceTree = "<group>"; };
 		16ED865E23E3145C00CB1766 /* ZMUserSession+Clients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Clients.swift"; sourceTree = "<group>"; };
 		16F5F16B1E4092C00062F0AE /* NSManagedObjectContext+CTCallCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+CTCallCenter.swift"; sourceTree = "<group>"; };
-		16F6BB371EDEA659009EA803 /* SearchResult+AddressBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SearchResult+AddressBook.swift"; sourceTree = "<group>"; };
 		16FF47481F0CD6610044C491 /* IntegrationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntegrationTest.h; sourceTree = "<group>"; };
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
 		259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastE2EIdentityUpdateDateProtocol.swift; sourceTree = "<group>"; };
@@ -919,12 +914,9 @@
 		54973A351DD48CAB007F8702 /* NSManagedObject+CryptoStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+CryptoStack.swift"; sourceTree = "<group>"; };
 		549815931A43232400A7CE2E /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		549815961A43232400A7CE2E /* WireSyncEngine-ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireSyncEngine-ios-Info.plist"; sourceTree = "<group>"; };
-		54991D571DEDCF2B007E282F /* AddressBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBook.swift; sourceTree = "<group>"; };
-		54991D591DEDD07E007E282F /* ContactAddressBook.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactAddressBook.swift; sourceTree = "<group>"; };
 		54A170631B300696001B41A5 /* ProxiedRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxiedRequestStrategy.swift; sourceTree = "<group>"; };
 		54A170671B300717001B41A5 /* ProxiedRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxiedRequestStrategyTests.swift; sourceTree = "<group>"; };
 		54A227D51D6604A5009414C0 /* SynchronizationMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = SynchronizationMocks.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		54A343461D6B589A004B65EA /* AddressBookSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBookSearch.swift; sourceTree = "<group>"; };
 		54AB428D1DF5C5B400381F2C /* TopConversationsDirectoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopConversationsDirectoryTests.swift; sourceTree = "<group>"; };
 		54BD32D01A5ACCF9008EB1B0 /* Test-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Test-Bridging-Header.h"; sourceTree = "<group>"; };
 		54BFDF671BDA6F9A0034A3DB /* HistorySynchronizationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistorySynchronizationStatus.swift; sourceTree = "<group>"; };
@@ -2399,8 +2391,6 @@
 				F1C51FE61FB49660009C2269 /* RegistrationStatus.swift */,
 				F148F6661FB9AA7600BD6909 /* UnregisteredTeam.swift */,
 				5EFE9C14212AB138007932A6 /* UnregisteredUser+Payload.swift */,
-				54991D571DEDCF2B007E282F /* AddressBook.swift */,
-				54991D591DEDD07E007E282F /* ContactAddressBook.swift */,
 				54DE9BEA1DE74FFB00EFFB9C /* RandomHandleGenerator.swift */,
 				5E8EE1F820FDC7C900DB1F9B /* Company */,
 			);
@@ -2428,11 +2418,9 @@
 		A9BABE5E19BA1EF300E9E5A3 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				54A343461D6B589A004B65EA /* AddressBookSearch.swift */,
 				1660AA081ECCAC900056D403 /* SearchDirectory.swift */,
 				1660AA0C1ECDB0250056D403 /* SearchTask.swift */,
 				164C29A61ED2D7B00026562A /* SearchResult.swift */,
-				16F6BB371EDEA659009EA803 /* SearchResult+AddressBook.swift */,
 				1660AA0A1ECCAF4E0056D403 /* SearchRequest.swift */,
 				54257C071DF1C94200107FE7 /* TopConversationsDirectory.swift */,
 			);
@@ -3546,7 +3534,6 @@
 				EE9CDE9027DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift in Sources */,
 				63E313D627553CA0002EAF1D /* ZMConversation+AVSIdentifier.swift in Sources */,
 				5EDF03EC2245563C00C04007 /* LinkPreviewAssetUploadRequestStrategy+Helper.swift in Sources */,
-				54991D581DEDCF2B007E282F /* AddressBook.swift in Sources */,
 				F96DBEEB1DF9A570008FE832 /* ZMSyncStrategy+ManagedObjectChanges.m in Sources */,
 				EEE95CF62A442A0100E136CB /* WireCallCenterV3+MLS.swift in Sources */,
 				168CF4292007840A009FCB89 /* Team+Invite.swift in Sources */,
@@ -3569,7 +3556,6 @@
 				E9AD0A362C2AF9B300CA88DF /* AnalyticsServiceConfiguration.swift in Sources */,
 				E91180E12CA6FD3E00DD63E2 /* ZMConversationMessage+SelfUserReactions.swift in Sources */,
 				F9245BED1CBF95A8009D1E85 /* ZMHotFixDirectory+Swift.swift in Sources */,
-				54991D5A1DEDD07E007E282F /* ContactAddressBook.swift in Sources */,
 				EE0CAEAF2AAF2E8E00BD2DB7 /* URLSession+MinTLSVersion.swift in Sources */,
 				E998FE8E2C184C9800EAA672 /* UserCredentials.swift in Sources */,
 				165BB94C2004D6490077EFD5 /* SessionManager+UserActivity.swift in Sources */,
@@ -3594,14 +3580,12 @@
 				161ACB3223F5BBA100ABFF33 /* CompanyLoginURLActionProcessor.swift in Sources */,
 				063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */,
 				EE9CDE8E27D9FF5900C4DAC8 /* APIVersionResolver.swift in Sources */,
-				16F6BB381EDEA659009EA803 /* SearchResult+AddressBook.swift in Sources */,
 				5458AF841F7021B800E45977 /* PreLoginAuthenticationNotification.swift in Sources */,
 				F9ABE84F1EFD568B00D83214 /* TeamDownloadRequestStrategy.swift in Sources */,
 				EE38DDEE280437E500D4983D /* BlacklistReason.swift in Sources */,
 				EE2DE5E229250C1A00F42F4C /* CallHandle.swift in Sources */,
 				871667FA1BB2AE9C009C6EEA /* APSSignalingKeysStore.swift in Sources */,
 				018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */,
-				54A343471D6B589A004B65EA /* AddressBookSearch.swift in Sources */,
 				5497100A1F6FFE9900026EDD /* ClientUpdateNotification.swift in Sources */,
 				16085B331F71811A000B9F22 /* UserChangeInfo+UserSession.swift in Sources */,
 				54131BC625C7F71400CE2CA2 /* LoginDelegate.swift in Sources */,
