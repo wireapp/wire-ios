@@ -438,24 +438,24 @@ final class ConversationLocalStoreTests: XCTestCase {
     }
 
     func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
-        
+
         let (userObjectID, conversationObjectID) = try await context.perform { [self] in
             let user = modelHelper.createUser(in: context)
             let conversation = modelHelper.createGroupConversation(in: context)
-            
+
             try context.obtainPermanentIDs(for: [user, conversation])
-            
+
             return (user.objectID, conversation.objectID)
-            
+
         }
-        
+
         let expectation = XCTestExpectation()
-        
+
         let typingUsersInfo = ConversationTypingUsersInfo(
             users: Set([userObjectID]),
             conversationID: conversationObjectID
         )
-        
+
         subscription = NotificationCenter.default.publisher(for: .typingNotification)
             .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
             .sink { typingUsers in
@@ -463,16 +463,16 @@ final class ConversationLocalStoreTests: XCTestCase {
                 XCTAssertEqual(typingUsers.first?.objectID, userObjectID)
                 expectation.fulfill()
             }
-        
+
         // When
-        
+
         await sut.updateTypingUsers(
             conversationID: conversationObjectID,
             usersID: Set([userObjectID])
         )
-        
+
         // Then
-        
+
         await fulfillment(of: [expectation], timeout: 5.0)
     }
 
