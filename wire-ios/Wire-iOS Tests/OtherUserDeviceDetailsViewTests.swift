@@ -33,6 +33,9 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 
+    private let mockMLSThumbprint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+        .uppercased()
+
     private var coreDataFixture: CoreDataFixture!
     private var sut: DeviceInfoViewController<OtherUserDeviceDetailsView>!
     private var client: UserClient!
@@ -72,6 +75,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
+        client.mlsThumbPrint = mlsThumbprint
         var certificate: E2eIdentityCertificate = switch status {
         case .notActivated:
             .mockNotActivated
@@ -129,25 +133,9 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
         )
     }
 
-    func testThatIsShowsDebugMenu_WhenE2eidentityViewIsDisabled() {
-        let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
-            status: .notActivated,
-            isProteusVerificationEnabled: true,
-            isE2eIdentityEnabled: false,
-            proteusKeyFingerPrint: mockFingerPrint,
-            showDebugMenu: true
-        )
-        snapshotHelper.verify(
-            matching: setupWrappedInNavigationController(
-                viewModel: viewModel
-            )
-        )
-    }
-
     func testWhenE2eidentityViewIsDisabled() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .notActivated,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: false,
@@ -162,7 +150,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .valid,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -175,7 +163,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .valid,
             isProteusVerificationEnabled: false,
             isE2eIdentityEnabled: true,
@@ -188,7 +176,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .revoked,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -201,7 +189,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .expired,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -215,7 +203,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
 
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .notActivated,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -228,7 +216,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsInvalid() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .invalid,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -243,7 +231,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .notActivated,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: false,
@@ -256,7 +244,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .valid,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -269,7 +257,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .revoked,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -282,7 +270,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .expired,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
@@ -295,7 +283,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
         let viewModel = prepareViewModel(
-            mlsThumbprint: mockFingerPrint,
+            mlsThumbprint: mockMLSThumbprint,
             status: .notActivated,
             isProteusVerificationEnabled: true,
             isE2eIdentityEnabled: true,
