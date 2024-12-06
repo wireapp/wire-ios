@@ -198,7 +198,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         blockingActivityIndicator.start()
         Task {
             do {
-                let migrationResult = try await useCase.invoke(teamName: teamName)
+                let migrationResult = try await self.useCase.invoke(teamName: teamName)
                 transition(to: .toCompletion(teamName: migrationResult.teamName))
                 blockingActivityIndicator.stop()
             } catch {

@@ -17,15 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+@preconcurrency import WireAPI
+import WireDomainAPI
+import WireLogging
 import WireSystem
 
 public struct IndividualToTeamMigrationUseCaseImplementation: IndividualToTeamMigrationUseCase {
     private let accountsAPI: AccountsAPI
     private let logger: WireLogger = .individualToTeamMigration
 
-    public init(apiService: APIServiceProtocol) {
-        self.accountsAPI = AccountsAPIBuilder(apiService: apiService).build()
+    public init(apiService: APIServiceProtocol, apiVersion: APIVersion) {
+        self.accountsAPI = AccountsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }
 
     public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
@@ -38,7 +40,7 @@ public struct IndividualToTeamMigrationUseCaseImplementation: IndividualToTeamMi
             logger.error("Failed to migrate individual account to team account")
             switch error {
             case AccountsAPIError.userAlreadyInATeam:
-                throw IndividualToTeamMigrationError.userAlreadyInATeam
+                throw IndividualToTeamMigrationError.userAlreadyInTeam
             default:
                 throw IndividualToTeamMigrationError.generic(error)
             }
