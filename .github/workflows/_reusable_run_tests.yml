@@ -221,7 +221,7 @@ jobs:
         run: ls -R
       
       - name: Analyze .xcresult file
-        uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        uses: wireapp/analyze-xcoderesults-action@v1
         with:
           results: ${{ matrix.xcresult_file }}
           warningAnnotations: true
