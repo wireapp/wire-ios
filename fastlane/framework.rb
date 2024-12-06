@@ -4,12 +4,10 @@ class Framework
     def self.all 
         all_folders = [
             "WireAPI",
-            "WireAPI",
             "WireAnalytics",
             "WireDomain",
             "WireFoundation",
             "WireLogging",
-            "WireUI",
             "WireUI",
             "wire-ios",
             "wire-ios-canvas",
@@ -134,6 +132,8 @@ class Framework
             name
         when "WireAnalytics"
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireLogging"
+            "WireLoggingAll"
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else

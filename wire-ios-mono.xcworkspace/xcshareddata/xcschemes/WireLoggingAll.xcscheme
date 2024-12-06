@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireLogging"
                BuildableName = "WireLogging"
                BlueprintName = "WireLogging"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireLogging">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:WireLogging/Tests/TestPlans/AllTests.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -53,7 +58,7 @@
             BlueprintIdentifier = "WireLogging"
             BuildableName = "WireLogging"
             BlueprintName = "WireLogging"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireLogging">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
