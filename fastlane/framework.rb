@@ -4,12 +4,10 @@ class Framework
     def self.all 
         all_folders = [
             "WireAPI",
-            "WireAPI",
             "WireAnalytics",
             "WireDomain",
             "WireFoundation",
             "WireLogging",
-            "WireUI",
             "WireUI",
             "wire-ios",
             "wire-ios-canvas",
