@@ -70,19 +70,22 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Local_Store_Add_Text_Message_Method() async throws {
         // Mock
 
-        let conversation = await context.perform { [self] in
-            modelHelper.createGroupConversation(in: context)
+        let (conversation, clientMessage) = await context.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(in: context)
+            let clientMessage = ZMClientMessage(context: context)
+            
+            return (conversation, clientMessage)
         }
 
-        messageLocalStore.canAddMessageConversationSenderIDLogAttributes_MockValue = true
-        messageLocalStore.addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_MockMethod = { _, _, _, _, _, _, _ in }
+        messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue = (clientMessage, isNew: true)
+        messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod = { _, _, _, _, _, _ in }
 
         let genericMessage = try XCTUnwrap(GenericMessage(withBase64String: Scaffolding.base64EncodedString))
         let content = try XCTUnwrap(genericMessage.content) // .text
 
         // When
 
-        await sut.processProtobufMessage(
+        try await sut.processProtobufMessage(
             genericMessage,
             content: content,
             conversation: conversation,
@@ -92,10 +95,9 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             logAttributes: LogAttributes(),
             date: .now
         )
-
-        // Then, ensuring the `addTextMessage` method is invoked since protobuf message content is `text`
-
-        XCTAssertEqual(messageLocalStore.addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_Invocations.count, 1)
+        
+        XCTAssertEqual(messageLocalStore.fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations.count, 1)
+        XCTAssertEqual(messageLocalStore.addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations.count, 1)
     }
 
     private enum Scaffolding {

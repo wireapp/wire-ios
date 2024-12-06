@@ -35,25 +35,73 @@ public protocol MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
-
-    /// Adds a message text to a given conversation.
+    
+    /// Fetches or creates a `ZMClientMessage` locally.
     /// - Parameters:
-    ///     - message: The message to add.
-    ///     - conversation: The conversation to add the message text to.
-    ///     - senderID: The message sender id.
-    ///     - senderDomain: The message sender domain.
-    ///     - senderClientID: The sender client id.
-    ///     - date: The date the message was created.
-    ///     - logAttributes: Attributes to add to the log.
+    ///     - id: The message ID.
+    ///     - conversation: The conversation the message is related to.
+    ///     - sender: The message sender info.
+    ///     - date: The date the message was received.
+    ///     - logAttributes: Log informations.
 
-    func addTextMessage(
-        _ message: GenericMessage,
-        in conversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String,
-        senderClientID: String?,
+    func fetchOrCreateClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
         date: Date,
         logAttributes: LogAttributes
+    ) async throws -> (ZMClientMessage, isNew: Bool)
+    
+    /// Fetches or creates a `ZMAssetClientMessage` locally.
+    /// - Parameters:
+    ///     - id: The message ID.
+    ///     - conversation: The conversation the message is related to.
+    ///     - sender: The message sender info.
+    ///     - date: The date the message was received.
+    ///     - logAttributes: Log informations.
+    
+    func fetchOrCreateAssetClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date,
+        logAttributes: LogAttributes
+    ) async throws -> (ZMAssetClientMessage, isNew: Bool)
+    
+    /// Adds a `ZMClientMessage` to a given conversation.
+    /// - Parameters:
+    ///     - clientMessage: The client message.
+    ///     - isNewMessage: Whether it is a new message.
+    ///     - genericMessage: The related protobuf message.
+    ///     - conversation: The conversation the message is related to.
+    ///     - senderID: The message sender ID.
+    ///     - senderDomain: The message sender domain.
+    
+    func addClientMessage(
+        _ clientMessage: ZMClientMessage,
+        isNewMessage: Bool,
+        genericMessage: GenericMessage,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String
+    ) async
+    
+    /// Adds a `ZMAssetClientMessage` to a given conversation.
+    /// - Parameters:
+    ///     - clientMessage: The client message.
+    ///     - isNewMessage: Whether it is a new message.
+    ///     - genericMessage: The related protobuf message.
+    ///     - conversation: The conversation the message is related to.
+    ///     - senderID: The message sender ID.
+    ///     - senderDomain: The message sender domain.
+
+    func addAssetClientMessage(
+        _ assetClientMessage: ZMAssetClientMessage,
+        isNewMessage: Bool,
+        genericMessage: GenericMessage,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String
     ) async
 
     /// Checks whether a message can be added to the conversation.
@@ -146,6 +194,16 @@ public protocol MessageLocalStoreProtocol {
 }
 
 public final class MessageLocalStore: MessageLocalStoreProtocol {
+    
+    enum Failure: Error {
+        case failedToAddConversation
+    }
+    
+    /// When receiving a MLS/Proteus add message event, we treat them either as an `asset` client message or a `default` client message.
+    enum ClientMessageType {
+        case `default`
+        case asset
+    }
 
     // MARK: - Properties
 
@@ -219,72 +277,124 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             return true
         }
     }
-
-    public func addTextMessage(
-        _ message: GenericMessage,
-        in conversation: ZMConversation,
-        senderID: UUID,
-        senderDomain: String,
-        senderClientID: String?,
+    
+    public func fetchOrCreateClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
         date: Date,
         logAttributes: LogAttributes
+    ) async throws -> (ZMClientMessage, isNew: Bool) {
+        
+        try await fetchOrCreateClientMessage(
+            id: id,
+            messageType: .default,
+            conversation: conversation,
+            sender: sender,
+            date: date,
+            logAttributes: logAttributes
+        ) as! (ZMClientMessage, Bool)
+        
+    }
+    
+    public func fetchOrCreateAssetClientMessage(
+        id: String,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
+        date: Date,
+        logAttributes: LogAttributes
+    ) async throws -> (ZMAssetClientMessage, isNew: Bool) {
+        
+        try await fetchOrCreateClientMessage(
+            id: id,
+            messageType: .asset,
+            conversation: conversation,
+            sender: sender,
+            date: date,
+            logAttributes: logAttributes
+        ) as! (ZMAssetClientMessage, Bool)
+        
+    }
+
+    public func addClientMessage(
+        _ clientMessage: ZMClientMessage,
+        isNewMessage: Bool,
+        genericMessage: GenericMessage,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String
     ) async {
         await context.perform { [self] in
-            guard shouldAddMessage(to: conversation, date: date),
-                  let nonce = UUID(uuidString: message.messageID)
-            else {
-                return WireLogger.eventProcessing.warn(
-                    "Dropping message because no nonce or for self conv",
-                    attributes: logAttributes
+            if isNewMessage {
+                do {
+                    try clientMessage.setUnderlyingMessage(genericMessage)
+                    clientMessage.updateNormalizedText()
+                } catch {
+                    assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+                }
+            } else {
+                applyLinkPreviewUpdate(
+                    clientMessage: clientMessage,
+                    updatedMessage: genericMessage,
+                    senderID: senderID
                 )
             }
-
-            let messageClass: AnyClass = GenericMessage.entityClass(for: message)
-            var clientMessage = fetchExistingMessage(
-                nonce: nonce,
-                conversation: conversation,
-                messageClass: messageClass
-            )
-
-            guard !isZombieObject(clientMessage) else {
-                return WireLogger.eventProcessing.warn(
-                    "Dropping message because zombieObject",
-                    attributes: logAttributes
-                )
-            }
-
-            let isNewMessage = clientMessage == nil
-            clientMessage = clientMessage ?? createNewMessage(
-                nonce: nonce,
-                messageClass: messageClass,
-                genericMessage: message,
-                date: date,
-                senderID: senderID,
-                senderClientID: senderClientID,
-                conversation: conversation,
-                logAttributes: logAttributes
-            )
-
-            if let assetClientMessage = clientMessage as? ZMAssetClientMessage {
-                updateAssetClientMessage(
-                    assetClientMessage,
-                    genericMessage: message,
-                    isNewMessage: isNewMessage
-                )
-            } else if let clientMessage = clientMessage as? ZMClientMessage {
-                updateClientMessage(
-                    clientMessage,
-                    genericMessage: message,
-                    senderID: senderID,
-                    isNewMessage: isNewMessage
-                )
-            }
-
-            guard let clientMessage else { return }
-
+            
             finalizeMessageUpdate(
                 clientMessage: clientMessage,
-                message: message,
+                senderID: senderID,
+                senderDomain: senderDomain,
+                conversation: conversation
+            )
+        }
+    }
+    
+    public func addAssetClientMessage(
+        _ assetClientMessage: ZMAssetClientMessage,
+        isNewMessage: Bool,
+        genericMessage: GenericMessage,
+        conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String
+    ) async {
+        await context.perform { [self] in
+            do {
+                try assetClientMessage.setUnderlyingMessage(genericMessage)
+            } catch {
+                return assertionFailure(
+                    "Failed to set generic message: \(error.localizedDescription)"
+                )
+            }
+
+            // We assume received assets are V3 since backend no longer supports sending V2 assets.
+            assetClientMessage.version = 3
+
+            if let assetData = genericMessage.assetData, let status = assetData.status {
+                switch status {
+                case .uploaded(let data) where data.hasAssetID:
+                    assetClientMessage.updateTransferState(
+                        .uploaded,
+                        synchronize: false
+                    )
+
+                case .notUploaded where assetClientMessage.transferState != .uploaded:
+                    switch assetData.notUploaded {
+                    case .cancelled:
+                        context.delete(assetClientMessage)
+                    case .failed:
+                        assetClientMessage.updateTransferState(
+                            .uploadingFailed,
+                            synchronize: false
+                        )
+                    }
+
+                default:
+                    break
+                }
+            }
+            
+            finalizeMessageUpdate(
+                clientMessage: assetClientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
                 conversation: conversation
@@ -391,91 +501,90 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     // MARK: - Private
-
-    private func shouldAddMessage(to conversation: ZMConversation, date: Date) -> Bool {
-        if let clearedTime = conversation.clearedTimeStamp,
-           clearedTime.compare(date) != .orderedAscending {
-            return false
-        }
-        return conversation.conversationType != .self
-    }
-
-    private func createNewMessage(
-        nonce: UUID,
-        messageClass: AnyClass,
-        genericMessage: GenericMessage,
+    
+    private func fetchOrCreateClientMessage(
+        id: String,
+        messageType: ClientMessageType,
+        conversation: ZMConversation,
+        sender: (id: UUID, domain: String, clientID: String?),
         date: Date,
-        senderID: UUID,
-        senderClientID: String?,
-        conversation: ZMConversation,
         logAttributes: LogAttributes
-    ) -> ZMOTRMessage? {
-        guard let newMessage = instantiateNewMessage(messageClass: messageClass, nonce: nonce) else {
-            WireLogger.eventProcessing.warn(
-                "Dropping unknown type new message",
-                attributes: logAttributes
+    ) async throws -> (ZMOTRMessage, isNew: Bool) {
+        try await context.perform { [self] in
+            guard let clearedTime = conversation.clearedTimeStamp,
+               clearedTime.compare(date) != .orderedAscending,
+                  conversation.conversationType != .self,
+                  let nonce = UUID(uuidString: id) else {
+                      throw Failure.failedToAddConversation
+            }
+            
+            let clientMessage = messageType == .asset ?
+            ZMAssetClientMessage.fetch(
+                withNonce: nonce,
+                for: conversation,
+                in: context
+            ) :
+            ZMClientMessage.fetch(
+                withNonce: nonce,
+                for: conversation,
+                in: context
             )
-            return nil
+            
+            if let clientMessage {
+                return (clientMessage, false)
+            } else {
+                let newClientMessage = messageType == .asset ?
+                ZMAssetClientMessage(
+                    nonce: nonce,
+                    managedObjectContext: context
+                ) :
+                ZMClientMessage(
+                    nonce: nonce,
+                    managedObjectContext: context
+                )
+                
+                setupNewClientMessage(
+                    newClientMessage,
+                    conversation: conversation,
+                    senderID: sender.id,
+                    clientID: sender.clientID,
+                    date: date
+                )
+                
+                return (newClientMessage, true)
+            }
         }
-
-        newMessage.senderClientID = senderClientID
-        newMessage.serverTimestamp = date
-
-        if conversation.conversationType == .group,
-           senderID != ZMUser.selfUser(in: context).remoteIdentifier {
-            let isComposite = (genericMessage as? ConversationCompositeMessage)?.isComposite ?? false
-            newMessage.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
-        }
-
-        return newMessage
     }
-
-    private func instantiateNewMessage(messageClass: AnyClass, nonce: UUID) -> ZMOTRMessage? {
-        if messageClass is ZMClientMessage.Type {
-            return ZMClientMessage(nonce: nonce, managedObjectContext: context)
-        } else if messageClass is ZMAssetClientMessage.Type {
-            return ZMAssetClientMessage(nonce: nonce, managedObjectContext: context)
-        }
-        return nil
-    }
-
-    private func fetchExistingMessage(
-        nonce: UUID,
+    
+    private func setupNewClientMessage(
+        _ message: ZMOTRMessage,
         conversation: ZMConversation,
-        messageClass: AnyClass
-    ) -> ZMOTRMessage? {
-        messageClass.fetch(
-            withNonce: nonce,
-            for: conversation,
-            in: context,
-            prefetchResult: .none
-        ) as? ZMOTRMessage
+        senderID: UUID,
+        clientID: String?,
+        date: Date
+    ) {
+        message.senderClientID = clientID
+        message.serverTimestamp = date
+        let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier
+        
+        if conversation.conversationType == .group, senderID != selfUserID {
+            let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
+            message.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
+        }
     }
-
-    private func isZombieObject(_ message: ZMOTRMessage?) -> Bool {
-        guard let message else { return false }
-        return message.isZombieObject
-    }
-
+    
     private func finalizeMessageUpdate(
         clientMessage: ZMOTRMessage,
-        message: GenericMessage,
         senderID: UUID,
         senderDomain: String,
         conversation: ZMConversation
-    ) {
-        guard !isZombieObject(clientMessage), clientMessage.nonce != nil else {
-            return WireLogger.eventProcessing.warn(
-                "Dropping potential zombie message"
-            )
-        }
-
+    )  {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
             domain: senderDomain,
             in: context
         )
-
+        
         clientMessage.visibleInConversation = conversation
         clientMessage.sender = sender
         updateQuoteRelationships(message: clientMessage)
@@ -915,29 +1024,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
-    private func updateClientMessage(
-        _ clientMessage: ZMClientMessage,
-        genericMessage: GenericMessage,
-        senderID: UUID,
-        isNewMessage: Bool
-    ) {
-        guard isNewMessage else {
-            applyLinkPreviewUpdate(
-                clientMessage: clientMessage,
-                updatedMessage: genericMessage,
-                senderID: senderID
-            )
-            return
-        }
-
-        do {
-            try clientMessage.setUnderlyingMessage(genericMessage)
-            clientMessage.updateNormalizedText()
-        } catch {
-            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
-        }
-    }
-
     private func applyLinkPreviewUpdate(
         clientMessage: ZMClientMessage,
         updatedMessage: GenericMessage,
@@ -964,52 +1050,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             try clientMessage.setUnderlyingMessage(message)
         } catch {
             assertionFailure("Failed to set generic message: \(error.localizedDescription)")
-        }
-    }
-
-    private func updateAssetClientMessage(
-        _ assetClientMessage: ZMAssetClientMessage,
-        genericMessage: GenericMessage,
-        isNewMessage: Bool
-    ) {
-        do {
-            try assetClientMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            return assertionFailure(
-                "Failed to set generic message: \(error.localizedDescription)"
-            )
-        }
-
-        // We assume received assets are V3 since backend no longer supports sending V2 assets.
-        assetClientMessage.version = 3
-
-        guard
-            let assetData = genericMessage.assetData,
-            let status = assetData.status
-        else {
-            return
-        }
-
-        switch status {
-        case .uploaded(let data) where data.hasAssetID:
-            assetClientMessage.updateTransferState(
-                .uploaded,
-                synchronize: false
-            )
-
-        case .notUploaded where assetClientMessage.transferState != .uploaded:
-            switch assetData.notUploaded {
-            case .cancelled:
-                context.delete(assetClientMessage)
-            case .failed:
-                assetClientMessage.updateTransferState(
-                    .uploadingFailed,
-                    synchronize: false
-                )
-            }
-
-        default:
-            break
         }
     }
 

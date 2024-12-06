@@ -681,16 +681,21 @@ public class MockConversationProtobufMessageProcessorProtocol: ConversationProto
     // MARK: - processProtobufMessage
 
     public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations: [(message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date)] = []
-    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, LogAttributes, Date) async -> Void)?
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError: Error?
+    public var processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod: ((GenericMessage, GenericMessage.OneOf_Content, ZMConversation, ConversationID, UserID, String?, LogAttributes, Date) async throws -> Void)?
 
-    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date) async {
+    public func processProtobufMessage(_ message: GenericMessage, content: GenericMessage.OneOf_Content, conversation: ZMConversation, conversationID: ConversationID, senderID: UserID, senderClientID: String?, logAttributes: LogAttributes, date: Date) async throws {
         processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_Invocations.append((message: message, content: content, conversation: conversation, conversationID: conversationID, senderID: senderID, senderClientID: senderClientID, logAttributes: logAttributes, date: date))
+
+        if let error = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockError {
+            throw error
+        }
 
         guard let mock = processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate_MockMethod else {
             fatalError("no mock for `processProtobufMessageContentConversationConversationIDSenderIDSenderClientIDLogAttributesDate`")
         }
 
-        await mock(message, content, conversation, conversationID, senderID, senderClientID, logAttributes, date)
+        try await mock(message, content, conversation, conversationID, senderID, senderClientID, logAttributes, date)
     }
 
 }
@@ -999,19 +1004,80 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(messageType, conversationID, conversationDomain)
     }
 
-    // MARK: - addTextMessage
+    // MARK: - fetchOrCreateClientMessage
 
-    public var addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_Invocations: [(message: GenericMessage, conversation: ZMConversation, senderID: UUID, senderDomain: String, senderClientID: String?, date: Date, logAttributes: LogAttributes)] = []
-    public var addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_MockMethod: ((GenericMessage, ZMConversation, UUID, String, String?, Date, LogAttributes) async -> Void)?
+    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes)] = []
+    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockError: Error?
+    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date, LogAttributes) async throws -> (ZMClientMessage, isNew: Bool))?
+    public var fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue: (ZMClientMessage, isNew: Bool)?
 
-    public func addTextMessage(_ message: GenericMessage, in conversation: ZMConversation, senderID: UUID, senderDomain: String, senderClientID: String?, date: Date, logAttributes: LogAttributes) async {
-        addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_Invocations.append((message: message, conversation: conversation, senderID: senderID, senderDomain: senderDomain, senderClientID: senderClientID, date: date, logAttributes: logAttributes))
+    public func fetchOrCreateClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes) async throws -> (ZMClientMessage, isNew: Bool) {
+        fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_Invocations.append((id: id, conversation: conversation, sender: sender, date: date, logAttributes: logAttributes))
 
-        guard let mock = addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes_MockMethod else {
-            fatalError("no mock for `addTextMessageInSenderIDSenderDomainSenderClientIDDateLogAttributes`")
+        if let error = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockError {
+            throw error
         }
 
-        await mock(message, conversation, senderID, senderDomain, senderClientID, date, logAttributes)
+        if let mock = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockMethod {
+            return try await mock(id, conversation, sender, date, logAttributes)
+        } else if let mock = fetchOrCreateClientMessageIdConversationSenderDateLogAttributes_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateClientMessageIdConversationSenderDateLogAttributes`")
+        }
+    }
+
+    // MARK: - fetchOrCreateAssetClientMessage
+
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes)] = []
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockError: Error?
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockMethod: ((String, ZMConversation, (id: UUID, domain: String, clientID: String?), Date, LogAttributes) async throws -> (ZMAssetClientMessage, isNew: Bool))?
+    public var fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockValue: (ZMAssetClientMessage, isNew: Bool)?
+
+    public func fetchOrCreateAssetClientMessage(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date, logAttributes: LogAttributes) async throws -> (ZMAssetClientMessage, isNew: Bool) {
+        fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_Invocations.append((id: id, conversation: conversation, sender: sender, date: date, logAttributes: logAttributes))
+
+        if let error = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockError {
+            throw error
+        }
+
+        if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockMethod {
+            return try await mock(id, conversation, sender, date, logAttributes)
+        } else if let mock = fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateAssetClientMessageIdConversationSenderDateLogAttributes`")
+        }
+    }
+
+    // MARK: - addClientMessage
+
+    public var addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations: [(clientMessage: ZMClientMessage, isNewMessage: Bool, genericMessage: GenericMessage, conversation: ZMConversation, senderID: UUID, senderDomain: String)] = []
+    public var addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod: ((ZMClientMessage, Bool, GenericMessage, ZMConversation, UUID, String) async -> Void)?
+
+    public func addClientMessage(_ clientMessage: ZMClientMessage, isNewMessage: Bool, genericMessage: GenericMessage, conversation: ZMConversation, senderID: UUID, senderDomain: String) async {
+        addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations.append((clientMessage: clientMessage, isNewMessage: isNewMessage, genericMessage: genericMessage, conversation: conversation, senderID: senderID, senderDomain: senderDomain))
+
+        guard let mock = addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod else {
+            fatalError("no mock for `addClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain`")
+        }
+
+        await mock(clientMessage, isNewMessage, genericMessage, conversation, senderID, senderDomain)
+    }
+
+    // MARK: - addAssetClientMessage
+
+    public var addAssetClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations: [(assetClientMessage: ZMAssetClientMessage, isNewMessage: Bool, genericMessage: GenericMessage, conversation: ZMConversation, senderID: UUID, senderDomain: String)] = []
+    public var addAssetClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod: ((ZMAssetClientMessage, Bool, GenericMessage, ZMConversation, UUID, String) async -> Void)?
+
+    public func addAssetClientMessage(_ assetClientMessage: ZMAssetClientMessage, isNewMessage: Bool, genericMessage: GenericMessage, conversation: ZMConversation, senderID: UUID, senderDomain: String) async {
+        addAssetClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_Invocations.append((assetClientMessage: assetClientMessage, isNewMessage: isNewMessage, genericMessage: genericMessage, conversation: conversation, senderID: senderID, senderDomain: senderDomain))
+
+        guard let mock = addAssetClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain_MockMethod else {
+            fatalError("no mock for `addAssetClientMessageIsNewMessageGenericMessageConversationSenderIDSenderDomain`")
+        }
+
+        await mock(assetClientMessage, isNewMessage, genericMessage, conversation, senderID, senderDomain)
     }
 
     // MARK: - canAddMessage

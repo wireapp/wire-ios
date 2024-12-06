@@ -92,8 +92,8 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             return
         }
 
-        // Read protobuf message
-        let protobufMessage = await readProtobufMessage(
+        // Get protobuf message
+        let protobufMessage = await getProtobufMessage(
             from: decryptedMessage.message
         )
 
@@ -126,7 +126,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
 
         // Process protobuf message
-        await protobufMessageProcessor.processProtobufMessage(
+        try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
             content: content,
             conversation: conversation,
@@ -138,7 +138,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         )
     }
 
-    private func readProtobufMessage(
+    private func getProtobufMessage(
         from base64Message: String
     ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
         let genericMessage = GenericMessage(withBase64String: base64Message)

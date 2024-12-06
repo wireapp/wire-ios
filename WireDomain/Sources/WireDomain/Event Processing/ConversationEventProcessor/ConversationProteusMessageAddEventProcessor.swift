@@ -76,8 +76,8 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             return
         }
 
-        // Read protobuf message
-        let protobufMessage = await readProtobufMessage(
+        // Get protobuf message
+        let protobufMessage = await getProtobufMessage(
             from: decryptedMessage,
             externalData: messageExternalData?.encryptedMessage
         )
@@ -111,7 +111,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
 
         // Process protobuf message
-        await protobufMessageProcessor.processProtobufMessage(
+        try await protobufMessageProcessor.processProtobufMessage(
             genericMessage,
             content: content,
             conversation: conversation,
@@ -123,36 +123,25 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         )
     }
 
-    private func readProtobufMessage(
+    private func getProtobufMessage(
         from base64Message: String,
         externalData: String?
     ) async -> (GenericMessage, GenericMessage.OneOf_Content)? {
         var genericMessage = GenericMessage(withBase64String: base64Message)
 
-        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular message.
-        /// See `External` section from https://github.com/wireapp/generic-message-proto
-        /// See `External messages` section from https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
         if let externalData,
            case .some(.external(let external)) = genericMessage?.content {
-            let externalData = Data(base64Encoded: externalData)
-            let externalSha256 = externalData?.zmSHA256Digest()
-
-            guard externalSha256 == external.sha256 else {
-                WireLogger.eventProcessing.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
+            
+            /// Content message is external, we decrypt the external payload
+            /// and turns it back into a generic non-external content message.
+            if let decryptedGenericMessage = decryptExternalMessage(
+                externalData: externalData,
+                external: external
+            ) {
+                genericMessage = decryptedGenericMessage
+            } else {
                 return nil
             }
-
-            let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
-                key: external.otrKey
-            )
-
-            guard let message = GenericMessage(
-                withBase64String: decryptedData?.base64String()
-            ) else {
-                return nil
-            }
-
-            genericMessage = message
         }
 
         guard let genericMessage, let content = genericMessage.content else {
@@ -160,6 +149,35 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         return (genericMessage, content)
+    }
+    
+    private func decryptExternalMessage(
+        externalData: String,
+        external: External
+    ) -> GenericMessage? {
+        /// If the encrypted payload is bigger than a certain size, an External Message is sent instead of a regular message.
+        /// See `External` section from https://github.com/wireapp/generic-message-proto
+        /// See `External messages` section from https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20545866/Messages
+    
+        let externalData = Data(base64Encoded: externalData)
+        let externalSha256 = externalData?.zmSHA256Digest()
+
+        guard externalSha256 == external.sha256 else {
+            WireLogger.eventProcessing.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256)")
+            return nil
+        }
+
+        let decryptedData = externalData?.zmDecryptPrefixedPlainTextIV(
+            key: external.otrKey
+        )
+
+        guard let message = GenericMessage(
+            withBase64String: decryptedData?.base64String()
+        ) else {
+            return nil
+        }
+
+        return message
     }
 
     private func addInvalidSystemMessage(

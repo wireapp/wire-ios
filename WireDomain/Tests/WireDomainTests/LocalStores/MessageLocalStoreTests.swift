@@ -64,7 +64,7 @@ final class MessageLocalStoreTests: XCTestCase {
     func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
         // Mock
 
-        let (groupConversation, selfUser, user) = await context.perform { [self] in
+        let (clientMessage, groupConversation, selfUser, user) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )
@@ -76,8 +76,10 @@ final class MessageLocalStoreTests: XCTestCase {
             )
 
             let user = modelHelper.createUser(in: context)
+            
+            let clientMessage = ZMClientMessage(context: context)
 
-            return (conversation, selfUser, user)
+            return (clientMessage, conversation, selfUser, user)
         }
 
         userLocalStore.fetchSelfUser_MockValue = selfUser
@@ -89,14 +91,13 @@ final class MessageLocalStoreTests: XCTestCase {
 
         // When
 
-        await sut.addTextMessage(
-            genericMessage,
-            in: groupConversation,
+        await sut.addClientMessage(
+            clientMessage,
+            isNewMessage: true,
+            genericMessage: genericMessage,
+            conversation: groupConversation,
             senderID: .mockID1,
-            senderDomain: Scaffolding.domain,
-            senderClientID: Scaffolding.senderClientID.uuidString,
-            date: .now,
-            logAttributes: LogAttributes()
+            senderDomain: Scaffolding.domain
         )
 
         // Then
