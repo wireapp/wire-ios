@@ -24,9 +24,7 @@ import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
-                                           ZMContextChangeTrackerSource, ZMEventAsyncConsumer {
-
-    
+    ZMContextChangeTrackerSource, ZMEventConsumer {
 
     // MARK: - Private Properties
 
@@ -237,14 +235,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Event Consumer
 
-    public func processEvents(_ events: [ZMUpdateEvent]) async {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         Self.logger.debug("process events: \(events.count)")
-        for event in events {
-            await processEvent(event)
-        }
+        events.forEach(processEvent)
     }
 
-    private func processEvent(_ event: ZMUpdateEvent) async {
+    private func processEvent(_ event: ZMUpdateEvent) {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
@@ -268,7 +264,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            await processCallEvent(
+            processCallEvent(
                 callingConversationId: genericMessage.calling.qualifiedConversationID,
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
@@ -292,7 +288,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         payload: Data,
         currentTimestamp: TimeInterval,
         eventTimestamp: Date
-    ) async {
+    ) {
 
         let identifier = !callingConversationId.id
             .isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
@@ -317,11 +313,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             clientId: clientId
         )
 
-        await withCheckedContinuation { continuation in
-            callCenter?.processCallEvent(callEvent, completionHandler: {
-                continuation.resume()
-            })
-        }
+        callCenter?.processCallEvent(callEvent)
     }
 
 }
