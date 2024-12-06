@@ -119,7 +119,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: xcresults
+          name: XCResults for ${{ inputs.branch }} (${{ github.run_id }})
           path: artifacts/**/*.xcresult  # Adjust this if necessary
 
       # Scripts
@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Failed Snapshots and log
+          name: Failed Snapshots and log for ${{ inputs.branch }} (${{ github.run_id }})
           path: |
             **/SnapshotResults/
             xcodebuild*.log
@@ -143,7 +143,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-reports
+          name: Test reports for ${{ inputs.branch }} (${{ github.run_id }})
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
@@ -161,7 +161,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: derived-data-xcode
+          name: Derived Data Xcode for ${{ inputs.branch }} (${{ github.run_id }})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -206,7 +206,7 @@ jobs:
       - name: Download .xcresult files
         uses: actions/download-artifact@v4
         with:
-          name: xcresults
+          name: XCResults for ${{ inputs.branch }} (${{ github.run_id }})
           path: ./artifacts
 
       - name: Display downloaded files
@@ -225,10 +225,10 @@ jobs:
     if: always()
     steps:
       - name: Download tests results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: test-reports
+          name: Test reports for ${{ inputs.branch }} (${{ github.run_id }})
       - uses: actions/setup-node@v3
         with:
           node-version: 18
