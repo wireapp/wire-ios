@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // MARK: JSON Decoder / Encoder
 

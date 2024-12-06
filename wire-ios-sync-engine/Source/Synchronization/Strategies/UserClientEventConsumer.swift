@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// Consumes self user client update events
 ///

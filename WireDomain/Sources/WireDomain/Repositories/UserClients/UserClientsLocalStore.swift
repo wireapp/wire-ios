@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol UserClientsLocalStoreProtocol {
