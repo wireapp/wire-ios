@@ -160,7 +160,6 @@ final class StartUIViewController: UIViewController {
         searchResults.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         createConstraints()
-        //updateActionBar()
         searchResults.searchContactList()
 
         view.accessibilityViewIsModal = true

@@ -325,7 +325,6 @@
 		59076F972C934AA100AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F962C934AA100AE7529 /* WireAccountImageUI */; };
 		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
 		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
-		590BD7B82C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590BD7B72C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
 		590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA092C971AFF002D0A2C /* WireFoundation */; };
 		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
@@ -1699,7 +1698,6 @@
 		EF3BA5D421075FC60093048F /* ConversationInputBarViewController+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */; };
 		EF3BA5D72107688D0093048F /* InputLanguageSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */; };
 		EF3BD69D225CC53B00ABB9B6 /* PermissionDeniedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */; };
-		EF3BD6A0225CD4FE00ABB9B6 /* ShareContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */; };
 		EF3CB75321DD0F0C0030C3E8 /* ConversationViewController+ParticipantsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3CB75221DD0F0B0030C3E8 /* ConversationViewController+ParticipantsPopover.swift */; };
 		EF3CB75521DD157B0030C3E8 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3CB75421DD157B0030C3E8 /* ProfileViewController.swift */; };
 		EF3CBC0A2147D81800566295 /* ConversationListViewController+PushPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3CBC092147D81700566295 /* ConversationListViewController+PushPermissions.swift */; };
@@ -1798,7 +1796,6 @@
 		EFDBA24722942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDBA24622942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift */; };
 		EFDC36DA2257A63000F916F3 /* CollectionViewContainerCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDC36D92257A63000F916F3 /* CollectionViewContainerCellSnapshotTests.swift */; };
 		EFDC36DB2257A8F300F916F3 /* CollectionViewContainerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DCF4C91D34EA4500BB420F /* CollectionViewContainerCell.swift */; };
-		EFDC36DC2257ACE800F916F3 /* StartUIInviteActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87DCF4D71D34EA4500BB420F /* StartUIInviteActionBar.swift */; };
 		EFE043992149CE8D00BC3079 /* ContactsViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE043972149CE7600BC3079 /* ContactsViewControllerSnapshotTests.swift */; };
 		EFE0439B2149D9CA00BC3079 /* ShareContactsViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE0439A2149D9C900BC3079 /* ShareContactsViewControllerSnapshotTests.swift */; };
 		EFE6151C2260E4AA006D48ED /* MultiParagraphSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE6151B2260E4AA006D48ED /* MultiParagraphSnapshotTests.swift */; };
@@ -2315,7 +2312,6 @@
 		5902F8DF2BF7B14F00F1D392 /* ArchivedListViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivedListViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
 		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
-		590BD7B72C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareContactsViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
 		5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
 		5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -2885,7 +2881,6 @@
 		87DCF49A1D34E9E600BB420F /* NSUserDefaults+Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUserDefaults+Location.swift"; sourceTree = "<group>"; };
 		87DCF4B61D34EA4500BB420F /* ShareItemProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShareItemProvider.swift; sourceTree = "<group>"; };
 		87DCF4C91D34EA4500BB420F /* CollectionViewContainerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionViewContainerCell.swift; sourceTree = "<group>"; };
-		87DCF4D71D34EA4500BB420F /* StartUIInviteActionBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartUIInviteActionBar.swift; sourceTree = "<group>"; };
 		87DE06B21D26632E0009411F /* AudioEffectsPickerViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEffectsPickerViewControllerTests.swift; sourceTree = "<group>"; };
 		87E4D2C91FC6E39800F3C664 /* CharacterInputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterInputField.swift; sourceTree = "<group>"; };
 		87E56ED71E4E10CA0097D489 /* TextSearchResultCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextSearchResultCell.swift; sourceTree = "<group>"; };
@@ -3699,7 +3694,6 @@
 		EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Language.swift"; sourceTree = "<group>"; };
 		EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputLanguageSettable.swift; sourceTree = "<group>"; };
 		EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewController.swift; sourceTree = "<group>"; };
-		EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareContactsViewController.swift; sourceTree = "<group>"; };
 		EF3CB75221DD0F0B0030C3E8 /* ConversationViewController+ParticipantsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+ParticipantsPopover.swift"; sourceTree = "<group>"; };
 		EF3CB75421DD157B0030C3E8 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		EF3CBC092147D81700566295 /* ConversationListViewController+PushPermissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+PushPermissions.swift"; sourceTree = "<group>"; };
@@ -4587,15 +4581,6 @@
 				5902F8E02BF7B14F00F1D392 /* ArchivedList */,
 			);
 			path = ConversationList;
-			sourceTree = "<group>";
-		};
-		590A5F052BF4CB06008E87D8 /* ShareContacts */ = {
-			isa = PBXGroup;
-			children = (
-				EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */,
-				590BD7B72C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift */,
-			);
-			path = ShareContacts;
 			sourceTree = "<group>";
 		};
 		5915B9492BF4A62100215817 /* NotificationAuthorizationStatusDeniedUseCases */ = {
@@ -6200,7 +6185,6 @@
 			isa = PBXGroup;
 			children = (
 				59E12BFD2CC8EDF200E687CE /* ConnectViewControllerBuilderProtocol.swift */,
-				87DCF4D71D34EA4500BB420F /* StartUIInviteActionBar.swift */,
 				A97FA6FD23B5883A005257A8 /* StartUIDelegate.swift */,
 				A97FA6FB23B57067005257A8 /* StartUIViewController.swift */,
 				E9ACC8392C108F390002E608 /* StartUIViewController+NavigationController.swift */,
@@ -6507,7 +6491,6 @@
 			isa = PBXGroup;
 			children = (
 				E9816C952CC9280400D77F22 /* LaunchScreenViewController.swift */,
-				590A5F052BF4CB06008E87D8 /* ShareContacts */,
 				87DCF4741D34E95B00BB420F /* PermissionDeniedHint */,
 				EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
@@ -9483,7 +9466,6 @@
 				EF3BA5D421075FC60093048F /* ConversationInputBarViewController+Language.swift in Sources */,
 				E9C0B3652B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift in Sources */,
 				87D679E61EBC8002005BEB4C /* String+Compatibility.swift in Sources */,
-				590BD7B82C00BD1C0093435A /* ShareContactsViewControllerDelegate.swift in Sources */,
 				5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */,
 				8719FD671C88802C005FBEC0 /* Delay.swift in Sources */,
 				A955D3D323F54AC400304851 /* AuthenticationCoordinatedViewController.swift in Sources */,
@@ -9796,7 +9778,6 @@
 				EE593F9A2B73C3E6008D1109 /* DeepLinksViewModel.swift in Sources */,
 				EF6E9FEE231D4426000B7785 /* ConversationListViewControllerViewModel+ZMConversationListObserver.swift in Sources */,
 				162917C91F8BB991000F3E92 /* NetworkStatusView.swift in Sources */,
-				EF3BD6A0225CD4FE00ABB9B6 /* ShareContactsViewController.swift in Sources */,
 				5E936E8F20B590530060E6AA /* UIDevice+Platform.swift in Sources */,
 				EF1A461A21AD60510009B6B9 /* ReceiptOptionsSectionController.swift in Sources */,
 				63497734268CBDAE00824A05 /* CallGridAction.swift in Sources */,
@@ -10078,7 +10059,6 @@
 				A937A5C323D5F0400080A507 /* ConversationInputBarViewControllerDelegate.swift in Sources */,
 				BFAC71FE20A1CE0D002711C4 /* CallGridConfiguration.swift in Sources */,
 				D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */,
-				EFDC36DC2257ACE800F916F3 /* StartUIInviteActionBar.swift in Sources */,
 				637387CD26458EDB004FEF79 /* ScalableView.swift in Sources */,
 				87A540AA1E094BA3009028C5 /* CollectionCell.swift in Sources */,
 				A9D19B182385245E00F6E14A /* ProfileViewControllerViewModel.swift in Sources */,
