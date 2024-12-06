@@ -20,9 +20,28 @@ import SwiftUI
 import WireDomainAPI
 
 struct MockUseCase: IndividualToTeamMigrationUseCase {
+    let error: (any Error)?
+
+    private init(error: (any Error)? = nil) {
+        self.error = error
+    }
+
     func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
         try await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
+        if let error { throw error }
         return IndividualToTeamMigrationResult(teamID: UUID(), teamName: teamName)
+    }
+
+    static func success() -> MockUseCase {
+        MockUseCase()
+    }
+
+    static func alreadyInTeam() -> MockUseCase {
+        MockUseCase(error: IndividualToTeamMigrationError.userAlreadyInTeam)
+    }
+
+    static func genericFailure(error: any Error) -> MockUseCase {
+        MockUseCase(error: IndividualToTeamMigrationError.generic(error))
     }
 }
 
@@ -35,7 +54,7 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
 
         IndividualToTeamMigrationViewController(
             features: features,
-            useCase: MockUseCase(),
+            useCase: MockUseCase.success(),
             userProfileName: "Some User",
             actionCallback: { _ in }
         )

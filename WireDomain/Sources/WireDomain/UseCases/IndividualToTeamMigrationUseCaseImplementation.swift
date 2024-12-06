@@ -36,7 +36,12 @@ public struct IndividualToTeamMigrationUseCaseImplementation: IndividualToTeamMi
             return IndividualToTeamMigrationResult(teamID: upgradeResult.teamId, teamName: upgradeResult.teamName)
         } catch {
             logger.error("Failed to migrate individual account to team account")
-            throw error
+            switch error {
+            case AccountsAPIError.userAlreadyInATeam:
+                throw IndividualToTeamMigrationError.userAlreadyInATeam
+            default:
+                throw IndividualToTeamMigrationError.generic(error)
+            }
         }
     }
 }

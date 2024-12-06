@@ -16,25 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-public enum IndividualToTeamMigrationError: Error, Sendable {
-    case userAlreadyInTeam
-    case generic(any Error)
-}
-
-public struct IndividualToTeamMigrationResult: Sendable {
-    public let teamID: UUID
-    public let teamName: String
-
-    public init(teamID: UUID, teamName: String) {
-        self.teamID = teamID
-        self.teamName = teamName
-    }
-}
-
-// sourcery: AutoMockable
-/// Sends a request to the backend to migrate the user to a team.
-public protocol IndividualToTeamMigrationUseCase: Sendable {
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
+@MainActor
+func errorAlertFactory(
+    title: String,
+    body: String,
+    action: String
+) -> UIAlertController {
+    let alert = UIAlertController(
+        title: title,
+        message: body,
+        preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(
+        title: action,
+        style: .default
+    ))
+    return alert
 }
