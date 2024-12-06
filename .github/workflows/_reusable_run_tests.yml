@@ -139,14 +139,6 @@ jobs:
             **/SnapshotResults/
             xcodebuild*.log
 
-      - name: Save cache with warning counts
-        # This step should only run for the test_develop.yml workflow
-        if: ${{ !cancelled() && github.event.action == 'push' }}
-        uses: actions/cache/save@v4
-        with:
-          path: Danger.results
-          key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
-
       - name: Upload Test Reports as Artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -181,7 +173,7 @@ jobs:
 
       - name: Notify on Wire for iOS Nightly 🤖
         uses: 8398a7/action-slack@v3
-        if: ${{ inputs.all }}
+        if: ${{ inputs.all && always() }}
         with:
           status: ${{ job.status }}
           text: |

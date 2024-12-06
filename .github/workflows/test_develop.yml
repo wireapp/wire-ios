@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         branch: [develop, release/cycle-3.114]  # List other branches here
+      fail-fast: false # avoid to fail one job
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
