@@ -26,7 +26,7 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    private var apiServiceFactory: (@Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol)?
+    private var apiServiceFactory: APIServiceFactory?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -112,7 +112,7 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
-        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
+        apiServiceFactory: @escaping APIServiceFactory,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,

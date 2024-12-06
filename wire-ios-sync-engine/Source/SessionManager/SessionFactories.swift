@@ -62,10 +62,7 @@ open class AuthenticatedSessionFactory {
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
 
-        let apiServiceFactory: @Sendable (String, UUID) -> any APIServiceProtocol = { [environment, minTLSVersion] (
-            clientID: String,
-            userID: UUID
-        ) in
+        let apiServiceFactory: APIServiceFactory = { [environment, minTLSVersion] clientID, userID in
             let wireAssembly = WireAPI.Assembly(
                 userID: userID,
                 clientID: clientID,

@@ -30,6 +30,8 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
 
+public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
+
 @objcMembers
 public final class ZMUserSession: NSObject {
 
@@ -42,7 +44,7 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     private(set) var coreDataStack: CoreDataStack!
-    private let apiServiceFactory: (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
+    private let apiServiceFactory: APIServiceFactory
     private(set) var apiService: APIServiceProtocol?
     let application: ZMApplication
     let flowManager: FlowManagerType
