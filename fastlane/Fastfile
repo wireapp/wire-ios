@@ -63,7 +63,7 @@ platform :ios do
 
     desc "Test frameworks given folders"
     lane :test_frameworks do |options|
-        if options[:all] == "true" || options[:all] == "1" 
+        if options[:all]
             schemas = Framework.all.values.map { |f| f.scheme }
         else
             if (options[:folders] == nil || options[:folders].empty?) && !is_running_on_ci

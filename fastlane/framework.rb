@@ -3,6 +3,12 @@ class Framework
     
     def self.all 
         all_folders = [
+            "WireAPI",
+            "WireAnalytics",
+            "WireDomain",
+            "WireFoundation",
+            "WireLogging",
+            "WireUI",
             "wire-ios",
             "wire-ios-canvas",
             "wire-ios-cryptobox",
@@ -20,12 +26,6 @@ class Framework
             "wire-ios-transport",
             "wire-ios-utilities",
             "wire-ios-ziphy",
-            "WireAnalytics",
-            "WireAPI",
-            "WireDomain",
-            "WireFoundation",
-            "WireLogging",
-            "WireUI",
         ]
 
         frameworks = all_folders.reduce({}) do |hash, framework| 
@@ -92,6 +92,8 @@ class Framework
 
         frameworks["WireAPI"].add_dependency(frameworks["WireFoundation"])
 
+        frameworks["WireAnalytics"].add_dependency(frameworks["WireFoundation"])
+
         frameworks
     end
 
@@ -132,6 +134,8 @@ class Framework
             name
         when "WireAnalytics"
             "WireAnalyticsAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireLogging"
+            "WireLoggingAll"
         when "wire-ios-mocktransport"
             "WireMockTransport"
         else

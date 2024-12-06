@@ -142,8 +142,7 @@ final class ProfileViewController: UIViewController {
 
         let controller = ConversationCreationController(
             preSelectedParticipants: viewModel.userSet,
-            userSession: viewModel.userSession,
-            mlsFeature: viewModel.userSession.makeGetMLSFeatureUseCase().invoke()
+            userSession: viewModel.userSession
         )
         controller.delegate = self
 
