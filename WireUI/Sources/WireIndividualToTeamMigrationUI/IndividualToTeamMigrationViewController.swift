@@ -100,7 +100,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let actionCallback: @Sendable (Action) -> Void
     lazy var blockingActivityIndicator: BlockingActivityIndicator = .init(
         view: view,
-        accessibilityAnnouncement: .localizedAccessibilityLabel(key: "loading", bundle: .module)
+        accessibilityAnnouncement: .localizedAccessibilityLabel(key: "individualToTeam.loading", bundle: .module)
     )
     let childController: UINavigationController
     var currentStep: Step
@@ -212,9 +212,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         switch error {
         case .userAlreadyInTeam:
             displayError(
-                title: "Already part of a team",
-                body: "You've created or joined a team with this email address on another device.",
-                action: "Ok"
+                title: .localized(key: "individualToTeam.error.alreadyPartOfTeam.title", bundle: .module),
+                body: .localized(key: "individualToTeam.error.alreadyPartOfTeam.body", bundle: .module),
+                action: .localized(key: "individualToTeam.error.alreadyPartOfTeam.action", bundle: .module)
             )
         case let .generic(error):
             displayError(error)
@@ -223,9 +223,9 @@ public class IndividualToTeamMigrationViewController: UIViewController {
 
     private func displayError(_ error: some Error) {
         displayError(
-            title: "Team not created",
-            body: "Wire could not complete your team creation due to an unknown error.",
-            action: "Try Again"
+            title: .localized(key: "individualToTeam.error.generic.title", bundle: .module),
+            body: .localized(key: "individualToTeam.error.generic.body", bundle: .module),
+            action: .localized(key: "individualToTeam.error.generic.action", bundle: .module)
         )
     }
 

@@ -241,6 +241,82 @@
         }
       }
     },
+    "individualToTeam.error.alreadyPartOfTeam.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ok"
+          }
+        }
+      }
+    },
+    "individualToTeam.error.alreadyPartOfTeam.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've created or joined a team with this email address on another device."
+          }
+        }
+      }
+    },
+    "individualToTeam.error.alreadyPartOfTeam.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already part of a team"
+          }
+        }
+      }
+    },
+    "individualToTeam.error.generic.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "individualToTeam.error.generic.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wire could not complete your team creation due to an unknown error."
+          }
+        }
+      }
+    },
+    "individualToTeam.error.generic.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team not created"
+          }
+        }
+      }
+    },
+    "individualToTeam.loading" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
+          }
+        }
+      }
+    },
     "individualToTeam.planSelection.body" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -414,9 +490,6 @@
           }
         }
       }
-    },
-    "loading" : {
-
     }
   },
   "version" : "1.0"
