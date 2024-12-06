@@ -34,8 +34,8 @@ public struct SystemLogger: LoggerProtocol {
 
     public init() {}
 
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, osLogType: .debug)
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+        log(message, attributes: [attributes], osLogType: .debug)
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {

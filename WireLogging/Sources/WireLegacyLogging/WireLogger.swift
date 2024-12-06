@@ -46,15 +46,12 @@ public struct WireLogger: LoggerProtocol, Sendable {
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        if key == .selfClientId {
-            print("adding selfClientId tag to logger: \(value ?? "<nil>")")
-        }
         Self.provider?.addTag(key, value: value)
     }
 
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func debug(_ message: any LogConvertible, attributes: LogAttributes) {
         guard shouldLogMessage(message) else { return }
-        Self.provider?.debug(message, attributes: finalizedAttributes(attributes))
+        Self.provider?.debug(message, attributes: finalizedAttributes([attributes]))
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {

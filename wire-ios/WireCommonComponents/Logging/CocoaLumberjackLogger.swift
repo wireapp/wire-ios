@@ -61,8 +61,8 @@ final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
         fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
-    func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(message, attributes: attributes, level: .debug)
+    func debug(_ message: any LogConvertible, attributes: LogAttributes) {
+        log(message, attributes: [attributes], level: .debug)
     }
 
     func info(_ message: any LogConvertible, attributes: LogAttributes...) {
