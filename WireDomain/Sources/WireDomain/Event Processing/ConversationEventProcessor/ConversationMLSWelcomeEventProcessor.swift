@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Process conversation mls welcome events.
 
@@ -95,11 +96,11 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
             let otherUserQualifiedID = await conversationLocalStore.fetchOtherUserIDInOneOnOneConversation(
                 conversation: conversation
             )
-
+            
             guard let otherUserQualifiedID else {
                 return
             }
-
+            
             try await oneOnOneResolver.resolveOneOnOneConversation(with: otherUserQualifiedID)
             WireLogger.mls.debug("successfully resolved one on one conversation")
         } catch {
