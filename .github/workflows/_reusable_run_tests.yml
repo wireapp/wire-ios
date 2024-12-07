@@ -63,13 +63,6 @@ jobs:
           path: Carthage
           key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
 
-      - name: Restore Danger results
-        id: restore-danger-results
-        uses: actions/cache/restore@v4
-        with:
-          path: Danger.results
-          key: ${{ github.event.before || github.event.pull_request.base.sha }}-Danger.results
-
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
