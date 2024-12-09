@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An event that can be tracked.
+/// An event that can be tracked..
 
-public struct AnalyticsEvent: Equatable, Identifiable, Sendable {
-
-    public var id: String { name }
+public struct AnalyticsEvent: Sendable, Equatable {
 
     /// A unique name.
 

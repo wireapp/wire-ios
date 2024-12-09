@@ -7,6 +7,7 @@ let package = Package(
     name: "WireDomainPackage",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        .library(name: "WireDomainAPI", targets: ["WireDomainAPI"]),
         .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
     ],
@@ -14,16 +15,16 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins"),
         .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
-        .package(name: "WireAnalytics", path: "../WireAnalytics")
+        .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(
+            name: "WireDomainAPI",
+            path: "./Sources/WireDomainAPI"
+        ),
+        .target(
             name: "WireDomainPkg",
-            dependencies: [
-                "WireAPI",
-                "WireAnalytics"
-            ],
+            dependencies: ["WireAPI"],
             path: "./Sources/Package"
         ),
         .target(

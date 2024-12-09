@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities

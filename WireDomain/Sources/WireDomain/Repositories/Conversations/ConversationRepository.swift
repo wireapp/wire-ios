@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
@@ -188,6 +189,14 @@ public protocol ConversationRepositoryProtocol {
         date: Date
     ) async
 
+    /// Updates the typing users for a given conversation.
+    /// - Parameters:
+    ///     - typingUsersInfo: A list of typing users for a given conversation.
+
+    func updateTypingUsers(
+        _ typingUsersInfo: [ConversationTypingUsersInfo]
+    ) async
+
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation id.
     /// - returns: The guest link.
@@ -195,6 +204,7 @@ public protocol ConversationRepositoryProtocol {
     func fetchConversationGuestLink(
         conversationID: String
     ) async throws -> String?
+
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -612,6 +622,17 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await deleteMembership(for: removedUserIDs, time: date)
+    }
+
+    public func updateTypingUsers(
+        _ typingUsersInfo: [ConversationTypingUsersInfo]
+    ) async {
+        for typingUserInfo in typingUsersInfo {
+            await conversationsLocalStore.updateTypingUsers(
+                conversationID: typingUserInfo.conversationID,
+                usersID: typingUserInfo.users
+            )
+        }
     }
 
     // MARK: - Private

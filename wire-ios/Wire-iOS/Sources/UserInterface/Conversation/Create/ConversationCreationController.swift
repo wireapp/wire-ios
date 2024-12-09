@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {

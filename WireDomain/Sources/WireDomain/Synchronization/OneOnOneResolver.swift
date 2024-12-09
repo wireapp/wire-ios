@@ -19,10 +19,16 @@
 import CoreData
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Resolves 1:1 conversations
 public protocol OneOnOneResolverProtocol {
+
+    func resolveOneOnOneConversation(
+        with userID: WireDataModel.QualifiedID
+    ) async throws
+
     func resolveAllOneOnOneConversations() async throws
 }
 
@@ -74,7 +80,7 @@ struct OneOnOneResolver: OneOnOneResolverProtocol {
         }
     }
 
-    private func resolveOneOnOneConversation(
+    func resolveOneOnOneConversation(
         with userID: WireDataModel.QualifiedID
     ) async throws {
         let user = try await userRepository.fetchUser(
