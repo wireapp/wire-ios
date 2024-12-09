@@ -28,7 +28,6 @@ extension SettingsCellDescriptorFactory {
 
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
-            shareContactsDisabledSection,
             clearHistorySection,
             notificationVisibleSection,
             chatHeadsSection,
@@ -57,22 +56,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
-
-    private var shareContactsDisabledSection: SettingsSectionDescriptorType {
-        let settingsButton = SettingsButtonCellDescriptor(
-            title: L10n.Localizable.Self.Settings.PrivacyContactsMenu.SettingsButton.title,
-            isDestructive: false,
-            selectAction: { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            }
-        )
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [settingsButton],
-            header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
-            footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title
-        )
-    }
 
     private var clearHistorySection: SettingsSectionDescriptorType {
         let clearHistoryButton = SettingsButtonCellDescriptor(
