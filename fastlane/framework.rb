@@ -1,30 +1,6 @@
 class Framework
     attr_accessor :name, :dependencies, :relations
-
-    def self.sorted_frameworks
-        all_frameworks = all.values
-        visited = {}
-        stack = []
-
-        all_frameworks.each do |framework|
-            dfs(framework, visited, stack)
-        end
-
-        stack.reverse
-    end
-
-    def self.dfs(framework, visited, stack)
-        return if visited[framework.name]
-
-        visited[framework.name] = true
-
-        framework.dependencies.each do |dependency|
-            dfs(dependency, visited, stack)
-        end
-
-        stack << framework
-    end
-
+    
     def self.all 
         all_folders = [
             "WireAPI",

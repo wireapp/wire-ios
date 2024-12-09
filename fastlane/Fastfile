@@ -64,8 +64,7 @@ platform :ios do
     desc "Test frameworks given folders"
     lane :test_frameworks do |options|
         if options[:all]
-            sorted_frameworks = Framework.sorted_frameworks
-            schemas = sorted_frameworks.map(&:scheme)
+            schemas = Framework.all.values.map { |f| f.scheme }
         else
             if (options[:folders].nil? || options[:folders].empty?) && !is_running_on_ci
                 schemas = select_frameworks()
@@ -73,10 +72,10 @@ platform :ios do
                 schemas = generate_framework_schemes(folders: options[:folders])
             end
         end
-    
-        UI.message "🤖 No schemes to test" if schemas.empty?
-    
-        run_tests_frameworks(schemas, options)
+       
+       UI.message "🤖 No schemes to test" if schemas.empty?
+
+       run_tests_frameworks(schemas, options)
     end
 
     desc "Test one framework only"
@@ -107,16 +106,15 @@ platform :ios do
 
     desc "Generate list of frameworks' schemes to test from folders"
     lane :generate_framework_schemes do |options|
-        frameworks = Framework.all
+        frameworks = Framework.all      
+
         folders = options[:folders].split(',')
-
-        selected_frameworks = folders.map { |folder| frameworks[folder] }.compact
-
-
-        # Filter sorted frameworks to only include the selected ones
-        matching_frameworks = all_frameworks.select { |framework| selected_frameworks.include?(framework) }
+        matching_frameworks = folders.map { |folder| frameworks[folder] }
         
-        unique_schemes = matching_frameworks.map(&:scheme).uniq
+        unique_schemes = matching_frameworks.compact.map do |framework|
+            framework.schemes
+        end.flatten.uniq
+
         unique_schemes
     end
     
