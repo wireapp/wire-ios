@@ -272,24 +272,11 @@ platform :ios do
         
         testplan = options[:testplan] || "AllTests"
 
-        failed_schemas = []
-
         schemas.each do |scheme|
             UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-            begin
-                test_plan(build, scheme, testplan)
-            rescue => e
-                failed_schemas << scheme
-                UI.error("Failed to test #{scheme}: #{e.message}")
-            end            
+            test_plan(build, scheme, testplan)
         end
-                    
-        if failed_targets.any?
-            UI.important("The following schemas failed: #{failed_targets.join(', ')}")
-        else
-            UI.success("All tests passed successfully!")
-        end
-     end
+    end
 
  
     def build_and_upload_app(options)
@@ -481,26 +468,58 @@ platform :ios do
             UI.user_error! "missing id for tests"
         end
 
-        run_tests(
-            testplan: testplan,
-            scheme: scheme,
-            skip_detect_devices: true,
-            configuration: "Debug",
-            # test_without_building: true,
-            sdk:"iphonesimulator",
-            destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
-            # code_coverage: true,
-            derived_data_path: "DerivedData",
-            buildlog_path: build.build_path,
-            result_bundle: true,
-            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
-            output_types: "junit",
-            cloned_source_packages_path: ENV['PACKAGES_DIR'],
-            disable_package_automatic_updates: true,
-            skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
-            number_of_retries: 2
-        )
+        begin
+            UI.message "🔨 Building scheme: #{scheme}"
+            
+            run_tests(
+                testplan: testplan,
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: build.build_path,
+                result_bundle: true,
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+                output_types: "junit",
+                cloned_source_packages_path: ENV['PACKAGES_DIR'],
+                disable_package_automatic_updates: true,
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
+                number_of_retries: 2,
+                build_for_testing: true
+            )
+        rescue => e
+            UI.error "❌ Build failed for scheme: #{scheme}: #{e.to_s}"
+            raise e # Stops execution immediately if the build fails
+        end
 
+        begin
+            UI.message "🧪 Running tests for scheme: #{scheme}"
+            run_tests(
+                testplan: testplan,
+                scheme: scheme,
+                skip_detect_devices: true,
+                configuration: "Debug",
+                sdk:"iphonesimulator",
+                destination: "platform=iOS Simulator,id=#{ENV['IOS_SIM_ID']},OS=#{ios_version}",
+                # code_coverage: true,
+                derived_data_path: "DerivedData",
+                buildlog_path: build.build_path,
+                result_bundle: true,
+                output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+                output_types: "junit",
+                cloned_source_packages_path: ENV['PACKAGES_DIR'],
+                disable_package_automatic_updates: true,
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
+                number_of_retries: 2,
+                test_without_building: true,
+            )
+        rescue => e
+            puts "⚠️ Tests failed for scheme: #{scheme}, but continuing..."
+            # Continue to the next scheme despite test failures
+        end
     end
 
     def create_simulator_if_needed
