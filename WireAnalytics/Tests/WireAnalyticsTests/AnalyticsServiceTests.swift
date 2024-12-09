@@ -24,44 +24,49 @@ import XCTest
 class AnalyticsServiceTests: XCTestCase {
 
     private var sut: AnalyticsService!
-    private var countly: MockCountlyProtocol!
+    private var countlyMock: MockCountlyAbstraction!
 
     override func setUpWithError() throws {
-        countly = MockCountlyProtocol()
+        countlyMock = .init()
         sut = AnalyticsService(
             config: Scaffolding.config,
             baseSegmentation: Scaffolding.baseSegmentation,
-            countlyProvider: { self.countly }
+            countlyProvider: { self.countlyMock }
         )
 
-        countly.startAppKeyHost_MockMethod = { _, _ in }
-        countly.resetInstance_MockMethod = {}
-        countly.endSession_MockMethod = {}
-        countly.beginSession_MockMethod = {}
-        countly.changeDeviceIDMergeData_MockMethod = { _, _ in }
-        countly.setUserValueForKey_MockMethod = { _, _ in }
-        countly.recordEventSegmentation_MockMethod = { _, _ in }
+        countlyMock.startAppKeyHost_MockMethod = { _, _ in }
+        countlyMock.resetInstance_MockMethod = {}
+        countlyMock.endSession_MockMethod = {}
+        countlyMock.beginSession_MockMethod = {}
+        countlyMock.changeDeviceIDMergeData_MockMethod = { _, _ in }
+        countlyMock.setUserValueForKey_MockMethod = { _, _ in }
+        countlyMock.recordEventSegmentation_MockMethod = { _, _ in }
     }
 
     override func tearDown() {
-        countly = nil
+        countlyMock = nil
         sut = nil
     }
 
     func resetMockInvocations() {
-        countly.startAppKeyHost_Invocations = []
-        countly.endSession_Invocations = []
-        countly.beginSession_Invocations = []
-        countly.changeDeviceIDMergeData_Invocations = []
-        countly.setUserValueForKey_Invocations = []
-        countly.resetInstance_Invocations = []
+        countlyMock.startAppKeyHost_Invocations = []
+        countlyMock.endSession_Invocations = []
+        countlyMock.beginSession_Invocations = []
+        countlyMock.changeDeviceIDMergeData_Invocations = []
+        countlyMock.setUserValueForKey_Invocations = []
+        countlyMock.resetInstance_Invocations = []
     }
 
     // MARK: - Tests
 
+    @MainActor
     func testEnableTracking_service_is_not_configured() async throws {
         // Given a service with no config.
-        let sut = AnalyticsService(config: nil, deviceModel: "", deviceOS: "")
+        let sut = AnalyticsService(
+            config: nil,
+            baseSegmentation: Scaffolding.baseSegmentation,
+            countlyProvider: { self.countlyMock }
+        )
 
         do {
             // When tracking is enabled.
@@ -78,7 +83,7 @@ class AnalyticsServiceTests: XCTestCase {
         try await sut.enableTracking()
 
         // Then the service was started.
-        let invocations = countly.startAppKeyHost_Invocations
+        let invocations = countlyMock.startAppKeyHost_Invocations
 
         guard invocations.count == 1 else {
             XCTFail("expected 1 invocation, got: \(invocations.count)")
@@ -89,7 +94,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(invocations[0].host, Scaffolding.config.serverHost)
 
         // Then no session has started yet.
-        XCTAssertEqual(countly.beginSession_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 0)
     }
 
     func testDisableTracking_service_is_not_configured() throws {
@@ -115,11 +120,11 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.disableTracking()
 
         // Then any session was ended and the service was reset.
-        XCTAssertEqual(countly.endSession_Invocations.count, 1)
-        XCTAssertEqual(countly.resetInstance_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.endSession_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.resetInstance_Invocations.count, 1)
 
         // Then the user was cleared.
-        let setUserInvocations = countly.setUserValueForKey_Invocations
+        let setUserInvocations = countlyMock.setUserValueForKey_Invocations
 
         guard setUserInvocations.count == 3 else {
             XCTFail("expected 3 invocation, got: \(setUserInvocations.count)")
@@ -159,10 +164,10 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.switchUser(Scaffolding.user)
 
         // Then the user was not switched again.
-        XCTAssertEqual(countly.endSession_Invocations.count, 0)
-        XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
-        XCTAssertEqual(countly.beginSession_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.endSession_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 0)
     }
 
     @MainActor
@@ -178,10 +183,10 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.switchUser(Scaffolding.userWithTeam)
 
         // Then the existing session was ended.
-        XCTAssertEqual(countly.endSession_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.endSession_Invocations.count, 1)
 
         // Then the device id was changed.
-        let deviceChangeInvocations = countly.changeDeviceIDMergeData_Invocations
+        let deviceChangeInvocations = countlyMock.changeDeviceIDMergeData_Invocations
         guard deviceChangeInvocations.count == 1 else {
             XCTFail("expected 1 device change invocation, got \(deviceChangeInvocations.count)")
             return
@@ -191,7 +196,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, false)
 
         // Then the user details were set.
-        let userSetInvocations = countly.setUserValueForKey_Invocations
+        let userSetInvocations = countlyMock.setUserValueForKey_Invocations
         guard userSetInvocations.count == 3 else {
             XCTFail("expected 3 user set invocations, got \(userSetInvocations.count)")
             return
@@ -206,7 +211,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(userSetInvocations[2].value, String(teamInfo.size.logRound()))
 
         // Then a new session was started.
-        XCTAssertEqual(countly.beginSession_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 1)
     }
 
     @MainActor
@@ -220,8 +225,8 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.updateCurrentUser(Scaffolding.user)
 
         // Then the user was not updated.
-        XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
     }
 
     @MainActor
@@ -237,8 +242,8 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.updateCurrentUser(Scaffolding.user)
 
         // Then no user data changed.
-        XCTAssertEqual(countly.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countly.setUserValueForKey_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
     }
 
     @MainActor
@@ -254,7 +259,7 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.updateCurrentUser(Scaffolding.userWithTeam)
 
         // Then the device id was changed with a merge.
-        let deviceChangeInvocations = countly.changeDeviceIDMergeData_Invocations
+        let deviceChangeInvocations = countlyMock.changeDeviceIDMergeData_Invocations
         guard deviceChangeInvocations.count == 1 else {
             XCTFail("expected 1 device change invocation, got \(deviceChangeInvocations.count)")
             return
@@ -264,7 +269,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, true)
 
         // Then the user details were set.
-        let userSetInvocations = countly.setUserValueForKey_Invocations
+        let userSetInvocations = countlyMock.setUserValueForKey_Invocations
         guard userSetInvocations.count == 3 else {
             XCTFail("expected 3 user set invocations, got \(userSetInvocations.count)")
             return
@@ -286,7 +291,7 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then no event was tracked.
-        XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.recordEventSegmentation_Invocations.count, 0)
     }
 
     @MainActor
@@ -300,7 +305,7 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then no event was tracked.
-        XCTAssertEqual(countly.recordEventSegmentation_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.recordEventSegmentation_Invocations.count, 0)
     }
 
     @MainActor
@@ -315,7 +320,7 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then a single event was tracked.
-        let recordInvocations = countly.recordEventSegmentation_Invocations
+        let recordInvocations = countlyMock.recordEventSegmentation_Invocations
         guard recordInvocations.count == 1 else {
             XCTFail("expected 1 recordInvocation, got \(recordInvocations.count)")
             return

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: move into Wire-iOS
+/*
 extension Countly: CountlyProtocol {
     func start(
         appKey: String,
@@ -51,3 +53,4 @@ extension Countly: CountlyProtocol {
     }
 
 }
+*/

@@ -20,7 +20,7 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(name: "WireAnalytics"),
+        .target(name: "WireAnalytics", dependencies: ["WireLogging"]),
         .target(
             name: "WireDatadog",
             dependencies: datadogDependencies() + ["WireLogging"],
