@@ -265,13 +265,22 @@ final class SelfProfileViewController: UIViewController {
                 case .cancel:
                     presentedViewController?.dismiss(animated: true)
                 case .completionGoToApp:
+                    dismissIndividualToTeamMigrationBanner()
                     presentedViewController?.dismiss(animated: true)
                 case .completionGoToTeamManagement:
+                    dismissIndividualToTeamMigrationBanner()
                     presentedViewController?.dismiss(animated: true)
                 }
             }
         )
         present(vc, animated: true)
+    }
+
+    private func dismissIndividualToTeamMigrationBanner() {
+        teamMigrationBanner?.willMove(toParent: nil)
+        teamMigrationBanner?.view.removeFromSuperview()
+        teamMigrationBanner?.removeFromParent()
+        teamMigrationBanner = nil
     }
 
     @objc
