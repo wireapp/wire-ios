@@ -22,10 +22,14 @@ import WireAnalytics
 
 struct CountlyWrapper: CountlyAbstraction {
 
-    var countly: Countly = .sharedInstance()
+    var countly: () -> Countly
+
+    init(countly: @escaping @autoclosure () -> Countly = .sharedInstance()) {
+        self.countly = countly
+    }
 
     func resetInstance() {
-        countly.resetInstance()
+        countly().resetInstance()
     }
 
     func start(
@@ -36,7 +40,7 @@ struct CountlyWrapper: CountlyAbstraction {
         config.appKey = appKey
         config.manualSessionHandling = true
         config.host = host.absoluteString
-        countly.start(with: config)
+        countly().start(with: config)
     }
 
     func setUserValue(
@@ -55,25 +59,25 @@ struct CountlyWrapper: CountlyAbstraction {
         mergeData: Bool
     ) {
         if mergeData {
-            countly.changeDeviceID(withMerge: id)
+            countly().changeDeviceID(withMerge: id)
         } else {
-            countly.changeDeviceIDWithoutMerge(id)
+            countly().changeDeviceIDWithoutMerge(id)
         }
     }
 
     func beginSession() {
-        countly.beginSession()
+        countly().beginSession()
     }
 
     func endSession() {
-        countly.endSession()
+        countly().endSession()
     }
 
     func recordEvent(
         _ key: String,
         segmentation: [String: String]?
     ) {
-        countly.recordEvent(key, segmentation: segmentation)
+        countly().recordEvent(key, segmentation: segmentation)
     }
 
 }
