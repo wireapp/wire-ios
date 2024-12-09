@@ -548,7 +548,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
