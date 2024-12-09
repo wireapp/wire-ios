@@ -24,20 +24,25 @@ import XCTest
 
 final class NetworkServiceTests: XCTestCase {
 
+    var session: URLSession!
     var sut: NetworkService!
     var backendURL: URL!
 
     override func setUp() async throws {
         try await super.setUp()
+        session = .mockURLSession()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         sut = NetworkService(
             baseURL: backendURL,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+            serverTrustValidator: ServerTrustValidator(pinnedKeys: [
+                try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
+            ])
         )
-        sut.configure(with: .mockURLSession())
+        sut.configure(with: session)
     }
 
     override func tearDown() async throws {
+        session = nil
         backendURL = nil
         sut = nil
         try await super.tearDown()
@@ -94,6 +99,66 @@ final class NetworkServiceTests: XCTestCase {
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
+    // MARK: - URLAuthenticationChallenge
+
+    func testUserSessionDidReceiveChallenge_whenNotServerTrustAuthenticationMethod() async throws {
+        let methods = [
+            NSURLAuthenticationMethodClientCertificate,
+            NSURLAuthenticationMethodNegotiate,
+            NSURLAuthenticationMethodNTLM,
+            NSURLAuthenticationMethodHTMLForm,
+            NSURLAuthenticationMethodHTTPDigest,
+            NSURLAuthenticationMethodHTTPBasic,
+            NSURLAuthenticationMethodDefault
+        ]
+
+        for method in methods {
+            // Given
+            let challenge = try Scaffolding.makeAuthenticationChallenge(
+                authenticationMethod: method,
+                serverTrust: .invalid
+            )
+            let task = session.dataTask(with: Scaffolding.getRequest)
+
+            // When
+            let result = await sut.urlSession(session, task: task, didReceive: challenge)
+
+            // Then
+            XCTAssertEqual(result.0, .performDefaultHandling)
+            XCTAssertEqual(result.1, Scaffolding.makeCredential())
+        }
+    }
+
+    func testUserSessionDidReceiveChallenge_whenServerTrustValid() async throws {
+        let challenge = try Scaffolding.makeAuthenticationChallenge(
+            authenticationMethod: NSURLAuthenticationMethodServerTrust,
+            serverTrust: .wire
+        )
+        let task = session.dataTask(with: Scaffolding.getRequest)
+
+        // When
+        let result = await sut.urlSession(session, task: task, didReceive: challenge)
+
+        // Then
+        XCTAssertEqual(result.0, .performDefaultHandling)
+        XCTAssertEqual(result.1, Scaffolding.makeCredential())
+    }
+
+    func testUserSessionDidReceiveChallenge_whenServerTrustInvalid() async throws {
+        let challenge = try Scaffolding.makeAuthenticationChallenge(
+            authenticationMethod: NSURLAuthenticationMethodServerTrust,
+            serverTrust: .invalid
+        )
+        let task = session.dataTask(with: Scaffolding.getRequest)
+
+        // When
+        let result = await sut.urlSession(session, task: task, didReceive: challenge)
+
+        // Then
+        XCTAssertEqual(result.0, .cancelAuthenticationChallenge)
+        XCTAssertNil(result.1)
+    }
+
 }
 
 private enum Scaffolding {
@@ -109,4 +174,31 @@ private enum Scaffolding {
         return request
     }()
 
+    static func makeCredential() -> URLCredential {
+        URLCredential(user: "user", password: "password", persistence: .none)
+    }
+
+    static func makeAuthenticationChallenge(
+        authenticationMethod: String,
+        serverTrust: SecTrust
+    ) throws -> URLAuthenticationChallenge {
+        let protectionSpace = MockURLProtectionSpace(
+            host: "prod-nginz-https.wire.com",
+            port: 8080,
+            protocol: nil,
+            realm: nil,
+            authenticationMethod: authenticationMethod
+        )
+
+        protectionSpace.mockServerTrust = serverTrust
+
+        return URLAuthenticationChallenge(
+            protectionSpace: protectionSpace,
+            proposedCredential: Scaffolding.makeCredential(),
+            previousFailureCount: 0,
+            failureResponse: nil,
+            error: nil,
+            sender: MockURLAuthenticationChallengeSender()
+        )
+    }
 }
