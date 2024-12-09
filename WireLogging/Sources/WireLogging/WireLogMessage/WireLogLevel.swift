@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Countly
-
-public typealias WireCountly = Countly
-
-public typealias WireCountlyConfig = CountlyConfig
+public enum WireLogLevel {
+    case debug
+    case info
+    case notice
+    case warn
+    case error
+    case critical
+}

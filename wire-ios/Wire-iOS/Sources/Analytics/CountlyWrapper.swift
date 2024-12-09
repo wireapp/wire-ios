@@ -17,8 +17,21 @@
 //
 
 import Countly
+import Foundation
+import WireAnalytics
 
-extension Countly: CountlyProtocol {
+struct CountlyWrapper: CountlyAbstraction {
+
+    var countly: () -> Countly
+
+    init(countly: @escaping @autoclosure () -> Countly = .sharedInstance()) {
+        self.countly = countly
+    }
+
+    func resetInstance() {
+        countly().resetInstance()
+    }
+
     func start(
         appKey: String,
         host: URL
@@ -27,18 +40,7 @@ extension Countly: CountlyProtocol {
         config.appKey = appKey
         config.manualSessionHandling = true
         config.host = host.absoluteString
-        start(with: config)
-    }
-
-    func changeDeviceID(
-        _ id: String,
-        mergeData: Bool
-    ) {
-        if mergeData {
-            changeDeviceID(withMerge: id)
-        } else {
-            changeDeviceIDWithoutMerge(id)
-        }
+        countly().start(with: config)
     }
 
     func setUserValue(
@@ -50,6 +52,32 @@ extension Countly: CountlyProtocol {
         } else {
             Countly.user().unSet(key)
         }
+    }
+
+    func changeDeviceID(
+        _ id: String,
+        mergeData: Bool
+    ) {
+        if mergeData {
+            countly().changeDeviceID(withMerge: id)
+        } else {
+            countly().changeDeviceIDWithoutMerge(id)
+        }
+    }
+
+    func beginSession() {
+        countly().beginSession()
+    }
+
+    func endSession() {
+        countly().endSession()
+    }
+
+    func recordEvent(
+        _ key: String,
+        segmentation: [String: String]?
+    ) {
+        countly().recordEvent(key, segmentation: segmentation)
     }
 
 }

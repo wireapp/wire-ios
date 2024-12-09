@@ -16,13 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireDatadog {
-    enum LogLevel: String, Codable {
-        case debug
-        case info
-        case notice
-        case warn
-        case error
-        case critical
-    }
+public import Foundation
+
+// sourcery: AutoMockable
+/// Mirrors the API of `Countly`.
+public protocol CountlyAbstraction {
+
+    func resetInstance()
+
+    func start(
+        appKey: String,
+        host: URL
+    )
+
+    func setUserValue(
+        _ value: String?,
+        forKey key: String
+    )
+
+    func changeDeviceID(
+        _ id: String,
+        mergeData: Bool
+    )
+
+    func beginSession()
+
+    func endSession()
+
+    func recordEvent(
+        _ key: String,
+        segmentation: [String: String]?
+    )
+
 }
