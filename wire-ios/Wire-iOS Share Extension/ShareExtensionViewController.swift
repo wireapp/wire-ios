@@ -26,6 +26,7 @@ import WireCoreCrypto
 import WireDataModel
 import WireDesign
 import WireLinkPreview
+import WireLogging
 import WireShareEngine
 
 typealias Completion = () -> Void
@@ -136,7 +137,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setUpDatadog() {
-        WireAnalytics.Datadog.enable()
+        WireAnalytics.setup()
     }
 
     override func viewDidLoad() {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireTransport
 import WireUtilities
 
@@ -51,7 +52,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         enum CannotStartMigrationReason {
             case unsupportedAPIVersion
             case mlsProtocolIsNotSupported
-            case clientDoesntSupportMLS
+            case mlsIsNotEnabled
             case backendDoesntSupportMLS
             case mlsMigrationIsNotEnabled
             case startTimeHasNotBeenReached
@@ -171,15 +172,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
 
-        if !DeveloperFlag.enableMLSSupport.isOn {
-            return .cannotStart(reason: .clientDoesntSupportMLS)
-        }
-
         if await !isMLSEnabledOnBackend() {
             return .cannotStart(reason: .backendDoesntSupportMLS)
         }
 
         let features = await fetchFeatures()
+
+        if features.mls.status == .disabled {
+            return .cannotStart(reason: .mlsIsNotEnabled)
+        }
 
         if !features.mls.config.supportedProtocols.contains(.mls) {
             return .cannotStart(reason: .mlsProtocolIsNotSupported)

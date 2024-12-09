@@ -59,7 +59,7 @@ struct UserEventProcessor {
         case let .connection(event):
             try await connectionEventProcessor.processEvent(event)
 
-        case let .contactJoin(event):
+        case .contactJoin:
             /// This event is not processed, we only show a notification to the user.
             break
 
@@ -79,7 +79,7 @@ struct UserEventProcessor {
             try await propertiesSetEventProcessor.processEvent(event)
 
         case let .propertiesDelete(event):
-            try await propertiesDeleteEventProcessor.processEvent(event)
+            await propertiesDeleteEventProcessor.processEvent(event)
 
         case .pushRemove:
             pushRemoveEventProcessor.processEvent()

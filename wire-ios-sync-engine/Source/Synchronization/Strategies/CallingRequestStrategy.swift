@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
+import WireLogging
 import WireRequestStrategy
 
 @objcMembers
@@ -28,8 +29,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Private Properties
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
-
-    private let zmLog = ZMSLog(tag: "calling")
 
     private let messageSender: MessageSenderInterface
     private let flowManager: FlowManagerType
@@ -85,7 +84,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         if let clientId = selfUser.selfClient()?.remoteIdentifier {
-            zmLog.debug("Creating callCenter from init")
             self.callCenter = WireCallCenterV3Factory.callCenter(
                 withUserId: selfUser.avsIdentifier,
                 clientId: clientId,
@@ -125,8 +123,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
         case callConfigRequestSync:
-            zmLog.debug("Scheduling request to '/calls/config/v2'")
-
             return ZMTransportRequest(
                 path: "/calls/config/v2",
                 method: .get,
@@ -144,8 +140,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             else {
                 return nil
             }
-
-            zmLog.debug("Scheduling request to discover clients")
 
             let factory = ClientMessageRequestFactory()
 
@@ -165,7 +159,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         switch sync {
         case callConfigRequestSync:
-            zmLog.debug("Received call config response for \(self): \(response)")
             if response.httpStatus == 200 {
                 var payloadAsString: String?
                 if let payload = response.payload, let data = try? JSONSerialization.data(
@@ -174,20 +167,17 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 ) {
                     payloadAsString = String(decoding: data, as: UTF8.self)
                 }
-                zmLog.debug("Callback: \(String(describing: callConfigCompletion))")
                 callConfigCompletion?(payloadAsString, response.httpStatus)
                 callConfigCompletion = nil
             }
 
         case clientDiscoverySync:
-            zmLog.debug("Received client discovery response for \(self): \(response)")
-
             defer {
                 clientDiscoveryRequest = nil
             }
 
             guard response.httpStatus == 412 else {
-                zmLog.warn("Expected 412 response: missing clients")
+                Self.logger.warning("Expected 412 response: missing clients")
                 return
             }
 
@@ -200,7 +190,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 let payload = try decoder.decode(ClientDiscoveryResponsePayload.self, from: jsonData)
                 clientDiscoveryRequest?.completion(payload.clients)
             } catch {
-                zmLog.error("Could not parse client discovery response: \(error.localizedDescription)")
+                Self.logger.error("Could not parse client discovery response: \(error.localizedDescription)")
             }
 
         default:
@@ -228,7 +218,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         for object in objects {
             if let userClient = object as? UserClient, userClient.isSelfClient(),
                let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
-                zmLog.debug("Creating callCenter")
                 let uiContext = managedObjectContext.zm_userInterface!
                 uiContext.performGroupedBlock {
                     self.callCenter = WireCallCenterV3Factory.callCenter(
@@ -265,15 +254,12 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 let conversationUUID = event.conversationUUID,
                 let eventTimestamp = event.timestamp
             else {
-                zmLog.error("ignoring calling message: \(genericMessage)")
+                Self.logger.error("ignoring calling message: \(genericMessage)")
                 return
             }
 
-            zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
-
             guard !callEventContent.isRemoteMute else {
                 callCenter?.isMuted = true
-                zmLog.debug("muted remotely from calling message")
                 return
             }
 
@@ -328,7 +314,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         callEventStatus.scheduledCallEventForProcessing()
         callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-            self?.zmLog.debug("processed calling message")
             self?.callEventStatus.finishedProcessingCallEvent()
         })
     }
@@ -355,14 +340,12 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 domain: conversationId.domain,
                 in: self.managedObjectContext
             ) else {
-                self.zmLog.error("Not sending calling messsage since conversation doesn't exist")
+                Self.logger.error("Not sending calling messsage since conversation doesn't exist")
                 completionHandler(500)
                 return
             }
 
             let genericMessage = GenericMessage(content: callingContent)
-
-            self.zmLog.debug("schedule calling message")
 
             let recipients = targets
                 .map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
@@ -436,9 +419,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
     }
 
     public func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
-        zmLog.debug("requestCallConfig() called, moc = \(managedObjectContext)")
         managedObjectContext.performGroupedBlock { [unowned self] in
-            zmLog.debug("requestCallConfig() on the moc queue")
             callConfigCompletion = completionHandler
 
             callConfigRequestSync.readyForNextRequestIfNotBusy()
@@ -447,15 +428,13 @@ extension CallingRequestStrategy: WireCallCenterTransport {
     }
 
     public func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void) {
-        zmLog.debug("requestClientList() called, moc = \(managedObjectContext)")
-
         managedObjectContext.performGroupedBlock { [unowned self] in
             guard let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
                 domain: conversationId.domain,
                 in: managedObjectContext
             ) else {
-                zmLog.error("Can't request client list since conversation doesn't exist")
+                Self.logger.error("Can't request client list since conversation doesn't exist")
                 completionHandler([])
                 return
             }

@@ -356,7 +356,8 @@ public final class SharingSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
+            if mlsFeature.isEnabled, coreDataStack.syncContext.mlsDecryptionService == nil {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }
         }

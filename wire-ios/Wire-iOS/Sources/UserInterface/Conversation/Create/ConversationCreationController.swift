@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
@@ -55,10 +56,10 @@ final class ConversationCreationController: UIViewController {
     )
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
-    private lazy var optionsSections: [ConversationCreateSectionController] = {
+    private var optionsSections: [ConversationCreateSectionController] {
         let sections = [
             guestsSection,
-            servicesSection,
+            values.shouldIncludeServices ? servicesSection : nil,
             receiptsSection,
             shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
         ].compactMap { $0 }
@@ -68,7 +69,7 @@ final class ConversationCreationController: UIViewController {
         }
 
         return sections
-    }()
+    }
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {
@@ -116,15 +117,33 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var encryptionProtocolSection = {
         let section = ConversationEncryptionProtocolSectionController(values: values)
-        section.isHidden = true
+
         section.tapAction = { sender in
             self.presentEncryptionProtocolPicker(sender: sender) { [weak self] encryptionProtocol in
-                self?.values.encryptionProtocol = encryptionProtocol
-                self?.updateOptions()
+                guard let self else { return }
+
+                values.encryptionProtocol = encryptionProtocol
+                updateOptions()
+
+                reloadOptionsSections()
             }
         }
         return section
     }()
+
+    private func reloadOptionsSections() {
+        guard let collectionView = collectionViewController.collectionView else { return }
+        updateSections()
+
+        // ignoring the conversation name so we don't loose the info while testing
+        let excludedSectionIndex = collectionViewController.sections.startIndex
+        let endIndex = collectionView.numberOfSections
+        let sectionsToReload = IndexSet(integersIn: (excludedSectionIndex + 1) ..< endIndex)
+
+        collectionView.performBatchUpdates {
+            collectionView.reloadSections(sectionsToReload)
+        }
+    }
 
     // MARK: - Life cycle
 
@@ -134,10 +153,8 @@ final class ConversationCreationController: UIViewController {
     ) {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
-
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
         self.values = ConversationCreationValues(
-            encryptionProtocol: mlsFeature.config.defaultProtocol,
+            encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
 
@@ -192,12 +209,16 @@ final class ConversationCreationController: UIViewController {
         ])
 
         collectionViewController.collectionView = collectionView
+        updateSections()
+    }
+
+    private func updateSections() {
+        servicesSection.isHidden = !values.shouldIncludeServices
         collectionViewController.sections = [nameSection, errorSection]
 
         if userSession.selfUser.isTeamMember {
             collectionViewController.sections.append(contentsOf: optionsSections)
         }
-
     }
 
     private func setupNavigationBar() {
@@ -288,7 +309,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 name: values.name,
                 users: Set(users),
                 allowGuests: values.allowGuests,
-                allowServices: values.allowServices,
+                allowServices: values.shouldIncludeServices ? values.allowServices : false,
                 enableReceipts: values.enableReceipts,
                 messageProtocol: messageProtocol
             ) { [weak self] result in
@@ -422,7 +443,7 @@ extension ConversationCreationController {
 
     func presentEncryptionProtocolPicker(
         sender: UIView,
-        _ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void
+        _ completion: @escaping (MessageProtocol) -> Void
     ) {
         let alertController = encryptionProtocolPicker { type in
             completion(type)
@@ -435,14 +456,13 @@ extension ConversationCreationController {
         present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void)
+    func encryptionProtocolPicker(_ completion: @escaping (MessageProtocol) -> Void)
         -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
-        let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+        let proteus = userSession.defaultProtocol == .proteus ? Localizable.ProtocolSelection
             .proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+        let mls = userSession.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
             .ProtocolSelection.mls
 
         let alert = UIAlertController(
@@ -475,4 +495,20 @@ extension ConversationCreationController {
 
         return alert
     }
+}
+
+extension UserSession {
+
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
+        case .proteus, .mixed:
+            return .proteus
+        case .mls:
+            return .mls
+        }
+    }
+
 }

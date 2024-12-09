@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import WireLogging
 import WireSystem
 import WireUtilities
 

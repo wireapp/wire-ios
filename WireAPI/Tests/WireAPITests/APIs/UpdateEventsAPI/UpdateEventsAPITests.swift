@@ -39,20 +39,20 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents() async throws {
         // Then
-        try await createSnapshotter().verifyRequestForAllAPIVersions {
+        try await createSnapshotter().verifyRequestForAllAPIVersions(
             // Given
-            .withResponses([
+            apiService: .withResponses([
                 (.ok, "GetUpdateEventsSuccessResponse200_Page1"),
                 (.ok, "GetUpdateEventsSuccessResponse200_Page2")
-            ])
-        } when: { sut in
-            for try await _ in sut.getUpdateEvents(
-                selfClientID: Scaffolding.selfClientID,
-                sinceEventID: Scaffolding.lastUpdateEventID
-            ) {
-                // Nothing to assert here since we're only snapshotting request.
+            ]), when: { sut in
+                for try await _ in sut.getUpdateEvents(
+                    selfClientID: Scaffolding.selfClientID,
+                    sinceEventID: Scaffolding.lastUpdateEventID
+                ) {
+                    // Nothing to assert here since we're only snapshotting request.
+                }
             }
-        }
+        )
     }
 
     // MARK: - Response handling

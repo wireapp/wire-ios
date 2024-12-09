@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {
@@ -174,13 +175,14 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
         let migrator = OneOnOneMigrator(mlsService: mlsService)
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(migrator: migrator)
+            oneOnOneResolver: OneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
         )
     }
 

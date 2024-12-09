@@ -358,13 +358,11 @@ final class AddParticipantsViewController: UIViewController {
     private func updateSelectionValues() {
         // Update view model after selection changed
         if case let .create(values) = viewModel.context {
-            let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
             let updated = ConversationCreationValues(
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,
-                allowServices: true,
-                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                encryptionProtocol: userSession.defaultProtocol,
                 selfUser: userSession.selfUser
             )
             viewModel = AddParticipantsViewModel(with: .create(updated))

@@ -334,7 +334,6 @@
 "conversation.create.guidance.empty" = "Mindst 1 tegn";
 "conversation.create.guidance.toolong" = "For mange tegn";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Tillad gæster";
 "conversation.create.guests.subtitle" = "Åbn denne samtale for personer uden for dit team.";
 "conversation.create.services.title" = "Allow services";

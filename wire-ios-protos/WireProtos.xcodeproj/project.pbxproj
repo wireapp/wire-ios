@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -30,7 +30,6 @@
 
 /* Begin PBXFileReference section */
 		016BDDED2A9F86E50054FB04 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
-		016BDDEE2A9F88AF0054FB04 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		090837FE1B872DBF00629095 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		090838021B872DBF00629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -57,6 +56,20 @@
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264302CF724FB0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 090838081B872DBF00629095 /* WireProtosTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D2642F2CF724F80005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264302CF724FB0005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		090837FA1B872DBF00629095 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -81,7 +94,6 @@
 			isa = PBXGroup;
 			children = (
 				EE9AEC8F2BD1594600F7853F /* WireProtos.docc */,
-				016BDDEE2A9F88AF0054FB04 /* README.md */,
 				016BDDED2A9F86E50054FB04 /* Scripts */,
 				09B70B4B1B874390002667A6 /* Resources */,
 				090838001B872DBF00629095 /* Protos */,
@@ -130,6 +142,7 @@
 		0908380D1B872DBF00629095 /* ProtosTests */ = {
 			isa = PBXGroup;
 			children = (
+				59D2642F2CF724F80005317F /* TestPlans */,
 				09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */,
 				0908380E1B872DBF00629095 /* Supporting Files */,
 				5E13807F21A30AB7004A646C /* ProtosTests.swift */,
@@ -232,6 +245,9 @@
 			);
 			dependencies = (
 				0908380C1B872DBF00629095 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				59D2642F2CF724F80005317F /* TestPlans */,
 			);
 			name = WireProtosTests;
 			productName = ProtosTests;

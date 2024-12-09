@@ -54,6 +54,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
+    }
+
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
         if mainSplitViewState == .collapsed {
             setupLeftNavigationBarButtonItems()
@@ -177,7 +181,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             withConfiguration: symbolConfiguration
         )!
 
-        var selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
+        let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
         case .favorites, .groups, .oneOnOne, .folder:
             filledFilterImage
         case .none:
@@ -337,7 +341,9 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileViewControllerBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
@@ -445,7 +451,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             guard let self, let mainCoordinator else { return }
 
             Task { @MainActor [folderPickerViewControllerBuilder] in
-                let viewController = folderPickerViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+                let viewController = folderPickerViewControllerBuilder.build(
+                    mainCoordinator: mainCoordinator,
+                    showCloseButton: true
+                )
                 if let sheet = viewController.sheetPresentationController {
                     sheet.detents = [.medium(), .large()]
                     sheet.prefersGrabberVisible = true

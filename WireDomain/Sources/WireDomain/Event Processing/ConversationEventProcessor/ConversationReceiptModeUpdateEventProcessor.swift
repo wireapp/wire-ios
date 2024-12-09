@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireLogging
 import WireSystem
 
 /// Process conversation receipt mode update events.
@@ -36,11 +37,12 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
     let userRepository: any UserRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
+    let messageRepository: any MessageRepositoryProtocol
 
     func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws {
         let senderID = event.senderID
         let conversationID = event.conversationID
-        let isEnabled = event.newRecieptMode == 1
+        let isEnabled = event.newReceiptMode == 1
 
         let sender = try await userRepository.fetchUser(
             id: senderID.uuid,
@@ -69,20 +71,17 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             timestamp: .now
         )
 
-        await conversationRepository.addSystemMessage(
-            systemMessage,
-            to: conversation
+        let systemMessageType: MessageType = .readReceiptsStatus(
+            isEnabled: isEnabled,
+            sender: (senderID.uuid, senderID.domain),
+            date: .now
         )
 
-        let isConversationArchived = await conversationLocalStore.isConversationArchived(conversation)
-        let mutedMessageTypes = await conversationLocalStore.conversationMutedMessageTypes(conversation)
-
-        if isConversationArchived, mutedMessageTypes == .none {
-            await conversationLocalStore.storeConversation(
-                isArchived: false,
-                for: conversation
-            )
-        }
+        await messageRepository.addMessageToConversation(
+            messageType: systemMessageType,
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain
+        )
     }
 
 }

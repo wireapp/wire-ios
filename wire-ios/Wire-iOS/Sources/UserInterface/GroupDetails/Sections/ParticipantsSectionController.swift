@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ParticipantsRowType {
@@ -186,6 +187,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType
     private var token: NSObjectProtocol?
+    private lazy var sizingFooter = SectionFooter()
 
     init(
         participants: [UserType],
@@ -266,8 +268,14 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         switch configuration {
         case let .user(user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
-            let isE2EICertified = if let userID = user.remoteIdentifier,
-                                     let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
+
+            let isE2EICertified =
+                if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] {
+                    userStatus.isE2EICertified
+                } else {
+                    false
+                }
+
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,
@@ -295,17 +303,12 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
 
-        guard
-            viewModel.footerVisible,
-            let footer = collectionView.dequeueFooter(for: IndexPath(item: 0, section: section)) as? SectionFooter
-        else {
-            return .zero
-        }
+        guard viewModel.footerVisible else { return .zero }
 
-        footer.titleLabel.text = viewModel.footerTitle
-        footer.size(fittingWidth: collectionView.bounds.width)
+        sizingFooter.titleLabel.text = viewModel.footerTitle
+        sizingFooter.size(fittingWidth: collectionView.bounds.width)
 
-        return footer.bounds.size
+        return sizingFooter.bounds.size
     }
 
     override func collectionView(

@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "B7D299A0-AF3C-405B-A529-A76A965FEE7A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireImages.xcodeproj",
+        "identifier" : "096960151B663E7C006DF53B",
+        "name" : "WireImages-iosTests"
+      }
+    }
+  ],
+  "version" : 1
+}
