@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public extension Notification.Name {
+    static let typingNotification = Notification.Name("ZMTypingNotification")
+}
 
 @objc
-class TypingUsers: NSObject {
+public class TypingUsers: NSObject {
 
     // MARK: - Properties
 
@@ -28,7 +30,7 @@ class TypingUsers: NSObject {
     // MARK: - Internal Methods
 
     @objc(updateTypingUsers:inConversation:)
-    func update(typingUsers: Set<ZMUser>, in conversation: ZMConversation) {
+    public func update(typingUsers: Set<ZMUser>, in conversation: ZMConversation) {
         let conversationId = conversation.objectID
         require(!conversationId.isTemporaryID)
 
@@ -43,7 +45,7 @@ class TypingUsers: NSObject {
         conversationIdToUserIds[conversationId] = userIds
     }
 
-    func typingUsers(in conversation: ZMConversation) -> Set<ZMUser> {
+    public func typingUsers(in conversation: ZMConversation) -> Set<ZMUser> {
         let conversationId = conversation.objectID
 
         guard

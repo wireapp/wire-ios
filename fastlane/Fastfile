@@ -74,22 +74,21 @@ platform :ios do
         end
        
        UI.message "🤖 No schemes to test" if schemas.empty?
-       
-       # hardcoded values that are required - not meaningful for testing
-       options[:build_type] = "Development"
-       options[:build_number] = 1
-       build = Build.new(options: options)
-       
-       
-       UI.message "🤖 Testing schemas:  #{schemas.join(', ')}"
-       
-       testplan = options[:testplan] || "AllTests"
-       schemas.each do |scheme|
-           UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
-           test_plan(build, scheme, testplan)
-       end
+
+       run_tests_frameworks(schemas, options)
     end
 
+    desc "Test one framework only"
+    lane :select_framework do |options|
+        frameworks = Framework.all.values
+        framework_options = frameworks.map { |f| f.scheme }
+    
+        selected_choice = UI.select("Select a framework for testing:", framework_options)
+        framework = frameworks.find { |framework| framework.scheme == selected_choice }
+
+        run_tests_frameworks([framework.scheme], options)
+    end
+    
     lane :select_frameworks do |options|
         frameworks = Framework.all.values
         select_all = "All"  
@@ -261,6 +260,22 @@ platform :ios do
         build_and_upload_app(options)
     end
 
+    def run_tests_frameworks(schemas, options)        
+        # hardcoded values that are required - not meaningful for testing
+        options[:build_type] = "Development"
+        options[:build_number] = 1
+        build = Build.new(options: options)
+        
+        UI.message "🤖 Testing schemas: #{schemas.join(', ')}"
+        
+        testplan = options[:testplan] || "AllTests"
+        schemas.each do |scheme|
+            UI.message "🤖 Testing scheme #{scheme} with plan #{testplan}"
+            test_plan(build, scheme, testplan)
+        end
+     end
+ 
+ 
     def build_and_upload_app(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)

@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireAnalytics
+import WireAPI
 import WireDataModel
 import WireLogging
 import WireRequestStrategy
@@ -28,6 +29,8 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
+
+public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
 
 @objcMembers
 public final class ZMUserSession: NSObject {
@@ -41,6 +44,8 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     private(set) var coreDataStack: CoreDataStack!
+    private let apiServiceFactory: APIServiceFactory
+    private(set) var apiService: APIServiceProtocol?
     let application: ZMApplication
     let flowManager: FlowManagerType
     private(set) var mediaManager: MediaManagerType
@@ -194,7 +199,7 @@ public final class ZMUserSession: NSObject {
     }
 
     // swiftlint:disable:next todo_requires_jira_link
-    public var selfUserClient: UserClient? { // TODO: jacob we don't want this to be public
+    public var selfUserClient: WireDataModel.UserClient? { // TODO: jacob we don't want this to be public
         ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
@@ -362,6 +367,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
+        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -380,6 +386,7 @@ public final class ZMUserSession: NSObject {
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies
     ) {
+        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.appVersion = appVersion
         self.flowManager = flowManager
@@ -732,7 +739,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Access Token
 
-    private func renewAccessTokenIfNeeded(for userClient: UserClient) {
+    private func renewAccessTokenIfNeeded(for userClient: WireDataModel.UserClient) {
         guard
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
@@ -1054,14 +1061,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient) {
+    public func didRegisterSelfUserClient(_ userClient: WireDataModel.UserClient) {
         // If during registration user allowed notifications,
         // The push token can only be registered after client registration
         transportSession.pushChannel.clientID = userClient.remoteIdentifier
         registerCurrentPushToken()
         renewAccessTokenIfNeeded(for: userClient)
 
-        UserClient.triggerSelfClientCapabilityUpdate(syncContext)
+        WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard
@@ -1085,6 +1092,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
         WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        guard  let selfUserId = ZMUser.selfUser(in: syncContext).remoteIdentifier else {
+            assertionFailure("unable to find selfUser from syncContext,")
+            return
+        }
+        apiService = apiServiceFactory(clientId, selfUserId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
