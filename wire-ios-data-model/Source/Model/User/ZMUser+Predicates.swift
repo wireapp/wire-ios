@@ -35,6 +35,16 @@ public extension ZMUser {
         predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
 
+    static func predicateForConnectedUsers(
+        withSearch query: String,
+        hostedOnDomain domain: String
+    ) -> NSPredicate {
+        predicateForUsers(
+            withSearch: query,
+            connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        .and(NSPredicate.isHostedOnDomain(domain))
+    }
+
     /// Retrieves all users with name or handle matching search string
     ///
     /// - Parameter query: search string
