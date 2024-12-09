@@ -17,5 +17,4 @@
 //
 
 public typealias WireCountly = Countly
-
 public typealias WireCountlyConfig = CountlyConfig

@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import WireAnalytics
+
+public import WireAnalytics
 
 // this mock is generated manually because of (any Error)?
 // TODO: [WPB-11829] update sourcery
