@@ -22,6 +22,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine

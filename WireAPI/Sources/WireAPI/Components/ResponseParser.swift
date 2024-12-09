@@ -73,7 +73,7 @@ struct ResponseParser<Success> {
     func failure(
         code: HTTPStatusCode,
         label: String = "",
-        error: any Error
+        error: some Error
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { _, data in

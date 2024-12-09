@@ -145,7 +145,7 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
-    static func triggerResyncResources(_ type: any SettingsCellDescriptorType) {
+    static func triggerResyncResources() {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
             ZMUserSession.shared()?.requestResyncResources()
         }
@@ -242,8 +242,10 @@ enum DebugActions {
             switch command {
             case .repairInvalidAccessRoles:
                 DebugActions.updateInvalidAccessRoles()
-            }
 
+            case .resyncResources:
+                DebugActions.triggerResyncResources()
+            }
         }
     }
 
