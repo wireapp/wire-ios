@@ -228,11 +228,16 @@ jobs:
     needs: run-tests
     if: always()
     steps:
+      - name: Sanitize branch name
+        run: |
+            SANITIZED_BRANCH=$(echo "${{ inputs.branch }}" | sed 's/[^a-zA-Z0-9._-]/_/g')
+            echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" >> $GITHUB_ENV
+            
       - name: Download tests results
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: Test reports for ${{ inputs.branch }} (${{ github.run_id }})
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
       - uses: actions/setup-node@v3
         with:
           node-version: 18
