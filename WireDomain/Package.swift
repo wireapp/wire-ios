@@ -15,8 +15,7 @@ let package = Package(
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WirePlugins"),
         .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
-        .package(name: "WireAnalytics", path: "../WireAnalytics")
+        .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(
@@ -25,10 +24,7 @@ let package = Package(
         ),
         .target(
             name: "WireDomainPkg",
-            dependencies: [
-                "WireAPI",
-                "WireAnalytics"
-            ],
+            dependencies: ["WireAPI"],
             path: "./Sources/Package"
         ),
         .target(
