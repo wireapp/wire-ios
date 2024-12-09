@@ -128,6 +128,8 @@ class Framework
             "WireUIAll" # use a custom scheme that includes all targets of WireUI, fastlane does not found WireUI-Package
         when "WireAPI"
             "WireAPIAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "wire-ios-ziphy"
+            "Ziphy"
         when "WireDomain"
             name
         when "WireAnalytics"
