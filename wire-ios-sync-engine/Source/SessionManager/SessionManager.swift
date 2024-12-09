@@ -364,7 +364,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyAbstraction
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -419,7 +420,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             sharedUserDefaults: sharedUserDefaults,
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
-            analyticsServiceConfiguration: analyticsServiceConfiguration
+            analyticsServiceConfiguration: analyticsServiceConfiguration,
+            countlyProvider: countlyProvider
         )
 
         configureBlacklistDownload()
@@ -482,7 +484,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
-        analyticsServiceConfiguration: AnalyticsServiceConfiguration?
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        countlyProvider: @escaping () -> CountlyAbstraction
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -549,7 +552,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
             deviceModel: UIDevice.current.model,
-            deviceOS: UIDevice.current.systemVersion
+            deviceOS: UIDevice.current.systemVersion,
+            countlyProvider: countlyProvider
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {

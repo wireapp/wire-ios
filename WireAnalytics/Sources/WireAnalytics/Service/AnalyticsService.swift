@@ -38,21 +38,22 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// Create a new `AnalyticsService`.
     ///
     /// A non-nil config is needed to track analytics data.
-    ///
-    /// - Parameters:
-    ///   - config: A config containing the authentication key and server host.
-    ///   - logger: A function that logs a message on behalf of the service.
 
-//    public convenience init(config: Config?, deviceModel: String, deviceOS: String) {
-//        self.init(
-//            config: config,
-//            baseSegmentation: [
-//                .deviceModel(deviceModel),
-//                .deviceOS(deviceOS)
-//            ],
-//            countlyProvider: { Countly.sharedInstance() }
-//        )
-//    }
+    public convenience init(
+        config: Config?,
+        deviceModel: String,
+        deviceOS: String,
+        countlyProvider: @escaping () -> any CountlyAbstraction
+    ) {
+        self.init(
+            config: config,
+            baseSegmentation: [
+                .deviceModel(deviceModel),
+                .deviceOS(deviceOS)
+            ],
+            countlyProvider: countlyProvider
+        )
+    }
 
     init(
         config: Config?,
