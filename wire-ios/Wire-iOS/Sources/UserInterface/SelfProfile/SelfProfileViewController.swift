@@ -22,7 +22,9 @@
 
 import SwiftUI
 import UIKit
+import WireAPI
 import WireCommonComponents
+import WireDomainAPI
 import WireDesign
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
@@ -109,13 +111,19 @@ final class SelfProfileViewController: UIViewController {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-        } else {
-            // TODO: [WPB-11270] show banner
-//            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-//               actionCallback: { [weak self] _ in
-//                   self?.userDidTapCreateTeam()
-//               }
-//           )
+            // If we create the use case later, then (for many reasons) it might be `nil`
+            // and we would have displayed a non-functionning banner.
+            // we don't want that
+        } else if
+            let backendInfoApiVersion = BackendInfo.apiVersion,
+            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+            let userName = selfUser.name,
+            let useCase =  SessionManager.shared?.activeUserSession?.createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) {
+            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+               actionCallback: { [weak self] action in
+                   self?.onTeamCreationBannerInteraction(action, useCase: useCase, userName: userName)
+               }
+           )
         }
     }
 
@@ -236,20 +244,34 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    private func onTeamCreationBannerInteraction(_ action: SelfProfileViewCallToActionBanner.Action) {
+    private func onTeamCreationBannerInteraction(
+        _ action: SelfProfileViewCallToActionBanner.Action,
+        useCase: IndividualToTeamMigrationUseCase,
+        userName: String
+    ) {
         switch action {
         case .createWireTeam:
-            userDidTapCreateTeam()
+            userDidTapCreateTeam(useCase: useCase, userName: userName)
         }
     }
 
-    private func userDidTapCreateTeam() {
-        // TODO: [WPB-11270] Present team creation flow
-//        let vc = IndividualToTeamMigrationViewController(
-//            features: ,
-//            useCase: ,
-//        )
-//        present(vc, animated: true)
+    private func userDidTapCreateTeam(useCase: IndividualToTeamMigrationUseCase, userName: String) {
+        let vc = IndividualToTeamMigrationViewController(
+            useCase: useCase,
+            userProfileName: userName,
+            actionCallback: { [weak self] action in
+                guard let self else { return }
+                switch action {
+                case .cancel:
+                    presentedViewController?.dismiss(animated: true)
+                case .completionGoToApp:
+                    presentedViewController?.dismiss(animated: true)
+                case .completionGoToTeamManagement:
+                    presentedViewController?.dismiss(animated: true)
+                }
+            }
+        )
+        present(vc, animated: true)
     }
 
     @objc
