@@ -57,9 +57,9 @@ func datadogDependencies() -> [Target.Dependency] {
 
 func datadogFiles() -> [String] {
     if datadogEnabled {
-        ["WireDatadog.swift", "LogLevel.swift"]
+        ["WireDatadog.swift"]
     } else {
-        ["WireFakeDatadog.swift", "LogLevel.swift"]
+        ["WireFakeDatadog.swift"]
     }
 }
 
