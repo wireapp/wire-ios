@@ -19,7 +19,7 @@
 /// Errors originating from `ConversationsAPI`.
 public enum ConversationsAPIError: Error {
 
-    /// A request url is not invalid.
+    /// A request url is invalid.
     case invalidURL
 
     /// Failure if functionality has not been implemented.

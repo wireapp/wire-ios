@@ -34,6 +34,7 @@ public extension WireLogger {
     static let ear = WireLogger(tag: "encryption-at-rest")
     static let environment = WireLogger(tag: "environment")
     static let featureConfigs = WireLogger(tag: "feature-configurations")
+    static let individualToTeamMigration = WireLogger(tag: "individual-to-team-migration")
     static let keychain = WireLogger(tag: "keychain")
     static let localStorage = WireLogger(tag: "local-storage")
     static let mainCoordinator = WireLogger(tag: "main-coordinator")

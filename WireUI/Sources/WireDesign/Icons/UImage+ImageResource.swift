@@ -20,4 +20,5 @@ import UIKit
 
 public extension UIImage {
     static let close = UIImage(resource: .close)
+    static let info = UIImage(resource: .info)
 }
