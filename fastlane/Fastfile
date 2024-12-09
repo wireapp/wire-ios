@@ -483,8 +483,6 @@ platform :ios do
                 output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
                 output_types: "junit",
                 cloned_source_packages_path: ENV['PACKAGES_DIR'],
-                disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
                 number_of_retries: 2,
                 build_for_testing: true
             )
@@ -510,7 +508,7 @@ platform :ios do
                 output_types: "junit",
                 cloned_source_packages_path: ENV['PACKAGES_DIR'],
                 disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"],
+                skip_package_dependencies_resolution: true,
                 number_of_retries: 2,
                 test_without_building: true,
             )
