@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public final class CreateGroupConversationAction: EntityAction {
 

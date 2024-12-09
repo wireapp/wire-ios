@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireLogging
 
 extension ZClientViewController: StartUIDelegate {
 
