@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<<< HEAD:WireLogging/Sources/WireLogging/WireLogMessage/WireLogLevel.swift
 public enum WireLogLevel {
     case debug
     case info
@@ -24,14 +23,4 @@ public enum WireLogLevel {
     case warn
     case error
     case critical
-========
-import XCTest
-
-final class WireCanvasTests: XCTestCase {
-
-    func testExample() throws {
-        throw XCTSkip("Placeholder for tests")
-    }
-
->>>>>>>> d03ca9769515b6088f45cf81b5b29526e6739a94:wire-ios-canvas/WireCanvasTests/WireCanvasTests.swift
 }
