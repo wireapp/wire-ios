@@ -123,6 +123,19 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
+    public convenience init(
+        useCase: any IndividualToTeamMigrationUseCase,
+        userProfileName: String,
+        actionCallback: @escaping @Sendable (Action) -> Void
+    ) {
+        self.init(
+            features: .features,
+            useCase: useCase,
+            userProfileName: userProfileName,
+            actionCallback: actionCallback
+        )
+    }
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError()
@@ -234,6 +247,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         present(alert, animated: true)
     }
 }
+
 
 @MainActor
 private func hostedView(
