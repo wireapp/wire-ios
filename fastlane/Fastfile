@@ -114,7 +114,7 @@ platform :ios do
 
 
         # Filter sorted frameworks to only include the selected ones
-        matching_frameworks = all_frameworks.select { |framework| selected_frameworks.include?(framework) }
+        matching_frameworks = frameworks.select { |framework| selected_frameworks.include?(framework) }
         
         unique_schemes = matching_frameworks.map(&:scheme).uniq
         unique_schemes
