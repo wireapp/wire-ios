@@ -307,7 +307,6 @@
 		546EEA8D2536DDF500195097 /* URLActionRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546EEA8C2536DDF500195097 /* URLActionRouter.swift */; };
 		546EEA8F2536DFAB00195097 /* SwitchingAccountRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546EEA8E2536DFAB00195097 /* SwitchingAccountRouter.swift */; };
 		5489E20E252C84BE0010461D /* AppStateCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5489E20D252C84BE0010461D /* AppStateCalculator.swift */; };
-		549D55AC1DBE03990035EB66 /* Settings+Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 549D55AB1DBE03990035EB66 /* Settings+Logging.swift */; };
 		54B27986258113FD0043ED25 /* AuthenticatedRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B27985258113FD0043ED25 /* AuthenticatedRouter.swift */; };
 		54D355E025559BFC0004DAC7 /* ActiveCallRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D355DF25559BFC0004DAC7 /* ActiveCallRouter.swift */; };
 		54F7C27F1D74367E004D8087 /* AddressBookHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F7C27E1D74367E004D8087 /* AddressBookHelper.swift */; };
@@ -2317,7 +2316,6 @@
 		546EEA8C2536DDF500195097 /* URLActionRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLActionRouter.swift; sourceTree = "<group>"; };
 		546EEA8E2536DFAB00195097 /* SwitchingAccountRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchingAccountRouter.swift; sourceTree = "<group>"; };
 		5489E20D252C84BE0010461D /* AppStateCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateCalculator.swift; sourceTree = "<group>"; };
-		549D55AB1DBE03990035EB66 /* Settings+Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Settings+Logging.swift"; sourceTree = "<group>"; };
 		54AA3C7B24E53E0100FE1F94 /* Security-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Security-Flags.xcconfig"; sourceTree = "<group>"; };
 		54B27985258113FD0043ED25 /* AuthenticatedRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedRouter.swift; sourceTree = "<group>"; };
 		54D355DF25559BFC0004DAC7 /* ActiveCallRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveCallRouter.swift; sourceTree = "<group>"; };
@@ -5818,7 +5816,6 @@
 				871BC3371D34F94200DF0793 /* Settings */,
 				A949418623E08AF6001B0373 /* Settings.swift */,
 				A90E4ABB2381B26600468F31 /* Settings+ColorScheme.swift */,
-				549D55AB1DBE03990035EB66 /* Settings+Logging.swift */,
 				EEB8A2CF1F628D1100958881 /* Settings+Account.swift */,
 				1639A80C225F604100868AB9 /* Settings+Availability.swift */,
 				1EE9DCAA1B5F9A6D00E347DF /* TokenField */,
@@ -9446,7 +9443,6 @@
 				16626500217DAC4F00300F45 /* ConversationMessageCell.swift in Sources */,
 				163E8C7921E363FE0030BD8D /* ConversationGuestsAllowedCell.swift in Sources */,
 				5915B95A2BF4BAFF00215817 /* DidPresentNotificationPermissionHintUseCase.swift in Sources */,
-				549D55AC1DBE03990035EB66 /* Settings+Logging.swift in Sources */,
 				EE2BCA0D2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift in Sources */,
 				EEC7E82A2178B55100E32835 /* ConversationNotificationOptionsViewController.swift in Sources */,
 				7CCA7CC4221AF55300A7CA2A /* ProfileFooterView.swift in Sources */,
