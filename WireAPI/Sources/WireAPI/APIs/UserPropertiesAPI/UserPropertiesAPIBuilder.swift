@@ -53,6 +53,8 @@ public struct UserPropertiesBuilder {
             UserPropertiesAPIV5(httpClient: httpClient)
         case .v6:
             UserPropertiesAPIV6(httpClient: httpClient)
+        case .v7:
+            UserPropertiesAPIV7(httpClient: httpClient)
         }
     }
 
