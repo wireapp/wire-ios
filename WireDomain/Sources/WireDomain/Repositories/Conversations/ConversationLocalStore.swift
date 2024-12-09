@@ -281,6 +281,27 @@ public protocol ConversationLocalStoreProtocol {
         for conversation: ZMConversation
     ) async -> MLSGroupID?
 
+    /// Sends a notification using the main context informing typing users
+    /// have been updated for a given conversation.
+    /// - Parameters:
+    ///     - conversationID: The conversation managed object ID.
+    ///     - usersID: The updated typing users managed object IDs.
+
+    func updateTypingUsers(
+        conversationID: NSManagedObjectID,
+        usersID: Set<NSManagedObjectID>
+    ) async
+
+    /// Obtain permanent stored object IDs.
+    /// - Parameters:
+    ///     - user: The user to get the permanent managed object ID for.
+    ///     - conversation: The conversation to get the permanent managed object ID for.
+
+    func obtainPermanentIDs(
+        user: ZMUser,
+        conversation: ZMConversation
+    )
+
     /// Fetches the current conversation name
     /// - parameter conversation: The conversation to fetch the name for.
     /// - returns: The conversation name
@@ -298,6 +319,33 @@ public protocol ConversationLocalStoreProtocol {
         newName: String,
         conversation: ZMConversation
     ) async
+
+    /// Updates or creates a MLS group locally.
+    /// - Parameters:
+    ///     - groupID: The MLS group ID.
+
+    func updateOrCreateMLSGroup(
+        groupID: MLSGroupID
+    ) async
+
+    /// Stores the conversation MLS group ID and marks the mls status as ready.
+    /// - Parameters:
+    ///     - mlsGroupID: The MLS group ID related to the conversation.
+    ///     - conversation: The conversation to update the properties for.
+
+    func storeMLSConversationEstablished(
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async
+
+    /// Fetches the other user qualified id (not self user) in a 1:1 conversation.
+    /// - Parameters:
+    ///     - conversation: The 1:1 conversation self and other user should be part of.
+    /// - returns: The other user `QualifiedID`.
+
+    func fetchOtherUserIDInOneOnOneConversation(
+        conversation: ZMConversation
+    ) async -> WireDataModel.QualifiedID?
 
 }
 
@@ -332,6 +380,61 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func storeMLSConversationEstablished(
+        mlsGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.mlsStatus = .ready
+            conversation.mlsGroupID = mlsGroupID
+        }
+    }
+
+    public func updateOrCreateMLSGroup(
+        groupID: MLSGroupID
+    ) async {
+        await context.perform { [context] in
+
+            MLSGroup.updateOrCreate(
+                id: groupID,
+                inSyncContext: context
+            ) {
+                $0.lastKeyMaterialUpdate = .now
+            }
+        }
+    }
+
+    public func fetchOtherUserIDInOneOnOneConversation(
+        conversation: ZMConversation
+    ) async -> WireDataModel.QualifiedID? {
+        await context.perform {
+            guard conversation.conversationType == .oneOnOne else {
+                WireLogger.conversation.info(
+                    "conversation type is not expected 'oneOnOne', aborting."
+                )
+
+                return nil
+            }
+
+            guard
+                let otherUser = conversation.localParticipantsExcludingSelf.first,
+                let otherUserID = otherUser.remoteIdentifier,
+                let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+            else {
+                WireLogger.conversation.warn(
+                    "failed to retrieve other user in 1:1 conversation"
+                )
+
+                return nil
+            }
+
+            return QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+        }
+    }
 
     public func updateMemberStatus(
         mutedStatusInfo: (status: Int?, referenceDate: Date?),
@@ -481,6 +584,74 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
+        }
+    }
+
+    public func updateTypingUsers(
+        conversationID: NSManagedObjectID,
+        usersID: Set<NSManagedObjectID>
+    ) async {
+        await context.perform { [context] in
+            if let conversation = context.object(with: conversationID) as? ZMConversation {
+
+                let users = usersID.compactMap {
+                    context.object(with: $0) as? ZMUser
+                }
+
+                context.typingUsers?.update(
+                    typingUsers: Set(users),
+                    in: conversation
+                )
+
+                self.notifyTypingUsers(
+                    Set(users),
+                    in: conversation
+                )
+            }
+        }
+    }
+
+    public func obtainPermanentIDs(
+        user: ZMUser,
+        conversation: ZMConversation
+    ) {
+        if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
+            do {
+                try context.obtainPermanentIDs(for: [user, conversation])
+            } catch {
+                WireLogger.eventProcessing.error(
+                    "Failed to obtain permanent object ids: \(error.localizedDescription)"
+                )
+            }
+        }
+    }
+
+    public func addSystemMessage(
+        _ message: SystemMessage,
+        to conversation: ZMConversation
+    ) async {
+        await context.perform { [context] in
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+            systemMessage.systemMessageType = message.type
+            systemMessage.sender = message.sender
+            systemMessage.users = message.users ?? Set()
+            systemMessage.addedUsers = message.addedUsers
+            systemMessage.clients = message.clients ?? Set()
+            systemMessage.serverTimestamp = message.timestamp
+
+            if let duration = message.duration {
+                systemMessage.duration = duration
+            }
+
+            if let messageTimer = message.messageTimer {
+                systemMessage.messageTimer = NSNumber(value: messageTimer)
+            }
+
+            systemMessage.relevantForConversationStatus = message.relevantForStatus
+            systemMessage.participantsRemovedReason = message.removedReason
+            systemMessage.domains = message.domains
+
+            conversation.append(systemMessage)
         }
     }
 
@@ -828,6 +999,20 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Private
+
+    private func notifyTypingUsers(
+        _ typingUsers: Set<ZMUser>,
+        in conversation: ZMConversation
+    ) {
+        let typingNotificationUsersKey = "typingUsers"
+
+        NotificationInContext(
+            name: .typingNotification,
+            context: context.notificationContext,
+            object: self,
+            userInfo: [typingNotificationUsersKey: typingUsers]
+        ).post()
+    }
 
     /// Updates or creates a conversation of type `connection` locally.
     ///

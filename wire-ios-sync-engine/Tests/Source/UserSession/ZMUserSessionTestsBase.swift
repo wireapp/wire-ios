@@ -126,6 +126,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
+            apiServiceFactory: { _, _ in MockAPIService() },
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,

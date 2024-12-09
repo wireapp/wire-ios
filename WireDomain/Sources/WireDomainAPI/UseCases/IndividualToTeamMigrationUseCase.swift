@@ -18,20 +18,23 @@
 
 import Foundation
 
-@objc
-extension NSManagedObjectContext {
+public enum IndividualToTeamMigrationError: Error, Sendable {
+    case userAlreadyInTeam
+    case generic(any Error)
+}
 
-    private static let TypingUsersKey = "ZMTypingUsers"
+public struct IndividualToTeamMigrationResult: Sendable {
+    public let teamID: UUID
+    public let teamName: String
 
-    var typingUsers: TypingUsers? {
-        guard zm_isUserInterfaceContext else { return nil }
-
-        if let users = userInfo[NSManagedObjectContext.TypingUsersKey] as? TypingUsers {
-            return users
-        } else {
-            let users = TypingUsers()
-            userInfo[NSManagedObjectContext.TypingUsersKey] = users
-            return users
-        }
+    public init(teamID: UUID, teamName: String) {
+        self.teamID = teamID
+        self.teamName = teamName
     }
+}
+
+// sourcery: AutoMockable
+/// Sends a request to the backend to migrate the user to a team.
+public protocol IndividualToTeamMigrationUseCase: Sendable {
+    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult
 }

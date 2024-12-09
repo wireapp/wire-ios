@@ -7,6 +7,7 @@ let package = Package(
     name: "WireDomainPackage",
     platforms: [.iOS(.v16), .macOS(.v12)],
     products: [
+        .library(name: "WireDomainAPI", targets: ["WireDomainAPI"]),
         .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
         .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
     ],
@@ -17,6 +18,10 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
+        .target(
+            name: "WireDomainAPI",
+            path: "./Sources/WireDomainAPI"
+        ),
         .target(
             name: "WireDomainPkg",
             dependencies: ["WireAPI"],

@@ -16,25 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import XCTest
+@testable import WireIndividualToTeamMigrationUI
 
-/// Process conversation typing events.
-
-protocol ConversationTypingEventProcessorProtocol {
-
-    /// Process a conversation typing event.
-    ///
-    /// - Parameter event: A conversation typing event.
-
-    func processEvent(_ event: ConversationTypingEvent) async throws
-
-}
-
-struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
-
-    func processEvent(_: ConversationTypingEvent) async throws {
-        // TODO: [WPB-10178]
-        assertionFailure("not implemented yet")
+class WireIndividualToTeamMigrationTests: XCTestCase {
+    func testExample() throws {
+        throw XCTSkip("[WPB-14864] Not yet implemented")
     }
-
 }
