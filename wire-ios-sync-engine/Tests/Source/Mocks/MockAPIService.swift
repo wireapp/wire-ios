@@ -32,6 +32,6 @@ public class MockAPIService: APIServiceProtocol {
         _ request: URLRequest,
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse) {
-        return try await requestHandler?(request, requiringAccessToken) ?? (Data(), HTTPURLResponse())
+        try await requestHandler?(request, requiringAccessToken) ?? (Data(), HTTPURLResponse())
     }
 }
