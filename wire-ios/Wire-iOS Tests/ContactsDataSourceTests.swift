@@ -27,7 +27,7 @@ final class ContactsDataSourceTests: XCTestCase {
     override func setUp() {
         super.setUp()
         Thread.sleep(forTimeInterval: 0.5)
-        dataSource = ContactsDataSource()
+        dataSource = ContactsDataSource(isFederationUsageAllowed: true)
     }
 
     override func tearDown() {

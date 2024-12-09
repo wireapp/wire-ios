@@ -16,16 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public extension UserSession {
 
-public extension String {
-    /// A classic whitespace.
-    static let breakingSpace = " "
-
-    /// A standard non-breaking space (&#160;).
-    static let nonBreakingSpace = "\u{00A0}"
-
-    func trim() -> String {
-        trimmingCharacters(in: .whitespaces)
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
+        case .proteus, .mixed:
+            return .proteus
+        case .mls:
+            return .mls
+        }
     }
+
+    var isFederationUsageAllowed: Bool {
+        guard BackendInfo.isMLSEnabled else {
+            // If there is no MLS removal key configured,federation search is allowed.
+            return true
+        }
+        return defaultProtocol != .proteus
+    }
+
 }
