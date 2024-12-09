@@ -18,11 +18,10 @@
 
 import Foundation
 
-@MainActor
-public protocol Factory {
+public protocol Factory: Sendable {
 
     func makeDetermineAuthenticationMethodUseCase() -> any DetermineAuthenticationMethodUseCaseProtocol
-    func makeEmailLoginUseCase() -> any EmailLogInUseCaseProtocol
+    func makeEmailLoginUseCase() -> any LoginViaEmailUseCaseProtocol
     func makePerformInitialSyncUseCase() -> any PerformInitialSyncUseCaseProtocol
     func makeSubmitTwoFactorAuthenticationCodeUseCase() -> any SubmitTwoFactorAuthenticationCodeUseCaseProtocol
 

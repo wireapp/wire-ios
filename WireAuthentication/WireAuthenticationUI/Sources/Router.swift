@@ -40,8 +40,8 @@ public final class Router: ObservableObject {
 enum Destination: Hashable {
 
     case landing
-    case login
-    case loginOrRegister
+    case login(email: String)
+    case loginOrRegister(email: String)
     case twoFactorAuthentication
 
 

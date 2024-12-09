@@ -42,11 +42,17 @@ public struct RootView: View {
                 case .landing:
                     landing
 
-                case .login:
-                    login(isRegistrationAllowed: false)
+                case .login(let email):
+                    login(
+                        email: email,
+                        isRegistrationAllowed: false
+                    )
 
-                case .loginOrRegister:
-                    login(isRegistrationAllowed: true)
+                case .loginOrRegister(let email):
+                    login(
+                        email: email,
+                        isRegistrationAllowed: true
+                    )
 
                 case .twoFactorAuthentication:
                     twoFactorAuthentication
@@ -64,11 +70,15 @@ public struct RootView: View {
         )
     }
 
-    private func login(isRegistrationAllowed: Bool) -> some View {
+    private func login(
+        email: String,
+        isRegistrationAllowed: Bool
+    ) -> some View {
         LoginView(
             viewModel: LoginViewModel(
                 router: router,
-                emailLogIn: factory.makeEmailLoginUseCase(),
+                loginViewEmailProvider: { factory.makeEmailLoginUseCase() },
+                email: email,
                 isRegistrationAllowed: isRegistrationAllowed
             )
         )
@@ -94,8 +104,8 @@ struct FactoryMock: Factory {
         DetermineAuthenticationMethodUseCaseMock()
     }
     
-    func makeEmailLoginUseCase() -> any EmailLogInUseCaseProtocol {
-        EmailLogInUseCaseMock()
+    func makeEmailLoginUseCase() -> any LoginViaEmailUseCaseProtocol {
+        LoginViaEmailUseCaseMock()
     }
     
     func makePerformInitialSyncUseCase() -> any PerformInitialSyncUseCaseProtocol {

@@ -17,18 +17,11 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-public struct EmailLoginUseCase: EmailLogInUseCaseProtocol {
+class LoginAPIV1: LoginAPIV0 {
 
-    public init() {}
-
-    @MainActor
-    public func invoke(
-        email: String,
-        password: String
-    ) async throws {
-
+    override var apiVersion: APIVersion {
+        .v1
     }
 
 }

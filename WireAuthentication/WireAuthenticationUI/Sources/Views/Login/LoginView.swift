@@ -68,7 +68,8 @@ struct LoginView: View {
         LoginView(
             viewModel: LoginViewModel(
                 router: Router(),
-                emailLogIn: EmailLogInUseCaseMock(),
+                loginViewEmailProvider: { LoginViaEmailUseCaseMock() },
+                email: "foo@bar.com",
                 isRegistrationAllowed: true
             )
         )

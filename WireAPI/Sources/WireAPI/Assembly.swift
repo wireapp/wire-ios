@@ -19,6 +19,23 @@
 import Foundation
 import WireFoundation
 
+public enum WireAPIAssembly {
+
+    public static func makeLoginStack(
+        backendURL: URL,
+        minTLSVersion: TLSVersion,
+        apiVersion: APIVersion
+    ) -> any LoginAPI {
+        let urlSessionConfigurationFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
+        let networkService = NetworkService(baseURL: backendURL)
+        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
+        let session = URLSession(configuration: config, delegate: networkService, delegateQueue: nil)
+        networkService.configure(with: session)
+        return LoginAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
+    }
+
+}
+
 final class Assembly {
 
     let userID: UUID

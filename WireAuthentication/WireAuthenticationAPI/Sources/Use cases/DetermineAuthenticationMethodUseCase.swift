@@ -27,8 +27,8 @@ public protocol DetermineAuthenticationMethodUseCaseProtocol {
 
 public enum AuthenticationMethod {
 
-    case login
-    case loginOrRegister
+    case login(email: String)
+    case loginOrRegister(email: String)
     case ssoLogin
     case onPremLogin
 

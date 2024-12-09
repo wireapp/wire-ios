@@ -17,6 +17,8 @@
 		EEC739332D022FE8003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEC739372D023029003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; };
 		EEC739382D02302A003C0FC9 /* WireAuthenticationAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEC7391A2D022F35003C0FC9 /* WireAuthenticationAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEC73BAC2D035B02003C0FC9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EEC73BAB2D035B02003C0FC9 /* WireAPI */; };
+		EEC73BB12D03B290003C0FC9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = EEC73BB02D03B290003C0FC9 /* WireAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -191,6 +193,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEC73BB12D03B290003C0FC9 /* WireAPI in Frameworks */,
 				EEC739292D022FE0003C0FC9 /* WireAuthenticationCore.framework in Frameworks */,
 				EEC7392D2D022FE0003C0FC9 /* WireAuthenticationUI.framework in Frameworks */,
 			);
@@ -216,6 +219,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEC73BAC2D035B02003C0FC9 /* WireAPI in Frameworks */,
 				EEC739372D023029003C0FC9 /* WireAuthenticationAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,6 +331,7 @@
 			);
 			name = WireAuthentication;
 			packageProductDependencies = (
+				EEC73BB02D03B290003C0FC9 /* WireAPI */,
 			);
 			productName = WireAuthentication;
 			productReference = EEC738C02D022D30003C0FC9 /* WireAuthentication.framework */;
@@ -400,6 +405,7 @@
 			);
 			name = WireAuthenticationCore;
 			packageProductDependencies = (
+				EEC73BAB2D035B02003C0FC9 /* WireAPI */,
 			);
 			productName = WireAuthenticationCore;
 			productReference = EEC738FD2D022EF5003C0FC9 /* WireAuthenticationCore.framework */;
@@ -1215,6 +1221,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EEC73BAB2D035B02003C0FC9 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
+		};
+		EEC73BB02D03B290003C0FC9 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EEC738B72D022D30003C0FC9 /* Project object */;
 }

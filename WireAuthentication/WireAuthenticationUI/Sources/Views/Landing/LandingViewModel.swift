@@ -46,11 +46,11 @@ public final class LandingViewModel: ObservableObject {
             )
 
             switch method {
-            case .login:
-                router.navigate(to: .login)
+            case .login(let email):
+                router.navigate(to: .login(email: email))
 
-            case .loginOrRegister:
-                router.navigate(to: .loginOrRegister)
+            case .loginOrRegister(let email):
+                router.navigate(to: .loginOrRegister(email: email))
 
             default:
                 break
@@ -64,9 +64,9 @@ struct DetermineAuthenticationMethodUseCaseMock: DetermineAuthenticationMethodUs
 
     func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
         if emailOrSSOCode.hasSuffix("@wire.com") {
-            return .loginOrRegister
+            return .loginOrRegister(email: emailOrSSOCode)
         } else {
-            return .login
+            return .login(email: emailOrSSOCode)
         }
     }
 

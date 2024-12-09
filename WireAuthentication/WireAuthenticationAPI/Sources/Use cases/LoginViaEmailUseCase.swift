@@ -17,17 +17,22 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-// If we were using a Swift package, we should use the `package` access modifier here.
+public protocol LoginViaEmailUseCaseProtocol {
 
-public struct DetermineAuthenticationMethodUseCase: DetermineAuthenticationMethodUseCaseProtocol {
+    func invoke(
+        email: String,
+        password: String
+    ) async throws (LoginViaEmailUseCaseFailure)
 
-    public init() {}
+}
 
-    @MainActor
-    public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
-    }
+public enum LoginViaEmailUseCaseFailure: Error {
+
+    case invalidCredentials
+    case verificationCodeRequired
+    case accountPendingActivation
+    case accountSuspended
+    case other(message: String)
 
 }

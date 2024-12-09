@@ -24,18 +24,20 @@ import WireAuthenticationAPI
 final class LoginViewModel: ObservableObject {
 
     let router: Router
-    let emailLogIn: any EmailLogInUseCaseProtocol
+    let loginViewEmailProvider: @Sendable () -> any LoginViaEmailUseCaseProtocol
 
-    let email = "foo@bar.com"
+    let email: String
     let isRegistrationAllowed: Bool
 
     init(
         router: Router,
-        emailLogIn: any EmailLogInUseCaseProtocol,
+        loginViewEmailProvider: @escaping @Sendable () -> any LoginViaEmailUseCaseProtocol,
+        email: String,
         isRegistrationAllowed: Bool
     ) {
         self.router = router
-        self.emailLogIn = emailLogIn
+        self.loginViewEmailProvider = loginViewEmailProvider
+        self.email = email
         self.isRegistrationAllowed = isRegistrationAllowed
     }
 
@@ -44,26 +46,26 @@ final class LoginViewModel: ObservableObject {
     }
 
     func submitPassword(_ password: String) {
-        Task { [email, router] in
-            try await self.emailLogIn.invoke(
-                email: email,
+        Task.detached {
+            try await self.loginViewEmailProvider().invoke(
+                email: self.email,
                 password: password
             )
 
             await MainActor.run {
-                router.navigate(to: .twoFactorAuthentication)
+                self.router.navigate(to: .twoFactorAuthentication)
             }
         }
     }
 
 }
 
-struct EmailLogInUseCaseMock: EmailLogInUseCaseProtocol {
+struct LoginViaEmailUseCaseMock: LoginViaEmailUseCaseProtocol {
 
     func invoke(
         email: String,
         password: String
-    ) async throws {
+    ) async throws(LoginViaEmailUseCaseFailure) {
 
     }
 

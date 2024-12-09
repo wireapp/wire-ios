@@ -18,6 +18,7 @@
 
 import Foundation
 import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 internal import WireAuthenticationUI
 internal import WireAuthenticationCore
@@ -26,11 +27,24 @@ internal import WireAuthenticationCore
 ///
 /// To load the contents of the module, create an instance of
 /// the assembly, which you can then use to make required views.
-@MainActor
+
 public struct WireAuthenticationAssembly {
 
-    public init() {}
+    let loginAPI: any LoginAPI
 
+    public init(
+        backendURL: URL,
+        minTLSVersion: TLSVersion,
+        apiVersion: APIVersion
+    ) {
+        loginAPI = WireAPIAssembly.makeLoginStack(
+            backendURL: backendURL,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion
+        )
+    }
+
+    @MainActor
     public func makeRootView() -> some View {
         RootView(factory: self)
     }
@@ -48,8 +62,8 @@ extension WireAuthenticationAssembly: Factory {
         DetermineAuthenticationMethodUseCase()
     }
     
-    public func makeEmailLoginUseCase() -> any EmailLogInUseCaseProtocol {
-        EmailLoginUseCase()
+    public func makeEmailLoginUseCase() -> any LoginViaEmailUseCaseProtocol {
+        LoginViaEmailUseCase(loginAPI: loginAPI)
     }
     
     public func makePerformInitialSyncUseCase() -> any PerformInitialSyncUseCaseProtocol {

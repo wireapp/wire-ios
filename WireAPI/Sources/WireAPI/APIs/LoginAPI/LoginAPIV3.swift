@@ -17,17 +17,11 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-// If we were using a Swift package, we should use the `package` access modifier here.
+class LoginAPIV3: LoginAPIV2 {
 
-public struct DetermineAuthenticationMethodUseCase: DetermineAuthenticationMethodUseCaseProtocol {
-
-    public init() {}
-
-    @MainActor
-    public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
+    override var apiVersion: APIVersion {
+        .v3
     }
 
 }

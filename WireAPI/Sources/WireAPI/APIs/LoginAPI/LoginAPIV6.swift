@@ -18,12 +18,10 @@
 
 import Foundation
 
-public protocol EmailLogInUseCaseProtocol {
+class LoginAPIV6: LoginAPIV5 {
 
-    @MainActor
-    func invoke(
-        email: String,
-        password: String
-    ) async throws
+    override var apiVersion: APIVersion {
+        .v6
+    }
 
 }

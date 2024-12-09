@@ -17,17 +17,13 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-// If we were using a Swift package, we should use the `package` access modifier here.
+public protocol LoginAPI: Sendable {
 
-public struct DetermineAuthenticationMethodUseCase: DetermineAuthenticationMethodUseCaseProtocol {
-
-    public init() {}
-
-    @MainActor
-    public func invoke(emailOrSSOCode: String) async -> AuthenticationMethod {
-        .login(email: emailOrSSOCode)
-    }
+    func login(
+        email: String,
+        password: String,
+        twoFactorAuthenticationCode: String?
+    ) async throws -> ([HTTPCookie], AccessToken)
 
 }
