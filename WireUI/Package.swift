@@ -29,7 +29,12 @@ let package = Package(
         .package(path: "../WirePlugins")
     ],
     targets: [
-        .target(name: "WireAccountImageUI", dependencies: ["WireFoundation"]),
+        .target(
+            name: "WireAccountImageUI",
+            dependencies: [
+                "WireDesign",
+                "WireFoundation"
+            ]),
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),

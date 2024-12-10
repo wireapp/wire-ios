@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2024 Wire Swi#ss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
-public extension UIImage {
-    static let close = UIImage(resource: .close)
-    static let info = UIImage(resource: .info)
-    static let infoCircle = UIImage(resource: .infoCircle)
+public enum ProfileNotifications {
+    case many
 }

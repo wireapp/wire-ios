@@ -22,6 +22,7 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     private let source: AccountImageSource
     private let availability: Availability?
+    private let profileNotifications: ProfileNotifications?
 
     @Environment(\.accountImageBorderWidth) private var accountImageBorderWidth
     @Environment(\.accountImageBorderColor) private var accountImageBorderColor
@@ -35,10 +36,12 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     public init(
         source: AccountImageSource,
-        availability: Availability?
+        availability: Availability?,
+        profileNotifications: ProfileNotifications?
     ) {
         self.source = source
         self.availability = availability
+        self.profileNotifications = profileNotifications
     }
 
     public func makeUIView(context: Context) -> AccountImageView {
@@ -48,6 +51,8 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     public func updateUIView(_ view: AccountImageView, context: Context) {
         view.source = source
         view.availability = availability
+        view.notifications = profileNotifications
+
         view.imageBorderWidth = accountImageBorderWidth
         view.imageBorderColor = accountImageBorderColor
 
@@ -62,11 +67,13 @@ extension AccountImageViewRepresentable {
 
     init(
         _ source: AccountImageSource,
-        _ availability: Availability?
+        _ availability: Availability?,
+        _ profileNotifications: ProfileNotifications?
     ) {
         self.init(
             source: source,
-            availability: availability
+            availability: availability,
+            profileNotifications: profileNotifications
         )
     }
 }

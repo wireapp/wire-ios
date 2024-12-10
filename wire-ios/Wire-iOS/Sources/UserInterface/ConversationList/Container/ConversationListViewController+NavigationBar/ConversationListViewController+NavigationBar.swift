@@ -64,6 +64,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
     }
 
+    func refreshAccountImageViewNotificationBadge() {
+        accountImageView?.notifications = viewModel.profileNotifications
+    }
+
     // MARK: - Navigation Bar Items
 
     private func makeAccountImageView() -> AccountImageView {
@@ -71,6 +75,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let accountImageView = AccountImageView()
         accountImageView.source = viewModel.accountImageSource
         accountImageView.availability = viewModel.selfUserStatus.availability.mapToAccountImageAvailability()
+        accountImageView.notifications = viewModel.profileNotifications
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
         accountImageView.translatesAutoresizingMaskIntoConstraints = false

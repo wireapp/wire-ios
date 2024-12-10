@@ -156,6 +156,7 @@ final class SelfProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.post(name: .userDidViewSelfProfile, object: nil)
         configureAccountTitle()
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
@@ -286,4 +287,11 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+}
+
+// MARK: - Notifications
+
+public extension Notification.Name {
+    // Used to notify the app that the user has viewed their own profile
+    static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
 }

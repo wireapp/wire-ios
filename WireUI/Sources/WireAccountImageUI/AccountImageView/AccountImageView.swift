@@ -93,12 +93,16 @@ public final class AccountImageView: UIView {
         set { availabilityIndicatorView.backgroundViewColor = newValue }
     }
 
+    public var notifications: ProfileNotifications? {
+        didSet { updateNotificationBadge() }
+    }
+
     // MARK: - Private Properties
 
     private let accountImageView = UIImageView()
     private let initialsLabel = UILabel()
     let availabilityIndicatorView = AvailabilityIndicatorView()
-
+    let notificationBadgeView = NotificationBadgeView(notifications: .many)
     public override var intrinsicContentSize: CGSize {
         .init(
             width: imageBorderWidth * 2 + accountImageHeight,
@@ -232,9 +236,22 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
         ])
 
+        // view which renders the notification badge
+        notificationBadgeView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(notificationBadgeView)
+        NSLayoutConstraint.activate([
+            notificationBadgeView.widthAnchor.constraint(
+                equalToConstant: 14),
+            notificationBadgeView.heightAnchor.constraint(equalToConstant: 14),
+            notificationBadgeView.centerYAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: 3.5),
+            notificationBadgeView.centerXAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor, constant: -3.5)
+        ])
+
+
         updateAccountImage()
         updateShape()
         updateAvailabilityIndicator()
+        updateNotificationBadge()
 
         if #available(iOS 17.0, *) {
             registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _: UITraitCollection) in
@@ -283,6 +300,12 @@ public final class AccountImageView: UIView {
             return
         }
     }
+
+    private func updateNotificationBadge() {
+        if notificationBadgeView.notifications != notifications {
+            notificationBadgeView.notifications = notifications
+        }
+    }
 }
 
 // MARK: - Previews
@@ -314,7 +337,7 @@ struct AccountImageView_Previews: PreviewProvider {
         _ availability: Availability?
     ) -> some View {
         NavigationStack {
-            AccountImageViewRepresentable(source, availability)
+            AccountImageViewRepresentable(source, availability, .many)
                 // slightly differnet colors so that we can verify that the view modifiers work
                 .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
                 .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
@@ -337,7 +360,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(source, availability)
+                            AccountImageViewRepresentable(source, availability, .many)
                                 .padding(.horizontal)
                         }
                     }

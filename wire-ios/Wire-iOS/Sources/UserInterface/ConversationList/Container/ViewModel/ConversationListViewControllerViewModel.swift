@@ -47,6 +47,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     @MainActor
     func showPermissionDeniedViewController()
 
+    @MainActor
+    func refreshAccountImageViewNotificationBadge()
+
     @discardableResult
     func selectOnListContentController(
         _ conversation: ZMConversation!,
@@ -68,6 +71,10 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 extension ConversationListViewController {
 
     final class ViewModel: NSObject {
+
+        private enum UserDefaultsKey: String, DefaultsKey {
+            case didViewSelfProfile
+        }
 
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
@@ -103,6 +110,8 @@ extension ConversationListViewController {
         private var userObservationToken: NSObjectProtocol?
         private var teamObservationToken: NSObjectProtocol?
 
+        private var userDidViewSelfProfileToken: NSObjectProtocol?
+
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
         var connectionRequestsObserverToken: NSObjectProtocol?
@@ -114,6 +123,25 @@ extension ConversationListViewController {
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
         let getUserAccountImageSourceUseCase: any GetUserAccountImageSourceUseCaseProtocol
+
+        public var profileNotifications: ProfileNotifications? {
+            if userSession.selfUser.isTeamMember {
+                return nil
+            }
+            guard let apiVersion = BackendInfo.apiVersion,
+                  apiVersion > .v6 else {
+                return nil
+            }
+
+            let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
+            let value = userDefaults.object(forKey: .didViewSelfProfile)
+
+            if value == nil {
+                userDefaults.set(false, forKey: .didViewSelfProfile)
+            }
+
+            return (value as? Bool) == false ? .many : nil
+        }
 
         init(
             account: Account,
@@ -151,6 +179,9 @@ extension ConversationListViewController {
 
             if let e2eiCertificateChangedToken {
                 notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
+            if let userDidViewSelfProfileToken {
+                notificationCenter.removeObserver(userDidViewSelfProfileToken)
             }
         }
     }
@@ -209,6 +240,19 @@ extension ConversationListViewController.ViewModel {
             queue: .main
         ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
+        }
+
+        userDidViewSelfProfileToken = notificationCenter.addObserver(
+            forName: .userDidViewSelfProfile,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            let userDefaults = PrivateUserDefaults<UserDefaultsKey>(userID: userSession.selfUser.remoteIdentifier)
+            userDefaults.set(true, forKey: .didViewSelfProfile)
+            Task { [weak self] in
+                await self?.viewController?.refreshAccountImageViewNotificationBadge()
+            }
         }
     }
 
