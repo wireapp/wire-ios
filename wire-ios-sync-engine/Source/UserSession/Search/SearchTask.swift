@@ -163,7 +163,8 @@ extension SearchTask {
             /// search for the local user with matching user ID and active
             let activeMembers = teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
             let teamMembers = activeMembers.filter { $0.remoteIdentifier == userId }
-            let connectedUsers = connectedUsers(matchingQuery: "").filter { $0.remoteIdentifier == userId }
+            let connectedUsers = connectedUsers(matchingQuery: "", hostedOnDomain: nil)
+                .filter { $0.remoteIdentifier == userId }
 
             contextProvider.viewContext.performGroupedBlock { [self] in
 
@@ -215,7 +216,10 @@ extension SearchTask {
 
             let selfUser = ZMUser.selfUser(in: searchContext)
             let connectedUsers = request.searchOptions
-                .contains(.contacts) ? connectedUsers(matchingQuery: request.normalizedQuery) : []
+                .contains(.contacts) ? connectedUsers(
+                    matchingQuery: request.normalizedQuery,
+                    hostedOnDomain: request.searchDomain
+                ) : []
             let teamMembers = request.searchOptions.contains(.teamMembers) ? teamMembers(
                 matchingQuery: request.normalizedQuery,
                 team: team,
@@ -315,8 +319,16 @@ extension SearchTask {
         return result
     }
 
-    func connectedUsers(matchingQuery query: String) -> [ZMUser] {
-        let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
+    func connectedUsers(matchingQuery query: String, hostedOnDomain: String?) -> [ZMUser] {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = if let hostedOnDomain {
+            ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(
+                withSearch: query,
+                hostedOnDomain: hostedOnDomain
+            ))
+        } else {
+            ZMUser.sortedFetchRequest(with: ZMUser.predicateForConnectedUsers(withSearch: query))
+        }
+
         return searchContext.fetchOrAssert(request: fetchRequest) as? [ZMUser] ?? []
     }
 

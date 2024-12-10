@@ -18,10 +18,91 @@
 
 import Foundation
 
-class UserClientsAPIV7: UserClientsAPIV6 {
+final class UserClientsAPIV7: UserClientsAPIV6 {
 
-    override var apiVersion: APIVersion {
-        .v7
+    override var apiVersion: APIVersion { .v7 }
+
+    override func getSelfClients() async throws -> [SelfUserClient] {
+        let components = URLComponents(string: "\(pathPrefix)/clients")
+
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UserClientsAPIError.invalidURL
+        }
+
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: ListUserClientV7.self)
+            .parse(code: response.statusCode, data: data)
+    }
+}
+
+// SelfUserClientV7.capabilities is now a list and not nested within another object anymore.
+
+private struct ListUserClientV7: Decodable, ToAPIModelConvertible {
+
+    let payload: [SelfUserClientV7]
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let payload = try container.decode([SelfUserClientV7].self)
+        self.payload = payload
+    }
+
+    func toAPIModel() -> [SelfUserClient] {
+        payload.map { $0.toAPIModel() }
+    }
+}
+
+private struct SelfUserClientV7: Decodable, ToAPIModelConvertible {
+
+    let id: String
+    let type: UserClientType
+    let activationDate: UTCTimeMillis
+    let label: String?
+    let model: String?
+    let deviceClass: DeviceClass?
+    let lastActiveDate: UTCTime?
+    let mlsPublicKeys: MLSPublicKeys?
+    let cookie: String?
+    let capabilities: [UserClientCapability]? // not of type `CapabilitiesList` anymore
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case type
+        case activationDate = "time"
+        case label
+        case model
+        case deviceClass = "class"
+        case lastActiveDate = "last_active"
+        case mlsPublicKeys = "mls_public_keys"
+        case cookie
+        case capabilities
+
+    }
+
+    func toAPIModel() -> SelfUserClient {
+        SelfUserClient(
+            id: id,
+            type: type,
+            activationDate: activationDate.date,
+            label: label,
+            model: model,
+            deviceClass: deviceClass,
+            lastActiveDate: lastActiveDate?.date,
+            mlsPublicKeys: mlsPublicKeys,
+            cookie: cookie,
+            capabilities: capabilities ?? []
+        )
     }
 
 }

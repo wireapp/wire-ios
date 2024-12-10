@@ -62,7 +62,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
         // then
         if let request {
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/proxy/giphy/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
         } else {
@@ -85,7 +85,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
         // then
         if let request {
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/proxy/soundcloud/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
             XCTAssertTrue(request.doesNotFollowRedirects)
@@ -109,7 +109,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
         // then
         if let request {
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/proxy/youtube/foo/bar")
             XCTAssertTrue(request.needsAuthentication)
         } else {
