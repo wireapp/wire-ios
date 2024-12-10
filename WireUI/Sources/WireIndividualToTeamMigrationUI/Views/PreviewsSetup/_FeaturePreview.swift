@@ -19,20 +19,20 @@
 import SwiftUI
 import WireDomainAPI
 
-struct MockUseCase: IndividualToTeamMigrationUseCase {
+public struct MockUseCase: IndividualToTeamMigrationUseCase {
     let error: (any Error)?
 
     private init(error: (any Error)? = nil) {
         self.error = error
     }
 
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
         try await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
         if let error { throw error }
         return IndividualToTeamMigrationResult(teamID: UUID(), teamName: teamName)
     }
 
-    static func success() -> MockUseCase {
+    public static func success() -> MockUseCase {
         MockUseCase()
     }
 

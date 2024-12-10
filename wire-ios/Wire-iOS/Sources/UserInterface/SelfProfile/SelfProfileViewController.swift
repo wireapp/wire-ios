@@ -113,17 +113,13 @@ final class SelfProfileViewController: UIViewController {
             userSession.enqueue {
                 selfUser.refreshTeamData()
             }
-            // If we create the use case later, then (for many reasons) it might be `nil`
-            // and we would have displayed a non-functionning banner.
-            // we don't want that
         } else if
             let backendInfoApiVersion = BackendInfo.apiVersion,
             let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-            let userName = selfUser.name,
-            let useCase =  SessionManager.shared?.activeUserSession?.createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) {
+            apiVersion >= .v7 {
             teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
                actionCallback: { [weak self] action in
-                   self?.onTeamCreationBannerInteraction(action, useCase: useCase, userName: userName)
+                   self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
                }
            )
         }
@@ -249,11 +245,16 @@ final class SelfProfileViewController: UIViewController {
 
     private func onTeamCreationBannerInteraction(
         _ action: SelfProfileViewCallToActionBanner.Action,
-        useCase: IndividualToTeamMigrationUseCase,
-        userName: String
+        apiVersion: WireAPI.APIVersion
     ) {
         switch action {
         case .createWireTeam:
+            let sessionContextProvider = userSession.contextProvider
+            let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
+            guard let userName = user.normalizedName,
+                  let useCase =  SessionManager.shared?.activeUserSession?.createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                return
+            }
             userDidTapCreateTeam(useCase: useCase, userName: userName)
         }
     }
