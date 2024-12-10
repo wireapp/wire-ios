@@ -24,6 +24,7 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireLogging
 import WireSyncEngine
+import WireCountly
 
 enum ApplicationLaunchType {
     case unknown
