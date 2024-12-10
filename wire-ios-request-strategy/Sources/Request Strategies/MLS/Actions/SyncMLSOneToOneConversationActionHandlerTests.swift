@@ -46,24 +46,6 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
 
     // MARK: - Request
 
-    func test_itGeneratesARequest_APIV7() throws {
-        try test_itGeneratesARequest(
-            for: action,
-            expectedPath: "/v7/one2one-conversations/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            expectedMethod: .get,
-            apiVersion: .v7
-        )
-    }
-
-    func test_itGeneratesARequest_APIV6() throws {
-        try test_itGeneratesARequest(
-            for: action,
-            expectedPath: "/v6/conversations/one2one/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            expectedMethod: .get,
-            apiVersion: .v6
-        )
-    }
-
     func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,

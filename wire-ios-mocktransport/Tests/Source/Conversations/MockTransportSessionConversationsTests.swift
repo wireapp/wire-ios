@@ -332,7 +332,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         let response = response(
             forProtobufData: messageData,
             path: requestPath,
-            method: .post,
+            method: ZMTransportRequestMethod.post,
             apiVersion: .v0
         )
 

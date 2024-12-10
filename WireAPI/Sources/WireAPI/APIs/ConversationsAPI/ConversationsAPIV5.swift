@@ -21,10 +21,6 @@ import Foundation
 class ConversationsAPIV5: ConversationsAPIV4 {
     override var apiVersion: APIVersion { .v5 }
 
-    var oneToOneConversationsPath: String {
-        "\(pathPrefix)\(basePath)/one2one"
-    }
-
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
@@ -59,7 +55,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
             throw ConversationsAPIError.userAndDomainShouldNotBeEmpty
         }
 
-        let components = URLComponents(string: "\(oneToOneConversationsPath)/\(domain)/\(userID)")
+        let components = URLComponents(string: "\(pathPrefix)\(basePath)/one2one/\(domain)/\(userID)")
 
         guard let url = components?.url else {
             assertionFailure("generated an invalid url")

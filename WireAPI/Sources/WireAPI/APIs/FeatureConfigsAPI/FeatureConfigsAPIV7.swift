@@ -16,6 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV7: FeatureConfigsAPIV6 {
-    override var apiVersion: APIVersion { .v7 }
+import Foundation
+
+class FeatureConfigsAPIV7: FeatureConfigsAPIV6 {
+
+    override var apiVersion: APIVersion {
+        .v7
+    }
 }

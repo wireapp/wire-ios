@@ -16,6 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class TeamsAPIV7: TeamsAPIV6 {
-    override var apiVersion: APIVersion { .v7 }
+import Foundation
+
+class TeamsAPIV7: TeamsAPIV6 {
+
+    override var apiVersion: APIVersion {
+        .v7
+    }
+
 }

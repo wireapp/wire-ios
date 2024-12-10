@@ -113,9 +113,7 @@ private extension ServiceUserData {
             fatal("conversation is not synced with the backend")
         }
 
-        let path = apiVersion >= .v7
-            ? "/bot/conversations/\(remoteIdentifier.transportString())"
-            : "/conversations/\(remoteIdentifier.transportString())/bots"
+        let path = "/conversations/\(remoteIdentifier.transportString())/bots"
 
         let payload: NSDictionary = [
             "provider": provider.transportString(),

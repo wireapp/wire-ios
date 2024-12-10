@@ -223,7 +223,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6, .v7:
+        case .v3, .v4, .v5, .v6:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"

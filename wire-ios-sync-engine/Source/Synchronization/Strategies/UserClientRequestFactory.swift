@@ -69,7 +69,7 @@ extension UserClientRequestFactory {
 
         let request = ZMTransportRequest(
             path: "/clients",
-            method: .post,
+            method: ZMTransportRequestMethod.post,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
@@ -149,7 +149,7 @@ extension UserClientRequestFactory {
         ]
         let request = ZMTransportRequest(
             path: "/clients/\(remoteIdentifier)",
-            method: .put,
+            method: ZMTransportRequestMethod.put,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
@@ -171,7 +171,7 @@ extension UserClientRequestFactory {
             ]
             let request = ZMTransportRequest(
                 path: "/clients/\(remoteIdentifier)",
-                method: .put,
+                method: ZMTransportRequestMethod.put,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )
@@ -224,7 +224,7 @@ extension UserClientRequestFactory {
         ]
         let request = ZMTransportRequest(
             path: "/clients/\(remoteIdentifier)",
-            method: .put,
+            method: ZMTransportRequestMethod.put,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
@@ -257,7 +257,7 @@ extension UserClientRequestFactory {
 
         let request = ZMTransportRequest(
             path: "/clients/\(client.remoteIdentifier!)",
-            method: .delete,
+            method: ZMTransportRequestMethod.delete,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )

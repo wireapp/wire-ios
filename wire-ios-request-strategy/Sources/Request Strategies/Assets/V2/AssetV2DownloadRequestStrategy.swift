@@ -193,7 +193,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
             fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
 
-        case .v2, .v3, .v4, .v5, .v6, .v7:
+        case .v2, .v3, .v4, .v5, .v6:
             return nil
         }
 

@@ -132,11 +132,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
         case handleCheckSync:
             let handle = userProfileUpdateStatus.handleToCheck!
-            let path = apiVersion >= .v7
-                ? "/handles/\(handle)"
-                : "/users/handles/\(handle)"
             return ZMTransportRequest(
-                path: path,
+                path: "/users/handles/\(handle)",
                 method: .head,
                 payload: nil,
                 apiVersion: apiVersion.rawValue
@@ -155,15 +152,12 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             guard let handlesToCheck = userProfileUpdateStatus.suggestedHandlesToCheck else {
                 fatal("Tried to check handles availability, but no handle was available")
             }
-            let path = apiVersion >= .v7
-                ? "/handles"
-                : "/users/handles"
             let payload = [
                 "handles": handlesToCheck,
                 "return": 1
             ] as NSDictionary
             return ZMTransportRequest(
-                path: path,
+                path: "/users/handles",
                 method: .post,
                 payload: payload,
                 apiVersion: apiVersion.rawValue
