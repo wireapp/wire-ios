@@ -9,7 +9,6 @@ on:
         default: true
       countly_enabled:
         type: boolean
-        default: true
       datadog_enabled:
         type: boolean
         default: false
