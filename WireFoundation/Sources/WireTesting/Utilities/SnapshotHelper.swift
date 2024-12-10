@@ -140,10 +140,11 @@ public struct SnapshotHelper {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        
+
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let failure = verifySnapshot(
                 of: value,
@@ -189,7 +190,8 @@ public struct SnapshotHelper {
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
         let config = size.map { ViewImageConfig(safeArea: safeArea, size: $0, traits: traits) }
 
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let failure = verifySnapshot(
                 of: value,
@@ -204,7 +206,7 @@ public struct SnapshotHelper {
                 testName: testName,
                 line: line
             )
-            
+
             XCTAssertNil(failure, file: file, line: line)
         }
     }
@@ -227,7 +229,8 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let failure = verifySnapshot(
                 of: value,
@@ -238,7 +241,7 @@ public struct SnapshotHelper {
                 testName: testName,
                 line: line
             )
-            
+
             XCTAssertNil(failure, file: file, line: line)
         }
     }
@@ -309,10 +312,11 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             for (config, name) in SnapshotHelper.phoneConfigs {
-                
+
                 let failure = verifySnapshot(
                     of: value,
                     as: .image(
@@ -324,7 +328,7 @@ public struct SnapshotHelper {
                     testName: testName,
                     line: line
                 )
-                
+
                 XCTAssertNil(failure, file: file, line: line)
             }
         }
@@ -348,7 +352,8 @@ public struct SnapshotHelper {
     ) {
         let snapshotDirectory = snapshotDirectory(file: file)
         setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let failure = verifySnapshot(
                 of: value,
@@ -359,7 +364,7 @@ public struct SnapshotHelper {
                 testName: testName,
                 line: line
             )
-            
+
             XCTAssertNil(failure, file: file, line: line)
         }
     }
@@ -380,9 +385,10 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
-            
+
             let snapshotDirectory = snapshotDirectory(file: file)
             setArtifactsDirectoryIfNeeded(basedOn: snapshotDirectory)
             [
@@ -410,7 +416,7 @@ public struct SnapshotHelper {
                     testName: testName,
                     line: line
                 )
-                
+
                 XCTAssertNil(failure, file: file, line: line)
             }
         }

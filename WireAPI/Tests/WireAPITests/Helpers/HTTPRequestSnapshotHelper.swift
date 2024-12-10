@@ -40,7 +40,8 @@ struct HTTPRequestSnapshotHelper {
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let errorMessage = verifySnapshot(
                 of: request,
@@ -50,7 +51,7 @@ struct HTTPRequestSnapshotHelper {
                 testName: function,
                 line: line
             )
-            
+
             if let errorMessage {
                 XCTFail(errorMessage, file: file, line: line)
             }
@@ -75,7 +76,8 @@ struct HTTPRequestSnapshotHelper {
         function: String = #function,
         line: UInt = #line
     ) {
-        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo.environment["CI"] == "true" ? .never : nil
+        let recordEnabled: SnapshotTestingConfiguration.Record? = ProcessInfo.processInfo
+            .environment["CI"] == "true" ? .never : nil
         withSnapshotTesting(record: recordEnabled) {
             let errorMessage = verifySnapshot(
                 of: request,
@@ -86,7 +88,7 @@ struct HTTPRequestSnapshotHelper {
                 testName: function,
                 line: line
             )
-            
+
             if let errorMessage {
                 XCTFail(errorMessage, file: file, line: line)
             }
