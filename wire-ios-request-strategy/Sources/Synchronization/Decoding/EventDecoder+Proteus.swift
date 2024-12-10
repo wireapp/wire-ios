@@ -189,7 +189,6 @@ extension EventDecoder {
         )
         WireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
 
-
         if error == .DuplicateMessage {
             // Do not notify the user if the error is just "duplicated".
             return

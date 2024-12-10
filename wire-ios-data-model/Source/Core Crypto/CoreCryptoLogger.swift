@@ -19,7 +19,6 @@
 import Foundation
 import WireCoreCrypto
 
-
 final class CoreCryptoLoggerProxy: CoreCryptoLogger {
 
     func log(

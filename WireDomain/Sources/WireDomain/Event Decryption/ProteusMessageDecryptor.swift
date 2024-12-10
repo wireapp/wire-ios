@@ -47,14 +47,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         proteusSessionID: ProteusSessionID
     )
 
-    init(
-        proteusService: any ProteusServiceInterface,
-        managedObjectContext: NSManagedObjectContext
-    ) {
-        self.proteusService = proteusService
-        self.managedObjectContext = managedObjectContext
-    }
-
     func decryptedEventData(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent {
