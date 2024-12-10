@@ -41,7 +41,8 @@ public extension ZMUser {
     ) -> NSPredicate {
         predicateForUsers(
             withSearch: query,
-            connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+            connectionStatuses: [ZMConnectionStatus.accepted.rawValue]
+        )
         .and(NSPredicate.isHostedOnDomain(domain))
     }
 
