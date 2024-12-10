@@ -404,6 +404,16 @@ public class ZMSearchUser: NSObject, UserType {
         user?.canCreateMLSGroups == true
     }
 
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let otherSearchUser = object as? ZMSearchUser else { return false }
+
+        if let lhsRemoteIdentifier = remoteIdentifier, let rhsRemoteIdentifier = otherSearchUser.remoteIdentifier {
+            return lhsRemoteIdentifier == rhsRemoteIdentifier
+        } else {
+            return false
+        }
+    }
+
     public override var hash: Int {
         remoteIdentifier?.hashValue ?? super.hash
     }
