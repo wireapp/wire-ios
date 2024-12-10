@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 enum SearchGroup: Int {
     case people
@@ -273,7 +273,8 @@ final class SearchResultsViewController: UIViewController {
                 let result = try await searchUsersUseCase.invoke(
                     query: query,
                     options: options,
-                    messageProtocol: filterConversation?.messageProtocol)
+                    messageProtocol: filterConversation?.messageProtocol
+                )
 
                 handleSearchResult(result: result, isCompleted: true)
             } catch {

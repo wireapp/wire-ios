@@ -179,9 +179,9 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     private var canCreateConversationWithOtherDomain: Bool {
         if userSession.isFederationUsageAllowed {
-            return true
+            true
         } else {
-            return viewer.domain == user.domain
+            viewer.domain == user.domain
         }
     }
 
@@ -223,7 +223,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         switch (context, conversation?.conversationType) {
         case (_, .oneOnOne?):
 
-            if viewer.canCreateConversation(type: .group) && canCreateConversationWithOtherDomain {
+            if viewer.canCreateConversation(type: .group), canCreateConversationWithOtherDomain {
                 actions.append(.createGroup)
             }
 
