@@ -97,3 +97,4 @@ vendor/*
 
 # Failing Snapshot Tests
 SnapshotResults
+artifacts/
