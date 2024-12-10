@@ -92,6 +92,8 @@ class Framework
 
         frameworks["WireAPI"].add_dependency(frameworks["WireFoundation"])
 
+        frameworks["WireAnalytics"].add_dependency(frameworks["WireLogging"])
+
         frameworks
     end
 
