@@ -19,20 +19,20 @@
 import SwiftUI
 import WireDomainAPI
 
-struct MockUseCase: IndividualToTeamMigrationUseCase {
+public struct MockUseCase: IndividualToTeamMigrationUseCase {
     let error: (any Error)?
 
     private init(error: (any Error)? = nil) {
         self.error = error
     }
 
-    func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
+    public func invoke(teamName: String) async throws -> IndividualToTeamMigrationResult {
         try await Task.sleep(nanoseconds: NSEC_PER_SEC * 5)
         if let error { throw error }
         return IndividualToTeamMigrationResult(teamID: UUID(), teamName: teamName)
     }
 
-    static func success() -> MockUseCase {
+    public static func success() -> MockUseCase {
         MockUseCase()
     }
 
@@ -68,29 +68,5 @@ private struct FeaturePreviewContainer: UIViewControllerRepresentable {
 @MainActor
 @ViewBuilder
 func featurePreview() -> some View {
-    FeaturePreviewContainer(features: [
-        .init(
-            id: "console",
-            description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.adminConsole", bundle: .module)
-        ),
-        .init(
-            id: "collaboration",
-            description: .localizedMarkdown(
-                key: "individualToTeam.planSelection.feature.collaboration",
-                bundle: .module
-            )
-        ),
-        .init(
-            id: "meetings",
-            description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.meetings", bundle: .module)
-        ),
-        .init(
-            id: "status",
-            description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.status", bundle: .module)
-        ),
-        .init(
-            id: "enterprise",
-            description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.enterprise", bundle: .module)
-        )
-    ])
+    FeaturePreviewContainer(features: .features)
 }
