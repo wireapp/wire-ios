@@ -27,3 +27,39 @@ public struct TeamPlanFeature: Hashable, Identifiable, Sendable {
         self.description = description
     }
 }
+
+extension [TeamPlanFeature] {
+    static var features: [TeamPlanFeature] {
+        [
+            .init(
+                id: "console",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.adminConsole",
+                    bundle: .module
+                )
+            ),
+            .init(
+                id: "collaboration",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.collaboration",
+                    bundle: .module
+                )
+            ),
+            .init(
+                id: "meetings",
+                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.meetings", bundle: .module)
+            ),
+            .init(
+                id: "status",
+                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.status", bundle: .module)
+            ),
+            .init(
+                id: "enterprise",
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.enterprise",
+                    bundle: .module
+                )
+            )
+        ]
+    }
+}
