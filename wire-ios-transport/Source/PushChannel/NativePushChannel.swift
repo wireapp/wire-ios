@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 @objcMembers
 final class NativePushChannel: NSObject, PushChannelType {
@@ -39,14 +40,14 @@ final class NativePushChannel: NSObject, PushChannelType {
             if keepOpen {
                 scheduleOpen()
             } else {
-                self.close()
+                close()
             }
 
         }
     }
 
     var canOpenConnection: Bool {
-        return keepOpen && websocketURL != nil && consumer != nil
+        keepOpen && websocketURL != nil && consumer != nil
     }
 
     let environment: BackendEnvironmentProvider
@@ -79,7 +80,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         let sessionConfig = URLSessionConfiguration.ephemeral
         sessionConfig.tlsMinimumSupportedProtocolVersion = self.minTLSVersion.secValue
 
-        if let settings = environment.proxy?.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
+        if let settings = environment.proxy?
+            .socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
             sessionConfig.httpShouldUsePipelining = true
             sessionConfig.connectionProxyDictionary = settings
         }
@@ -104,7 +106,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: GroupQueue) {
-        self.consumerQueue = queue
+        consumerQueue = queue
         self.consumer = consumer
 
         if consumer == nil {
@@ -159,17 +161,17 @@ final class NativePushChannel: NSObject, PushChannelType {
     func listen() {
         websocketTask?.receive(completionHandler: { [weak self] result in
             switch result {
-            case.failure(let error):
+            case let .failure(error):
                 WireLogger.pushChannel.debug("Failed to receive message \(error)")
                 self?.onClose()
-            case .success(let message):
-                guard case .data(let data) = message else {
+            case let .success(message):
+                guard case let .data(data) = message else {
                     break
                 }
 
-                self?.consumerQueue?.performGroupedBlock({
+                self?.consumerQueue?.performGroupedBlock {
                     self?.consumer?.pushChannelDidReceive(data)
-                })
+                }
             }
 
             self?.listen()
@@ -198,9 +200,9 @@ final class NativePushChannel: NSObject, PushChannelType {
         listen()
         startPingTimer()
 
-        consumerQueue?.performGroupedBlock({
+        consumerQueue?.performGroupedBlock {
             self.consumer?.pushChannelDidOpen()
-        })
+        }
     }
 
     private func stopPingTimer() {
@@ -237,13 +239,22 @@ extension NativePushChannel: ZMTimerClient {
 
 extension NativePushChannel: URLSessionWebSocketDelegate {
 
-    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+    func urlSession(
+        _ session: URLSession,
+        webSocketTask: URLSessionWebSocketTask,
+        didOpenWithProtocol protocol: String?
+    ) {
         WireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
 
         onOpen()
     }
 
-    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+    func urlSession(
+        _ session: URLSession,
+        webSocketTask: URLSessionWebSocketTask,
+        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+        reason: Data?
+    ) {
         WireLogger.pushChannel.info("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
 
         onClose()
@@ -253,15 +264,18 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
+        WireLogger.pushChannel
+            .error("Websocket open connection task did fail: \(error.map { String(describing: $0) } ?? "n/a")")
 
         websocketTask = nil
     }
 
-    func urlSession(_ session: URLSession,
-                    task: URLSessionTask,
-                    didReceive challenge: URLAuthenticationChallenge,
-                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
 
         let protectionSpace = challenge.protectionSpace
 

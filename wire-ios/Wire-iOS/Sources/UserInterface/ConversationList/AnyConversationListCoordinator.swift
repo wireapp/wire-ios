@@ -18,17 +18,20 @@
 
 import WireConversationListUI
 
-final class AnyConversationListCoordinator<ConversationModel, ConversationMessageModel>: ConversationListCoordinatorProtocol {
+final class AnyConversationListCoordinator<
+    ConversationModel,
+    ConversationMessageModel
+>: ConversationListCoordinatorProtocol {
 
     let showConversationScrolledToMessage: (ConversationModel, ConversationMessageModel?) async -> Void
 
     init<ConversationListCoordinator: ConversationListCoordinatorProtocol>(
         conversationListCoordinator: ConversationListCoordinator
     ) where
-    ConversationListCoordinator.ConversationModel == ConversationModel,
-    ConversationListCoordinator.ConversationMessageModel == ConversationMessageModel {
+        ConversationListCoordinator.ConversationModel == ConversationModel,
+        ConversationListCoordinator.ConversationMessageModel == ConversationMessageModel {
 
-        showConversationScrolledToMessage = { conversation, message in
+        self.showConversationScrolledToMessage = { conversation, message in
             await conversationListCoordinator.showConversation(conversation: conversation, scrolledTo: message)
         }
     }

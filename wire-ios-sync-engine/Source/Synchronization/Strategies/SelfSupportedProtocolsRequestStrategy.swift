@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomain
+import WireLogging
 import WireRequestStrategy
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
@@ -40,7 +41,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // MARK: - Initializers
 
-    required public init(
+    public required init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,

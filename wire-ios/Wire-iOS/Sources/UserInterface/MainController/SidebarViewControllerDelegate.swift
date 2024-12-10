@@ -25,28 +25,56 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
     let mainCoordinator: AnyMainCoordinator
     let connectUIBuilder: ConnectViewControllerBuilderProtocol
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+    let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
 
     init(
         mainCoordinator: AnyMainCoordinator,
         connectUIBuilder: ConnectViewControllerBuilderProtocol,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     ) {
         self.mainCoordinator = mainCoordinator
         self.connectUIBuilder = connectUIBuilder
         self.selfProfileUIBuilder = selfProfileUIBuilder
+        self.folderPickerViewControllerBuilder = folderPickerViewControllerBuilder
     }
 
     @MainActor
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileUIBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 
     @MainActor
-    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarSelectableMenuItem) {
+    func sidebarViewController(_ viewController: SidebarViewController, didTapFoldersMenuItem frame: CGRect) {
+        Task {
+            let folderPicker = folderPickerViewControllerBuilder.build(
+                mainCoordinator: mainCoordinator,
+                showCloseButton: false
+            )
+            folderPicker.modalPresentationStyle = .popover
+
+            if let popover = folderPicker.popoverPresentationController,
+               let view = viewController.view,
+               let window = view.window {
+                popover.sourceView = view
+                popover.sourceRect = view.convert(frame, from: window)
+            }
+
+            viewController.present(folderPicker, animated: true)
+        }
+    }
+
+    @MainActor
+    public func sidebarViewController(
+        _ viewController: SidebarViewController,
+        didSelect menuItem: SidebarSelectableMenuItem
+    ) {
         Task {
             switch menuItem {
             case .all:
@@ -57,6 +85,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .groups)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
+            case .folders:
+                break // handled by `sidebarViewController(_:didTapFoldersAt:)`
             case .archive:
                 await mainCoordinator.showArchive()
             case .settings:

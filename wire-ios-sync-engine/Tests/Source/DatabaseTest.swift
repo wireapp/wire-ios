@@ -25,19 +25,19 @@ class DatabaseTest: ZMTBaseTest {
     var coreDataStack: CoreDataStack?
 
     var useInMemoryDatabase: Bool {
-        return true
+        true
     }
 
     var uiMOC: NSManagedObjectContext {
-        return self.coreDataStack!.viewContext
+        coreDataStack!.viewContext
     }
 
     var syncMOC: NSManagedObjectContext {
-        return self.coreDataStack!.syncContext
+        coreDataStack!.syncContext
     }
 
     var searchMOC: NSManagedObjectContext {
-        return self.coreDataStack!.searchContext
+        coreDataStack!.searchContext
     }
 
     var sharedContainerURL: URL? {
@@ -47,22 +47,28 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.randomCacheURL!
+        FileManager.default.randomCacheURL!
 
     }
 
     private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL!,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }
 
     private func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL!,
-                                  inMemoryStore: true,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL!,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup
+        )
 
         stack.loadStores { error in
             XCTAssertNil(error)
@@ -87,7 +93,7 @@ class DatabaseTest: ZMTBaseTest {
     override func setUp() {
         super.setUp()
 
-        self.coreDataStack = createCoreDataStack()
+        coreDataStack = createCoreDataStack()
 
         configureCaches()
     }
@@ -112,20 +118,34 @@ class DatabaseTest: ZMTBaseTest {
         uiMOC.markAsUIContext()
     }
 
-    func event(withPayload payload: [AnyHashable: Any]?, type: ZMUpdateEventType, in conversation: ZMConversation, user: ZMUser) -> ZMUpdateEvent {
-        return ZMUpdateEvent(uuid: nil, payload: eventPayload(content: payload, type: type, in: conversation, from: user), transient: false, decrypted: true, source: .download)!
+    func event(
+        withPayload payload: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        user: ZMUser
+    ) -> ZMUpdateEvent {
+        ZMUpdateEvent(
+            uuid: nil,
+            payload: eventPayload(content: payload, type: type, in: conversation, from: user),
+            transient: false,
+            decrypted: true,
+            source: .download
+        )!
     }
 
-    private func eventPayload(content: [AnyHashable: Any]?,
-                              type: ZMUpdateEventType,
-                              in conversation: ZMConversation,
-                              from user: ZMUser,
-                              timestamp: Date = Date()) -> [AnyHashable: Any] {
-        return [ "conversation": conversation.remoteIdentifier!.transportString(),
-                 "data": conversation,
-                 "from": user.remoteIdentifier!.transportString(),
-                 "time": timestamp.transportString(),
-                 "type": ZMUpdateEvent.eventTypeString(for: type)!
+    private func eventPayload(
+        content: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        from user: ZMUser,
+        timestamp: Date = Date()
+    ) -> [AnyHashable: Any] {
+        [
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "data": conversation,
+            "from": user.remoteIdentifier!.transportString(),
+            "time": timestamp.transportString(),
+            "type": ZMUpdateEvent.eventTypeString(for: type)!
         ]
     }
 

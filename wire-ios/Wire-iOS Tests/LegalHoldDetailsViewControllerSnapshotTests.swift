@@ -60,7 +60,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
 
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
-        let createSut: () -> UIViewController = {
+        {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,
                 userSession: self.userSession,
@@ -69,8 +69,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             )
             return self.sut.wrapInNavigationController()
         }
-
-        return createSut
     }
 
     // MARK: - Snapshot Tests
@@ -90,7 +88,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut(),
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -100,7 +98,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut(),
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -131,7 +129,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "LightTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )
@@ -141,7 +139,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

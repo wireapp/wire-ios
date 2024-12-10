@@ -33,13 +33,13 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.35
+        0.35
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 
         if let toView = transitionContext.view(forKey: UITransitionContextViewKey.to),
-            let toViewController = transitionContext.viewController(forKey: .to) {
+           let toViewController = transitionContext.viewController(forKey: .to) {
 
             toView.frame = transitionContext.finalFrame(for: toViewController)
             transitionContext.containerView.addSubview(toView)
@@ -52,13 +52,13 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         transitionContext.view(forKey: UITransitionContextViewKey.to)?.layoutIfNeeded()
 
-        let visualEffect = self.visualEffectView.effect
+        let visualEffect = visualEffectView.effect
 
         if reverse {
             UIView.animate(withDuration: 0.35, animations: {
-                self.crossfadingViews.forEach({ view in
+                self.crossfadingViews.forEach { view in
                     view.alpha = 0
-                })
+                }
 
                 self.visualEffectView.effect = nil
             }, completion: { didComplete in
@@ -66,15 +66,15 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
                 transitionContext.completeTransition(didComplete)
             })
         } else {
-            self.visualEffectView.effect = nil
-            self.crossfadingViews.forEach({ view in
+            visualEffectView.effect = nil
+            crossfadingViews.forEach { view in
                 view.alpha = 0
-            })
+            }
 
             UIView.animate(withDuration: 0.35, animations: {
-                self.crossfadingViews.forEach({ view in
+                self.crossfadingViews.forEach { view in
                     view.alpha = 1
-                })
+                }
 
                 self.visualEffectView.effect = visualEffect
             }, completion: { didComplete in

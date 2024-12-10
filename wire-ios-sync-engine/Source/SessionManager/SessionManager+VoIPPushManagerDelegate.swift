@@ -18,6 +18,7 @@
 
 import Foundation
 import PushKit
+import WireLogging
 
 extension SessionManager: VoIPPushManagerDelegate {
 
@@ -34,11 +35,11 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         guard
             let accountId = accountId(from: payload),
-            let account = self.accountManager.account(with: accountId),
+            let account = accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
                 expirationHandler: {
-                  WireLogger.notifications.warn("Processing push payload expired: \(payload)")
+                    WireLogger.notifications.warn("Processing push payload expired: \(payload)")
                 }
             )
         else {
@@ -100,7 +101,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 private extension VoIPPushPayload {
 
     func caller(in context: NSManagedObjectContext) -> ZMUser? {
-        return ZMUser.fetch(
+        ZMUser.fetch(
             with: senderID,
             domain: senderDomain,
             in: context
@@ -108,7 +109,7 @@ private extension VoIPPushPayload {
     }
 
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
-        return ZMConversation.fetch(
+        ZMConversation.fetch(
             with: conversationID,
             domain: conversationDomain,
             in: context
@@ -117,7 +118,7 @@ private extension VoIPPushPayload {
 
 }
 
-private extension Dictionary where Key == AnyHashable, Value == Any {
+private extension [AnyHashable: Any] {
 
     var stringIdentifier: String {
         guard
@@ -125,7 +126,7 @@ private extension Dictionary where Key == AnyHashable, Value == Any {
             let innerData = data["data"] as? [AnyHashable: Any],
             let id = innerData["id"]
         else {
-            return self.description
+            return description
         }
 
         return "\(id)"

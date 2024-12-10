@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
+import WireLogging
 
 /// Request strategy for fetching user profiles and processing user update events.
 ///
@@ -36,28 +38,36 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let actionSync: EntityActionSync
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress
+    ) {
 
         self.syncProgress = syncProgress
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
 
-        self.userProfileByID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
-                                                    transcoder: userProfileByIDTranscoder)
-        self.userProfileByQualifiedID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
-                                                             transcoder: userProfileByQualifiedIDTranscoder)
+        self.userProfileByID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userProfileByIDTranscoder
+        )
+        self.userProfileByQualifiedID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userProfileByQualifiedIDTranscoder
+        )
 
         self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync]
-        self.userProfileByID.delegate = self
-        self.userProfileByQualifiedID.delegate = self
-        self.userProfileByQualifiedIDTranscoder.contextChangedTracker = self
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringSlowSync
+        ]
+        userProfileByID.delegate = self
+        userProfileByQualifiedID.delegate = self
+        userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -74,7 +84,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             return
         }
 
-        let allConnectedUsers = self.allConnectedUsers()
+        let allConnectedUsers = allConnectedUsers()
 
         if allConnectedUsers.isEmpty {
             syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
@@ -143,7 +153,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend()!)
+        ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend()!)
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -242,11 +252,15 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard apiVersion == .v0 else { return nil }
         // GET /users?ids=?
-        let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
+        let userIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
@@ -302,7 +316,8 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             apiVersion > .v0,
-            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers)).payloadData(encoder: encoder),
+            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers))
+            .payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
@@ -310,10 +325,19 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         // POST /list-users
         let path = NSString.path(withComponents: ["/list-users"])
-        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
@@ -387,16 +411,16 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
 }
 
-private extension Collection where Element == ZMUser {
+private extension Collection<ZMUser> {
 
     func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
-        return compactMap { user in
+        compactMap { user in
             if let qualifiedID = user.qualifiedID {
-                return qualifiedID
+                qualifiedID
             } else if let identifier = user.remoteIdentifier {
-                return QualifiedID(uuid: identifier, domain: localDomain)
+                QualifiedID(uuid: identifier, domain: localDomain)
             } else {
-                return nil
+                nil
             }
         }
     }

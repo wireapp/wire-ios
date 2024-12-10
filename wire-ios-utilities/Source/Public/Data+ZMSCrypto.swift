@@ -45,7 +45,7 @@ public extension Data {
         var md5Hash = Insecure.MD5()
 
         // We may have a lot of data to hash, so compute in chunks of 512 bytes.
-        for range in (startIndex..<endIndex).chunked(by: 512) {
+        for range in (startIndex ..< endIndex).chunked(by: 512) {
             md5Hash.update(data: self[range])
         }
 
@@ -54,7 +54,7 @@ public extension Data {
     }
 
     func zmHMACSHA256Digest(key: Data) -> Data {
-        return (self as NSData).zmHMACSHA256Digest(withKey: key)
+        (self as NSData).zmHMACSHA256Digest(withKey: key)
     }
 
     func zmHexEncodedString() -> String {
@@ -62,7 +62,7 @@ public extension Data {
         var characters: [unichar] = []
         characters.reserveCapacity(count * 2)
 
-        self.forEach { byte in
+        forEach { byte in
             characters.append(hexDigits[Int(byte / 16)])
             characters.append(hexDigits[Int(byte % 16)])
         }
@@ -71,23 +71,23 @@ public extension Data {
     }
 
     static func zmRandomSHA256Key() -> Data {
-        return NSData.zmRandomSHA256Key()
+        NSData.zmRandomSHA256Key()
     }
 
     func zmSHA256Digest() -> Data {
-        return (self as NSData).zmSHA256Digest()
+        (self as NSData).zmSHA256Digest()
     }
 
     func base64String() -> String {
-        return (self as NSData).base64String()
+        (self as NSData).base64String()
     }
 
     func zmEncryptPrefixingIV(key: Data) -> Data {
-        return (self as NSData).zmEncryptPrefixingIV(withKey: key)
+        (self as NSData).zmEncryptPrefixingIV(withKey: key)
     }
 
     func zmDecryptPrefixedIV(key: Data) -> Data {
-        return (self as NSData).zmDecryptPrefixedIV(withKey: key)
+        (self as NSData).zmDecryptPrefixedIV(withKey: key)
     }
 
     func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
@@ -97,7 +97,7 @@ public extension Data {
             throw AESError.keySizeError
         }
 
-        let dataLength = size_t(self.count + kCCBlockSizeAES128)
+        let dataLength = size_t(count + kCCBlockSizeAES128)
         var encryptedData = Data(count: dataLength)
         var copiedBytes: size_t = 0
 
@@ -105,19 +105,20 @@ public extension Data {
         let iv = Data.secureRandomData(length: UInt(ivSize))
 
         let encryptedDataBytes = encryptedData.withUnsafeMutableBytes {
-            return $0.baseAddress
+            $0.baseAddress
         }
-        let status = CCCrypt(CCOperation(kCCEncrypt),
-                             CCAlgorithm(kCCAlgorithmAES),
-                             CCOptions(kCCOptionPKCS7Padding),
-                             Array(key),
-                             keyLength,
-                             Array(iv),
-                             Array(self),
-                             self.count,
-                             encryptedDataBytes,
-                             encryptedData.count,
-                             &copiedBytes
+        let status = CCCrypt(
+            CCOperation(kCCEncrypt),
+            CCAlgorithm(kCCAlgorithmAES),
+            CCOptions(kCCOptionPKCS7Padding),
+            Array(key),
+            keyLength,
+            Array(iv),
+            Array(self),
+            count,
+            encryptedDataBytes,
+            encryptedData.count,
+            &copiedBytes
         )
 
         guard status == kCCSuccess else {
@@ -125,22 +126,20 @@ public extension Data {
         }
 
         encryptedData.count = copiedBytes
-        let output = iv + encryptedData
-
-        return output
+        return iv + encryptedData
 
     }
 
     func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
-        return (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
+        (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
     }
 
     static func secureRandomData(length: UInt) -> Data {
-        return NSData.secureRandomData(ofLength: length)
+        NSData.secureRandomData(ofLength: length)
     }
 
     static func randomEncryptionKey() -> Data {
-        return NSData.randomEncryptionKey()
+        NSData.randomEncryptionKey()
     }
 
 }
@@ -153,10 +152,10 @@ private extension Range where Index == Int {
         let numberOfWholeChunks = endIndex / chunkSize
         let numberOfChunks = endIndex.isMultiple(of: chunkSize) ? numberOfWholeChunks : numberOfWholeChunks + 1
 
-        return (0..<numberOfChunks).map { chunkIndex in
+        return (0 ..< numberOfChunks).map { chunkIndex in
             let start = chunkIndex * chunkSize
             let end = Swift.min(start + chunkSize, endIndex)
-            return start..<end
+            return start ..< end
         }
     }
 

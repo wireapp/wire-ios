@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objcMembers public class PersonName: NSObject {
+@objcMembers
+public class PersonName: NSObject {
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
-        return self.components == other.components
+        return components == other.components
     }
 
     enum NameOrder {
-        case givenNameFirst, givenNameLast, arabicGivenName
+        case givenNameFirst
+        case givenNameLast
+        case arabicGivenName
     }
 
     let components: [String]
@@ -49,11 +52,11 @@
         case .arabicGivenName:
             startIndex = 1
             lastIndex = self.components.count - 1
-            guard self.components.count > 1 && self.components[1].zmIsGodName() else { break }
+            guard self.components.count > 1, self.components[1].zmIsGodName() else { break }
             guard self.components.count > 2 else { return [] }
             startIndex += 1
         }
-        return Array(self.components[startIndex...lastIndex])
+        return Array(self.components[startIndex ... lastIndex])
     }()
 
     lazy var givenName: String = {
@@ -75,7 +78,7 @@
         return name
     }()
 
-    lazy public var initials: String = {
+    public lazy var initials: String = {
         guard let firstComponent = self.components.first else { return "" }
 
         var _initials = String()
@@ -112,21 +115,26 @@
     }
 
     static func script(of string: String, schemeTagger: NSLinguisticTagger) -> NameOrder {
-        // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and last name
+        // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and
+        // last name
         // If the name contains latin scheme tag, it uses the first name as the given name
-        // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
+        // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for
+        // god
         schemeTagger.string = string
-        let tags = schemeTagger.tags(in: NSRange(location: 0, length: schemeTagger.string!.count), scheme: NSLinguisticTagScheme.script.rawValue, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
+        let tags = schemeTagger.tags(
+            in: NSRange(location: 0, length: schemeTagger.string!.count),
+            scheme: NSLinguisticTagScheme.script.rawValue,
+            options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames],
+            tokenRanges: nil
+        )
 
-        let nameOrder: NameOrder
-        if tags.contains("Arab") {
-            nameOrder = .arabicGivenName
+        return if tags.contains("Arab") {
+            .arabicGivenName
         } else if tags.contains(where: { ["Hani", "Jpan", "Deva", "Gurj"].contains($0) }) {
-            nameOrder = tags.contains("Latn") ? .givenNameFirst : .givenNameLast
+            tags.contains("Latn") ? .givenNameFirst : .givenNameLast
         } else {
-            nameOrder = .givenNameFirst
+            .givenNameFirst
         }
-        return nameOrder
     }
 
     static func splitNameComponents(fullName: String) -> [String] {
@@ -135,9 +143,15 @@
         var component: String?
         var lastRange: Range<String.Index>?
 
-        // This is a bit more complicated because we don't want chinese names to be split up by their individual characters
+        // This is a bit more complicated because we don't want chinese names to be split up by their individual
+        // characters
         let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
-        fullName.enumerateLinguisticTags(in: fullRange, scheme: NSLinguisticTagScheme.tokenType.rawValue, options: options, orthography: nil) { tag, substringRange, _, _ in
+        fullName.enumerateLinguisticTags(
+            in: fullRange,
+            scheme: NSLinguisticTagScheme.tokenType.rawValue,
+            options: options,
+            orthography: nil
+        ) { tag, substringRange, _, _ in
             guard tag == NSLinguisticTag.word.rawValue else { return }
             let substring = fullName[substringRange]
             if let aComponent = component {
@@ -161,7 +175,7 @@
         return components
     }
 
-    override public var hash: Int {
+    public override var hash: Int {
         var hash = 0
         components.forEach { hash ^= $0.hash }
         return hash

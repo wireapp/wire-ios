@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class PreviewBlackListTests: XCTestCase {
 
@@ -57,12 +57,22 @@ class PreviewBlackListTests: XCTestCase {
     }
 
     func assertThatPreviewMetadataIsBlacklisted(_ host: String, line: UInt = #line) {
-        let metadata = LinkMetadata(originalURLString: "https://www.\(host).com/example", permanentURLString: "https://www.\(host).com/example", resolvedURLString: "https://www.\(host).com/example", offset: 0)
+        let metadata = LinkMetadata(
+            originalURLString: "https://www.\(host).com/example",
+            permanentURLString: "https://www.\(host).com/example",
+            resolvedURLString: "https://www.\(host).com/example",
+            offset: 0
+        )
         XCTAssertTrue(metadata.isBlacklisted, line: line)
     }
 
     func assertThatPreviewMetadataIsNotBlacklisted(_ host: String, line: UInt = #line) {
-        let metadata = LinkMetadata(originalURLString: "https://www.\(host).com/example", permanentURLString: "https://www.\(host).com/example", resolvedURLString: "https://www.\(host).com/example", offset: 0)
+        let metadata = LinkMetadata(
+            originalURLString: "https://www.\(host).com/example",
+            permanentURLString: "https://www.\(host).com/example",
+            resolvedURLString: "https://www.\(host).com/example",
+            offset: 0
+        )
         XCTAssertFalse(metadata.isBlacklisted, line: line)
     }
 

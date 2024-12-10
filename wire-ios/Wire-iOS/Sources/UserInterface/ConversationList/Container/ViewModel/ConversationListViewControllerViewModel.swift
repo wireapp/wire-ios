@@ -22,6 +22,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -54,7 +55,14 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         animated: Bool
     ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
+        _ viewModel: ConversationListViewController
+            .ViewModel
+    )
+
+    func conversationListViewControllerViewModelDidReloadContent(
+        _ viewModel: ConversationListViewController.ViewModel
+    )
 }
 
 extension ConversationListViewController {
@@ -120,9 +128,9 @@ extension ConversationListViewController {
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-            selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
-            shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
-            didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
+            self.selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
+            self.shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
+            self.didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             self.getUserAccountImageSourceUseCase = getUserAccountImageSourceUseCase
@@ -207,8 +215,7 @@ extension ConversationListViewController.ViewModel {
     private func updateAccountImage() {
         Task { @MainActor in
             do {
-                let useCase = GetUserAccountImageSourceUseCase()
-                accountImageSource = try await useCase.invoke(
+                accountImageSource = try await getUserAccountImageSourceUseCase.invoke(
                     user: userSession.selfUser,
                     userContext: userSession.contextProvider.viewContext,
                     account: account
@@ -287,7 +294,8 @@ extension ConversationListViewController.ViewModel: UserObserving {
     @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
-        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
+        if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo
+            .imageSmallProfileDataChanged || changeInfo.teamsChanged {
             updateAccountImage()
         }
 

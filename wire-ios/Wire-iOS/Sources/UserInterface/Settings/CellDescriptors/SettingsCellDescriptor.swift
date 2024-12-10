@@ -33,10 +33,8 @@ import WireSettingsUI
 
 // MARK: - Protocols
 
-/**
- * @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
- * should be updated from the cell.
- */
+/// @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
+/// should be updated from the cell.
 protocol SettingsCellDescriptorType: AnyObject {
 
     static var cellType: SettingsTableCellProtocol.Type { get }
@@ -57,7 +55,7 @@ protocol SettingsCellDescriptorType: AnyObject {
 
 extension SettingsCellDescriptorType {
     var copiableText: String? {
-        return nil
+        nil
     }
 
     var settingsTopLevelMenuItem: SettingsTopLevelMenuItem? {
@@ -67,30 +65,30 @@ extension SettingsCellDescriptorType {
 
 func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {
     if let leftID = left.identifier,
-        let rightID = right.identifier {
-            return leftID == rightID
+       let rightID = right.identifier {
+        leftID == rightID
     } else {
-        return left == right
+        left == right
     }
 }
 
 typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
 
 protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
-    var viewController: UIViewController? {get set}
+    var viewController: UIViewController? { get set }
 }
 
 protocol SettingsSectionDescriptorType: AnyObject {
-    var cellDescriptors: [SettingsCellDescriptorType] {get}
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {get}
-    var header: String? {get}
-    var footer: String? {get}
-    var visible: Bool {get}
+    var cellDescriptors: [SettingsCellDescriptorType] { get }
+    var visibleCellDescriptors: [SettingsCellDescriptorType] { get }
+    var header: String? { get }
+    var footer: String? { get }
+    var visible: Bool { get }
 }
 
 extension SettingsSectionDescriptorType {
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return cellDescriptors
+        cellDescriptors
     }
 }
 
@@ -100,10 +98,10 @@ enum InternalScreenStyle {
 }
 
 protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorType {
-    var items: [SettingsSectionDescriptorType] {get}
-    var visibleItems: [SettingsSectionDescriptorType] {get}
-    var style: InternalScreenStyle {get}
-    var accessibilityBackButtonText: String {get}
+    var items: [SettingsSectionDescriptorType] { get }
+    var visibleItems: [SettingsSectionDescriptorType] { get }
+    var style: InternalScreenStyle { get }
+    var accessibilityBackButtonText: String { get }
 }
 
 extension SettingsInternalGroupCellDescriptorType {
@@ -113,10 +111,6 @@ extension SettingsInternalGroupCellDescriptorType {
             section.allCellDescriptors()
         }
     }
-}
-
-protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorType {
-    var presentationAction: () -> (UIViewController?) {get}
 }
 
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
@@ -132,30 +126,46 @@ protocol SettingsControllerGeneratorType {
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
     var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        return self.cellDescriptors.filter {
-            $0.visible
-        }
+        cellDescriptors.filter(\.visible)
     }
+
     var visible: Bool {
-        return visibilityAction?(self) ?? true
+        visibilityAction?(self) ?? true
     }
+
     let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
 
     var header: String? {
-        return headerGenerator()
+        headerGenerator()
     }
+
     var footer: String? {
-        return footerGenerator()
+        footerGenerator()
     }
 
     let headerGenerator: () -> String?
     let footerGenerator: () -> String?
 
-    convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
-        self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer }, visibilityAction: visibilityAction)
+    convenience init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        header: String? = .none,
+        footer: String? = .none,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
+        self.init(
+            cellDescriptors: cellDescriptors,
+            headerGenerator: { header },
+            footerGenerator: { footer },
+            visibilityAction: visibilityAction
+        )
     }
 
-    init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
+    init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        headerGenerator: @escaping () -> String?,
+        footerGenerator: @escaping () -> String?,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
         self.cellDescriptors = cellDescriptors
         self.headerGenerator = headerGenerator
         self.footerGenerator = footerGenerator
@@ -182,9 +192,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     weak var group: (any SettingsGroupCellDescriptorType)?
 
     var visibleItems: [SettingsSectionDescriptorType] {
-        return self.items.filter {
-            $0.visible
-        }
+        items.filter(\.visible)
     }
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
@@ -215,12 +223,12 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
-        if let previewGenerator = self.previewGenerator {
+        cell.titleText = title
+        if let previewGenerator {
             let preview = previewGenerator(self)
             cell.preview = preview
         }
-        cell.icon = self.icon
+        cell.icon = icon
         if let cell = cell as? SettingsTableCell {
             cell.showDisclosureIndicator()
         }
@@ -259,7 +267,6 @@ extension SettingsPropertyName {
             return "Disable Markdown support"
         case .darkMode:
             return Settings.AccountPictureGroup.theme
-
         // Profile
         case .profileName:
             return Account.Name.title
@@ -271,7 +278,6 @@ extension SettingsPropertyName {
             return Account.Team.title
         case .domain:
             return Account.Domain.title
-
         // AVS
         case .soundAlerts:
             return SoundMenu.title
@@ -281,7 +287,6 @@ extension SettingsPropertyName {
             return SoundMenu.Ringtone.title
         case .pingSoundName:
             return SoundMenu.Ping.title
-
         case .accentColor:
             return Settings.AccountPictureGroup.color
         case .disableSendButton:
@@ -306,8 +311,7 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
-
-            // personal information - Analytics
+        // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
         case .readReceiptsEnabled:

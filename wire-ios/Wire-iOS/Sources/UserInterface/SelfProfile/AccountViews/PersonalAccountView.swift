@@ -48,20 +48,37 @@ final class PersonalAccountView: BaseAccountView {
         self.shouldGroupAccessibilityChildren = true
         self.accessibilityIdentifier = "personal team"
 
-        selectionView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
-        }
+        selectionView.layer.masksToBounds = true
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: userSession), userSession: userSession)
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            self.conversationListObserver = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.conversations(inUserSession: userSession),
+                userSession: userSession
+            )
+            self.connectionRequestObserver = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
 
-        self.imageViewContainer.addSubview(userImageView)
+        imageViewContainer.addSubview(userImageView)
         userImageView.translatesAutoresizingMaskIntoConstraints = false
-        userImageView.fitIn(view: imageViewContainer, inset: 2)
+
+        NSLayoutConstraint.activate([
+            userImageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: 2),
+            userImageView.bottomAnchor.constraint(equalTo: imageViewContainer.bottomAnchor, constant: -2),
+            userImageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: 2),
+            userImageView.trailingAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -2)
+        ])
 
         update()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        selectionView.layer.cornerRadius = selectionView.bounds.width / 2
     }
 
     @available(*, unavailable)
@@ -74,7 +91,8 @@ final class PersonalAccountView: BaseAccountView {
     override func update() {
         super.update()
 
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.userName) + " " + accessibilityState
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(account.userName) + " " + accessibilityState
         if let imageData = account.imageData, let avatarImage = UIImage(data: imageData) {
             userImageView.avatar = .image(avatarImage)
         } else {

@@ -50,7 +50,8 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     func testWipeDatabaseViewController() {
         let createSut: () -> UIViewController = {
-            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            let navigationController = UIViewController()
+                .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
             navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
             return navigationController
         }
@@ -61,7 +62,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
             .verify(
                 matching: sut,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

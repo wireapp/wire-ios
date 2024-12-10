@@ -20,11 +20,10 @@ import UIKit
 import WireTesting
 import WireTransport
 
-/**
- * A controllable objects that mocks the behavior of UIApplication regarding background tasks.
- */
+/// A controllable objects that mocks the behavior of UIApplication regarding background tasks.
 
-@objc class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+@objc
+class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
 
     var backgroundTimeRemaining: TimeInterval = 10
 
@@ -44,12 +43,12 @@ import WireTransport
 
     /// The number of active tasks.
     @objc var numberOfTasks: Int {
-        return tasks.count
+        tasks.count
     }
 
     // MARK: - Data
 
-    private var lastIdentifier: ZMAtomicInteger = ZMAtomicInteger(integer: 1)
+    private var lastIdentifier: ZMAtomicInteger = .init(integer: 1)
 
     private struct Task {
         let name: String?
@@ -85,7 +84,8 @@ import WireTransport
 
     // MARK: - Helpers
 
-    @objc func triggerExpiration() {
+    @objc
+    func triggerExpiration() {
         isExpiring = true
 
         tasks.values.forEach {
@@ -93,7 +93,8 @@ import WireTransport
         }
     }
 
-    @objc func reset() {
+    @objc
+    func reset() {
         triggerExpiration()
         limit = 1
         isExpiring = false

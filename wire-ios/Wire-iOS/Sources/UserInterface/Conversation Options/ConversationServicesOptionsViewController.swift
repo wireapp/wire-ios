@@ -23,9 +23,9 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
-                                                       UITableViewDelegate,
-                                                       UITableViewDataSource,
-                                                       ConversationServicesOptionsViewModelDelegate {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ConversationServicesOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
@@ -33,7 +33,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
@@ -78,7 +78,6 @@ final class ConversationServicesOptionsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
     }
 
     private func createConstraints() {
@@ -123,20 +122,23 @@ final class ConversationServicesOptionsViewController: UIViewController,
     // MARK: – UITableViewDelegate & UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.state.rows.count
+        viewModel.state.rows.count
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return viewModel.state.rows[indexPath.row].action != nil
+        viewModel.state.rows[indexPath.row].action != nil
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: row.cellType.reuseIdentifier,
+            for: indexPath
+        ) as! CellConfigurationConfigurable
         cell.configure(with: row)
         return cell as! UITableViewCell
     }

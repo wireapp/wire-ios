@@ -18,13 +18,13 @@
 
 import Foundation
 
-extension ZMPersistentCookieStorage {
+public extension ZMPersistentCookieStorage {
 
     /// Returns true if `self` has an authentication cookie that can be **decrypted**.
     ///
     /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which
     /// makes no guarantees about whether it's returned value can be decrypted.
-    @objc public var hasAuthenticationCookie: Bool {
+    @objc var hasAuthenticationCookie: Bool {
         authenticationCookieExpirationDate != nil
     }
 

@@ -21,7 +21,8 @@ import WireCommonComponents
 import WireDesign
 
 enum PopUpIconButtonExpandDirection {
-    case left, right
+    case left
+    case right
 }
 
 protocol PopUpIconButtonDelegate: AnyObject {
@@ -42,7 +43,8 @@ final class PopUpIconButton: IconButton {
         addGestureRecognizer(longPressGR)
     }
 
-    @objc private func longPressHandler(gestureRecognizer: UILongPressGestureRecognizer) {
+    @objc
+    private func longPressHandler(gestureRecognizer: UILongPressGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
 

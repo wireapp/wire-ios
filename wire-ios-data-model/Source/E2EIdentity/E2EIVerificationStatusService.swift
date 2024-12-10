@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol E2EIVerificationStatusServiceInterface {
@@ -56,7 +57,8 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
 
     /// Returns the state of a conversation regarding end-to-end identity.
     /// Note: coreCrypto indicates a conversation with one of the states: `verified`, `notVerified`, `notEnabled`.
-    /// For further use, we need to convert it to MLSVerificationStatus, which has `verified`, `notVerified`, and `degraded` states.
+    /// For further use, we need to convert it to MLSVerificationStatus, which has `verified`, `notVerified`, and
+    /// `degraded` states.
     ///
     /// - Parameters:
     ///  - groupID: the id of the MLS group for which to get the verification status
@@ -71,7 +73,8 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
                 try await $0.e2eiConversationState(conversationId: groupID.data).toMLSVerificationStatus()
             }
         } catch {
-            WireLogger.e2ei.warn("can't get conversation \(groupID.safeForLoggingDescription) verification state: \(error)")
+            WireLogger.e2ei
+                .warn("can't get conversation \(groupID.safeForLoggingDescription) verification state: \(error)")
 
             throw E2EIVerificationStatusError.failedToFetchVerificationStatus
         }

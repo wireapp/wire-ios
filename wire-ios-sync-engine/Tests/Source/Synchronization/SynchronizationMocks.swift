@@ -26,24 +26,25 @@ import WireDataModel
 @objcMembers
 public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrationDelegate, ZMRequestCancellation {
 
-    public var taskCancellationDelegate: ZMRequestCancellation { return self }
-    public var clientRegistrationDelegate: ClientRegistrationDelegate { return self }
+    public var taskCancellationDelegate: ZMRequestCancellation { self }
+    public var clientRegistrationDelegate: ClientRegistrationDelegate { self }
 
     public var mockSynchronizationState = SynchronizationState.unauthenticated
     public var synchronizationState: SynchronizationState {
-        return mockSynchronizationState
+        mockSynchronizationState
     }
 
     public var mockOperationState = OperationState.foreground
     public var operationState: OperationState {
-        return mockOperationState
+        mockOperationState
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return self
+        self
     }
 
     // MARK: ZMRequestCancellation
+
     public var cancelledIdentifiers = [ZMTaskIdentifier]()
 
     public func cancelTask(with identifier: ZMTaskIdentifier) {
@@ -51,6 +52,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
     }
 
     // MARK: ClientRegistrationDelegate
+
     public var deletionCalls: Int = 0
 
     /// Notify that the current client was deleted remotely
@@ -60,7 +62,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
 
     /// Returns true if the client is registered
     public var clientIsReadyForRequests: Bool {
-        return true
+        true
     }
 
     public var didRequestResyncResources = false
@@ -74,17 +76,21 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 
     var mockPhase: ZMAuthenticationPhase
 
-    init(delegate: ZMAuthenticationStatusDelegate,
-         phase: ZMAuthenticationPhase = .authenticated,
-         userInfoParser: UserInfoParser) {
+    init(
+        delegate: ZMAuthenticationStatusDelegate,
+        phase: ZMAuthenticationPhase = .authenticated,
+        userInfoParser: UserInfoParser
+    ) {
         self.mockPhase = phase
-        super.init(delegate: delegate,
-                   groupQueue: DispatchGroupQueue(queue: .main),
-                   userInfoParser: userInfoParser)
+        super.init(
+            delegate: delegate,
+            groupQueue: DispatchGroupQueue(queue: .main),
+            userInfoParser: userInfoParser
+        )
     }
 
     override var currentPhase: ZMAuthenticationPhase {
-        return mockPhase
+        mockPhase
     }
 
 }
@@ -115,21 +121,21 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     }
 
     var isLoggedIn: Bool {
-        return true
+        true
     }
 
     override var clientIsReadyForRequests: Bool {
-        return mockReadiness
+        mockReadiness
     }
 
     var isWaitingForLoginValue: Bool = false
     override var isWaitingForLogin: Bool {
-        return isWaitingForLoginValue
+        isWaitingForLoginValue
     }
 
     var isAddingEmailNecessaryValue: Bool = false
     override var isAddingEmailNecessary: Bool {
-        return isAddingEmailNecessaryValue
+        isAddingEmailNecessaryValue
     }
 }
 
@@ -138,10 +144,10 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var mockPhase: ClientUpdatePhase?
     var deleteCallCount: Int = 0
     var fetchCallCount: Int = 0
-    var mockCredentials: UserEmailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
+    var mockCredentials: UserEmailCredentials = .init(email: "bla@example.com", password: "secret")
 
     override var credentials: UserEmailCredentials? {
-        return mockCredentials
+        mockCredentials
     }
 
     override func didFetchClients(_ clients: [UserClient]) {
@@ -167,7 +173,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     var password = "verySafePassword"
 
     func emailCredentials() -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password)
+        UserEmailCredentials(email: email, password: password)
     }
 
     func credentialsMayBeCleared() {
@@ -175,8 +181,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
-class FakeCookieStorage: ZMPersistentCookieStorage {
-}
+class FakeCookieStorage: ZMPersistentCookieStorage {}
 
 public class MockSyncStatus: SyncStatus {
 
@@ -202,7 +207,8 @@ public class MockSyncStatus: SyncStatus {
     }
 }
 
-@objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
+@objc
+public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
     var registeredUserClient: UserClient?
     var registeredMLSClient: UserClient?
@@ -246,7 +252,8 @@ public class MockSyncStatus: SyncStatus {
     }
 }
 
-@objc public class MockPushMessageHandler: NSObject, PushMessageHandler {
+@objc
+public class MockPushMessageHandler: NSObject, PushMessageHandler {
 
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
@@ -288,7 +295,8 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 
 }
 
-@objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
+@objcMembers
+public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
 
     public var objectsDidChangeCalled: Bool = false
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
@@ -336,6 +344,7 @@ public class MockRequestStrategy: NSObject, RequestStrategy {
             }
         }
     }
+
     public var nextRequestCalled = false
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         nextRequestCalled = true

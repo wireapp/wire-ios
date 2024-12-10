@@ -30,7 +30,7 @@ public struct GenericHash: Hashable {
 
 extension GenericHash: CustomStringConvertible {
     public var description: String {
-        return "GenericHash \(hashValue)"
+        "GenericHash \(hashValue)"
     }
 }
 
@@ -55,8 +55,11 @@ public final class GenericHashBuilder {
     private static let size = MemoryLayout<Int>.size
 
     init() {
-        cryptoState = UnsafeMutableRawBufferPointer.allocate(byteCount: crypto_generichash_statebytes(), alignment: 64)
-        opaqueCryptoState = OpaquePointer(cryptoState.baseAddress!)
+        self.cryptoState = UnsafeMutableRawBufferPointer.allocate(
+            byteCount: crypto_generichash_statebytes(),
+            alignment: 64
+        )
+        self.opaqueCryptoState = OpaquePointer(cryptoState.baseAddress!)
 
         crypto_generichash_init(opaqueCryptoState, nil, 0, GenericHashBuilder.size)
     }
@@ -64,7 +67,11 @@ public final class GenericHashBuilder {
     public func append(_ data: Data) {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
         state = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> State in
-            crypto_generichash_update(opaqueCryptoState, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), UInt64(data.count))
+            crypto_generichash_update(
+                opaqueCryptoState,
+                bytes.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                UInt64(data.count)
+            )
             return .readyToBuild
         }
     }

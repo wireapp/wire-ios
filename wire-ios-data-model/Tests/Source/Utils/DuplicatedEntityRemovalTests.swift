@@ -17,21 +17,22 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 
-    func appendSystemMessage(conversation: ZMConversation,
-                             type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date?,
-                             duration: TimeInterval? = nil
-        ) -> ZMSystemMessage {
+    func appendSystemMessage(
+        conversation: ZMConversation,
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date?,
+        duration: TimeInterval? = nil
+    ) -> ZMSystemMessage {
 
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
         systemMessage.systemMessageType = type
@@ -49,33 +50,39 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         return systemMessage
     }
 
-    func addedOrRemovedSystemMessages(conversation: ZMConversation,
-                                      client: UserClient
-                                      ) -> [ZMSystemMessage] {
-        let addedMessage = self.appendSystemMessage(conversation: conversation,
-                                                    type: .newClient,
-                                                    sender: ZMUser.selfUser(in: self.moc),
-                                                    users: [client.user!],
-                                                    addedUsers: [client.user!],
-                                                    clients: [client],
-                                                    timestamp: Date())
+    func addedOrRemovedSystemMessages(
+        conversation: ZMConversation,
+        client: UserClient
+    ) -> [ZMSystemMessage] {
+        let addedMessage = appendSystemMessage(
+            conversation: conversation,
+            type: .newClient,
+            sender: ZMUser.selfUser(in: moc),
+            users: [client.user!],
+            addedUsers: [client.user!],
+            clients: [client],
+            timestamp: Date()
+        )
 
-        let ignoredMessage = self.appendSystemMessage(conversation: conversation,
-                                                      type: .ignoredClient,
-                                                      sender: ZMUser.selfUser(in: self.moc),
-                                                      users: [client.user!],
-                                                      clients: [client],
-                                                      timestamp: Date())
+        let ignoredMessage = appendSystemMessage(
+            conversation: conversation,
+            type: .ignoredClient,
+            sender: ZMUser.selfUser(in: moc),
+            users: [client.user!],
+            clients: [client],
+            timestamp: Date()
+        )
 
         return [addedMessage, ignoredMessage]
     }
 
     func messages(conversation: ZMConversation) -> [ZMMessage] {
-        return (0..<5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
+        (0 ..< 5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
     }
 }
 
 // MARK: - Merge tests
+
 extension DuplicatedEntityRemovalTests {
 
     func testThatItMergesTwoUserClients() {
@@ -91,9 +98,9 @@ extension DuplicatedEntityRemovalTests {
         let addedOrRemovedInSystemMessages = Set<ZMSystemMessage>(
             addedOrRemovedSystemMessages(conversation: conversation, client: client2)
         )
-        let ignoredByClients = Set((0..<5).map { _ in createClient(user: user) })
+        let ignoredByClients = Set((0 ..< 5).map { _ in createClient(user: user) })
         let messagesMissingRecipient = Set<ZMMessage>(messages(conversation: conversation))
-        let trustedByClients = Set((0..<5).map { _ in createClient(user: user) })
+        let trustedByClients = Set((0 ..< 5).map { _ in createClient(user: user) })
         let missedByClient = createClient(user: user)
 
         client2.addedOrRemovedInSystemMessages = addedOrRemovedInSystemMessages
@@ -104,8 +111,8 @@ extension DuplicatedEntityRemovalTests {
 
         // WHEN
         client1.merge(with: client2)
-        self.moc.delete(client2)
-        self.moc.saveOrRollback()
+        moc.delete(client2)
+        moc.saveOrRollback()
 
         // THEN
         XCTAssertEqual(addedOrRemovedInSystemMessages.count, 2)
@@ -124,9 +131,9 @@ extension DuplicatedEntityRemovalTests {
 
 }
 
-extension Array where Element: ZMManagedObject {
+private extension Array where Element: ZMManagedObject {
 
-    fileprivate var nonZombies: [Element] {
-        return self.filter { !($0.isZombieObject || $0.isDeleted) }
+    var nonZombies: [Element] {
+        filter { !($0.isZombieObject || $0.isDeleted) }
     }
 }

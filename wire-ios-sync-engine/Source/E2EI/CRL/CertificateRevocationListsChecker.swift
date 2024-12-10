@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
@@ -32,7 +33,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let fetchE2EIFeatureConfig: (() -> Feature.E2EI.Config?)
+    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -118,7 +119,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
         let crlURLBuilder = CRLURLBuilder(
             shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
-            proxyURLString: e2eiFeatureConfig?.crlProxy)
+            proxyURLString: e2eiFeatureConfig?.crlProxy
+        )
 
         var shouldNotifyAboutRevokedCertificate = false
 
@@ -147,7 +149,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
                 }
             } catch {
-                logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
+                logger
+                    .warn(
+                        "failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))"
+                    )
             }
         }
 

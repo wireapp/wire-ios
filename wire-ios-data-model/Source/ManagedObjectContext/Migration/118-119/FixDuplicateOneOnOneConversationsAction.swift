@@ -17,13 +17,15 @@
 //
 
 import Foundation
+import WireLogging
 
 final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
 
     override func execute(in context: NSManagedObjectContext) throws {
 
         // 1) fetch all conversations to fix
-        guard let fake1On1Conversations: [ZMConversation] = try? fakeOneOnOneConversations(context: context), !fake1On1Conversations.isEmpty else {
+        guard let fake1On1Conversations: [ZMConversation] = try? fakeOneOnOneConversations(context: context),
+              !fake1On1Conversations.isEmpty else {
             return
         }
 
@@ -42,7 +44,10 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
             let theOneOnOneConversation = sortedConversations.removeFirst()
             user.oneOnOneConversation = theOneOnOneConversation
 
-            WireLogger.localStorage.debug("Fixing oneOnOne conversation", attributes: [.conversationId: theOneOnOneConversation.remoteIdentifier.safeForLoggingDescription])
+            WireLogger.localStorage.debug(
+                "Fixing oneOnOne conversation",
+                attributes: [.conversationId: theOneOnOneConversation.remoteIdentifier.safeForLoggingDescription]
+            )
 
             // 3) select all messages from other conversations
             for otherConversation in sortedConversations {
@@ -61,8 +66,10 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
         return fakeOnOnOneByUser
     }
 
-    private func moveMessages(from otherConversation: ZMConversation,
-                              to theOneOnOneConversation: ZMConversation) {
+    private func moveMessages(
+        from otherConversation: ZMConversation,
+        to theOneOnOneConversation: ZMConversation
+    ) {
         otherConversation.allMessages.forEach { message in
 
             // 4) set them to conversation 1:1
@@ -98,7 +105,11 @@ final class FixDuplicateOneOnOneConversationsAction: CoreDataMigrationAction {
             return []
         }
         let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
         let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
         let sameParticipant = NSPredicate(
             format: "%K.@count == 2 AND ANY %K.user == %@",

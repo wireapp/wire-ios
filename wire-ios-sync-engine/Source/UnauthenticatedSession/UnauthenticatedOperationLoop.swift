@@ -30,7 +30,11 @@ class UnauthenticatedOperationLoop: NSObject {
     fileprivate var tornDown = false
     fileprivate var shouldEnqueue = true
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: GroupQueue, requestStrategies: [RequestStrategy]) {
+    init(
+        transportSession: UnauthenticatedTransportSessionProtocol,
+        operationQueue: GroupQueue,
+        requestStrategies: [RequestStrategy]
+    ) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue
@@ -56,7 +60,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     func newRequestsAvailable() {
         var enqueueMore = true
-        while enqueueMore && shouldEnqueue {
+        while enqueueMore, shouldEnqueue {
             let result = transportSession.enqueueRequest(withGenerator: generator)
             enqueueMore = result == .success
             switch result {
@@ -68,11 +72,11 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
     }
 
     private var generator: ZMTransportRequestGenerator {
-        return { [weak self] in
+        { [weak self] in
             guard let self else { return nil }
             guard let apiVersion = BackendInfo.apiVersion else { return nil }
-            let request = (self.requestStrategies as NSArray).nextRequest(for: apiVersion)
-            guard let queue = self.operationQueue else { return nil }
+            let request = (requestStrategies as NSArray).nextRequest(for: apiVersion)
+            guard let queue = operationQueue else { return nil }
             request?.add(ZMCompletionHandler(on: queue) { [weak self] _ in
                 self?.newRequestsAvailable()
             })

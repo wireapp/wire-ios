@@ -16,8 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationFilter: CaseIterable, Sendable {
+import Foundation
+
+public enum ConversationFilter: Sendable, Equatable {
     case favorites
     case groups
     case oneOnOne
+    case folder(id: UUID, name: String)
+
+    /// Returns the associated `id` & `name` data if the filter is a `folder`.
+    var folderData: (id: UUID, name: String)? {
+        if case let .folder(id, name) = self {
+            return (id, name)
+        }
+        return nil
+    }
 }

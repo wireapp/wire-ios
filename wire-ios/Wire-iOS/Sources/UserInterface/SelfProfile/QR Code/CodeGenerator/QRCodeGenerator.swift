@@ -19,7 +19,7 @@
 import CoreImage.CIFilterBuiltins
 import SwiftUI
 
-public struct QRCodeGenerator {
+public enum QRCodeGenerator {
 
     public static func generateQRCode(from string: String, size: CGFloat = 200) -> UIImage {
 
@@ -30,8 +30,10 @@ public struct QRCodeGenerator {
         filter.correctionLevel = "M"
 
         if let outputImage = filter.outputImage {
-            let scaledImage = outputImage.transformed(by: CGAffineTransform(scaleX: size / outputImage.extent.width,
-                                                                            y: size / outputImage.extent.height))
+            let scaledImage = outputImage.transformed(by: CGAffineTransform(
+                scaleX: size / outputImage.extent.width,
+                y: size / outputImage.extent.height
+            ))
 
             if let cgImage = context.createCGImage(scaledImage, from: scaledImage.extent) {
                 return UIImage(cgImage: cgImage)

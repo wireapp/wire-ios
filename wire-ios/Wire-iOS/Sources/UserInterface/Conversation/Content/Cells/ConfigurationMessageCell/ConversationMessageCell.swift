@@ -23,16 +23,25 @@ import WireUtilities
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode)
+    func conversationMessageWantsToOpenMessageDetails(
+        _ cell: UIView,
+        for message: ZMConversationMessage,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    )
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
-    func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView)
-    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController)
+    func conversationMessageWantsToOpenParticipantsDetails(
+        _ cell: UIView,
+        selectedUsers: [UserType],
+        sourceView: UIView
+    )
+    func conversationMessageWantsToShowActionsController(
+        _ cell: UIView,
+        actionsController: MessageActionsViewController
+    )
     func conversationMessageShouldUpdate()
 }
 
-/**
- * A generic view that displays conversation contents.
- */
+/// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: AnyObject {
     /// The object that contains the configuration of the view.
@@ -56,11 +65,9 @@ protocol ConversationMessageCell: AnyObject {
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
 
-    /**
-     * Configures the cell with the specified configuration object.
-     * - parameter object: The view model for the cell.
-     * - parameter animated: True if the view should animate the changes
-     */
+    /// Configures the cell with the specified configuration object.
+    /// - parameter object: The view model for the cell.
+    /// - parameter animated: True if the view should animate the changes
 
     func configure(with object: Configuration, animated: Bool)
 
@@ -76,15 +83,15 @@ protocol ConversationMessageCell: AnyObject {
 extension ConversationMessageCell {
 
     var selectionView: UIView? {
-        return nil
+        nil
     }
 
     var selectionRect: CGRect {
-        return selectionView?.bounds ?? .zero
+        selectionView?.bounds ?? .zero
     }
 
     var ephemeralTimerTopInset: CGFloat {
-        return 8
+        8
     }
 
     func willDisplay() {
@@ -95,19 +102,15 @@ extension ConversationMessageCell {
         // to be overriden
     }
 
-    func prepareForReuse() {
-
-    }
+    func prepareForReuse() {}
 
 }
 
-/**
- * An object that prepares the contents of a conversation cell before
- * it is displayed.
- *
- * The role of this object is to provide a `configuration` view model for
- * the view type it declares as the contents of the cell.
- */
+/// An object that prepares the contents of a conversation cell before
+/// it is displayed.
+///
+/// The role of this object is to provide a `configuration` view model for
+/// the view type it declares as the contents of the cell.
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
@@ -164,9 +167,8 @@ extension ConversationMessageCellDescription {
         _ = message?.startSelfDestructionIfNeeded()
     }
 
-    func didEndDisplayingCell() {
+    func didEndDisplayingCell() {}
 
-    }
     func register(in tableView: UITableView) {
         tableView.register(cell: type(of: self))
     }
@@ -213,12 +215,13 @@ extension ConversationMessageCellDescription {
         }
     }
 
-    /// Default implementation of isConfigurationEqual. If the configure is Equatable, see below Conditionally Conforming for View.Configuration : Equatable
+    /// Default implementation of isConfigurationEqual. If the configure is Equatable, see below Conditionally
+    /// Conforming for View.Configuration : Equatable
     ///
     /// - Parameter other: other object to compare
     /// - Returns: true if both self and other having same type
     func isConfigurationEqual(with other: Any) -> Bool {
-        return type(of: self) == type(of: other)
+        type(of: self) == type(of: other)
     }
 
 }
@@ -236,9 +239,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
     }
 }
 
-/**
- * A type erased box containing a conversation message cell description.
- */
+/// A type erased box containing a conversation message cell description.
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
@@ -259,89 +260,89 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _axLabel: AnyConstantProperty<String?>
 
     init<T: ConversationMessageCellDescription>(_ description: T) {
-        registrationBlock = { tableView in
+        self.registrationBlock = { tableView in
             description.register(in: tableView)
         }
 
-        configureBlock = { cell, animated in
+        self.configureBlock = { cell, animated in
             description.configureCell(cell, animated: animated)
         }
 
-        viewGenerator = {
-            return description.makeView()
+        self.viewGenerator = {
+            description.makeView()
         }
 
-        cellGenerator = { tableView, indexPath in
-            return description.makeCell(for: tableView, at: indexPath)
+        self.cellGenerator = { tableView, indexPath in
+            description.makeCell(for: tableView, at: indexPath)
         }
 
-        baseTypeGetter = {
-            return T.self
+        self.baseTypeGetter = {
+            T.self
         }
 
-        instanceGetter = {
-            return description
+        self.instanceGetter = {
+            description
         }
 
-        isConfigurationEqualBlock = { otherDescription in
+        self.isConfigurationEqualBlock = { otherDescription in
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
-        _delegate = AnyMutableProperty(description, keyPath: \.delegate)
-        _message = AnyMutableProperty(description, keyPath: \.message)
-        _actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
-        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
-        _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
-        _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
+        self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
+        self._message = AnyMutableProperty(description, keyPath: \.message)
+        self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
+        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
+        self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
     var instance: AnyObject {
-        return instanceGetter()
+        instanceGetter()
     }
 
     var baseType: AnyClass {
-        return baseTypeGetter()
+        baseTypeGetter()
     }
 
     var delegate: ConversationMessageCellDelegate? {
-        get { return _delegate.getter() }
+        get { _delegate.getter() }
         set { _delegate.setter(newValue) }
     }
 
     var message: ZMConversationMessage? {
-        get { return _message.getter() }
+        get { _message.getter() }
         set { _message.setter(newValue) }
     }
 
     var actionController: ConversationMessageActionController? {
-        get { return _actionController.getter() }
+        get { _actionController.getter() }
         set { _actionController.setter(newValue) }
     }
 
     var topMargin: Float {
-        get { return _topMargin.getter() }
+        get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
     }
 
     var containsHighlightableContent: Bool {
-        return _containsHighlightableContent.getter()
+        _containsHighlightableContent.getter()
     }
 
     var showEphemeralTimer: Bool {
-        get { return _showEphemeralTimer.getter() }
+        get { _showEphemeralTimer.getter() }
         set { _showEphemeralTimer.setter(newValue) }
     }
 
     /// The accessibility identifier of the cell.
     var cellAccessibilityIdentifier: String? {
-        return _axIdentifier.getter()
+        _axIdentifier.getter()
     }
 
     /// The accessibility label of the cell.
     var cellAccessibilityLabel: String? {
-        return _axLabel.getter()
+        _axLabel.getter()
     }
 
     func configure(cell: UITableViewCell, animated: Bool = false) {
@@ -353,15 +354,15 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        return cellGenerator(tableView, indexPath)
+        cellGenerator(tableView, indexPath)
     }
 
     func makeView() -> UIView {
-        return viewGenerator()
+        viewGenerator()
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
-        return isConfigurationEqualBlock(description)
+        isConfigurationEqualBlock(description)
     }
 
 }

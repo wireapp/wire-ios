@@ -31,8 +31,8 @@ final class ProximityMonitorManager: NSObject {
 
     fileprivate(set) var raisedToEar: Bool = false {
         didSet {
-            if oldValue != self.raisedToEar {
-                self.stateChanged?(self.raisedToEar)
+            if oldValue != raisedToEar {
+                stateChanged?(raisedToEar)
             }
         }
     }
@@ -54,7 +54,7 @@ final class ProximityMonitorManager: NSObject {
             return
         }
 
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         AVSMediaManagerClientChangeNotification.add(self)
 
         updateProximityMonitorState()
@@ -62,16 +62,17 @@ final class ProximityMonitorManager: NSObject {
 
     func updateProximityMonitorState() {
         // Only do proximity monitoring on phones
-        guard UIDevice.current.userInterfaceIdiom == .phone, let callCenter = ZMUserSession.shared()?.callCenter, !listening else { return }
+        guard UIDevice.current.userInterfaceIdiom == .phone, let callCenter = ZMUserSession.shared()?.callCenter,
+              !listening else { return }
 
-        let ongoingCalls = callCenter.nonIdleCalls.filter({ (_, callState: CallState) -> Bool in
+        let ongoingCalls = callCenter.nonIdleCalls.filter { (_, callState: CallState) -> Bool in
             switch callState {
             case .established, .establishedDataChannel, .answered(degraded: false), .outgoing(degraded: false):
                 return true
             default:
                 return false
             }
-        })
+        }
 
         let hasOngoingCall = ongoingCalls.count > 0
         let speakerIsEnabled = AVSMediaManager.sharedInstance()?.isSpeakerEnabled ?? false
@@ -82,37 +83,46 @@ final class ProximityMonitorManager: NSObject {
     // MARK: - listening mode switching (for AudioMessageView)
 
     func startListening() {
-        guard !self.listening else {
+        guard !listening else {
             return
         }
 
-        self.listening = true
+        listening = true
 
         UIDevice.current.isProximityMonitoringEnabled = true
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleProximityChange),
-                                               name: UIDevice.proximityStateDidChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleProximityChange),
+            name: UIDevice.proximityStateDidChangeNotification,
+            object: nil
+        )
     }
 
     func stopListening() {
-        guard self.listening else {
+        guard listening else {
             return
         }
-        self.listening = false
+        listening = false
 
         UIDevice.current.isProximityMonitoringEnabled = false
     }
 
-    @objc func handleProximityChange(_ notification: Notification) {
-        self.raisedToEar = UIDevice.current.proximityState
+    @objc
+    func handleProximityChange(_ notification: Notification) {
+        raisedToEar = UIDevice.current.proximityState
     }
 
 }
 
 extension ProximityMonitorManager: WireCallCenterCallStateObserver {
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateProximityMonitorState()
     }
 

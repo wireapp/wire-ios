@@ -21,11 +21,11 @@ import XCTest
 extension XCTestCase {
 
     func dataInTestBundleNamed(_ name: String) -> Data {
-        return try! Data(contentsOf: urlForResource(inTestBundleNamed: name))
+        try! Data(contentsOf: urlForResource(inTestBundleNamed: name))
     }
 
     func image(inTestBundleNamed name: String) -> UIImage {
-        return UIImage(contentsOfFile: urlForResource(inTestBundleNamed: name).path)!
+        UIImage(contentsOfFile: urlForResource(inTestBundleNamed: name).path)!
     }
 
     func urlForResource(inTestBundleNamed name: String) -> URL {
@@ -43,7 +43,7 @@ extension XCTestCase {
     }
 
     var mockImageData: Data {
-        return image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)!
+        image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)!
     }
 }
 

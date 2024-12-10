@@ -1,0 +1,46 @@
+{
+    "qualified_user_map": {
+        "domain1.example.com": {
+            "000600d0-000b-9c1a-000d-a4130002c221": [
+                {
+                    "class": "legalhold",
+                    "id": "d0"
+                },
+                {
+                    "class": "desktop",
+                    "id": "d0"
+                }
+            ]
+        },
+        "domain2.example.com": {
+            "000700d0-000b-9c1a-000d-a4130002c221": [
+                {
+                    "class": "legalhold",
+                    "id": "d0"
+                },
+                {
+                    "class": "phone",
+                    "id": "d0"
+                }
+            ],
+            "000800d0-000b-9c1a-000d-a4130002c221": [
+                {
+                    "class": "legalhold",
+                    "id": "d0"
+                },
+                {
+                    "class": "tablet",
+                    "id": "d0"
+                }
+            ]
+        },
+        "domain3.example.com": {
+            "000900d0-000b-9c1a-000d-a4130002c221": [
+                {
+                    "class": "legalhold",
+                    "id": "d0"
+                }
+            ]
+        }
+    }
+}

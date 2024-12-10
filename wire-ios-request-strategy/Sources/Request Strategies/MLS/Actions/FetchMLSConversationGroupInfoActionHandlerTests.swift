@@ -17,10 +17,13 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
-class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSConversationGroupInfoAction, FetchMLSConversationGroupInfoActionHandler> {
+class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<
+    FetchMLSConversationGroupInfoAction,
+    FetchMLSConversationGroupInfoActionHandler
+> {
 
     override func setUp() {
         super.setUp()

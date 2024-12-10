@@ -22,7 +22,7 @@ import WireSyncEngine
 
 final class ConversationInputBarSendController: NSObject {
     let conversation: InputBarConversationType
-    private let feedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let feedbackGenerator: UIImpactFeedbackGenerator = .init(style: .light)
 
     init(conversation: InputBarConversationType) {
         self.conversation = conversation
@@ -59,7 +59,7 @@ final class ConversationInputBarSendController: NSObject {
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        userSession.enqueue({
+        userSession.enqueue {
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
@@ -74,7 +74,7 @@ final class ConversationInputBarSendController: NSObject {
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }
-        })
+        }
     }
 
     func sendTextMessage(
@@ -87,7 +87,7 @@ final class ConversationInputBarSendController: NSObject {
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
-        userSession.enqueue({
+        userSession.enqueue {
             do {
                 let textMessageUseCase = userSession.makeAppendTextMessageUseCase()
                 let imageMessageUseCase = userSession.makeAppendImageMessageUseCase()
@@ -100,8 +100,9 @@ final class ConversationInputBarSendController: NSObject {
                 )
                 try imageMessageUseCase.invoke(withImageData: data, in: conversation)
             } catch {
-                Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
-        })
+        }
     }
 }

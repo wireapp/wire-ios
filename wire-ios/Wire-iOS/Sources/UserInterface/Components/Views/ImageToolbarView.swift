@@ -63,8 +63,10 @@ final class ImageToolbarView: UIView {
     }
 
     private func updateButtonStyle() {
-        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) : .from(scheme: .iconNormal)
-        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) : .from(scheme: .iconHighlighted)
+        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) :
+            .from(scheme: .iconNormal)
+        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) :
+            .from(scheme: .iconHighlighted)
         let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
 
         [sketchButton, emojiButton, textButton, expandButton].forEach {
@@ -106,7 +108,7 @@ final class ImageToolbarView: UIView {
     }
 
     func updateButtonConfiguration() {
-        buttons.forEach({ $0.removeFromSuperview() })
+        buttons.forEach { $0.removeFromSuperview() }
         var newButtons = showsSketchButton ? [sketchButton] : []
 
         switch configuration {
@@ -156,7 +158,7 @@ final class ImageToolbarView: UIView {
             ])
         }
 
-        for i in 1..<buttons.count {
+        for i in 1 ..< buttons.count {
             let previousButton = buttons[i - 1]
             let button = buttons[i]
 

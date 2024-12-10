@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
-@testable import WireDomain
 import WireDomainSupport
 import XCTest
+@testable import WireAPI
+@testable import WireDomain
 
 final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
 
@@ -45,7 +45,7 @@ final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Pull_Conversation_Repo_Method() async throws {
         // Mock
 
-        repository.pullConversationWith_MockMethod = { _ in }
+        repository.pullConversationIdDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -53,7 +53,7 @@ final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(repository.pullConversationWith_Invocations.count, 1)
+        XCTAssertEqual(repository.pullConversationIdDomain_Invocations.count, 1)
     }
 
     private enum Scaffolding {

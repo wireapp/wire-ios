@@ -17,21 +17,25 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
-@objc public enum ZMUpdateEventsPolicy: Int {
+@objc
+public enum ZMUpdateEventsPolicy: Int {
     case buffer /// store live events in a buffer, to be processed later
     case ignore /// process events received through /notifications or /conversation/.../events
     case process /// process events received through the push channel
 }
 
-@objc public enum ZMUpdateEventSource: Int {
+@objc
+public enum ZMUpdateEventSource: Int {
     case webSocket
     case pushNotification
     case download
 }
 
-@objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
+@objc
+public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2
@@ -86,94 +90,93 @@ extension ZMUpdateEventType {
     var stringValue: String? {
         switch self {
         case .unknown:
-            return nil
-
+            nil
         case .conversationAssetAdd:
-            return "conversation.asset-add"
+            "conversation.asset-add"
         case .conversationConnectRequest:
-            return "conversation.connect-request"
+            "conversation.connect-request"
         case .conversationCreate:
-            return "conversation.create"
+            "conversation.create"
         case .conversationDelete:
-            return "conversation.delete"
+            "conversation.delete"
         case .conversationKnock:
-            return "conversation.knock"
+            "conversation.knock"
         case .conversationMemberJoin:
-            return "conversation.member-join"
+            "conversation.member-join"
         case .conversationMemberLeave:
-            return "conversation.member-leave"
+            "conversation.member-leave"
         case .conversationMemberUpdate:
-            return "conversation.member-update"
+            "conversation.member-update"
         case .conversationMessageAdd:
-            return "conversation.message-add"
+            "conversation.message-add"
         case .conversationClientMessageAdd:
-            return "conversation.client-message-add"
+            "conversation.client-message-add"
         case .conversationOtrMessageAdd:
-            return "conversation.otr-message-add"
+            "conversation.otr-message-add"
         case .conversationOtrAssetAdd:
-            return "conversation.otr-asset-add"
+            "conversation.otr-asset-add"
         case .conversationRename:
-            return "conversation.rename"
+            "conversation.rename"
         case .conversationProtocolUpdate:
-            return "conversation.protocol-update"
+            "conversation.protocol-update"
         case .conversationTyping:
-            return "conversation.typing"
+            "conversation.typing"
         case .conversationCodeUpdate:
-            return "conversation.code-update"
+            "conversation.code-update"
         case .conversationAccessModeUpdate:
-            return "conversation.access-update"
+            "conversation.access-update"
         case .conversationReceiptModeUpdate:
-            return "conversation.receipt-mode-update"
+            "conversation.receipt-mode-update"
         case .conversationMLSWelcome:
-            return "conversation.mls-welcome"
+            "conversation.mls-welcome"
         case .conversationMLSMessageAdd:
-            return "conversation.mls-message-add"
+            "conversation.mls-message-add"
         case .userConnection:
-            return "user.connection"
+            "user.connection"
         case .userNew:
-            return "user.new"
+            "user.new"
         case .userUpdate:
-            return "user.update"
+            "user.update"
         case .userDelete:
-            return "user.delete"
+            "user.delete"
         case .userPushRemove:
-            return "user.push-remove"
+            "user.push-remove"
         case .userContactJoin:
-            return "user.contact-join"
+            "user.contact-join"
         case .userLegalHoldEnable:
-            return "user.legalhold-enable"
+            "user.legalhold-enable"
         case .userLegalHoldDisable:
-            return "user.legalhold-disable"
+            "user.legalhold-disable"
         case .userLegalHoldRequest:
-            return "user.legalhold-request"
+            "user.legalhold-request"
         case .userClientAdd:
-            return "user.client-add"
+            "user.client-add"
         case .userClientRemove:
-            return "user.client-remove"
+            "user.client-remove"
         case .teamCreate:
-            return "team.create"
+            "team.create"
         case .teamDelete:
-            return "team.delete"
+            "team.delete"
         case .teamMemberLeave:
-            return "team.member-leave"
+            "team.member-leave"
         case .teamConversationCreate:
-            return "team.conversation-create"
+            "team.conversation-create"
         case .teamConversationDelete:
-            return "team.conversation-delete"
+            "team.conversation-delete"
         case .teamMemberUpdate:
-            return "team.member-update"
+            "team.member-update"
         case .conversationMessageTimerUpdate:
-            return "conversation.message-timer-update"
+            "conversation.message-timer-update"
         case .userPropertiesSet:
-            return "user.properties-set"
+            "user.properties-set"
         case .userPropertiesDelete:
-            return "user.properties-delete"
+            "user.properties-delete"
         case .featureConfigUpdate:
-            return "feature-config.update"
+            "feature-config.update"
         case .federationDelete:
-            return "federation.delete"
+            "federation.delete"
         case .federationConnectionRemoved:
-            return "federation.connectionRemoved"
+            "federation.connectionRemoved"
         }
     }
 
@@ -195,13 +198,15 @@ extension ZMUpdateEventType {
     }
 }
 
-extension ZMUpdateEvent {
-    @objc(updateEventTypeForEventTypeString:) public static func updateEventType(for string: String) -> ZMUpdateEventType {
-        return ZMUpdateEventType(string: string)
+public extension ZMUpdateEvent {
+    @objc(updateEventTypeForEventTypeString:)
+    static func updateEventType(for string: String) -> ZMUpdateEventType {
+        ZMUpdateEventType(string: string)
     }
 
-    @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType) -> String? {
-        return eventType.stringValue
+    @objc(eventTypeStringForUpdateEventType:)
+    static func eventTypeString(for eventType: ZMUpdateEventType) -> String? {
+        eventType.stringValue
     }
 
 }
@@ -228,20 +233,27 @@ open class ZMUpdateEvent: NSObject {
 
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
-        switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
-            return true
+        switch type {
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
+             .conversationMLSMessageAdd:
+            true
         default:
-            return false
+            false
         }
     }
 
     /// Debug information
     open var debugInformation: String {
-        return debugInformationArray.joined(separator: "\n")
+        debugInformationArray.joined(separator: "\n")
     }
 
-    public init?(uuid: UUID?, payload: [AnyHashable: Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
+    public init?(
+        uuid: UUID?,
+        payload: [AnyHashable: Any]?,
+        transient: Bool,
+        decrypted: Bool,
+        source: ZMUpdateEventSource
+    ) {
         guard let payload else { return nil }
         guard let payloadType = payload["type"] as? String else { return nil }
 
@@ -254,40 +266,59 @@ open class ZMUpdateEvent: NSObject {
         guard eventType != .unknown else { return nil }
         self.type = eventType
         self.source = source
-        wasDecrypted = false
+        self.wasDecrypted = false
     }
 
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData) -> [ZMUpdateEvent]? {
-        return self.eventsArray(from: transportData, source: .webSocket)
+        eventsArray(from: transportData, source: .webSocket)
     }
 
     /// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
     /// ZMUpdateEventSourceWebSocket, if a non-nil @c NSUUID is given for the @c pushStartingAt parameter, all
     /// events earlier or equal to this uuid will have a source of @c ZMUpdateEventSourcePushNotification
-    open class func eventsArray(fromPushChannelData transportData: ZMTransportData, pushStartingAt threshold: UUID?) -> [Any]? {
-        return self.eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
+    open class func eventsArray(
+        fromPushChannelData transportData: ZMTransportData,
+        pushStartingAt threshold: UUID?
+    ) -> [Any]? {
+        eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
     }
 
-    class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
+    class func eventsArray(
+        with uuid: UUID,
+        payloadArray: [Any]?,
+        transient: Bool,
+        source: ZMUpdateEventSource,
+        pushStartingAt sourceThreshold: UUID?
+    ) -> [ZMUpdateEvent] {
 
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().redactedAndTruncated()], .safePublic)
+            WireLogger.updateEvent.error(
+                "Push event payload is invalid",
+                attributes: [.eventId: uuid.transportString().redactedAndTruncated()],
+                .safePublic
+            )
             return []
         }
 
-        let events = payloads.compactMap { payload -> ZMUpdateEvent? in
+        return payloads.compactMap { payload -> ZMUpdateEvent? in
             var actualSource = source
-            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID, (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
+            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID,
+               (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
                 actualSource = .pushNotification
             }
-            return ZMUpdateEvent(uuid: uuid, payload: payload, transient: transient, decrypted: false, source: actualSource)
+            return ZMUpdateEvent(
+                uuid: uuid,
+                payload: payload,
+                transient: transient,
+                decrypted: false,
+                source: actualSource
+            )
         }
-        return events
     }
 
     @objc(eventFromEventStreamPayload:uuid:)
     public static func eventFromEventStreamPayload(_ payload: ZMTransportData, uuid: UUID?) -> ZMUpdateEvent? {
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
+        ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
     }
 
     /// Creates an update event
@@ -301,23 +332,44 @@ open class ZMUpdateEvent: NSObject {
     }
 
     /// Creates an update event that was encrypted and it's now decrypted
-    open class func decryptedUpdateEvent(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?, transient: Bool, source: ZMUpdateEventSource) -> ZMUpdateEvent? {
-        return ZMUpdateEvent(uuid: uuid, payload: payload.asDictionary(), transient: transient, decrypted: true, source: source)
+    open class func decryptedUpdateEvent(
+        fromEventStreamPayload payload: ZMTransportData,
+        uuid: UUID?,
+        transient: Bool,
+        source: ZMUpdateEventSource
+    ) -> ZMUpdateEvent? {
+        ZMUpdateEvent(
+            uuid: uuid,
+            payload: payload.asDictionary(),
+            transient: transient,
+            decrypted: true,
+            source: source
+        )
     }
 
     @objc(eventsArrayFromTransportData:source:)
     open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource) -> [ZMUpdateEvent]? {
-        return self.eventsArray(from: transportData, source: source, pushStartingAt: nil)
+        eventsArray(from: transportData, source: source, pushStartingAt: nil)
     }
 
-    open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource, pushStartingAt threshold: UUID?) -> [ZMUpdateEvent]? {
+    open class func eventsArray(
+        from transportData: ZMTransportData,
+        source: ZMUpdateEventSource,
+        pushStartingAt threshold: UUID?
+    ) -> [ZMUpdateEvent]? {
 
         let dictionary = transportData.asDictionary()
         guard let uuidString = dictionary?["id"] as? String, let uuid = UUID(uuidString: uuidString) else { return nil }
         guard let payloadArray = dictionary?["payload"] as? [Any] else { return nil }
         let transient = (dictionary?["transient"] as? Bool) ?? false
 
-        return eventsArray(with: uuid, payloadArray: payloadArray, transient: transient, source: source, pushStartingAt: threshold)
+        return eventsArray(
+            with: uuid,
+            payloadArray: payloadArray,
+            transient: transient,
+            source: source,
+            pushStartingAt: threshold
+        )
     }
 
     /// Adds debug information
@@ -335,13 +387,13 @@ extension ZMUpdateEvent {
 
 extension ZMUpdateEvent {
 
-    override open func isEqual(_ object: Any?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else {
             return false
         }
 
-        return (self.uuid == other.uuid)
-            && (self.type == other.type)
-            && (self.payload as NSDictionary).isEqual(to: other.payload)
+        return (uuid == other.uuid)
+            && (type == other.type)
+            && (payload as NSDictionary).isEqual(to: other.payload)
     }
 }

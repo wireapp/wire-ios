@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class DeveloperDebugActionsViewModelTests: XCTestCase {
 
@@ -27,7 +27,7 @@ final class DeveloperDebugActionsViewModelTests: XCTestCase {
 
         // when
         // then
-        XCTAssertEqual(viewModel.buttons.count, 6)
+        XCTAssertEqual(viewModel.buttons.count, 8)
     }
 
     // MARK: - Helpers

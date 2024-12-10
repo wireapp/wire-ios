@@ -21,6 +21,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireLogging
 import WireNotificationEngine
 import WireRequestStrategy
 import WireSyncEngine
@@ -54,8 +55,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private lazy var accountManager: AccountManager = {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        let account = AccountManager(sharedDirectory: sharedContainerURL)
-        return account
+        return AccountManager(sharedDirectory: sharedContainerURL)
     }()
 
     private var appGroupID: String {
@@ -91,7 +91,8 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         do {
             session = try createSession(accountID: accountID)
         } catch {
-            WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
+            WireLogger.notifications
+                .error("failed to process process request: could not create session: \(error.localizedDescription)")
             return finishWithoutShowingNotification()
         }
 
@@ -189,26 +190,26 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         session = nil
     }
 
-   private func createSession(accountID: UUID) throws -> NotificationSession {
-      let session = try NotificationSession(
-          applicationGroupIdentifier: appGroupID,
-          accountIdentifier: accountID,
-          environment: BackendEnvironment.shared,
-          sharedUserDefaults: .applicationGroup,
-          minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-      )
+    private func createSession(accountID: UUID) throws -> NotificationSession {
+        let session = try NotificationSession(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: accountID,
+            environment: BackendEnvironment.shared,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
 
-      session.delegate = self
-      return session
-  }
+        session.delegate = self
+        return session
+    }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
         guard let session else {
             return nil
         }
-        let account = self.accountManager.account(with: session.accountIdentifier)
+        let account = accountManager.account(with: session.accountIdentifier)
         account?.unreadConversationCount = unreadConversationCount
-        let totalUnreadCount = self.accountManager.totalUnreadCount
+        let totalUnreadCount = accountManager.totalUnreadCount
 
         return NSNumber(value: totalUnreadCount)
     }
@@ -224,7 +225,7 @@ extension UNNotificationContent {
     // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
 
     static var empty: Self {
-        return Self()
+        Self()
     }
 
     var accountID: UUID? {

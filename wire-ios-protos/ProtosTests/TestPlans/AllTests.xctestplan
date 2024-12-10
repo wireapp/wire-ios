@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "ABAAC225-C137-4281-A5E6-334A914925C4",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:WireProtos.xcodeproj",
+        "identifier" : "090838081B872DBF00629095",
+        "name" : "WireProtosTests"
+      }
+    }
+  ],
+  "version" : 1
+}

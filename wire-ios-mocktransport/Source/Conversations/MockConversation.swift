@@ -18,14 +18,26 @@
 
 import Foundation
 
-extension MockConversation {
-    @objc public static let admin = "wire_admin"
-    @objc public static let member = "wire_member"
+public extension MockConversation {
+    @objc static let admin = "wire_admin"
+    @objc static let member = "wire_member"
 
-    @objc public static func insertConversationInto(context: NSManagedObjectContext, withCreator creator: MockUser, forTeam team: MockTeam, users: [MockUser]) -> MockConversation {
-        let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
+    @objc
+    static func insertConversationInto(
+        context: NSManagedObjectContext,
+        withCreator creator: MockUser,
+        forTeam team: MockTeam,
+        users: [MockUser]
+    ) -> MockConversation {
+        let conversation = NSEntityDescription.insertNewObject(
+            forEntityName: "Conversation",
+            into: context
+        ) as! MockConversation
         conversation.type = .group
-        (conversation.accessMode, conversation.accessRole, conversation.accessRoleV2) = defaultAccess(conversationType: .group, team: team)
+        (conversation.accessMode, conversation.accessRole, conversation.accessRoleV2) = defaultAccess(
+            conversationType: .group,
+            team: team
+        )
         conversation.team = team
         conversation.identifier = UUID.create().transportString()
         conversation.creator = creator
@@ -34,52 +46,72 @@ extension MockConversation {
     }
 
     @objc(insertConversationWithRolesIntoContext:withCreator:otherUsers:)
-    public static func insertConversationWithRolesInto(context: NSManagedObjectContext, creator: MockUser, otherUsers: [MockUser]) -> MockConversation {
-        let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
+    static func insertConversationWithRolesInto(
+        context: NSManagedObjectContext,
+        creator: MockUser,
+        otherUsers: [MockUser]
+    ) -> MockConversation {
+        let conversation = NSEntityDescription.insertNewObject(
+            forEntityName: "Conversation",
+            into: context
+        ) as! MockConversation
         conversation.type = .group
         conversation.team = nil
         conversation.identifier = UUID.create().transportString()
         conversation.creator = creator
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: otherUsers)
         let roles = Set([
-                MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context)),
-                MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
+            MockRole.insert(
+                in: context,
+                name: MockConversation.admin,
+                actions: MockTeam.createAdminActions(context: context)
+            ),
+            MockRole.insert(
+                in: context,
+                name: MockConversation.member,
+                actions: MockTeam.createMemberActions(context: context)
+            )
         ])
         conversation.nonTeamRoles = roles
 
         return conversation
     }
 
-    @objc public static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
+    @objc
+    static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
         let (accessMode, _, _) = defaultAccess(conversationType: conversationType, team: team)
         return accessMode
     }
 
-    @objc public static func defaultAccessRole(conversationType: ZMTConversationType, team: MockTeam?) -> String {
+    @objc
+    static func defaultAccessRole(conversationType: ZMTConversationType, team: MockTeam?) -> String {
         let (_, accessRole, _) = defaultAccess(conversationType: conversationType, team: team)
         return accessRole
     }
 
-    @objc public static func defaultAccessRoleV2(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
+    @objc
+    static func defaultAccessRoleV2(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
         let (_, _, accessRoleV2) = defaultAccess(conversationType: conversationType, team: team)
         return accessRoleV2
     }
-    public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String, [String]) {
+
+    static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String, [String]) {
         switch (team, conversationType) {
         case (.some, .group):
-            return (["invite"], "activated", ["team_member", "non_team_member", "guest"])
+            (["invite"], "activated", ["team_member", "non_team_member", "guest"])
         case (.some, _):
-            return (["private"], "private", [""])
+            (["private"], "private", [""])
         case (.none, .group):
-            return (["invite"], "activated", ["team_member", "non_team_member", "guest"])
+            (["invite"], "activated", ["team_member", "non_team_member", "guest"])
         case (.none, _):
-            return (["private"], "private", [""])
+            (["private"], "private", [""])
         }
     }
 
-    @objc public func set(allowGuests: Bool, allowServices: Bool) {
+    @objc
+    func set(allowGuests: Bool, allowServices: Bool) {
         guard type == .group, team != nil else {
-             return
+            return
         }
 
         accessRole = MockConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
@@ -87,13 +119,14 @@ extension MockConversation {
         accessMode = MockConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
     }
 
-    @objc var changePushPayload: [String: Any]? {
+    @objc internal var changePushPayload: [String: Any]? {
         let accessModeKeyPath = #keyPath(MockConversation.accessMode)
         let accessRoleKeyPath = #keyPath(MockConversation.accessRole)
         let accessRoleV2KeyPath = #keyPath(MockConversation.accessRoleV2)
 
-        if changedValues()[accessModeKeyPath] != nil || changedValues()[accessRoleKeyPath] != nil, changedValues()[accessRoleV2KeyPath] != nil {
-            return [ "access_role": self.accessRole, "access_role_v2": self.accessRoleV2, "access": self.accessMode ]
+        if changedValues()[accessModeKeyPath] != nil || changedValues()[accessRoleKeyPath] != nil,
+           changedValues()[accessRoleV2KeyPath] != nil {
+            return ["access_role": accessRole, "access_role_v2": accessRoleV2, "access": accessMode]
         } else {
             return nil
         }
@@ -102,12 +135,16 @@ extension MockConversation {
 
 extension MockConversation: EntityNamedProtocol {
     public static var entityName: String {
-        return "Conversation"
+        "Conversation"
     }
 }
 
-@objc public extension MockConversation {
-    static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
+@objc
+public extension MockConversation {
+    static func existingConversation(
+        with identifier: String,
+        managedObjectContext: NSManagedObjectContext
+    ) -> MockConversation? {
         let conversationPredicate = NSPredicate(format: "%K == %@", #keyPath(MockConversation.identifier), identifier)
         return MockConversation.fetch(in: managedObjectContext, withPredicate: conversationPredicate)
 

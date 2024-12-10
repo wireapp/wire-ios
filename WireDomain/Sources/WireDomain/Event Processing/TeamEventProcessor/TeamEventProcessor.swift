@@ -45,10 +45,10 @@ struct TeamEventProcessor {
         case .delete:
             try await deleteEventProcessor.processEvent()
 
-        case .memberLeave(let event):
+        case let .memberLeave(event):
             try await memberLeaveEventProcessor.processEvent(event)
 
-        case .memberUpdate(let event):
+        case let .memberUpdate(event):
             try await memberUpdateEventProcessor.processEvent(event)
         }
     }

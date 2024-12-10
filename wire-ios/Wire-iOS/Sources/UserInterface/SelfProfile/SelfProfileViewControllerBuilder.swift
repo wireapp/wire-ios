@@ -26,7 +26,6 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
-    var mainCoordinator: AnyMainCoordinator!
     var accountSelector: AccountSelector?
     var trackingManager: TrackingManager?
 
@@ -42,7 +41,7 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
         self.accountSelector = accountSelector
     }
 
-    func build() -> UIViewController {
+    func build(mainCoordinator: AnyMainCoordinator) -> UIViewController {
         SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,

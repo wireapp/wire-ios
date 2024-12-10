@@ -214,14 +214,12 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
     private func expectations(
         from participants: [MLSParticipant]
     ) -> [MLSClientID: XCTestExpectation] {
-        return participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
-            var expectation: XCTestExpectation
-
-            switch participant.callParticipant.state {
+        participants.reduce(into: [MLSClientID: XCTestExpectation]()) { expectations, participant in
+            var expectation = switch participant.callParticipant.state {
             case .connecting:
-                expectation = XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
+                XCTestExpectation(description: "removed stale participant (\(participant.mlsClientID))")
             default:
-                expectation = XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
+                XCTestExpectation(description: "did not remove participant (\(participant.mlsClientID))").inverted()
             }
 
             expectations[participant.mlsClientID] = expectation
@@ -267,7 +265,7 @@ private class MLSParticipant {
     }
 
     func updateState(_ state: CallParticipantState) {
-        self.callParticipant = CallParticipant(
+        callParticipant = CallParticipant(
             user: callParticipant.user as! ZMUser,
             clientId: callParticipant.clientId,
             state: state,

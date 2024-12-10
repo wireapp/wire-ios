@@ -19,18 +19,18 @@
 import UIKit
 
 protocol InputLanguageSettable {
-    var language: String? {get set}
-    var originalTextInputMode: UITextInputMode? {get}
+    var language: String? { get set }
+    var originalTextInputMode: UITextInputMode? { get }
 }
 
 extension TextView: InputLanguageSettable {
 
     var originalTextInputMode: UITextInputMode? {
-        return super.textInputMode
+        super.textInputMode
     }
 
     var overriddenTextInputMode: UITextInputMode? {
-        guard let language, language.count > 0 else {
+        guard let language, !language.isEmpty else {
             return super.textInputMode
         }
 

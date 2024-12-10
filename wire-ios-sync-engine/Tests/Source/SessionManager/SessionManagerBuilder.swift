@@ -23,7 +23,7 @@ struct SessionManagerBuilder {
 
     var maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts
     var jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector()
-    var dispatchGroup: ZMSDispatchGroup = ZMSDispatchGroup(label: "SessionManagerBuilder.internal")
+    var dispatchGroup: ZMSDispatchGroup = .init(label: "SessionManagerBuilder.internal")
 
     func build() -> SessionManager {
         let application = ApplicationMock()

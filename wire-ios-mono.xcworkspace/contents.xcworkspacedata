@@ -38,6 +38,9 @@
       <FileRef
          location = "group:Matchfile">
       </FileRef>
+      <FileRef
+         location = "group:framework.rb">
+      </FileRef>
    </Group>
    <FileRef
       location = "group:wire-avs.json">
@@ -128,6 +131,9 @@
       location = "group:WireFoundation">
    </FileRef>
    <FileRef
-      location = "group:SourceryPlugin">
+      location = "group:WireLogging">
+   </FileRef>
+   <FileRef
+      location = "group:WirePlugins">
    </FileRef>
 </Workspace>

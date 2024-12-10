@@ -19,10 +19,10 @@
 import Foundation
 
 public enum ConversationRemoveParticipantError: Error {
-    case unknown,
-         invalidOperation,
-         conversationNotFound,
-         failedToRemoveMLSMembers
+    case unknown
+    case invalidOperation
+    case conversationNotFound
+    case failedToRemoveMLSMembers
 }
 
 public class RemoveParticipantAction: EntityAction {
@@ -35,7 +35,7 @@ public class RemoveParticipantAction: EntityAction {
     public let conversationID: NSManagedObjectID
 
     public required init(user: ZMUser, conversation: ZMConversation) {
-        userID = user.objectID
-        conversationID = conversation.objectID
+        self.userID = user.objectID
+        self.conversationID = conversation.objectID
     }
 }

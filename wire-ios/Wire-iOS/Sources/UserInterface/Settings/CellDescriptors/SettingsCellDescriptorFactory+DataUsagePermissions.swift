@@ -25,8 +25,14 @@ extension SettingsCellDescriptorFactory {
 
         // show analytics toggle for public domain
         if isPublicDomain {
-            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing), inverse: true)
-            let sendAnalyticsDataSection = SettingsSectionDescriptor(cellDescriptors: [sendAnalyticsData], footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title)
+            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
+                settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
+                inverse: true
+            )
+            let sendAnalyticsDataSection = SettingsSectionDescriptor(
+                cellDescriptors: [sendAnalyticsData],
+                footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title
+            )
 
             items.append(sendAnalyticsDataSection)
         }

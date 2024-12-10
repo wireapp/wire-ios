@@ -28,7 +28,7 @@ struct MessageReactionMetadata: Equatable {
     let isSelfUserReacting: Bool
 
     static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+        lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 
 }
@@ -86,12 +86,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
             ) { [weak self] in
                 guard
                     let self,
-                    let message = self.message
+                    let message
                 else {
                     return
                 }
 
-                self.delegate?.perform(
+                delegate?.perform(
                     action: .react(reaction.emoji),
                     for: message,
                     view: self

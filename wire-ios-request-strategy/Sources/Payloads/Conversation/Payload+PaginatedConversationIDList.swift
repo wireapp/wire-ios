@@ -27,7 +27,7 @@ extension Payload {
         }
 
         var nextStartReference: String? {
-            return conversations.last?.transportString()
+            conversations.last?.transportString()
         }
 
         let conversations: [UUID]

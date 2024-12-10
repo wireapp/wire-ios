@@ -68,8 +68,8 @@ public struct SearchOptions: OptionSet {
 
 }
 
-extension SearchOptions {
-    public mutating func updateForSelfUserTeamRole(selfUser: UserType) {
+public extension SearchOptions {
+    mutating func updateForSelfUserTeamRole(selfUser: UserType) {
         if selfUser.teamRole == .partner {
             insert(.excludeNonActiveTeamMembers)
             remove(.directory)
@@ -88,18 +88,18 @@ public struct SearchRequest {
         var isHandleQuery: Bool {
             switch self {
             case .exactHandle:
-                return true
+                true
             case .fullTextSearch:
-                return false
+                false
             }
         }
 
         var string: String {
             switch self {
-            case .exactHandle(let handle):
-                return handle
-            case .fullTextSearch(let text):
-                return text
+            case let .exactHandle(handle):
+                handle
+            case let .fullTextSearch(text):
+                text
             }
         }
 
@@ -110,10 +110,15 @@ public struct SearchRequest {
     let searchDomain: String?
     let searchOptions: SearchOptions
 
-    public init(query: String, searchOptions: SearchOptions, team: Team? = nil) {
-        let (query, searchDomain) = Self.parseQuery(query)
+    public init(
+        query: String,
+        searchDomain: String? = nil,
+        searchOptions: SearchOptions,
+        team: Team? = nil
+    ) {
+        let (query, parsedDomain) = Self.parseQuery(query)
         self.query = query
-        self.searchDomain = searchDomain
+        self.searchDomain = searchDomain ?? parsedDomain
         self.searchOptions = searchOptions
         self.team = team
     }
@@ -155,9 +160,10 @@ private extension SearchRequest {
 
 }
 
-fileprivate extension String {
+private extension String {
 
     func normalizedAndTrimmed() -> String {
+        // swiftformat:disable:next redundantSelf
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }

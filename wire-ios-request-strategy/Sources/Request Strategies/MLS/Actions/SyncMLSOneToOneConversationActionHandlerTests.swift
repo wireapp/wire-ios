@@ -20,7 +20,10 @@ import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 
-final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase<SyncMLSOneToOneConversationAction, SyncMLSOneToOneConversationActionHandler> {
+final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase<
+    SyncMLSOneToOneConversationAction,
+    SyncMLSOneToOneConversationActionHandler
+> {
 
     var qualifiedID: QualifiedID!
 
@@ -132,7 +135,8 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
 
         var payload = Payload.ConversationWithRemovalKeys(
             conversation: conversation,
-            publicKeys: publicKeys)
+            publicKeys: publicKeys
+        )
 
         let encoder = JSONEncoder.defaultEncoder
         encoder.setAPIVersion(apiVersion)

@@ -229,25 +229,25 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
     // MARK: - appendFile
 
-       public var appendFile_Invocations: [(fileMetadata: ZMFileMetadata, nonce: UUID)] = []
-       public var appendFile_MockError: Error?
-       public var appendFile_MockMethod: ((ZMFileMetadata, UUID) throws -> ZMConversationMessage)?
-       public var appendFile_MockValue: ZMConversationMessage?
+    public var appendFile_Invocations: [(fileMetadata: ZMFileMetadata, nonce: UUID)] = []
+    public var appendFile_MockError: Error?
+    public var appendFile_MockMethod: ((ZMFileMetadata, UUID) throws -> ZMConversationMessage)?
+    public var appendFile_MockValue: ZMConversationMessage?
 
-       @discardableResult
-       public func appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID) throws -> ZMConversationMessage {
-           appendFile_Invocations.append((fileMetadata: fileMetadata, nonce: nonce))
+    @discardableResult
+    public func appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID) throws -> ZMConversationMessage {
+        appendFile_Invocations.append((fileMetadata: fileMetadata, nonce: nonce))
 
-           if let error = appendFile_MockError {
-               throw error
-           }
+        if let error = appendFile_MockError {
+            throw error
+        }
 
-           if let mock = appendFile_MockMethod {
-               return try mock(fileMetadata, nonce)
-           } else if let mock = appendFile_MockValue {
-               return mock
-           } else {
-               fatalError("no mock for `appendFile`")
-           }
-       }
+        if let mock = appendFile_MockMethod {
+            return try mock(fileMetadata, nonce)
+        } else if let mock = appendFile_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `appendFile`")
+        }
+    }
 }

@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireLogging
 import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
@@ -42,7 +43,7 @@ public protocol EventDecoderProtocol {
 /// Decodes and stores events from various sources to be processed later
 public final class EventDecoder: NSObject, EventDecoderProtocol {
 
-    public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
+    public typealias ConsumeBlock = ([ZMUpdateEvent]) async -> Void
 
     static var BatchSize: Int {
         if let testingBatchSize {
@@ -108,7 +109,7 @@ extension EventDecoder {
 
         let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return try await self.decryptAndStoreEvents(
+                try await self.decryptAndStoreEvents(
                     events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
@@ -116,7 +117,7 @@ extension EventDecoder {
                 )
             },
             withKeyStore: { keyStore in
-                return await self.legacyDecryptAndStoreEvents(
+                await self.legacyDecryptAndStoreEvents(
                     events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
@@ -126,7 +127,7 @@ extension EventDecoder {
         )
 
         if !events.isEmpty {
-            WireLogger.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
+            WireLogger.eventProcessing.info("Decrypted/Stored \(events.count) event(s)")
         }
 
         return decryptedEvents
@@ -178,7 +179,12 @@ extension EventDecoder {
                 if DeveloperFlag.decryptAndStoreEventsSleep.isOn {
                     try await Task.sleep(nanoseconds: 1_000_000_000)
                 }
-                await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
+                await decryptedEvents += self.decryptAndStoreEvent(
+                    event: event,
+                    at: index,
+                    publicKeys: publicKeys,
+                    proteusService: proteusService
+                )
                 index += 1
             }
         }
@@ -218,7 +224,7 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         switch event.type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-            let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+            let proteusEvent = await decryptProteusEventAndAddClient(event, in: syncMOC) { sessionID, encryptedData in
                 try await proteusService.decrypt(
                     data: encryptedData,
                     forSession: sessionID
@@ -227,11 +233,11 @@ extension EventDecoder {
             return proteusEvent.map { [$0] } ?? []
 
         case .conversationMLSWelcome:
-            await self.processWelcomeMessage(from: event, context: self.syncMOC)
+            await processWelcomeMessage(from: event, context: syncMOC)
             return [event]
 
         case .conversationMLSMessageAdd:
-            return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+            return await decryptMlsMessage(from: event, context: syncMOC)
 
         default:
             return [event]
@@ -252,7 +258,10 @@ extension EventDecoder {
             for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    let proteusEvent = await decryptProteusEventAndAddClient(
+                        event,
+                        in: syncMOC
+                    ) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()
@@ -263,11 +272,11 @@ extension EventDecoder {
                     }
 
                 case .conversationMLSWelcome:
-                    await self.processWelcomeMessage(from: event, context: self.syncMOC)
+                    await processWelcomeMessage(from: event, context: syncMOC)
                     decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
-                    let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    let events = await decryptMlsMessage(from: event, context: syncMOC)
                     decryptedEvents.append(contentsOf: events)
 
                 default:
@@ -310,13 +319,14 @@ extension EventDecoder {
         }
 
         do {
-            try self.eventMOC.save()
+            try eventMOC.save()
         } catch {
             WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
         }
     }
 
-    // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
+    // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the
+    // `consumeBlock` for each batch.
     // After the `consumeBlock` has been called the stored events are deleted from the database.
     // This method terminates when no more events are in the database.
 
@@ -328,7 +338,7 @@ extension EventDecoder {
     ) async {
         let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
-        guard events.storedEvents.count > 0 else {
+        guard !events.storedEvents.isEmpty else {
             if firstCall {
                 await consumeBlock([])
             }
@@ -336,7 +346,10 @@ extension EventDecoder {
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
+        WireLogger.updateEvent.debug(
+            "EventDecoder: process batch of \(events.storedEvents.count) events",
+            attributes: .safePublic
+        )
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
@@ -345,7 +358,10 @@ extension EventDecoder {
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(
+        with privateKeys: EARPrivateKeys?,
+        callEventsOnly: Bool
+    ) async -> EventsWithStoredEvents {
 
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
@@ -388,23 +404,27 @@ extension EventDecoder {
             do {
                 try eventMOC.save()
             } catch {
-                WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
+                WireLogger.eventProcessing
+                    .critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
         }
     }
 }
 
 // MARK: - List of already received event IDs
-extension EventDecoder {
+
+private extension EventDecoder {
 
     /// Filters out events that shouldn't be processed
-    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
-        let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
+    func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
+        let selfConversationID = await syncMOC
+            .perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
         let selfUserID = await syncMOC.perform { ZMUser.selfUser(in: self.syncMOC).remoteIdentifier }
 
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
-            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
+            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID,
+               let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
                     WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)

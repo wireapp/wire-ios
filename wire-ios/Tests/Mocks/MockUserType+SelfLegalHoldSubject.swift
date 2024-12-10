@@ -23,23 +23,23 @@ extension MockUserType: SelfLegalHoldSubject {
 
     var legalHoldStatus: UserLegalHoldStatus {
         if isUnderLegalHold {
-            return .enabled
+            .enabled
         } else if let request = legalHoldDataSource.legalHoldRequest {
-            return .pending(request)
+            .pending(request)
         } else {
-            return .disabled
+            .disabled
         }
     }
 
     var needsToAcknowledgeLegalHoldStatus: Bool {
-        return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
+        legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
     var fingerprint: String? {
         guard let preKey = legalHoldDataSource.legalHoldRequest?.lastPrekey,
               let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
-                  return nil
-              }
+            return nil
+        }
         return String(decoding: fingerprintData, as: UTF8.self)
     }
 
@@ -61,13 +61,18 @@ extension MockUserType: SelfLegalHoldSubject {
     }
 
     func requestLegalHold() {
-        let keyData = Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!
-        let prekey = LegalHoldRequest.Prekey(id: 65535, key: keyData)
+        let keyData =
+            Data(
+                base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+            )!
+        let prekey = LegalHoldRequest.Prekey(id: 65_535, key: keyData)
 
-        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(target: UUID(),
-                                                                requester: UUID(),
-                                                                clientIdentifier: "eca3c87cfe28be49",
-                                                                lastPrekey: prekey)
+        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(
+            target: UUID(),
+            requester: UUID(),
+            clientIdentifier: "eca3c87cfe28be49",
+            lastPrekey: prekey
+        )
     }
 
 }

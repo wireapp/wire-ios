@@ -32,9 +32,7 @@ struct MessageDetailsSectionDescription {
 
 }
 
-/**
- * Displays the list of users for a specified message detail content type.
- */
+/// Displays the list of users for a specified message detail content type.
 
 final class MessageDetailsContentViewController: UIViewController {
 
@@ -42,7 +40,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     /// The type of the displayed content.
     enum ContentType {
-        case reactions, receipts(enabled: Bool)
+        case reactions
+        case receipts(enabled: Bool)
     }
 
     // MARK: - Configuration
@@ -56,7 +55,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details.
     var subtitle: String? {
         get {
-            return subtitleLabel.text
+            subtitleLabel.text
         }
         set {
             subtitleLabel.text = newValue
@@ -67,7 +66,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details in Voice Over.
     var accessibleSubtitle: String? {
         get {
-            return subtitleLabel.accessibilityValue
+            subtitleLabel.accessibilityValue
         }
         set {
             subtitleLabel.accessibilityValue = newValue
@@ -92,9 +91,7 @@ final class MessageDetailsContentViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a view controller to display message details of a certain type.
-     */
+    /// Creates a view controller to display message details of a certain type.
 
     init(
         contentType: ContentType,
@@ -239,16 +236,17 @@ final class MessageDetailsContentViewController: UIViewController {
         // Update the bottom cell padding to fit the text
         collectionView.contentInset.bottom = footerRegionHeight
 
-        /*
-         We calculate the distance between the bottom of the last cell and the bottom of the view.
-
-         We use this height to move the status label offscreen if needed, and move it up alongside the
-         content if the user scroll up.
-         */
+        // We calculate the distance between the bottom of the last cell and the bottom of the view.
+        //
+        // We use this height to move the status label offscreen if needed, and move it up alongside the
+        // content if the user scroll up.
 
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
-        let visibleOnScreen = min(scrollableContentHeight - offset, scrollView.bounds.height - scrollView.contentInset.top)
+        let visibleOnScreen = min(
+            scrollableContentHeight - offset,
+            scrollView.bounds.height - scrollView.contentInset.top
+        )
         let bottomSpace = scrollableContentHeight - (visibleOnScreen + offset)
 
         let constant = bottomSpace - padding
@@ -276,22 +274,20 @@ final class MessageDetailsContentViewController: UIViewController {
 
     // MARK: - Updating the Data
 
-    /**
-     * Updates the list of users for the details.
-     * - parameter sections: The new list of sections to display.
-     */
+    /// Updates the list of users for the details.
+    /// - parameter sections: The new list of sections to display.
 
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
         noResultsView.isHidden = !sections.isEmpty
         self.sections = sections
-        self.updateTitle()
+        updateTitle()
 
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return
         }
 
         collectionView.reloadData()
-        self.updateFooterPosition(for: collectionView)
+        updateFooterPosition(for: collectionView)
     }
 
 }
@@ -301,11 +297,11 @@ final class MessageDetailsContentViewController: UIViewController {
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return sections[section].items.count
+        sections[section].items.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func collectionView(
@@ -369,7 +365,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     /// When the user selects a cell, show the details for this user.
@@ -392,7 +388,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
-        profileViewController.viewControllerDismisser = self
 
         presentDetailsViewController(profileViewController, above: cell)
     }
@@ -401,14 +396,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         updateFooterPosition(for: scrollView)
     }
 
-}
-
-// MARK: - ViewControllerDismisser
-
-extension MessageDetailsContentViewController: ViewControllerDismisser {
-    func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
-        viewController.dismiss(animated: true, completion: nil)
-    }
 }
 
 // MARK: - ProfileViewControllerDelegate
@@ -426,10 +413,10 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
 
 // MARK: - Adaptive Presentation
 
-extension MessageDetailsContentViewController {
+private extension MessageDetailsContentViewController {
 
     /// Presents a profile view controller as a popover or a modal depending on the context.
-    fileprivate func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
+    func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
         let presentedController = controller.wrapInNavigationController()
         presentedController.modalPresentationStyle = .formSheet
 

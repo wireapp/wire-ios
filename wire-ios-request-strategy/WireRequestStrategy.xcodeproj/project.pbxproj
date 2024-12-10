@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -41,6 +41,7 @@
 		0649D19B24F66E9E001DDC78 /* ZMLocalNotification+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19A24F66E9E001DDC78 /* ZMLocalNotification+Events.swift */; };
 		0649D19F24F6717C001DDC78 /* ZMLocalNotificationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19E24F6717C001DDC78 /* ZMLocalNotificationSet.swift */; };
 		0649D1A624F673E7001DDC78 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D1A524F673E7001DDC78 /* Logging.swift */; };
+		066A3D822CDE6EFC0089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */; };
 		0671976E2AE951F400D96598 /* AcmeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671976D2AE951F400D96598 /* AcmeAPI.swift */; };
 		0671979A2AFBE9FD00D96598 /* AcmeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197992AFBE9FD00D96598 /* AcmeResponse.swift */; };
 		067215AD2B10DCA300CF4AD4 /* E2EIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067215AC2B10DCA300CF4AD4 /* E2EIRepository.swift */; };
@@ -196,6 +197,8 @@
 		591B6E422C8B09B6009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		59271BED2B90D2140019B726 /* ClientRegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */; };
 		59271BF02B90D2510019B726 /* MockOTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BEE2B90D24A0019B726 /* MockOTREntity.swift */; };
+		59537D852CFF9D1600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D842CFF9D1600920B59 /* WireLogging */; };
+		59537D872CFF9DF600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D862CFF9DF600920B59 /* WireLogging */; };
 		597B70C92B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */; };
 		597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */; };
 		598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042F2C89C67E00B64D71 /* WireFoundation */; };
@@ -539,6 +542,7 @@
 		0649D19A24F66E9E001DDC78 /* ZMLocalNotification+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+Events.swift"; sourceTree = "<group>"; };
 		0649D19E24F6717C001DDC78 /* ZMLocalNotificationSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationSet.swift; sourceTree = "<group>"; };
 		0649D1A524F673E7001DDC78 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysRequestStrategy.swift; sourceTree = "<group>"; };
 		0671976D2AE951F400D96598 /* AcmeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeAPI.swift; sourceTree = "<group>"; };
 		067197992AFBE9FD00D96598 /* AcmeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeResponse.swift; sourceTree = "<group>"; };
 		067215AC2B10DCA300CF4AD4 /* E2EIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIRepository.swift; sourceTree = "<group>"; };
@@ -942,12 +946,27 @@
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AllTests.xctestplan,
+			);
+			target = 166901731D707509000FE4AF /* WireRequestStrategyTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		59D264282CF7225A0005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D264292CF722680005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		166901661D707509000FE4AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				598D04332C89C6CF00B64D71 /* WireFoundation in Frameworks */,
+				59537D852CFF9D1600920B59 /* WireLogging in Frameworks */,
 				591B6E3B2C8B09AA009F8A7B /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -960,6 +979,7 @@
 				CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */,
 				598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */,
 				598E870D2BF4E08100FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
+				59537D872CFF9DF600920B59 /* WireLogging in Frameworks */,
 				CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */,
 				591B6E3D2C8B09AE009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
@@ -1342,6 +1362,7 @@
 				F154EDC51F447B6C00CB8184 /* Test Host */,
 				1621D2211D75AB2D007108C2 /* Helpers */,
 				F12CD7932035FC4400EAAEBC /* Resources */,
+				59D264282CF7225A0005317F /* TestPlans */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1743,6 +1764,7 @@
 			children = (
 				7AEBB6732859E5F00090B524 /* Actions */,
 				EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */,
+				066A3D812CDE6EE80089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -2190,6 +2212,7 @@
 			name = WireRequestStrategy;
 			packageProductDependencies = (
 				598D04322C89C6CF00B64D71 /* WireFoundation */,
+				59537D842CFF9D1600920B59 /* WireLogging */,
 			);
 			productName = WireRequestStrategy;
 			productReference = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */;
@@ -2210,9 +2233,13 @@
 				F154EDD71F447BB600CB8184 /* PBXTargetDependency */,
 				CB7979082C73663B006FBA58 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				59D264282CF7225A0005317F /* TestPlans */,
+			);
 			name = WireRequestStrategyTests;
 			packageProductDependencies = (
 				598D042F2C89C67E00B64D71 /* WireFoundation */,
+				59537D862CFF9DF600920B59 /* WireLogging */,
 			);
 			productName = WireRequestStrategyTests;
 			productReference = 166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */;
@@ -2521,6 +2548,7 @@
 				E629E3A32B47015300D526AD /* EventData.swift in Sources */,
 				63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
+				066A3D822CDE6EFC0089C5C2 /* FetchBackendMLSPublicKeysRequestStrategy.swift in Sources */,
 				EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */,
 				E629E39F2B4700B600D526AD /* Payload+NewConversation.swift in Sources */,
 				0649D14524F63BBD001DDC78 /* LocalNotificationType+Configuration.swift in Sources */,
@@ -3195,6 +3223,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		59537D842CFF9D1600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D862CFF9DF600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		598D042F2C89C67E00B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;

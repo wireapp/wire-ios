@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Gesetzliche Aufbewahrung";
+
 "sidebar.conversation_filter.title" = "Unterhaltungen";
 "sidebar.conversation_filter.all.title" = "Alle";
 "sidebar.conversation_filter.favorites.title" = "Favoriten";
 "sidebar.conversation_filter.groups.title" = "Gruppen";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"sidebar.conversation_filter.folders.title" = "Ordner";
 "sidebar.conversation_filter.archived.title" = "Archiv";
 
 "sidebar.contacts.title" = "Kontakte";

@@ -33,8 +33,7 @@ public final class AccessToken: NSObject {
         self.expirationDate = Date(timeIntervalSinceNow: Double(expiresInSeconds))
     }
 
-    @objc
     public var httpHeaders: [String: String] {
-        return ["Authorization": "\(self.type) \(self.token)"]
+        ["Authorization": "\(type) \(token)"]
     }
 }

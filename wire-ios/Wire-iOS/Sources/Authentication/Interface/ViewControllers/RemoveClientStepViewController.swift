@@ -25,8 +25,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
-    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-       return traitEnvironment.traitCollection.horizontalSizeClass
+    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
+        traitEnvironment.traitCollection.horizontalSizeClass
     }
 
     private var contentViewWidthRegular: NSLayoutConstraint!
@@ -35,7 +35,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Initialization
 
     init(clients: [UserClient]) {
-        clientListController = RemoveClientsViewController(clientsList: clients)
+        self.clientListController = RemoveClientsViewController(clientsList: clients)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -95,15 +95,18 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
     // MARK: - Adaptive UI
 
     func toggleConstraints() {
-        userInterfaceSizeClass(self).toggle(compactConstraints: [contentViewWidthCompact],
-               regularConstraints: [contentViewWidthRegular])
+        userInterfaceSizeClass(self).toggle(
+            compactConstraints: [contentViewWidthCompact],
+            regularConstraints: [contentViewWidthRegular]
+        )
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -131,8 +134,10 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
     }
 
     func failedToDeleteClients(_ error: Error) {
-        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error as NSError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 

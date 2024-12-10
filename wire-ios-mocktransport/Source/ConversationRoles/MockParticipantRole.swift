@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversation: MockConversation
     @NSManaged public var user: MockUser
     @NSManaged public var role: MockRole?
@@ -27,9 +28,13 @@ import Foundation
     public static var entityName = "ParticipantRole"
 }
 
-extension MockParticipantRole {
+public extension MockParticipantRole {
     @objc
-    public static func insert(in context: NSManagedObjectContext, conversation: MockConversation, user: MockUser) -> MockParticipantRole {
+    static func insert(
+        in context: NSManagedObjectContext,
+        conversation: MockConversation,
+        user: MockUser
+    ) -> MockParticipantRole {
         let participantRole: MockParticipantRole = insert(in: context)
         participantRole.conversation = conversation
         participantRole.user = user

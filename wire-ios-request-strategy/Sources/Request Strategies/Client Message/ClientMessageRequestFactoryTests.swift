@@ -18,10 +18,10 @@
 
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
 import WireTransport
 import WireUtilities
 import XCTest
+@testable import WireRequestStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
 
@@ -38,6 +38,7 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 }
 
 // MARK: - Client discovery
+
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
@@ -103,7 +104,10 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages"
+            )
             XCTAssertEqual(message, expectedMessage)
         }
     }

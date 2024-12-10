@@ -26,26 +26,25 @@ extension ConversationLocalStore {
     // MARK: - Conversation status
 
     func updateConversationStatus(
-        from remoteConversation: WireAPI.Conversation,
+        from remoteConversation: Conversation,
         for localConversation: ZMConversation
     ) {
-        if let selfMember = remoteConversation.members?.selfMember {
-            updateMemberStatus(
-                from: selfMember,
-                for: localConversation
-            )
-        }
-
         if let readReceiptMode = remoteConversation.readReceiptMode {
             localConversation.updateReceiptMode(readReceiptMode)
         }
 
         if let accessModes = remoteConversation.access {
             if let accessRoles = remoteConversation.accessRoles {
-                localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
+                localConversation.updateAccessStatus(
+                    accessModes: accessModes,
+                    accessRoles: accessRoles
+                )
             } else if let accessRole = remoteConversation.legacyAccessRole {
-                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole.toDomainModel())
-                localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
+                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole)
+                localConversation.updateAccessStatus(
+                    accessModes: accessModes,
+                    accessRoles: accessRoles.map(\.rawValue)
+                )
             }
         }
 
@@ -57,14 +56,17 @@ extension ConversationLocalStore {
     // MARK: - MLS status
 
     func updateMLSStatus(
-        from remoteConversation: WireAPI.Conversation,
-        for localConversation: ZMConversation
+        from remoteConversation: Conversation,
+        for localConversation: ZMConversation,
+        isMLSEnabled: Bool
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        guard isMLSEnabled else { return }
 
         await updateConversationIfNeeded(
             localConversation: localConversation,
-            fallbackGroupID: remoteConversation.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil
+            fallbackGroupID: remoteConversation.mlsGroupID.map {
+                .init(base64Encoded: $0)
+            } ?? nil
         )
     }
 
@@ -94,12 +96,12 @@ extension ConversationLocalStore {
             }
         }
 
-        guard let mlsService else { return }
-
         let conversationExists: Bool
 
         do {
-            conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
+            conversationExists = try await mlsService.conversationExists(
+                groupID: mlsGroupID
+            )
         } catch {
             conversationExists = false
         }
@@ -111,26 +113,4 @@ extension ConversationLocalStore {
             context.saveOrRollback()
         }
     }
-
-    // MARK: - Member status
-
-    func updateMemberStatus(
-        from remoteConversation: WireAPI.Conversation.Member,
-        for localConversation: ZMConversation
-    ) {
-        let mutedStatus = remoteConversation.mutedStatus
-        let mutedReference = remoteConversation.mutedReference
-
-        if let mutedStatus, let mutedReference {
-            localConversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
-        }
-
-        let archived = remoteConversation.archived
-        let archivedReference = remoteConversation.archivedReference
-
-        if let archived, let archivedReference {
-            localConversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
-        }
-    }
-
 }

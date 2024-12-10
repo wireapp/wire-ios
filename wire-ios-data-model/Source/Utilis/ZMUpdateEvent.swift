@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
+
 public enum UpdateEventSource: String {
     case pushChannel
     case notificationsStream
@@ -23,8 +25,8 @@ public enum UpdateEventSource: String {
 
 import Foundation
 
-extension ZMUpdateEvent {
-    public var messageNonce: UUID? {
+public extension ZMUpdateEvent {
+    var messageNonce: UUID? {
         switch type {
         case .conversationMessageAdd,
              .conversationAssetAdd,
@@ -45,11 +47,11 @@ extension ZMUpdateEvent {
     }
 
     /// Attributes that can be attached to logs safely
-    public var logAttributes: LogAttributes {
+    var logAttributes: LogAttributes {
         logAttributes(source: .notificationsStream)
     }
 
-    public func logAttributes(source: UpdateEventSource) -> LogAttributes {
+    func logAttributes(source: UpdateEventSource) -> LogAttributes {
         [
             LogAttributesKey.messageType: safeType,
             LogAttributesKey.eventId: safeUUID,
@@ -59,29 +61,31 @@ extension ZMUpdateEvent {
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
-    public var safeLoggingConversationId: String {
-        conversationUUID.flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ?? "<nil>"
+    var safeLoggingConversationId: String {
+        conversationUUID
+            .flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ??
+            "<nil>"
     }
 
-    public var userIDs: [UUID] {
+    var userIDs: [UUID] {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
-            let userIds = dataPayload["user_ids"] as? [String] else {
-                return []
+              let userIds = dataPayload["user_ids"] as? [String] else {
+            return []
         }
-        return userIds.compactMap({ UUID.init(uuidString: $0) })
+        return userIds.compactMap { UUID(uuidString: $0) }
     }
 
-    public var qualifiedUserIDs: [QualifiedID]? {
+    var qualifiedUserIDs: [QualifiedID]? {
         qualifiedUserIDsFromQualifiedIDList() ?? qualifiedUserIDsFromUserList()
     }
 
     private func qualifiedUserIDsFromUserList() -> [QualifiedID]? {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
               let userDicts = dataPayload["users"] as? [NSDictionary] else {
-                return nil
+            return nil
         }
 
-        let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
+        let qualifiedIDs: [QualifiedID] = userDicts.compactMap {
             let qualifiedID = $0.optionalDictionary(forKey: "qualified_id") as NSDictionary?
 
             guard
@@ -92,7 +96,7 @@ extension ZMUpdateEvent {
             }
 
             return QualifiedID(uuid: uuid, domain: domain)
-        })
+        }
 
         if !qualifiedIDs.isEmpty {
             return qualifiedIDs
@@ -104,10 +108,10 @@ extension ZMUpdateEvent {
     private func qualifiedUserIDsFromQualifiedIDList() -> [QualifiedID]? {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
               let userDicts = dataPayload["qualified_user_ids"] as? [NSDictionary] else {
-                return nil
+            return nil
         }
 
-        let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
+        let qualifiedIDs: [QualifiedID] = userDicts.compactMap {
             guard
                 let uuid = $0.uuid(forKey: "id"),
                 let domain = $0.string(forKey: "domain")
@@ -116,7 +120,7 @@ extension ZMUpdateEvent {
             }
 
             return QualifiedID(uuid: uuid, domain: domain)
-        })
+        }
 
         if !qualifiedIDs.isEmpty {
             return qualifiedIDs
@@ -125,29 +129,33 @@ extension ZMUpdateEvent {
         }
     }
 
-    public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
+    func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
 
         if let qualifiedUserIDs {
             if createIfNeeded {
-                return qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
-                                                                   domain: $0.domain,
-                                                                   in: context) }
+                qualifiedUserIDs.map { ZMUser.fetchOrCreate(
+                    with: $0.uuid,
+                    domain: $0.domain,
+                    in: context
+                ) }
             } else {
-                return qualifiedUserIDs.compactMap { ZMUser.fetch(with: $0.uuid,
-                                                                  domain: $0.domain,
-                                                                  in: context) }
+                qualifiedUserIDs.compactMap { ZMUser.fetch(
+                    with: $0.uuid,
+                    domain: $0.domain,
+                    in: context
+                ) }
             }
         } else {
             if createIfNeeded {
-                return userIDs.map { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
+                userIDs.map { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
             } else {
-                return userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
+                userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
             }
 
         }
     }
 
-    public var participantsRemovedReason: ZMParticipantsRemovedReason {
+    var participantsRemovedReason: ZMParticipantsRemovedReason {
         guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
               let reasonString = dataPayload["reason"] as? String else {
             return ZMParticipantsRemovedReason.none

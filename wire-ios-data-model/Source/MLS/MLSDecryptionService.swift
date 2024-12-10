@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireLogging
 import WireSystem
 
 // sourcery: AutoMockable
@@ -45,7 +46,7 @@ public protocol MLSDecryptionServiceInterface {
     ///   The data representing the decrypted message bytes.
     ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
     ///
-    /// In addition to decrypting the message and returning a result, this method will also publish events 
+    /// In addition to decrypting the message and returning a result, this method will also publish events
     /// if the epoch has changed or if new CRL distribution points have been found.
 
     func decrypt(
@@ -86,11 +87,11 @@ protocol DecryptedMessageBundle {
 
 }
 
-extension DecryptedMessage: DecryptedMessageBundle { }
-extension BufferedDecryptedMessage: DecryptedMessageBundle { }
+extension DecryptedMessage: DecryptedMessageBundle {}
+extension BufferedDecryptedMessage: DecryptedMessageBundle {}
 
 /// A class responsible for decrypting messages for MLS groups.
-/// It is also responsible for processing welcome messages and publishing events 
+/// It is also responsible for processing welcome messages and publishing events
 /// when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
@@ -105,11 +106,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        return onEpochChangedSubject.eraseToAnyPublisher()
+        onEpochChangedSubject.eraseToAnyPublisher()
     }
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        return onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Life cycle
@@ -150,7 +151,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
-        WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
+        WireLogger.mls
+            .debug(
+                "decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))"
+            )
 
         guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
@@ -159,10 +163,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         var groupID = groupID
         var debugInfo = "parentID: \(groupID)"
         if let type = subconversationType,
-            let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
-                forType: type,
-                parentGroupID: groupID
-            ) {
+           let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
+               forType: type,
+               parentGroupID: groupID
+           ) {
             groupID = subconversationGroupID
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }
@@ -178,15 +182,18 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
             }
 
-            var results = try decryptedMessage.bufferedMessages?.compactMap({ try decryptResult(from: $0) }) ?? []
+            var results = try decryptedMessage.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
 
             if let result = try decryptResult(from: decryptedMessage) {
                 results.append(result)
             }
 
             return results
-        } catch CoreCryptoError.CryptoError(let error) {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+        } catch let CoreCryptoError.CryptoError(error) {
+            WireLogger.mls
+                .error(
+                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                )
 
             switch error {
 
@@ -215,7 +222,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         } catch {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+            WireLogger.mls
+                .error(
+                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                )
 
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }

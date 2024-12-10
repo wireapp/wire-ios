@@ -60,7 +60,8 @@ public extension NSData {
             throw MetadataError.unknownFormat
         }
 
-        // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
+        // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from
+        // CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
         if type == UTType.gif.identifier as CFString {
             return self
         }
@@ -71,8 +72,13 @@ public extension NSData {
             throw MetadataError.cannotCreate
         }
 
-        for sourceIndex in 0..<count {
-            CGImageDestinationAddImageFromSource(imageDestination, imageSource, sourceIndex, NSData.nullMetadataProperties)
+        for sourceIndex in 0 ..< count {
+            CGImageDestinationAddImageFromSource(
+                imageDestination,
+                imageSource,
+                sourceIndex,
+                NSData.nullMetadataProperties
+            )
         }
 
         guard CGImageDestinationFinalize(imageDestination) else {
@@ -100,12 +106,12 @@ public extension Data {
     // Supports JPEG, TIFF, PNG and other image (container) formats/types.
     // @throws MetadataError
     func wr_removingImageMetadata() throws -> Data {
-        return try (self as NSData).wr_imageDataWithoutMetadata() as Data
+        try (self as NSData).wr_imageDataWithoutMetadata() as Data
     }
 
     // Retrieves image metadata from the binary image.
     // @throws MetadataError
     func wr_metadata() throws -> [String: Any] {
-        return try (self as NSData).wr_metadata()
+        try (self as NSData).wr_metadata()
     }
 }

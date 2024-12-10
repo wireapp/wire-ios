@@ -27,7 +27,7 @@ extension Member {
         context.fetchOrAssert(request: request).forEach(migrateUserRemoteIdentifer)
     }
 
-    static private func migrateUserRemoteIdentifer(for member: Member) {
+    private static func migrateUserRemoteIdentifer(for member: Member) {
         member.remoteIdentifier = member.user?.remoteIdentifier
     }
 

@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireLogging
 import WireSystem
 
 /// Process conversation create events.
@@ -41,7 +42,7 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         let timestamp = event.timestamp
 
         let existingConversation = await repository.fetchConversation(
-            with: conversationID.uuid,
+            id: conversationID.uuid,
             domain: conversationID.domain
         )
 
@@ -51,7 +52,7 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
         }
 
         await repository.storeConversation(
-            conversation,
+            conversation.toDomainModel(),
             timestamp: timestamp
         )
     }

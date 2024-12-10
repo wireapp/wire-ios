@@ -24,12 +24,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
-import Foundation
-#if os(iOS) || os(tvOS) || os(watchOS)
-import UIKit
-#elseif os(OSX)
-import AppKit
-#endif
 
 import WireAnalytics
 
@@ -552,6 +546,38 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
         }
 
         try await mock()
+    }
+
+}
+
+public class MockSearchUsersUseCaseProtocol: SearchUsersUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeQueryOptionsMessageProtocol_Invocations: [(query: String, options: SearchOptions, messageProtocol: MessageProtocol?)] = []
+    public var invokeQueryOptionsMessageProtocol_MockError: Error?
+    public var invokeQueryOptionsMessageProtocol_MockMethod: ((String, SearchOptions, MessageProtocol?) async throws -> SearchResult)?
+    public var invokeQueryOptionsMessageProtocol_MockValue: SearchResult?
+
+    public func invoke(query: String, options: SearchOptions, messageProtocol: MessageProtocol?) async throws -> SearchResult {
+        invokeQueryOptionsMessageProtocol_Invocations.append((query: query, options: options, messageProtocol: messageProtocol))
+
+        if let error = invokeQueryOptionsMessageProtocol_MockError {
+            throw error
+        }
+
+        if let mock = invokeQueryOptionsMessageProtocol_MockMethod {
+            return try await mock(query, options, messageProtocol)
+        } else if let mock = invokeQueryOptionsMessageProtocol_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeQueryOptionsMessageProtocol`")
+        }
     }
 
 }

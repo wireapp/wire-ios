@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireLinkPreview
 import XCTest
+@testable import Wire
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
@@ -75,7 +75,10 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItTruncatesTextAfterFourLines_31() {
         // GIVEN
-        let message = MockMessageFactory.textMessage(withText: "@Bruno do we have the latest mockup files ready to go for the annual report? Once we have the copy finalized I would like to drop it in and get this out as quickly as possible. We can also add more lines to the test message if we need.")
+        let message = MockMessageFactory
+            .textMessage(
+                withText: "@Bruno do we have the latest mockup files ready to go for the annual report? Once we have the copy finalized I would like to drop it in and get this out as quickly as possible. We can also add more lines to the test message if we need."
+            )
         message.backingTextMessageData?.mentions = [Mention(range: NSRange(location: 0, length: 6), user: otherUser)]
         message.senderUser = MockUserType.createSelfUser(name: "Alice")
         message.conversation = otherUserConversation
@@ -272,7 +275,12 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         // GIVEN
         let url = "https://apple.com/de/apple-pay"
         let message = MockMessageFactory.textMessage(withText: "https://apple.com/de/apple-pay")
-        message.backingTextMessageData?.backingLinkPreview = LinkMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: 0)
+        message.backingTextMessageData?.backingLinkPreview = LinkMetadata(
+            originalURLString: url,
+            permanentURLString: url,
+            resolvedURLString: url,
+            offset: 0
+        )
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
 
@@ -288,7 +296,12 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
         // GIVEN
         let url = "https://apple.com/de/apple-pay"
         let message = MockMessageFactory.textMessage(withText: "There you go! https://apple.com/de/apple-pay")
-        message.backingTextMessageData?.backingLinkPreview = LinkMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: 14)
+        message.backingTextMessageData?.backingLinkPreview = LinkMetadata(
+            originalURLString: url,
+            permanentURLString: url,
+            resolvedURLString: url,
+            offset: 14
+        )
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
 
@@ -317,7 +330,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysPortraitImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
+        let image = image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -332,7 +345,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysSquareImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_square.jpg")
+        let image = image(inTestBundleNamed: "unsplash_square.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -347,7 +360,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysPanoImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_pano.jpg")
+        let image = image(inTestBundleNamed: "unsplash_pano.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -362,7 +375,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysVideoMessage_53() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_square.jpg")
+        let image = image(inTestBundleNamed: "unsplash_square.jpg")
         let message = MockMessageFactory.fileTransferMessage()
         message.backingFileMessageData!.filename = "Video.mp4"
         message.backingFileMessageData!.mimeType = "video/mp4"
@@ -497,44 +510,89 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     private func verifyAccessibilityIdentifiers(
         _ cell: ConversationReplyCell,
         _ message: ZMConversationMessage?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let contentView = cell.contentView
 
         // Structure
-        XCTAssertEqual(contentView.senderComponent.label.accessibilityIdentifier, "original.sender", file: file, line: line)
-        XCTAssertEqual(contentView.senderComponent.indicatorView.accessibilityIdentifier, "original.edit_icon", file: file, line: line)
+        XCTAssertEqual(
+            contentView.senderComponent.label.accessibilityIdentifier,
+            "original.sender",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            contentView.senderComponent.indicatorView.accessibilityIdentifier,
+            "original.edit_icon",
+            file: file,
+            line: line
+        )
         XCTAssertEqual(contentView.timestampLabel.accessibilityIdentifier, "original.timestamp", file: file, line: line)
 
         // Content
         switch message {
         case let message? where message.isText:
-            XCTAssertEqual(contentView.contentTextView.accessibilityIdentifier, "quote.type.text", file: file, line: line)
+            XCTAssertEqual(
+                contentView.contentTextView.accessibilityIdentifier,
+                "quote.type.text",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
 
         case let message? where message.isLocation:
-            XCTAssertEqual(contentView.contentTextView.accessibilityIdentifier, "quote.type.location", file: file, line: line)
+            XCTAssertEqual(
+                contentView.contentTextView.accessibilityIdentifier,
+                "quote.type.location",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
 
         case let message? where message.isAudio:
-            XCTAssertEqual(contentView.contentTextView.accessibilityIdentifier, "quote.type.audio", file: file, line: line)
+            XCTAssertEqual(
+                contentView.contentTextView.accessibilityIdentifier,
+                "quote.type.audio",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
 
         case let message? where message.isImage:
-            XCTAssertEqual(contentView.assetThumbnail.accessibilityIdentifier, "quote.type.image", file: file, line: line)
+            XCTAssertEqual(
+                contentView.assetThumbnail.accessibilityIdentifier,
+                "quote.type.image",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.contentTextView.accessibilityIdentifier, file: file, line: line)
 
         case let message? where message.isVideo:
-            XCTAssertEqual(contentView.assetThumbnail.accessibilityIdentifier, "quote.type.video", file: file, line: line)
+            XCTAssertEqual(
+                contentView.assetThumbnail.accessibilityIdentifier,
+                "quote.type.video",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.contentTextView.accessibilityIdentifier, file: file, line: line)
 
         case let message? where message.isFile:
-            XCTAssertEqual(contentView.contentTextView.accessibilityIdentifier, "quote.type.file", file: file, line: line)
+            XCTAssertEqual(
+                contentView.contentTextView.accessibilityIdentifier,
+                "quote.type.file",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
 
         default:
-            XCTAssertEqual(contentView.contentTextView.accessibilityIdentifier, "quote.type.unavailable", file: file, line: line)
+            XCTAssertEqual(
+                contentView.contentTextView.accessibilityIdentifier,
+                "quote.type.unavailable",
+                file: file,
+                line: line
+            )
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
         }
     }

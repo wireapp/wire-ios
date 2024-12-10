@@ -22,6 +22,10 @@ import Foundation
 
 enum ConversationRepositoryError: Error {
 
+    /// Conversation not found
+
+    case conversationNotFound
+
     /// Unable to delete conversation.
 
     case failedToDeleteConversation(Error)
@@ -30,8 +34,8 @@ enum ConversationRepositoryError: Error {
 
     case mlsConversationShouldHaveAGroupID
 
-    /// Conversation not found
+    /// Unable to fetch conversation guest link
 
-    case conversationNotFound
+    case failedToFetchGuestLink(Error)
 
 }

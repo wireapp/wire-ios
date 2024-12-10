@@ -64,7 +64,7 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
         )
 
         // Then
-        guard case .image(let teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
+        guard case let .image(teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
             return XCTFail("Expected team image to match actual image")
         }
     }
@@ -108,7 +108,7 @@ final class GetTeamAccountImageSourceUseCaseTests: XCTestCase {
         )
 
         // Then
-        guard case .image(let teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
+        guard case let .image(teamImage) = teamImageSource, teamImage.pngData() == teamImageData else {
             return XCTFail("Expected team image to match actual image")
         }
     }

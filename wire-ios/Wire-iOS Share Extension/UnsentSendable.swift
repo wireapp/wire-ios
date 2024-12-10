@@ -95,7 +95,12 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
     private var text: String
     private let attachment: NSItemProvider?
 
-    init(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, text: String, attachment: NSItemProvider? = nil) {
+    init(
+        conversation: WireShareEngine.Conversation,
+        sharingSession: SharingSession,
+        text: String,
+        attachment: NSItemProvider? = nil
+    ) {
         self.text = text
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
@@ -108,7 +113,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
-            let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
+            let message = conversation.appendTextMessage(text, fetchLinkPreview: fetchPreview)
             completion(message)
         }
     }
@@ -117,7 +122,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
         needsPreparation = false
 
-        if let attachment = self.attachment, attachment.hasURL {
+        if let attachment, attachment.hasURL {
 
             self.attachment?.fetchURL(completion: { _ in
                 completion()
@@ -148,11 +153,15 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         let longestDimension: CGFloat = 1024
 
         // note: this doesn't seem to have any effect, but perhaps it's an iOS bug that will be fixed...
-        let options = [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(width: longestDimension, height: longestDimension))]
+        let options = [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
+            width: longestDimension,
+            height: longestDimension
+        ))]
 
         // app extensions have severely limited memory resources & risk termination if they are too greedy. In order to
         // minimize memory consumption we must downscale the images being shared. Standard image scaling methods that
-        // rely on UIImage are too expensive (eg. 12MP image -> approx 48MB UIImage), so we make the system scale the images
+        // rely on UIImage are too expensive (eg. 12MP image -> approx 48MB UIImage), so we make the system scale the
+        // images
         // for us ('free' of charge) by using the image URL & ImageIO library.
         //
 
@@ -179,16 +188,20 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                 // if it fails, it will attach the content directly
 
-                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] image, error in
+                self?.attachment
+                    .loadItem(
+                        forTypeIdentifier: UTType.image.identifier,
+                        options: options
+                    ) { [weak self] image, error in
 
-                    error?.log(message: "Unable to load image from attachment")
+                        error?.log(message: "Unable to load image from attachment")
 
-                    if let image = image as? UIImage {
-                        self?.imageData = image.jpegData(compressionQuality: 0.9)
+                        if let image = image as? UIImage {
+                            self?.imageData = image.jpegData(compressionQuality: 0.9)
+                        }
+
+                        completion()
                     }
-
-                    completion()
-                }
             }
 
         }
@@ -198,7 +211,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.imageData.flatMap(self.conversation.appendImage))
+            completion(imageData.flatMap(conversation.appendImage))
         }
     }
 
@@ -251,16 +264,16 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.metadata.flatMap(self.conversation.appendFile))
+            completion(metadata.flatMap(conversation.appendFile))
         }
     }
 
     private func prepareAsFileData(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
+        prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
     }
 
     private func prepareAsWalletPass(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: nil, typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
+        prepareAsFile(name: nil, typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
     }
 
     private func prepareAsFile(name: String?, typeIdentifier: String, completion: @escaping () -> Void) {
@@ -296,10 +309,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     return completion()
                 }
 
-                self?.prepareForSending(withUTI: UTIString,
-                                        name: name,
-                                        data: data,
-                                        completion: prepareColsure)
+                self?.prepareForSending(
+                    withUTI: UTIString,
+                    name: name,
+                    data: data,
+                    completion: prepareColsure
+                )
             } else if let dataURL = data as? URL {
 
                 guard dataURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
@@ -307,10 +322,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     return completion()
                 }
 
-                self?.prepareForSending(withUTI: UTIString,
-                                        name: name,
-                                        dataURL: dataURL,
-                                        completion: prepareColsure)
+                self?.prepareForSending(
+                    withUTI: UTIString,
+                    name: name,
+                    dataURL: dataURL,
+                    completion: prepareColsure
+                )
             } else {
                 completion()
             }
@@ -319,9 +336,11 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     typealias SendingCompletion = (URL?, Error?) -> Void
 
-    private func convertVideoIfNeeded(UTI: String,
-                                      fileURL: URL,
-                                      completion: @escaping SendingCompletion) {
+    private func convertVideoIfNeeded(
+        UTI: String,
+        fileURL: URL,
+        completion: @escaping SendingCompletion
+    ) {
         if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
             AVURLAsset.convertVideoToUploadFormat(at: fileURL) { url, _, error in
                 completion(url, error)
@@ -337,10 +356,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     ///   - name: file name
     ///   - dataURL: data URL
     ///   - completion: completion handler
-    private func prepareForSending(withUTI UTI: String,
-                                   name: String?,
-                                   dataURL: URL,
-                                   completion: @escaping SendingCompletion) {
+    private func prepareForSending(
+        withUTI UTI: String,
+        name: String?,
+        dataURL: URL,
+        completion: @escaping SendingCompletion
+    ) {
         guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
 
         do {
@@ -361,10 +382,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     /// Process data to the right format to be sent
-    private func prepareForSending(withUTI UTI: String,
-                                   name: String?,
-                                   data: Data,
-                                   completion: @escaping (URL?, Error?) -> Void) {
+    private func prepareForSending(
+        withUTI UTI: String,
+        name: String?,
+        data: Data,
+        completion: @escaping (URL?, Error?) -> Void
+    ) {
         guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
 
         let fileManager = FileManager.default
@@ -397,6 +420,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
 extension AccountManager {
     // MARK: - Host App State
+
     static var sharedAccountManager: AccountManager? {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -404,6 +428,6 @@ extension AccountManager {
     }
 
     static var fileSizeLimitInBytes: UInt64 {
-        return UInt64.uploadFileSizeLimit(hasTeam: AccountManager.sharedAccountManager?.selectedAccount?.teamName != nil)
+        UInt64.uploadFileSizeLimit(hasTeam: AccountManager.sharedAccountManager?.selectedAccount?.teamName != nil)
     }
 }

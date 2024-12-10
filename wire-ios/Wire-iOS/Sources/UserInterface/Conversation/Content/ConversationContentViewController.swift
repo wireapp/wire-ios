@@ -70,8 +70,8 @@ final class ConversationContentViewController: UIViewController {
         return button
     }()
 
-    let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
-    let bottomContainer: UIView = UIView(frame: .zero)
+    let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
+    let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -81,17 +81,15 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
+    let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
-    lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(
-            conversation: conversation,
-            tableView: tableView,
-            actionResponder: self,
-            cellDelegate: self,
-            userSession: userSession
-        )
-    }()
+    lazy var dataSource: ConversationTableViewDataSource = .init(
+        conversation: conversation,
+        tableView: tableView,
+        actionResponder: self,
+        cellDelegate: self,
+        userSession: userSession
+    )
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
@@ -120,12 +118,12 @@ final class ConversationContentViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     ) {
-        messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.selfProfileUIBuilder = selfProfileUIBuilder
         self.conversation = conversation
-        messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 
         super.init(nibName: nil, bundle: nil)
 
@@ -134,13 +132,19 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.targetViewController = self
         messagePresenter.modalTargetController = parent
 
-        token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
+        self.token = NotificationCenter.default.addObserver(
+            forName: .activeMediaPlayerChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateMediaBar()
         }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -154,7 +158,12 @@ final class ConversationContentViewController: UIViewController {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: ZMConversation.failedToSendMessageNotificationName, object: nil)
+        DeveloperToolsViewModel.context.currentConversation = nil
+        NotificationCenter.default.removeObserver(
+            self,
+            name: ZMConversation.failedToSendMessageNotificationName,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -209,7 +218,8 @@ final class ConversationContentViewController: UIViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.delaysContentTouches = false
-        tableView.keyboardDismissMode = AutomationHelper.sharedHelper.disableInteractiveKeyboardDismissal ? .none : .interactive
+        tableView.keyboardDismissMode = AutomationHelper.sharedHelper
+            .disableInteractiveKeyboardDismissal ? .none : .interactive
 
         tableView.backgroundColor = SemanticColors.View.backgroundConversationView
         view.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -244,8 +254,10 @@ final class ConversationContentViewController: UIViewController {
     @objc
     private func showErrorAlertToSendMessage(_ notification: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
-        UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
-                                                 message: MessageSendError.missingLegalholdConsent)
+        UIAlertController.showErrorAlertWithLink(
+            title: MessageSendError.title,
+            message: MessageSendError.missingLegalholdConsent
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -292,7 +304,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     func setupMentionsResultsView() {
@@ -312,7 +324,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override func didReceiveMemoryWarning() {
@@ -366,11 +378,12 @@ final class ConversationContentViewController: UIViewController {
     }
 
     var isScrolledToBottom: Bool {
-        return !dataSource.hasNewerMessagesToLoad &&
-        tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
+        !dataSource.hasNewerMessagesToLoad &&
+            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     // MARK: - Actions
+
     func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
     }
@@ -417,6 +430,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     // MARK: - MediaPlayer
+
     /// Update media bar visiblity
     private func updateMediaBar() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
@@ -428,11 +442,17 @@ final class ConversationContentViewController: UIViewController {
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         } else {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    willDisplayActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         }
     }
@@ -464,9 +484,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // using dispatch_async because when this method gets run, the cell is not yet in visible cells,
         // so the update will fail
         // dispatch_async runs it with next runloop, when the cell has been added to visible cells
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.updateVisibleMessagesWindow()
-        })
+        }
 
         cachedRowHeights[indexPath] = cell.frame.size.height
     }
@@ -478,11 +498,11 @@ extension ConversationContentViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cachedRowHeights[indexPath] ?? UITableView.automaticDimension
+        cachedRowHeights[indexPath] ?? UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return willSelectRow(at: indexPath, tableView: tableView)
+        willSelectRow(at: indexPath, tableView: tableView)
     }
 }
 
@@ -494,8 +514,10 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 
 private extension UIAlertController {
 
-    static func showErrorAlertWithLink(title: String,
-                                       message: String) {
+    static func showErrorAlertWithLink(
+        title: String,
+        message: String
+    ) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
@@ -503,17 +525,21 @@ private extension UIAlertController {
             topmostViewController?.present(browserViewController, animated: true)
         }
 
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
 
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
-                                                style: .default,
-                                                handler: legalHoldLearnMoreHandler))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.LegalholdActive.Alert.learnMore,
+            style: .default,
+            handler: legalHoldLearnMoreHandler
+        ))
 
         topmostViewController?.present(alertController, animated: true)
     }

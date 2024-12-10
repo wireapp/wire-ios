@@ -18,8 +18,13 @@
 
 import Foundation
 
-fileprivate extension AssetRequestFactory {
-    static func request(for identifier: String, on queue: GroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
+private extension AssetRequestFactory {
+    static func request(
+        for identifier: String,
+        on queue: GroupQueue,
+        apiVersion: APIVersion,
+        block: @escaping ZMCompletionHandlerBlock
+    ) -> ZMTransportRequest? {
 
         let path: String
 
@@ -46,10 +51,14 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
     private let identifierProvider: AssetDeletionIdentifierProviderType
 
     @objc(initWithManagedObjectContext:applicationStatus:identifierProvider:)
-    required public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus, identifierProvider: AssetDeletionIdentifierProviderType) {
+    public required init(
+        context: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        identifierProvider: AssetDeletionIdentifierProviderType
+    ) {
         self.identifierProvider = identifierProvider
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
-        requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
 
     private func handle(response: ZMTransportResponse, for identifier: String) {
@@ -69,9 +78,10 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard sync == requestSync, let identifier = identifierProvider.nextIdentifierToDelete() else { return nil }
-        return AssetRequestFactory.request(for: identifier, on: managedObjectContext, apiVersion: apiVersion) { [weak self] response in
-            self?.handle(response: response, for: identifier)
-        }
+        return AssetRequestFactory
+            .request(for: identifier, on: managedObjectContext, apiVersion: apiVersion) { [weak self] response in
+                self?.handle(response: response, for: identifier)
+            }
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

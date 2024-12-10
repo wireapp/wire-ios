@@ -27,12 +27,12 @@ extension NSManagedObjectContext {
     @objc public var searchUserObserverCenter: SearchUserObserverCenter {
         assert(zm_isUserInterfaceContext, "SearchUserObserverCenter does not exist in syncMOC")
 
-        if let observer = self.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
+        if let observer = userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
             return observer
         }
 
         let newObserver = SearchUserObserverCenter(managedObjectContext: self)
-        self.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] = newObserver
+        userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] = newObserver
         return newObserver
     }
 }
@@ -40,12 +40,14 @@ extension NSManagedObjectContext {
 public class SearchUserSnapshot {
 
     /// Keys that we want to be notified for
-    static let observableKeys: [String] = [#keyPath(ZMSearchUser.name),
-                                            #keyPath(ZMSearchUser.completeImageData),
-                                            #keyPath(ZMSearchUser.previewImageData),
-                                            #keyPath(ZMSearchUser.isConnected),
-                                            #keyPath(ZMSearchUser.user),
-                                            #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
+    static let observableKeys: [String] = [
+        #keyPath(ZMSearchUser.name),
+        #keyPath(ZMSearchUser.completeImageData),
+        #keyPath(ZMSearchUser.previewImageData),
+        #keyPath(ZMSearchUser.isConnected),
+        #keyPath(ZMSearchUser.user),
+        #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)
+    ]
 
     weak var searchUser: ZMSearchUser?
     public private(set) var snapshotValues: [String: NSObject?]
@@ -61,7 +63,7 @@ public class SearchUserSnapshot {
 
     /// Creates a snapshot values for the observableKeys keys and stores them
     static func createSnapshots(searchUser: ZMSearchUser) -> [String: NSObject?] {
-        return observableKeys.mapToDictionaryWithOptionalValue { searchUser.value(forKey: $0) as? NSObject }
+        observableKeys.mapToDictionaryWithOptionalValue { searchUser.value(forKey: $0) as? NSObject }
     }
 
     /// Updates the snapshot values for the observableKeys keys,
@@ -86,24 +88,27 @@ public class SearchUserSnapshot {
 
     /// Post a UserChangeInfo for the specified SearchUser
     func postNotification(changedKeys: [String]) {
-        guard changedKeys.count > 0,
-            let searchUser,
-            let moc = self.managedObjectContext
-            else { return }
+        guard !changedKeys.isEmpty,
+              let searchUser,
+              let moc = managedObjectContext
+        else { return }
 
         let userChange = UserChangeInfo(object: searchUser)
         userChange.changedKeys = Set(changedKeys)
-        NotificationInContext(name: .SearchUserChange,
-                              context: moc.notificationContext,
-                              object: searchUser,
-                              changeInfo: userChange).post()
+        NotificationInContext(
+            name: .SearchUserChange,
+            context: moc.notificationContext,
+            object: searchUser,
+            changeInfo: userChange
+        ).post()
     }
 }
 
-@objcMembers public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
+@objcMembers
+public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
 
     /// Map of searchUser remoteID to snapshot
-    internal var snapshots: [UUID: SearchUserSnapshot] = [:]
+    var snapshots: [UUID: SearchUserSnapshot] = [:]
 
     weak var managedObjectContext: NSManagedObjectContext?
 
@@ -114,17 +119,20 @@ public class SearchUserSnapshot {
     /// Adds a snapshots for the specified searchUser if not already present
     public func addSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier,
-            let moc = self.managedObjectContext else {
+              let moc = managedObjectContext else {
             zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }
-        snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(searchUser: searchUser, managedObjectContext: moc)
+        snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(
+            searchUser: searchUser,
+            managedObjectContext: moc
+        )
     }
 
     /// Removes all snapshots for searchUsers that are not contained in this set
     /// This should be called when the searchDirectory changes
     public func searchDirectoryDidUpdate(newSearchUsers: [ZMSearchUser]) {
-        let remoteIDs = newSearchUsers.compactMap { $0.remoteIdentifier }
+        let remoteIDs = newSearchUsers.compactMap(\.remoteIdentifier)
         let currentRemoteIds = Set(snapshots.keys)
         let toRemove = currentRemoteIds.subtracting(remoteIDs)
         toRemove.forEach { snapshots.removeValue(forKey: $0) }
@@ -152,14 +160,15 @@ public class SearchUserSnapshot {
 
     /// Matches the userChangeInfo with the searchUser snapshots and updates those if needed
     func usersDidChange(info: UserChangeInfo) {
-        guard snapshots.count > 0 else { return }
+        guard !snapshots.isEmpty else { return }
 
-        guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info.connectionStateChanged,
+        guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info
+            .connectionStateChanged,
             let user = info.user as? ZMUser,
             let remoteID = user.remoteIdentifier,
             let snapshot = snapshots[remoteID]
         else {
-                return
+            return
         }
 
         guard let searchUser = snapshot.searchUser else {
@@ -168,8 +177,10 @@ public class SearchUserSnapshot {
         }
 
         guard searchUser.user != nil else {
-            // When inserting a connection with a remote user, the user is first inserted into the sync context, then merged into the UI context
-            // Only then the relationship is set between searchUser and user. Therefore we might receive the userChange notification about the updated connectionState BEFORE the relationship is set.
+            // When inserting a connection with a remote user, the user is first inserted into the sync context, then
+            // merged into the UI context
+            // Only then the relationship is set between searchUser and user. Therefore we might receive the userChange
+            // notification about the updated connectionState BEFORE the relationship is set.
             // We will wait until we get notified via `notifyUpdatedSearchUser:`
             return
         }

@@ -50,7 +50,7 @@ struct APISnapshotHelper<API> {
     func verifyRequestForAllAPIVersions(
         httpClient: (() throws -> HTTPClientMock)? = nil,
         when block: (API) async throws -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) async throws {
@@ -82,7 +82,7 @@ struct APISnapshotHelper<API> {
         for apiVersions: any Sequence<APIVersion>,
         httpClient: (() throws -> HTTPClientMock)? = nil,
         when block: (API) async throws -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) async throws {
@@ -118,7 +118,7 @@ struct APISnapshotHelper<API> {
         apiVersion: APIVersion,
         httpClient: HTTPClientMock,
         when block: (API) async throws -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) async throws {

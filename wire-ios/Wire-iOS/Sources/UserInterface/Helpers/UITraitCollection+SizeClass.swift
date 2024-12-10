@@ -20,7 +20,7 @@ import UIKit
 
 extension UITraitCollection {
     func didSizeClassChange(from previousTraitCollection: UITraitCollection?) -> Bool {
-        return horizontalSizeClass != previousTraitCollection?.horizontalSizeClass
+        horizontalSizeClass != previousTraitCollection?.horizontalSizeClass
             || verticalSizeClass != previousTraitCollection?.verticalSizeClass
     }
 }

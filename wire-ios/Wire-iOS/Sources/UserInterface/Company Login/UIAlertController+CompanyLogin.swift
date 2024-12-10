@@ -33,28 +33,28 @@ extension UIAlertController {
         }
 
         var action: String {
-            return LoginSSoAlertLocale.action
+            LoginSSoAlertLocale.action
         }
 
         var title: String {
-            return LoginSSoAlertLocale.title
+            LoginSSoAlertLocale.title
         }
 
         var message: String {
             switch self {
             case .ssoOnly:
-                return LoginSSoAlertLocale.Message.ssoOnly
+                LoginSSoAlertLocale.Message.ssoOnly
             case .ssoAndEmail:
-                return LoginSSoAlertLocale.Message.ssoAndEmail
+                LoginSSoAlertLocale.Message.ssoAndEmail
             }
         }
 
         var placeholder: String {
             switch self {
             case .ssoOnly:
-                return LoginSSoAlertLocale.TextField.Placeholder.ssoOnly
+                LoginSSoAlertLocale.TextField.Placeholder.ssoOnly
             case .ssoAndEmail:
-                return LoginSSoAlertLocale.TextField.Placeholder.ssoAndEmail
+                LoginSSoAlertLocale.TextField.Placeholder.ssoAndEmail
             }
         }
     }
@@ -91,7 +91,7 @@ extension UIAlertController {
                 return LoginSSOErrorAlertLocale.DomainAssociatedWithWrongServer.message
             case .invalidCode:
                 return LoginSSOErrorAlertLocale.InvalidCode.message
-            case .invalidStatus(let status):
+            case let .invalidStatus(status):
                 return LoginSSOErrorAlertLocale.InvalidStatus.message(String(status))
             case .unknown:
                 return LoginSSOErrorAlertLocale.Unknown.message
@@ -108,38 +108,39 @@ extension UIAlertController {
         prefilledInput: String? = nil,
         ssoOnly: Bool = false,
         error: CompanyLoginError? = nil,
-        completion: @escaping (_ ssoCode: String?) -> Void) -> UIAlertController {
+        completion: @escaping (_ ssoCode: String?) -> Void
+    ) -> UIAlertController {
 
-            let copy = CompanyLoginCopy(ssoOnly: ssoOnly)
+        let copy = CompanyLoginCopy(ssoOnly: ssoOnly)
 
-            let controller = UIAlertController(
-                title: copy.title,
-                message: "\n\(copy.message)",
-                preferredStyle: .alert
+        let controller = UIAlertController(
+            title: copy.title,
+            message: "\n\(copy.message)",
+            preferredStyle: .alert
+        )
+
+        if let error {
+            let attributedString = NSAttributedString.companyLoginString(
+                withMessage: copy.message,
+                error: error.description(for: copy)
             )
-
-            if let error {
-                let attributedString = NSAttributedString.companyLoginString(
-                    withMessage: copy.message,
-                    error: error.description(for: copy)
-                )
-                controller.setValue(attributedString, forKey: "attributedMessage")
-            }
-
-            let loginAction = UIAlertAction(title: copy.action, style: .default) { [controller] _ in
-                completion(controller.textFields?.first?.text)
-            }
-
-            controller.addTextField { textField in
-                textField.text = prefilledInput
-                textField.accessibilityIdentifier = "textfield.sso.code"
-                textField.placeholder = copy.placeholder
-            }
-
-            controller.addAction(.cancel { completion(nil) })
-            controller.addAction(loginAction)
-            return controller
+            controller.setValue(attributedString, forKey: "attributedMessage")
         }
+
+        let loginAction = UIAlertAction(title: copy.action, style: .default) { [controller] _ in
+            completion(controller.textFields?.first?.text)
+        }
+
+        controller.addTextField { textField in
+            textField.text = prefilledInput
+            textField.accessibilityIdentifier = "textfield.sso.code"
+            textField.placeholder = copy.placeholder
+        }
+
+        controller.addAction(.cancel { completion(nil) })
+        controller.addAction(loginAction)
+        return controller
+    }
 
     /// Creates an `UIAlertController` warning about no network connection.
     static func noInternetError() -> UIAlertController {

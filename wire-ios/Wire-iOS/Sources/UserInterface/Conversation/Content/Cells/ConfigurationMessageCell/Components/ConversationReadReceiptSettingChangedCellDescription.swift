@@ -33,7 +33,7 @@ struct ReadReceiptViewModel {
     ]
 
     func image() -> UIImage? {
-        return iconColor.map { icon.makeImage(size: .tiny, color: $0) }
+        iconColor.map { icon.makeImage(size: .tiny, color: $0) }
     }
 
     func createSystemMessage(template: String) -> NSAttributedString {
@@ -42,7 +42,10 @@ struct ReadReceiptViewModel {
         if sender.isSelfUser {
             let youLocalized = L10n.Localizable.Content.System.youStarted
 
-            updateText = NSAttributedString(string: template.localized(pov: sender.pov, args: youLocalized), attributes: baseAttributes).adding(font: .mediumSemiboldFont, to: youLocalized)
+            updateText = NSAttributedString(
+                string: template.localized(pov: sender.pov, args: youLocalized),
+                attributes: baseAttributes
+            ).adding(font: .mediumSemiboldFont, to: youLocalized)
         } else {
             let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
             updateText = NSAttributedString(string: template.localized(args: otherUserName), attributes: baseAttributes)
@@ -62,7 +65,10 @@ struct ReadReceiptViewModel {
         case .readReceiptsEnabled:
             updateText = createSystemMessage(template: "content.system.message_read_receipt_on")
         case .readReceiptsOn:
-            updateText = NSAttributedString(string: L10n.Localizable.Content.System.messageReadReceiptOnAddToGroup, attributes: baseAttributes)
+            updateText = NSAttributedString(
+                string: L10n.Localizable.Content.System.messageReadReceiptOnAddToGroup,
+                attributes: baseAttributes
+            )
         default:
             assertionFailure("invalid systemMessageType for ReadReceiptViewModel")
         }
@@ -89,16 +95,23 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(sender: UserType,
-         systemMessageType: ZMSystemMessageType) {
-        let viewModel = ReadReceiptViewModel(icon: .eye,
-                                             iconColor: SemanticColors.Icon.backgroundDefault,
-                                             systemMessageType: systemMessageType, sender: sender)
+    init(
+        sender: UserType,
+        systemMessageType: ZMSystemMessageType
+    ) {
+        let viewModel = ReadReceiptViewModel(
+            icon: .eye,
+            iconColor: SemanticColors.Icon.backgroundDefault,
+            systemMessageType: systemMessageType,
+            sender: sender
+        )
 
-        configuration = View.Configuration(icon: viewModel.image(),
-                                           attributedText: viewModel.attributedTitle(),
-                                           showLine: true)
-        accessibilityLabel = viewModel.attributedTitle()?.string
-        actionController = nil
+        self.configuration = View.Configuration(
+            icon: viewModel.image(),
+            attributedText: viewModel.attributedTitle(),
+            showLine: true
+        )
+        self.accessibilityLabel = viewModel.attributedTitle()?.string
+        self.actionController = nil
     }
 }

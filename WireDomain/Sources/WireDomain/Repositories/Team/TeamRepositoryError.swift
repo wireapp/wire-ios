@@ -26,10 +26,6 @@ enum TeamRepositoryError: Error {
 
     case failedToFetchRemotely(Error)
 
-    /// The local team instance was not found in the database.
-
-    case teamNotFoundLocally
-
     /// User is not a member of the team.
 
     case userNotAMemberInTeam(user: UUID)

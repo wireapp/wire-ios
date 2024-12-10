@@ -18,35 +18,31 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    public typealias ConversationID = UUID
+    typealias ConversationID = UUID
 
     /// Whether the conversation was deleted on the backend.
 
-    @NSManaged
-    public var isDeletedRemotely: Bool
+    @NSManaged var isDeletedRemotely: Bool
 
     /// Whether the converstion is marked as read only
 
-    @NSManaged
-    public var isForcedReadOnly: Bool
+    @NSManaged var isForcedReadOnly: Bool
 
     /// The other user of a one on one conversation.
 
-    @NSManaged
-    public var oneOnOneUser: ZMUser?
+    @NSManaged var oneOnOneUser: ZMUser?
 
     /// True until the metadata has been fetched for the first time
 
-    @NSManaged
-    public var isPendingInitialFetch: Bool
+    @NSManaged var isPendingInitialFetch: Bool
 
     // MARK: - CoreData unique constraint
 
-    static let domainKey: String = "domain"
+    internal static let domainKey: String = "domain"
     @NSManaged private var primitiveDomain: String?
-    public var domain: String? {
+    var domain: String? {
         get {
             willAccessValue(forKey: Self.domainKey)
             let value = primitiveDomain
@@ -62,28 +58,27 @@ extension ZMConversation {
         }
     }
 
-    static let remoteIdentifierKey: String = "remoteIdentifier"
+    internal static let remoteIdentifierKey: String = "remoteIdentifier"
     @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
-    @objc
-    public var remoteIdentifier: ConversationID! {
+    @objc var remoteIdentifier: ConversationID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
-            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            let value = transientUUID(forKey: Self.remoteIdentifierKey)
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
 
         set {
             willChangeValue(forKey: Self.remoteIdentifierKey)
-            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
             didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
     }
 
     /// combination of domain and remoteIdentifier
-    @NSManaged private(set) var primaryKey: String
+    @NSManaged internal private(set) var primaryKey: String
 
     private func updatePrimaryKey(remoteIdentifier: ConversationID?, domain: String?) {
         guard entity.attributesByName["primaryKey"] != nil else {

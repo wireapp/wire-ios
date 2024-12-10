@@ -22,17 +22,19 @@ public enum ZMUserKeys {
     public static let RichProfile = "richProfile"
 }
 
-@objc public class UserRichProfileField: NSObject, Codable {
+@objc
+public class UserRichProfileField: NSObject, Codable {
     public var type: String
     public var value: String
-    @objc public init(type: String, value: String) {
+    @objc
+    public init(type: String, value: String) {
         self.type = type
         self.value = value
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserRichProfileField else { return false }
-        return self.type == other.type && self.value == other.value
+        return type == other.type && value == other.value
     }
 
 }
@@ -45,21 +47,20 @@ extension ZMUser {
     @NSManaged private var primitiveRichProfile: Data?
     public var richProfile: [UserRichProfileField] {
         get {
-            self.willAccessValue(forKey: ZMUserKeys.RichProfile)
-            let fields: [UserRichProfileField]
-            if let data = primitiveRichProfile {
-                fields = (try? JSONDecoder().decode([UserRichProfileField].self, from: data)) ?? []
+            willAccessValue(forKey: ZMUserKeys.RichProfile)
+            let fields: [UserRichProfileField] = if let data = primitiveRichProfile {
+                (try? JSONDecoder().decode([UserRichProfileField].self, from: data)) ?? []
             } else {
-                fields = []
+                []
             }
-            self.didAccessValue(forKey: ZMUserKeys.RichProfile)
+            didAccessValue(forKey: ZMUserKeys.RichProfile)
             return fields
         }
         set {
             if newValue != richProfile {
-                self.willChangeValue(forKey: ZMUserKeys.RichProfile)
+                willChangeValue(forKey: ZMUserKeys.RichProfile)
                 primitiveRichProfile = try? JSONEncoder().encode(newValue)
-                self.didChangeValue(forKey: ZMUserKeys.RichProfile)
+                didChangeValue(forKey: ZMUserKeys.RichProfile)
             }
         }
     }

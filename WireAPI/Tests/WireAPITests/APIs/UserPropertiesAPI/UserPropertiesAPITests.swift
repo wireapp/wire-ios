@@ -125,7 +125,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
+        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
             // When
             _ = try await sut.getLabels()
         }
@@ -137,7 +137,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
+        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
             // When
             _ = try await sut.areTypingIndicatorsEnabled
         }
@@ -149,7 +149,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
+        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.propertyNotFound) {
             // When
             _ = try await sut.areReadReceiptsEnabled
         }
@@ -163,7 +163,7 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(UserPropertiesAPIError.invalidKey) {
+        await XCTAssertThrowsErrorAsync(UserPropertiesAPIError.invalidKey) {
             // When
             try await sut.getLabels()
         }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // MARK: JSON Decoder / Encoder
 
@@ -50,10 +51,10 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ date, encoder in
+        encoder.dateEncodingStrategy = .custom { date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(date.transportString())
-        })
+        }
 
         return encoder
     }
@@ -74,7 +75,7 @@ extension Decodable {
     init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
         do {
             self = try decoder.decode(Self.self, from: payloadData)
-        } catch let error {
+        } catch {
             WireLogger.network.warn("Failed to decode \(Self.self) from payload: \(error)")
             return nil
         }
@@ -134,15 +135,14 @@ extension Encodable {
     ///   - encoder: JSONEncoder to use
 
     func payloadString(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> String? {
-        return payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
+        payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
             String(decoding: $0, as: UTF8.self)
         }
     }
 
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
-        let string = String(decoding: data, as: UTF8.self)
-        return string
+        return String(decoding: data, as: UTF8.self)
     }
 
     func encodeToJSON(encoder: JSONEncoder = .defaultEncoder) throws -> Data {
@@ -209,12 +209,12 @@ private extension CodingUserInfoKey {
 
 extension Decoder {
     var apiVersion: APIVersion? {
-        return userInfo[.apiVersion] as? APIVersion
+        userInfo[.apiVersion] as? APIVersion
     }
 }
 
 extension Encoder {
     var apiVersion: APIVersion? {
-        return userInfo[.apiVersion] as? APIVersion
+        userInfo[.apiVersion] as? APIVersion
     }
 }

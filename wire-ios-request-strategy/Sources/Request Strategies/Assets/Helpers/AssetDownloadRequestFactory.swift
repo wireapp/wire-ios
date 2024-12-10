@@ -21,7 +21,12 @@ import WireTransport
 
 public final class AssetDownloadRequestFactory {
 
-    public func requestToGetAsset(withKey key: String, token: String?, domain: String?, apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func requestToGetAsset(
+        withKey key: String,
+        token: String?,
+        domain: String?,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
 
         let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         let path: String

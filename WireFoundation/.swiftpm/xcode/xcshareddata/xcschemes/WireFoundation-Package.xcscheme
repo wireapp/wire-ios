@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
+   LastUpgradeVersion = "1610"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -57,9 +57,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUtilitiesPackage"
-               BuildableName = "WireUtilitiesPackage"
-               BlueprintName = "WireUtilitiesPackage"
+               BlueprintIdentifier = "WireLogging"
+               BuildableName = "WireLogging"
+               BlueprintName = "WireLogging"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "WireLoggingSupport"
+               BuildableName = "WireLoggingSupport"
+               BlueprintName = "WireLoggingSupport"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -72,7 +86,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireFoundation-Package.xctestplan"
+            reference = "container:Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -91,9 +105,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUtilitiesPackageTests"
-               BuildableName = "WireUtilitiesPackageTests"
-               BlueprintName = "WireUtilitiesPackageTests"
+               BlueprintIdentifier = "WireLoggingTests"
+               BuildableName = "WireLoggingTests"
+               BlueprintName = "WireLoggingTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

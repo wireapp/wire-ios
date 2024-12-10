@@ -15,8 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
 
@@ -31,14 +32,18 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         super.tearDown()
     }
 
-    func performMigration(accountIdentifier: UUID,
-                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void, Error>? {
+    func performMigration(
+        accountIdentifier: UUID,
+        migration: @escaping (NSManagedObjectContext) throws -> Void
+    ) -> Result<Void, Error>? {
         var result: Result<Void, Error>?
-        CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
-                                          applicationContainer: DatabaseBaseTest.applicationContainer,
-                                          dispatchGroup: dispatchGroup,
-                                          migration: migration,
-                                          completion: { result = $0 })
+        CoreDataStack.migrateLocalStorage(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            dispatchGroup: dispatchGroup,
+            migration: migration,
+            completion: { result = $0 }
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         return result
@@ -84,7 +89,8 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         }
 
         // then
-        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
+        else { return XCTFail() }
 
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
@@ -133,7 +139,8 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         }
 
         // then
-        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result
+        else { return XCTFail() }
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }

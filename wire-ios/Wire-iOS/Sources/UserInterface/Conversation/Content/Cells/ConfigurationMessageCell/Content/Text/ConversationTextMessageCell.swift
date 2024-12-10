@@ -20,8 +20,8 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView,
-                                         ConversationMessageCell,
-                                         TextViewInteractionDelegate {
+    ConversationMessageCell,
+    TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -66,11 +66,11 @@ final class ConversationTextMessageCell: UIView,
     }
 
     var selectionView: UIView? {
-        return messageTextView
+        messageTextView
     }
 
     var selectionRect: CGRect {
-        return messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
+        messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
     }
 
     override init(frame: CGRect) {
@@ -108,8 +108,9 @@ final class ConversationTextMessageCell: UIView,
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
-            if let message = self.message, let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
-                return self.openMention(mention)
+            if let message,
+               let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
+                return openMention(mention)
             } else {
                 return false
             }
@@ -120,7 +121,12 @@ final class ConversationTextMessageCell: UIView,
     }
 
     func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(self, user: mention.user, sourceView: messageTextView, frame: selectionRect)
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
         return true
     }
 
@@ -163,14 +169,14 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = self.delegate
-        cell.cellView.message = self.message
+        cell.cellView.delegate = delegate
+        cell.cellView.message = message
         cell.cellView.menuPresenter = cell
         return cell
     }
@@ -180,7 +186,10 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 
 extension ConversationTextMessageCellDescription {
 
-    static func cells(for message: ZMConversationMessage, searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
+    static func cells(
+        for message: ZMConversationMessage,
+        searchQueries: [String]
+    ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
@@ -188,9 +197,11 @@ extension ConversationTextMessageCellDescription {
         return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
     }
 
-    static func cells(textMessageData: TextMessageData,
-                      message: ZMConversationMessage,
-                      searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
+    static func cells(
+        textMessageData: TextMessageData,
+        message: ZMConversationMessage,
+        searchQueries: [String]
+    ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
@@ -208,7 +219,12 @@ extension ConversationTextMessageCellDescription {
         // Search queries
         if !searchQueries.isEmpty {
             let highlightStyle: [NSAttributedString.Key: AnyObject] = [.backgroundColor: UIColor.accentDarken]
-            messageText = messageText.highlightingAppearances(of: searchQueries, with: highlightStyle, upToWidth: 0, totalMatches: nil)
+            messageText = messageText.highlightingAppearances(
+                of: searchQueries,
+                with: highlightStyle,
+                upToWidth: 0,
+                totalMatches: nil
+            )
         }
 
         // Quote
@@ -219,7 +235,10 @@ extension ConversationTextMessageCellDescription {
 
         // Text
         if !messageText.string.isEmpty {
-            let textCell = ConversationTextMessageCellDescription(attributedString: messageText, isObfuscated: message.isObfuscated)
+            let textCell = ConversationTextMessageCellDescription(
+                attributedString: messageText,
+                isObfuscated: message.isObfuscated
+            )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
@@ -230,7 +249,10 @@ extension ConversationTextMessageCellDescription {
         // Links
         if let attachment = attachments.first {
             // Link Attachment
-            let attachmentCell = ConversationLinkAttachmentCellDescription(attachment: attachment, thumbnailResource: message.linkAttachmentImage)
+            let attachmentCell = ConversationLinkAttachmentCellDescription(
+                attachment: attachment,
+                thumbnailResource: message.linkAttachmentImage
+            )
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview

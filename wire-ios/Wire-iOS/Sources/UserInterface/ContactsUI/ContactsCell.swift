@@ -215,14 +215,15 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         )
     }
 
-    @objc func actionButtonPressed(sender: Any?) {
+    @objc
+    func actionButtonPressed(sender: Any?) {
         if let user, let action {
             actionButtonHandler?(user, action)
         }
     }
 }
 
-extension ContactsCell: UserCellSubtitleProtocol { }
+extension ContactsCell: UserCellSubtitleProtocol {}
 
 extension ContactsCell {
 
@@ -236,9 +237,9 @@ extension ContactsCell {
         var localizedDescription: String {
             switch self {
             case .open:
-                return ContactsUIActionButton.open.capitalized
+                ContactsUIActionButton.open.capitalized
             case .invite:
-                return ContactsUIActionButton.invite.capitalized
+                ContactsUIActionButton.invite.capitalized
             }
         }
     }

@@ -19,9 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handle e-mail login errors that occur for unknown errors.
- */
+/// Handle e-mail login errors that occur for unknown errors.
 
 final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHandler {
 
@@ -41,20 +39,28 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
         }
 
         // We try to validate the fields to detect an error
-        var detectedError: NSError
-
-        if !ZMUser.isValidEmailAddress(credentials.email) {
-            detectedError = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.invalidEmail.rawValue, userInfo: nil)
+        var detectedError: NSError = if !ZMUser.isValidEmailAddress(credentials.email) {
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidEmail.rawValue,
+                userInfo: nil
+            )
         } else if !ZMUser.isValidPassword(credentials.password) {
-            detectedError = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.invalidCredentials.rawValue, userInfo: nil)
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidCredentials.rawValue,
+                userInfo: nil
+            )
         } else {
-            detectedError = error
+            error
         }
 
         // Show the alert with a guidance dot
 
-        let alert = AuthenticationCoordinatorErrorAlert(error: detectedError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: detectedError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
 
         return [.hideLoadingView, .executeFeedbackAction(.showGuidanceDot), .presentErrorAlert(alert)]
     }

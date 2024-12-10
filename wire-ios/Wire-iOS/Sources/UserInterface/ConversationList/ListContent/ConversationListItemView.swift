@@ -27,6 +27,7 @@ extension Notification.Name {
 
 final class ConversationListItemView: UIView {
     // MARK: UI constants
+
     static let minHeight: CGFloat = 64
 
     // Please use `updateForConversation:` to set conversation.
@@ -47,15 +48,14 @@ final class ConversationListItemView: UIView {
         }
     }
 
-    let titleField: UILabel = UILabel()
-    let avatarView: ConversationAvatarView = ConversationAvatarView()
-    lazy var rightAccessory: ConversationListAccessoryView = {
-        return ConversationListAccessoryView()
-    }()
+    let titleField: UILabel = .init()
+    let avatarView: ConversationAvatarView = .init()
+    lazy var rightAccessory: ConversationListAccessoryView = .init()
 
     var selected = false {
         didSet {
-            backgroundColor = selected ? SemanticColors.View.backgroundUserCellHightLighted : SemanticColors.View.backgroundUserCell
+            backgroundColor = selected ? SemanticColors.View.backgroundUserCellHightLighted : SemanticColors.View
+                .backgroundUserCell
         }
     }
 
@@ -67,14 +67,19 @@ final class ConversationListItemView: UIView {
         }
     }
 
-    let labelsStack: UIStackView = UIStackView()
-    let contentStack: UIStackView = UIStackView()
-    private let subtitleField: UILabel = UILabel()
+    let labelsStack: UIStackView = .init()
+    let contentStack: UIStackView = .init()
+    private let subtitleField: UILabel = .init()
 
     init() {
         super.init(frame: .zero)
         setupConversationListItemView()
-        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contentSizeCategoryDidChange(_:)),
+            name: UIContentSizeCategory.didChangeNotification,
+            object: nil
+        )
 
         addMediaPlaybackManagerPlayerStateObserver()
 
@@ -113,7 +118,12 @@ final class ConversationListItemView: UIView {
         subtitleField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         createConstraints()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(otherConversationListItemDidScroll(_:)), name: .conversationListItemDidScroll, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(otherConversationListItemDidScroll(_:)),
+            name: .conversationListItemDidScroll,
+            object: nil
+        )
     }
 
     private func createConstraints() {
@@ -124,9 +134,15 @@ final class ConversationListItemView: UIView {
             heightAnchor.constraint(greaterThanOrEqualToConstant: ConversationListItemView.minHeight),
 
             // avatar
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.ConversationList.horizontalMargin),
+            contentStack.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: CGFloat.ConversationList.horizontalMargin
+            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin),
+            contentStack.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -CGFloat.ConversationList.horizontalMargin
+            ),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
     }
@@ -173,6 +189,7 @@ final class ConversationListItemView: UIView {
     }
 
     // MARK: - Observer
+
     @objc
     private func contentSizeCategoryDidChange(_ notification: Notification?) {
         configureFont()
@@ -185,26 +202,27 @@ final class ConversationListItemView: UIView {
             return
         }
 
-            var fraction: CGFloat
-            if bounds.size.width != 0 {
-                fraction = 1 - otherItem.visualDrawerOffset / bounds.size.width
-            } else {
-                fraction = 1
-            }
+        var fraction: CGFloat = if bounds.size.width != 0 {
+            1 - otherItem.visualDrawerOffset / bounds.size.width
+        } else {
+            1
+        }
 
-            if fraction > 1.0 {
-                fraction = 1.0
-            } else if fraction < 0.0 {
-                fraction = 0.0
-            }
-            alpha = 0.35 + fraction * 0.65
+        if fraction > 1.0 {
+            fraction = 1.0
+        } else if fraction < 0.0 {
+            fraction = 0.0
+        }
+        alpha = 0.35 + fraction * 0.65
     }
 
     private func addMediaPlaybackManagerPlayerStateObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(mediaPlayerStateChanged(_:)),
-                                               name: .mediaPlaybackManagerPlayerStateChanged,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(mediaPlayerStateChanged(_:)),
+            name: .mediaPlaybackManagerPlayerStateChanged,
+            object: nil
+        )
     }
 
     @objc
@@ -218,8 +236,10 @@ final class ConversationListItemView: UIView {
         }
     }
 
-    func configure(with title: NSAttributedString?,
-                   subtitle: NSAttributedString?) {
+    func configure(
+        with title: NSAttributedString?,
+        subtitle: NSAttributedString?
+    ) {
         titleText = title
         subtitleAttributedText = subtitle
     }
@@ -231,9 +251,9 @@ final class ConversationListItemView: UIView {
     ///   - subtitle: subtitle of the cell
     ///   - users: the pending user(s) waiting for self user to accept connection request
     func configure(with title: NSAttributedString?, subtitle: NSAttributedString?, users: [UserType]) {
-        self.titleText = title
-        self.subtitleAttributedText = subtitle
-        self.rightAccessory.icon = .pendingConnection
+        titleText = title
+        subtitleAttributedText = subtitle
+        rightAccessory.icon = .pendingConnection
         avatarView.configure(context: .connect(users: users))
         labelsStack.accessibilityLabel = title?.string
     }
@@ -242,7 +262,7 @@ final class ConversationListItemView: UIView {
         self.conversation = conversation
 
         guard let conversation else {
-            self.configure(with: nil, subtitle: nil)
+            configure(with: nil, subtitle: nil)
             return
         }
 
@@ -257,8 +277,8 @@ final class ConversationListItemView: UIView {
         let title: NSAttributedString?
 
         if let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.isTeamMember,
-            let connectedUser = conversation.connectedUserType {
+           selfUser.isTeamMember,
+           let connectedUser = conversation.connectedUserType {
             title = AvailabilityStringBuilder.titleForUser(
                 name: connectedUser.name ?? "",
                 availability: connectedUser.availability,
@@ -284,14 +304,13 @@ final class ConversationListItemView: UIView {
         avatarView.configure(context: .conversation(conversation: conversation))
 
         // Configure the accessory
-        let statusIcon: ConversationStatusIcon?
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let player = appDelegate.mediaPlaybackManager?.activeMediaPlayer,
-           let message = player.sourceMessage,
-           message.conversationLike === conversation {
-            statusIcon = .playingMedia
+        let statusIcon: ConversationStatusIcon? = if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+                                                     let player = appDelegate.mediaPlaybackManager?.activeMediaPlayer,
+                                                     let message = player.sourceMessage,
+                                                     message.conversationLike === conversation {
+            .playingMedia
         } else {
-            statusIcon = status.icon(for: conversation)
+            status.icon(for: conversation)
         }
         rightAccessory.icon = statusIcon
 

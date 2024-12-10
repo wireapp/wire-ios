@@ -34,21 +34,22 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        self.configuration = object
+        configuration = object
         attributedText = object.pingText
         imageView.setTemplateIcon(.ping, size: 20)
         imageView.tintColor = object.pingColor
         lineView.isHidden = true
     }
 
-    @objc func startAnimation() {
-        self.animationBlock = createAnimationBlock()
+    @objc
+    func startAnimation() {
+        animationBlock = createAnimationBlock()
         animate()
     }
 
     func stopAnimation() {
-        self.isAnimationRunning = false
-        self.imageView.alpha = 1.0
+        isAnimationRunning = false
+        imageView.alpha = 1.0
     }
 
     func animate() {
@@ -66,11 +67,11 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
     func createAnimationBlock() -> AnimationBlock {
 
-        let animationBlock: AnimationBlock = { [weak self] otherBlock, reps in
+        { [weak self] otherBlock, reps in
             guard let self else { return }
-            self.imageView.alpha = 1.0
+            imageView.alpha = 1.0
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 
                 if !self.canAnimationContinue(for: self.configuration?.message) {
                     return
@@ -90,28 +91,26 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                     if reps > 0 {
                         (otherBlock as! AnimationBlock)(self.animationBlock as Any, reps - 1)
                     } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: {
-                             if !self.canAnimationContinue(for: self.configuration?.message) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                            if !self.canAnimationContinue(for: self.configuration?.message) {
                                 return
-                             }
+                            }
 
                             UIView.animate(easing: .easeOutQuart, duration: 0.55, animations: {
                                 self.imageView.alpha = 1.0
                             }, completion: { _ in
                                 self.stopAnimation()
                             })
-                        })
+                        }
                     }
                 })
-            })
+            }
 
         }
-
-        return animationBlock
     }
 
     func canAnimationContinue(for message: ZMConversationMessage?) -> Bool {
-        return message?.knockMessageData?.isEqual(configuration?.message?.knockMessageData) ?? false
+        message?.knockMessageData?.isEqual(configuration?.message?.knockMessageData) ?? false
     }
 
     func willDisplay() {
@@ -136,7 +135,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool {
-        get { return false }
+        get { false }
         set { /* pings doesn't support the ephemeral timer */ }
     }
 
@@ -159,7 +158,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
         let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : sender.accentColor
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)
-        accessibilityLabel = text.string
-        actionController = nil
+        self.accessibilityLabel = text.string
+        self.actionController = nil
     }
 }

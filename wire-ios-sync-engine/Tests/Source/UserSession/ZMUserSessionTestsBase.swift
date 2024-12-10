@@ -19,10 +19,10 @@
 import Combine
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireTransportSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 @testable import WireTransport
-import WireTransportSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -67,7 +67,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = { }
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
             .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
@@ -77,7 +77,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
-        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
 
         sut = createSut()
         sut.sessionManager = mockSessionManager
@@ -92,18 +92,18 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
-        self.baseURL = nil
-        self.cookieStorage = nil
-        self.validCookie = nil
-        self.mockSessionManager = nil
-        self.mockMLSService = nil
-        self.transportSession = nil
-        self.mediaManager = nil
-        self.flowManagerMock = nil
-        self.mockRecurringActionService = nil
-        self.mockEARService.delegate = nil
-        self.mockEARService = nil
-        let sut = self.sut
+        baseURL = nil
+        cookieStorage = nil
+        validCookie = nil
+        mockSessionManager = nil
+        mockMLSService = nil
+        transportSession = nil
+        mediaManager = nil
+        flowManagerMock = nil
+        mockRecurringActionService = nil
+        mockEARService.delegate = nil
+        mockEARService = nil
+        let sut = sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()
@@ -120,12 +120,13 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         let mockContextStorable = MockLAContextStorable()
-        mockContextStorable.clear_MockMethod = { }
+        mockContextStorable.clear_MockMethod = {}
 
         let configuration = ZMUserSession.Configuration()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
+            apiServiceFactory: { _, _ in MockAPIService() },
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -169,7 +170,10 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
+        let cachesURL = FileManager.default.cachesURLForAccount(
+            with: userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {

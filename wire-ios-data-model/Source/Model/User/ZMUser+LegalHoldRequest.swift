@@ -21,11 +21,9 @@ import WireCryptobox
 
 private let log = ZMSLog(tag: "UserClient")
 
-public typealias SelfUserLegalHoldable = UserType & EditableUserType & SelfLegalHoldSubject
+public typealias SelfUserLegalHoldable = EditableUserType & SelfLegalHoldSubject & UserType
 
-/**
- * A protocol for objects that provide the legal hold status for the self user.
- */
+/// A protocol for objects that provide the legal hold status for the self user.
 
 public protocol SelfLegalHoldSubject {
 
@@ -52,9 +50,7 @@ public protocol SelfLegalHoldSubject {
 
 }
 
-/**
- * Describes the status of legal hold for the user.
- */
+/// Describes the status of legal hold for the user.
 
 @frozen
 public enum UserLegalHoldStatus: Equatable {
@@ -68,15 +64,11 @@ public enum UserLegalHoldStatus: Equatable {
     case disabled
 }
 
-/**
- * Describes a request to enable legal hold, created from the update event.
- */
+/// Describes a request to enable legal hold, created from the update event.
 
 public struct LegalHoldRequest: Codable, Hashable {
 
-    /**
-     * Represents a prekey in the legal hold request.
-     */
+    /// Represents a prekey in the legal hold request.
 
     public struct Prekey: Codable, Hashable {
 
@@ -93,9 +85,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     }
 
-    /**
-     * Represent a client in the legal hold request.
-     */
+    /// Represent a client in the legal hold request.
 
     private struct Client: Codable, Hashable {
 
@@ -107,7 +97,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     /// The ID of the legal hold client.
     public var clientIdentifier: String {
-            return client.id
+        client.id
     }
 
     /// The last prekey for the legal hold client.
@@ -160,17 +150,17 @@ extension ZMUser: SelfLegalHoldSubject {
 
     /// The keys that affect the legal hold status for the user.
     static func keysAffectingLegalHoldStatus() -> Set<String> {
-        return [#keyPath(ZMUser.clients), ZMUserKeys.legalHoldRequest]
+        [#keyPath(ZMUser.clients), ZMUserKeys.legalHoldRequest]
     }
 
     /// The current legal hold status for the user.
     public var legalHoldStatus: UserLegalHoldStatus {
         if clients.any(\.isLegalHoldDevice) {
-            return .enabled
-        } else if let legalHoldRequest = self.legalHoldRequest {
-            return .pending(legalHoldRequest)
+            .enabled
+        } else if let legalHoldRequest {
+            .pending(legalHoldRequest)
         } else {
-            return .disabled
+            .disabled
         }
     }
 
@@ -192,24 +182,20 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    /**
-     * Call this method a pending legal hold request was cancelled
-     */
+    /// Call this method a pending legal hold request was cancelled
 
     public func legalHoldRequestWasCancelled() {
         legalHoldRequest = nil
         needsToAcknowledgeLegalHoldStatus = false
     }
 
-    /**
-     * Call this method when the user accepted the legal hold request.
-     * - parameter request: The request that the user received.
-     */
+    /// Call this method when the user accepted the legal hold request.
+    /// - parameter request: The request that the user received.
 
     public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
         guard
             // The request must match the current request to avoid nil-ing it out by mistake.
-            request == self.legalHoldRequest,
+            request == legalHoldRequest,
             isSelfUser,
             let context = managedObjectContext
         else {
@@ -235,11 +221,9 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    /**
-     * Adds a legal hold client for the user from the specified legal hold request.
-     * - parameter request: The legal hold request that contains the details of the client.
-     * - returns: The created client, if the state is valid.
-     */
+    /// Adds a legal hold client for the user from the specified legal hold request.
+    /// - parameter request: The legal hold request that contains the details of the client.
+    /// - returns: The created client, if the state is valid.
 
     public func addLegalHoldClient(from request: LegalHoldRequest) async -> UserClient? {
         guard
@@ -248,7 +232,10 @@ extension ZMUser: SelfLegalHoldSubject {
             let legalHoldClient = await context.perform({ self.insertLegalHoldClient(from: request, in: context) })
         else { return nil }
 
-        guard await selfClient.establishSessionWithClient(legalHoldClient, usingPreKey: request.lastPrekey.key.base64String()) else {
+        guard await selfClient.establishSessionWithClient(
+            legalHoldClient,
+            usingPreKey: request.lastPrekey.key.base64String()
+        ) else {
             log.error("Could not establish session with new legal hold device.")
             await context.perform { context.delete(legalHoldClient) }
             return nil
@@ -257,7 +244,10 @@ extension ZMUser: SelfLegalHoldSubject {
         return legalHoldClient
     }
 
-    private func insertLegalHoldClient(from request: LegalHoldRequest, in context: NSManagedObjectContext) -> UserClient? {
+    private func insertLegalHoldClient(
+        from request: LegalHoldRequest,
+        in context: NSManagedObjectContext
+    ) -> UserClient? {
         let legalHoldClient = UserClient.insertNewObject(in: context)
         legalHoldClient.type = .legalHold
         legalHoldClient.deviceClass = .legalHold
@@ -267,13 +257,11 @@ extension ZMUser: SelfLegalHoldSubject {
         return legalHoldClient
     }
 
-    /**
-     * Call this method when the user received a legal hold request from their admin.
-     * - parameter request: The request that the user received.
-     */
+    /// Call this method when the user received a legal hold request from their admin.
+    /// - parameter request: The request that the user received.
 
     public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
-        guard request.target == nil || request.target == self.remoteIdentifier else {
+        guard request.target == nil || request.target == remoteIdentifier else {
             // Do not handle requests if the user ID doesn't match the self user ID
             return
         }
@@ -287,9 +275,7 @@ extension ZMUser: SelfLegalHoldSubject {
     /// Whether the user needs to be notified about a legal hold status change.
     @NSManaged public var needsToAcknowledgeLegalHoldStatus: Bool
 
-    /**
-     * Call this method when the user acknowledged the last legal hold status.
-     */
+    /// Call this method when the user acknowledged the last legal hold status.
 
     public func acknowledgeLegalHoldStatus() {
         needsToAcknowledgeLegalHoldStatus = false
@@ -303,7 +289,7 @@ extension ZMUser: SelfLegalHoldSubject {
                 (self.managedObjectContext?.zm_sync, self.legalHoldRequest?.lastPrekey)
             }), let syncContext, let prekey else { return nil }
 
-            let proteusProvider = await syncContext.perform({ syncContext.proteusProvider })
+            let proteusProvider = await syncContext.perform { syncContext.proteusProvider }
             return await proteusProvider.performAsync { proteusService in
                 await fetchFingerprint(for: prekey, through: proteusService)
             } withKeyStore: { keyStore in
@@ -312,7 +298,10 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through proteusService: ProteusServiceInterface) async -> String? {
+    private func fetchFingerprint(
+        for prekey: LegalHoldRequest.Prekey,
+        through proteusService: ProteusServiceInterface
+    ) async -> String? {
         do {
             return try await proteusService.fingerprint(fromPrekey: prekey.key.base64EncodedString())
         } catch {
@@ -321,7 +310,10 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
+    private func fetchFingerprint(
+        for prekey: LegalHoldRequest.Prekey,
+        through keystore: UserClientKeysStore
+    ) -> String? {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
         return String(decoding: fingerprintData, as: UTF8.self)
     }

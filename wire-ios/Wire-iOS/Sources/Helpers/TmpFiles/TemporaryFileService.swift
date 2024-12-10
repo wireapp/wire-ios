@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
 
 protocol TemporaryFileServiceInterface {
@@ -29,7 +30,11 @@ final class TemporaryFileService: TemporaryFileServiceInterface {
         let manager = FileManager.default
 
         try? manager
-            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .contentsOfDirectory(
+                at: tmpDirectoryPath,
+                includingPropertiesForKeys: nil,
+                options: .skipsSubdirectoryDescendants
+            )
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }

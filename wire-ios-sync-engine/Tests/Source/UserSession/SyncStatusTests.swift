@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class SyncStatusTests: MessagingTest {
 
@@ -134,6 +134,8 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
         // when
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
+        // when
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
         sut.finishCurrentSyncPhase(phase: .evaluate1on1ConversationsForMLS)
@@ -228,6 +230,8 @@ final class SyncStatusTests: MessagingTest {
         sut.finishCurrentSyncPhase(phase: .fetchingLabels)
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
         // when
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)
         // when
@@ -401,7 +405,7 @@ final class SyncStatusTests: MessagingTest {
         sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()
@@ -515,6 +519,9 @@ final class SyncStatusTests: MessagingTest {
         // when
         XCTAssertEqual(sut.currentSyncPhase, .fetchingFeatureConfig)
         sut.finishCurrentSyncPhase(phase: .fetchingFeatureConfig)
+        // when
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingBackendMLSPublicKeys)
+        sut.finishCurrentSyncPhase(phase: .fetchingBackendMLSPublicKeys)
         // when
         XCTAssertEqual(sut.currentSyncPhase, .updateSelfSupportedProtocols)
         sut.finishCurrentSyncPhase(phase: .updateSelfSupportedProtocols)

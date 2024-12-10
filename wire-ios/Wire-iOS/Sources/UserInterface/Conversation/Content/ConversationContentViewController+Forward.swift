@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
@@ -29,8 +30,8 @@ extension ZMConversation: ShareDestination {
             return false
         }
         return selfUser.hasTeam &&
-            self.conversationType == .oneOnOne &&
-            self.localParticipants.first { $0.isGuest(in: self) } != nil
+            conversationType == .oneOnOne &&
+            localParticipants.first { $0.isGuest(in: self) } != nil
     }
 }
 
@@ -43,16 +44,16 @@ extension ShareDestination where Self: ConversationAvatarViewConversation {
     }
 }
 
-extension Array where Element == ZMConversation {
+extension [ZMConversation] {
 
     // Should be called inside ZMUserSession.shared().perform block
     func forEachNonEphemeral(_ block: (ZMConversation) -> Void) {
         forEach {
             guard let timeout = $0.activeMessageDestructionTimeoutValue,
                   let type = $0.activeMessageDestructionTimeoutType else {
-                      block($0)
-                      return
-                  }
+                block($0)
+                return
+            }
             $0.setMessageDestructionTimeoutValue(.init(rawValue: 0), for: type)
             block($0)
             $0.setMessageDestructionTimeoutValue(timeout, for: type)
@@ -63,7 +64,7 @@ extension Array where Element == ZMConversation {
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
 
-    func share<ZMConversation>(to: [ZMConversation]) {
+    func share(to: [some Any]) {
         forward(to: to as [AnyObject])
     }
 
@@ -77,9 +78,14 @@ extension ZMMessage: Shareable {
                 conversations.forEachNonEphemeral {
                     do {
                         // We should not forward any mentions to other conversations
-                        try $0.appendText(content: self.textMessageData!.messageText!, mentions: [], fetchLinkPreview: fetchLinkPreview)
+                        try $0.appendText(
+                            content: self.textMessageData!.messageText!,
+                            mentions: [],
+                            fetchLinkPreview: fetchLinkPreview
+                        )
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn("Failed to append text message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -89,7 +95,8 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendImage(from: imageData)
                     } catch {
-                        WireLogger.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -103,20 +110,27 @@ extension ZMMessage: Shareable {
                         do {
                             try $0.appendFile(with: fileMetadata)
                         } catch {
-                            WireLogger.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            WireLogger.messageProcessing
+                                .warn("Failed to append file message. Reason: \(error.localizedDescription)")
                         }
                     }
                     userSession?.saveOrRollbackChanges()
                 }
             }
         } else if isLocation {
-            let locationData = LocationData.locationData(withLatitude: locationMessageData!.latitude, longitude: locationMessageData!.longitude, name: locationMessageData!.name, zoomLevel: locationMessageData!.zoomLevel)
+            let locationData = LocationData.locationData(
+                withLatitude: locationMessageData!.latitude,
+                longitude: locationMessageData!.longitude,
+                name: locationMessageData!.name,
+                zoomLevel: locationMessageData!.zoomLevel
+            )
             ZMUserSession.shared()?.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        WireLogger.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -145,8 +159,11 @@ extension ConversationContentViewController {
 
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
-        if let keyboardAvoidingViewController = self.presentedViewController as? KeyboardAvoidingViewController,
-           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
+        if let keyboardAvoidingViewController = presentedViewController as? KeyboardAvoidingViewController,
+           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<
+               ZMConversation,
+               ZMMessage
+           > {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
     }
@@ -154,7 +171,10 @@ extension ConversationContentViewController {
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
 
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection
+    ) -> UIModalPresentationStyle {
         traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

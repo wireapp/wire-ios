@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockPushEvent: NSObject {
+@objcMembers
+public class MockPushEvent: NSObject {
 
     public let payload: ZMTransportData
     public let uuid: UUID
@@ -27,8 +28,13 @@ import Foundation
     public let isSilent: Bool
 
     @objc(eventWithPayload:uuid:isTransient:isSilent:)
-    static public func event(with payload: ZMTransportData, uuid: UUID, isTransient: Bool, isSilent: Bool) -> MockPushEvent {
-        return MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
+    public static func event(
+        with payload: ZMTransportData,
+        uuid: UUID,
+        isTransient: Bool,
+        isSilent: Bool
+    ) -> MockPushEvent {
+        MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
     }
 
     public init(with payload: ZMTransportData, uuid: UUID, isTransient: Bool = false, isSilent: Bool = false) {
@@ -39,18 +45,18 @@ import Foundation
     }
 
     public var transportData: ZMTransportData {
-        return [
-                "id": uuid.transportString(),
-                "payload": [ payload ],
-                "transient": isTransient
+        [
+            "id": uuid.transportString(),
+            "payload": [payload],
+            "transient": isTransient
         ] as ZMTransportData
     }
 
     public override var description: String {
-        return payload.description
+        payload.description
     }
 
     public override var debugDescription: String {
-        return "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
+        "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
     }
 }

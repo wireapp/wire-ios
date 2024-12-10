@@ -39,7 +39,7 @@ struct MessageInfo {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
             for (_, userClientDatas) in userClientIdAndSessionIds {
-                let sessionIds = userClientDatas.compactMap( { $0.sessionID })
+                let sessionIds = userClientDatas.compactMap(\.sessionID)
                 result.append(contentsOf: sessionIds)
             }
         }

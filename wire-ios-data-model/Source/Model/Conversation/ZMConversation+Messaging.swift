@@ -17,47 +17,40 @@
 //
 
 import Foundation
+import WireLogging
 import WireUtilities
 
-extension ZMConversation {
+public extension ZMConversation {
 
     // MARK: Keys
 
-    @objc
-    public static let messageProtocolKey = "messageProtocol"
+    @objc static let messageProtocolKey = "messageProtocol"
 
-    @objc
-    static let mlsGroupIdKey = "mlsGroupID"
+    @objc internal static let mlsGroupIdKey = "mlsGroupID"
 
-    @objc
-    static let mlsStatusKey = "mlsStatus"
+    @objc internal static let mlsStatusKey = "mlsStatus"
 
-    @objc
-    static let mlsVerificationStatusKey = "mlsVerificationStatus"
+    @objc internal static let mlsVerificationStatusKey = "mlsVerificationStatus"
 
-    @objc
-    static let commitPendingProposalDateKey = "commitPendingProposalDate"
+    @objc internal static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
-    @objc
-    static let ciphersuiteKey = "ciphersuite"
+    @objc internal static let ciphersuiteKey = "ciphersuite"
 
-    @objc
-    static let epochKey = #keyPath(epoch)
+    @objc internal static let epochKey = #keyPath(epoch)
 
-    @objc
-    static let epochTimestampKey = #keyPath(epochTimestamp)
+    @objc internal static let epochTimestampKey = #keyPath(epochTimestamp)
 
     // MARK: Properties
 
     @NSManaged private var primitiveCiphersuite: NSNumber?
 
-    @NSManaged public var epoch: UInt64
+    @NSManaged var epoch: UInt64
 
-    @NSManaged public var epochTimestamp: Date?
+    @NSManaged var epochTimestamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
-    public var ciphersuite: MLSCipherSuite? {
+    var ciphersuite: MLSCipherSuite? {
         get {
             willAccessValue(forKey: Self.ciphersuiteKey)
             let rawValue = primitiveCiphersuite
@@ -72,14 +65,14 @@ extension ZMConversation {
 
         set {
             willChangeValue(forKey: Self.ciphersuiteKey)
-            primitiveCiphersuite = newValue.map({ NSNumber(value: $0.rawValue) })
+            primitiveCiphersuite = newValue.map { NSNumber(value: $0.rawValue) }
             didChangeValue(forKey: Self.ciphersuiteKey)
         }
     }
 
     /// The message protocol used to exchange messages in this conversation.
 
-    public var messageProtocol: MessageProtocol {
+    var messageProtocol: MessageProtocol {
         get {
             willAccessValue(forKey: Self.messageProtocolKey)
             let value = primitiveMessageProtocol.int16Value
@@ -106,7 +99,7 @@ extension ZMConversation {
     /// If this conversation is an mls group (which it should be if the
     /// `messageProtocol` is `mls`), then this identifier should exist.
 
-    public var mlsGroupID: MLSGroupID? {
+    var mlsGroupID: MLSGroupID? {
         get {
             willAccessValue(forKey: Self.mlsGroupIdKey)
             let value = primitiveMlsGroupID
@@ -127,7 +120,7 @@ extension ZMConversation {
     ///
     /// If this conversation is an mls group (which it should be if the
     /// `messageProtocol` is `mls`), then this status should exist.
-    public var mlsStatus: MLSGroupStatus? {
+    var mlsStatus: MLSGroupStatus? {
         get {
             willAccessValue(forKey: Self.mlsStatusKey)
             let value = primitiveMlsStatus?.int16Value
@@ -154,14 +147,14 @@ extension ZMConversation {
     /// Point in time when the pending proposals in the conversation
     /// should be committed. If nil there's no pending proposals
     /// to commit.
-    @NSManaged public var commitPendingProposalDate: Date?
+    @NSManaged var commitPendingProposalDate: Date?
 
     /// The mls verification status.
     ///
     /// If this conversation is an mls group (which it should be if the
     /// `messageProtocol` is `mls`), then this identifier should exist.
 
-    public var mlsVerificationStatus: MLSVerificationStatus? {
+    var mlsVerificationStatus: MLSVerificationStatus? {
         get {
             willAccessValue(forKey: Self.mlsVerificationStatusKey)
             let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
@@ -254,7 +247,7 @@ public extension ZMConversation {
     }
 
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
-        guard let syncContext = self.managedObjectContext?.zm_sync else {
+        guard let syncContext = managedObjectContext?.zm_sync else {
             completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
             return
         }

@@ -30,7 +30,7 @@ public extension String {
 
     func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
-        for char in self.unicodeScalars {
+        for char in unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
                 obfuscatedVersion.append(char)
             } else {
@@ -45,15 +45,19 @@ public extension GenericMessage {
 
     func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
-        guard case .ephemeral? = self.content else { return nil }
+        guard case .ephemeral? = content else { return nil }
 
         if let someText = textData {
             let content = someText.content
             let obfuscatedContent = content.obfuscated()
             var obfuscatedLinkPreviews: [LinkPreview] = []
-            if linkPreviews.count > 0 {
+            if !linkPreviews.isEmpty {
                 let offset = linkPreviews.first!.urlOffset
-                let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: Int(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
+                let offsetIndex = obfuscatedContent.index(
+                    obfuscatedContent.startIndex,
+                    offsetBy: Int(offset),
+                    limitedBy: obfuscatedContent.endIndex
+                ) ?? obfuscatedContent.startIndex
                 let originalURL = obfuscatedContent[offsetIndex...]
                 obfuscatedLinkPreviews = linkPreviews.map { $0.obfuscated(originalURL: String(originalURL)) }
             }
@@ -81,7 +85,7 @@ public extension GenericMessage {
 
 extension ImageAsset {
     func obfuscated() -> ImageAsset {
-        return WireProtos.ImageAsset.with({
+        WireProtos.ImageAsset.with {
             $0.tag = tag
             $0.width = width
             $0.height = height
@@ -89,7 +93,7 @@ extension ImageAsset {
             $0.originalHeight = originalHeight
             $0.mimeType = mimeType
             $0.size = 1
-        })
+        }
     }
 }
 
@@ -125,10 +129,10 @@ extension Tweet {
     func obfuscated() -> Tweet {
         let obfAuthorName = hasAuthor ? author.obfuscated() : ""
         let obfUserName = hasUsername ? username.obfuscated() : ""
-        return Tweet.with({
+        return Tweet.with {
             $0.author = obfAuthorName
             $0.username = obfUserName
-        })
+        }
     }
 }
 

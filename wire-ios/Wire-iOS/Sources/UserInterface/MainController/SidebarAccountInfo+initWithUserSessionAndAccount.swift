@@ -22,12 +22,19 @@ import WireSidebarUI
 
 extension SidebarAccountInfo {
 
-    init(_ user: some UserType, _ accountImageSource: SidebarAccountInfo.AccountImageSource) {
+    init(
+        _ user: some UserType,
+        _ accountImageSource: SidebarAccountInfo.AccountImageSource,
+        _ isE2EICertified: Bool
+    ) {
         self.init(
             displayName: user.name ?? "",
-            username: user.handle ?? "",
+            username: "@\(user.handle ?? "")",
             accountImageSource: accountImageSource,
-            availability: user.availability.mapToSidebarAccountInfoAvailability()
+            availability: user.availability.mapToSidebarAccountInfoAvailability(),
+            isE2EICertified: isE2EICertified,
+            isVerified: user.isVerified,
+            isLegalHoldEnabled: user.isUnderLegalHold
         )
     }
 }

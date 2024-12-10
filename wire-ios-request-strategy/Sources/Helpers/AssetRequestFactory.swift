@@ -23,15 +23,15 @@ public final class AssetRequestFactory: NSObject {
     public enum Retention: String {
         /// The asset will be automatically removed from the backend
         /// storage after a short-ish amount of time.
-        case volatile = "volatile"
+        case volatile
 
         /// The asset will be automatically removed from the backend storage
         /// after a certain, long-ish amount of time.
-        case expiring = "expiring"
+        case expiring
 
         /// The asset will never be removed from the backend storage unless the
         /// user requests the deletion explicitly. Used for profile pictures.
-        case eternal = "eternal"
+        case eternal
 
         /// The same as eternal, however this is cost-optimized
         /// on the backend for infrequent access. Used for team conversations.
@@ -69,18 +69,23 @@ public final class AssetRequestFactory: NSObject {
             return nil
         }
 
-        let path: String
-        switch apiVersion {
+        let path = switch apiVersion {
         case .v0, .v1:
-            path = "/assets/v3"
+            "/assets/v3"
 
         case .v2, .v3, .v4, .v5, .v6:
-            path = "/assets"
+            "/assets"
         }
 
-        let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: Constant.ContentType.multipart, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest.uploadRequest(
+            withFileURL: uploadURL,
+            path: path,
+            contentType: Constant.ContentType.multipart,
+            apiVersion: apiVersion.rawValue
+        )
 
-        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form
+        // `addContentDebugInformation`.
         // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request.addContentDebugInformation("Uploading full asset to \(path)")
         request.contentHintForRequestLoop += "Uploading full asset to \(path)"
@@ -88,19 +93,34 @@ public final class AssetRequestFactory: NSObject {
         return request
     }
 
-    public func upstreamRequestForAsset(withData data: Data, shareable: Bool = true, retention: Retention, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
+    public func upstreamRequestForAsset(
+        withData data: Data,
+        shareable: Bool = true,
+        retention: Retention,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
+        guard let multipartData = try? dataForMultipartAssetUploadRequest(
+            data,
+            shareable: shareable,
+            retention: retention
+        ) else { return nil }
 
-        let path: String
-        switch apiVersion {
+        let path = switch apiVersion {
         case .v0, .v1:
-            path = "/assets/v3"
+            "/assets/v3"
 
         case .v2, .v3, .v4, .v5, .v6:
-            path = "/assets"
+            "/assets"
         }
 
-        return ZMTransportRequest(path: path, method: .post, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            binaryData: multipartData,
+            type: Constant.ContentType.multipart,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {
@@ -143,7 +163,8 @@ public final class AssetRequestFactory: NSObject {
 
 public extension AssetRequestFactory.Retention {
     init(conversation: ZMConversation) {
-        if ZMUser.selfUser(in: conversation.managedObjectContext!).hasTeam || conversation.hasTeam || conversation.containsTeamUser {
+        if ZMUser.selfUser(in: conversation.managedObjectContext!).hasTeam || conversation.hasTeam || conversation
+            .containsTeamUser {
             self = .eternalInfrequentAccess
         } else {
             self = .expiring
@@ -153,10 +174,10 @@ public extension AssetRequestFactory.Retention {
 
 extension ZMConversation {
     var containsTeamUser: Bool {
-        return localParticipants.any { $0.hasTeam }
+        localParticipants.any { $0.hasTeam }
     }
 
     var hasTeam: Bool {
-        return nil != team
+        team != nil
     }
 }

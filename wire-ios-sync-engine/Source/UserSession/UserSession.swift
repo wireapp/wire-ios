@@ -269,6 +269,12 @@ public protocol UserSession: AnyObject {
 
     func makeCallQualitySurveyUseCase() -> any SubmitCallQualitySurveyUseCaseProtocol
 
+    func makeConversationFolderSelectionUseCase() -> UpdateConversationFolderUseCase
+
+    func makeConversationFolderCreationUseCase() -> CreateConversationFolderUseCase
+
+    func makeSearchUsersUseCase() -> SearchUsersUseCaseProtocol
+
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?

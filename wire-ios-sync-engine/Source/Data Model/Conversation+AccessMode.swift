@@ -20,9 +20,9 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
-fileprivate extension ZMConversation {
+private extension ZMConversation {
 
-    struct TransportKey {
+    enum TransportKey {
         static let data = "data"
         static let uri = "uri"
         static let hasPassword = "has_password"
@@ -43,23 +43,29 @@ public enum WirelessLinkError: Error {
         case (404, "no-conversation-code"?): self = .noCode
         case (404, "no-conversation"?): self = .noConversation
         case (409, "guest-links-disabled"?): self = .guestLinksDisabled
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }
 }
 
-extension ZMConversation {
+public extension ZMConversation {
 
     /// Fetches the wireless link for accessing the conversation.
     ///
     /// - Parameters:
     ///   - userSession: The user session used to fetch the link.
-    ///   - completion: A closure called when the operation is completed. It returns a `Result` with either the link fetched
+    ///   - completion: A closure called when the operation is completed. It returns a `Result` with either the link
+    /// fetched
     ///                 along with its security status or an error.
     ///
-    /// - Note: The completion closure is called with `.success` and the link fetched if successful. If the link has not been generated yet, it is called with `.success(nil)`. If there are any errors during the operation, it is called with `.failure` along with the corresponding error.
-    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
+    /// - Note: The completion closure is called with `.success` and the link fetched if successful. If the link has not
+    /// been generated yet, it is called with `.success(nil)`. If there are any errors during the operation, it is
+    /// called with `.failure` along with the corresponding error.
+    func fetchWirelessLink(
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void
+    ) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -91,12 +97,12 @@ extension ZMConversation {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    var isLegacyAccessMode: Bool {
-        return self.accessMode == [.invite]
+    internal var isLegacyAccessMode: Bool {
+        accessMode == [.invite]
     }
 
     /// Checks if a guest link can be generated or not
-    public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
+    func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
         }
@@ -119,6 +125,7 @@ extension ZMConversation {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 zmLog.error("Could not check guest link status: \(error)")
                 completion(.failure(error))
+
             default:
                 completion(.failure(WirelessLinkError.unknown))
             }
@@ -129,7 +136,7 @@ extension ZMConversation {
     }
 
     /// Deletes the existing wireless link.
-    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -153,14 +160,14 @@ extension ZMConversation {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    public var canManageAccess: Bool {
-        guard let moc = self.managedObjectContext else { return false }
+    var canManageAccess: Bool {
+        guard let moc = managedObjectContext else { return false }
         let selfUser = ZMUser.selfUser(in: moc)
         return selfUser.canModifyAccessControlSettings(in: self)
     }
 }
 
-internal struct WirelessRequestFactory {
+enum WirelessRequestFactory {
     static func fetchLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
@@ -168,21 +175,37 @@ internal struct WirelessRequestFactory {
         return .init(getFromPath: "/conversations/\(identifier)/code", apiVersion: apiVersion.rawValue)
     }
 
-    static func guestLinkFeatureStatusRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func guestLinkFeatureStatusRequest(
+        for conversation: ZMConversation,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
         }
-        return .init(getFromPath: "/conversations/\(identifier)/features/conversationGuestLinks", apiVersion: apiVersion.rawValue)
+        return .init(
+            getFromPath: "/conversations/\(identifier)/features/conversationGuestLinks",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     static func deleteLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
         }
-        return .init(path: "/conversations/\(identifier)/code", method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
+        return .init(
+            path: "/conversations/\(identifier)/code",
+            method: .delete,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    static func setAccessRoles(allowGuests: Bool, allowServices: Bool, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func setAccessRoles(
+        allowGuests: Bool,
+        allowServices: Bool,
+        for conversation: ZMConversation,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
         }

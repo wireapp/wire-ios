@@ -21,6 +21,6 @@ import UserNotifications
 
 extension UNNotificationResponse: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "action:\(actionIdentifier) notification: [\(notification.safeForLoggingDescription)]"
+        "action:\(actionIdentifier) notification: [\(notification.safeForLoggingDescription)]"
     }
 }

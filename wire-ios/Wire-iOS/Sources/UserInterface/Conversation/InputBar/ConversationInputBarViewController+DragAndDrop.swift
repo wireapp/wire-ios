@@ -38,30 +38,31 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
             } else if itemProvider.canLoadObject(ofClass: UIImage.self) {
                 itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { object, error in
 
-                    guard error == nil else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
+                    guard error == nil
+                    else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
                     guard let draggedImage = object as? UIImage else { return }
 
                     DispatchQueue.main.async {
-                        let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: draggedImage),
-                                                                         onConfirm: { [unowned self] _ in
-                            self.dismiss(animated: true) {
-                                if let draggedImageData = draggedImage.pngData() {
-                                    self.sendController.sendMessage(
-                                        withImageData: draggedImageData,
-                                        userSession: self.userSession
-                                    )
+                        let context = ConfirmAssetViewController.Context(
+                            asset: .image(mediaAsset: draggedImage),
+                            onConfirm: { [unowned self] _ in
+                                dismiss(animated: true) {
+                                    if let draggedImageData = draggedImage.pngData() {
+                                        self.sendController.sendMessage(
+                                            withImageData: draggedImageData,
+                                            userSession: self.userSession
+                                        )
+                                    }
                                 }
+                            },
+                            onCancel: { [unowned self] in
+                                dismiss(animated: true)
                             }
-                        },
-                                                                         onCancel: { [unowned self] in
-                            self.dismiss(animated: true)
-                        }
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
                         confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
-                        self.present(confirmImageViewController, animated: true) {
-                        }
+                        self.present(confirmImageViewController, animated: true) {}
                     }
                 })
                 // swiftlint:disable:next todo_requires_jira_link
@@ -72,17 +73,20 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        return dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()))
+        dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(
+            sessionRestriction: ZMUserSession
+                .shared()
+        ))
     }
 
     func dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager) -> UIDropProposal {
-        return mediaShareRestrictionManager.canUseClipboard
-        ? UIDropProposal(operation: .copy)
-        : UIDropProposal(operation: .forbidden)
+        mediaShareRestrictionManager.canUseClipboard
+            ? UIDropProposal(operation: .copy)
+            : UIDropProposal(operation: .forbidden)
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
-        return true
+        true
     }
 }
 
@@ -90,7 +94,7 @@ private extension NSItemProvider {
 
     func hasText() -> Bool {
         // Image dragged from browser can be both NSString and UIImage
-        return canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
+        canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
     }
 
 }

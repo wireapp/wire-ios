@@ -104,27 +104,35 @@ public final class SidebarViewController: UIViewController {
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
+    public typealias LegalHoldIndicatorViewBuilder<LegalHoldIndicatorView> = () -> LegalHoldIndicatorView
 
     public init(
-        accountImageView: @escaping AccountImageViewBuilder<some View>
+        accountImageView: @escaping AccountImageViewBuilder<some View>,
+        legalHoldIndicatorView: @escaping LegalHoldIndicatorViewBuilder<some View>
     ) {
         super.init(nibName: nil, bundle: nil)
 
-        model = .init(accountImageAction: { [weak self] in
+        self.model = .init(accountImageAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
         }, menuItemAction: { [weak self] menuItem in
             guard let self, !skipCallingDelegate else { return }
             delegate?.sidebarViewController(self, didSelect: menuItem)
+        }, foldersAction: { [weak self] rect in
+            self?.delegate?.sidebarViewController(self!, didTapFoldersMenuItem: rect)
         }, connectAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })
 
-        setupHostingController = { [weak self] in
+        self.setupHostingController = { [weak self] in
             guard let self else { return }
 
-            let sidebarAdapter = SidebarAdapter(model: model, accountImageView: accountImageView)
+            let sidebarAdapter = SidebarAdapter(
+                model: model,
+                accountImageView: accountImageView,
+                legalHoldIndicatorView: legalHoldIndicatorView
+            )
             let hostingController = UIHostingController(rootView: sidebarAdapter)
             addChild(hostingController)
             hostingController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -144,7 +152,7 @@ public final class SidebarViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    override public func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setupHostingController()
     }
@@ -152,7 +160,7 @@ public final class SidebarViewController: UIViewController {
 
 // MARK: - SidebarAdapter
 
-private struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
+private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: View>: View {
 
     @ObservedObject fileprivate var model: SidebarModel
 
@@ -160,15 +168,18 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         _ accountImage: SidebarAccountInfo.AccountImageSource,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
+    private(set) var legalHoldIndicatorView: () -> LegalHoldIndicatorView
 
     var body: some View {
         SidebarView(
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
+            foldersAction: model.foldersAction,
             connectAction: model.connectAction,
             supportAction: model.supportAction,
-            accountImageView: accountImageView
+            accountImageView: accountImageView,
+            legalHoldIndicatorView: legalHoldIndicatorView
         )
         .sidebarBackgroundColor(.init(uiColor: model.sidebarBackgroundColor))
         .sidebarAccountInfoViewDisplayNameColor(.init(uiColor: model.sidebarAccountInfoViewDisplayNameColor))
@@ -176,7 +187,10 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         .sidebarMenuHeaderForegroundColor(.init(uiColor: model.sidebarMenuHeaderForegroundColor))
         .sidebarMenuItemTitleForegroundColor(.init(uiColor: model.sidebarMenuItemTitleForegroundColor))
         .sidebarMenuItemLinkIconForegroundColor(.init(uiColor: model.sidebarMenuItemLinkIconForegroundColor))
-        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(uiColor: model.sidebarMenuItemIsSelectedTitleForegroundColor))
+        .sidebarMenuItemIsSelectedTitleForegroundColor(.init(
+            uiColor: model
+                .sidebarMenuItemIsSelectedTitleForegroundColor
+        ))
         .environment(\.wireAccentColor, model.wireAccentColor)
         .environment(\.wireAccentColorMapping, model.wireAccentColorMapping)
         .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

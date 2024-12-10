@@ -23,18 +23,20 @@ import WireTransport
 private let MEGABYTE = UInt(1 * 1000 * 1000)
 
 // MARK: ZMUser
+
 extension ZMUser {
     private func cacheIdentifier(suffix: String?) -> String? {
         guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else { return nil }
-        return (userRemoteId + "-" + suffix)
+        return userRemoteId + "-" + suffix
     }
 
-    @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
+    @objc
+    public func imageCacheKey(for size: ProfileImageSize) -> String? {
         switch size {
         case .preview:
-            return cacheIdentifier(suffix: previewProfileAssetIdentifier)
+            cacheIdentifier(suffix: previewProfileAssetIdentifier)
         case .complete:
-            return cacheIdentifier(suffix: completeProfileAssetIdentifier)
+            cacheIdentifier(suffix: completeProfileAssetIdentifier)
         }
     }
 
@@ -43,20 +45,22 @@ extension ZMUser {
 // MARK: NSManagedObjectContext
 
 let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
-extension NSManagedObjectContext {
-    @objc public var zm_userImageCache: UserImageLocalCache! {
+public extension NSManagedObjectContext {
+    @objc var zm_userImageCache: UserImageLocalCache! {
         get {
-            return self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
+            userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
         }
 
         set {
-            self.userInfo[NSManagedObjectContextUserImageCacheKey] = newValue
+            userInfo[NSManagedObjectContextUserImageCacheKey] = newValue
         }
     }
 }
 
 // MARK: Cache
-@objcMembers open class UserImageLocalCache: NSObject {
+
+@objcMembers
+open class UserImageLocalCache: NSObject {
 
     fileprivate let log = ZMSLog(tag: "UserImageCache")
 
@@ -124,17 +128,28 @@ extension NSManagedObjectContext {
         case .preview:
             let stored = setImage(inCache: smallUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))")
+                log
+                    .info(
+                        "Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))"
+                    )
             }
         case .complete:
             let stored = setImage(inCache: largeUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.name ?? "")] complete image [\(imageData)] cache key: \(String(describing: key))")
+                log
+                    .info(
+                        "Setting [\(user.name ?? "")] complete image [\(imageData)] cache key: \(String(describing: key))"
+                    )
             }
         }
     }
 
-    open func userImage(_ user: ZMUser, size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
+    open func userImage(
+        _ user: ZMUser,
+        size: ProfileImageSize,
+        queue: DispatchQueue,
+        completion: @escaping (_ imageData: Data?) -> Void
+    ) {
         guard let cacheKey = user.imageCacheKey(for: size) else { return completion(nil) }
 
         queue.async {
@@ -149,15 +164,17 @@ extension NSManagedObjectContext {
 
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
         guard let cacheKey = user.imageCacheKey(for: size) else { return nil }
-        let data: Data?
-        switch size {
+        let data: Data? = switch size {
         case .preview:
-            data = smallUserImageCache.object(forKey: cacheKey) as? Data
+            smallUserImageCache.object(forKey: cacheKey) as? Data
         case .complete:
-            data = largeUserImageCache.object(forKey: cacheKey) as? Data
+            largeUserImageCache.object(forKey: cacheKey) as? Data
         }
         if let data {
-            log.info("Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
+            log
+                .info(
+                    "Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]"
+                )
         }
 
         return data

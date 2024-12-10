@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
+import WireLogging
 
 struct ConferenceParticipantsInfo {
     let participants: [CallParticipant]
@@ -211,9 +212,9 @@ extension CallParticipantState {
     var isConnected: Bool {
         switch self {
         case .connected:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

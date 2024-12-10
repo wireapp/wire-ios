@@ -32,7 +32,8 @@ protocol MapViewControllerDelegate: AnyObject {
 // MARK: - MapViewController
 
 /// The MapViewController class is a subclass of UIViewController that manages a map interface using MKMapView.
-/// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and updating annotations, and adjusting the map’s region.
+/// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and
+/// updating annotations, and adjusting the map’s region.
 final class MapViewController: UIViewController {
 
     // MARK: - Properties
@@ -40,9 +41,10 @@ final class MapViewController: UIViewController {
     let mapView = MKMapView()
     weak var delegate: MapViewControllerDelegate?
     private let pointAnnotation = MKPointAnnotation()
-    private lazy var annotationView: MKMarkerAnnotationView = MKMarkerAnnotationView(
+    private lazy var annotationView: MKMarkerAnnotationView = .init(
         annotation: pointAnnotation,
-        reuseIdentifier: String(describing: type(of: self)
+        reuseIdentifier: String(
+            describing: type(of: self)
         )
     )
 
@@ -83,8 +85,14 @@ final class MapViewController: UIViewController {
         mapView.addSubview(annotationView)
         annotationView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
-            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.centerXAnchor.constraint(
+                equalTo: mapView.centerXAnchor,
+                constant: LayoutConstants.annotationViewCenterXOffset
+            ),
+            annotationView.bottomAnchor.constraint(
+                equalTo: mapView.centerYAnchor,
+                constant: LayoutConstants.annotationViewBottomOffset
+            ),
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
             annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth)
         ])
@@ -103,8 +111,17 @@ final class MapViewController: UIViewController {
         mapView.addAnnotation(annotation)
     }
 
-    func setRegion(to coordinate: CLLocationCoordinate2D, latitudinalMeters: Double, longitudinalMeters: Double, animated: Bool) {
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: latitudinalMeters, longitudinalMeters: longitudinalMeters)
+    func setRegion(
+        to coordinate: CLLocationCoordinate2D,
+        latitudinalMeters: Double,
+        longitudinalMeters: Double,
+        animated: Bool
+    ) {
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            latitudinalMeters: latitudinalMeters,
+            longitudinalMeters: longitudinalMeters
+        )
         mapView.setRegion(region, animated: animated)
     }
 

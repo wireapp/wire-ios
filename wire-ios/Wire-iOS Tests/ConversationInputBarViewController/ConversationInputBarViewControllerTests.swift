@@ -24,7 +24,8 @@ import XCTest
 // In this class the snapshot tests they don't look the same as in the real app.
 // The first and last button for the input bar look like they have 4 rounded corners
 // instead of 2. That's because snapshot tests don't work well with maskedCorners and CI.
-// More on the issue can be found here: https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
+// More on the issue can be found here:
+// https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
 final class ConversationInputBarViewControllerTests: XCTestCase {
 
     // MARK: - Properties
@@ -174,7 +175,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 259200)
+            self.setMessageDestructionTimeout(timeInterval: 259_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
 
@@ -190,7 +191,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 2419200)
+            self.setMessageDestructionTimeout(timeInterval: 2_419_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
 
@@ -206,7 +207,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 2419200)
+            self.setMessageDestructionTimeout(timeInterval: 2_419_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
             let shortText = "Lorem ipsum dolor"
@@ -298,7 +299,8 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func makeViewController(conversation: MockInputBarConversationType? = nil) -> ConversationInputBarViewController {
+    private func makeViewController(conversation: MockInputBarConversationType? = nil)
+        -> ConversationInputBarViewController {
         ConversationInputBarViewController(
             conversation: conversation ?? mockConversation,
             userSession: mockUserSession,

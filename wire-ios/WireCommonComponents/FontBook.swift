@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-extension UIFont {
+public extension UIFont {
 
 //     Constants for weight values
 //     Those values come directly from the system
@@ -37,12 +37,12 @@ extension UIFont {
 //            (.heavy, "Heavy"),
 //            (.black, "Black")
 //        ]
-//    
+//
 //        print("Font weights for \(familyName):")
 //        for (weight, weightName) in fontWeights {
 //            print("\(weight.rawValue): \(weightName)")
 //        }
-    private struct WeightValues {
+    private enum WeightValues {
         static let ultraLight: CGFloat = -0.8
         static let thin: CGFloat = -0.6
         static let light: CGFloat = -0.4
@@ -54,7 +54,7 @@ extension UIFont {
         static let black: CGFloat = 0.62
     }
 
-    public enum FontStyle {
+    enum FontStyle {
         case title3
         case headline
         case body
@@ -69,7 +69,7 @@ extension UIFont {
         case bigHeadline
     }
 
-    public static func font(for style: FontStyle) -> UIFont {
+    static func font(for style: FontStyle) -> UIFont {
         switch style {
         case .title3:
             return .preferredFont(forTextStyle: .title3)
@@ -111,50 +111,50 @@ extension UIFont {
         }
     }
 
-    public static func swiftUIFont(for style: UIFont.FontStyle) -> Font {
+    static func swiftUIFont(for style: UIFont.FontStyle) -> Font {
         switch style {
         case .title3:
-            return .title3
+            .title3
 
         case .headline:
-            return .headline
+            .headline
 
         case .body:
-            return .body
+            .body
 
         case .subheadline:
-            return .subheadline
+            .subheadline
 
         case .caption1:
-            return .caption
+            .caption
 
         case .title3Bold:
-            return .title3.bold()
+            .title3.bold()
 
         case .calloutBold:
-            return .callout.bold()
+            .callout.bold()
 
         case .footnoteSemibold:
-            return .footnote.weight(.semibold)
+            .footnote.weight(.semibold)
 
         case .bodyTwoSemibold:
-            return .system(size: 16, weight: .semibold)
+            .system(size: 16, weight: .semibold)
 
         case .buttonSmallSemibold:
-            return .system(size: 14, weight: .semibold)
+            .system(size: 14, weight: .semibold)
 
         case .buttonBigSemibold:
-                return .title3.bold()
+            .title3.bold()
 
         case .bigHeadline:
-            return .system(size: 36)
+            .system(size: 36)
         }
     }
 
     /// Returns a new font with the weight specified
     ///
     /// - Parameter weight: The new font weight
-    func withWeight(_ weight: UIFont.Weight) -> UIFont {
+    internal func withWeight(_ weight: UIFont.Weight) -> UIFont {
         var weightTraits: [UIFontDescriptor.TraitKey: Any] = [:]
 
         switch weight {

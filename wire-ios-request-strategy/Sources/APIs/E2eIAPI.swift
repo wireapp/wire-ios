@@ -32,7 +32,7 @@ class E2eIAPIV5: E2eIAPI {
     let httpClient: HttpClient
 
     open var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 
     init(httpClient: HttpClient) {
@@ -40,10 +40,12 @@ class E2eIAPIV5: E2eIAPI {
     }
 
     func getWireNonce(clientId: String) async throws -> String {
-        let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathNonce)",
-                                         method: .head,
-                                         payload: nil,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathNonce)",
+            method: .head,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
         request.addValue(ContentType.joseAndJson, forAdditionalHeaderField: Constant.contentType)
 
         let response = await httpClient.send(request)
@@ -56,10 +58,12 @@ class E2eIAPIV5: E2eIAPI {
     }
 
     func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
-        let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
-                                         method: .post,
-                                         payload: nil,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
+            method: .post,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
         request.addValue(dpopToken, forAdditionalHeaderField: Constant.dpopHeaderKey)
         let response = await httpClient.send(request)
 
@@ -70,7 +74,7 @@ class E2eIAPIV5: E2eIAPI {
 
 class E2eIAPIV6: E2eIAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
 }
 

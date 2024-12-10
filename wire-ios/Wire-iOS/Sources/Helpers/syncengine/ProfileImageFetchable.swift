@@ -20,18 +20,20 @@ import Foundation
 import WireSyncEngine
 
 extension CIContext {
-    static var shared: CIContext = CIContext(options: nil)
+    static var shared: CIContext = .init(options: nil)
 }
 
-typealias ProfileImageFetchableUser = UserType & ProfileImageFetchable
+typealias ProfileImageFetchableUser = ProfileImageFetchable & UserType
 
 protocol ProfileImageFetchable {
 
-    func fetchProfileImage(session: ZMUserSessionInterface,
-                           cache: ImageCache<UIImage>,
-                           sizeLimit: Int?,
-                           desaturate: Bool,
-                           completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void)
+    func fetchProfileImage(
+        session: ZMUserSessionInterface,
+        cache: ImageCache<UIImage>,
+        sizeLimit: Int?,
+        desaturate: Bool,
+        completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void
+    )
 
 }
 
@@ -55,19 +57,20 @@ extension ProfileImageFetchable where Self: UserType {
         return derivedKey
     }
 
-    func fetchProfileImage(session: ZMUserSessionInterface,
-                           cache: ImageCache<UIImage> = UIImage.defaultUserImageCache,
-                           sizeLimit: Int? = nil,
-                           desaturate: Bool = false,
-                           completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void) {
+    func fetchProfileImage(
+        session: ZMUserSessionInterface,
+        cache: ImageCache<UIImage> = UIImage.defaultUserImageCache,
+        sizeLimit: Int? = nil,
+        desaturate: Bool = false,
+        completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void
+    ) {
 
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280
-        let size: ProfileImageSize
-        if let sizeLimit {
-            size = CGFloat(sizeLimit) * screenScale < previewSizeLimit ? .preview : .complete
+        let size: ProfileImageSize = if let sizeLimit {
+            CGFloat(sizeLimit) * screenScale < previewSizeLimit ? .preview : .complete
         } else {
-            size = .complete
+            .complete
         }
 
         guard let cacheKey = cacheKey(for: size, sizeLimit: sizeLimit, desaturate: desaturate) as NSString? else {
@@ -80,9 +83,9 @@ extension ProfileImageFetchable where Self: UserType {
 
         switch size {
         case .preview:
-            self.requestPreviewProfileImage()
+            requestPreviewProfileImage()
         default:
-            self.requestCompleteProfileImage()
+            requestCompleteProfileImage()
         }
 
         imageData(for: size, queue: cache.processingQueue) { imageData in
@@ -92,11 +95,10 @@ extension ProfileImageFetchable where Self: UserType {
                 }
             }
 
-            var image: UIImage?
-            if let sizeLimit {
-                image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * screenScale)
+            var image: UIImage? = if let sizeLimit {
+                UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * screenScale)
             } else {
-                image = UIImage(data: imageData)?.decoded
+                UIImage(data: imageData)?.decoded
             }
 
             if desaturate {

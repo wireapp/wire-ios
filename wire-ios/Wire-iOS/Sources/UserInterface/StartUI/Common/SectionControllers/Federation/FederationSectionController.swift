@@ -28,7 +28,7 @@ final class FederationSectionController: SearchSectionController {
     weak var collectionView: UICollectionView?
 
     override var isHidden: Bool {
-        return users.isEmpty
+        users.isEmpty
     }
 
     override var sectionTitle: String {
@@ -48,10 +48,13 @@ final class FederationSectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return users.count
+        users.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
         if let selfUser = ZMUser.selfUser() {

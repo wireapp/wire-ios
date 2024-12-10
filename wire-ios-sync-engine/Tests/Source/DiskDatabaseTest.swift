@@ -22,13 +22,13 @@ import WireTesting
 final class DiskDatabaseTest: DatabaseTest {
 
     override var useInMemoryDatabase: Bool {
-        return false
+        false
     }
 
     public override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountId
         }

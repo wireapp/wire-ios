@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension UserClient {
-    public var safeRemoteIdentifier: SafeValueForLogging<String> {
-        return SafeValueForLogging(self.remoteIdentifier?.redactedAndTruncated() ?? "nil")
+public extension UserClient {
+    var safeRemoteIdentifier: SafeValueForLogging<String> {
+        SafeValueForLogging(remoteIdentifier?.redactedAndTruncated() ?? "nil")
     }
 }

@@ -17,5 +17,11 @@
 //
 
 public enum SettingsTopLevelMenuItem: Sendable {
-    case account, devices, options, advanced, support, about, developerOptions
+    case account
+    case devices
+    case options
+    case advanced
+    case support
+    case about
+    case developerOptions
 }

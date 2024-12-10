@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -32,11 +33,11 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 
@@ -47,8 +48,16 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         guard object.isSelfUser else { return completion() }
 
         let message = GenericMessage(content: WireProtos.Availability(object.availability))
-        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
-        let proteusMessage = GenericMessageEntity(message: message, context: context, targetRecipients: .users(recipients), completionHandler: nil)
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(
+            in: context,
+            maxCount: maximumBroadcastRecipients
+        )
+        let proteusMessage = GenericMessageEntity(
+            message: message,
+            context: context,
+            targetRecipients: .users(recipients),
+            completionHandler: nil
+        )
 
         WaitingGroupTask(context: context) { [self] in
             do {

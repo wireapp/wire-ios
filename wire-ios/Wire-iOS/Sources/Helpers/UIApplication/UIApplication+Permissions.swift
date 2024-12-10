@@ -32,7 +32,7 @@ extension UIApplication: ApplicationProtocol {
                     self.wr_warnAboutMicrophonePermission()
                 }
 
-                if audioPermissionsWereNotDetermined && granted {
+                if audioPermissionsWereNotDetermined, granted {
                     NotificationCenter.default.post(name: Notification.Name.UserGrantedAudioPermissions, object: nil)
                 }
                 grantedHandler(granted)

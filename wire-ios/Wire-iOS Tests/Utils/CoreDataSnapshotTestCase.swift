@@ -37,7 +37,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     //
     var selfUserProvider: SelfUserProvider!
 
-    override open func setUp() {
+    open override func setUp() {
         super.setUp()
         snapshotBackgroundColor = .white
         setupTestObjects()
@@ -46,7 +46,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUserProvider = SelfProvider(providedSelfUser: selfUser)
     }
 
-    override open func tearDown() {
+    open override func tearDown() {
         selfUser = nil
         otherUser = nil
         otherUserConversation = nil
@@ -62,7 +62,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     // MARK: – Setup
 
     private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()
@@ -142,21 +142,21 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
     }
 
-// MARK: - mock conversation
+    // MARK: - mock conversation
 
     func createGroupConversation() -> ZMConversation {
-        return ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createGroupConversationOnlyAdmin() -> ZMConversation {
-        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+        ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 
-// MARK: - mock service user
+    // MARK: - mock service user
 
     func createServiceUser() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)

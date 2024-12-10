@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class RandomGeneratorFromDataTests: XCTestCase {
     func testThatItGeneratesAPseudorandom() {
@@ -27,7 +27,7 @@ final class RandomGeneratorFromDataTests: XCTestCase {
         // WHEN
         let random: Int = RandomGeneratorFromData(uuid: uuid).rand()
         // THEN
-        XCTAssertEqual(6505850725663318502, random)
+        XCTAssertEqual(6_505_850_725_663_318_502, random)
     }
 
     func testThatItGeneratesAStablePseudorandom() {
@@ -47,8 +47,8 @@ final class RandomGeneratorFromDataTests: XCTestCase {
         // WHEN
         let seed1 = RandomGeneratorFromData(uuid: uuid)
         let seed2 = RandomGeneratorFromData(uuid: uuid)
-        let random1: [Int] = (0...100).map { _ in seed1.rand() }
-        let random2: [Int] = (0...100).map { _ in seed2.rand() }
+        let random1: [Int] = (0 ... 100).map { _ in seed1.rand() }
+        let random2: [Int] = (0 ... 100).map { _ in seed2.rand() }
 
         // THEN
         XCTAssertEqual(random1, random2)

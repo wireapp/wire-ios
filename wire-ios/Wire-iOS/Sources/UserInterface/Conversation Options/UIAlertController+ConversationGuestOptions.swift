@@ -45,7 +45,7 @@ extension UIAlertController {
     static func confirmRemovingGuests(
         _ completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
-        return confirmController(
+        confirmController(
             title: GuestRoom.RemoveGuests.message,
             confirmTitle: GuestRoom.RemoveGuests.action,
             completion: completion
@@ -53,17 +53,19 @@ extension UIAlertController {
     }
 
     static func confirmRevokingLink(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
+        confirmController(
             title: GuestRoom.RevokeLink.message,
             confirmTitle: GuestRoom.RevokeLink.action,
             completion: completion
         )
     }
 
-    static func confirmController(title: String,
-                                  message: String? = nil,
-                                  confirmAction: UIAlertAction,
-                                  completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func confirmController(
+        title: String,
+        message: String? = nil,
+        confirmAction: UIAlertAction,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         let controller = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 
         controller.addAction(confirmAction)
@@ -82,10 +84,12 @@ extension UIAlertController {
             completion(true)
         }
 
-        return UIAlertController.confirmController(title: title,
-                                                   message: message,
-                                                   confirmAction: confirmAction,
-                                                   completion: completion)
+        return UIAlertController.confirmController(
+            title: title,
+            message: message,
+            confirmAction: confirmAction,
+            completion: completion
+        )
     }
 
     static func guestLinkTypeController(
@@ -93,11 +97,17 @@ extension UIAlertController {
     ) -> UIAlertController {
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let createGuestLinkWithPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithPassword.action, style: .default) { _ in
+        let createGuestLinkWithPasswordAction = UIAlertAction(
+            title: GuestRoom.Create.LinkWithPassword.action,
+            style: .default
+        ) { _ in
             completion(.secure)
         }
 
-        let createGuestLinkWithoutPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithoutPassword.action, style: .default) { _ in
+        let createGuestLinkWithoutPasswordAction = UIAlertAction(
+            title: GuestRoom.Create.LinkWithoutPassword.action,
+            style: .default
+        ) { _ in
             completion(.normal)
         }
 

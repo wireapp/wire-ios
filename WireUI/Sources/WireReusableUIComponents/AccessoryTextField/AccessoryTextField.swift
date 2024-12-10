@@ -61,7 +61,7 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
         text ?? ""
     }
 
-    override public var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
@@ -92,8 +92,8 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
         textFieldAttributes: Attributes
     ) {
         let topInset: CGFloat = 0
-        placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
-        textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
+        self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
+        self.textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
         self.accessoryTrailingInset = accessoryTrailingInset
         self.textFieldAttributes = textFieldAttributes
         super.init(frame: .zero)
@@ -123,7 +123,10 @@ extension AccessoryTextField {
             accessoryStack.topAnchor.constraint(equalTo: accessoryContainer.topAnchor),
             accessoryStack.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor),
             accessoryStack.leadingAnchor.constraint(equalTo: accessoryContainer.leadingAnchor, constant: 0),
-            accessoryStack.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor, constant: -accessoryTrailingInset)
+            accessoryStack.trailingAnchor.constraint(
+                equalTo: accessoryContainer.trailingAnchor,
+                constant: -accessoryTrailingInset
+            )
         ])
     }
 
@@ -171,8 +174,10 @@ public extension AccessoryTextField {
 
 public extension AccessoryTextField {
     internal func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
-        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
-                                                         .font: textFieldAttributes.placeholderFont.font!]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textFieldAttributes.placeholderColor,
+            .font: textFieldAttributes.placeholderFont.font!
+        ]
         return NSAttributedString(string: placeholder, attributes: attributes)
     }
 
@@ -200,7 +205,12 @@ public extension AccessoryTextField {
         var rightViewRect: CGRect
         let newY = bounds.origin.y + (bounds.size.height - contentSize.height) / 2
         if isLeftToRight {
-            rightViewRect = CGRect(x: CGFloat(bounds.maxX - contentSize.width), y: newY, width: contentSize.width, height: contentSize.height)
+            rightViewRect = CGRect(
+                x: CGFloat(bounds.maxX - contentSize.width),
+                y: newY,
+                width: contentSize.width,
+                height: contentSize.height
+            )
         } else {
             rightViewRect = CGRect(x: bounds.origin.x, y: newY, width: contentSize.width, height: contentSize.height)
         }
@@ -250,9 +260,11 @@ private extension UIEdgeInsets {
 
     /// Returns a copy of the insets that are adapted for the current layout.
     func directionAwareInsets(view: UIView) -> UIEdgeInsets {
-        UIEdgeInsets(top: top,
-                     left: leading(view: view),
-                     bottom: bottom,
-                     right: trailing(view: view))
+        UIEdgeInsets(
+            top: top,
+            left: leading(view: view),
+            bottom: bottom,
+            right: trailing(view: view)
+        )
     }
 }

@@ -21,7 +21,7 @@ import WireDataModel
 import WireMainNavigationUI
 import WireSyncEngine
 
-final class ProfilePresenter: NSObject, ViewControllerDismisser {
+final class ProfilePresenter: NSObject {
 
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
@@ -41,10 +41,12 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         self.selfProfileUIBuilder = selfProfileUIBuilder
         super.init()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(deviceOrientationChanged),
-                                               name: UIDevice.orientationDidChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deviceOrientationChanged),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -62,7 +64,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         else { return }
 
         presentedViewController.popoverPresentationController?.sourceRect = presentedFrame
-        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
+        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0)
+            .size
     }
 
     func presentProfileViewController(
@@ -93,8 +96,6 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             selfProfileUIBuilder: selfProfileUIBuilder
         )
         profileViewController.delegate = self
-        profileViewController.viewControllerDismisser = self
-
         let navigationController = profileViewController.wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
 
@@ -104,11 +105,15 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     func dismiss(viewController: UIViewController, completion: (() -> Void)? = nil) {
         viewController.dismiss(animated: true) {
             completion?()
-            self.onDismiss?()
-            self.controllerToPresentOn = nil
-            self.viewToPresentOn = nil
-            self.presentedFrame = .zero
-            self.onDismiss = nil
+            self.cleanup()
         }
+    }
+
+    private func cleanup() {
+        onDismiss?()
+        controllerToPresentOn = nil
+        viewToPresentOn = nil
+        presentedFrame = .zero
+        onDismiss = nil
     }
 }

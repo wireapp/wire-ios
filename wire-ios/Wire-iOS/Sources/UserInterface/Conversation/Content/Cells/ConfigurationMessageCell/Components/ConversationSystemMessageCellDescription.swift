@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationSystemMessageCellDescription {
+enum ConversationSystemMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
@@ -98,6 +98,7 @@ final class ConversationSystemMessageCellDescription {
         case .conversationIsDegraded:
             let shieldCell = ConversationDegradedSystemMessageSectionDescription()
             return [AnyConversationMessageCellDescription(shieldCell)]
+
         case .sessionReset:
             let sessionResetCell = ConversationSessionResetSystemMessageCellDescription(
                 message: message,
@@ -152,8 +153,8 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
-                .readReceiptsDisabled,
-                .readReceiptsOn:
+             .readReceiptsDisabled,
+             .readReceiptsOn:
             let cell = ConversationReadReceiptSettingChangedCellDescription(
                 sender: sender,
                 systemMessageType: systemMessageData.systemMessageType
@@ -171,7 +172,10 @@ final class ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message, data: systemMessageData)
+            let startedConversationCell = ConversationStartedSystemMessageCellDescription(
+                message: message,
+                data: systemMessageData
+            )
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
@@ -201,16 +205,21 @@ final class ConversationSystemMessageCellDescription {
             }
 
         case .domainsStoppedFederating:
-            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
+            let domainsStoppedFederatingCell =
+                ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
+        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted,
+             .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(description)]
 
         case .mlsNotSupportedSelfUser, .mlsNotSupportedOtherUser:
             if let user = conversation.connectedUserType {
-                let description = MLSMigrationSupportCellDescription(messageType: systemMessageData.systemMessageType, for: user)
+                let description = MLSMigrationSupportCellDescription(
+                    messageType: systemMessageData.systemMessageType,
+                    for: user
+                )
                 return [AnyConversationMessageCellDescription(description)]
             } else {
                 assertionFailure("connectedUserType should not be nil in this case")
@@ -219,7 +228,6 @@ final class ConversationSystemMessageCellDescription {
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
-
         }
 
         return []
@@ -228,7 +236,7 @@ final class ConversationSystemMessageCellDescription {
 
 private extension ConversationLike {
     var isOpenGroup: Bool {
-        return conversationType == .group && allowGuests
+        conversationType == .group && allowGuests
     }
 
     var selfCanAddUsers: Bool {

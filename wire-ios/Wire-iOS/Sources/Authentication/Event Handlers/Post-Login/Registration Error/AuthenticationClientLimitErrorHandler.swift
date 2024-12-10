@@ -20,15 +20,16 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Handles client registration errors related to the client limit.
- */
+/// Handles client registration errors related to the client limit.
 
 final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle canNotRegisterMoreClients errors
@@ -40,15 +41,16 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
         let authenticationCredentials: UserCredentials?
 
         switch currentStep {
-        case .noHistory(let credentials, _):
+        case let .noHistory(credentials, _):
             authenticationCredentials = credentials
-        case .authenticateEmailCredentials(let credentials):
+        case let .authenticateEmailCredentials(credentials):
             authenticationCredentials = credentials
         default:
             return nil
         }
 
-        guard let nextStep = AuthenticationFlowStep.makeClientManagementStep(from: error, statusProvider: self.statusProvider) else {
+        guard let nextStep = AuthenticationFlowStep
+            .makeClientManagementStep(from: error, statusProvider: statusProvider) else {
             return nil
         }
 

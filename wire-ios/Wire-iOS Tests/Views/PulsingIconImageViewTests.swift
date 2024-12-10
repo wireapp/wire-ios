@@ -37,12 +37,12 @@ private class MockPulsingIconImageView: PulsingIconImageView {
 private class MockPulsingIconImageStyle: PulsingIconImageStyle, IconImageStyle {
     var _shouldPulse = false
     var shouldPulse: Bool {
-        return _shouldPulse
+        _shouldPulse
     }
 
-    var icon: StyleKitIcon? { return .cake }
-    var accessibilitySuffix: String { return "" }
-    var accessibilityLabel: String { return "" }
+    var icon: StyleKitIcon? { .cake }
+    var accessibilitySuffix: String { "" }
+    var accessibilityLabel: String { "" }
 }
 
 class PulsingIconImageViewTests: XCTestCase {

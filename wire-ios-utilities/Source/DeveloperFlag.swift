@@ -22,7 +22,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
-    case enableMLSSupport
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
@@ -33,35 +32,32 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public var description: String {
         switch self {
-        case .enableMLSSupport:
-            return "Turn on to enable MLS support. This will cause the app to register an MLS client."
-
         case .showCreateMLSGroupToggle:
-            return "Turn on to show the MLS toggle when creating a new group."
+            "Turn on to show the MLS toggle when creating a new group."
 
         case .proteusViaCoreCrypto:
-            return "Turn on to use CoreCrypto for proteus messaging."
+            "Turn on to use CoreCrypto for proteus messaging."
 
         case .forceDatabaseLoadingFailure:
-            return "Turn on to force database loading failure in the process of database migration"
+            "Turn on to force database loading failure in the process of database migration"
 
         case .ignoreIncomingEvents:
-            return "Turn on to ignore incoming update events"
+            "Turn on to ignore incoming update events"
 
         case .debugDuplicateObjects:
-            return "Turn on to have actions to insert duplicate users, conversations, teams"
+            "Turn on to have actions to insert duplicate users, conversations, teams"
 
         case .decryptAndStoreEventsSleep:
-            return "Adds a delay when decrypting and storing events"
+            "Adds a delay when decrypting and storing events"
 
         case .forceCRLExpiryAfterOneMinute:
-            return "Turn on to force CRLs to expire after 1 minute"
+            "Turn on to force CRLs to expire after 1 minute"
         }
     }
 
     public var isOn: Bool {
         get {
-            return Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
+            Self.storage.object(forKey: rawValue) as? Bool ?? defaultValue
         }
 
         set {
@@ -76,7 +72,7 @@ public enum DeveloperFlag: String, CaseIterable {
         return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
-    static public func clearAllFlags() {
+    public static func clearAllFlags() {
         allCases.forEach {
             storage.set(nil, forKey: $0.rawValue)
         }
@@ -84,18 +80,16 @@ public enum DeveloperFlag: String, CaseIterable {
 
     var bundleKey: String? {
         switch self {
-        case .enableMLSSupport:
-            return "MLSEnabled"
         case .showCreateMLSGroupToggle:
-            return "CreateMLSGroupEnabled"
+            nil
         case .proteusViaCoreCrypto:
-            return "ProteusByCoreCryptoEnabled"
+            "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
-            return "ForceDatabaseLoadingFailure"
+            "ForceDatabaseLoadingFailure"
         case .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
-            return nil
+            nil
         case .ignoreIncomingEvents:
-            return "IgnoreIncomingEventsEnabled"
+            "IgnoreIncomingEventsEnabled"
         }
     }
 
@@ -114,12 +108,12 @@ public enum DeveloperFlag: String, CaseIterable {
 private final class DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
-        return Bundle(for: self).infoForKey(bundleKey) == "1"
+        Bundle(for: self).infoForKey(bundleKey) == "1"
     }
 }
 
 public extension Bundle {
     func infoForKey(_ key: String) -> String? {
-        return infoDictionary?[key] as? String
+        infoDictionary?[key] as? String
     }
 }

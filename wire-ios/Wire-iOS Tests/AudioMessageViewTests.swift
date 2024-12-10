@@ -16,34 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension MockMessage: AudioTrack {
 
     var title: String? {
-        return .none
+        .none
     }
 
     var author: String? {
-        return .none
+        .none
     }
 
     var duration: TimeInterval {
-        return 9999
+        9999
     }
 
     var streamURL: URL? {
-        return .none
+        .none
     }
 
     var previewStreamURL: URL? {
-        return .none
+        .none
     }
 
     var failedToLoad: Bool {
         get {
-            return false
+            false
         }
         set {
             // no-op
@@ -92,11 +92,23 @@ final class AudioMessageViewTests: XCTestCase {
 
         // THEN
         let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
-        sut.callCenterDidChange(callState: incomingState, conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: incomingState,
+            conversation: ZMConversation(),
+            caller: ZMUser(),
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
-        sut.callCenterDidChange(callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal), conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: incomingState)
+        sut.callCenterDidChange(
+            callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal),
+            conversation: ZMConversation(),
+            caller: ZMUser(),
+            timestamp: nil,
+            previousCallState: incomingState
+        )
 
         XCTAssert((sut.audioTrackPlayer?.isPlaying)!)
     }
@@ -114,11 +126,23 @@ final class AudioMessageViewTests: XCTestCase {
 
         // THEN
         let incomingState = CallState.incoming(video: false, shouldRing: true, degraded: false)
-        sut.callCenterDidChange(callState: incomingState, conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: incomingState,
+            conversation: ZMConversation(),
+            caller: ZMUser(),
+            timestamp: nil,
+            previousCallState: nil
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
 
-        sut.callCenterDidChange(callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal), conversation: ZMConversation(), caller: ZMUser(), timestamp: nil, previousCallState: incomingState)
+        sut.callCenterDidChange(
+            callState: .terminating(reason: WireSyncEngine.CallClosedReason.normal),
+            conversation: ZMConversation(),
+            caller: ZMUser(),
+            timestamp: nil,
+            previousCallState: incomingState
+        )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
     }

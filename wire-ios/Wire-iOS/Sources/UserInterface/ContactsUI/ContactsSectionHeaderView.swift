@@ -26,6 +26,7 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
 
         return label
     }()
+
     static let height: CGFloat = 20
 
     override init(reuseIdentifier: String?) {
@@ -53,20 +54,20 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     }
 
     func setupStyle() {
-        self.textLabel?.isHidden = true
+        textLabel?.isHidden = true
     }
 
     private func setupConstraints() {
 
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          label.centerYAnchor.constraint(equalTo: centerYAnchor),
-          label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
         ])
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
+        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
     }
 
 }

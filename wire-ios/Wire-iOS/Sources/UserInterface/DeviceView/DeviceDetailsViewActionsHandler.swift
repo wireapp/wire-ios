@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
@@ -68,7 +69,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        return await withCheckedContinuation {[weak self] continuation in
+        await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 return continuation.resume(returning: false)
             }
@@ -97,15 +98,17 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func updateVerified(_ isVerified: Bool) async -> Bool {
         let selfUserClient = userSession.selfUserClient
         return await withCheckedContinuation { continuation in
-            userSession.enqueue({
-                if isVerified {
-                    selfUserClient?.trustClient(self.userClient)
-                } else {
-                    selfUserClient?.ignoreClient(self.userClient)
+            userSession.enqueue(
+                {
+                    if isVerified {
+                        selfUserClient?.trustClient(self.userClient)
+                    } else {
+                        selfUserClient?.ignoreClient(self.userClient)
+                    }
+                },
+                completionHandler: {
+                    continuation.resume(returning: self.userClient.verified)
                 }
-            }, completionHandler: {
-                continuation.resume(returning: self.userClient.verified)
-            }
             )
         }
     }
@@ -144,27 +147,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             authenticate: oauthUseCase.invoke
         )
     }
-
-    @MainActor
-    private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
-        guard let mlsClientID = MLSClientID(userClient: userClient),
-        let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
-            logger.error("MLSGroupID for self was not found")
-            return nil
-        }
-        return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
-                                                                clientIds: [mlsClientID]).first
-    }
-
-    @MainActor
-    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
-        await contextProvider.syncContext.perform { [weak self] in
-            guard let self else {
-                return nil
-            }
-            return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID
-        }
-    }
 }
 
 extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
@@ -173,7 +155,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         viewControllerToPresent: UIViewController
     ) {
         if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
-                    UIViewController.presentTopMost(viewController: viewControllerToPresent)
+            UIViewController.presentTopMost(viewController: viewControllerToPresent)
         }
     }
 

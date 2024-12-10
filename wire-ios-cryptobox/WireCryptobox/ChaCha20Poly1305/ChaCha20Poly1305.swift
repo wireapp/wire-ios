@@ -16,4 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ChaCha20Poly1305 { }
+public enum ChaCha20Poly1305 {}

@@ -27,7 +27,7 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
-        return ZMTransportRequest(
+        ZMTransportRequest(
             path: "/push/tokens",
             method: .get,
             payload: nil,
@@ -62,7 +62,7 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
                         transportType: token.transport,
                         tokenType: token.isStandardAPNSToken ? .standard : .voip
                     )
-            }
+                }
 
             action.notifyResult(.success(tokens))
 
@@ -89,11 +89,11 @@ extension GetPushTokensActionHandler {
         let transport: String
 
         var isStandardAPNSToken: Bool {
-            return transport.isOne(of: ["APNS", "APNS_SANDBOX"])
+            transport.isOne(of: ["APNS", "APNS_SANDBOX"])
         }
 
         var isVoIPToken: Bool {
-            return transport.isOne(of: ["APNS_VOIP", "APNS_VOIP_SANDBOX"])
+            transport.isOne(of: ["APNS_VOIP", "APNS_VOIP_SANDBOX"])
         }
 
     }

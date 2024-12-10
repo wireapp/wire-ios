@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
@@ -58,8 +58,24 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
 
-        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
-        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
+        try message.setUnderlyingMessage(GenericMessage(
+            content: ImageAsset(
+                mediumProperties: properties,
+                processedProperties: properties,
+                encryptionKeys: keys,
+                format: .medium
+            ),
+            nonce: message.nonce!
+        ))
+        try message.setUnderlyingMessage(GenericMessage(
+            content: ImageAsset(
+                mediumProperties: properties,
+                processedProperties: properties,
+                encryptionKeys: keys,
+                format: .preview
+            ),
+            nonce: message.nonce!
+        ))
 
         message.version = 2
         message.assetId = assetId
@@ -75,7 +91,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        let fileURL = Bundle(for: ImageV2DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
+        let fileURL = Bundle(for: ImageV2DownloadRequestStrategyTests.self).url(
+            forResource: "Lorem Ipsum",
+            withExtension: "txt"
+        )!
         let metadata = ZMFileMetadata(fileURL: fileURL)
         let message = try! conversation.appendFile(with: metadata, nonce: nonce) as! ZMAssetClientMessage
 
@@ -86,7 +105,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {
         // remove image data or it won't be downloaded
-        self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
+        syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         message.imageMessageData?.requestFileDownload()
         return sut.nextRequest(for: .v0)!
     }
@@ -96,7 +115,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     func testRequestToDownloadAssetIsCreated() {
         // GIVEN
         var message: ZMAssetClientMessage?
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             message = try? self.createV2ImageMessage(withAssetId: UUID()).0
 
             guard let message else {
@@ -120,13 +139,16 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // THEN
-            XCTAssertEqual(request?.path, "/conversations/\(message.conversation!.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())")
+            XCTAssertEqual(
+                request?.path,
+                "/conversations/\(message.conversation!.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())"
+            )
         }
     }
 
     func testRequestToDownloadAssetIsNotCreated_WhenAssetIdIsNotAvailable() {
         // GIVEN
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             guard let (message, _) = try? self.createV2ImageMessage(withAssetId: nil) else {
                 XCTFail("failed to create message")
                 return
@@ -196,7 +218,10 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     // MARK: - Response Handling
 
     func testThatMessageIsDeleted_WhenResponseSaysItDoesntExistOnBackend() {
-        let nonceAndConversation: (UUID, ZMConversation)? = syncMOC.performGroupedAndWait { () -> (UUID, ZMConversation)? in
+        let nonceAndConversation: (UUID, ZMConversation)? = syncMOC.performGroupedAndWait { () -> (
+            UUID,
+            ZMConversation
+        )? in
             // GIVEN
             guard let (message, _) = try? self.createV2ImageMessage(withAssetId: UUID.create()) else {
                 XCTFail("failed to create message")
@@ -205,7 +230,12 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             let nonceAndConversation = (message.nonce!, message.conversation!)
 
             // WHEN
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             self.sut.delete(message, with: response, downstreamSync: nil)
 
             // THEN
@@ -235,7 +265,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var message: ZMAssetClientMessage!
         var encryptedData: Data!
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             guard let messageAndEncryptedData = try? self.createV2ImageMessage(withAssetId: UUID()) else {
                 XCTFail("failed to create message")
                 return
@@ -252,7 +282,13 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlock {
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
-            request?.complete(with: ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                imageData: encryptedData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

@@ -37,6 +37,7 @@
 "general.on" = "On";
 "general.loading" = "Loading…";
 "general.paste" = "Paste";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -129,6 +130,7 @@
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
 // Conversation List - Filter Conversations
@@ -136,6 +138,7 @@
 "conversation_list.filter.favorites.title" = "Favorites";
 "conversation_list.filter.groups.title" = "Groups";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Remove";
 
@@ -154,6 +157,13 @@
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
@@ -324,7 +334,6 @@
 "conversation.create.guidance.empty" = "At least 1 character";
 "conversation.create.guidance.toolong" = "Too many characters";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
 "conversation.create.guests.title" = "Allow guests";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
 "conversation.create.services.title" = "Allow services";

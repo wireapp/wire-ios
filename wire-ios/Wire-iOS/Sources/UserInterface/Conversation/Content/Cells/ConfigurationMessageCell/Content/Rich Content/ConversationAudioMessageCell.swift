@@ -25,7 +25,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -101,12 +101,12 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
     override var tintColor: UIColor! {
         didSet {
-            self.transferView.tintColor = self.tintColor
+            transferView.tintColor = tintColor
         }
     }
 
     var selectionRect: CGRect {
-        return transferView.bounds
+        transferView.bounds
     }
 
 }
@@ -135,14 +135,14 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
+        configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
     }
 
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
         self.configuration = View.Configuration(message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
 
 }

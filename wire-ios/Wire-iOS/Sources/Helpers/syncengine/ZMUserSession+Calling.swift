@@ -24,26 +24,28 @@ protocol CallConversationProvider {
     var ringingCallConversation: ZMConversation? { get }
 }
 
-extension ZMUserSession: CallConversationProvider { }
+extension ZMUserSession: CallConversationProvider {}
 
 extension ZMUserSession {
 
     var priorityCallConversation: ZMConversation? {
         guard let callNotificationStyle = SessionManager.shared?.callNotificationStyle else { return nil }
-        guard let callCenter = self.callCenter else { return nil }
+        guard let callCenter else { return nil }
 
-        let conversationsWithIncomingCall = callCenter.nonIdleCallConversations(in: self).filter({ conversation -> Bool in
-            guard let callState = conversation.voiceChannel?.state else { return false }
+        let conversationsWithIncomingCall = callCenter.nonIdleCallConversations(in: self)
+            .filter { conversation -> Bool in
+                guard let callState = conversation.voiceChannel?.state else { return false }
 
-            switch callState {
-            case .incoming(video: _, shouldRing: true, degraded: _):
-                return conversation.mutedMessageTypesIncludingAvailability == .none && callNotificationStyle != .callKit
-            default:
-                return false
+                switch callState {
+                case .incoming(video: _, shouldRing: true, degraded: _):
+                    return conversation
+                        .mutedMessageTypesIncludingAvailability == .none && callNotificationStyle != .callKit
+                default:
+                    return false
+                }
             }
-        })
 
-        if conversationsWithIncomingCall.count > 0 {
+        if !conversationsWithIncomingCall.isEmpty {
             return conversationsWithIncomingCall.last
         }
 
@@ -51,7 +53,7 @@ extension ZMUserSession {
     }
 
     var ongoingCallConversation: ZMConversation? {
-        guard let callCenter = self.callCenter else { return nil }
+        guard let callCenter else { return nil }
 
         return callCenter.nonIdleCallConversations(in: self).first { conversation -> Bool in
             guard let callState = conversation.voiceChannel?.state else { return false }

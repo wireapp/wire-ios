@@ -18,9 +18,12 @@
 
 import CoreFoundation
 import Security
+import WireLogging
 
 public enum EnqueueResult {
-    case success, nilRequest, maximumNumberOfRequests
+    case success
+    case nilRequest
+    case maximumNumberOfRequests
 }
 
 public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
@@ -32,7 +35,8 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     var environment: BackendEnvironmentProvider { get }
 }
 
-@objcMembers public final class UserInfo: NSObject {
+@objcMembers
+public final class UserInfo: NSObject {
     public let identifier: UUID
     public let cookieData: Data
 
@@ -48,7 +52,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 }
 
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
-/// until a user has been authenticated. Consumers should set themselves as delegate to 
+/// until a user has been authenticated. Consumers should set themselves as delegate to
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
@@ -65,13 +69,14 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// Property to accept requests
     public let readyForRequests: Bool
 
-    public init(environment: BackendEnvironmentProvider,
-                proxyUsername: String?,
-                proxyPassword: String?,
-                urlSession: SessionProtocol? = nil,
-                reachability: ReachabilityProvider,
-                applicationVersion: String,
-                readyForRequests: Bool = false
+    public init(
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        urlSession: SessionProtocol? = nil,
+        reachability: ReachabilityProvider,
+        applicationVersion: String,
+        readyForRequests: Bool = false
     ) {
         self.baseURL = environment.backendURL
         self.environment = environment
@@ -85,7 +90,10 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         configuration.httpAdditionalHeaders = ["User-Agent": ZMUserAgent.userAgent(withAppVersion: applicationVersion)]
 
         if let proxySettings = environment.proxy {
-            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+            let proxyDictionary = proxySettings.socks5Settings(
+                proxyUsername: proxyUsername,
+                proxyPassword: proxyPassword
+            )
             configuration.connectionProxyDictionary = proxyDictionary
             configuration.httpShouldUsePipelining = true
             (urlSession as? URLSession)?.configuration.connectionProxyDictionary = proxyDictionary
@@ -129,10 +137,14 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
-            WireLogger.network.info("Dropping request \(request) as networkTransportSession not ready", attributes: .safePublic)
+            WireLogger.network.info(
+                "Dropping request \(request) as networkTransportSession not ready",
+                attributes: .safePublic
+            )
             return
         }
-        guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
+        guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init)
+        else { preconditionFailure() }
         urlRequest.configure(with: request)
         WireLogger.network.log(request: urlRequest)
 
@@ -142,7 +154,12 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
             if let response = response as? HTTPURLResponse {
                 WireLogger.network.log(response: response)
-                transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
+                transportResponse = ZMTransportResponse(
+                    httpurlResponse: response,
+                    data: data,
+                    error: error,
+                    apiVersion: request.apiVersion
+                )
             } else if let error {
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
             }
@@ -171,15 +188,15 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// Increments the number of running requests.
     /// - returns: The value after the increment.
     private func increment() -> Int {
-        return numberOfRunningRequests.increment()
+        numberOfRunningRequests.increment()
     }
 
     public func tearDown() {
         // From NSURLSession documentation at https://developer.apple.com/documentation/foundation/urlsession:
-        // "The session object keeps a strong reference to the delegate until your app 
-        // exits or explicitly invalidates the session. 
+        // "The session object keeps a strong reference to the delegate until your app
+        // exits or explicitly invalidates the session.
         // If you do not invalidate the session, your app leaks memory until it exits."
-        self.session = nil
+        session = nil
     }
 
 }
@@ -188,11 +205,20 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
 extension UnauthenticatedTransportSession: URLSessionDelegate {
 
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with this authentication method
-            guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host) else { return completionHandler(.cancelAuthenticationChallenge, nil) }
+            // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with
+            // this authentication method
+            guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host)
+            else { return completionHandler(
+                .cancelAuthenticationChallenge,
+                nil
+            ) }
         }
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
@@ -203,7 +229,8 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
 
 extension NSMutableURLRequest {
 
-    @objc(configureWithRequest:) func configure(with request: ZMTransportRequest) {
+    @objc(configureWithRequest:)
+    func configure(with request: ZMTransportRequest) {
         httpMethod = request.methodAsString
         request.setAcceptedResponseMediaTypeOnHTTP(self)
         request.setBodyDataAndMediaTypeOnHTTP(self)
@@ -225,7 +252,8 @@ private enum HeaderKey: String {
 }
 
 private enum UserKey: String {
-    case user, id
+    case user
+    case id
 }
 
 extension ZMTransportResponse {
@@ -234,7 +262,10 @@ extension ZMTransportResponse {
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
     private func extractCookieData() -> Data? {
         guard let response = rawResponse else { return nil }
-        let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as! [String: String], for: response.url!)
+        let cookies = HTTPCookie.cookies(
+            withResponseHeaderFields: response.allHeaderFields as! [String: String],
+            for: response.url!
+        )
         return HTTPCookie.extractData(from: cookies)
     }
 
@@ -244,7 +275,8 @@ extension ZMTransportResponse {
             ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
-    @objc public func extractUserInfo() -> UserInfo? {
+    @objc
+    public func extractUserInfo() -> UserInfo? {
         guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
         return .init(identifier: id, cookieData: data)
     }

@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-struct FilterButtonStyleHelper {
+enum FilterButtonStyleHelper {
 
     /// Makes the action image based on the image name and selection state.
     ///

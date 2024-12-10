@@ -19,7 +19,8 @@
 import Foundation
 import WireUtilities
 
-@objc public protocol UserInfoParser: AnyObject {
+@objc
+public protocol UserInfoParser: AnyObject {
 
     @objc(accountExistsLocallyFromUserInfo:)
     func accountExistsLocally(from userInfo: UserInfo) -> Bool
@@ -39,7 +40,7 @@ public class UnauthenticatedSession: NSObject {
     /// **accountId** will be set if the unauthenticated session is associated with an existing account
     public internal(set) var accountId: UUID?
     public let groupQueue: DispatchGroupQueue
-    private(set) public var authenticationStatus: ZMAuthenticationStatus!
+    public private(set) var authenticationStatus: ZMAuthenticationStatus!
     public let registrationStatus: RegistrationStatus
     let reachability: ReachabilityProvider
     private(set) var operationLoop: UnauthenticatedOperationLoop!
@@ -67,13 +68,20 @@ public class UnauthenticatedSession: NSObject {
         self.userPropertyValidator = userPropertyValidator
         super.init()
 
-        self.authenticationStatus = ZMAuthenticationStatus(delegate: authenticationStatusDelegate,
-                                                           groupQueue: groupQueue,
-                                                           userInfoParser: self)
-        self.urlActionProcessors = [CompanyLoginURLActionProcessor(delegate: self,
-                                                                   authenticationStatus: authenticationStatus),
-                                    StartLoginURLActionProcessor(delegate: self,
-                                                                 authenticationStatus: authenticationStatus)
+        self.authenticationStatus = ZMAuthenticationStatus(
+            delegate: authenticationStatusDelegate,
+            groupQueue: groupQueue,
+            userInfoParser: self
+        )
+        self.urlActionProcessors = [
+            CompanyLoginURLActionProcessor(
+                delegate: self,
+                authenticationStatus: authenticationStatus
+            ),
+            StartLoginURLActionProcessor(
+                delegate: self,
+                authenticationStatus: authenticationStatus
+            )
         ]
         self.operationLoop = UnauthenticatedOperationLoop(
             transportSession: transportSession,
@@ -92,7 +100,7 @@ public class UnauthenticatedSession: NSObject {
     }
 
     func authenticationErrorIfNotReachable(_ block: () -> Void) {
-        if self.reachability.mayBeReachable {
+        if reachability.mayBeReachable {
             block()
         } else {
             let error = NSError(userSessionErrorCode: .networkError, userInfo: nil)
@@ -104,7 +112,7 @@ public class UnauthenticatedSession: NSObject {
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
 
     var isAllowedToCreateNewAccount: Bool {
-        return delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
+        delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 
 }
@@ -112,7 +120,7 @@ extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
 extension UnauthenticatedSession: URLActionProcessor {
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        urlActionProcessors.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
+        urlActionProcessors.forEach { $0.process(urlAction: urlAction, delegate: delegate) }
     }
 
 }
@@ -138,8 +146,8 @@ extension UnauthenticatedSession: UserInfoParser {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         cookieStorage.authenticationCookieData = userInfo.cookieData
-        self.authenticationStatus.authenticationCookieData = userInfo.cookieData
-        self.delegate?.session(session: self, createdAccount: account)
+        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        delegate?.session(session: self, createdAccount: account)
     }
 
     public func reportBackupImportDidSucceed(_ didSucceed: Bool) {

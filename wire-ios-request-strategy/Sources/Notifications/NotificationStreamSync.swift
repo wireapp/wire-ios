@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public protocol NotificationStreamSyncDelegate: AnyObject {
     func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool)
@@ -38,14 +39,14 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     ) {
         self.lastEventIDRepository = eventIDRespository
         super.init()
-        managedObjectContext = moc
+        self.managedObjectContext = moc
 
         moc.performAndWait {
             let selfUser = ZMUser.selfUser(in: moc)
             self.clientID = selfUser.selfClient()?.remoteIdentifier
         }
 
-        listPaginator = ZMSimpleListRequestPaginator(
+        self.listPaginator = ZMSimpleListRequestPaginator(
             basePath: "/notifications",
             startKey: "since",
             pageSize: 500,
@@ -53,7 +54,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             transcoder: self
         )
 
-        notificationStreamSyncDelegate = delegate
+        self.notificationStreamSyncDelegate = delegate
     }
 
     public func reset() {
@@ -62,8 +63,8 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
-       // We only reset the paginator if it is neither in progress nor has more pages to fetch.
-        if listPaginator.status != ZMSingleRequestProgress.inProgress && !listPaginator.hasMoreToFetch {
+        // We only reset the paginator if it is neither in progress nor has more pages to fetch.
+        if listPaginator.status != ZMSingleRequestProgress.inProgress, !listPaginator.hasMoreToFetch {
             listPaginator.resetFetching()
         }
 
@@ -84,13 +85,16 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     @objc(nextUUIDFromResponse:forListPaginator:)
-    public func nextUUID(from response: ZMTransportResponse, forListPaginator paginator: ZMSimpleListRequestPaginator) -> UUID? {
+    public func nextUUID(
+        from response: ZMTransportResponse,
+        forListPaginator paginator: ZMSimpleListRequestPaginator
+    ) -> UUID? {
         if let timestamp = response.payload?.asDictionary()?["time"] {
             updateServerTimeDeltaWith(timestamp: timestamp as! String)
         }
         let latestEventId = processUpdateEventsAndReturnLastNotificationID(from: response.payload)
 
-        if latestEventId != nil && response.httpStatus != 404 {
+        if latestEventId != nil, response.httpStatus != 404 {
             return latestEventId
         }
 
@@ -99,7 +103,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     public func startUUID() -> UUID? {
-        return self.lastUpdateEventID
+        lastUpdateEventID
     }
 
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
@@ -117,7 +121,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             .compactMap { ZMUpdateEvent.eventsArray(from: $0 as ZMTransportData, source: source) }
             .flatMap { $0 }
 
-        notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: self.listPaginator.hasMoreToFetch)
+        notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: listPaginator.hasMoreToFetch)
         latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         tp.warnIfLongerThanInterval()
@@ -141,7 +145,8 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     func appendPotentialGapSystemMessageIfNeeded(with response: ZMTransportResponse) {
         // A 404 by the BE means we can't get all notifications as they are not stored anymore
         // and we want to issue a system message. We still might have a payload with notifications that are newer
-        // than the commissioning time, the system message should be inserted between the old messages and the potentional
+        // than the commissioning time, the system message should be inserted between the old messages and the
+        // potentional
         // newly received ones in the payload.
 
         if response.httpStatus == 404 {
@@ -149,14 +154,14 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             let offset = 0.1
 
             if let eventsDictionaries = eventDictionariesFrom(payload: response.payload),
-                let firstEvent = eventsDictionaries.first {
+               let firstEvent = eventsDictionaries.first {
 
                 let event = ZMUpdateEvent.eventsArray(fromPushChannelData: firstEvent as ZMTransportData)?.first
                 // In case we receive a payload together with the 404 we set the timestamp of the system message
                 // to be 1/10th of a second older than the oldest received notification for it to appear above it.
                 timestamp = event?.timestamp?.addingTimeInterval(-offset)
             }
-            ZMConversation.appendNewPotentialGapSystemMessage(at: timestamp, inContext: self.managedObjectContext)
+            ZMConversation.appendNewPotentialGapSystemMessage(at: timestamp, inContext: managedObjectContext)
         }
     }
 }
@@ -169,10 +174,10 @@ extension NotificationStreamSync {
         guard let serverTimeDelta = serverTime?.timeIntervalSinceNow else {
             return
         }
-        self.managedObjectContext.serverTimeDelta = serverTimeDelta
+        managedObjectContext.serverTimeDelta = serverTimeDelta
     }
 
     private func eventDictionariesFrom(payload: ZMTransportData?) -> [[String: Any]]? {
-        return payload?.asDictionary()?["notifications"] as? [[String: Any]]
+        payload?.asDictionary()?["notifications"] as? [[String: Any]]
     }
 }

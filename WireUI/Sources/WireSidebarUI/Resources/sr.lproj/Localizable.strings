@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"sidebar.legalHold.title" = "Legal hold";
+
 "sidebar.conversation_filter.title" = "Разговори";
 "sidebar.conversation_filter.all.title" = "сва";
 "sidebar.conversation_filter.favorites.title" = "Омиљено";
 "sidebar.conversation_filter.groups.title" = "Групе";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "Архивирај";
 
 "sidebar.contacts.title" = "Контакти";

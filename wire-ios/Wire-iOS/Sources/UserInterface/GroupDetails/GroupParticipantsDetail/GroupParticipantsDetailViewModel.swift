@@ -18,31 +18,33 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
-fileprivate extension String {
+private extension String {
     var isValidQuery: Bool {
-        return !isEmpty && self != "@"
+        !isEmpty && self != "@"
     }
 }
 
 typealias GroupParticipantsDetailConversation = GroupDetailsConversationType & StableRandomParticipantsProvider
 
-final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControllerDelegate, ZMConversationObserver {
+final class GroupParticipantsDetailViewModel: NSObject, ZMConversationObserver {
+
+    // MARK: - Properties
 
     private var internalParticipants: [UserType]
     private var filterQuery: String?
+    fileprivate var token: NSObjectProtocol?
 
     let selectedParticipants: [UserType]
     let conversation: GroupParticipantsDetailConversation
-    var participantsDidChange: (() -> Void)?
-
     let userSession: UserSession
     let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
     private(set) var userStatuses = [UUID: UserStatus]()
 
-    fileprivate var token: NSObjectProtocol?
+    var participantsDidChange: (() -> Void)?
 
     var indexPathOfFirstSelectedParticipant: IndexPath? {
         guard let user = selectedParticipants.first as? ZMUser else { return nil }
@@ -59,40 +61,46 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
             participantsDidChange?()
         }
     }
+
     var admins = [UserType]()
     var members = [UserType]()
+
+    // MARK: - Initialization
 
     init(
         selectedParticipants: [UserType],
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession
     ) {
-        internalParticipants = conversation.sortedOtherParticipants
+        self.internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
         self.selectedParticipants = selectedParticipants.sortedAscendingPrependingNil(by: \.name)
         self.userSession = userSession
-        isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
+        self.isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
+
         super.init()
 
         if let conversation = conversation as? ZMConversation {
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
         }
 
         computeVisibleParticipants()
         updateUserE2EICertificationStatuses()
     }
 
+    // MARK: - Private Methods
+
     private func computeVisibleParticipants() {
         guard let query = filterQuery,
-            query.isValidQuery else {
-                return participants = internalParticipants
+              query.isValidQuery else {
+            return participants = internalParticipants
         }
         participants = (internalParticipants as NSArray).filtered(using: filterPredicate(for: query)) as! [UserType]
     }
 
     private func computeParticipantGroups() {
-        admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
-        members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
+        admins = participants.filter { $0.isGroupAdmin(in: conversation) }
+        members = participants.filter { !$0.isGroupAdmin(in: conversation) }
     }
 
     private func filterPredicate(for query: String) -> NSPredicate {
@@ -109,24 +117,19 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         return NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
     }
 
+    // MARK: - ZMConversationObserver
+
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard changeInfo.participantsChanged else { return }
         internalParticipants = conversation.sortedOtherParticipants
         computeVisibleParticipants()
     }
 
-    // MARK: - SearchHeaderViewControllerDelegate
+    // MARK: - Search
 
-    func searchHeaderViewController(
-        _ searchHeaderViewController: SearchHeaderViewController,
-        updatedSearchQuery query: String
-    ) {
+    func updateSearch(query: String) {
         filterQuery = query
         computeVisibleParticipants()
-    }
-
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        // no-op
     }
 
     // MARK: - UserStatuses
@@ -138,7 +141,10 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
                 guard let user = user as? ZMUser else { continue }
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
-                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                     if userStatuses.keys.contains(user.remoteIdentifier) {
                         userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                     } else {

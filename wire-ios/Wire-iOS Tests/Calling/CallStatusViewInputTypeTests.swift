@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 struct MockCallStatusViewInputType: CallStatusViewInputType {
     var state: CallStatusViewState
@@ -32,7 +32,15 @@ struct MockCallStatusViewInputType: CallStatusViewInputType {
 
 extension MockCallStatusViewInputType {
     static func fixture(isForcedCBR: Bool, userEnabledCBR: Bool) -> CallStatusViewInputType {
-        return MockCallStatusViewInputType(state: .established(duration: 200), isConstantBitRate: true, title: "title", isVideoCall: false, userEnabledCBR: userEnabledCBR, isForcedCBR: isForcedCBR, classification: .none)
+        MockCallStatusViewInputType(
+            state: .established(duration: 200),
+            isConstantBitRate: true,
+            title: "title",
+            isVideoCall: false,
+            userEnabledCBR: userEnabledCBR,
+            isForcedCBR: isForcedCBR,
+            classification: .none
+        )
     }
 }
 

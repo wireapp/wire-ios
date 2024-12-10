@@ -24,14 +24,18 @@ import XCTest
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
-        return true
+    func showInIPad(
+        networkStatusViewController: NetworkStatusViewController,
+        with orientation: UIInterfaceOrientation
+    ) -> Bool {
+        true
     }
 
     var shouldAnimateNetworkStatusView: Bool = true
 }
 
-/// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of NetworkState with other UIView at the bottom.
+/// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of NetworkState with
+/// other UIView at the bottom.
 final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
@@ -71,7 +75,8 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
             sut.view.bottomAnchor.constraint(equalTo: mockContentView.topAnchor),
             mockContentView.leadingAnchor.constraint(equalTo: mockContainerViewController.view.leadingAnchor),
             mockContentView.trailingAnchor.constraint(equalTo: mockContainerViewController.view.trailingAnchor),
-            mockContentView.bottomAnchor.constraint(equalTo: mockContainerViewController.view.safeAreaLayoutGuide.bottomAnchor)
+            mockContentView.bottomAnchor
+                .constraint(equalTo: mockContainerViewController.view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -88,7 +93,12 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
-    private func verify(for newState: NetworkState, testName: String = #function, file: StaticString = #file, line: UInt = #line) {
+    private func verify(
+        for newState: NetworkState,
+        testName: String = #function,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 

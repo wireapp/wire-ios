@@ -38,19 +38,19 @@ public class ClaimMLSKeyPackageAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .missingDomain:
-                return "Missing domain."
+                "Missing domain."
             case .endpointUnavailable:
-                return "Endpoint unavailable."
+                "Endpoint unavailable."
             case .malformedResponse:
-                return "Malformed response."
+                "Malformed response."
             case .invalidSelfClientId:
-                return "Invalid self client id for parameter: skip own."
+                "Invalid self client id for parameter: skip own."
             case .userOrDomainNotFound:
-                return "User domain or user not found."
+                "User domain or user not found."
             case .emptyKeyPackages:
-                return "The list of key packages is empty"
-            case .unknown(let status):
-                return "Unknown error (response status: \(status))"
+                "The list of key packages is empty"
+            case let .unknown(status):
+                "Unknown error (response status: \(status))"
             }
         }
     }
@@ -64,7 +64,13 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     public let ciphersuite: MLSCipherSuite
     public var resultHandler: ResultHandler?
 
-    public init(domain: String?, userId: UUID, ciphersuite: MLSCipherSuite, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
+    public init(
+        domain: String?,
+        userId: UUID,
+        ciphersuite: MLSCipherSuite,
+        excludedSelfClientId: String? = nil,
+        resultHandler: ResultHandler? = nil
+    ) {
         self.domain = domain
         self.userId = userId
         self.ciphersuite = ciphersuite
@@ -73,7 +79,8 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     }
 }
 
-// Temporary solution until we know what we need from the result. Once we do, this should move to the action handler extension.
+// Temporary solution until we know what we need from the result. Once we do, this should move to the action handler
+// extension.
 public struct KeyPackage: Codable, Equatable {
 
     public let client: String

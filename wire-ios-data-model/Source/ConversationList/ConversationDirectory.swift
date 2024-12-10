@@ -19,7 +19,13 @@
 import Foundation
 
 public enum ConversationListType {
-    case archived, unarchived, pending, contacts, groups, favorites, folder(_ folder: LabelType)
+    case archived
+    case unarchived
+    case pending
+    case contacts
+    case groups
+    case favorites
+    case folder(_ folder: LabelType)
 }
 
 public struct ConversationDirectoryChangeInfo {
@@ -38,14 +44,17 @@ public struct ConversationDirectoryChangeInfo {
 
 public protocol ConversationDirectoryObserver: AnyObject {
 
-    func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
+    func conversationDirectoryDidChange(
+        conversationDirectory: ConversationDirectoryType,
+        changeInfo: ConversationDirectoryChangeInfo
+    )
 
 }
 
 public protocol ConversationDirectoryType {
 
-    /// All folder created by the user
-    var allFolders: [LabelType] { get }
+    /// Folders excluding those marked for deletion
+    var nonDeletedFolders: [LabelType] { get }
 
     /// Create a new folder with a given name
     func createFolder(_ name: String) -> LabelType?
@@ -76,17 +85,28 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return groupConversations.items
         case .favorites:
             return favoriteConversations.items
-        case .folder(let label):
-            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
+        case let .folder(label):
+            // swiftlint:disable:next todo_requires_jira_link
+            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO: jacob make optional?
             return (listsByFolder[objectID] as? ConversationList)?.items ?? []
         }
     }
 
     public func addObserver(_ observer: ConversationDirectoryObserver) -> Any {
         let observerProxy = ConversationListObserverProxy(observer: observer, directory: self)
-        let listToken = ConversationListChangeInfo.addListObserver(observerProxy, for: nil, managedObjectContext: managedObjectContext)
-        let reloadToken = ConversationListChangeInfo.addReloadObserver(observerProxy, managedObjectContext: managedObjectContext)
-        let folderToken = ConversationListChangeInfo.addFolderObserver(observerProxy, managedObjectContext: managedObjectContext)
+        let listToken = ConversationListChangeInfo.addListObserver(
+            observerProxy,
+            for: nil,
+            managedObjectContext: managedObjectContext
+        )
+        let reloadToken = ConversationListChangeInfo.addReloadObserver(
+            observerProxy,
+            managedObjectContext: managedObjectContext
+        )
+        let folderToken = ConversationListChangeInfo.addFolderObserver(
+            observerProxy,
+            managedObjectContext: managedObjectContext
+        )
 
         return [folderToken, listToken, reloadToken, observerProxy]
     }
@@ -94,7 +114,12 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
     @objc
     public func createFolder(_ name: String) -> LabelType? {
         var created = false
-        let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: managedObjectContext, created: &created)
+        let label = Label.fetchOrCreate(
+            remoteIdentifier: UUID(),
+            create: true,
+            in: managedObjectContext,
+            created: &created
+        )
         label?.name = name
         label?.kind = .folder
         return label
@@ -102,7 +127,8 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 
 }
 
-private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver {
+private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver,
+    ZMConversationListFolderObserver {
 
     weak var observer: ConversationDirectoryObserver?
     var directory: ZMConversationListDirectory
@@ -113,35 +139,46 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
     }
 
     func conversationListsDidReload() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false)
+        )
     }
 
     func conversationListsDidChangeFolders() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true)
+        )
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
-        let updatedLists: [ConversationListType]
-
-        if changeInfo.conversationList === directory.oneToOneConversations {
-            updatedLists = [.contacts]
+        let updatedLists: [ConversationListType] = if changeInfo.conversationList === directory.oneToOneConversations {
+            [.contacts]
         } else if changeInfo.conversationList === directory.groupConversations {
-            updatedLists = [.groups]
+            [.groups]
         } else if changeInfo.conversationList === directory.archivedConversations {
-            updatedLists = [.archived]
+            [.archived]
         } else if changeInfo.conversationList === directory.pendingConnectionConversations {
-            updatedLists = [.pending]
+            [.pending]
         } else if changeInfo.conversationList === directory.unarchivedConversations {
-            updatedLists = [.unarchived]
+            [.unarchived]
         } else if changeInfo.conversationList === directory.favoriteConversations {
-            updatedLists = [.favorites]
+            [.favorites]
         } else if let label = changeInfo.conversationList.label, label.kind == .folder {
-            updatedLists = [.folder(label)]
+            [.folder(label)]
         } else {
-            updatedLists = []
+            []
         }
 
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
+        observer?.conversationDirectoryDidChange(
+            conversationDirectory: directory,
+            changeInfo: ConversationDirectoryChangeInfo(
+                reloaded: false,
+                updatedLists: updatedLists,
+                updatedFolders: false
+            )
+        )
     }
 
 }

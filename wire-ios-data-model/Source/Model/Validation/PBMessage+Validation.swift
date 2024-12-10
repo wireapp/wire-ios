@@ -19,28 +19,28 @@
 import Foundation
 import WireProtos
 
-extension UUID {
+public extension UUID {
 
-    public static func isValid(object: Any?) -> Bool {
+    static func isValid(object: Any?) -> Bool {
         guard let string = object as? String else { return false }
         return UUID(uuidString: string) != nil
     }
 
-    public static func isValid(bytes: Data?) -> Bool {
-        return bytes?.count == 16
+    static func isValid(bytes: Data?) -> Bool {
+        bytes?.count == 16
     }
 
-    public static func isValid(array: [Any]?) -> Bool {
-        return array?.map(UUID.isValid).contains(false) == false
+    static func isValid(array: [Any]?) -> Bool {
+        array?.map(UUID.isValid).contains(false) == false
     }
 
 }
 
 // MARK: - String Formatting
 
-extension String {
+public extension String {
 
-    public var isValidAssetID: Bool {
+    var isValidAssetID: Bool {
 
         // Format: https://github.com/wireapp/wire-webapp/blob/dev/app/script/util/ValidationUtil.js
 
@@ -50,15 +50,15 @@ extension String {
         assetIDAllowedCharacters.insert(charactersIn: "a" ... "z") // a-z
         assetIDAllowedCharacters.insert("-") // hyphen
 
-        return self.trimmingCharacters(in: assetIDAllowedCharacters).isEmpty
+        return trimmingCharacters(in: assetIDAllowedCharacters).isEmpty
 
     }
 
-    public var isValidBearerToken: Bool {
+    var isValidBearerToken: Bool {
 
         // Format: https://github.com/wireapp/wire-webapp/blob/dev/app/script/util/ValidationUtil.js
 
-        let decodedAssetToken = self.removingPercentEncoding ?? self
+        let decodedAssetToken = removingPercentEncoding ?? self
 
         var assetTokenAllowedCharacters = CharacterSet()
         assetTokenAllowedCharacters.formUnion(.decimalDigits) // numbers
@@ -86,9 +86,9 @@ extension String {
 
 // MARK: Generic Message
 
-extension GenericMessage {
-    public func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content = self.content else { return nil }
+public extension GenericMessage {
+    func validatingFields() -> GenericMessage? {
+        guard UUID.isValid(object: messageID), let content else { return nil }
 
         switch content {
         case .text:
@@ -118,8 +118,8 @@ extension GenericMessage {
 
 // MARK: - Text
 
-extension Text {
-    public func validatingFields() -> Text? {
+public extension Text {
+    func validatingFields() -> Text? {
         let validMentions = mentions.compactMap { $0.validatingFields() }
         guard validMentions.count == mentions.count else { return nil }
         return self
@@ -128,40 +128,40 @@ extension Text {
 
 // MARK: Quotes
 
-extension Quote {
-    public func validatingFields() -> Quote? {
-        return UUID.isValid(object: quotedMessageID) ? self : nil
+public extension Quote {
+    func validatingFields() -> Quote? {
+        UUID.isValid(object: quotedMessageID) ? self : nil
     }
 }
 
 // MARK: Mention
 
-extension WireProtos.Mention {
-    public func validatingFields() -> WireProtos.Mention? {
-        return UUID.isValid(object: userID) ? self : nil
+public extension WireProtos.Mention {
+    func validatingFields() -> WireProtos.Mention? {
+        UUID.isValid(object: userID) ? self : nil
     }
 }
 
 // MARK: Last Read
 
-extension LastRead {
-    public func validatingFields() -> LastRead? {
-        return UUID.isValid(object: conversationID) ? self : nil
+public extension LastRead {
+    func validatingFields() -> LastRead? {
+        UUID.isValid(object: conversationID) ? self : nil
     }
 }
 
 // MARK: Cleared
 
-extension Cleared {
-    public func validatingFields() -> Cleared? {
-        return UUID.isValid(object: conversationID) ? self : nil
+public extension Cleared {
+    func validatingFields() -> Cleared? {
+        UUID.isValid(object: conversationID) ? self : nil
     }
 }
 
 // MARK: Message Hide
 
-extension MessageHide {
-    public func validatingFields() -> MessageHide? {
+public extension MessageHide {
+    func validatingFields() -> MessageHide? {
         guard UUID.isValid(object: conversationID) else { return nil }
         guard UUID.isValid(object: messageID) else { return nil }
         return self
@@ -170,24 +170,24 @@ extension MessageHide {
 
 // MARK: Message Delete
 
-extension MessageDelete {
-    public func validatingFields() -> MessageDelete? {
-        return UUID.isValid(object: messageID) ? self : nil
+public extension MessageDelete {
+    func validatingFields() -> MessageDelete? {
+        UUID.isValid(object: messageID) ? self : nil
     }
 }
 
 // MARK: Message Edit
 
-extension MessageEdit {
-    public func validatingFields() -> MessageEdit? {
-        return UUID.isValid(object: replacingMessageID) ? self : nil
+public extension MessageEdit {
+    func validatingFields() -> MessageEdit? {
+        UUID.isValid(object: replacingMessageID) ? self : nil
     }
 }
 
 // MARK: Message Confirmation
 
-extension Confirmation {
-    public func validatingFields() -> Confirmation? {
+public extension Confirmation {
+    func validatingFields() -> Confirmation? {
         guard UUID.isValid(object: firstMessageID) else { return nil }
 
         if !moreMessageIds.isEmpty {
@@ -200,25 +200,25 @@ extension Confirmation {
 
 // MARK: Reaction
 
-extension WireProtos.Reaction {
-    public func validatingFields() -> WireProtos.Reaction? {
-        return UUID.isValid(object: messageID) ? self : nil
+public extension WireProtos.Reaction {
+    func validatingFields() -> WireProtos.Reaction? {
+        UUID.isValid(object: messageID) ? self : nil
     }
 }
 
 // MARK: User ID
 
-extension WireProtos.Proteus_UserId {
-    public func validatingFields() -> WireProtos.Proteus_UserId? {
-        return UUID.isValid(bytes: uuid) ? self : nil
+public extension WireProtos.Proteus_UserId {
+    func validatingFields() -> WireProtos.Proteus_UserId? {
+        UUID.isValid(bytes: uuid) ? self : nil
     }
 }
 
 // MARK: - Asset
 
-extension WireProtos.Asset {
-    public func validatingFields() -> WireProtos.Asset? {
-        if hasPreview && preview.hasRemote {
+public extension WireProtos.Asset {
+    func validatingFields() -> WireProtos.Asset? {
+        if hasPreview, preview.hasRemote {
             guard preview.remote.validatingFields() != nil else { return nil }
         }
 
@@ -230,8 +230,8 @@ extension WireProtos.Asset {
     }
 }
 
-extension WireProtos.Asset.RemoteData {
-    public func validatingFields() -> WireProtos.Asset.RemoteData? {
+public extension WireProtos.Asset.RemoteData {
+    func validatingFields() -> WireProtos.Asset.RemoteData? {
         guard assetID.isValidAssetID else { return nil }
         guard assetToken.isValidBearerToken else { return nil }
         return self

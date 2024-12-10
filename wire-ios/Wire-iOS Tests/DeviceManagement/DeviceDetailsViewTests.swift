@@ -154,8 +154,25 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
         snapshotHelper.verify(matching: viewController)
     }
 
+    func testWhenE2eidentityIsDisabledAndMLSIsEnabled() {
+        client.e2eIdentityCertificate = nil
+        client.mlsThumbPrint = E2eIdentityCertificate.mockValid.mlsThumbprint
+
+        let viewModel = prepareViewModel(
+            isProteusVerificationEnabled: true,
+            isE2eIdentityEnabled: true,
+            proteusKeyFingerPrint: mockFingerPrint,
+            isSelfClient: false
+        )
+
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        snapshotHelper.verify(matching: viewController)
+    }
+
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValid() {
         client.e2eIdentityCertificate = .mockValid
+        client.mlsThumbPrint = E2eIdentityCertificate.mockValid.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -171,6 +188,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
         client.e2eIdentityCertificate = .mockValid
+        client.mlsThumbPrint = E2eIdentityCertificate.mockValid.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: false,
@@ -186,6 +204,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevoked() {
         client.e2eIdentityCertificate = .mockRevoked
+        client.mlsThumbPrint = E2eIdentityCertificate.mockRevoked.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -201,6 +220,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpired() {
         client.e2eIdentityCertificate = .mockExpired
+        client.mlsThumbPrint = E2eIdentityCertificate.mockExpired.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -216,6 +236,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
         client.e2eIdentityCertificate = .mockNotActivated
+        client.mlsThumbPrint = E2eIdentityCertificate.mockNotActivated.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -231,6 +252,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
         client.e2eIdentityCertificate = .mockExpired
+        client.mlsThumbPrint = E2eIdentityCertificate.mockExpired.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -246,6 +268,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
         client.e2eIdentityCertificate = .mockNotActivated
+        client.mlsThumbPrint = E2eIdentityCertificate.mockNotActivated.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -261,6 +284,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsInvalid() {
         client.e2eIdentityCertificate = .mockInvalid
+        client.mlsThumbPrint = E2eIdentityCertificate.mockInvalid.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -298,9 +322,9 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false
+            isE2eIdentityEnabled: false,
+            proteusKeyFingerPrint: mockFingerPrint,
+            isSelfClient: false
         )
 
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)
@@ -312,6 +336,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsValidInDarkMode() {
         client.e2eIdentityCertificate = .mockValid
+        client.mlsThumbPrint = E2eIdentityCertificate.mockValid.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -329,6 +354,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsRevokedInDarkMode() {
         client.e2eIdentityCertificate = .mockRevoked
+        client.mlsThumbPrint = E2eIdentityCertificate.mockRevoked.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -346,6 +372,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkMode() {
         client.e2eIdentityCertificate = .mockExpired
+        client.mlsThumbPrint = E2eIdentityCertificate.mockExpired.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -363,6 +390,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
         client.e2eIdentityCertificate = .mockNotActivated
+        client.mlsThumbPrint = E2eIdentityCertificate.mockNotActivated.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -380,6 +408,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkModeForOtherClient() {
         client.e2eIdentityCertificate = .mockExpired
+        client.mlsThumbPrint = E2eIdentityCertificate.mockExpired.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
@@ -397,6 +426,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkModeForOtherClient() {
         client.e2eIdentityCertificate = .mockNotActivated
+        client.mlsThumbPrint = E2eIdentityCertificate.mockNotActivated.mlsThumbprint
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,

@@ -21,7 +21,11 @@ import Foundation
 extension ZMBaseManagedObjectTest {
 
     @discardableResult
-    func createConversation(in moc: NSManagedObjectContext, with participants: [ZMUser] = [], role: Role? = nil) -> ZMConversation {
+    func createConversation(
+        in moc: NSManagedObjectContext,
+        with participants: [ZMUser] = [],
+        role: Role? = nil
+    ) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
@@ -55,7 +59,13 @@ extension ZMBaseManagedObjectTest {
         return user
     }
 
-    @discardableResult func createMembership(in moc: NSManagedObjectContext, user: ZMUser, team: Team?, with permissions: Permissions? = nil) -> Member {
+    @discardableResult
+    func createMembership(
+        in moc: NSManagedObjectContext,
+        user: ZMUser,
+        team: Team?,
+        with permissions: Permissions? = nil
+    ) -> Member {
         let member = Member.insertNewObject(in: moc)
         member.user = user
         if let team {
@@ -68,7 +78,8 @@ extension ZMBaseManagedObjectTest {
         return member
     }
 
-    @discardableResult func createTeamMember(in moc: NSManagedObjectContext, for team: Team) -> ZMUser {
+    @discardableResult
+    func createTeamMember(in moc: NSManagedObjectContext, for team: Team) -> ZMUser {
         let user = createUser(in: moc)
         createMembership(in: moc, user: user, team: team)
         return user

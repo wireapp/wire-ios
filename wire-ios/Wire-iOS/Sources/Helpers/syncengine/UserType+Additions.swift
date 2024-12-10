@@ -22,9 +22,9 @@ extension UserType {
 
     var canSeeServices: Bool {
         #if ADD_SERVICE_DISABLED
-        return false
+            return false
         #else
-        return hasTeam
+            return hasTeam
         #endif
     }
 

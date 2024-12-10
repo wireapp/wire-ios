@@ -28,11 +28,11 @@ extension RemoveClientsViewController {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
-            self.initalizeProperties(clientsList)
+            initalizeProperties(clientsList)
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList
+            clients = clientsList
                 .filter { !$0.isSelfClient() }
                 .sorted(by: {
                     guard
@@ -47,14 +47,16 @@ extension RemoveClientsViewController {
 
         func removeUserClient(_ userClient: UserClient, password: String) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
-                return userClient.remoteIdentifier
+                userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
 
-            try await removeUserClientUseCase?.invoke(clientId: clientId,
-                                                      password: password)
+            try await removeUserClientUseCase?.invoke(
+                clientId: clientId,
+                password: password
+            )
         }
     }
 }

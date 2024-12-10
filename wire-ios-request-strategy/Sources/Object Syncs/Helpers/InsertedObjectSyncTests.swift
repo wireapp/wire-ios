@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
 import XCTest
+@testable import WireRequestStrategy
 
 class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
 
@@ -28,7 +28,7 @@ class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
     var pendingInsertions: [() -> Void] = []
 
     func completePendingInsertions() {
-        pendingInsertions.forEach({ $0() })
+        pendingInsertions.forEach { $0() }
         pendingInsertions.removeAll()
     }
 

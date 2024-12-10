@@ -33,8 +33,8 @@ public struct BackupMetadata: Codable {
         creationTime: Date = .init(),
         userIdentifier: UUID,
         clientIdentifier: String
-        ) {
-        platform = .iOS
+    ) {
+        self.platform = .iOS
         self.appVersion = appVersion
         self.modelVersion = modelVersion
         self.creationTime = creationTime
@@ -47,7 +47,7 @@ public struct BackupMetadata: Codable {
         clientIdentifier: String,
         appVersionProvider: VersionProvider = Bundle.main,
         modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
-        ) {
+    ) {
         self.init(
             appVersion: appVersionProvider.version,
             modelVersion: modelVersionProvider.version,
@@ -62,10 +62,11 @@ public struct BackupMetadata: Codable {
 extension BackupMetadata: Equatable {}
 
 public func == (lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
-    return lhs.platform == rhs.platform
+    lhs.platform == rhs.platform
         && lhs.appVersion == rhs.appVersion
         && lhs.modelVersion == rhs.modelVersion
-        && (lhs.creationTime.timeIntervalSince1970 - rhs.creationTime.timeIntervalSince1970) < 0.001 // We only store 3 floating points
+        && (lhs.creationTime.timeIntervalSince1970 - rhs.creationTime.timeIntervalSince1970) <
+        0.001 // We only store 3 floating points
         && lhs.userIdentifier == rhs.userIdentifier
         && lhs.clientIdentifier == rhs.clientIdentifier
 }
@@ -117,7 +118,7 @@ public extension BackupMetadata {
     func verify(
         using userIdentifier: UUID,
         modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
-        ) -> VerificationError? {
+    ) -> VerificationError? {
         guard self.userIdentifier == userIdentifier else { return .userMismatch }
         let current = Version(string: modelVersionProvider.version)
         let backup = Version(string: modelVersion)
@@ -137,12 +138,12 @@ public protocol VersionProvider {
 
 extension NSManagedObjectModel: VersionProvider {
     public var version: String {
-        return versionIdentifiers.first as! String
+        versionIdentifiers.first as! String
     }
 }
 
 extension Bundle: VersionProvider {
     public var version: String {
-        return infoDictionary!["CFBundleShortVersionString"] as! String
+        infoDictionary!["CFBundleShortVersionString"] as! String
     }
 }

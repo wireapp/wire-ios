@@ -20,11 +20,10 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
-/**
- * The actions that can be performed from the profile details or devices.
- */
+/// The actions that can be performed from the profile details or devices.
 
 enum ProfileAction: Equatable {
     case createGroup
@@ -46,51 +45,51 @@ enum ProfileAction: Equatable {
     /// The text of the button for this action.
     var buttonText: String {
         switch self {
-        case .createGroup: return L10n.Localizable.Profile.createConversationButtonTitle
-        case .mute(let isMuted): return isMuted
+        case .createGroup: L10n.Localizable.Profile.createConversationButtonTitle
+        case let .mute(isMuted): isMuted
             ? L10n.Localizable.Meta.Menu.Silence.unmute
             : L10n.Localizable.Meta.Menu.Silence.mute
-        case .manageNotifications: return L10n.Localizable.Meta.Menu.configureNotifications
-        case .archive: return L10n.Localizable.Meta.Menu.archive
-        case .deleteContents: return L10n.Localizable.Meta.Menu.clearContent
-        case .block(let isBlocked): return isBlocked
+        case .manageNotifications: L10n.Localizable.Meta.Menu.configureNotifications
+        case .archive: L10n.Localizable.Meta.Menu.archive
+        case .deleteContents: L10n.Localizable.Meta.Menu.clearContent
+        case let .block(isBlocked): isBlocked
             ? L10n.Localizable.Profile.unblockButtonTitle
             : L10n.Localizable.Profile.blockButtonTitle
-        case .openOneToOne: return L10n.Localizable.Profile.openConversationButtonTitle
-        case .startOneToOne: return L10n.Localizable.Profile.startConversationButtonTitle
-        case .removeFromGroup: return L10n.Localizable.Profile.removeDialogButtonRemove
-        case .connect: return L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
-        case .cancelConnectionRequest: return L10n.Localizable.Meta.Menu.cancelConnectionRequest
-        case .openSelfProfile: return L10n.Localizable.Meta.Menu.openSelfProfile
-        case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
-        case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
-        case .duplicateConversation: return "⚠️ DEBUG - Duplicate Conversation"
+        case .openOneToOne: L10n.Localizable.Profile.openConversationButtonTitle
+        case .startOneToOne: L10n.Localizable.Profile.startConversationButtonTitle
+        case .removeFromGroup: L10n.Localizable.Profile.removeDialogButtonRemove
+        case .connect: L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
+        case .cancelConnectionRequest: L10n.Localizable.Meta.Menu.cancelConnectionRequest
+        case .openSelfProfile: L10n.Localizable.Meta.Menu.openSelfProfile
+        case .duplicateUser: "⚠️ DEBUG - Duplicate User"
+        case .duplicateTeam: "⚠️ DEBUG - Duplicate Team"
+        case .duplicateConversation: "⚠️ DEBUG - Duplicate Conversation"
         }
     }
 
     /// The icon of the button for this action, if it's eligible to be a key action.
     var keyActionIcon: StyleKitIcon? {
         switch self {
-        case .createGroup: return .createConversation
-        case .manageNotifications, .mute: return nil
-        case .archive: return nil
-        case .deleteContents: return nil
-        case .block: return nil
-        case .openOneToOne: return .conversation
-        case .startOneToOne: return .conversation
-        case .removeFromGroup: return .minus
-        case .connect: return .plus
-        case .cancelConnectionRequest: return .undo
-        case .openSelfProfile: return .personalProfile
-        case .duplicateUser: return nil
-        case .duplicateTeam: return nil
-        case .duplicateConversation: return nil
+        case .createGroup: .createConversation
+        case .manageNotifications, .mute: nil
+        case .archive: nil
+        case .deleteContents: nil
+        case .block: nil
+        case .openOneToOne: .conversation
+        case .startOneToOne: .conversation
+        case .removeFromGroup: .minus
+        case .connect: .plus
+        case .cancelConnectionRequest: .undo
+        case .openSelfProfile: .personalProfile
+        case .duplicateUser: nil
+        case .duplicateTeam: nil
+        case .duplicateConversation: nil
         }
     }
 
     /// Whether the action can be used as a key action.
     var isEligibleForKeyAction: Bool {
-        return keyActionIcon != nil
+        keyActionIcon != nil
     }
 
 }
@@ -100,10 +99,8 @@ protocol ProfileActionsFactoryProtocol {
     func makeActionsList(completion: @escaping ([ProfileAction]) -> Void)
 }
 
-/**
- * An object that returns the actions that a user can perform in the scope
- * of a conversation.
- */
+/// An object that returns the actions that a user can perform in the scope
+/// of a conversation.
 
 final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
@@ -126,13 +123,11 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the action controller with the specified environment.
-     * - parameter user: The user that is displayed in the profile details.
-     * - parameter viewer: The user that wants to perform the actions.
-     * - parameter conversation: The conversation that the user wants to
-     * perform the actions in.
-     */
+    /// Creates the action controller with the specified environment.
+    /// - parameter user: The user that is displayed in the profile details.
+    /// - parameter viewer: The user that wants to perform the actions.
+    /// - parameter conversation: The conversation that the user wants to
+    /// perform the actions in.
 
     init(
         user: UserType,
@@ -182,6 +177,14 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
     }
 
+    private var canCreateConversationWithOtherDomain: Bool {
+        if userSession.isFederationUsageAllowed {
+            return true
+        } else {
+            return viewer.domain == user.domain
+        }
+    }
+
     private func makeActionsList(isOneOnOneReady: Bool) -> [ProfileAction] {
 
         // Do nothing if the user was deleted
@@ -191,7 +194,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
         // if the user is viewing their own profile by tapping his name/icon of
         // a sent message, add the open self-profile screen button
-        if viewer.isSelfUser && user.isSelfUser {
+        if viewer.isSelfUser, user.isSelfUser {
             return [.openSelfProfile]
         }
 
@@ -220,18 +223,19 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         switch (context, conversation?.conversationType) {
         case (_, .oneOnOne?):
 
-            if viewer.canCreateConversation(type: .group) {
+            if viewer.canCreateConversation(type: .group) && canCreateConversationWithOtherDomain {
                 actions.append(.createGroup)
             }
 
             // Notifications, Archive, Delete Contents if available for every 1:1
             if let conversation {
-                let notificationAction: ProfileAction = viewer.isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
+                let notificationAction: ProfileAction = viewer
+                    .isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
                 actions.append(contentsOf: [notificationAction, .archive, .deleteContents])
             }
 
             // If the viewer is not on the same team as the other user, allow blocking
-            if !viewer.canAccessCompanyInformation(of: user) && !user.isWirelessUser {
+            if !viewer.canAccessCompanyInformation(of: user), !user.isWirelessUser {
                 actions.append(.block(isBlocked: false))
             }
 
@@ -246,8 +250,8 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             }
 
         case (.profileViewer, .none),
-            (.search, .none),
-            (_, .group?):
+             (.search, .none),
+             (_, .group?):
             // Do nothing if the viewer is a wireless user because they can't have 1:1's
             if viewer.isWirelessUser {
                 break
@@ -264,7 +268,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
                 } else {
                     actions.append(.startOneToOne)
                 }
-            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
+            } else if user.canBeConnected, !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
             }
 
@@ -275,7 +279,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
             // If the user is not from the same team as the other user, allow blocking
 
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasEmptyName {
+            if user.isConnected, !isOnSameTeam, !user.isWirelessUser, !user.hasEmptyName {
                 actions.append(.block(isBlocked: false))
             }
 
@@ -292,9 +296,9 @@ extension UserType {
     var canBeUnblocked: Bool {
         switch blockState {
         case .blockedMissingLegalholdConsent:
-            return false
+            false
         default:
-            return true
+            true
         }
     }
 

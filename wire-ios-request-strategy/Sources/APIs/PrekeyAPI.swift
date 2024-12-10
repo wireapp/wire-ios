@@ -38,7 +38,7 @@ class PrekeyAPIV0: PrekeyAPI {
     }
 
     open var apiVersion: APIVersion {
-        return .v0
+        .v0
     }
 
     let httpClient: HttpClient
@@ -52,10 +52,12 @@ class PrekeyAPIV0: PrekeyAPI {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         let result: Payload.PrekeyByUserID = try mapResponse(response)
@@ -65,7 +67,7 @@ class PrekeyAPIV0: PrekeyAPI {
 
 class PrekeyAPIV1: PrekeyAPIV0 {
     override var apiVersion: APIVersion {
-        return .v1
+        .v1
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -76,10 +78,12 @@ class PrekeyAPIV1: PrekeyAPIV0 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         return try mapResponse(response)
@@ -88,19 +92,19 @@ class PrekeyAPIV1: PrekeyAPIV0 {
 
 class PrekeyAPIV2: PrekeyAPIV1 {
     override var apiVersion: APIVersion {
-        return .v2
+        .v2
     }
 }
 
 class PrekeyAPIV3: PrekeyAPIV2 {
     override var apiVersion: APIVersion {
-        return .v3
+        .v3
     }
 }
 
 class PrekeyAPIV4: PrekeyAPIV3 {
     override var apiVersion: APIVersion {
-        return .v4
+        .v4
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -111,10 +115,12 @@ class PrekeyAPIV4: PrekeyAPIV3 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
         let response = await httpClient.send(request)
 
         let result: Payload.PrekeyByQualifiedUserIDV4 = try mapResponse(response)
@@ -124,23 +130,23 @@ class PrekeyAPIV4: PrekeyAPIV3 {
 
 class PrekeyAPIV5: PrekeyAPIV4 {
     override var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 }
 
 class PrekeyAPIV6: PrekeyAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
 }
 
-extension Collection where Element == QualifiedClientID {
+extension Collection<QualifiedClientID> {
 
     var clientListByUserID: Payload.ClientListByUserID {
 
         let initial: Payload.ClientListByUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
+        return reduce(into: initial) { result, client in
             result[client.userID.transportString(), default: []].append(client.clientID)
         }
     }
@@ -148,8 +154,9 @@ extension Collection where Element == QualifiedClientID {
     var clientListByDomain: Payload.ClientListByQualifiedUserID {
         let initial: Payload.ClientListByQualifiedUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
-            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []].append(client.clientID)
+        return reduce(into: initial) { result, client in
+            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []]
+                .append(client.clientID)
         }
     }
 

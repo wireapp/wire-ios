@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
+@testable import WireDataModel
 
 final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase {
     var coreDataStack: CoreDataStack!
@@ -51,100 +51,134 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
         var newConversationMessageNonces: [UUID]!
         let draftMessageText = "test"
 
-        try helper.migrateStoreToCurrentVersion(sourceVersion: "2.118.0",
-                                            preMigrationAction: { context in
-            try context.performAndWait {
+        try helper.migrateStoreToCurrentVersion(
+            sourceVersion: "2.118.0",
+            preMigrationAction: { context in
+                try context.performAndWait {
 
-                let model = ModelHelper()
+                    let model = ModelHelper()
 
-                let selfUser = model.createSelfUser(domain: Scaffolding.domain, in: context)
+                    let selfUser = model.createSelfUser(domain: Scaffolding.domain, in: context)
 
-                let otherUser = model.createUser(qualifiedID: Scaffolding.otherUserQualifiedID, in: context)
+                    let otherUser = model.createUser(qualifiedID: Scaffolding.otherUserQualifiedID, in: context)
 
-                let team = model.createTeam(in: context)
-                model.addUsers([selfUser, otherUser], to: team, in: context)
+                    let team = model.createTeam(in: context)
+                    model.addUsers([selfUser, otherUser], to: team, in: context)
 
-                let oldOneOnOneConversation = model.createGroupConversation(id: Scaffolding.oldOneOnOneConversationID,
-                                                                            with: Set([otherUser, selfUser]),
-                                                                            team: selfUser.team,
-                                                                            domain: selfUser.domain,
-                                                                            in: context)
-                oldOneOnOneConversation.messageProtocol = .proteus
-                oldOneOnOneConversation.userDefinedName = nil
+                    let oldOneOnOneConversation = model.createGroupConversation(
+                        id: Scaffolding.oldOneOnOneConversationID,
+                        with: Set([otherUser, selfUser]),
+                        team: selfUser.team,
+                        domain: selfUser.domain,
+                        in: context
+                    )
+                    oldOneOnOneConversation.messageProtocol = .proteus
+                    oldOneOnOneConversation.userDefinedName = nil
 
-                try model.addTextMessages(to: oldOneOnOneConversation,
-                                          messagePrefix: "oldConv from me",
-                                          sender: selfUser,
-                                          count: 3,
-                                          in: context)
-                try model.addTextMessages(to: oldOneOnOneConversation,
-                                          messagePrefix: "oldConv from otherUser",
-                                          sender: otherUser,
-                                          count: 4,
-                                          in: context)
-                oldOneOnOneConversation.draftMessage = DraftMessage(text: draftMessageText, mentions: [], quote: nil)
-                let newOneOnOneConversation = model.createGroupConversation(id: Scaffolding.newOneOnOneConversationID,
-                                                                            with: Set([otherUser, selfUser]),
-                                                                            team: selfUser.team,
-                                                                            domain: selfUser.domain,
-                                                                            in: context)
-                newOneOnOneConversation.messageProtocol = .proteus
-                newOneOnOneConversation.userDefinedName = nil
-                // the default oneOnOne conversation done by the OneOnOneMigration was using first result of request instead of sorting by qualified id with ascending order, here let's assume we have the wrong one setup
-                otherUser.setValue(newOneOnOneConversation, forKey: "oneOnOneConversation")
+                    try model.addTextMessages(
+                        to: oldOneOnOneConversation,
+                        messagePrefix: "oldConv from me",
+                        sender: selfUser,
+                        count: 3,
+                        in: context
+                    )
+                    try model.addTextMessages(
+                        to: oldOneOnOneConversation,
+                        messagePrefix: "oldConv from otherUser",
+                        sender: otherUser,
+                        count: 4,
+                        in: context
+                    )
+                    oldOneOnOneConversation.draftMessage = DraftMessage(
+                        text: draftMessageText,
+                        mentions: [],
+                        quote: nil
+                    )
+                    let newOneOnOneConversation = model.createGroupConversation(
+                        id: Scaffolding.newOneOnOneConversationID,
+                        with: Set([otherUser, selfUser]),
+                        team: selfUser.team,
+                        domain: selfUser.domain,
+                        in: context
+                    )
+                    newOneOnOneConversation.messageProtocol = .proteus
+                    newOneOnOneConversation.userDefinedName = nil
+                    // the default oneOnOne conversation done by the OneOnOneMigration was using first result of request
+                    // instead of sorting by qualified id with ascending order, here let's assume we have the wrong one
+                    // setup
+                    otherUser.setValue(newOneOnOneConversation, forKey: "oneOnOneConversation")
 
-                try model.addTextMessages(to: newOneOnOneConversation,
-                                          messagePrefix: "newConv from me",
-                                          sender: selfUser,
-                                          count: 1,
-                                          in: context)
-                try model.addTextMessages(to: newOneOnOneConversation,
-                                          messagePrefix: "newConv from otherUser",
-                                          sender: otherUser,
-                                          count: 2,
-                                          in: context)
+                    try model.addTextMessages(
+                        to: newOneOnOneConversation,
+                        messagePrefix: "newConv from me",
+                        sender: selfUser,
+                        count: 1,
+                        in: context
+                    )
+                    try model.addTextMessages(
+                        to: newOneOnOneConversation,
+                        messagePrefix: "newConv from otherUser",
+                        sender: otherUser,
+                        count: 2,
+                        in: context
+                    )
 
-                newConversationMessageNonces = newOneOnOneConversation.allMessages.compactMap {
-                    $0.nonce
+                    newConversationMessageNonces = newOneOnOneConversation.allMessages.compactMap(\.nonce)
+
+                    oldConversationMessageNonces = oldOneOnOneConversation.allMessages.compactMap(\.nonce)
+
+                    try context.save()
                 }
 
-                oldConversationMessageNonces = oldOneOnOneConversation.allMessages.compactMap {
-                    $0.nonce
+            },
+            postMigrationAction: { context in
+
+                try context.performAndWait {
+                    let selfUser = ZMUser.selfUser(in: context)
+
+                    let conversation = ZMConversation.fetch(
+                        with: Scaffolding.oldOneOnOneConversationID,
+                        domain: Scaffolding.domain,
+                        in: context
+                    )
+
+                    let oneOnOneConversation = try XCTUnwrap(conversation)
+                    XCTAssertEqual(
+                        oneOnOneConversation.qualifiedID?.uuid,
+                        Scaffolding.oldOneOnOneConversationID,
+                        "expect the patch to set the oldConversation as the new oneOnOne"
+                    )
+
+                    XCTAssertEqual(
+                        oneOnOneConversation.allMessages.count,
+                        newConversationMessageNonces.count + oldConversationMessageNonces.count
+                    )
+
+                    let oneOnOneConversationMessageIds = Set(oneOnOneConversation.allMessages.compactMap(\.nonce))
+                    XCTAssertEqual(
+                        oneOnOneConversationMessageIds,
+                        Set(oldConversationMessageNonces + newConversationMessageNonces)
+                    )
+
+                    let otherUser = try XCTUnwrap(ZMUser.fetch(
+                        with: Scaffolding.otherUserQualifiedID.uuid,
+                        domain: Scaffolding.otherUserQualifiedID.domain,
+                        in: context
+                    ))
+                    XCTAssertEqual(otherUser.oneToOneConversation, oneOnOneConversation)
+                    XCTAssertEqual(oneOnOneConversation.oneOnOneUser, otherUser)
+
+                    XCTAssertNotNil(oneOnOneConversation.draftMessage)
+                    XCTAssertNotNil(oneOnOneConversation.draftMessage?.text, draftMessageText)
                 }
-
-                try context.save()
-            }
-
-        }, postMigrationAction: { context in
-
-            try context.performAndWait {
-                let selfUser = ZMUser.selfUser(in: context)
-
-                let conversation = ZMConversation.fetch(with: Scaffolding.oldOneOnOneConversationID, domain: Scaffolding.domain, in: context)
-
-                let oneOnOneConversation = try XCTUnwrap(conversation)
-                XCTAssertEqual(oneOnOneConversation.qualifiedID?.uuid, Scaffolding.oldOneOnOneConversationID, "expect the patch to set the oldConversation as the new oneOnOne")
-
-                XCTAssertEqual(oneOnOneConversation.allMessages.count, newConversationMessageNonces.count + oldConversationMessageNonces.count)
-
-                let oneOnOneConversationMessageIds = Set(oneOnOneConversation.allMessages.compactMap { $0.nonce })
-                XCTAssertEqual(oneOnOneConversationMessageIds, Set(oldConversationMessageNonces + newConversationMessageNonces))
-
-                let otherUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.otherUserQualifiedID.uuid,
-                                                           domain: Scaffolding.otherUserQualifiedID.domain,
-                                                           in: context))
-                XCTAssertEqual(otherUser.oneToOneConversation, oneOnOneConversation)
-                XCTAssertEqual(oneOnOneConversation.oneOnOneUser, otherUser)
-
-                XCTAssertNotNil(oneOnOneConversation.draftMessage)
-                XCTAssertNotNil(oneOnOneConversation.draftMessage?.text, draftMessageText)
-            }
-        }, for: self)
+            },
+            for: self
+        )
     }
 
     enum Scaffolding {
         static let domain = String.randomDomain()
-        static let otherUserQualifiedID = QualifiedID.init(uuid: .create(), domain: Self.domain)
+        static let otherUserQualifiedID = QualifiedID(uuid: .create(), domain: Self.domain)
         static let oldOneOnOneConversationID = UUID(uuidString: "11118744-5514-45BB-A145-0B6F37856CDA")!
         static let newOneOnOneConversationID = UUID(uuidString: "87CF8744-5514-45BB-A145-0B6F37856CDA")!
     }

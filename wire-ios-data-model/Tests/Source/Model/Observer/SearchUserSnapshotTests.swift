@@ -23,7 +23,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
     var token: Any?
 
     override func tearDown() {
-        self.token = nil
+        token = nil
         super.tearDown()
     }
 
@@ -32,14 +32,23 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let searchUser = makeSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // then
-        XCTAssertEqual(searchUser.completeImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.completeImageData)] as? Data)
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
-        XCTAssertEqual(searchUser.user, sut.snapshotValues[ #keyPath(ZMSearchUser.user)] as? ZMUser)
-        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.completeImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data
+        )
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
+        XCTAssertEqual(searchUser.user, sut.snapshotValues[#keyPath(ZMSearchUser.user)] as? ZMUser)
+        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItCreatesASnapshotOfAllValues_withUser() {
@@ -51,14 +60,23 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
 
         // when
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // then
-        XCTAssertEqual(searchUser.completeImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.completeImageData)] as? Data)
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
-        XCTAssertEqual(searchUser.user, sut.snapshotValues[ #keyPath(ZMSearchUser.user)] as? ZMUser)
-        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.completeImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data
+        )
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
+        XCTAssertEqual(searchUser.user, sut.snapshotValues[#keyPath(ZMSearchUser.user)] as? ZMUser)
+        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItPostsANotificationWhenUserImageChanged() {
@@ -68,13 +86,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -90,7 +108,10 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
     }
 
     func testThatItPostsANotificationWhenConnectionChanged() {
@@ -100,13 +121,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -122,7 +143,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
+        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
     }
 
     func testThatItPostsANotificationWhenPendingApprovalChanged() {
@@ -135,13 +156,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         connection.status = .pending
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -155,8 +176,11 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItPostsANotificationWhenTheUserIsAdded() {
@@ -166,13 +190,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .amber, remoteIdentifier: UUID())
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { _ in
             expectation.fulfill()
@@ -184,8 +208,11 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     // MARK: - Helpers

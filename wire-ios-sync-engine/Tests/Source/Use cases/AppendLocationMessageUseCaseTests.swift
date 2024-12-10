@@ -60,7 +60,12 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         }
         analyticsEventTracker.trackEvent_MockMethod = { _ in }
 
-        let testLocationData = LocationData(latitude: 37.7749, longitude: -122.4194, name: "San Francisco", zoomLevel: 10)
+        let testLocationData = LocationData(
+            latitude: 37.7749,
+            longitude: -122.4194,
+            name: "San Francisco",
+            zoomLevel: 10
+        )
 
         // WHEN
         try sut.invoke(withLocationData: testLocationData, in: mockConversation)

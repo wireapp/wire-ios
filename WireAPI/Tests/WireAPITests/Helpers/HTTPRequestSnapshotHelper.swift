@@ -36,7 +36,7 @@ struct HTTPRequestSnapshotHelper {
     func verifyRequest(
         request: HTTPRequest,
         resourceName: String? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) {
@@ -68,7 +68,7 @@ struct HTTPRequestSnapshotHelper {
         request: URLRequest,
         resourceName: String? = nil,
         record: Bool = false,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         function: String = #function,
         line: UInt = #line
     ) {

@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers open class LinkMetadata: NSObject {
+@objcMembers
+open class LinkMetadata: NSObject {
 
     public let originalURLString: String
     public let permanentURL: URL?
@@ -31,19 +32,19 @@ import Foundation
 
     public init(originalURLString: String, permanentURLString: String, resolvedURLString: String, offset: Int) {
         self.originalURLString = originalURLString
-        permanentURL = URL(string: permanentURLString)
-        resolvedURL = URL(string: resolvedURLString)
-        characterOffsetInText = offset
+        self.permanentURL = URL(string: permanentURLString)
+        self.resolvedURL = URL(string: resolvedURLString)
+        self.characterOffsetInText = offset
         super.init()
     }
 
     public var isBlacklisted: Bool {
         if let permanentURL {
-            return PreviewBlacklist.isBlacklisted(permanentURL)
+            PreviewBlacklist.isBlacklisted(permanentURL)
         } else if let resolvedURL {
-            return PreviewBlacklist.isBlacklisted(resolvedURL)
+            PreviewBlacklist.isBlacklisted(resolvedURL)
         } else {
-            return false
+            false
         }
     }
 

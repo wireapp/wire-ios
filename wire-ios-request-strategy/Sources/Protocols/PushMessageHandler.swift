@@ -19,7 +19,8 @@
 import Foundation
 import WireDataModel
 
-@objc public protocol PushMessageHandler: NSObjectProtocol {
+@objc
+public protocol PushMessageHandler: NSObjectProtocol {
 
     /// Shows a notification for a failure to send
     ///

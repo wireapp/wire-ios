@@ -18,9 +18,9 @@
 
 import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
@@ -40,9 +40,13 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             self.mockApplicationStatus = MockApplicationStatus()
             self.mockApplicationStatus.mockSynchronizationState = .online
-            self.oneToOneconversationOnSync = syncMOC.object(with: self.oneToOneConversation.objectID) as? ZMConversation
+            self.oneToOneconversationOnSync = syncMOC
+                .object(with: self.oneToOneConversation.objectID) as? ZMConversation
 
-            self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
+            self.sut = LinkPreviewAssetDownloadRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: self.mockApplicationStatus
+            )
         }
         apiVersion = .v0
     }
@@ -60,11 +64,13 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    fileprivate func createLinkPreview(_ assetID: String,
-                                       _ assetDomain: String? = nil,
-                                       article: Bool = true,
-                                       otrKey: Data? = nil,
-                                       sha256: Data? = nil) -> LinkPreview {
+    fileprivate func createLinkPreview(
+        _ assetID: String,
+        _ assetDomain: String? = nil,
+        article: Bool = true,
+        otrKey: Data? = nil,
+        sha256: Data? = nil
+    ) -> LinkPreview {
         let URL = "http://www.example.com"
 
         if article {
@@ -80,7 +86,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             let asset = WireProtos.Asset.with {
                 $0.uploaded = remoteData
             }
-            let linkPreview = LinkPreview.with {
+            return LinkPreview.with {
                 $0.url = URL
                 $0.permanentURL = URL
                 $0.urlOffset = 42
@@ -88,9 +94,8 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                 $0.summary = "Summary"
                 $0.image = asset
             }
-            return linkPreview
         } else {
-            let linkPreview = LinkPreview.with {
+            return LinkPreview.with {
                 $0.url = URL
                 $0.permanentURL = URL
                 $0.urlOffset = 42
@@ -100,14 +105,16 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                     $0.username = "UserName"
                 }
             }
-
-            return linkPreview
         }
     }
 
     fileprivate func fireSyncCompletedNotification() {
         // ManagedObjectContextObserver does not process all changes until the sync is done
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil, userInfo: nil)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"),
+            object: nil,
+            userInfo: nil
+        )
     }
 }
 
@@ -118,9 +125,9 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     func testThatItGeneratesAnExpectedV3RequestForAWhitelistedMessageWithNoImageInCache() {
         // GIVEN
         let assetID = UUID.create().transportString()
-        let linkPreview = self.createLinkPreview(assetID)
+        let linkPreview = createLinkPreview(assetID)
         let nonce = UUID.create()
-        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        var text = Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil)
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
@@ -131,9 +138,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -156,9 +164,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -170,9 +179,9 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         apiVersion = .v1
         let assetID = UUID.create().transportString()
         let assetDomain = UUID().create().transportString()
-        let linkPreview = self.createLinkPreview(assetID, assetDomain)
+        let linkPreview = createLinkPreview(assetID, assetDomain)
         let nonce = UUID.create()
-        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        var text = Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil)
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
@@ -183,9 +192,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -210,9 +220,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -238,7 +249,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -260,7 +271,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -268,9 +279,9 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
     func testThatItDoesNotGenerateARequestForAMessageWithoutArticleLinkPreview() {
         let assetID = UUID.create().transportString()
-        let linkPreview = self.createLinkPreview(assetID, article: false)
+        let linkPreview = createLinkPreview(assetID, article: false)
         let nonce = UUID.create()
-        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        var text = Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil)
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
@@ -284,7 +295,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -302,7 +313,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: sha256)
         let nonce = UUID.create()
 
-        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        var text = Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil)
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
@@ -316,10 +327,17 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
-            let response = ZMTransportResponse(imageData: encrypted, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
+            let response = ZMTransportResponse(
+                imageData: encrypted,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: self.apiVersion.rawValue
+            )
 
             // WHEN
             request.complete(with: response)
@@ -328,7 +346,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             XCTAssertTrue(syncMOC.zm_fileAssetCache.hasEncryptedMediumImageData(for: message))
             XCTAssertFalse(syncMOC.zm_fileAssetCache.hasMediumImageData(for: message))
-            let decryptedData = syncMOC.zm_fileAssetCache.decryptedMediumImageData(for: message, encryptionKey: otrKey, sha256Digest: sha256)
+            let decryptedData = syncMOC.zm_fileAssetCache.decryptedMediumImageData(
+                for: message,
+                encryptionKey: otrKey,
+                sha256Digest: sha256
+            )
             XCTAssertEqual(decryptedData, data)
         }
     }
@@ -337,7 +359,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreview(assetID)
         let nonce = UUID.create()
-        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        var text = Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil)
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
@@ -350,10 +372,17 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
-            let response = ZMTransportResponse(imageData: .secureRandomData(length: 256), httpStatus: 400, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
+            let response = ZMTransportResponse(
+                imageData: .secureRandomData(length: 256),
+                httpStatus: 400,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: self.apiVersion.rawValue
+            )
             // WHEN
             request.complete(with: response)
         }

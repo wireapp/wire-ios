@@ -65,12 +65,12 @@ final class AuthenticatedRouter {
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
-        activeCallRouter = ActiveCallRouter(
+        self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
             userSession: userSession,
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
-        zClientControllerBuilder = .init(
+        self.zClientControllerBuilder = .init(
             account: account,
             userSession: userSession,
             trackingManager: trackingManager
@@ -80,7 +80,7 @@ final class AuthenticatedRouter {
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
-        featureChangeObserverToken = NotificationCenter.default.addObserver(
+        self.featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
@@ -88,7 +88,7 @@ final class AuthenticatedRouter {
             self?.notifyFeatureChange(notification)
         }
 
-        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+        self.revokedCertificateObserverToken = NotificationCenter.default.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
             object: nil,
             queue: .main
@@ -111,14 +111,19 @@ final class AuthenticatedRouter {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                                 acknowledger: featureRepositoryProvider.featureRepository,
-                                                                 actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change,
-                                                      acknowledger: featureRepositoryProvider.featureRepository)
+            ? UIAlertController.fromFeatureChangeWithActions(
+                change,
+                acknowledger: featureRepositoryProvider
+                    .featureRepository,
+                actionsHandler: featureChangeActionsHandler
+            )
+            : UIAlertController.fromFeatureChange(
+                change,
+                acknowledger: featureRepositoryProvider.featureRepository
+            )
         else { return }
 
-        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
@@ -150,13 +155,13 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case .conversation(let converation, let message):
+        case let .conversation(converation, message):
             _zClientViewController?.showConversation(converation, at: message)
-        case .connectionRequest(let userId):
+        case let .connectionRequest(userId):
             _zClientViewController?.showConnectionRequest(userId: userId)
         case .conversationList:
             _zClientViewController?.showConversationList()
-        case .userProfile(let user):
+        case let .userProfile(user):
             Task { @MainActor in
                 await _zClientViewController?.showUserProfile(user: user)
             }

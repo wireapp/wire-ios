@@ -17,8 +17,8 @@
 //
 
 import Photos
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     static var url: URL?
@@ -41,7 +41,7 @@ final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     static var image: UIImage?
 
     static func forAsset() -> MockAssetCreationRequest {
-        return MockAssetCreationRequest()
+        MockAssetCreationRequest()
     }
 
     func addResource(with type: PHAssetResourceType, data: Data, options: PHAssetResourceCreationOptions?) {
@@ -64,9 +64,9 @@ final class SavableImageTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        image = self.image(inTestBundleNamed: "transparent.png")
+        image = image(inTestBundleNamed: "transparent.png")
         imageData = image.imageData
-        gif = self.image(inTestBundleNamed: "animated.gif")
+        gif = image(inTestBundleNamed: "animated.gif")
         gifData = gif.imageData
     }
 

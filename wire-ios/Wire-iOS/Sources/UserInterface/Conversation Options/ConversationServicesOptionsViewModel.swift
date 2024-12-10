@@ -69,10 +69,11 @@ final class ConversationServicesOptionsViewModel {
             self?.updateRows()
         }
     }
+
     private func updateRows() {
         state.rows = [.allowServicesToggle(
-            get: { [unowned self] in return self.configuration.allowServices },
-            set: { [unowned self] in self.setAllowServices($0, sender: $1) }
+            get: { [unowned self] in return configuration.allowServices },
+            set: { [unowned self] in setAllowServices($0, sender: $1) }
         )]
     }
 
@@ -81,7 +82,8 @@ final class ConversationServicesOptionsViewModel {
     ///   - allowServices: new state AllowServices
     ///   - sender: the source view which triggers setAllowServices action
     /// - Returns: alert controller
-    @discardableResult func setAllowServices(
+    @discardableResult
+    func setAllowServices(
         _ allowServices: Bool,
         sender: UIView
     ) -> UIAlertController? {
@@ -93,13 +95,13 @@ final class ConversationServicesOptionsViewModel {
             configuration.setAllowServices(allowServices) { [weak self] result in
                 guard let self else { return }
                 item.cancel()
-                self.state.isLoading = false
+                state.isLoading = false
 
                 switch result {
                 case .success:
-                    self.updateRows()
-                case .failure(let error):
-                    self.delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
+                    updateRows()
+                case let .failure(error):
+                    delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }
@@ -108,7 +110,7 @@ final class ConversationServicesOptionsViewModel {
 
         // In case allow services mode should be deactivated & service in conversation, ask the delegate
         // to confirm this action as all services will be removed.
-        if !allowServices && configuration.areServicePresent {
+        if !allowServices, configuration.areServicePresent {
             // Make "remove services" warning only appear if services are present
             return delegate?.conversationServicesOptionsViewModel(
                 self,
@@ -119,7 +121,7 @@ final class ConversationServicesOptionsViewModel {
             ) { [weak self] remove in
                 guard let self else { return }
 
-                guard remove else { return self.updateRows() }
+                guard remove else { return updateRows() }
                 _setAllowServices()
             }
         } else {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
 import WireRequestStrategy
 import WireUtilities
@@ -25,6 +26,7 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
+    private var apiServiceFactory: APIServiceFactory?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -49,12 +51,13 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Initialize
 
-    init() { }
+    init() {}
 
     // MARK: - Build
 
     func build() -> ZMUserSession {
         guard
+            let apiServiceFactory,
             let appVersion,
             let appLock,
             let application,
@@ -85,6 +88,7 @@ struct ZMUserSessionBuilder {
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
+            apiServiceFactory: apiServiceFactory,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
@@ -108,6 +112,7 @@ struct ZMUserSessionBuilder {
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
+        apiServiceFactory: @escaping APIServiceFactory,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
@@ -188,10 +193,14 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             userID: userId
         )
-        let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
+        let recurringActionService = recurringActionService ?? RecurringActionService(
+            storage: sharedUserDefaults,
+            dateProvider: .system
+        )
 
         // setup builder
 
+        self.apiServiceFactory = apiServiceFactory
         self.appVersion = appVersion
         self.appLock = appLock
         self.application = application
@@ -200,11 +209,11 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
+        dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
-        self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
+        lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
         self.mediaManager = mediaManager
         self.mlsService = mlsService

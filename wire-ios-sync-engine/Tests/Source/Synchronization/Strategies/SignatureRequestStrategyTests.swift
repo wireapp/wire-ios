@@ -16,27 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class SignatureRequestStrategyTests: MessagingTest {
-     var sut: SignatureRequestStrategy!
-     var mockApplicationStatus: MockApplicationStatus!
+    var sut: SignatureRequestStrategy!
+    var mockApplicationStatus: MockApplicationStatus!
     var asset: WireProtos.Asset?
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         asset = randomAsset()
-        let signatureStatus = SignatureStatus(asset: asset,
-                                              data: Data(),
-                                              managedObjectContext: syncMOC)
+        let signatureStatus = SignatureStatus(
+            asset: asset,
+            data: Data(),
+            managedObjectContext: syncMOC
+        )
         signatureStatus.documentID = "documentId"
         syncMOC.performAndWait {
             syncMOC.signatureStatus = signatureStatus
         }
-        sut = SignatureRequestStrategy(withManagedObjectContext: syncMOC,
-                                       applicationStatus: mockApplicationStatus)
+        sut = SignatureRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -52,7 +56,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         syncMOC.performAndWait {
             syncMOC.signatureStatus?.state = .waitingForConsentURL
 
-        // when
+            // when
             request = sut.nextRequestIfAllowed(for: .v0)
         }
         // then
@@ -71,9 +75,16 @@ class SignatureRequestStrategyTests: MessagingTest {
     func testThatItGeneratesCorrectRequestIfStateIsWaitingForSignature() {
         // given
         let responseId = "123123"
-        let payload: [String: String] = ["consentURL": "http://test.com",
-                                          "responseId": responseId]
-        let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let payload: [String: String] = [
+            "consentURL": "http://test.com",
+            "responseId": responseId
+        ]
+        let successResponse = ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when user inserted correct OTP code
         var request: ZMTransportRequest?
@@ -91,9 +102,16 @@ class SignatureRequestStrategyTests: MessagingTest {
     func testThatItNotifiesSignatureStatusAfterSuccessfulResponseToReceiveConsentURL() {
         // given
         let responseId = "123123"
-        let payload: [String: String] = ["consentURL": "http://test.com",
-                                          "responseId": responseId]
-        let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let payload: [String: String] = [
+            "consentURL": "http://test.com",
+            "responseId": responseId
+        ]
+        let successResponse = ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         syncMOC.performAndWait {
@@ -108,9 +126,16 @@ class SignatureRequestStrategyTests: MessagingTest {
     func testThatItNotifiesSignatureStatusAfterSuccessfulResponseToReceiveSignature() {
         // given
         let documentId = "123123"
-        let payload: [String: String] = ["documentId": documentId,
-                                          "cms": "Test"]
-        let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let payload: [String: String] = [
+            "documentId": documentId,
+            "cms": "Test"
+        ]
+        let successResponse = ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         syncMOC.performAndWait {
@@ -124,7 +149,12 @@ class SignatureRequestStrategyTests: MessagingTest {
 
     func testThatItNotifiesSignatureStatusAfterFailedResponseToReceiveConsentURL() {
         // given
-        let successResponse = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let successResponse = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         syncMOC.performAndWait {
@@ -138,7 +168,12 @@ class SignatureRequestStrategyTests: MessagingTest {
 
     func testThatItNotifiesSignatureStatusAfterFailedResponseToReceiveSignature() {
         // given
-        let successResponse = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let successResponse = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         syncMOC.performAndWait {
@@ -152,18 +187,24 @@ class SignatureRequestStrategyTests: MessagingTest {
 
     private func randomAsset() -> WireProtos.Asset? {
         let imageMetaData = WireProtos.Asset.ImageMetaData(width: 30, height: 40)
-        let original = WireProtos.Asset.Original(withSize: 200,
-                                                 mimeType: "application/pdf",
-                                                 name: "PDF test",
-                                                 imageMetaData: imageMetaData)
-        let remoteData = WireProtos.Asset.RemoteData(withOTRKey: Data(),
-                                                     sha256: Data(),
-                                                     assetId: "id",
-                                                     assetToken: "token")
-        let preview = WireProtos.Asset.Preview(size: 200,
-                                               mimeType: "application/pdf",
-                                               remoteData: remoteData,
-                                               imageMetadata: imageMetaData)
+        let original = WireProtos.Asset.Original(
+            withSize: 200,
+            mimeType: "application/pdf",
+            name: "PDF test",
+            imageMetaData: imageMetaData
+        )
+        let remoteData = WireProtos.Asset.RemoteData(
+            withOTRKey: Data(),
+            sha256: Data(),
+            assetId: "id",
+            assetToken: "token"
+        )
+        let preview = WireProtos.Asset.Preview(
+            size: 200,
+            mimeType: "application/pdf",
+            remoteData: remoteData,
+            imageMetadata: imageMetaData
+        )
 
         return WireProtos.Asset(original: original, preview: preview)
     }

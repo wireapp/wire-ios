@@ -58,7 +58,7 @@ final class SearchUserViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         if let session = ZMUserSession.shared() {
-            searchDirectory = SearchDirectory(userSession: session)
+            self.searchDirectory = SearchDirectory(userSession: session)
         }
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -111,13 +111,12 @@ final class SearchUserViewController: UIViewController {
             return
         }
 
-        let profileUser: UserType?
-        if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
-            profileUser = searchUser
+        let profileUser: UserType? = if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {
+            searchUser
         } else if let memberUser = searchResult.teamMembers.first?.user, !memberUser.isAccountDeleted {
-            profileUser = memberUser
+            memberUser
         } else {
-            profileUser = nil
+            nil
         }
 
         if let profileUser {

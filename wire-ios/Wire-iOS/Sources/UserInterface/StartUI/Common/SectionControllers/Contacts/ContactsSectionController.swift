@@ -27,6 +27,7 @@ class ContactsSectionController: SearchSectionController {
             selection?.add(observer: self)
         }
     }
+
     var allowsSelection: Bool = false
     weak var delegate: SearchSectionControllerDelegate?
     weak var collectionView: UICollectionView?
@@ -44,26 +45,32 @@ class ContactsSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        return contacts.isEmpty
+        contacts.isEmpty
     }
 
     var title: String = ""
 
     override var sectionTitle: String {
-        return title
+        title
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return "label.search.participants"
+        "label.search.participants"
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return contacts.count
+        contacts.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = contacts[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,
@@ -78,8 +85,8 @@ class ContactsSectionController: SearchSectionController {
         if allowsSelection {
             typealias CreateConversation = L10n.Accessibility.CreateConversation
             cell.accessibilityHint = cell.isSelected
-                                    ? CreateConversation.SelectedUser.hint
-                                    : CreateConversation.UnselectedUser.hint
+                ? CreateConversation.SelectedUser.hint
+                : CreateConversation.UnselectedUser.hint
         }
 
         let selected = selection?.users.contains(user) ?? false
@@ -93,7 +100,7 @@ class ContactsSectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return !(selection?.hasReachedLimit ?? false)
+        !(selection?.hasReachedLimit ?? false)
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

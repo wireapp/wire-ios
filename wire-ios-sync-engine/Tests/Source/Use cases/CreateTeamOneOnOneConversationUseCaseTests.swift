@@ -18,9 +18,9 @@
 
 import WireDataModelSupport
 import WireRequestStrategySupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
@@ -34,7 +34,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
     private var service: MockConversationServiceInterface!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {
@@ -65,7 +65,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
     // MARK: - Helpers
 
     private func createTeamWithAnotherUser() async throws -> ZMUser {
-        return try await syncContext.perform {
+        try await syncContext.perform {
             let (_, _, otherUsers) = self.modelHelper.createSelfTeam(
                 numberOfUsers: 1,
                 in: self.syncContext
@@ -140,7 +140,7 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 
         // Mock: migrator returns id of the created mls one on one.
         migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in
-            return groupID
+            groupID
         }
 
         // When

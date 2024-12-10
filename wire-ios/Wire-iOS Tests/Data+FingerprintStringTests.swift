@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class Data_FingerprintStringTestsTests: XCTestCase {
 
@@ -28,6 +28,9 @@ final class Data_FingerprintStringTestsTests: XCTestCase {
 
         // WHEN & THEN
 
-        XCTAssertEqual(sut?.fingerprintString, "10 20 30 40 50 60 70 80 90 a0 b0 c0 d0 e0 f0 70 80 90 10 20 30 40 50 60 70 80 90")
+        XCTAssertEqual(
+            sut?.fingerprintString,
+            "10 20 30 40 50 60 70 80 90 a0 b0 c0 d0 e0 f0 70 80 90 10 20 30 40 50 60 70 80 90"
+        )
     }
 }

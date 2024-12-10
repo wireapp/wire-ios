@@ -18,6 +18,7 @@
 
 import Foundation
 import os.log
+import WireLogging
 import ZipArchive
 
 /// Represents an entry to be logged.
@@ -47,7 +48,7 @@ public final class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public final class ZMSLog: NSObject {
+public final class ZMSLog: NSObject, Sendable {
 
     public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
@@ -66,7 +67,8 @@ public final class ZMSLog: NSObject {
     /// Log observers
     fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
 
-    @objc public init(tag: String) {
+    @objc
+    public init(tag: String) {
         self.tag = tag
         logQueue.sync {
             ZMSLog.register(tag: tag)
@@ -90,33 +92,34 @@ public extension ZMSLog {
         _ message: @autoclosure () -> SanitizedString,
         level: ZMLogLevel = .info,
         osLogOn: Bool = true,
-        file: String = #file,
+        file: String = #fileID,
         line: UInt = #line
     ) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
         ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
-    func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    func error(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.error, message: message(), tag: tag, file: file, line: line)
     }
 
-    func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    func warn(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.warn, message: message(), tag: tag, file: file, line: line)
     }
 
-    func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    func info(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.info, message: message(), tag: tag, file: file, line: line)
     }
 
-    func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    func debug(_ message: @autoclosure () -> String, file: String = #fileID, line: UInt = #line) {
         ZMSLog.logWithLevel(.debug, message: message(), tag: tag, file: file, line: line)
     }
 }
 
 // MARK: - Conditional execution
 
-// These let us run code only if the log level is set correspondingly. That can be usefull when creating the logging is expensive.
+// These let us run code only if the log level is set correspondingly. That can be usefull when creating the logging is
+// expensive.
 //
 // zmLog.ifError {
 //     // do expensive calculation of 'foo' here
@@ -159,7 +162,7 @@ public final class LogHookToken: NSObject {
     fileprivate let token: UUID
 
     override init() {
-        token = UUID()
+        self.token = UUID()
         super.init()
     }
 }
@@ -183,7 +186,8 @@ public extension ZMSLog {
     // MARK: - Rich Hooks
 
     /// Adds a log hook
-    @objc static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc
+    static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         var token: LogHookToken! = nil
         logQueue.sync {
             token = self.nonLockingAddEntryHook(logHook: logHook)
@@ -192,21 +196,24 @@ public extension ZMSLog {
     }
 
     /// Adds a log hook without locking
-    @objc static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc
+    static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         let token = LogHookToken()
         logHooks[token.token] = logHook
         return token
     }
 
     /// Remove a log hook
-    @objc static func removeLogHook(token: LogHookToken) {
+    @objc
+    static func removeLogHook(token: LogHookToken) {
         logQueue.sync {
             _ = self.logHooks.removeValue(forKey: token.token)
         }
     }
 
     /// Remove all log hooks
-    @objc static func removeAllLogHooks() {
+    @objc
+    static func removeAllLogHooks() {
         logQueue.sync {
             self.logHooks = [:]
         }
@@ -217,7 +224,14 @@ public extension ZMSLog {
 
 extension ZMSLog {
 
-    @objc public static func logWithLevel(_ level: ZMLogLevel, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
+    @objc
+    public static func logWithLevel(
+        _ level: ZMLogLevel,
+        message: @autoclosure () -> String,
+        tag: String?,
+        file: String = #fileID,
+        line: UInt = #line
+    ) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }
@@ -228,7 +242,7 @@ extension ZMSLog {
         isSafe: Bool,
         tag: String?,
         osLogOn: Bool = true,
-        file: String = #file,
+        file: String = #fileID,
         line: UInt = #line
     ) {
         logQueue.async {
@@ -279,7 +293,8 @@ public extension ZMSLog {
             cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
         }
 
-    @objc static func clearLogs() {
+    @objc
+    static func clearLogs() {
         guard let currentLogURL else { return }
 
         logQueue.async {
@@ -299,7 +314,8 @@ public extension ZMSLog {
         }
     }
 
-    @objc static func switchCurrentLogToPrevious() {
+    @objc
+    static func switchCurrentLogToPrevious() {
         guard let currentLogURL else { return }
 
         logQueue.async {

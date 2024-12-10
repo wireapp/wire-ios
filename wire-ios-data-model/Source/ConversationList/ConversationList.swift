@@ -55,12 +55,12 @@ public final class ConversationList: NSObject {
     ) {
         self.filteringPredicate = filteringPredicate
         self.managedObjectContext = managedObjectContext
-        identifier = description
+        self.identifier = description
         self.label = label
-        sortDescriptors = ZMConversation.defaultSortDescriptors()!
+        self.sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
-        conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
+        self.conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
+        self.items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
 
         super.init()
 
@@ -110,7 +110,12 @@ public final class ConversationList: NSObject {
     }
 
     private func sortInsertConversation(_ conversation: ZMConversation) {
-        let index = (items as NSArray).index(of: conversation, inSortedRange: NSRange(location: 0, length: items.count), options: .insertionIndex, usingComparator: comparator)
+        let index = (items as NSArray).index(
+            of: conversation,
+            inSortedRange: NSRange(location: 0, length: items.count),
+            options: .insertionIndex,
+            usingComparator: comparator
+        )
         items.insert(conversation, at: index)
     }
 
@@ -120,9 +125,9 @@ public final class ConversationList: NSObject {
             let c0 = $0 as! ZMConversation
             let c1 = $1 as! ZMConversation
 
-            if c0.conversationListIndicator == .activeCall && c1.conversationListIndicator != .activeCall {
+            if c0.conversationListIndicator == .activeCall, c1.conversationListIndicator != .activeCall {
                 return .orderedAscending
-            } else if c1.conversationListIndicator == .activeCall && c0.conversationListIndicator != .activeCall {
+            } else if c1.conversationListIndicator == .activeCall, c0.conversationListIndicator != .activeCall {
                 return .orderedDescending
             }
 

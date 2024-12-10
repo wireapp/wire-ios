@@ -25,6 +25,10 @@ public protocol AnalyticsServiceProtocol: AnalyticsEventTracker {
 
     var isTrackingEnabled: Bool { get }
 
+    /// Whether tracking can be enabled.
+
+    var canEnableTracking: Bool { get }
+
     /// Start sending analytics data.
 
     func enableTracking() async throws

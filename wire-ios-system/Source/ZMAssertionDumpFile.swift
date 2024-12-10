@@ -22,7 +22,7 @@ import Foundation
 public final class AssertionDumpFile: NSObject {
 
     @available(*, unavailable)
-    override public init() {
+    public override init() {
         fatalError()
     }
 

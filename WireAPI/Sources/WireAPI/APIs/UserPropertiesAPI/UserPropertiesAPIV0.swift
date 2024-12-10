@@ -33,7 +33,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     var areTypingIndicatorsEnabled: Bool {
         get async throws {
             let result = try await getProperty(forKey: .wireTypingIndicatorMode)
-            guard case .areTypingIndicatorsEnabled(let isEnabled) = result else {
+            guard case let .areTypingIndicatorsEnabled(isEnabled) = result else {
                 throw UserPropertiesAPIError.invalidKey
             }
 
@@ -44,7 +44,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     var areReadReceiptsEnabled: Bool {
         get async throws {
             let result = try await getProperty(forKey: .wireReceiptMode)
-            guard case .areReadReceiptsEnabled(let isEnabled) = result else {
+            guard case let .areReadReceiptsEnabled(isEnabled) = result else {
                 throw UserPropertiesAPIError.invalidKey
             }
 
@@ -55,7 +55,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     func getLabels() async throws -> [ConversationLabel] {
         let result = try await getProperty(forKey: .labels)
 
-        guard case .conversationLabels(let labels) = result else {
+        guard case let .conversationLabels(labels) = result else {
             throw UserPropertiesAPIError.invalidKey
         }
 
@@ -140,7 +140,7 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
             )
         }
 
-        value = .conversationLabels(conversationLabels)
+        self.value = .conversationLabels(conversationLabels)
     }
 }
 

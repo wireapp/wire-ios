@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class CoreDataMessagingMigrationVersionTests: XCTestCase {
 
@@ -26,6 +26,9 @@ final class CoreDataMessagingMigrationVersionTests: XCTestCase {
         let migrationVersion = CoreDataMessagingMigrationVersion.allCases.first { version in
             version.dataModelVersion == currentModelVersion
         }
-        XCTAssertNotNil(migrationVersion, "if you added a new model, you MUST add the case in the enum. and update the nextVersion method")
+        XCTAssertNotNil(
+            migrationVersion,
+            "if you added a new model, you MUST add the case in the enum. and update the nextVersion method"
+        )
     }
 }

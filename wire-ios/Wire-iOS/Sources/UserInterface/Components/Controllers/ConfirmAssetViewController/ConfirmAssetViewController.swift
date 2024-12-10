@@ -29,7 +29,7 @@ final class ConfirmAssetViewController: UIViewController {
         case video(url: URL)
     }
 
-    typealias Confirm = ((_ editedImage: UIImage?) -> Void)
+    typealias Confirm = (_ editedImage: UIImage?) -> Void
     struct Context {
         let asset: Asset
         let onConfirm: Confirm?
@@ -43,7 +43,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     var asset: Asset {
-        return context.asset
+        context.asset
     }
 
     let context: Context
@@ -61,11 +61,13 @@ final class ConfirmAssetViewController: UIViewController {
     private var imageToolbarViewInsideImage: ImageToolbarView?
     private var imageToolbarView: ImageToolbarView?
 
-    private let topPanel: UIView = UIView()
-    private let titleLabel: DynamicFontLabel = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                                                color: SemanticColors.Label.textDefault)
-    private let bottomPanel: UIView = UIView()
-    private let confirmButtonsStack: UIStackView = UIStackView()
+    private let topPanel: UIView = .init()
+    private let titleLabel: DynamicFontLabel = .init(
+        fontSpec: .headerSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+    private let bottomPanel: UIView = .init()
+    private let confirmButtonsStack: UIStackView = .init()
     private let acceptImageButton = ZMButton(
         style: .accentColorTextButtonStyle,
         cornerRadius: 16,
@@ -76,8 +78,8 @@ final class ConfirmAssetViewController: UIViewController {
         cornerRadius: 16,
         fontSpec: .buttonBigSemibold
     )
-    private let contentLayoutGuide: UILayoutGuide = UILayoutGuide()
-    private let imageToolbarSeparatorView: UIView = UIView()
+    private let contentLayoutGuide: UILayoutGuide = .init()
+    private let imageToolbarSeparatorView: UIView = .init()
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
@@ -97,9 +99,9 @@ final class ConfirmAssetViewController: UIViewController {
         super.viewDidLoad()
 
         switch asset {
-        case .image(let mediaAsset):
+        case let .image(mediaAsset):
             createPreviewPanel(image: mediaAsset)
-        case .video(let url):
+        case let .video(url):
             createVideoPanel(videoURL: url)
         }
 
@@ -112,10 +114,11 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     // MARK: - View Creation
+
     private func createContentLayoutGuide() {
         view.addLayoutGuide(contentLayoutGuide)
     }
@@ -141,19 +144,19 @@ final class ConfirmAssetViewController: UIViewController {
     /// Show editing options only if the image is not animated
     var showEditingOptions: Bool {
         switch asset {
-        case .image(let mediaAsset):
-            return mediaAsset is UIImage
+        case let .image(mediaAsset):
+            mediaAsset is UIImage
         case .video:
-            return false
+            false
         }
     }
 
     private var imageToolbarFitsInsideImage: Bool {
         switch asset {
-        case .image(let image):
-            return image.size.width > 192 && image.size.height > 96
+        case let .image(image):
+            image.size.width > 192 && image.size.height > 96
         case .video:
-            return false
+            false
         }
     }
 
@@ -172,8 +175,8 @@ final class ConfirmAssetViewController: UIViewController {
 
     /// open canvas screen if the image is sketchable(e.g. not an animated GIF)
     private func openSketch(in editMode: CanvasViewControllerEditMode) {
-        guard case .image(let mediaAsset) = asset,
-            let image = mediaAsset as? UIImage else {
+        guard case let .image(mediaAsset) = asset,
+              let image = mediaAsset as? UIImage else {
             return
         }
 
@@ -189,6 +192,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     // MARK: - View Creation
+
     private func createPreviewPanel(image: MediaAsset) {
         let imagePreviewView = FLAnimatedImageView()
 
@@ -198,11 +202,19 @@ final class ConfirmAssetViewController: UIViewController {
 
         imagePreviewView.mediaAsset = image
 
-        if showEditingOptions && imageToolbarFitsInsideImage {
+        if showEditingOptions, imageToolbarFitsInsideImage {
             let imageToolbarViewInsideImage = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarViewInsideImage.isPlacedOnImage = true
-            imageToolbarViewInsideImage.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
-            imageToolbarViewInsideImage.emojiButton.addTarget(self, action: #selector(emojiEdit(_:)), for: .touchUpInside)
+            imageToolbarViewInsideImage.sketchButton.addTarget(
+                self,
+                action: #selector(sketchEdit(_:)),
+                for: .touchUpInside
+            )
+            imageToolbarViewInsideImage.emojiButton.addTarget(
+                self,
+                action: #selector(emojiEdit(_:)),
+                for: .touchUpInside
+            )
             imagePreviewView.addSubview(imageToolbarViewInsideImage)
 
             self.imageToolbarViewInsideImage = imageToolbarViewInsideImage
@@ -214,7 +226,7 @@ final class ConfirmAssetViewController: UIViewController {
     private func createBottomPanel() {
         view.addSubview(bottomPanel)
 
-        if showEditingOptions && !imageToolbarFitsInsideImage {
+        if showEditingOptions, !imageToolbarFitsInsideImage {
             let imageToolbarView = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarView.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
             imageToolbarView.emojiButton.addTarget(self, action: #selector(emojiEdit(_:)), for: .touchUpInside)
@@ -242,6 +254,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     @objc
     private func acceptImage(_ sender: Any?) {
         context.onConfirm?(nil)
@@ -343,35 +356,44 @@ final class ConfirmAssetViewController: UIViewController {
 
         switch asset {
         // Preview Image
-        case .image(let mediaAsset):
+        case let .image(mediaAsset):
             let imageSize: CGSize = mediaAsset.size
 
             if let imagePreviewView {
 
-            constraints += [
-                // dimension
-                imagePreviewView.heightAnchor.constraint(equalTo: imagePreviewView.widthAnchor, multiplier: imageSize.height / imageSize.width),
-
-                // centering
-                imagePreviewView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
-                imagePreviewView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
-
-                // limits
-                imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
-                imagePreviewView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor, constant: margin),
-                imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
-                imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin)
-            ]
-
-            // Image Toolbar Inside Image
-            if let imageToolbarViewInsideImage {
                 constraints += [
-                    imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
-                    imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),
-                    imageToolbarViewInsideImage.bottomAnchor.constraint(equalTo: imagePreviewView.bottomAnchor),
-                    imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48)
+                    // dimension
+                    imagePreviewView.heightAnchor.constraint(
+                        equalTo: imagePreviewView.widthAnchor,
+                        multiplier: imageSize.height / imageSize.width
+                    ),
+
+                    // centering
+                    imagePreviewView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
+                    imagePreviewView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
+
+                    // limits
+                    imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
+                    imagePreviewView.topAnchor.constraint(
+                        greaterThanOrEqualTo: contentLayoutGuide.topAnchor,
+                        constant: margin
+                    ),
+                    imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
+                    imagePreviewView.bottomAnchor.constraint(
+                        lessThanOrEqualTo: contentLayoutGuide.bottomAnchor,
+                        constant: -margin
+                    )
                 ]
-            }
+
+                // Image Toolbar Inside Image
+                if let imageToolbarViewInsideImage {
+                    constraints += [
+                        imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
+                        imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),
+                        imageToolbarViewInsideImage.bottomAnchor.constraint(equalTo: imagePreviewView.bottomAnchor),
+                        imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48)
+                    ]
+                }
             }
         // Player View
         case .video:

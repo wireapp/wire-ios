@@ -22,7 +22,7 @@ public extension Conversation {
 
     /// Represents a conversation's member.
 
-    struct Member: Equatable, Codable {
+    struct Member: Equatable, Codable, Sendable {
 
         public let qualifiedID: QualifiedID?
         public let id: UUID?

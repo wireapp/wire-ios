@@ -56,7 +56,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
 
     func testInvoke_enables_and_switches_user_via_service() async throws {
         // Mock
-        service.enableTracking_MockMethod = { }
+        service.enableTracking_MockMethod = {}
         service.switchUser_MockMethod = { _ in }
 
         // Given

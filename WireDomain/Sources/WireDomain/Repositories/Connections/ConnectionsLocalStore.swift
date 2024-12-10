@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
-import Foundation
-import WireAPI
 import WireDataModel
 
-protocol ConnectionsLocalStoreProtocol {
+// sourcery: AutoMockable
+public protocol ConnectionsLocalStoreProtocol {
+
+    /// Save connection and related objects to local storage.
+    /// - Parameter connectionInfo: connection object
 
     func storeConnection(
-        _ connectionPayload: Connection
+        _ connectionInfo: ConnectionInfo
     ) async throws
 }
 
@@ -44,15 +45,12 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
     // MARK: - Public
 
-    /// Save connection and related objects to local storage.
-    /// - Parameter connectionPayload: connection object from WireAPI
-
-    public func storeConnection(_ connectionPayload: Connection) async throws {
+    public func storeConnection(_ connectionInfo: ConnectionInfo) async throws {
         try await context.perform { [self] in
 
-            let connection = try storedConnection(from: connectionPayload)
+            let connection = try storedConnection(from: connectionInfo)
 
-            let conversation = try storedConversation(from: connectionPayload, with: connection)
+            let conversation = try storedConversation(from: connectionInfo, with: connection)
 
             connection.to.oneOnOneConversation = conversation
 
@@ -66,7 +64,10 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     ///   - storedConnection: ZMConnection object stored locally
     /// - Returns: conversation object stored locally
 
-    private func storedConversation(from connection: Connection, with storedConnection: ZMConnection) throws -> ZMConversation {
+    private func storedConversation(
+        from connection: ConnectionInfo,
+        with storedConnection: ZMConnection
+    ) throws -> ZMConversation {
         guard let conversationID = connection.conversationID ?? connection.qualifiedConversationID?.uuid else {
             throw ConnectionsRepositoryError.missingConversationId
         }
@@ -87,7 +88,9 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     /// - Parameter connection: connection payload from WireAPI
     /// - Returns: connection object stored locally
 
-    private func storedConnection(from connection: Connection) throws -> ZMConnection {
+    private func storedConnection(
+        from connection: ConnectionInfo
+    ) throws -> ZMConnection {
         guard let userID = connection.receiverID ?? connection.receiverQualifiedID?.uuid else {
             throw ConnectionsRepositoryError.missingReceiverId
         }
@@ -98,7 +101,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             in: context
         )
 
-        storedConnection.status = connection.status.toDomainModel()
+        storedConnection.status = connection.status
         storedConnection.lastUpdateDateInGMT = connection.lastUpdate
         return storedConnection
     }

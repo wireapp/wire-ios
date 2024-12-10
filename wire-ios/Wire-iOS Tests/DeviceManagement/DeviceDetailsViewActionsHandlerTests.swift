@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngineSupport
 import XCTest
+@testable import Wire
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -94,7 +94,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         )
         let testFingerPrint = String.randomAlphanumerical(length: 16)
         mockGetProteusFingerprint.invokeUserClient_MockMethod = { _ in
-            return testFingerPrint.data(using: .utf8)
+            testFingerPrint.data(using: .utf8)
         }
         let fingerPrint = await deviceActionHandler.getProteusFingerPrint()
         XCTAssertEqual(fingerPrint, testFingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased())
@@ -111,7 +111,7 @@ extension E2eIdentityCertificate {
         expiryDate: Date = .now,
         sertialNumber: String = .mockSerialNumber
     ) -> E2eIdentityCertificate {
-        return .init(
+        .init(
             clientId: "sdjksksd",
             certificateDetails: certificateDetails,
             mlsThumbprint: .mockMlsThumbprint,

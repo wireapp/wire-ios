@@ -21,51 +21,52 @@ import WireDataModel
 import WireSyncEngine
 
 enum NotificationResult: CaseIterable {
-    case everything, mentionsAndReplies, nothing, cancel
+    case everything
+    case mentionsAndReplies
+    case nothing
+    case cancel
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
+        L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
     }
 
     var mutedMessageTypes: MutedMessageTypes? {
         switch self {
         case .everything:
-            return MutedMessageTypes.none
+            MutedMessageTypes.none
         case .mentionsAndReplies:
-            return .regular
+            .regular
         case .nothing:
-            return .all
+            .all
         case .cancel:
-            return nil
+            nil
         }
     }
 
     var title: String {
         switch self {
-        case .everything: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
-        case .mentionsAndReplies: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
-        case .nothing: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
-        case .cancel: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonCancel
+        case .everything: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .mentionsAndReplies: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .nothing: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
+        case .cancel: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonCancel
         }
     }
 
     private var style: UIAlertAction.Style {
         switch self {
-        case .cancel: return .cancel
-        default: return .default
+        case .cancel: .cancel
+        default: .default
         }
     }
 
     func action(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) -> UIAlertAction {
-        let checkmarkText: String
-
-        if let mutedMessageTypes = self.mutedMessageTypes, conversation.mutedMessageTypes == mutedMessageTypes {
-            checkmarkText = " ✓"
+        let checkmarkText = if let mutedMessageTypes, conversation.mutedMessageTypes == mutedMessageTypes {
+            " ✓"
         } else {
-            checkmarkText = ""
+            ""
         }
 
-        let title = self.title + checkmarkText
+        let title = title + checkmarkText
         return .init(title: title, style: style, handler: { _ in handler(self) })
     }
 }

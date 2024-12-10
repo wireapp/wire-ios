@@ -25,7 +25,7 @@ private struct LegalHoldParticipantsSectionViewModel {
 
     var sectionAccesibilityIdentifier = "label.groupdetails.participants"
     var sectionTitle: String {
-        return L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
+        L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
     }
 
     init(participants: [UserType]) {
@@ -44,7 +44,10 @@ typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
 private extension ConversationLike {
     func createViewModel() -> LegalHoldParticipantsSectionViewModel {
-        return LegalHoldParticipantsSectionViewModel(participants: sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
+        LegalHoldParticipantsSectionViewModel(
+            participants: sortedActiveParticipantsUserTypes
+                .filter(\.isUnderLegalHold)
+        )
     }
 }
 
@@ -58,12 +61,12 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
     init(conversation: LegalHoldDetailsConversation) {
-        viewModel = conversation.createViewModel()
+        self.viewModel = conversation.createViewModel()
         self.conversation = conversation
         super.init()
 
         if let userSession = ZMUserSession.shared() {
-            token = UserChangeInfo.add(userObserver: self, in: userSession)
+            self.token = UserChangeInfo.add(userObserver: self, in: userSession)
         }
     }
 
@@ -74,20 +77,26 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     }
 
     override var sectionTitle: String {
-        return viewModel.sectionTitle
+        viewModel.sectionTitle
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccesibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.participants.count
+        viewModel.participants.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let participant = viewModel.participants[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
@@ -118,7 +127,8 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }
+        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged
+        else { return }
 
         viewModel = conversation.createViewModel()
         collectionView?.reloadData()

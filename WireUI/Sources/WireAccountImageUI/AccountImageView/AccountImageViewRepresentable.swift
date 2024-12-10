@@ -95,7 +95,11 @@ public extension View {
     }
 
     func availabilityIndicatorBackgroundViewColor(_ backgroundViewColor: UIColor) -> some View {
-        modifier(AvailabilityIndicatorBackgroundColorViewModifier(availabilityIndicatorBackgroundViewColor: backgroundViewColor))
+        modifier(
+            AvailabilityIndicatorBackgroundColorViewModifier(
+                availabilityIndicatorBackgroundViewColor: backgroundViewColor
+            )
+        )
     }
 }
 

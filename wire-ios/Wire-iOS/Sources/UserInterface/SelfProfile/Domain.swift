@@ -34,9 +34,9 @@ extension String {
     var domainType: DomainType {
         switch self {
         case "wire.com", "staging.zinfra.io":
-            return .publicDomain
+            .publicDomain
         default:
-            return .privateDomain
+            .privateDomain
         }
     }
 }

@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFolderPickerUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -45,10 +47,15 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         accountImageView?.accessibilityIdentifier = "account_profile_image_view"
 
         if let userName = viewModel.userSession.selfUser.name {
-            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(userName)
+            accountImageView?.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+                .accessibilityValue(userName)
         } else {
             accountImageView?.accessibilityValue = .none
         }
+    }
+
+    func conversationListViewControllerViewModelDidReloadContent(_ viewModel: ViewModel) {
+        configureEmptyPlaceholder()
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
@@ -141,6 +148,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Groups.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+        case (.expanded, .folder):
+            L10n.Localizable.ConversationList.Filter.Folders.title
         case (.collapsed, _):
             L10n.Localizable.List.title
         }
@@ -159,19 +168,24 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let newConversationButton = UIButton(primaryAction: newConversationAction)
         let startConversationItem = UIBarButtonItem(customView: newConversationButton)
         startConversationItem.accessibilityIdentifier = "create_group_or_search_button"
-        startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
+        startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
+            .description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
-        let defaultFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: symbolConfiguration)!
-        let filledFilterImage = UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: symbolConfiguration)!
+        let defaultFilterImage = UIImage(
+            systemName: "line.3.horizontal.decrease.circle",
+            withConfiguration: symbolConfiguration
+        )!
+        let filledFilterImage = UIImage(
+            systemName: "line.3.horizontal.decrease.circle.fill",
+            withConfiguration: symbolConfiguration
+        )!
 
-        var selectedFilterImage: UIImage
-
-        switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneOnOne:
-            selectedFilterImage = filledFilterImage
+        let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
+        case .favorites, .groups, .oneOnOne, .folder:
+            filledFilterImage
         case .none:
-            selectedFilterImage = defaultFilterImage
+            defaultFilterImage
         }
 
         // Define the menu actions with initial states
@@ -197,13 +211,18 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter == .oneOnOne
         )
 
+        let foldersAction = createFolderFilterAction(
+            isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
+        )
+
         // Create the menu
         let filterMenu = UIMenu(
             children: [
                 allConversationsAction,
                 favoritesAction,
                 groupsAction,
-                oneToOneConversationsAction
+                oneToOneConversationsAction,
+                foldersAction
             ]
         )
 
@@ -227,15 +246,26 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         newConversationBarButton.accessibilityIdentifier = "create_group_or_search_button"
-        newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton.description
-        newConversationBarButton.addTarget(self, action: #selector(presentCreateConversationUI), for: .primaryActionTriggered)
+        newConversationBarButton.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
+            .description
+        newConversationBarButton.addTarget(
+            self,
+            action: #selector(presentCreateConversationUI),
+            for: .primaryActionTriggered
+        )
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
         newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         newConversationBarButton.layer.borderWidth = 1
-        newConversationBarButton.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        newConversationBarButton.setBorderColor(
+            SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection),
+            for: .normal
+        )
         newConversationBarButton.layer.cornerRadius = 12
         newConversationBarButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
-        newConversationBarButton.bounds.size = newConversationBarButton.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
+        newConversationBarButton.bounds.size = newConversationBarButton.systemLayoutSizeFitting(CGSize(
+            width: .max,
+            height: 32
+        ))
 
         navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: newConversationBarButton)]
     }
@@ -279,17 +309,23 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         switch filter {
         case .favorites:
-            return isSelected ? accessibilityLocale.Favorites.Selected.description : accessibilityLocale.Favorites.description
+            return isSelected ? accessibilityLocale.Favorites.Selected.description : accessibilityLocale.Favorites
+                .description
 
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
         case .oneOnOne:
-            return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
+            return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne
+                .description
+
+        case .folder:
+            return isSelected ? accessibilityLocale.Folders.Selected.description : accessibilityLocale.Folders
+                .description
 
         case .none:
-            return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale.AllConversations.description
-
+            return isSelected ? accessibilityLocale.AllConversations.Selected.description : accessibilityLocale
+                .AllConversations.description
         }
     }
 
@@ -305,16 +341,21 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     @objc
     private func presentProfile() {
         Task {
-            let selfProfileUI = UINavigationController(rootViewController: selfProfileViewControllerBuilder.build())
+            let selfProfileUI = UINavigationController(
+                rootViewController: selfProfileViewControllerBuilder.build(mainCoordinator: mainCoordinator)
+            )
             selfProfileUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(selfProfileUI)
         }
     }
 
     @objc
-    private func presentCreateConversationUI() {
+    func presentCreateConversationUI() {
         Task {
-            let createConversationUI = UINavigationController(rootViewController: createGroupConversationUIBuilder.build())
+            let createConversationUI = UINavigationController(
+                rootViewController: createGroupConversationUIBuilder
+                    .build()
+            )
             createConversationUI.modalPresentationStyle = .formSheet
             await mainCoordinator.presentViewController(createConversationUI)
         }
@@ -342,7 +383,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             imageViewContainer.widthAnchor.constraint(equalTo: imageViewContainer.heightAnchor),
 
             imageView.centerXAnchor.constraint(equalTo: imageViewContainer.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor)])
+            imageView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor)
+        ])
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentLegalHoldInfo))
         imageViewContainer.addGestureRecognizer(tapGestureRecognizer)
@@ -394,5 +436,40 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         }
 
         ZClientViewController.shared?.legalHoldDisclosureController?.discloseCurrentState(cause: .userAction)
+    }
+
+    // MARK: Folder Picker
+
+    private func createFolderFilterAction(isSelected: Bool) -> UIAction {
+        let action = UIAction(
+            title: L10n.Localizable.ConversationList.Filter.Folders.title,
+            image: FilterButtonStyleHelper.makeActionImage(
+                named: FilterImageName.folder.rawValue,
+                isSelected: isSelected
+            )
+        ) { [weak mainCoordinator, weak self] _ in
+            guard let self, let mainCoordinator else { return }
+
+            Task { @MainActor [folderPickerViewControllerBuilder] in
+                let viewController = folderPickerViewControllerBuilder.build(
+                    mainCoordinator: mainCoordinator,
+                    showCloseButton: true
+                )
+                if let sheet = viewController.sheetPresentationController {
+                    sheet.detents = [.medium(), .large()]
+                    sheet.prefersGrabberVisible = true
+                }
+
+                await mainCoordinator.presentViewController(viewController)
+            }
+        }
+
+        action.accessibilityLabel = if isSelected {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.Selected.description
+        } else {
+            L10n.Accessibility.ConversationsList.FilterMenuOptions.Folders.description
+        }
+
+        return action
     }
 }

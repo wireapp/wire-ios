@@ -23,9 +23,10 @@ import WireDataModel
 import WireDesign
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
-
-    func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
-
+    func locationSelectionViewController(
+        _ viewController: LocationSelectionViewController,
+        didSelectLocationWithData locationData: LocationData
+    )
     func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 }
 
@@ -61,7 +62,6 @@ final class LocationSelectionViewController: UIViewController {
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
     private let mapViewController = MapViewController()
-    private let toolBar = ModalTopBar()
     private let geocoder = CLGeocoder()
     private let sendViewController = LocationSendViewController()
     private var userShowedInitially = false
@@ -79,11 +79,21 @@ final class LocationSelectionViewController: UIViewController {
         super.viewDidLoad()
 
         mapViewController.delegate = self
-        toolBar.delegate = self
         sendViewController.delegate = self
 
         configureViews()
         createConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        setupNavigationBarTitle(title ?? "")
+        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -112,7 +122,6 @@ final class LocationSelectionViewController: UIViewController {
 
         view.addSubview(mapViewController.view)
         view.addSubview(sendViewController.view)
-        view.addSubview(toolBar)
         view.addSubview(locationButton)
 
         let action = UIAction { [weak self] _ in
@@ -120,14 +129,12 @@ final class LocationSelectionViewController: UIViewController {
         }
 
         locationButton.addAction(action, for: .touchUpInside)
-
-        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
     }
 
     private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapViewController.view, sendController, toolBar, locationButton].forEach {
+        [mapViewController.view, sendController, locationButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -145,11 +152,14 @@ final class LocationSelectionViewController: UIViewController {
             sendController.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sendController.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sendController.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            toolBar.topAnchor.constraint(equalTo: view.topAnchor),
-            toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.locationButtonLeadingOffset),
-            locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: LayoutConstants.locationButtonBottomOffset),
+            locationButton.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: LayoutConstants.locationButtonLeadingOffset
+            ),
+            locationButton.bottomAnchor.constraint(
+                equalTo: sendController.topAnchor,
+                constant: LayoutConstants.locationButtonBottomOffset
+            ),
             locationButton.widthAnchor.constraint(equalToConstant: LayoutConstants.locationButtonWidth),
             locationButton.heightAnchor.constraint(equalToConstant: LayoutConstants.locationButtonHeight)
         ])
@@ -164,7 +174,7 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Helpers
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func presentUnauthorizedAlert() {
@@ -194,23 +204,25 @@ final class LocationSelectionViewController: UIViewController {
 
     private func formatAndUpdateAddress() {
         guard mapDidRender else { return }
-        geocoder.reverseGeocodeLocation(mapViewController.mapView.centerCoordinate.location) { [weak self] placemarks, error in
-            guard error == nil, let placemark = placemarks?.first else { return }
-            if let address = placemark.formattedAddress(false), !address.isEmpty {
-                self?.sendViewController.address = address
-            } else {
-                self?.sendViewController.address = nil
+        geocoder
+            .reverseGeocodeLocation(
+                mapViewController.mapView.centerCoordinate
+                    .location
+            ) { [weak self] placemarks, error in
+                guard error == nil, let placemark = placemarks?.first else { return }
+                if let address = placemark.formattedAddress(false), !address.isEmpty {
+                    self?.sendViewController.address = address
+                } else {
+                    self?.sendViewController.address = nil
+                }
             }
-        }
     }
 }
 
 // MARK: - LocationSendViewControllerDelegate
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
-
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
-
         sendControllerHeightConstraint?.isActive = isActive
 
         if isActive {
@@ -232,20 +244,9 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     }
 }
 
-// MARK: - Modal Top Bar Delegate
-
-extension LocationSelectionViewController: ModalTopBarDelegate {
-
-    func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
-        delegate?.locationSelectionViewControllerDidCancel(self)
-    }
-
-}
-
 // MARK: - Map Manager Delegate
 
 extension LocationSelectionViewController: MapViewControllerDelegate {
-
     func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
         if !userShowedInitially {
             userShowedInitially = true
@@ -261,24 +262,26 @@ extension LocationSelectionViewController: MapViewControllerDelegate {
         mapDidRender = true
         formatAndUpdateAddress()
     }
-
 }
 
 // MARK: - AppLocation Manager Delegate
 
 extension LocationSelectionViewController: AppLocationManagerDelegate {
-
     func didUpdateLocations(_ locations: [CLLocation]) {
         guard let newLocation = locations.first else { return }
 
         if !userShowedInitially {
             userShowedInitially = true
-            mapViewController.setRegion(to: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50, animated: true)
+            mapViewController.setRegion(
+                to: newLocation.coordinate,
+                latitudinalMeters: 50,
+                longitudinalMeters: 50,
+                animated: true
+            )
         }
     }
 
     func didFailWithError(_ error: Error) {
-
         let alertController = UIAlertController(
             title: L10n.Localizable.Location.Error.Alert.title,
             message: L10n.Localizable.Location.Error.Alert.description,

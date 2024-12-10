@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     let trustData: [TrustData]
@@ -39,7 +40,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     }
 
     /// Returns the public key of the leaf certificate associated with the trust object
-    /// 
+    ///
     /// To dump certificate data, use
     ///     CFIndex const certCount = SecTrustGetCertificateCount(serverTrust);
     /// and
@@ -81,7 +82,8 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         guard !pinnedKeys.isEmpty else {
             return true
         }
-        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public key
+        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public
+        // key
         guard let publicKey = publicKeyAssociatedWithServerTrust(serverTrust) else {
             return false
         }

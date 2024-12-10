@@ -22,14 +22,14 @@ import WireDesign
 import WireSyncEngine
 
 final class ConnectRequestsViewController: UIViewController,
-                                           UITableViewDataSource,
-                                           UITableViewDelegate {
+    UITableViewDataSource,
+    UITableViewDelegate {
 
     var connectionRequests: [ConversationLike] = []
 
     private var userObserverToken: Any?
     private var pendingConnectionsListObserverToken: Any?
-    private let tableView: UITableView = UITableView(frame: .zero)
+    private let tableView: UITableView = .init(frame: .zero)
     private var lastLayoutBounds = CGRect.zero
     private var isAccepting = false
     private var isIgnoring = false
@@ -40,6 +40,7 @@ final class ConnectRequestsViewController: UIViewController,
         super.init(nibName: nil, bundle: nil)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,7 +58,10 @@ final class ConnectRequestsViewController: UIViewController,
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
             connectionRequests = pendingConnectionsList.items
-            pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
+            pendingConnectionsListObserverToken = userSession.addConversationListObserver(
+                self,
+                for: pendingConnectionsList
+            )
             userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
         }
 
@@ -78,7 +82,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override func viewDidLayoutSubviews() {
@@ -109,8 +113,9 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDataSource
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return connectionRequests.count
+        connectionRequests.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -121,6 +126,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDelegate
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // If there are more than one request, reduce the cell height to give user a hint
 
@@ -167,8 +173,13 @@ final class ConnectRequestsViewController: UIViewController,
                 guard self?.connectionRequests.isEmpty == true else { return }
 
                 ZClientViewController.shared?.hideIncomingContactRequests() // TODO: [WPB-11994] test this flow manually
+
                 if let oneToOneConversation = user.oneToOneConversation {
-                    ZClientViewController.shared?.select(conversation: oneToOneConversation, focusOnView: true, animated: true)
+                    ZClientViewController.shared?.select(
+                        conversation: oneToOneConversation,
+                        focusOnView: true,
+                        animated: true
+                    )
                 }
             }
         }
@@ -204,7 +215,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         tableView.reloadData()
 
-        if !isAccepting && !isIgnoring {
+        if !isAccepting, !isIgnoring {
             hideRequestsOrShowNextRequest()
         }
     }
@@ -222,6 +233,8 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
 
 extension ConnectRequestsViewController: UserObserving {
     func userDidChange(_ change: UserChangeInfo) {
-        tableView.reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
+        tableView
+            .reloadData() // may need a slightly different approach, like enumerating through table cells of type
+        // FirstTimeTableViewCell and setting their bgColor property
     }
 }

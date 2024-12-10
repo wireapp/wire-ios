@@ -17,27 +17,39 @@
 //
 
 import Foundation
+import WireLogging
 
-extension ZMUserSession {
+public extension ZMUserSession {
 
-    public func application(_ application: ZMApplication, didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]) {
+    func application(
+        _ application: ZMApplication,
+        didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]
+    ) {
         startEphemeralTimers()
     }
 
-    public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void ) {
+    func application(
+        _ application: ZMApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
+            self.applicationStatusDirectory.operationStatus
+                .startBackgroundFetch(withCompletionHandler: completionHandler)
         }
     }
 
-    public func application(_ application: ZMApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+    func application(
+        _ application: ZMApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
         completionHandler()
     }
 
     @objc
-    public func applicationDidEnterBackground(_ note: Notification?) {
+    func applicationDidEnterBackground(_ note: Notification?) {
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -50,7 +62,7 @@ extension ZMUserSession {
     }
 
     @objc
-    public func applicationWillEnterForeground(_ note: Notification?) {
+    func applicationWillEnterForeground(_ note: Notification?) {
 
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
@@ -58,13 +70,13 @@ extension ZMUserSession {
         processPendingEvents()
     }
 
-    func processPendingEvents() {
+    internal func processPendingEvents() {
         syncContext.performGroupedBlock {
             self.processEvents()
         }
     }
 
-    func deleteOldEphemeralMessages() {
+    internal func deleteOldEphemeralMessages() {
         // In the case that an ephemeral was sent via the share extension, we need
         // to ensure that they have timers running or are deleted/obfuscated if
         // needed. Note: ZMMessageTimer will only create a new timer for a message
@@ -74,7 +86,7 @@ extension ZMUserSession {
         }
     }
 
-    func mergeChangesFromStoredSaveNotificationsIfNeeded() {
+    internal func mergeChangesFromStoredSaveNotificationsIfNeeded() {
         let storedNotifications = storedDidSaveNotifications.storedNotifications
         storedDidSaveNotifications.clear()
 
@@ -84,7 +96,10 @@ extension ZMUserSession {
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [managedObjectContext])
 
             syncManagedObjectContext.performGroupedBlock {
-                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.syncManagedObjectContext])
+                NSManagedObjectContext.mergeChanges(
+                    fromRemoteContextSave: changes,
+                    into: [self.syncManagedObjectContext]
+                )
             }
         }
 
@@ -94,10 +109,10 @@ extension ZMUserSession {
             self.syncManagedObjectContext.processPendingChanges()
         }
 
-        self.managedObjectContext.saveOrRollback()
+        managedObjectContext.saveOrRollback()
     }
 
-    func recalculateUnreadMessages() {
+    internal func recalculateUnreadMessages() {
         WireLogger.badgeCount.info("recalculate unread conversations")
         syncManagedObjectContext.performGroupedBlock {
             ZMConversation.recalculateUnreadMessages(in: self.syncManagedObjectContext)

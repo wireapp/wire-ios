@@ -42,18 +42,18 @@ extension APIVersion: CaseIterable {}
 extension APIVersion: Comparable {
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
-        return lhs.rawValue < rhs.rawValue
+        lhs.rawValue < rhs.rawValue
     }
 
 }
 
-extension APIVersion {
-    public var useQualifiedIds: Bool {
+public extension APIVersion {
+    var useQualifiedIds: Bool {
         switch self {
         case .v0:
-            return false
+            false
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            return true
+            true
         }
     }
 }

@@ -17,6 +17,8 @@
 //
 
 import WireAPI
+import WireDataModel
+import WireSystem
 
 /// Process conversation delete events.
 
@@ -32,9 +34,24 @@ protocol ConversationDeleteEventProcessorProtocol {
 
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
 
-    func processEvent(_: ConversationDeleteEvent) async throws {
-        // TODO: [WPB-10167]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case failedToDeleteConversation(Swift.Error)
+    }
+
+    let repository: any ConversationRepositoryProtocol
+
+    func processEvent(_ event: ConversationDeleteEvent) async throws {
+        let id = event.conversationID.uuid
+        let domain = event.conversationID.domain
+
+        do {
+            try await repository.deleteConversation(
+                id: id,
+                domain: domain
+            )
+        } catch {
+            throw Error.failedToDeleteConversation(error)
+        }
     }
 
 }

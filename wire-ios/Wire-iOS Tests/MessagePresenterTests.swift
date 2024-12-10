@@ -56,6 +56,7 @@ final class MessagePresenterTests: XCTestCase {
     }
 
     // MARK: - Video
+
     func testThatAVPlayerViewControllerIsPresentedWhenOpeningAVideoFile() {
         // GIVEN
         let message = MockMessageFactory.videoMessage()

@@ -20,13 +20,14 @@ import Foundation
 import WireDataModel
 
 enum BlockResult {
-    case block(isBlocked: Bool), cancel
+    case block(isBlocked: Bool)
+    case cancel
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.Profile.BlockDialog.buttonCancel
-        case .block(isBlocked: false): return L10n.Localizable.Profile.blockButtonTitleAction
-        case .block(isBlocked: true): return L10n.Localizable.Profile.unblockButtonTitleAction
+        case .cancel: L10n.Localizable.Profile.BlockDialog.buttonCancel
+        case .block(isBlocked: false): L10n.Localizable.Profile.blockButtonTitleAction
+        case .block(isBlocked: true): L10n.Localizable.Profile.unblockButtonTitleAction
         }
     }
 
@@ -36,7 +37,7 @@ enum BlockResult {
     }
 
     func action(_ handler: @escaping (BlockResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static func title(for user: UserType) -> String? {
@@ -49,7 +50,7 @@ enum BlockResult {
     }
 
     static func all(isBlocked: Bool) -> [BlockResult] {
-        return [.block(isBlocked: isBlocked), .cancel]
+        [.block(isBlocked: isBlocked), .cancel]
     }
 }
 
@@ -57,7 +58,11 @@ extension ConversationActionController {
 
     func requestBlockResult(for conversation: ZMConversation, handler: @escaping (BlockResult) -> Void) {
         guard let user = conversation.connectedUser else { return }
-        let controller = UIAlertController(title: BlockResult.title(for: user), message: nil, preferredStyle: .actionSheet)
+        let controller = UIAlertController(
+            title: BlockResult.title(for: user),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
         BlockResult.all(isBlocked: user.isBlocked).map { $0.action(handler) }.forEach(controller.addAction)
         present(controller)
     }

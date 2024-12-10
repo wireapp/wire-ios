@@ -69,7 +69,8 @@ final class DoubleColumnContainerViewController: UIViewController {
         borderView.backgroundColor = borderColor
 
         borderWidthConstraint = borderView.widthAnchor.constraint(equalToConstant: borderWidth)
-        primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor.constraint(equalToConstant: primaryColumnWidth)
+        primaryColumnWidthConstraint = primaryNavigationController.view.widthAnchor
+            .constraint(equalToConstant: primaryColumnWidth)
         NSLayoutConstraint.activate([
             borderView.leadingAnchor.constraint(equalTo: primaryNavigationController.view.trailingAnchor),
             borderView.topAnchor.constraint(equalTo: view.topAnchor),

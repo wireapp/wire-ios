@@ -28,7 +28,8 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     weak var delegate: GroupDetailsFooterViewDelegate?
 
     enum Action {
-        case more, invite
+        case more
+        case invite
     }
 
     func update(for conversation: GroupDetailsConversationType) {

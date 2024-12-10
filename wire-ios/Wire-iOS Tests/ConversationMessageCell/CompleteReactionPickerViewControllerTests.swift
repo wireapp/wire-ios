@@ -25,8 +25,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
     // MARK: Properties
 
-    var sut: CompleteReactionPickerViewController!
-    var emojiRepository: EmojiRepository!
+    private var sut: CompleteReactionPickerViewController!
+    private var emojiRepository: EmojiRepository!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
@@ -51,9 +51,13 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     // MARK: Snapshot Tests
 
     func testReactionPicker() {
+        // GIVEN & WHEN
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
         scrollToSection(1)
-        snapshotHelper.verify(matching: sut)
+
+        // THEN
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_scrolledToMiddle() {
@@ -62,7 +66,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(4)
 
         // THEN
-        snapshotHelper.verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_scrolledToBottom() {
@@ -71,7 +76,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(7)
 
         // THEN
-        snapshotHelper.verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_withRecentReactionsSection() {
@@ -81,7 +87,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
 
         // THEN
-        snapshotHelper.verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     func testReactionPicker_withSearchQuery() {
@@ -92,7 +99,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
         scrollToSection(1)
 
         // THEN
-        snapshotHelper.verify(matching: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        snapshotHelper.verify(matching: navigationController)
     }
 
     // MARK: Helper Methods
@@ -109,9 +117,11 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     private func scrollToSection(_ section: Int) {
         sut.view.subviews.forEach {
             if let collectionView = $0 as? UICollectionView {
-                collectionView.scrollToItem(at: IndexPath(item: 0, section: section),
-                                            at: .top,
-                                            animated: false)
+                collectionView.scrollToItem(
+                    at: IndexPath(item: 0, section: section),
+                    at: .top,
+                    animated: false
+                )
             }
         }
     }

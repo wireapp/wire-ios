@@ -24,12 +24,12 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
 
     public override func setUp() {
         super.setUp()
-        self.mocs = self.createStorageStackAndWaitForCompletion()
+        mocs = createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
 
     public override func tearDown() {
-        self.mocs = nil
+        mocs = nil
         super.tearDown()
     }
 
@@ -94,71 +94,95 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
-        assertEntityFetchingWhen(selfUserDomain: nil,
-                                 entityDomain: nil,
-                                 searchDomain: nil,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: nil,
+            entityDomain: nil,
+            searchDomain: nil,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: nil,
-                                 searchDomain: nil,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: nil,
+            searchDomain: nil,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: nil,
-                                 entityDomain: localDomain,
-                                 searchDomain: nil,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: nil,
+            entityDomain: localDomain,
+            searchDomain: nil,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: nil,
-                                 searchDomain: localDomain,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: nil,
+            searchDomain: localDomain,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: localDomain,
-                                 searchDomain: nil,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: localDomain,
+            searchDomain: nil,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: nil,
-                                 entityDomain: localDomain,
-                                 searchDomain: localDomain,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: nil,
+            entityDomain: localDomain,
+            searchDomain: localDomain,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: nil,
-                                 searchDomain: remoteDomain,
-                                 fetched: false)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: nil,
+            searchDomain: remoteDomain,
+            fetched: false
+        )
     }
 
     func testEntityFetching_WhenSearchingForRemoteEntity() {
         let localDomain = "example.com"
         let remoteDomain = "remote.com"
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: remoteDomain,
-                                 searchDomain: remoteDomain,
-                                 fetched: true)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: remoteDomain,
+            searchDomain: remoteDomain,
+            fetched: true
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: nil,
-                                 entityDomain: localDomain,
-                                 searchDomain: remoteDomain,
-                                 fetched: false)
+        assertEntityFetchingWhen(
+            selfUserDomain: nil,
+            entityDomain: localDomain,
+            searchDomain: remoteDomain,
+            fetched: false
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: remoteDomain,
-                                 searchDomain: nil,
-                                 fetched: false)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: remoteDomain,
+            searchDomain: nil,
+            fetched: false
+        )
 
-        assertEntityFetchingWhen(selfUserDomain: localDomain,
-                                 entityDomain: remoteDomain,
-                                 searchDomain: localDomain,
-                                 fetched: false)
+        assertEntityFetchingWhen(
+            selfUserDomain: localDomain,
+            entityDomain: remoteDomain,
+            searchDomain: localDomain,
+            fetched: false
+        )
     }
 
-    func assertEntityFetchingWhen(selfUserDomain: String?,
-                                  entityDomain: String?,
-                                  searchDomain: String?,
-                                  fetched: Bool) {
+    func assertEntityFetchingWhen(
+        selfUserDomain: String?,
+        entityDomain: String?,
+        searchDomain: String?,
+        fetched: Bool
+    ) {
 
         // given
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)

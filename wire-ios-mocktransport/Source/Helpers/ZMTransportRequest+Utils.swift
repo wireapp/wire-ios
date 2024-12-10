@@ -18,13 +18,14 @@
 
 import Foundation
 
-@objc public extension ZMTransportRequest {
+@objc
+public extension ZMTransportRequest {
 
     var URL: URL {
         Foundation.URL(string: path)!
     }
 
-    // It would be better to use `queryItems: [URLQueryItem]`, 
+    // It would be better to use `queryItems: [URLQueryItem]`,
     // because an array is sorted (compared to dictionary here).
     // It can make a difference in the final call,
     // e.g. for caching requests and have them equal with other platforms.
@@ -40,29 +41,32 @@ import Foundation
     }
 
     var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
-        if let items = self.multipartBodyItems() as? [ZMMultipartBodyItem] {
+        if let items = multipartBodyItems() as? [ZMMultipartBodyItem] {
             return items
         }
 
-        guard let fileURL = self.fileUploadURL,
-            let multipartData = try? Data(contentsOf: fileURL)
+        guard let fileURL = fileUploadURL,
+              let multipartData = try? Data(contentsOf: fileURL)
         else {
             return []
         }
 
-        return ((multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]) ?? []
+        return (
+            (multipartData as NSData)
+                .multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]
+        ) ?? []
     }
 
     @objc(RESTComponentAtIndex:)
     func RESTComponents(index: Int) -> String? {
-        guard self.pathComponents.count > index, index > 0 else {
+        guard pathComponents.count > index, index > 0 else {
             return nil
         }
-        return self.pathComponents[index]
+        return pathComponents[index]
     }
 
-    fileprivate var pathComponents: [String] {
-        var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
+    private var pathComponents: [String] {
+        var components = URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
 
         // remove api version from path components
         let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
@@ -75,12 +79,13 @@ import Foundation
 
 }
 
-@objc public extension ZMTransportRequest {
+@objc
+public extension ZMTransportRequest {
     /// Returns whether the path of the request matches the given string.
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
-        return self.method == method && self.matches(path: path)
+        self.method == method && matches(path: path)
     }
 }
 
@@ -90,7 +95,7 @@ public extension ZMTransportRequest {
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     func matches(path: String) -> Bool {
-        let pathComponents = self.pathComponents
+        let pathComponents = pathComponents
         let expectedComponents = path.components(separatedBy: "/").filter { !$0.isEmpty }
 
         guard pathComponents.count == expectedComponents.count else {
@@ -103,6 +108,6 @@ public extension ZMTransportRequest {
     }
 
     static func ~= (path: String, request: ZMTransportRequest) -> Bool {
-        return request.matches(path: path)
+        request.matches(path: path)
     }
 }

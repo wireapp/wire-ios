@@ -17,5 +17,6 @@
 //
 
 public enum SidebarNonselectableMenuItem: CaseIterable, Comparable, Sendable {
-    case connect, support
+    case connect
+    case support
 }

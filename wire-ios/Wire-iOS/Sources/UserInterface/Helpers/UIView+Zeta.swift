@@ -23,21 +23,31 @@ private let WireLastCachedKeyboardHeightKey = "WireLastCachedKeyboardHeightKey"
 extension UIView {
 
     /// Provides correct handling for animating alongside a keyboard animation
-    class func animate(withKeyboardNotification notification: Notification?,
-                       in view: UIView,
-                       delay: TimeInterval = 0,
-                       animations: @escaping (_ keyboardFrameInView: CGRect) -> Void,
-                       completion: ResultHandler? = nil) {
-        let keyboardFrame = self.keyboardFrame(in: view, forKeyboardNotification: notification)
+    class func animate(
+        withKeyboardNotification notification: Notification?,
+        in view: UIView,
+        delay: TimeInterval = 0,
+        animations: @escaping (_ keyboardFrameInView: CGRect) -> Void,
+        completion: ResultHandler? = nil
+    ) {
+        let keyboardFrame = keyboardFrame(in: view, forKeyboardNotification: notification)
 
         if let currentFirstResponder = UIResponder.currentFirst {
-            let keyboardSize = CGSize(width: keyboardFrame.size.width, height: keyboardFrame.size.height - (currentFirstResponder.inputAccessoryView?.bounds.size.height ?? 0))
+            let keyboardSize = CGSize(
+                width: keyboardFrame.size.width,
+                height: keyboardFrame.size.height - (currentFirstResponder.inputAccessoryView?.bounds.size.height ?? 0)
+            )
             setLastKeyboardSize(keyboardSize)
         }
 
         let userInfo = notification?.userInfo
-        let animationLength: TimeInterval = (userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-        let animationCurve: AnimationCurve = AnimationCurve(rawValue: (userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as AnyObject).intValue ?? 0) ?? .easeInOut
+        let animationLength: TimeInterval = (userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?
+            .doubleValue ?? 0
+        let animationCurve =
+            AnimationCurve(
+                rawValue: (userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as AnyObject)
+                    .intValue ?? 0
+            ) ?? .easeInOut
 
         var animationOptions: UIView.AnimationOptions = .beginFromCurrentState
 
@@ -89,8 +99,6 @@ extension UIView {
         let windowRect = view.window?.convert(screenRect ?? CGRect.zero, from: nil)
         let viewRect = view.convert(windowRect ?? CGRect.zero, from: nil)
 
-        let intersection = viewRect.intersection(view.bounds)
-
-        return intersection
+        return viewRect.intersection(view.bounds)
     }
 }

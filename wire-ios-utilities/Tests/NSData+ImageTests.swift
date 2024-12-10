@@ -21,7 +21,7 @@ import XCTest
 final class NSDataImageTests: XCTestCase {
     func testThatNonAnimateGifIsIdentified() {
         // given
-        let sut: NSData = self.data(forResource: "not_animated", extension: "gif")! as NSData
+        let sut: NSData = data(forResource: "not_animated", extension: "gif")! as NSData
 
         // when & then
         XCTAssertNotNil(sut)
@@ -30,7 +30,7 @@ final class NSDataImageTests: XCTestCase {
 
     func testThatAnimateGifIsIdentified() {
         // given
-        let sut: NSData = self.data(forResource: "animated", extension: "gif")! as NSData
+        let sut: NSData = data(forResource: "animated", extension: "gif")! as NSData
 
         // when & then
         XCTAssertNotNil(sut)
@@ -39,7 +39,7 @@ final class NSDataImageTests: XCTestCase {
 
     func testThatGifmimeTypeIsResolved() {
         // given
-        let sut: Data = self.data(forResource: "animated", extension: "gif")!
+        let sut: Data = data(forResource: "animated", extension: "gif")!
 
         // when & then
         XCTAssertEqual(sut.mimeType, "image/gif")
@@ -47,7 +47,7 @@ final class NSDataImageTests: XCTestCase {
 
     func testThatTxtmimeTypeIsNotResolved() {
         // given
-        let sut: Data = self.data(forResource: "excessive_diacritics", extension: "txt")!
+        let sut: Data = data(forResource: "excessive_diacritics", extension: "txt")!
 
         // when & then
         XCTAssertNil(sut.mimeType)

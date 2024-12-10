@@ -35,8 +35,10 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
     // MARK: - Life cycle
 
-    init(getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
-         context: NSManagedObjectContext) {
+    init(
+        getE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol,
+        context: NSManagedObjectContext
+    ) {
         self.getE2eIdentityCertificatesUseCase = getE2eIdentityCertificatesUseCase
         self.context = context
     }
@@ -69,7 +71,8 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
         return try await getE2eIdentityCertificatesUseCase.invoke(
             mlsGroupId: conversationID,
-            clientIds: [clientID]).first
+            clientIds: [clientID]
+        ).first
     }
 
     enum Error: Swift.Error {

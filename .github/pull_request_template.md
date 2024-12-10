@@ -11,7 +11,6 @@ _Optional: add details about technical approach, solutions etc._
 
 _Optional: reference dependencies to other pull requests etc._
 
-
 ### Testing
 
 _Describe how to test._

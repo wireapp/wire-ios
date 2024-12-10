@@ -18,6 +18,7 @@
 
 import AppAuth
 import Foundation
+import WireLogging
 import WireRequestStrategy
 import WireSystem
 import WireUtilities
@@ -46,29 +47,32 @@ class OAuthUseCase: OAuthUseCaseInterface {
         }
 
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
-            OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
-                if let error {
-                    return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
+            OIDAuthorizationService
+                .discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
+                    if let error {
+                        return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
+                    }
+
+                    guard let config = configuration else {
+                        return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
+                    }
+
+                    let claims = self.createAdditionalParameters(
+                        with: parameters.keyauth,
+                        acmeAudience: parameters.acmeAudience
+                    )
+
+                    let request = OIDAuthorizationRequest(
+                        configuration: config,
+                        clientId: parameters.clientID,
+                        scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
+                        redirectURL: redirectURI,
+                        responseType: OIDResponseTypeCode,
+                        additionalParameters: claims
+                    )
+
+                    return continuation.resume(returning: request)
                 }
-
-                guard let config = configuration else {
-                    return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
-                }
-
-                let claims = self.createAdditionalParameters(
-                    with: parameters.keyauth,
-                    acmeAudience: parameters.acmeAudience)
-
-                let request = OIDAuthorizationRequest(
-                    configuration: config,
-                    clientId: parameters.clientID,
-                    scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
-                    redirectURL: redirectURI,
-                    responseType: OIDResponseTypeCode,
-                    additionalParameters: claims)
-
-                return continuation.resume(returning: request)
-            }
         }
 
         return try await execute(authorizationRequest: request)
@@ -76,12 +80,12 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
     private func createAdditionalParameters(with keyauth: String, acmeAudience: String) -> [String: String]? {
         enum CodingKeys: String {
-            case claims = "claims"
+            case claims
             case idToken = "id_token"
-            case keyauth = "keyauth"
+            case keyauth
             case acmeAud = "acme_aud"
-            case essential = "essential"
-            case value = "value"
+            case essential
+            case value
         }
 
         let keyauth: [String: Any] = [
@@ -116,25 +120,28 @@ class OAuthUseCase: OAuthUseCaseInterface {
         }
 
         return try await withCheckedThrowingContinuation { [weak self] continuation in
-            self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
-                                                                    externalUserAgent: userAgent,
-                                                                    callback: { authState, error in
-                if let error = error as NSError? {
-                    if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
-                        return continuation.resume(throwing: OAuthError.userCancelled)
-                    } else {
-                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+            self?.currentAuthorizationFlow = OIDAuthState.authState(
+                byPresenting: authorizationRequest,
+                externalUserAgent: userAgent,
+                callback: { authState, error in
+                    if let error = error as NSError? {
+                        if error.domain == OIDGeneralErrorDomain,
+                           error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
+                            return continuation.resume(throwing: OAuthError.userCancelled)
+                        } else {
+                            return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                        }
                     }
+
+                    guard let idToken = authState?.lastTokenResponse?.idToken else {
+                        return continuation.resume(throwing: OAuthError.missingIdToken)
+                    }
+
+                    let refreshToken = authState?.lastTokenResponse?.refreshToken
+
+                    return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
                 }
-
-                guard let idToken = authState?.lastTokenResponse?.idToken else {
-                    return continuation.resume(throwing: OAuthError.missingIdToken)
-                }
-
-                let refreshToken = authState?.lastTokenResponse?.refreshToken
-
-                return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
-            })
+            )
         }
 
     }

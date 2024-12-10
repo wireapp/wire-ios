@@ -18,10 +18,11 @@
 
 import Foundation
 
-extension ZMMessage {
+public extension ZMMessage {
 
     @discardableResult
-    @objc public static func addReaction(
+    @objc
+    static func addReaction(
         _ reaction: String,
         to message: ZMConversationMessage
     ) -> ZMClientMessage? {
@@ -39,7 +40,8 @@ extension ZMMessage {
         )
     }
 
-    @objc public static func removeReaction(
+    @objc
+    static func removeReaction(
         _ reaction: String,
         from message: ZMConversationMessage
     ) {
@@ -61,7 +63,7 @@ extension ZMMessage {
     }
 
     @discardableResult
-    static func setReactions(
+    internal static func setReactions(
         reactions: Set<String>,
         for message: ZMConversationMessage
     ) -> ZMClientMessage? {
@@ -99,7 +101,8 @@ extension ZMMessage {
         }
     }
 
-    @objc public func setReactions(
+    @objc
+    func setReactions(
         _ updatedReactions: Set<String>,
         forUser user: ZMUser,
         newReactionsCreationDate: Date? = nil
@@ -107,13 +110,13 @@ extension ZMMessage {
         removeEmptyReactions()
 
         // Remove all existing reactions for this user.
-        for reaction in self.reactions where reaction.users.contains(user) {
+        for reaction in reactions where reaction.users.contains(user) {
             reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
         }
 
         // Add all new reactions for this user.
         for reaction in updatedReactions {
-            let existingReaction = self.reactions.first(where: {
+            let existingReaction = reactions.first(where: {
                 $0.unicodeValue == reaction
             })
 
@@ -133,25 +136,28 @@ extension ZMMessage {
         }
     }
 
-    func removeEmptyReactions() {
-        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of adding them again
+    internal func removeEmptyReactions() {
+        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of
+        // adding them again
         guard let moc = managedObjectContext else { return }
-        let reactionsCopy = self.reactions
+        let reactionsCopy = reactions
         for reaction in reactionsCopy where reaction.users.isEmpty {
             mutableSetValue(forKey: "reactions").remove(reaction)
             moc.delete(reaction)
         }
     }
 
-    @objc public func clearAllReactions() {
-        let oldReactions = self.reactions
+    @objc
+    func clearAllReactions() {
+        let oldReactions = reactions
         reactions.removeAll()
         guard let moc = managedObjectContext else { return }
         oldReactions.forEach(moc.delete)
     }
 
-    @objc public func clearConfirmations() {
-        let oldConfirmations = self.confirmations
+    @objc
+    func clearConfirmations() {
+        let oldConfirmations = confirmations
         mutableSetValue(forKey: ZMMessageConfirmationKey).removeAllObjects()
         guard let moc = managedObjectContext else { return }
         oldConfirmations.forEach(moc.delete)

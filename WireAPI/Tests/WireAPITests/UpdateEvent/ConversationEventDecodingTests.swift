@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import XCTest
+@testable import WireAPI
 
 final class ConversationEventDecodingTests: XCTestCase {
 
@@ -486,7 +486,7 @@ final class ConversationEventDecodingTests: XCTestCase {
         static let receiptModeUpdateEvent = ConversationReceiptModeUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            newRecieptMode: 1
+            newReceiptMode: 1
         )
 
         static let renameEvent = ConversationRenameEvent(

@@ -22,15 +22,24 @@ import XCTest
 
 extension XCTestCase {
     func doubleTap(fullscreenImageViewController: FullscreenImageViewController) {
-        let mockTapGestureRecognizer = MockTapGestureRecognizer(location: CGPoint(x: fullscreenImageViewController.view.bounds.size.width / 2, y: fullscreenImageViewController.view.bounds.size.height / 2), state: .ended)
+        let mockTapGestureRecognizer = MockTapGestureRecognizer(
+            location: CGPoint(
+                x: fullscreenImageViewController.view.bounds.size.width / 2,
+                y: fullscreenImageViewController.view.bounds.size.height / 2
+            ),
+            state: .ended
+        )
 
         fullscreenImageViewController.handleDoubleTap(mockTapGestureRecognizer)
         fullscreenImageViewController.view.layoutIfNeeded()
     }
 
     @MainActor
-    func createFullscreenImageViewControllerForTest(imageFileName: String, userSession: UserSessionMock) -> FullscreenImageViewController {
-        let image = self.image(inTestBundleNamed: imageFileName)
+    func createFullscreenImageViewControllerForTest(
+        imageFileName: String,
+        userSession: UserSessionMock
+    ) -> FullscreenImageViewController {
+        let image = image(inTestBundleNamed: imageFileName)
 
         let message = MockMessageFactory.imageMessage(with: image)
 

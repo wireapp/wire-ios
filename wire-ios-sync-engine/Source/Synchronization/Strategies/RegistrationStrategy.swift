@@ -24,10 +24,10 @@ final class RegistrationStrategy: NSObject {
     var registrationSync: ZMSingleRequestSync!
 
     init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
-        registrationStatus = status
+        self.registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()
-        registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
+        self.registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
 
@@ -35,9 +35,19 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch registrationStatus.phase {
         case let .createUser(user):
-            return ZMTransportRequest(path: "/register", method: .post, payload: user.payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/register",
+                method: .post,
+                payload: user.payload,
+                apiVersion: apiVersion.rawValue
+            )
         case let .createTeam(team):
-            return ZMTransportRequest(path: "/register", method: .post, payload: team.payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/register",
+                method: .post,
+                payload: team.payload,
+                apiVersion: apiVersion.rawValue
+            )
         default:
             let phaseString = registrationStatus.phase.map { "\($0)" } ?? "<nil>"
             fatal("Generating request for invalid phase: \(phaseString)")

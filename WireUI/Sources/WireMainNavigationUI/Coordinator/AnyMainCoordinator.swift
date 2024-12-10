@@ -24,9 +24,13 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     public let base: any MainCoordinatorProtocol
 
     private let _showConversationList: @MainActor (_ conversationFilter: ConversationFilter?) async -> Void
+    private let _applyConversationFilter: @MainActor (_ conversationFilter: ConversationFilter?) -> Void
     private let _showArchive: @MainActor () async -> Void
     private let _showSettings: @MainActor () async -> Void
-    private let _showConversation: @MainActor (_ conversation: ConversationModel, _ message: ConversationMessageModel?) async -> Void
+    private let _showConversation: @MainActor (
+        _ conversation: ConversationModel,
+        _ message: ConversationMessageModel?
+    ) async -> Void
     private let _hideConversation: @MainActor () -> Void
     private let _showSettingsContent: @MainActor (_ topLevelMenuItem: SettingsTopLevelMenuItem) -> Void
     private let _hideSettingsContent: @MainActor () -> Void
@@ -37,32 +41,35 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     public init<MainCoordinator: MainCoordinatorProtocol>(
         mainCoordinator: MainCoordinator
     ) where MainCoordinator.Dependencies == Dependencies {
-        base = mainCoordinator
-        _showConversationList = { conversationFilter in
+        self.base = mainCoordinator
+        self._showConversationList = { conversationFilter in
             await mainCoordinator.showConversationList(conversationFilter: conversationFilter)
         }
-        _showArchive = {
+        self._applyConversationFilter = { conversationFilter in
+            mainCoordinator.applyConversationFilter(conversationFilter)
+        }
+        self._showArchive = {
             await mainCoordinator.showArchive()
         }
-        _showSettings = {
+        self._showSettings = {
             await mainCoordinator.showSettings()
         }
-        _showConversation = { conversation, message in
+        self._showConversation = { conversation, message in
             await mainCoordinator.showConversation(conversation: conversation, message: message)
         }
-        _hideConversation = {
+        self._hideConversation = {
             mainCoordinator.hideConversation()
         }
-        _showSettingsContent = { topLevelMenuItem in
+        self._showSettingsContent = { topLevelMenuItem in
             mainCoordinator.showSettingsContent(topLevelMenuItem)
         }
-        _hideSettingsContent = {
+        self._hideSettingsContent = {
             mainCoordinator.hideSettingsContent()
         }
-        _presentViewController = { viewController in
+        self._presentViewController = { viewController in
             await mainCoordinator.presentViewController(viewController)
         }
-        _dismissPresentedViewController = {
+        self._dismissPresentedViewController = {
             await mainCoordinator.dismissPresentedViewController()
         }
     }
@@ -70,6 +77,11 @@ public final class AnyMainCoordinator<Dependencies: MainCoordinatorDependenciesP
     @MainActor
     public func showConversationList(conversationFilter: ConversationFilter?) async {
         await _showConversationList(conversationFilter)
+    }
+
+    @MainActor
+    public func applyConversationFilter(_ conversationFilter: ConversationFilter?) {
+        _applyConversationFilter(conversationFilter)
     }
 
     @MainActor

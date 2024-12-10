@@ -25,9 +25,9 @@ import XCTest
 // MARK: - MockConversation
 
 private final class MockConversation: MockStableRandomParticipantsConversation,
-                                      ConversationStatusProvider,
-                                      TypingStatusProvider,
-                                      VoiceChannelProvider {
+    ConversationStatusProvider,
+    TypingStatusProvider,
+    VoiceChannelProvider {
     var voiceChannel: VoiceChannel?
 
     var typingUsers: [UserType] = []
@@ -41,7 +41,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
     var status: ConversationStatus
 
     required init() {
-        status = ConversationStatus(
+        self.status = ConversationStatus(
             isGroup: false,
             hasMessages: false,
             hasUnsentMessages: false,
@@ -117,29 +117,25 @@ final class ConversationListCellTests: XCTestCase {
     // MARK: - Helper Methods
 
     private func createNewMessage(text: String = "Hey there!") -> MockMessage {
-        let message: MockMessage = MockMessageFactory.textMessage(
+        MockMessageFactory.textMessage(
             withText: text,
             sender: otherUser,
             conversation: otherUserConversation
         )
-
-        return message
     }
 
     private func createMentionSelfMessage() -> MockMessage {
-        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
+        MockMessageFactory.textMessage(
             withText: "@self test",
             sender: otherUser,
             conversation: otherUserConversation
         )
-
-        return mentionMessage
     }
 
     private func verify(
         _ conversation: MockConversation,
         icon: ConversationStatusIcon? = nil,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
     ) {
@@ -237,7 +233,7 @@ final class ConversationListCellTests: XCTestCase {
     func testThatItRendersConversationWithNewMessages() {
         // WHEN
         var messages: [MockMessage] = []
-        (0..<8).forEach {_ in
+        (0 ..< 8).forEach { _ in
             let message = createNewMessage()
 
             messages.append(message)
@@ -524,18 +520,20 @@ final class ConversationListCellTests: XCTestCase {
         // WHEN
         let conversation = createGroupConversation()
 
-        let status = ConversationStatus(isGroup: true,
-                                        hasMessages: false,
-                                        hasUnsentMessages: false,
-                                        messagesRequiringAttention: [],
-                                        messagesRequiringAttentionByType: [:],
-                                        isTyping: true,
-                                        mutedMessageTypes: [],
-                                        isOngoingCall: false,
-                                        isBlocked: false,
-                                        isSelfAnActiveMember: false,
-                                        hasSelfMention: false,
-                                        hasSelfReply: false)
+        let status = ConversationStatus(
+            isGroup: true,
+            hasMessages: false,
+            hasUnsentMessages: false,
+            messagesRequiringAttention: [],
+            messagesRequiringAttentionByType: [:],
+            isTyping: true,
+            mutedMessageTypes: [],
+            isOngoingCall: false,
+            isBlocked: false,
+            isSelfAnActiveMember: false,
+            hasSelfMention: false,
+            hasSelfReply: false
+        )
         otherUserConversation.status = status
         // THEN
         verify(conversation)
@@ -543,21 +541,30 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersGroupConversationWithIncomingCall() {
         let conversation = createGroupConversation()
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation, icon: icon)
     }
 
     func testThatItRendersGroupConversationWithIncomingCall_SilencedExceptMentions() {
         let conversation = createGroupConversation()
         conversation.mutedMessageTypes = .mentionsAndReplies
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation, icon: icon)
     }
 
     func testThatItRendersGroupConversationWithIncomingCall_SilencedAll() {
         let conversation = createGroupConversation()
         conversation.mutedMessageTypes = .all
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation, icon: icon)
     }
 
@@ -572,18 +579,20 @@ final class ConversationListCellTests: XCTestCase {
         let conversation = createGroupConversation()
         let message = createNewMessage()
 
-        let status = ConversationStatus(isGroup: true,
-                                        hasMessages: false,
-                                        hasUnsentMessages: false,
-                                        messagesRequiringAttention: [message],
-                                        messagesRequiringAttentionByType: [.text: 1],
-                                        isTyping: false,
-                                        mutedMessageTypes: [],
-                                        isOngoingCall: false,
-                                        isBlocked: false,
-                                        isSelfAnActiveMember: true,
-                                        hasSelfMention: false,
-                                        hasSelfReply: false)
+        let status = ConversationStatus(
+            isGroup: true,
+            hasMessages: false,
+            hasUnsentMessages: false,
+            messagesRequiringAttention: [message],
+            messagesRequiringAttentionByType: [.text: 1],
+            isTyping: false,
+            mutedMessageTypes: [],
+            isOngoingCall: false,
+            isBlocked: false,
+            isSelfAnActiveMember: true,
+            hasSelfMention: false,
+            hasSelfReply: false
+        )
         conversation.status = status
 
         // THEN
@@ -592,21 +601,30 @@ final class ConversationListCellTests: XCTestCase {
 
     func testThatItRendersOneOnOneConversationWithIncomingCall() {
         let conversation = otherUserConversation
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation!, icon: icon)
     }
 
     func testThatItRendersOneOnOneConversationWithIncomingCall_SilencedExceptMentions() {
         let conversation = otherUserConversation
         conversation?.mutedMessageTypes = .mentionsAndReplies
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation!, icon: icon)
     }
 
     func testThatItRendersOneOnOneConversationWithIncomingCall_SilencedAll() {
         let conversation = otherUserConversation
         conversation?.mutedMessageTypes = .all
-        let icon = CallingMatcher.icon(for: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation)
+        let icon = CallingMatcher.icon(
+            for: .incoming(video: false, shouldRing: true, degraded: false),
+            conversation: conversation
+        )
         verify(conversation!, icon: icon)
     }
 

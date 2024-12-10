@@ -17,6 +17,6 @@
 //
 import Foundation
 
-extension NSSet {
-    @objc public var isEmpty: Bool { count == 0 }
+public extension NSSet {
+    @objc var isEmpty: Bool { count == 0 }
 }

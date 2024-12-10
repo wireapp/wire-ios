@@ -22,7 +22,7 @@ import WireDataModel
 extension CustomMessageView: ConversationMessageCell {
 
     var selectionView: UIView? {
-        return messageLabel
+        messageLabel
     }
 
     func configure(with object: String, animated: Bool) {
@@ -30,9 +30,7 @@ extension CustomMessageView: ConversationMessageCell {
     }
 }
 
-/**
- * A description for a message cell that informs the user a message cannot be rendered.
- */
+/// A description for a message cell that informs the user a message cannot be rendered.
 
 final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     typealias View = CustomMessageView
@@ -53,8 +51,8 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     let containsHighlightableContent = false
 
     init() {
-        configuration = L10n.Localizable.Content.System.UnknownMessage.body
-        accessibilityLabel = configuration
+        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
+        self.accessibilityLabel = configuration
     }
 
 }

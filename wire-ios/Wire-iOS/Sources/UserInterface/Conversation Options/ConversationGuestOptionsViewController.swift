@@ -29,9 +29,9 @@ enum ConversationGuestLink {
 }
 
 final class ConversationGuestOptionsViewController: UIViewController,
-                                                    UITableViewDelegate,
-                                                    UITableViewDataSource,
-                                                    ConversationGuestOptionsViewModelDelegate {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ConversationGuestOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
@@ -40,7 +40,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     convenience init(conversation: ZMConversation, userSession: ZMUserSession) {
@@ -77,9 +77,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         guestLinkObserver = NotificationCenter.default.addObserver(
             forName: ConversationGuestLink.didCreateSecureGuestLinkNotification,
             object: nil,
-            queue: .main) { [weak self] notification in
-                self?.handleGuestLinkNotification(notification)
-            }
+            queue: .main
+        ) { [weak self] notification in
+            self?.handleGuestLinkNotification(notification)
+        }
 
         setupNavigationBar()
     }
@@ -107,7 +108,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
-        tableView.contentInsetAdjustmentBehavior = .never
     }
 
     private func setupNavigationBar() {
@@ -146,7 +146,8 @@ final class ConversationGuestOptionsViewController: UIViewController,
         _ viewModel: ConversationGuestOptionsViewModel,
         didReceiveError error: Error
     ) {
-        // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that explains why the user cannot use/create links to join the conversation.
+        // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that
+        // explains why the user cannot use/create links to join the conversation.
 
         if let error = error as? WirelessLinkError,
            error == .guestLinksDisabled {
@@ -223,20 +224,23 @@ final class ConversationGuestOptionsViewController: UIViewController,
     // MARK: – UITableViewDelegate & UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.state.rows.count
+        viewModel.state.rows.count
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return viewModel.state.rows[indexPath.row].action != nil
+        viewModel.state.rows[indexPath.row].action != nil
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: row.cellType.reuseIdentifier,
+            for: indexPath
+        ) as! CellConfigurationConfigurable
         cell.configure(with: row)
         return cell as! UITableViewCell
     }

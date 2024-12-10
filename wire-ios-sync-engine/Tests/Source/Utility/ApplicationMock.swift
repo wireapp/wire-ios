@@ -22,7 +22,8 @@ import WireDataModel
 @testable import WireSyncEngine
 
 /// A mock of Application that records the calls
-@objcMembers public final class ApplicationMock: NSObject {
+@objcMembers
+public final class ApplicationMock: NSObject {
 
     public var applicationState: UIApplication.State = .active
     public var deviceToken: Data?
@@ -42,56 +43,92 @@ import WireDataModel
     public var minimumBackgroundFetchInverval: TimeInterval = UIApplication.backgroundFetchIntervalNever
 
     /// Callback invoked when `registerUserNotificationSettings` is invoked
-    public var registerForRemoteNotificationsCallback: () -> Void = { }
+    public var registerForRemoteNotificationsCallback: () -> Void = {}
 }
 
 // MARK: - Application protocol
+
 extension ApplicationMock: ZMApplication {
 
     public func registerForRemoteNotifications() {
-        self.registerForRemoteNotificationCount += 1
-        self.registerForRemoteNotificationsCallback()
-        self.updateDeviceToken()
+        registerForRemoteNotificationCount += 1
+        registerForRemoteNotificationsCallback()
+        updateDeviceToken()
     }
 
     public func setMinimumBackgroundFetchInterval(_ minimumBackgroundFetchInterval: TimeInterval) {
-        self.minimumBackgroundFetchInverval = minimumBackgroundFetchInterval
+        minimumBackgroundFetchInverval = minimumBackgroundFetchInterval
     }
 }
 
 // MARK: - Observers
-extension ApplicationMock {
 
-    public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didBecomeActiveNotification, object: nil)
+public extension ApplicationMock {
+
+    func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
-    public func registerObserverForWillResignActive(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willResignActiveNotification, object: nil)
+    func registerObserverForWillResignActive(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
     }
 
-    public func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willEnterForegroundNotification, object: nil)
+    func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
-    public func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didEnterBackgroundNotification, object: nil)
+    func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
-    public func registerObserverForApplicationWillTerminate(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willTerminateNotification, object: nil)
+    func registerObserverForApplicationWillTerminate(_ object: NSObject, selector: Selector) {
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willTerminateNotification,
+            object: nil
+        )
     }
 
-    public func unregisterObserverForStateChange(_ object: NSObject) {
+    func unregisterObserverForStateChange(_ object: NSObject) {
         NotificationCenter.default.removeObserver(object, name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(object, name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.removeObserver(object, name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(object, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(
+            object,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            object,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
         NotificationCenter.default.removeObserver(object, name: UIApplication.willTerminateNotification, object: nil)
     }
 }
 
 // MARK: - Simulate application state change
+
 extension ApplicationMock {
 
     public func simulateApplicationDidBecomeActive() {
@@ -115,27 +152,30 @@ extension ApplicationMock {
     }
 
     var isInBackground: Bool {
-        return self.applicationState == .background
+        applicationState == .background
     }
 
-    @objc func setBackground() {
-        self.applicationState = .background
+    @objc
+    func setBackground() {
+        applicationState = .background
     }
 
     var isInactive: Bool {
-        return self.applicationState == .inactive
+        applicationState == .inactive
     }
 
-    @objc func setInactive() {
-        self.applicationState = .inactive
+    @objc
+    func setInactive() {
+        applicationState = .inactive
     }
 
     var isActive: Bool {
-        return self.applicationState == .active
+        applicationState == .active
     }
 
-    @objc func setActive() {
-        self.applicationState = .active
+    @objc
+    func setActive() {
+        applicationState = .active
     }
 
     public func updateDeviceToken() {

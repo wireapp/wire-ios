@@ -17,12 +17,12 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 class DatabaseBaseTest: ZMTBaseTest {
 
-    var accountID: UUID = UUID.create()
+    var accountID: UUID = .create()
 
     public static var applicationContainer: URL {
         FileManager.default
@@ -33,14 +33,14 @@ class DatabaseBaseTest: ZMTBaseTest {
 
     // MARK: - Init
 
-    override public func setUp() {
+    public override func setUp() {
         super.setUp()
-        self.clearStorageFolder()
+        clearStorageFolder()
         try! FileManager.default.createDirectory(at: Self.applicationContainer, withIntermediateDirectories: true)
     }
 
-    override public func tearDown() {
-        self.clearStorageFolder()
+    public override func tearDown() {
+        clearStorageFolder()
         super.tearDown()
     }
 
@@ -55,19 +55,25 @@ class DatabaseBaseTest: ZMTBaseTest {
     // MARK: - CoreData Stack
 
     /// Create storage stack
-    func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
+    func createStorageStackAndWaitForCompletion(
+        userID: UUID = UUID(),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> CoreDataStack {
 
         // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
         BackgroundActivityFactory.shared.activityManager = manager
 
         let account = Account(userName: "", userIdentifier: userID)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: Self.applicationContainer,
-                                  inMemoryStore: false,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: Self.applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
-        let exp = self.customExpectation(description: "should wait for loadStores to finish")
+        let exp = customExpectation(description: "should wait for loadStores to finish")
         stack.setup(onStartMigration: {
             // do nothing
         }, onFailure: { error in

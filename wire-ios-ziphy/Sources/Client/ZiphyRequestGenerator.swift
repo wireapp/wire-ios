@@ -18,20 +18,16 @@
 
 import Foundation
 
-/**
- * An object that generates requests to the Giphy API.
- */
+/// An object that generates requests to the Giphy API.
 
 struct ZiphyRequestGenerator {
 
     /// The host
     let host: String
 
-    /**
-     * Creates a request for the specified endpoint and query items, if the resulting URL is valid.
-     */
+    /// Creates a request for the specified endpoint and query items, if the resulting URL is valid.
 
-    fileprivate func makeRequest(endpoint: ZiphyEndpoint, query: [URLQueryItem]? = nil) -> ZiphyResult<URLRequest> {
+    private func makeRequest(endpoint: ZiphyEndpoint, query: [URLQueryItem]? = nil) -> ZiphyResult<URLRequest> {
         let path = "/" + ZiphyEndpoint.version + endpoint.resourcePath
 
         var components = URLComponents()
@@ -55,40 +51,38 @@ struct ZiphyRequestGenerator {
 
 extension ZiphyRequestGenerator {
 
-    /**
-     * Creates the request to fetch random images.
-     */
+    /// Creates the request to fetch random images.
 
     func makeRandomImageRequest() -> ZiphyResult<URLRequest> {
-        return makeRequest(endpoint: .random)
+        makeRequest(endpoint: .random)
     }
 
-    /**
-     * Creates the request to fetch trending images.
-     *
-     * - parameter resultsLimit: The maximum number of images to fetch.
-     * - parameter offset: The number of the result page to read.
-     */
+    /// Creates the request to fetch trending images.
+    ///
+    /// - parameter resultsLimit: The maximum number of images to fetch.
+    /// - parameter offset: The number of the result page to read.
 
     func makeTrendingImagesRequest(resultsLimit: Int, offset: Int) -> ZiphyResult<URLRequest> {
-        let queryItems = [URLQueryItem(name: "limit", value: String(resultsLimit)),
-                          URLQueryItem(name: "offset", value: String(offset))]
+        let queryItems = [
+            URLQueryItem(name: "limit", value: String(resultsLimit)),
+            URLQueryItem(name: "offset", value: String(offset))
+        ]
 
         return makeRequest(endpoint: .trending, query: queryItems)
     }
 
-    /**
-     * Creates the request to search for an image by name.
-     *
-     * - parameter term: The search term.
-     * - parameter resultsLimit: The maximum number of images to fetch.
-     * - parameter offset: The number of the result page to read.
-     */
+    /// Creates the request to search for an image by name.
+    ///
+    /// - parameter term: The search term.
+    /// - parameter resultsLimit: The maximum number of images to fetch.
+    /// - parameter offset: The number of the result page to read.
 
     func makeSearchRequest(term: String, resultsLimit: Int, offset: Int) -> ZiphyResult<URLRequest> {
-        let queryItems = [URLQueryItem(name: "limit", value: String(resultsLimit)),
-                          URLQueryItem(name: "offset", value: String(offset)),
-                          URLQueryItem(name: "q", value: term)]
+        let queryItems = [
+            URLQueryItem(name: "limit", value: String(resultsLimit)),
+            URLQueryItem(name: "offset", value: String(offset)),
+            URLQueryItem(name: "q", value: term)
+        ]
 
         return makeRequest(endpoint: .search, query: queryItems)
     }

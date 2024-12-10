@@ -18,6 +18,7 @@
 
 import UserNotifications
 import WireDataModel
+import WireLogging
 
 /// Defines the various types of local notifications, some of which
 /// have associated subtypes.
@@ -85,7 +86,7 @@ public class ZMLocalNotification: NSObject {
         self.id = userInfo?.messageNonce ?? UUID()
         super.init()
 
-        self.userInfo?.requestID = id
+        userInfo?.requestID = id
     }
 
     /// Returns a configured concrete `UNNotificationContent` object.
@@ -115,9 +116,7 @@ public class ZMLocalNotification: NSObject {
     }()
 
     /// Returns a configured concrete `UNNotificationRequest`.
-    public lazy var request: UNNotificationRequest = {
-        return UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
-    }()
+    public lazy var request: UNNotificationRequest = .init(identifier: id.uuidString, content: content, trigger: nil)
 
     public var contentHashValue: Int {
         var hash = Hasher()
@@ -140,23 +139,23 @@ public class ZMLocalNotification: NSObject {
 
 // MARK: - Properties
 
-extension ZMLocalNotification {
+public extension ZMLocalNotification {
 
-    public var selfUserID: UUID? { return userInfo?.selfUserID }
-    public var senderID: UUID? { return userInfo?.senderID }
-    public var messageNonce: UUID? { return userInfo?.messageNonce }
-    public var conversationID: UUID? { return userInfo?.conversationID }
+    var selfUserID: UUID? { userInfo?.selfUserID }
+    var senderID: UUID? { userInfo?.senderID }
+    var messageNonce: UUID? { userInfo?.messageNonce }
+    var conversationID: UUID? { userInfo?.conversationID }
 
     /// Returns true if it is a calling notification, else false.
-    var isCallingNotification: Bool {
+    internal var isCallingNotification: Bool {
         switch type {
-        case .calling: return true
-        default: return false
+        case .calling: true
+        default: false
         }
     }
 
     /// Returns true if it is a ephemeral notification, else false.
-    var isEphemeral: Bool {
+    internal var isEphemeral: Bool {
         guard case .message(.ephemeral) = type else { return false }
         return true
     }
@@ -168,23 +167,26 @@ extension ZMLocalNotification {
 extension ZMLocalNotification {
 
     public func conversation(in moc: NSManagedObjectContext) -> ZMConversation? {
-        return userInfo?.conversation(in: moc)
+        userInfo?.conversation(in: moc)
     }
 
     func sender(in moc: NSManagedObjectContext) -> ZMUser? {
-        return userInfo?.sender(in: moc)
+        userInfo?.sender(in: moc)
     }
 }
 
 // MARK: - Unread Count
 
-extension ZMLocalNotification {
+public extension ZMLocalNotification {
 
-    public func increaseEstimatedUnreadCount(on conversation: ZMConversation?) {
+    func increaseEstimatedUnreadCount(on conversation: ZMConversation?) {
 
         if type.shouldIncreaseUnreadCount {
             conversation?.internalEstimatedUnreadCount += 1
-            WireLogger.badgeCount.info("increase internalEstimatedUnreadCount: \(String(describing: conversation?.internalEstimatedUnreadCount)) in \(String(describing: conversation?.remoteIdentifier?.uuidString)) timestamp: \(Date())")
+            WireLogger.badgeCount
+                .info(
+                    "increase internalEstimatedUnreadCount: \(String(describing: conversation?.internalEstimatedUnreadCount)) in \(String(describing: conversation?.remoteIdentifier?.uuidString)) timestamp: \(Date())"
+                )
         }
 
         if type.shouldDecreaseUnreadCount {
@@ -209,7 +211,7 @@ extension LocalNotificationType {
             return true
         }
 
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -222,7 +224,7 @@ extension LocalNotificationType {
     }
 
     var shouldDecreaseUnreadCount: Bool {
-        guard case LocalNotificationType.event(let contentType) = self else {
+        guard case let LocalNotificationType.event(contentType) = self else {
             return false
         }
 
@@ -235,7 +237,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadMentionCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -249,7 +251,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadReplyCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -264,9 +266,9 @@ extension LocalNotificationType {
 
 }
 
-extension ZMLocalNotification {
+public extension ZMLocalNotification {
 
-    public static func bundledMessages(count: Int, in context: NSManagedObjectContext) -> ZMLocalNotification? {
+    static func bundledMessages(count: Int, in context: NSManagedObjectContext) -> ZMLocalNotification? {
         let builder = BundledMessagesNotificationBuilder(messageCount: count)
         return ZMLocalNotification(builder: builder, moc: context)
     }
@@ -275,5 +277,5 @@ extension ZMLocalNotification {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
-    return UNNotificationSoundName(rawValue: input)
+    UNNotificationSoundName(rawValue: input)
 }

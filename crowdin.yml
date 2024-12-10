@@ -44,6 +44,11 @@ files: [
   "translation" : "/WireUI/Sources/WireSidebarUI/Resources/%osx_code%/%original_file_name%",
  },
  {
+  "source" : "/WireUI/Sources/WireSidebarUI/Resources/en.lproj/Accessibility.strings",
+  "dest" : "/App/WireSidebarUI/Resources/Accessibility.strings",
+  "translation" : "/WireUI/Sources/WireSidebarUI/Resources/%osx_code%/%original_file_name%",
+ },
+ {
   "source" : "/WireUI/Sources/WireMainNavigationUI/Resources/Localizable.xcstrings",
   "dest" : "/App/WireMainNavigationUI/Resources/Localizable.xcstrings",
   "translation" : "%original_path%/%original_file_name%",
@@ -54,5 +59,29 @@ files: [
    "dest" : "/App/WireMainNavigationUI/Resources/Accessibility.xcstrings",
    "translation" : "%original_path%/%original_file_name%",
    "multilingual": true,
-  },
+ },
+ {
+  "source" : "/WireUI/Sources/WireFolderPickerUI/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireFolderPickerUI/Resources/Localizable.xcstrings",
+  "translation" : "%original_path%/%original_file_name%",
+  "multilingual": true,
+ },
+ {
+   "source" : "/WireUI/Sources/WireFolderPickerUI/Resources/Accessibility.xcstrings",
+   "dest" : "/App/WireFolderPickerUI/Resources/Accessibility.xcstrings",
+   "translation" : "%original_path%/%original_file_name%",
+   "multilingual": true,
+ },
+  {
+  "source" : "/WireUI/Sources/WireMoveToFolderUI/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireMoveToFolderUI/Resources/Localizable.xcstrings",
+  "translation" : "%original_path%/%original_file_name%",
+  "multilingual": true,
+ },
+  {
+   "source" : "/WireUI/Sources/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
+   "dest" : "/App/WireMoveToFolderUI/Resources/Accessibility.xcstrings",
+   "translation" : "%original_path%/%original_file_name%",
+   "multilingual": true,
+ },
 ]

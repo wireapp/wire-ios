@@ -28,9 +28,11 @@ public final class SendableBatchObserver {
 
     public init(sendables: [Sendable]) {
         self.sendables = sendables
-        self.observerToken = NotificationCenter.default.addObserver(forName: contextWasMergedNotification,
-                                                                    object: nil,
-                                                                    queue: nil) { [weak self] _ in
+        self.observerToken = NotificationCenter.default.addObserver(
+            forName: contextWasMergedNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             DispatchQueue.main.async {
                 self?.onDeliveryChanged()
             }
@@ -44,7 +46,7 @@ public final class SendableBatchObserver {
     }
 
     public var allSendablesSent: Bool {
-        return !sendables.contains { !$0.isSent }
+        !sendables.contains { !$0.isSent }
     }
 
     public func onDeliveryChanged() {

@@ -23,7 +23,7 @@ class NSData_ZMSCryptoTests: XCTestCase {
 
     /// Key to use to read the test data
     var sampleKey: Data {
-        return Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
     }
 
     var sampleEncryptedImageData: Data {
@@ -37,22 +37,23 @@ class NSData_ZMSCryptoTests: XCTestCase {
     }
 
     var sampleSHADigestOfImageData: Data {
-        return Data(base64Encoded: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSData.Base64DecodingOptions())!
     }
 
     var sampleSHAKeyOfImageData: Data {
-        return Data(base64Encoded: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSData.Base64DecodingOptions())!
     }
 }
 
 // MARK: - Encryption with plaintext IV
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItEncryptsAndDecryptsData_plaintextIV() throws {
 
         // given
-        let data = self.sampleDecryptedImageData
-        let key = self.sampleKey
+        let data = sampleDecryptedImageData
+        let key = sampleKey
 
         // when
         let encryptedData = try data.zmEncryptPrefixingPlainTextIV(key: key)
@@ -71,11 +72,11 @@ extension NSData_ZMSCryptoTests {
 
         // given
         var generatedDataSet = Set<Data>()
-        let sampleData = self.sampleDecryptedImageData
+        let sampleData = sampleDecryptedImageData
 
         // when
-        for _ in 0..<100 {
-            let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
+        for _ in 0 ..< 100 {
+            let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -84,11 +85,11 @@ extension NSData_ZMSCryptoTests {
     func testThatItDecryptsAndroidImage_plaintextIV() {
 
         // given
-        let encryptedImage = self.sampleEncryptedImageData
-        let expectedDecryptedImage = self.sampleDecryptedImageData
+        let encryptedImage = sampleEncryptedImageData
+        let expectedDecryptedImage = sampleDecryptedImageData
 
         // when
-        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIV(key: self.sampleKey)
+        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIV(key: sampleKey)
 
         // then
         XCTAssertEqual(decryptedImage, expectedDecryptedImage)
@@ -96,7 +97,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesUniqueEncryptionKey() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.randomEncryptionKey()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -106,13 +107,14 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Encrypted IV
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItEncryptsAndDecryptsData_encryptedIV() {
 
         // given
-        let data = self.sampleDecryptedImageData
-        let key = self.sampleKey
+        let data = sampleDecryptedImageData
+        let key = sampleKey
 
         // when
         let encryptedData = data.zmEncryptPrefixingIV(key: key)
@@ -131,11 +133,11 @@ extension NSData_ZMSCryptoTests {
 
         // given
         var generatedDataSet = Set<Data>()
-        let sampleData = self.sampleDecryptedImageData
+        let sampleData = sampleDecryptedImageData
 
         // when
-        for _ in 0..<100 {
-            let data = sampleData.zmEncryptPrefixingIV(key: self.sampleKey)
+        for _ in 0 ..< 100 {
+            let data = sampleData.zmEncryptPrefixingIV(key: sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -143,6 +145,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Random data generation
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesRandomDataWithTheRightSize() {
@@ -156,7 +159,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesDifferentDataValues() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.secureRandomData(length: 10)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -164,17 +167,19 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItReturnsNilIfDecryptingKeyIsNotOfAES256Length() {
-        let badKey = self.sampleKey.subdata(in: Range(0...15))
-        XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
-        XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: self.sampleKey))
+        let badKey = sampleKey.subdata(in: Range(0 ... 15))
+        XCTAssertNil(sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
+        XCTAssertNotNil(sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: sampleKey))
     }
 }
 
 // MARK: - Hashing
+
 extension NSData_ZMSCryptoTests {
 
     var samplePlainData: Data {
-        let text = "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
+        let text =
+            "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
         return text.data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
@@ -251,7 +256,10 @@ extension NSData_ZMSCryptoTests {
         // given
         let dataPath = Bundle(for: type(of: self)).path(forResource: "data_to_hash", ofType: "enc")
         let inputData = try! Data(contentsOf: URL(fileURLWithPath: dataPath!))
-        let expectedHash = Data(base64Encoded: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=", options: NSData.Base64DecodingOptions())!
+        let expectedHash = Data(
+            base64Encoded: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=",
+            options: NSData.Base64DecodingOptions()
+        )!
 
         // when
         let digest = inputData.zmSHA256Digest()
@@ -262,7 +270,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesUniqueHashKey() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.zmRandomSHA256Key()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -271,11 +279,12 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Hex encoding
+
 extension NSData_ZMSCryptoTests {
 
     func testThatDataCanBeEncodedIntoHexString() {
         // given
-        let array: [UInt8] = Array(0...255)
+        let array: [UInt8] = Array(0 ... 255)
         let data = Data(array)
 
         // when
@@ -283,13 +292,13 @@ extension NSData_ZMSCryptoTests {
 
         // then
         let expected = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" +
-                       "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f" +
-                       "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f" +
-                       "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f" +
-                       "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f" +
-                       "a0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf" +
-                       "c0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedf" +
-                       "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+            "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f" +
+            "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f" +
+            "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f" +
+            "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f" +
+            "a0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf" +
+            "c0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedf" +
+            "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
 
         XCTAssertEqual(encoded, expected)
     }
@@ -297,24 +306,25 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Hex decoding
+
 extension NSData_ZMSCryptoTests {
 
     func testThatHexStringCanBeDecodedIntoData() {
         // given
         let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" +
-                        "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f" +
-                        "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f" +
-                        "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f" +
-                        "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f" +
-                        "a0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf" +
-                        "c0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedf" +
-                        "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+            "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f" +
+            "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f" +
+            "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f" +
+            "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9f" +
+            "a0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebf" +
+            "c0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedf" +
+            "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
 
         // when
         let decoded = Data(hexString: hexString)
 
         // then
-        let array: [UInt8] = Array(0...255)
+        let array: [UInt8] = Array(0 ... 255)
         let expectedData = Data(array)
 
         XCTAssertNotNil(decoded)
@@ -345,7 +355,9 @@ extension NSData_ZMSCryptoTests {
 
     func testThatHexStringWithUnevenNumberOfCharactersCanNotBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1" // hex string with an uneven number of characters.
+        let hexString =
+            "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1" // hex string with an uneven number of
+        // characters.
 
         // when
         let decoded = Data(hexString: hexString)
@@ -356,32 +368,35 @@ extension NSData_ZMSCryptoTests {
 
     func testThatHexStringWithUppercaseCharactersCanBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F" // hex strings with uppercase characters.
+        let hexString =
+            "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F" // hex strings with uppercase characters.
 
         // when
         let decoded = Data(hexString: hexString)
 
         // then
-       let array: [UInt8] = Array(0...31)
-       let expectedData = Data(array)
+        let array: [UInt8] = Array(0 ... 31)
+        let expectedData = Data(array)
 
-       XCTAssertNotNil(decoded)
-       XCTAssertEqual(decoded, expectedData)
+        XCTAssertNotNil(decoded)
+        XCTAssertEqual(decoded, expectedData)
     }
 
     func testThatHexStringWithAMixOfUpperAndLowercaseCharactersCanBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191A1b1C1d1E1F" // hex strings with a mix of upper and lowercase characters.
+        let hexString =
+            "000102030405060708090a0b0c0d0e0f101112131415161718191A1b1C1d1E1F" // hex strings with a mix of upper and
+        // lowercase characters.
 
         // when
         let decoded = Data(hexString: hexString)
 
         // then
-       let array: [UInt8] = Array(0...31)
-       let expectedData = Data(array)
+        let array: [UInt8] = Array(0 ... 31)
+        let expectedData = Data(array)
 
-       XCTAssertNotNil(decoded)
-       XCTAssertEqual(decoded, expectedData)
+        XCTAssertNotNil(decoded)
+        XCTAssertEqual(decoded, expectedData)
     }
 
     func testThatHexStringWithEmojisCanNotBeDecodedIntoData() {
@@ -392,7 +407,7 @@ extension NSData_ZMSCryptoTests {
         let decoded = Data(hexString: hexString)
 
         // then
-       XCTAssertNil(decoded)
+        XCTAssertNil(decoded)
     }
 
     func testThatHexStringWithSymbolsCanNotBeDecodedIntoData() {
@@ -403,6 +418,6 @@ extension NSData_ZMSCryptoTests {
         let decoded = Data(hexString: hexString)
 
         // then
-       XCTAssertNil(decoded)
+        XCTAssertNil(decoded)
     }
 }

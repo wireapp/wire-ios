@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
@@ -30,13 +31,13 @@ final class TrackingManager: NSObject, TrackingInterface {
         self.sessionManager = sessionManager
         super.init()
         AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
-        observerToken = NotificationCenter.default.addObserver(
+        self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
             queue: OperationQueue.main,
             using: { [weak self] _ in
                 guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(!self.isAnalyticsDisabled)
+                AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
             }
         )
     }
@@ -51,8 +52,9 @@ final class TrackingManager: NSObject, TrackingInterface {
 
     @MainActor
     func firstTimeRequestToEnableAnalytics() async throws {
-        // Only ask if user has not given a preference yet.
-        guard !doesUserConsentPreferenceExist else {
+        // Ask if user has not given a preference yet
+        // and tracking can be enabled
+        guard !doesUserConsentPreferenceExist, sessionManager.canEnableTracking else {
             return
         }
 

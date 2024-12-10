@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireRequestStrategy
 
 public enum NotificationSessionError: LocalizedError {
@@ -30,19 +31,19 @@ public enum NotificationSessionError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .accountNotAuthenticated:
-            return "user is not authenticated"
+            "user is not authenticated"
 
         case .noEventID:
-            return "event id is missing in push payload"
+            "event id is missing in push payload"
 
         case .invalidEventID:
-            return "invalid event id"
+            "invalid event id"
 
         case .alreadyFetchedEvent:
-            return "event was already fetched"
+            "event was already fetched"
 
         case .unknown:
-            return "unknown"
+            "unknown"
         }
     }
 
@@ -156,9 +157,13 @@ public final class NotificationSession {
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: accountIdentifier,
+            useCache: false
+        )
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
+        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
@@ -179,7 +184,10 @@ public final class NotificationSession {
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            accountContainer: CoreDataStack.accountDataFolder(
+                accountIdentifier: accountIdentifier,
+                applicationContainer: sharedContainerURL
+            ),
             accountIdentifier: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults
         )
@@ -261,7 +269,10 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor),
+            mlsDecryptionService: MLSDecryptionService(
+                context: coreDataStack.syncContext,
+                mlsActionExecutor: mlsActionExecutor
+            ),
             lastEventIDRepository: lastEventIDRepository
         )
     }
@@ -290,7 +301,7 @@ public final class NotificationSession {
         self.accountIdentifier = accountIdentifier
         self.earService = earService
 
-        eventDecoder = EventDecoder(
+        self.eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
             syncMOC: coreDataStack.syncContext,
             lastEventIDRepository: lastEventIDRepository
@@ -307,7 +318,8 @@ public final class NotificationSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
+            if mlsFeature.isEnabled, coreDataStack.syncContext.mlsDecryptionService == nil {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }
         }
@@ -346,7 +358,7 @@ public final class NotificationSession {
     }
 
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any]) {
-        guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+        guard let nonce = messageNonce(fromPushChannelData: payload) else {
             delegate?.notificationSessionDidFailWithError(error: .noEventID)
             return
         }
@@ -382,7 +394,7 @@ public final class NotificationSession {
     }
 
     private enum PushChannelKeys: String {
-        case data = "data"
+        case data
         case identifier = "id"
     }
 }
@@ -393,12 +405,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
     ) async throws {
-        let decodedEvents = try await self.eventDecoder.decryptAndStoreEvents(
+        let decodedEvents = try await eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: try? self.earService.fetchPublicKeys()
+            publicKeys: try? earService.fetchPublicKeys()
         )
 
-        await self.context.perform { [self] in
+        await context.perform { [self] in
             processDecodedEvents(decodedEvents)
         }
     }
@@ -497,9 +509,9 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         // Should not handle a call if the caller is a self user and it's an incoming call or call end.
         // The caller can be the same as the self user if it's a rejected call or answered elsewhere.
         if let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
-            let callerID = callContent.callerID,
-            callerID == selfUserID,
-            callContent.isIncomingCall || callContent.isEndCall {
+           let callerID = callContent.callerID,
+           callerID == selfUserID,
+           callContent.isIncomingCall || callContent.isEndCall {
             WireLogger.calling.info("should not handle call event: self call")
             return nil
         }
@@ -594,10 +606,10 @@ extension NotificationSession {
                 return nil
             }
 
-            note = ZMLocalNotification.init(callState: callState, conversation: conversation, caller: caller, moc: context)
+            note = ZMLocalNotification(callState: callState, conversation: conversation, caller: caller, moc: context)
 
         } else {
-            note = ZMLocalNotification.init(event: event, conversation: conversation, managedObjectContext: context)
+            note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: context)
         }
 
         note?.increaseEstimatedUnreadCount(on: conversation)

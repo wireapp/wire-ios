@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class LegalHoldAlertFactoryTests: XCTestCase {
 
@@ -44,10 +44,25 @@ final class LegalHoldAlertFactoryTests: XCTestCase {
     }
 
     func testThatItCanCreateLegalHoldPendingAlert() throws {
-        let prekey = LegalHoldRequest.Prekey(id: 65535, key: Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!)
-        let request = LegalHoldRequest(target: UUID(), requester: UUID(), clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
+        let prekey = LegalHoldRequest.Prekey(
+            id: 65_535,
+            key: Data(
+                base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+            )!
+        )
+        let request = LegalHoldRequest(
+            target: UUID(),
+            requester: UUID(),
+            clientIdentifier: "eca3c87cfe28be49",
+            lastPrekey: prekey
+        )
         user.legalHoldDataSource.legalHoldRequest = request
-        let alert = LegalHoldAlertFactory.makeLegalHoldActivationAlert(for: request, fingerprint: "12355789", user: user, suggestedStateChangeHandler: nil)
+        let alert = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
+            for: request,
+            fingerprint: "12355789",
+            user: user,
+            suggestedStateChangeHandler: nil
+        )
         try verify(matching: alert)
     }
 }

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A set of password rules that can be used to check if a password is valid.
- */
+/// A set of password rules that can be used to check if a password is valid.
 
 public struct PasswordRuleSet: Decodable, Equatable {
 
@@ -44,22 +42,26 @@ public struct PasswordRuleSet: Decodable, Equatable {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the rule set from its required values.
-     * - parameter minimumLength: The minimum length of the password.
-     * - parameter maximumLength: The maximum length of the password.
-     * - parameter allowedCharacters: The characters that are allowed in the password.
-     * - parameter requiredCharacters: The characters that are required in the password. Note that if these are
-     * not included in `allowedCharacters`, they will be added to that set.
-     */
+    /// Creates the rule set from its required values.
+    /// - parameter minimumLength: The minimum length of the password.
+    /// - parameter maximumLength: The maximum length of the password.
+    /// - parameter allowedCharacters: The characters that are allowed in the password.
+    /// - parameter requiredCharacters: The characters that are required in the password. Note that if these are
+    /// not included in `allowedCharacters`, they will be added to that set.
 
-    init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: [PasswordCharacterClass], requiredCharacters: [PasswordCharacterClass]) {
+    init(
+        minimumLength: UInt,
+        maximumLength: UInt,
+        allowedCharacters: [PasswordCharacterClass],
+        requiredCharacters: [PasswordCharacterClass]
+    ) {
         self.minimumLength = minimumLength
         self.maximumLength = maximumLength
 
         // Parse the allowed and required characters
         var allowedCharacters = allowedCharacters
-        var allowedCharacterSet = allowedCharacters.reduce(into: CharacterSet()) { $0.formUnion($1.associatedCharacterSet) }
+        var allowedCharacterSet = allowedCharacters
+            .reduce(into: CharacterSet()) { $0.formUnion($1.associatedCharacterSet) }
         var requiredCharacterSets: [PasswordCharacterClass: CharacterSet] = [:]
 
         for requiredClass in requiredCharacters {
@@ -90,26 +92,29 @@ public struct PasswordRuleSet: Decodable, Equatable {
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)
         let allowedCharacters = try container.decode([PasswordCharacterClass].self, forKey: .allowedCharacters)
         let requiredCharacters = try container.decode([PasswordCharacterClass].self, forKey: .requiredCharacters)
-        self.init(minimumLength: minimumLength, maximumLength: maximumLength, allowedCharacters: allowedCharacters, requiredCharacters: requiredCharacters)
+        self.init(
+            minimumLength: minimumLength,
+            maximumLength: maximumLength,
+            allowedCharacters: allowedCharacters,
+            requiredCharacters: requiredCharacters
+        )
     }
 
     // MARK: - Encoding
 
     /// Encodes the rules in the format used by the Apple keychain.
     func encodeInKeychainFormat() -> String {
-        let allowed = allowedCharacters.map({ "allowed: \($0.rawValue)" }).joined(separator: "; ")
-        let required = requiredCharacters.map({ "required: \($0.rawValue)" }).joined(separator: "; ")
+        let allowed = allowedCharacters.map { "allowed: \($0.rawValue)" }.joined(separator: "; ")
+        let required = requiredCharacters.map { "required: \($0.rawValue)" }.joined(separator: "; ")
         return "minlength: \(minimumLength); maxlength: \(maximumLength); \(allowed); \(required);"
     }
 
     // MARK: - Validation
 
-    /**
-     * Verifies that the specified password conforms to this password rule set.
-     * - parameter password: The password to validate.
-     * - returns: The validation result. `valid` if the password is valid, or
-     * the description of the error.
-     */
+    /// Verifies that the specified password conforms to this password rule set.
+    /// - parameter password: The password to validate.
+    /// - returns: The validation result. `valid` if the password is valid, or
+    /// the description of the error.
 
     func validatePassword(_ password: String) -> PasswordValidationResult {
         var violations: [PasswordValidationResult.Violation] = []
@@ -136,8 +141,8 @@ public struct PasswordRuleSet: Decodable, Equatable {
             }
 
             for (requiredClass, requiredCharacters) in requiredCharacterSets
-            where !matchedRequiredClasses.contains(requiredClass) && requiredCharacters.contains(scalar) {
-                    matchedRequiredClasses.insert(requiredClass)
+                where !matchedRequiredClasses.contains(requiredClass) && requiredCharacters.contains(scalar) {
+                matchedRequiredClasses.insert(requiredClass)
             }
         }
 

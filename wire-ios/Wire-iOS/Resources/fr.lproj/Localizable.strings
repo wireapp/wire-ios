@@ -37,6 +37,7 @@
 "general.on" = "Activé";
 "general.loading" = "Chargement…";
 "general.paste" = "Coller";
+"general.or" = "or";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
@@ -49,7 +50,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Rechercher par nom ou par identifiant";
 "peoplepicker.header.top_people" = "Contacts favoris";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Créer un groupe";
 "peoplepicker.button.add_to_conversation" = "Ajouter des contacts";
 "peoplepicker.header.conversations" = "Groupes";
 "peoplepicker.header.team_conversations" = "%@ Groupes";
@@ -59,8 +60,8 @@
 "peoplepicker.header.directory" = "Se connecter";
 "peoplepicker.header.federation" = "Se connecter à un autre domaine";
 
-"peoplepicker.group.title.singular" = "Select Participants";
-"peoplepicker.group.title.plural" = "Select Participants (%d)";
+"peoplepicker.group.title.singular" = "Sélectionner des participants";
+"peoplepicker.group.title.plural" = "Sélectionner des participants (%d)";
 "peoplepicker.group.skip" = "Passer";
 "peoplepicker.group.done" = "Terminer";
 "peoplepicker.group.create" = "Créer";
@@ -129,6 +130,7 @@
 "conversation_list.search_bar.favoritesPlaceholder" = "Search favourites";
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
 // Conversation List - Filter Conversations
@@ -136,6 +138,7 @@
 "conversation_list.filter.favorites.title" = "Favoris";
 "conversation_list.filter.groups.title" = "Groupes";
 "conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter.folders.title" = "Dossiers";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Supprimer";
 
@@ -147,13 +150,20 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Nouveaux messages.";
 
 // Conversation List - Empty states
-"conversation_list.empty_placeholder.all.headline" = "Welcome";
+"conversation_list.empty_placeholder.all.headline" = "Bienvenue";
 "conversation_list.empty_placeholder.all.subheadline" = "Connect with others or create a new group to start collaborating!";
 "conversation_list.empty_placeholder.favorite.subheadline" = "Select your favorite conversations, and you’ll find them here.";
 "conversation_list.empty_placeholder.favorite.link" = "How to label conversations as favorites";
 "conversation_list.empty_placeholder.group.subheadline" = "You are not part of any group conversation yet.\nStart a new conversation!";
 "conversation_list.empty_placeholder.oneonone.subheadline" = "You have no contacts yet.\nSearch for people on %@ and get connected.";
 "conversation_list.empty_placeholder.oneonone.button" = "Connect with People";
+
+"conversation_list.empty_placeholder.search.subheadline.phone" = "No conversations could be found.\n\nConnect with people or start a new group conversation:";
+"conversation_list.empty_placeholder.search.subheadline.ipad" = "No results found.";
+
+"conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
+"conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
+"conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "dans les contacts";
@@ -175,8 +185,8 @@
 
 // Archived List
 "archived_list.title" = "archives";
-"archived_list.empty_placeholder.headline" = "Nothing archived yet";
-"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
+"archived_list.empty_placeholder.headline" = "Aucune archive pour le moment";
+"archived_list.empty_placeholder.subheadline" = "Pour garder votre liste de conversations bien rangée, déplacez les conversations inutilisées ici. Vous pouvez toujours les désarchiver plus tard.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Les conversations commencent ici";
@@ -320,26 +330,25 @@
 "conversation.input_bar.message_too_long.message" = "Vous pouvez envoyer des messages de %d caractères maximum.";
 
 "conversation.create.group_name.title" = "Créer un groupe";
-"conversation.create.group_name.label" = "Group name";
+"conversation.create.group_name.label" = "Nom du groupe";
 "conversation.create.guidance.empty" = "Au moins un caractère";
 "conversation.create.guidance.toolong" = "Trop de caractères";
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
-"conversation.create.options.subtitle" = "Invités : %@, Services : %@, Accusés de lecture : %@";
 "conversation.create.guests.title" = "Autoriser les invités";
 "conversation.create.guests.subtitle" = "Rendre cette conversation accessible à des personnes externes à votre équipe.";
 "conversation.create.services.title" = "Autoriser les services";
 "conversation.create.services.subtitle" = "Ouvrir cette conversation aux services.";
 "conversation.create.receipts.title" = "Accusés de lecture";
 "conversation.create.receipts.subtitle" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
-"conversation.create.mls.title" = "Protocol";
-"conversation.create.mls.subtitle" = "Select MLS to create a group using the Messaging Layer Security protocol.";
-"conversation.create.mls.picker_title" = "Select Protocol";
+"conversation.create.mls.title" = "Protocole";
+"conversation.create.mls.subtitle" = "Sélectionnez MLS pour créer un groupe en utilisant le protocole Messaging Layer Security.";
+"conversation.create.mls.picker_title" = "Sélectionner un protocole";
 "conversation.create.mls.cancel" = "Annuler";
-"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.title" = "Le groupe ne peut pas être créé";
 "conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "En savoir plus";
-"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.non_federating_domains_error.abort" = "Annuler la création du groupe";
 "conversation.create.protocol_selection.mls" = "MLS";
 "conversation.create.protocol_selection.mls_default" = "MLS (default)";
 "conversation.create.protocol_selection.proteus" = "Proteus";
@@ -355,8 +364,8 @@
 // Conversation banner
 "conversation.banner.guests" = "Invités";
 "conversation.banner.services" = "Services";
-"conversation.banner.externals" = "Externals";
-"conversation.banner.remotes" = "Federated users";
+"conversation.banner.externals" = "Externes";
+"conversation.banner.remotes" = "Utilisateurs fédérés";
 "conversation.banner.are_present" = "%@ sont présents";
 "conversation.banner.are_active" = "%@ sont actifs";
 "conversation.banner.separator" = " et ";
@@ -409,7 +418,7 @@
 "location.unauthorized_alert.cancel" = "Annuler";
 "location.unauthorized_alert.settings" = "Paramètres";
 
-"location.error.alert.title" = "Location can’t be sent.";
+"location.error.alert.title" = "L'emplacement ne peut pas être envoyé.";
 "location.error.alert.description" = "Wire can’t get your location at the moment. Check if you allowed Wire to access your location in your device settings.";
 
 // Twitter
@@ -1018,7 +1027,7 @@
 "group_details.receipt_options_cell.description" = "Quand cette option est activée, les participants peuvent voir quand leurs messages ont été lus dans cette conversation.";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
-"group_details.message_protocol.title" = "Protocol";
+"group_details.message_protocol.title" = "Protocole";
 "group_details.message_protocol.cipher_suite" = "Cipher Suite";
 
 "group_details.conversation_admins_header.title" = "Admins du groupe";

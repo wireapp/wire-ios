@@ -19,16 +19,13 @@
 import avs
 import Combine
 import Foundation
+import WireLogging
 
-private let zmLog = ZMSLog(tag: "calling")
-
-/**
- * WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
- * WireCallCenter.
- *
- * Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
- * called from any thread.
- */
+/// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
+/// WireCallCenter.
+///
+/// Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
+/// called from any thread.
 public class WireCallCenterV3: NSObject {
 
     static let logger = WireLogger.calling
@@ -56,17 +53,13 @@ public class WireCallCenterV3: NSObject {
 
     // MARK: - Calling State
 
-    /**
-     * The date when the call was established (Participants can talk to each other).
-     * - note: This property is only valid when the call state is `.established`.
-     */
+    /// The date when the call was established (Participants can talk to each other).
+    /// - note: This property is only valid when the call state is `.established`.
 
     var establishedDate: Date?
 
-    /**
-     * Whether we use constant bit rate for calls.
-     * - note: Changing this property after the call has started has no effect.
-     */
+    /// Whether we use constant bit rate for calls.
+    /// - note: Changing this property after the call has started has no effect.
 
     var useConstantBitRateAudio: Bool = false
 
@@ -83,7 +76,8 @@ public class WireCallCenterV3: NSObject {
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
 
-    /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
+    /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to
+    /// AVS.
     var isReady: Bool = false {
         didSet {
             VoIPPushHelper.isAVSReady = isReady
@@ -115,24 +109,24 @@ public class WireCallCenterV3: NSObject {
         avsWrapper.close()
     }
 
-    /**
-     * Creates a call center with the required details.
-     * - parameter userId: The identifier of the current signed-in user.
-     * - parameter clientId: The identifier of the current client on the user's account.
-     * - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
-     * If you don't specify one, a default object will be created. Defaults to `nil`.
-     * - parameter uiMOC: The Core Data context to use to coordinate events.
-     * - parameter flowManager: The object that controls media flow.
-     * - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
-     * - parameter transport: The object that performs network requests when the call center requests them.
-     */
+    /// Creates a call center with the required details.
+    /// - parameter userId: The identifier of the current signed-in user.
+    /// - parameter clientId: The identifier of the current client on the user's account.
+    /// - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
+    /// If you don't specify one, a default object will be created. Defaults to `nil`.
+    /// - parameter uiMOC: The Core Data context to use to coordinate events.
+    /// - parameter flowManager: The object that controls media flow.
+    /// - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
+    /// - parameter transport: The object that performs network requests when the call center requests them.
 
-    public required init(userId: AVSIdentifier,
-                         clientId: String,
-                         avsWrapper: AVSWrapperType? = nil,
-                         uiMOC: NSManagedObjectContext,
-                         flowManager: FlowManagerType,
-                         transport: WireCallCenterTransport) {
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        avsWrapper: AVSWrapperType? = nil,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        transport: WireCallCenterTransport
+    ) {
 
         self.selfUserId = userId
         self.uiMOC = uiMOC
@@ -161,26 +155,37 @@ extension WireCallCenterV3 {
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
     }
 
-    /**
-     * Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
-     * - parameter callState:
-     * - parameter members: The current members of the call.
-     * - parameters callStarter: The ID of the user that started the call.
-     * - parameter video: Whether the call is a video call.
-     * - parameter conversationId: The identifier of the conversation that hosts the call.
-     */
+    /// Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
+    /// - parameter callState:
+    /// - parameter members: The current members of the call.
+    /// - parameters callStarter: The ID of the user that started the call.
+    /// - parameter video: Whether the call is a video call.
+    /// - parameter conversationId: The identifier of the conversation that hosts the call.
 
-    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, conversationType: AVSConversationType) {
+    func createSnapshot(
+        callState: CallState,
+        members: [AVSCallMember],
+        callStarter: AVSIdentifier,
+        video: Bool,
+        for conversationId: AVSIdentifier,
+        conversationType: AVSConversationType
+    ) {
         guard
             let moc = uiMOC,
-            let conversation = ZMConversation.fetch(with: conversationId.identifier,
-                                                    domain: conversationId.domain,
-                                                    in: moc)
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: moc
+            )
         else {
             return
         }
 
-        let callParticipants = CallParticipantsSnapshot(conversationId: conversationId, members: members, callCenter: self)
+        let callParticipants = CallParticipantsSnapshot(
+            conversationId: conversationId,
+            members: members,
+            callCenter: self
+        )
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
@@ -205,91 +210,83 @@ extension WireCallCenterV3 {
 
 // MARK: - State Helpers
 
-extension WireCallCenterV3 {
+public extension WireCallCenterV3 {
 
     /// All non idle conversations and their corresponding call state.
-    public var nonIdleCalls: [AVSIdentifier: CallState] {
-        return callSnapshots.mapValues({ $0.callState })
+    var nonIdleCalls: [AVSIdentifier: CallState] {
+        callSnapshots.mapValues { $0.callState }
     }
 
     /// The list of conversation with established calls.
-    public var activeCalls: [AVSIdentifier: CallState] {
-        return nonIdleCalls.filter { _, callState in
+    var activeCalls: [AVSIdentifier: CallState] {
+        nonIdleCalls.filter { _, callState in
             switch callState {
             case .established, .establishedDataChannel:
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }
 
-    /**
-     * Checks the state of video calling in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the conversation hosts a video call.
-     */
+    /// Checks the state of video calling in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the conversation hosts a video call.
 
-    public func isVideoCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isVideo ?? false
+    func isVideoCall(conversationId: AVSIdentifier) -> Bool {
+        callSnapshots[conversationId]?.isVideo ?? false
     }
 
-    /**
-     * Checks the call bitrate type used in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the call is being made with a constant bitrate.
-     */
+    /// Checks the call bitrate type used in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the call is being made with a constant bitrate.
 
-    public func isContantBitRate(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isConstantBitRate ?? false
+    func isContantBitRate(conversationId: AVSIdentifier) -> Bool {
+        callSnapshots[conversationId]?.isConstantBitRate ?? false
     }
 
-    /**
-     * Determines the video state of the specified user in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: The video-sending state of the user inside conversation.
-     */
+    /// Determines the video state of the specified user in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: The video-sending state of the user inside conversation.
 
-    public func videoState(conversationId: AVSIdentifier) -> VideoState {
-        return callSnapshots[conversationId]?.videoState ?? .stopped
+    func videoState(conversationId: AVSIdentifier) -> VideoState {
+        callSnapshots[conversationId]?.videoState ?? .stopped
     }
 
-    /**
-     * Determines the call state of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: The state of calling of conversation, if any.
-     */
+    /// Determines the call state of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: The state of calling of conversation, if any.
 
-    public func callState(conversationId: AVSIdentifier) -> CallState {
-        return callSnapshots[conversationId]?.callState ?? .none
+    func callState(conversationId: AVSIdentifier) -> CallState {
+        callSnapshots[conversationId]?.callState ?? .none
     }
 
-    /**
-     * Determines the call state of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether there is an active call in the conversation.
-     */
+    /// Determines the call state of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether there is an active call in the conversation.
 
-    public func isActive(conversationId: AVSIdentifier) -> Bool {
+    func isActive(conversationId: AVSIdentifier) -> Bool {
         switch callState(conversationId: conversationId) {
         case .established, .establishedDataChannel:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
-    /**
-     * Determines the degradation of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the conversation has degraded security or the call in the conversation has a degraded user.
-     */
+    /// Determines the degradation of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the conversation has degraded security or the call in the conversation has a degraded user.
 
-    public func isDegraded(conversationId: AVSIdentifier) -> Bool {
+    func isDegraded(conversationId: AVSIdentifier) -> Bool {
         guard
             isEnabled,
             let uiMOC,
-            let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC)
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: uiMOC
+            )
         else {
             return  false
         }
@@ -298,7 +295,7 @@ extension WireCallCenterV3 {
         return isConversationDegraded || isCallDegraded
     }
 
-    func canJoinCall(conversationId: AVSIdentifier) -> Bool {
+    internal func canJoinCall(conversationId: AVSIdentifier) -> Bool {
         guard
             isEnabled,
             let context = uiMOC,
@@ -315,55 +312,55 @@ extension WireCallCenterV3 {
     }
 
     /// Returns conversations with active calls.
-    public func activeCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
+    func activeCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
         guard isEnabled else { return  [] }
-        let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
+        return nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
             case .establishedDataChannel, .established, .answered, .outgoing:
-                return ZMConversation.fetch(with: key.identifier,
-                                            domain: key.domain,
-                                            in: userSession.managedObjectContext)
+                return ZMConversation.fetch(
+                    with: key.identifier,
+                    domain: key.domain,
+                    in: userSession.managedObjectContext
+                )
             default:
                 return nil
             }
         }
-
-        return conversations
     }
 
     /// Returns conversations with a non idle call state.
-    public func nonIdleCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
-        let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
-            return ZMConversation.fetch(with: key.identifier,
-                                        domain: key.domain,
-                                        in: userSession.managedObjectContext)
+    func nonIdleCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
+        nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
+            return ZMConversation.fetch(
+                with: key.identifier,
+                domain: key.domain,
+                in: userSession.managedObjectContext
+            )
         }
-
-        return conversations
     }
 
-    public func networkQuality(conversationId: AVSIdentifier) -> NetworkQuality {
-        return callSnapshots[conversationId]?.networkQuality ?? .normal
+    func networkQuality(conversationId: AVSIdentifier) -> NetworkQuality {
+        callSnapshots[conversationId]?.networkQuality ?? .normal
     }
 
-    public func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.conversationType.isConference ?? false
+    func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
+        callSnapshots[conversationId]?.conversationType.isConference ?? false
     }
 
-    public func isMLSConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.conversationType == .mlsConference
+    func isMLSConferenceCall(conversationId: AVSIdentifier) -> Bool {
+        callSnapshots[conversationId]?.conversationType == .mlsConference
     }
 
-    func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
-        return callSnapshots[conversationId]?.degradedUser
+    internal func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
+        callSnapshots[conversationId]?.degradedUser
     }
 
-    public func videoGridPresentationMode(conversationId: AVSIdentifier) -> VideoGridPresentationMode {
-        return callSnapshots[conversationId]?.videoGridPresentationMode ?? .allVideoStreams
+    func videoGridPresentationMode(conversationId: AVSIdentifier) -> VideoGridPresentationMode {
+        callSnapshots[conversationId]?.videoGridPresentationMode ?? .allVideoStreams
     }
 
     private func isGroup(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isGroup ?? false
+        callSnapshots[conversationId]?.isGroup ?? false
     }
 
 }
@@ -378,9 +375,11 @@ extension WireCallCenterV3 {
     ///   - kind: the kind of participants expected in return
     ///   - activeSpeakersLimit: the limit of active speakers to be included
     /// - Returns: the callParticipants currently in the conversation, according to the specified kind
-    func callParticipants(conversationId: AVSIdentifier,
-                          kind: CallParticipantsListKind,
-                          activeSpeakersLimit limit: Int? = nil) -> [CallParticipant] {
+    func callParticipants(
+        conversationId: AVSIdentifier,
+        kind: CallParticipantsListKind,
+        activeSpeakersLimit limit: Int? = nil
+    ) -> [CallParticipant] {
         guard isEnabled else { return  [] }
         guard
             let callMembers = callSnapshots[conversationId]?.callParticipants.members.array,
@@ -389,7 +388,7 @@ extension WireCallCenterV3 {
             return []
         }
 
-        let activeSpeakers = self.activeSpeakers(conversationId: conversationId, limitedBy: limit)
+        let activeSpeakers = activeSpeakers(conversationId: conversationId, limitedBy: limit)
 
         return callMembers.compactMap { member in
             var activeSpeakerState: ActiveSpeakerState = .inactive
@@ -398,7 +397,7 @@ extension WireCallCenterV3 {
                 activeSpeakerState = kind.state(ofActiveSpeaker: activeSpeaker)
             }
 
-            if kind == .smoothedActiveSpeakers && activeSpeakerState == .inactive {
+            if kind == .smoothedActiveSpeakers, activeSpeakerState == .inactive {
                 return nil
             }
 
@@ -406,7 +405,10 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func activeSpeakers(conversationId: AVSIdentifier, limitedBy limit: Int? = nil) -> [AVSActiveSpeakersChange.ActiveSpeaker] {
+    private func activeSpeakers(
+        conversationId: AVSIdentifier,
+        limitedBy limit: Int? = nil
+    ) -> [AVSActiveSpeakersChange.ActiveSpeaker] {
         guard isEnabled else { return [] }
         guard let activeSpeakers = callSnapshots[conversationId]?.activeSpeakers else {
             return []
@@ -431,7 +433,8 @@ extension WireCallCenterV3 {
         let shouldEndCall = shouldEndCall(
             conversationId: conversationId,
             previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
-            newParticipants: participants)
+            newParticipants: participants
+        )
         guard !shouldEndCall else {
             endAllCalls()
             return
@@ -450,7 +453,7 @@ extension WireCallCenterV3 {
     }
 
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
-        return onParticipantsChangedSubject.eraseToAnyPublisher()
+        onParticipantsChangedSubject.eraseToAnyPublisher()
     }
 
 }
@@ -459,9 +462,11 @@ extension WireCallCenterV3 {
 
 extension WireCallCenterV3 {
 
-    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
+    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is
+    /// `true`.
     /// If the other user hangs up, we should end the call for the self user.
-    /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
+    /// More info (Option 1):
+    /// https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
     private func shouldEndCall(
         conversationId: AVSIdentifier,
         previousParticipants: [AVSCallMember],
@@ -469,9 +474,10 @@ extension WireCallCenterV3 {
     ) -> Bool {
         guard let context = uiMOC,
               let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: conversationId.domain,
-                in: context),
+                  with: conversationId.identifier,
+                  domain: conversationId.domain,
+                  in: context
+              ),
               conversation.conversationType == .oneOnOne,
               callSnapshots[conversationId]?.callState == .established
         else {
@@ -482,11 +488,13 @@ extension WireCallCenterV3 {
         case .mls:
             return shouldEndCallForMLS(
                 previousParticipants: previousParticipants,
-                newParticipants: newParticipants)
+                newParticipants: newParticipants
+            )
         case .mixed, .proteus:
             return shouldEndCallForProteus(
                 previousParticipants: previousParticipants,
-                newParticipants: newParticipants)
+                newParticipants: newParticipants
+            )
         }
     }
 
@@ -494,7 +502,8 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
+        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the
+        /// call should end.
         guard
             previousParticipants.count == 2,
             newParticipants.count == 2,
@@ -509,16 +518,16 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        return previousParticipants.count == 2 && newParticipants.count == 1
+        previousParticipants.count == 2 && newParticipants.count == 1
     }
 
 }
 
 // MARK: - Actions
 
-extension WireCallCenterV3 {
+public extension WireCallCenterV3 {
 
-    public enum Failure: Error {
+    enum Failure: Error {
 
         case missingAVSIdentifier
         case missingAVSConversationType
@@ -536,7 +545,7 @@ extension WireCallCenterV3 {
     ///
     /// - Throws: WireCallCenterV3.Failure
 
-    public func answerCall(
+    func answerCall(
         conversation: ZMConversation,
         video: Bool
     ) throws {
@@ -548,7 +557,7 @@ extension WireCallCenterV3 {
 
         endAllCalls(exluding: conversationId)
 
-        let callType = self.callType(
+        let callType = callType(
             for: conversation,
             startedWithVideo: video,
             isConferenceCall: isConferenceCall(conversationId: conversationId)
@@ -606,7 +615,7 @@ extension WireCallCenterV3 {
     ///
     /// - Throws: WireCallCenterV3.Failure
 
-    public func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
+    func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
         Self.logger.info("starting call")
 
         guard let conversationId = conversation.avsIdentifier else {
@@ -622,13 +631,13 @@ extension WireCallCenterV3 {
             throw Failure.missingAVSConversationType
         }
 
-        let callType = self.callType(
+        let callType = callType(
             for: conversation,
             startedWithVideo: isVideo,
             isConferenceCall: conversationType.isConference
         )
 
-        if conversationType.isConference && !canStartConferenceCalls {
+        if conversationType.isConference, !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
@@ -759,7 +768,7 @@ extension WireCallCenterV3 {
                         }
                     }
 
-                    // Create the stale participants remover 
+                    // Create the stale participants remover
                     // and subscribe to the publisher of participants changes
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
                         mlsService: mlsService,
@@ -793,19 +802,21 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Closes the call in the specified conversation.
-     * - parameter conversationId: The ID of the conversation where the call should be ended.
-     * - parameter reason: The reason why the call should be ended. The default is `.normal` (user action).
-     */
+    /// Closes the call in the specified conversation.
+    /// - parameter conversationId: The ID of the conversation where the call should be ended.
+    /// - parameter reason: The reason why the call should be ended. The default is `.normal` (user action).
 
-    public func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
+    func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
         Self.logger.info("closing call")
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
             if previousSnapshot.isGroup {
-                let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+                let callState: CallState = .incoming(
+                    video: previousSnapshot.isVideo,
+                    shouldRing: false,
+                    degraded: isDegraded(conversationId: conversationId)
+                )
                 callSnapshots[conversationId] = previousSnapshot.update(with: callState)
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
@@ -827,28 +838,28 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Rejects an incoming call in the conversation.
-     * - parameter conversationId: The ID of the conversation where the incoming call is hosted.
-     */
+    /// Rejects an incoming call in the conversation.
+    /// - parameter conversationId: The ID of the conversation where the incoming call is hosted.
 
-    public func rejectCall(conversationId: AVSIdentifier) {
+    func rejectCall(conversationId: AVSIdentifier) {
         Self.logger.info("rejecting call")
         avsWrapper.rejectCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
-            let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+            let callState: CallState = .incoming(
+                video: previousSnapshot.isVideo,
+                shouldRing: false,
+                degraded: isDegraded(conversationId: conversationId)
+            )
             callSnapshots[conversationId] = previousSnapshot.update(with: callState)
         }
     }
 
-    /**
-     * Ends all the calls. You can specify the identifier of a conversation where the call shouldn't be ended.
-     * - parameter excluding: If you need to terminate all calls except one, pass the identifier of the conversation
-     * that hosts the call to keep alive. If you pass `nil`, all calls will be ended. Defaults to `nil`.
-     */
+    /// Ends all the calls. You can specify the identifier of a conversation where the call shouldn't be ended.
+    /// - parameter excluding: If you need to terminate all calls except one, pass the identifier of the conversation
+    /// that hosts the call to keep alive. If you pass `nil`, all calls will be ended. Defaults to `nil`.
 
-    public func endAllCalls(exluding: AVSIdentifier? = nil) {
+    func endAllCalls(exluding: AVSIdentifier? = nil) {
         Self.logger.info("ending all calls")
         nonIdleCalls.forEach { (key: AVSIdentifier, callState: CallState) in
             guard exluding == nil || key != exluding else { return }
@@ -862,13 +873,11 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Enables or disables video for a call.
-     * - parameter conversationId: The identifier of the conversation where the video call is hosted.
-     * - parameter videoState: The new video state for the self user.
-     */
+    /// Enables or disables video for a call.
+    /// - parameter conversationId: The identifier of the conversation where the video call is hosted.
+    /// - parameter videoState: The new video state for the self user.
 
-    public func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+    func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
@@ -879,17 +888,18 @@ extension WireCallCenterV3 {
         avsWrapper.setVideoState(conversationId: conversationId, videoState: videoState)
     }
 
-    /**
-     * Sets the capture device type to use for video.
-     * - parameter captureDevice: The device type to use to capture video for the call.
-     * - parameter conversationId: The identifier of the conversation where the video call is hosted.
-     */
+    /// Sets the capture device type to use for video.
+    /// - parameter captureDevice: The device type to use to capture video for the call.
+    /// - parameter conversationId: The identifier of the conversation where the video call is hosted.
 
-    public func setVideoCaptureDevice(_ captureDevice: CaptureDevice, for conversationId: AVSIdentifier) {
+    func setVideoCaptureDevice(_ captureDevice: CaptureDevice, for conversationId: AVSIdentifier) {
         flowManager.setVideoCaptureDevice(captureDevice, for: conversationId)
     }
 
-    public func setVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode, for conversationId: AVSIdentifier) {
+    func setVideoGridPresentationMode(
+        _ presentationMode: VideoGridPresentationMode,
+        for conversationId: AVSIdentifier
+    ) {
         if let snapshot = callSnapshots[conversationId] {
             callSnapshots[conversationId] = snapshot.updateVideoGridPresentationMode(presentationMode)
         }
@@ -899,16 +909,20 @@ extension WireCallCenterV3 {
     /// - Parameters:
     ///   - conversationId: The identifier of the conversation where the video call is hosted.
     ///   - clients: The list of clients for which AVS should load video streams.
-    public func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
+    func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
         let videoStreams = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
     }
 
-    private func callType(for conversation: ZMConversation, startedWithVideo: Bool, isConferenceCall: Bool) -> AVSCallType {
-        if !isConferenceCall && conversation.localParticipants.count > legacyVideoParticipantsLimit {
-            return .audioOnly
+    private func callType(
+        for conversation: ZMConversation,
+        startedWithVideo: Bool,
+        isConferenceCall: Bool
+    ) -> AVSCallType {
+        if !isConferenceCall, conversation.localParticipants.count > legacyVideoParticipantsLimit {
+            .audioOnly
         } else {
-            return startedWithVideo ? .video : .normal
+            startedWithVideo ? .video : .normal
         }
     }
 }
@@ -918,21 +932,34 @@ extension WireCallCenterV3 {
 extension WireCallCenterV3 {
 
     /// Sends a call OTR message when requested by AVS through `wcall_send_h`.
-    func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int, overMLSSelfConversation: Bool = false) {
+    func send(
+        token: WireCallMessageToken,
+        conversationId: AVSIdentifier,
+        targets: AVSClientList?,
+        data: Data,
+        dataLength: Int,
+        overMLSSelfConversation: Bool = false
+    ) {
         Self.logger.info("sending call message for AVS")
-        zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
-        transport?.send(data: data, conversationId: conversationId, targets: targets.map(\.clients), overMLSSelfConversation: overMLSSelfConversation, completionHandler: { [weak self] status in
-            self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
-        })
+        Self.logger.debug("\(self): send call message, transport = \(String(describing: transport))")
+        transport?.send(
+            data: data,
+            conversationId: conversationId,
+            targets: targets.map(\.clients),
+            overMLSSelfConversation: overMLSSelfConversation,
+            completionHandler: { [weak self] status in
+                self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
+            }
+        )
     }
 
     /// Sends an SFT call message when requested by AVS through `wcall_sft_req_h`.
     func sendSFT(token: WireCallMessageToken, url: String, data: Data) {
         Self.logger.info("sending SFT message for AVS")
-        zmLog.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
+        Self.logger.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
 
         guard let endpoint = URL(string: url) else {
-            zmLog.error("SFT request failed. Invalid url: \(url)")
+            Self.logger.error("SFT request failed. Invalid url: \(url)")
             avsWrapper.handleSFTResponse(data: nil, context: token)
             return
         }
@@ -940,7 +967,7 @@ extension WireCallCenterV3 {
         transport?.sendSFT(data: data, url: endpoint) { [weak self] result in
             switch result {
             case let .failure(error):
-                zmLog.error("SFT request failed: \(error.localizedDescription)")
+                Self.logger.error("SFT request failed: \(error.localizedDescription)")
                 self?.avsWrapper.handleSFTResponse(data: nil, context: token)
 
             case let .success(data):
@@ -951,28 +978,36 @@ extension WireCallCenterV3 {
 
     /// Sends the config request when requested by AVS through `wcall_config_req_h`.
     func requestCallConfig() {
-        zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
+        Self.logger.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
         transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
             guard let self else { return }
-            zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
-            self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
+            Self.logger.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
+            avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
         })
     }
 
     /// Tags a call as missing when requested by AVS through `wcall_missed_h`.
     func missed(conversationId: AVSIdentifier, userId: AVSIdentifier, timestamp: Date, isVideoCall: Bool) {
-        zmLog.debug("missed call")
+        Self.logger.debug("missed call")
 
         if let context = uiMOC {
-            WireCallCenterMissedCallNotification(context: context, conversationId: conversationId, callerId: userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
+            WireCallCenterMissedCallNotification(
+                context: context,
+                conversationId: conversationId,
+                callerId: userId,
+                timestamp: timestamp,
+                video: isVideoCall
+            ).post(in: context.notificationContext)
         }
 
         updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
-    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it to the `bufferedEvents`.
+    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
+    /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for AVS to signal that it's ready).
+    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for
+    /// AVS to signal that it's ready).
     func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
         Self.logger.info("process call event")
         if isReady {
@@ -990,7 +1025,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversationType = self.conversationType(from: callEvent)
+            let conversationType = conversationType(from: callEvent)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             completionHandler()
@@ -1014,7 +1049,7 @@ extension WireCallCenterV3 {
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
-        return conversationType(from: callEvent.conversationId)
+        conversationType(from: callEvent.conversationId)
     }
 
     func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
@@ -1042,7 +1077,12 @@ extension WireCallCenterV3 {
     ///     - conversationId: The id of the conversation where teh calling state has changed.
     ///     - messageTime: The timestamp of the event.
 
-    func handle(callState: CallState, conversationId: AVSIdentifier, messageTime: Date? = nil, userId: AVSIdentifier? = nil) {
+    func handle(
+        callState: CallState,
+        conversationId: AVSIdentifier,
+        messageTime: Date? = nil,
+        userId: AVSIdentifier? = nil
+    ) {
         callState.logState()
 
         var callState = callState
@@ -1078,12 +1118,14 @@ extension WireCallCenterV3 {
         }
 
         if let context = uiMOC, let callerId {
-            let notification = WireCallCenterCallStateNotification(context: context,
-                                                                   callState: callState,
-                                                                   conversationId: conversationId,
-                                                                   callerId: callerId,
-                                                                   messageTime: messageTime,
-                                                                   previousCallState: previousCallState)
+            let notification = WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: callerId,
+                messageTime: messageTime,
+                previousCallState: previousCallState
+            )
             notification.post(in: context.notificationContext)
         }
 
@@ -1098,16 +1140,16 @@ extension WireCallCenterV3 {
     private func getAVSConversationType(for conversation: ZMConversation) -> AVSConversationType? {
         switch (conversation.conversationType, conversation.messageProtocol) {
         case (.oneOnOne, _):
-            return getAVSConversationTypeForOneOnOne(conversation)
+            getAVSConversationTypeForOneOnOne(conversation)
 
         case (.group, .proteus), (.group, .mixed):
-            return .conference
+            .conference
 
         case (.group, .mls), (.`self`, .mls):
-            return .mlsConference
+            .mlsConference
 
         default:
-            return nil
+            nil
         }
     }
 

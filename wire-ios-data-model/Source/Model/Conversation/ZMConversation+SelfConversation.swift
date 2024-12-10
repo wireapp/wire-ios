@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension ZMConversation {
+public extension ZMConversation {
 
-    public enum UpdateSelfConversationError: Error {
+    enum UpdateSelfConversationError: Error {
 
         case invalidConversation
         case missingLastReadTimestamp
@@ -43,7 +43,7 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    public static func updateSelfConversation(withLastReadOf conversation: ZMConversation) throws -> ZMClientMessage {
+    static func updateSelfConversation(withLastReadOf conversation: ZMConversation) throws -> ZMClientMessage {
         guard let lastReadTimeStamp = conversation.lastReadServerTimeStamp else {
             throw UpdateSelfConversationError.missingLastReadTimestamp
         }
@@ -74,7 +74,7 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    public static func updateSelfConversation(withClearedOf conversation: ZMConversation) throws -> ZMClientMessage {
+    static func updateSelfConversation(withClearedOf conversation: ZMConversation) throws -> ZMClientMessage {
         guard let clearedTimestamp = conversation.clearedTimeStamp else {
             throw UpdateSelfConversationError.missingClearedTimestamp
         }
@@ -93,7 +93,7 @@ extension ZMConversation {
     }
 
     @discardableResult
-    public static func sendMessageToSelfClients(
+    static func sendMessageToSelfClients(
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> (proteus: ZMClientMessage, mls: ZMClientMessage?) {
@@ -133,7 +133,7 @@ extension ZMConversation {
 
     // MARK: - Sync downstream
 
-    static func updateConversation(
+    internal static func updateConversation(
         withLastReadFromSelfConversation lastRead: LastRead,
         in context: NSManagedObjectContext
     ) {
@@ -153,7 +153,7 @@ extension ZMConversation {
         )
     }
 
-    static func updateConversation(
+    internal static func updateConversation(
         withClearedFromSelfConversation cleared: Cleared,
         in context: NSManagedObjectContext
     ) {

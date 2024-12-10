@@ -20,7 +20,9 @@ import Foundation
 import WireUtilities
 
 public enum AssetFetchResult: Int {
-    case success, failed, noAssetsToFetch
+    case success
+    case failed
+    case noAssetsToFetch
 }
 
 public protocol ZMCollection: TearDownCapable {
@@ -32,15 +34,21 @@ public protocol ZMCollection: TearDownCapable {
 public protocol AssetCollectionDelegate: NSObjectProtocol {
     /// The AssetCollection calls this when the fetching completes
     /// To get all messages for any category defined in `including`, call `assets(for category: CategoryMatch)`
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool)
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    )
 
     /// This method is called when all assets in the conversation have been fetched & analyzed / categorized
     func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult)
 }
 
 /// This class fetches messages and groups them by `CategoryMatch` (e.g. files, images, videos etc.)
-/// It first fetches all objects that have previously categorized and then performs consecutive request of limited batch-size and categorizes them
-/// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it finished categorizing all objects
+/// It first fetches all objects that have previously categorized and then performs consecutive request of limited
+/// batch-size and categorizes them
+/// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it
+/// finished categorizing all objects
 public class AssetCollection: NSObject, ZMCollection {
 
     private unowned var delegate: AssetCollectionDelegate
@@ -51,7 +59,8 @@ public class AssetCollection: NSObject, ZMCollection {
     private let matchingCategories: [CategoryMatch]
 
     enum MessagesToFetch {
-        case client, asset
+        case client
+        case asset
     }
 
     public static let initialFetchCount = 100
@@ -67,44 +76,62 @@ public class AssetCollection: NSObject, ZMCollection {
     }
 
     public var fetchingDone: Bool {
-        return doneFetchingTexts && doneFetchingAssets
+        doneFetchingTexts && doneFetchingAssets
     }
 
     private var syncMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext?.zm_sync
+        conversation?.managedObjectContext?.zm_sync
     }
+
     private var uiMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext
+        conversation?.managedObjectContext
     }
 
     /// Returns a collection that automatically fetches the assets in batches
     /// @param categoriesToFetch: The AssetCollection only returns and calls the delegate for these categories
-    public init(conversation: ConversationLike,
-                matchingCategories: [CategoryMatch],
-                delegate: AssetCollectionDelegate) {
+    public init(
+        conversation: ConversationLike,
+        matchingCategories: [CategoryMatch],
+        delegate: AssetCollectionDelegate
+    ) {
         self.conversation = conversation as? ZMConversation
         self.delegate = delegate
         self.matchingCategories = matchingCategories
         super.init()
 
-        guard let syncMOC = self.syncMOC else {
+        guard let syncMOC else {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
             guard let self, !self.tornDown else { return }
             guard let conversation = self.conversation,
-                let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
+                  let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation
+            else {
                 return
             }
 
-            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(for: syncConversation, matchPairs: self.matchingCategories)
-            if categorizedMessages.count > 0 {
-                let categorized = AssetCollectionBatched.messageMap(messages: categorizedMessages, matchingCategories: self.matchingCategories)
-                self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
+            let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(
+                for: syncConversation,
+                matchPairs: self.matchingCategories
+            )
+            if !categorizedMessages.isEmpty {
+                let categorized = AssetCollectionBatched.messageMap(
+                    messages: categorizedMessages,
+                    matchingCategories: self.matchingCategories
+                )
+                notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
 
-            self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .asset, syncConversation: syncConversation)
-            self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .client, syncConversation: syncConversation)
+            fetchNextIfNotTornDown(
+                limit: AssetCollection.initialFetchCount,
+                type: .asset,
+                syncConversation: syncConversation
+            )
+            fetchNextIfNotTornDown(
+                limit: AssetCollection.initialFetchCount,
+                type: .client,
+                syncConversation: syncConversation
+            )
         }
 
     }
@@ -143,47 +170,58 @@ public class AssetCollection: NSObject, ZMCollection {
     private func fetchNextIfNotTornDown(limit: Int, type: MessagesToFetch, syncConversation: ZMConversation) {
         guard !fetchingDone, !tornDown else { return }
         guard !syncConversation.isZombieObject else {
-            self.notifyDelegateFetchingIsDone(result: .failed)
+            notifyDelegateFetchingIsDone(result: .failed)
             return
         }
 
         // Fetch next messages to categorize
-        let lastMessage: ZMMessage? = (type == .client) ? self.lastClientMessage : self.lastAssetMessage
+        let lastMessage: ZMMessage? = (type == .client) ? lastClientMessage : lastAssetMessage
         let messagesToAnalyze: [ZMMessage]
         if  type == .client {
             // Unfortunately this is the only way to infer the type :-/
-            let clientMessages: [ZMClientMessage] = self.messages(for: syncConversation, startAfter: lastMessage, fetchLimit: limit)
+            let clientMessages: [ZMClientMessage] = messages(
+                for: syncConversation,
+                startAfter: lastMessage,
+                fetchLimit: limit
+            )
             messagesToAnalyze = clientMessages
         } else {
-            let assetMessages: [ZMAssetClientMessage] = self.messages(for: syncConversation, startAfter: lastMessage, fetchLimit: limit)
+            let assetMessages: [ZMAssetClientMessage] = messages(
+                for: syncConversation,
+                startAfter: lastMessage,
+                fetchLimit: limit
+            )
             messagesToAnalyze = assetMessages
         }
 
         // Determine whether we have reached the end of the messages, if so, set flags for completeness
         let didReachLastMessage = (messagesToAnalyze.count < limit)
         if didReachLastMessage {
-            self.setFetchingCompleteFor(type: type)
+            setFetchingCompleteFor(type: type)
         }
-        if messagesToAnalyze.count == 0 {
-            if self.fetchingDone {
-                self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
+        if messagesToAnalyze.isEmpty {
+            if fetchingDone {
+                notifyDelegateFetchingIsDone(result: (assets == nil) ? .noAssetsToFetch : .success)
             }
             return
         }
 
         // Remember last message for next fetch
         if type == .client {
-            self.lastClientMessage = messagesToAnalyze.last as? ZMClientMessage
+            lastClientMessage = messagesToAnalyze.last as? ZMClientMessage
         } else {
-            self.lastAssetMessage = messagesToAnalyze.last as? ZMAssetClientMessage
+            lastAssetMessage = messagesToAnalyze.last as? ZMAssetClientMessage
         }
 
         // Categorize messages
-        let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
+        let newAssets = AssetCollectionBatched.messageMap(
+            messages: messagesToAnalyze,
+            matchingCategories: matchingCategories
+        )
         syncConversation.managedObjectContext?.enqueueDelayedSave()
 
         // Notify delegate
-        self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
+        notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
 
         // Return if done
         if didReachLastMessage {
@@ -192,12 +230,20 @@ public class AssetCollection: NSObject, ZMCollection {
 
         syncConversation.managedObjectContext?.performGroupedBlock { [weak self] in
             guard let self, !self.tornDown else { return }
-            self.fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
+            fetchNextIfNotTornDown(
+                limit: AssetCollection.defaultFetchCount,
+                type: type,
+                syncConversation: syncConversation
+            )
         }
     }
 
-    private func notifyDelegate(newAssets: [CategoryMatch: [ZMMessage]], type: MessagesToFetch?, didReachLastMessage: Bool) {
-        if newAssets.count == 0 {
+    private func notifyDelegate(
+        newAssets: [CategoryMatch: [ZMMessage]],
+        type: MessagesToFetch?,
+        didReachLastMessage: Bool
+    ) {
+        if newAssets.isEmpty {
             return
         }
 
@@ -207,43 +253,51 @@ public class AssetCollection: NSObject, ZMCollection {
             // Map to ui assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
             newAssets.forEach { category, messages in
-                let uiValues = messages.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
+                let uiValues = messages
+                    .compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
                 uiAssets[category] = uiValues
             }
 
             // Merge with existing assets
-            if let assets = self.assets {
+            if let assets {
                 self.assets = AssetCollectionBatched.merge(messageMap: assets, with: uiAssets)
             } else {
-                self.assets = uiAssets
+                assets = uiAssets
             }
 
             // Notify delegate
-            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: didReachLastMessage)
-            if self.fetchingDone {
-                self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
+            delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: didReachLastMessage)
+            if fetchingDone {
+                notifyDelegateFetchingIsDone(result: (assets == nil) ? .noAssetsToFetch : .success)
             }
         }
     }
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
-        self.uiMOC?.performGroupedBlock { [weak self] in
+        uiMOC?.performGroupedBlock { [weak self] in
             guard let self, !self.tornDown else { return }
-            self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)
+            delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
     }
 
-    func messages<T: ZMMessage>(for conversation: ZMConversation, startAfter previousMessage: ZMMessage?, fetchLimit: Int) -> [T] {
+    func messages<T: ZMMessage>(
+        for conversation: ZMConversation,
+        startAfter previousMessage: ZMMessage?,
+        fetchLimit: Int
+    ) -> [T] {
 
-        let request: NSFetchRequest <T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
+        let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
         if let serverTimestamp = previousMessage?.serverTimestamp {
             let messagePredicate = NSPredicate(format: "serverTimestamp < %@", serverTimestamp as NSDate)
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [request.predicate!, messagePredicate])
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                request.predicate!,
+                messagePredicate
+            ])
         }
         request.fetchLimit = fetchLimit
         request.returnsObjectsAsFaults = false
 
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else {return []}
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
         return result
     }
 

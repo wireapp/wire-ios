@@ -18,11 +18,11 @@
 
 import LocalAuthentication
 import PushKit
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
 import WireTransportSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class SessionManagerTests: IntegrationTest {
 
@@ -55,6 +55,7 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     // MARK: max account number
+
     func testThatDefaultMaxAccountNumberIs3_whenDefaultValueIsUsed() {
         // given and when
         let sut = sessionManagerBuilder.build()
@@ -116,19 +117,22 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.count, 1)
         XCTAssertNil(sut.unauthenticatedSession)
         withExtendedLifetime(token) {
-            XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations, observer.createdUserSession)
+            XCTAssertEqual(
+                mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations,
+                observer.createdUserSession
+            )
         }
     }
 
     func testThatItNotifiesObserverWhenCreatingAndTearingDownSession() {
 
         // GIVEN
-        let account = self.createAccount()
+        let account = createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
+        let sessionManagerExpectation = customExpectation(description: "Session manager and session is loaded")
 
         let observer = MockSessionManagerObserver()
         var createToken: Any?
@@ -157,7 +161,7 @@ final class SessionManagerTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -177,7 +181,7 @@ final class SessionManagerTests: IntegrationTest {
         }
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual([testSessionManager.activeUserSession!], observer.createdUserSession)
 
         // AND WHEN
@@ -217,15 +221,15 @@ final class SessionManagerTests: IntegrationTest {
         mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
         mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_MockMethod = { _ in }
 
-        let account1 = self.createAccount()
+        let account1 = createAccount()
         sessionManager!.environment.cookieStorage(for: account1).authenticationCookieData = HTTPCookie.validCookieData()
 
-        let account2 = self.createAccount(with: UUID.create())
+        let account2 = createAccount(with: UUID.create())
         sessionManager!.environment.cookieStorage(for: account2).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and sessions are loaded")
+        let sessionManagerExpectation = customExpectation(description: "Session manager and sessions are loaded")
         let observer = MockSessionManagerObserver()
 
         var destroyToken: Any?
@@ -233,7 +237,7 @@ final class SessionManagerTests: IntegrationTest {
         let testSessionManager = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            delegate: self.mockDelegate,
+            delegate: mockDelegate,
             application: application,
             dispatchGroup: dispatchGroup,
             environment: sessionManager!.environment,
@@ -254,7 +258,7 @@ final class SessionManagerTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -275,9 +279,12 @@ final class SessionManagerTests: IntegrationTest {
             }
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
-        XCTAssertEqual(testSessionManager.backgroundUserSessions[account2.userIdentifier], testSessionManager.activeUserSession)
+        XCTAssertEqual(
+            testSessionManager.backgroundUserSessions[account2.userIdentifier],
+            testSessionManager.activeUserSession
+        )
 
         withExtendedLifetime(destroyToken) {
             NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
@@ -290,7 +297,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatJailbrokenDeviceCallsDelegateMethod() {
         // GIVEN
-        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = {}
 
         guard let application else { return XCTFail() }
         let jailbreakDetector = MockJailbreakDetector(jailbroken: true)
@@ -300,7 +307,7 @@ final class SessionManagerTests: IntegrationTest {
         _ = SessionManager(
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
-            delegate: self.mockDelegate,
+            delegate: mockDelegate,
             application: application,
             environment: sessionManager!.environment,
             configuration: configuration,
@@ -323,7 +330,7 @@ final class SessionManagerTests: IntegrationTest {
         mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, userSessionCanBeTornDown in
             userSessionCanBeTornDown?()
         }
-        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = {}
 
         let jailbreakDetector = MockJailbreakDetector()
         jailbreakDetector.jailbroken = true
@@ -351,16 +358,17 @@ final class SessionManagerTests: IntegrationTest {
         let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
-        let logoutExpectation = self.expectation(description: "Authentication after reboot")
+        let logoutExpectation = expectation(description: "Authentication after reboot")
 
         mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
-        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { error, userSessionCanBeTornDown in
-            XCTAssertNil(sut.activeUserSession)
-            XCTAssertEqual((error as? NSError)?.userSessionErrorCode, .needsAuthenticationAfterReboot)
+        mockDelegate
+            .sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { error, userSessionCanBeTornDown in
+                XCTAssertNil(sut.activeUserSession)
+                XCTAssertEqual((error as? NSError)?.userSessionErrorCode, .needsAuthenticationAfterReboot)
 
-            userSessionCanBeTornDown?()
-            logoutExpectation.fulfill()
-        }
+                userSessionCanBeTornDown?()
+                logoutExpectation.fulfill()
+            }
 
         // WHEN && THEN
         sut.accountManager.addAndSelect(createAccount())
@@ -470,7 +478,7 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertTrue(login())
         let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
 
-        let url = try XCTUnwrap( URL(string: "https://example.com"))
+        let url = try XCTUnwrap(URL(string: "https://example.com"))
         let expirationDatesRepository = CRLExpirationDatesRepository(userID: account.userIdentifier)
         expirationDatesRepository.storeCRLExpirationDate(.now, for: url)
 
@@ -539,9 +547,9 @@ final class SessionManagerTests: IntegrationTest {
 
         var conversations: [ZMConversation] = []
 
-        let conversation1CreatedExpectation = self.customExpectation(description: "Conversation 1 created")
+        let conversation1CreatedExpectation = customExpectation(description: "Conversation 1 created")
 
-        self.sessionManager?.withSession(for: account1, perform: { createdSession in
+        sessionManager?.withSession(for: account1, perform: { createdSession in
             let syncContext = createdSession.syncContext
             syncContext.performAndWait {
                 self.createSelfUserAndSelfConversation(in: syncContext)
@@ -555,9 +563,9 @@ final class SessionManagerTests: IntegrationTest {
             conversation1CreatedExpectation.fulfill()
         })
 
-        let conversation2CreatedExpectation = self.customExpectation(description: "Conversation 2 created")
+        let conversation2CreatedExpectation = customExpectation(description: "Conversation 2 created")
 
-        self.sessionManager?.withSession(for: account2, perform: { createdSession in
+        sessionManager?.withSession(for: account2, perform: { createdSession in
             let syncContext = createdSession.syncContext
             syncContext.performAndWait {
                 self.createSelfUserAndSelfConversation(in: syncContext)
@@ -571,24 +579,24 @@ final class SessionManagerTests: IntegrationTest {
             conversation2CreatedExpectation.fulfill()
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(conversations.count, 2)
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 2)
 
         // when
-        let doneExpectation = self.customExpectation(description: "Conversations are marked as read")
+        let doneExpectation = customExpectation(description: "Conversations are marked as read")
 
-        self.sessionManager?.markAllConversationsAsRead(completion: {
+        sessionManager?.markAllConversationsAsRead(completion: {
             doneExpectation.fulfill()
         })
 
         // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
 
         // cleanup
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func testThatItLogsOutWithCompanyLoginURL() throws {
@@ -623,7 +631,7 @@ final class SessionManagerTests: IntegrationTest {
 extension IntegrationTest {
 
     func createAccount() -> Account {
-        return createAccount(with: currentUserIdentifier)
+        createAccount(with: currentUserIdentifier)
     }
 
     func createAccount(with id: UUID) -> Account {

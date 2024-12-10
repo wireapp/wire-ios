@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles error when addding the e-mail to the user.
- */
+/// Handles error when addding the e-mail to the user.
 
 final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
 
@@ -42,7 +40,10 @@ final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
             actions.append(feedbackAction)
         }
 
-        let errorAlert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let errorAlert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         actions.append(.presentErrorAlert(errorAlert))
 
         return actions

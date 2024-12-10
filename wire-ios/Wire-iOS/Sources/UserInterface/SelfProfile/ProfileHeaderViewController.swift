@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
@@ -106,7 +107,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
     /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
-    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if `user.isSelfUser` is `true`.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if
+    /// `user.isSelfUser` is `true`.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -117,16 +119,16 @@ final class ProfileHeaderViewController: UIViewController {
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(user: user, isE2EICertified: false)
+        self.userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-        isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
+        self.isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        userStatusViewController = .init(
+        self.userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
@@ -252,7 +254,8 @@ final class ProfileHeaderViewController: UIViewController {
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
+            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint,
+            bottomSpaceConstraint,
             qrCodeButton.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             qrCodeButton.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 8),
             qrCodeButton.heightAnchor.constraint(equalToConstant: 32),
@@ -274,7 +277,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         if userStatus.isProteusVerified {
             let verifiedShieldAttachment = NSTextAttachment()
-            verifiedShieldAttachment.image = UIImage.init(resource: .verifiedShield)
+            verifiedShieldAttachment.image = UIImage(resource: .verifiedShield)
             let verifiedShieldIconString = NSAttributedString(attachment: verifiedShieldAttachment)
 
             userNameWithIcons.append(verifiedShieldIconString)
@@ -282,7 +285,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         if userStatus.isE2EICertified {
             let certificateValidAttachment = NSTextAttachment()
-            certificateValidAttachment.image = UIImage.init(resource: .certificateValid)
+            certificateValidAttachment.image = UIImage(resource: .certificateValid)
             let certificateValidIconString = NSAttributedString(attachment: certificateValidAttachment)
 
             userNameWithIcons.append(certificateValidIconString)
@@ -308,12 +311,11 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGroupRoleIndicator() {
-        let groupRoleIndicatorHidden: Bool
-        switch conversation?.conversationType {
+        let groupRoleIndicatorHidden: Bool = switch conversation?.conversationType {
         case .group?:
-            groupRoleIndicatorHidden = !(conversation.map(user.isGroupAdmin) ?? false)
+            !(conversation.map(user.isGroupAdmin) ?? false)
         default:
-            groupRoleIndicatorHidden = true
+            true
         }
         groupRoleIndicator.isHidden = groupRoleIndicatorHidden
 
@@ -347,7 +349,8 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateAvailabilityVisibility() {
-        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user.availability == .none
+        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user
+            .availability == .none
         userStatusViewController.view?.isHidden = isHidden
     }
 
@@ -407,17 +410,20 @@ final class ProfileHeaderViewController: UIViewController {
         let qrCodeView = QRCodeView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: qrCodeView)
         hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
+
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
             action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             },
-            accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description)
+            accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description
+        )
         navigationController?.pushViewController(hostingController, animated: true)
     }
 
     private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
         guard
             let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+            let profileDeepLink = selfUser.profileDeepLink,
             let handle = selfUser.handle
         else {
             return nil
@@ -425,6 +431,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         return UserQRCodeViewModel(
             profileLink: profileLink,
+            profileDeepLink: profileDeepLink,
             handle: handle
         )
     }

@@ -22,26 +22,34 @@ import XCTest
 
 final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 
-   func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
+    func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
         try syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-                    let nonce = UUID.create()
+            let nonce = UUID.create()
 
-            let textMessage = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: syncMOC)
+            let textMessage = GenericMessage(
+                content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: nonce
+            )
+            let msg = ZMClientMessage(nonce: nonce, managedObjectContext: syncMOC)
             try msg.setUnderlyingMessage(textMessage)
 
             msg.visibleInConversation = conversation
-            msg.serverTimestamp = Date(timeIntervalSinceReferenceDate: 400000000)
+            msg.serverTimestamp = Date(timeIntervalSinceReferenceDate: 400_000_000)
 
             let data: NSDictionary = try [
                 "content": self.name,
                 "nonce": XCTUnwrap(msg.nonce?.transportString())
             ]
-            let payload = self.payloadForMessage(in: conversation, type: EventConversationAdd, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
+            let payload = self.payloadForMessage(
+                in: conversation,
+                type: EventConversationAdd,
+                data: data,
+                time: Date(timeIntervalSinceReferenceDate: 450_000_000)
+            )
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
             XCTAssertNotNil(event)
@@ -50,7 +58,7 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
             msg.update(with: event!, for: conversation)
 
             // then
-            XCTAssertEqual(msg.serverTimestamp!.timeIntervalSinceReferenceDate, 400000000, accuracy: 1)
+            XCTAssertEqual(msg.serverTimestamp!.timeIntervalSinceReferenceDate, 400_000_000, accuracy: 1)
         }
     }
 }
@@ -61,7 +69,7 @@ extension ZMMessageTests_GenericMessage {
 
     func testThatItCreatesOtrKnockMessageFromAnUpdateEvent() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let senderClientID = String.randomClientIdentifier()
@@ -73,12 +81,17 @@ extension ZMMessageTests_GenericMessage {
             "sender": senderClientID,
             "text": contentData.base64String()
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(timeIntervalSinceReferenceDate: 450_000_000)
+        )
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
         // when
         var message: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             message = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -94,7 +107,7 @@ extension ZMMessageTests_GenericMessage {
     func testThatAClientMessageHasKnockMessageData() throws {
         // given
         let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
-        let message = ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         try message.setUnderlyingMessage(knock)
 
         // then
@@ -111,7 +124,7 @@ extension ZMMessageTests_GenericMessage {
 
     func testThatATextMessageGenericDataIsRemoved() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         // when
@@ -133,11 +146,11 @@ extension ZMMessageTests_GenericMessage {
 
     func testThatATextMessageGenericDataIsRemoved_Asset() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         // when
-        let message = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMOTRMessage
         let dataSet = message.dataSet
 
         XCTAssertNotNil(message.managedObjectContext)

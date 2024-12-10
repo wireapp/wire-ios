@@ -45,10 +45,12 @@ public class UpdateAccessRolesAction: EntityAction {
 
     // MARK: - Life cycle
 
-    public init(conversation: ZMConversation,
-                accessMode: ConversationAccessMode,
-                accessRoles: Set<ConversationAccessRoleV2>,
-                resultHandler: ResultHandler? = nil) {
+    public init(
+        conversation: ZMConversation,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        resultHandler: ResultHandler? = nil
+    ) {
         self.conversationID = conversation.objectID
         self.accessMode = accessMode
         self.accessRoles = accessRoles

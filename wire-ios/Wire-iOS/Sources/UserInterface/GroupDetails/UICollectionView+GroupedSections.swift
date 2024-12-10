@@ -18,7 +18,7 @@
 
 import UIKit
 
-fileprivate extension UICollectionViewFlowLayout {
+private extension UICollectionViewFlowLayout {
     convenience init(forGroupedSections: ()) {
         self.init()
         scrollDirection = .vertical

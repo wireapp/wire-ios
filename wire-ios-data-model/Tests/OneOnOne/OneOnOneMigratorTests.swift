@@ -117,7 +117,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         mockMLSService.conversationExistsGroupID_MockValue = false
         mockMLSService.establishGroupForWithRemovalKeys_MockMethod = { _, _, _ in
-            return ciphersuite
+            ciphersuite
         }
 
         // When
@@ -211,7 +211,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         mockMLSService.conversationExistsGroupID_MockValue = false
         mockMLSService.establishGroupForWithRemovalKeys_MockMethod = { _, _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         // required to add be able to add images
@@ -313,7 +313,10 @@ final class OneOnOneMigratorTests: XCTestCase {
         return (connection, conversation)
     }
 
-    private func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
+    private func createMLSConversation(
+        with identifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
         mlsConversation.domain = "local@domain.com"

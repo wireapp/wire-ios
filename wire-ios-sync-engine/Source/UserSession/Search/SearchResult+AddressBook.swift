@@ -27,25 +27,32 @@ extension SearchResult {
     /// Creates a new search result with the same results and additional
     /// results obtained by searching through the address book with the same query
     public func extendWithContactsFromAddressBook(_ query: String, contextProvider: ContextProvider) -> SearchResult {
-        /*
-         When I have a search result obtained (either with a local search or from the BE) by matching on Wire
-         users display names or handle, I also want to check if I have any address book contact in my local
-         address book that match the query. However, matching local contacts might overlap in a number of ways
-         with the users that I already found from the Wire search. The following code makes sure that such overlaps
-         are not displayed twice (once for the Wire user, once for the address book contact).
-         */
+        // When I have a search result obtained (either with a local search or from the BE) by matching on Wire
+        // users display names or handle, I also want to check if I have any address book contact in my local
+        // address book that match the query. However, matching local contacts might overlap in a number of ways
+        // with the users that I already found from the Wire search. The following code makes sure that such overlaps
+        // are not displayed twice (once for the Wire user, once for the address book contact).
         let addressBook = AddressBookSearch(addressBook: debug_searchResultAddressBookOverride)
 
         // I don't need to find the address book contacts of users that I already found
-        let identifiersOfAlreadyFoundUsers = contacts.compactMap { $0.user?.addressBookEntry?.localIdentifier } + self.directory.compactMap { $0.user?.addressBookEntry?.localIdentifier }
-        let allMatchingAddressBookContacts = addressBook.contactsMatchingQuery(query, identifiersToExclude: identifiersOfAlreadyFoundUsers)
+        let identifiersOfAlreadyFoundUsers = contacts
+            .compactMap { $0.user?.addressBookEntry?.localIdentifier } + directory
+            .compactMap { $0.user?.addressBookEntry?.localIdentifier }
+        let allMatchingAddressBookContacts = addressBook.contactsMatchingQuery(
+            query,
+            identifiersToExclude: identifiersOfAlreadyFoundUsers
+        )
 
-        // There might also be contacts for which the local address book name match and which are also Wire users, but on Wire their name doesn't match,
-        // so the Wire search did not return them. If I figure out which Wire users they match, I want to include those users into
+        // There might also be contacts for which the local address book name match and which are also Wire users, but
+        // on Wire their name doesn't match,
+        // so the Wire search did not return them. If I figure out which Wire users they match, I want to include those
+        // users into
         // the result as Wire user results, not an non-Wire address book results
 
-        let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(contacts: allMatchingAddressBookContacts,
-                                                                                                        managedObjectContext: contextProvider.viewContext)
+        let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(
+            contacts: allMatchingAddressBookContacts,
+            managedObjectContext: contextProvider.viewContext
+        )
         let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap {
             ZMSearchUser(
                 contextProvider: contextProvider,
@@ -86,7 +93,10 @@ extension SearchResult {
     }
 
     /// Returns users that are linked to the given address book contacts
-    private func contactsThatAreAlsoUsers(contacts: [ZMAddressBookContact], managedObjectContext: NSManagedObjectContext) -> (users: [ZMUser], nonMatchedContacts: [ZMAddressBookContact]) {
+    private func contactsThatAreAlsoUsers(
+        contacts: [ZMAddressBookContact],
+        managedObjectContext: NSManagedObjectContext
+    ) -> (users: [ZMUser], nonMatchedContacts: [ZMAddressBookContact]) {
 
         guard !contacts.isEmpty else {
             return (users: [], nonMatchedContacts: [])

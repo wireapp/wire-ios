@@ -53,13 +53,13 @@ final class SubheadlineTextView: UITextView {
 
     /// non-selectable textview
     override var selectedTextRange: UITextRange? {
-        get { return nil }
+        get { nil }
         set { /* no-op */ }
     }
 
     // Prevent double-tap to select
     override var canBecomeFirstResponder: Bool {
-        return false
+        false
     }
 
 }

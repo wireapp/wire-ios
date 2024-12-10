@@ -64,9 +64,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             useTypeIntrinsicSizeTableView: true,
             settingsCoordinator: settingsCoordinator
         )
-        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-        return viewController
+        return sut.wrapInNavigationController()
     }
 
     // MARK: Snapshot Tests
@@ -81,7 +79,7 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
             .verify(
                 matching: viewController,
                 named: "DarkTheme",
-                file: #file,
+                file: #filePath,
                 testName: #function,
                 line: #line
             )

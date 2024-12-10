@@ -17,6 +17,7 @@
 //
 
 import WireCoreCrypto
+import WireLogging
 
 struct CreateMLSGroupUseCase {
 
@@ -60,12 +61,14 @@ struct CreateMLSGroupUseCase {
             return try await createGroup(
                 for: groupID,
                 parentGroupID: parentGroupID,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         } else {
             return try await createGroup(
                 for: groupID,
                 removalKeys: removalKeys,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         }
     }
 }
@@ -92,7 +95,8 @@ extension CreateMLSGroupUseCase {
         return try await createGroup(
             for: groupID,
             externalSenders: externalSenders,
-            ciphersuite: ciphersuite)
+            ciphersuite: ciphersuite
+        )
     }
 
     private func createGroup(
@@ -115,7 +119,8 @@ extension CreateMLSGroupUseCase {
             return try await createGroup(
                 for: groupID,
                 externalSenders: externalSenders,
-                ciphersuite: ciphersuite)
+                ciphersuite: ciphersuite
+            )
         }
     }
 

@@ -21,7 +21,10 @@ import XCTest
 
 @testable import WireRequestStrategy
 
-final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase<CreateConversationGuestLinkAction, CreateConversationGuestLinkActionHandler> {
+final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase<
+    CreateConversationGuestLinkAction,
+    CreateConversationGuestLinkActionHandler
+> {
 
     // MARK: - Properties
 
@@ -30,7 +33,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
     private var conversationID: UUID!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {
@@ -41,8 +44,8 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
             conversationID = UUID()
 
-            self.action = CreateConversationGuestLinkAction(password: nil, conversationID: conversationID)
-            self.handler = CreateConversationGuestLinkActionHandler(context: syncContext)
+            action = CreateConversationGuestLinkAction(password: nil, conversationID: conversationID)
+            handler = CreateConversationGuestLinkActionHandler(context: syncContext)
         }
     }
 

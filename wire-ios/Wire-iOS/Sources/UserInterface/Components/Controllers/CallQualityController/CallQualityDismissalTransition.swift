@@ -21,7 +21,7 @@ import UIKit
 final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -36,14 +36,12 @@ final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTr
 
         // Animate Presentation
 
-        let hideTransform: CGAffineTransform
-
-        switch containerView.traitCollection.horizontalSizeClass {
+        let hideTransform = switch containerView.traitCollection.horizontalSizeClass {
         case .regular:
-            hideTransform = CGAffineTransform(scaleX: 0, y: 0)
+            CGAffineTransform(scaleX: 0, y: 0)
 
         default:
-            hideTransform = CGAffineTransform(translationX: 0, y: containerView.frame.height)
+            CGAffineTransform(translationX: 0, y: containerView.frame.height)
         }
 
         let duration = transitionDuration(using: transitionContext)
@@ -53,9 +51,15 @@ final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTr
             contentView.transform = hideTransform
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: .systemDismissalCurve, animations: animations) { finished in
-            transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
-        }
+        UIView
+            .animate(
+                withDuration: duration,
+                delay: 0,
+                options: .systemDismissalCurve,
+                animations: animations
+            ) { finished in
+                transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
+            }
 
     }
 

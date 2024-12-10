@@ -37,7 +37,7 @@ public final class UTIHelper: NSObject {
     // MARK: - UTI conformation
 
     public static func conformsToGifType(uti: String) -> Bool {
-        return conformsTo(uti: uti, type: .gif)
+        conformsTo(uti: uti, type: .gif)
     }
 
     @objc
@@ -51,12 +51,12 @@ public final class UTIHelper: NSObject {
 
     @objc
     public static func conformsToVectorType(uti: String) -> Bool {
-        return UTType(uti)?.conforms(to: .svg) ?? false
+        UTType(uti)?.conforms(to: .svg) ?? false
     }
 
     @objc
     public static func conformsToJsonType(uti: String) -> Bool {
-        return UTType(uti)?.conforms(to: .json) ?? false
+        UTType(uti)?.conforms(to: .json) ?? false
     }
 
     // MARK: - MIME conformation
@@ -126,7 +126,7 @@ public final class UTIHelper: NSObject {
     }
 
     private static func mime(from utType: UTType) -> String? {
-        return utType.preferredMIMEType
+        utType.preferredMIMEType
     }
 
     @objc

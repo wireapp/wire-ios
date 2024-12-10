@@ -45,9 +45,6 @@ public protocol MessageAppendableConversation {
         with fileMetadata: ZMFileMetadata,
         nonce: UUID
     ) throws -> ZMConversationMessage
-
 }
 
-extension ZMConversation: MessageAppendableConversation {
-
-}
+extension ZMConversation: MessageAppendableConversation {}

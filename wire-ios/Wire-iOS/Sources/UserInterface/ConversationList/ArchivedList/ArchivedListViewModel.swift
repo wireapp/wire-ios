@@ -21,7 +21,11 @@ import WireDataModel
 import WireSyncEngine
 
 protocol ArchivedListViewModelDelegate: AnyObject {
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void)
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo,
+        applyChangesClosure: @escaping () -> Void
+    )
 }
 
 final class ArchivedListViewModel: NSObject {
@@ -40,16 +44,16 @@ final class ArchivedListViewModel: NSObject {
         super.init()
 
         let list = userSession.archivedConversationsInUserSession()
-        archivedConversationListObserverToken = userSession.addConversationListObserver(self, for: list)
-        archivedConversations = list.items
+        self.archivedConversationListObserverToken = userSession.addConversationListObserver(self, for: list)
+        self.archivedConversations = list.items
     }
 
     var count: Int {
-        return archivedConversations.count
+        archivedConversations.count
     }
 
     subscript(key: Int) -> ZMConversation {
-        return archivedConversations[key]
+        archivedConversations[key]
     }
 
     func unarchiveConversation(at row: Int) {

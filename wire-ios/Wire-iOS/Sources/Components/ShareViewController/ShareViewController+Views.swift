@@ -46,15 +46,15 @@ extension ShareViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
         containerView.backgroundColor = SemanticColors.View.backgroundDefault
         createShareablePreview()
-        self.tokenField.tokenTitleVerticalAdjustment = 1
-        self.tokenField.textView.placeholderTextAlignment = .natural
-        self.tokenField.textView.accessibilityIdentifier = "textViewSearch"
-        self.tokenField.textView.placeholder = L10n.Localizable.Content.Message.Forward.to
-        self.tokenField.textView.keyboardAppearance = .default
-        self.tokenField.textView.returnKeyType = .done
-        self.tokenField.textView.autocorrectionType = .no
-        self.tokenField.textView.textContainerInset = UIEdgeInsets(top: 9, left: 40, bottom: 11, right: 40)
-        self.tokenField.delegate = self
+        tokenField.tokenTitleVerticalAdjustment = 1
+        tokenField.textView.placeholderTextAlignment = .natural
+        tokenField.textView.accessibilityIdentifier = "textViewSearch"
+        tokenField.textView.placeholder = L10n.Localizable.Content.Message.Forward.to
+        tokenField.textView.keyboardAppearance = .default
+        tokenField.textView.returnKeyType = .done
+        tokenField.textView.autocorrectionType = .no
+        tokenField.textView.textContainerInset = UIEdgeInsets(top: 9, left: 40, bottom: 11, right: 40)
+        tokenField.delegate = self
 
         clearButton.accessibilityLabel = L10n.Accessibility.SearchView.ClearButton.description
         clearButton.setIcon(.clearInput, size: .tiny, for: .normal)
@@ -62,62 +62,82 @@ extension ShareViewController {
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
         clearButton.isHidden = true
 
-        self.destinationsTableView.backgroundColor = .clear
-        self.destinationsTableView.register(ShareDestinationCell<D>.self, forCellReuseIdentifier: ShareDestinationCell<D>.reuseIdentifier)
-        self.destinationsTableView.separatorStyle = .none
-        self.destinationsTableView.allowsSelection = true
-        self.destinationsTableView.allowsMultipleSelection = self.allowsMultipleSelection
-        self.destinationsTableView.keyboardDismissMode = .interactive
-        self.destinationsTableView.delegate = self
-        self.destinationsTableView.dataSource = self
+        destinationsTableView.backgroundColor = .clear
+        destinationsTableView.register(
+            ShareDestinationCell<D>.self,
+            forCellReuseIdentifier: ShareDestinationCell<D>.reuseIdentifier
+        )
+        destinationsTableView.separatorStyle = .none
+        destinationsTableView.allowsSelection = true
+        destinationsTableView.allowsMultipleSelection = allowsMultipleSelection
+        destinationsTableView.keyboardDismissMode = .interactive
+        destinationsTableView.delegate = self
+        destinationsTableView.dataSource = self
 
-        self.closeButton.accessibilityLabel = "close"
-        self.closeButton.setIcon(.cross, size: .tiny, for: .normal)
-        self.closeButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-        self.closeButton.addTarget(self, action: #selector(ShareViewController.onCloseButtonPressed(sender:)), for: .touchUpInside)
+        closeButton.accessibilityLabel = "close"
+        closeButton.setIcon(.cross, size: .tiny, for: .normal)
+        closeButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        closeButton.addTarget(
+            self,
+            action: #selector(ShareViewController.onCloseButtonPressed(sender:)),
+            for: .touchUpInside
+        )
 
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        self.sendButton.accessibilityLabel = "send"
-        self.sendButton.isEnabled = false
-        self.sendButton.setIcon(.send, size: .tiny, for: .normal)
-        self.sendButton.setBackgroundImageColor(UIColor.accent(), for: .normal)
-        self.sendButton.setBackgroundImageColor(UIColor.accentDarken, for: .highlighted)
-        self.sendButton.setBackgroundImageColor(SemanticColors.Button.backgroundSendDisabled, for: .disabled)
+        sendButton.accessibilityLabel = "send"
+        sendButton.isEnabled = false
+        sendButton.setIcon(.send, size: .tiny, for: .normal)
+        sendButton.setBackgroundImageColor(UIColor.accent(), for: .normal)
+        sendButton.setBackgroundImageColor(UIColor.accentDarken, for: .highlighted)
+        sendButton.setBackgroundImageColor(SemanticColors.Button.backgroundSendDisabled, for: .disabled)
 
-        self.sendButton.setIconColor(sendButtonIconColor, for: .normal)
-        self.sendButton.setIconColor(sendButtonIconColor, for: .highlighted)
-        self.sendButton.setIconColor(sendButtonIconColor, for: .disabled)
+        sendButton.setIconColor(sendButtonIconColor, for: .normal)
+        sendButton.setIconColor(sendButtonIconColor, for: .highlighted)
+        sendButton.setIconColor(sendButtonIconColor, for: .disabled)
 
-        self.sendButton.circular = true
-        self.sendButton.addTarget(self, action: #selector(ShareViewController.onSendButtonPressed(sender:)), for: .touchUpInside)
+        sendButton.circular = true
+        sendButton.addTarget(
+            self,
+            action: #selector(ShareViewController.onSendButtonPressed(sender:)),
+            for: .touchUpInside
+        )
 
-        if self.allowsMultipleSelection {
+        if allowsMultipleSelection {
             searchIcon.setTemplateIcon(.search, size: .tiny)
             searchIcon.tintColor = SemanticColors.SearchBar.backgroundButton
         } else {
-            self.clearButton.isHidden = true
-            self.tokenField.isHidden = true
-            self.searchIcon.isHidden = true
-            self.sendButton.isHidden = true
-            self.closeButton.isHidden = true
-            self.bottomSeparatorLine.isHidden = true
+            clearButton.isHidden = true
+            tokenField.isHidden = true
+            searchIcon.isHidden = true
+            sendButton.isHidden = true
+            closeButton.isHidden = true
+            bottomSeparatorLine.isHidden = true
         }
 
-        [self.containerView].forEach(self.view.addSubview)
+        [containerView].forEach(view.addSubview)
 
-        [self.tokenField, self.destinationsTableView, self.closeButton, self.sendButton, self.bottomSeparatorLine, self.topSeparatorView, self.searchIcon, self.clearButton].forEach(self.containerView.addSubview)
+        [
+            tokenField,
+            destinationsTableView,
+            closeButton,
+            sendButton,
+            bottomSeparatorLine,
+            topSeparatorView,
+            searchIcon,
+            clearButton
+        ].forEach(containerView.addSubview)
 
-        if let shareablePreviewWrapper = self.shareablePreviewWrapper {
-            self.containerView.addSubview(shareablePreviewWrapper)
+        if let shareablePreviewWrapper {
+            containerView.addSubview(shareablePreviewWrapper)
         }
     }
 
     func createConstraints() {
 
         guard let shareablePreviewWrapper,
-            let shareablePreviewView else {
-                return
+              let shareablePreviewView else {
+            return
         }
 
         [
@@ -140,10 +160,19 @@ extension ShareViewController {
         let sendButtonMargin: CGFloat = 12
 
         let bottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        let shareablePreviewTopConstraint = shareablePreviewWrapper.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor, constant: shareablePreviewWrapperMargin)
-        let tokenFieldShareablePreviewSpacingConstraint = tokenField.topAnchor.constraint(equalTo: shareablePreviewWrapper.bottomAnchor, constant: shareablePreviewWrapperMargin)
+        let shareablePreviewTopConstraint = shareablePreviewWrapper.topAnchor.constraint(
+            equalTo: containerView.safeAreaLayoutGuide.topAnchor,
+            constant: shareablePreviewWrapperMargin
+        )
+        let tokenFieldShareablePreviewSpacingConstraint = tokenField.topAnchor.constraint(
+            equalTo: shareablePreviewWrapper.bottomAnchor,
+            constant: shareablePreviewWrapperMargin
+        )
 
-        let tokenFieldTopConstraint = tokenField.topAnchor.constraint(equalTo: containerView.topAnchor, constant: tokenFieldMargin)
+        let tokenFieldTopConstraint = tokenField.topAnchor.constraint(
+            equalTo: containerView.topAnchor,
+            constant: tokenFieldMargin
+        )
 
         let tokenFieldHeightConstraint: NSLayoutConstraint
         let allowsMultipleSelectionConstraints: [NSLayoutConstraint]
@@ -171,48 +200,61 @@ extension ShareViewController {
             ]
         }
 
-        NSLayoutConstraint.activate([
+        NSLayoutConstraint.activate(
+            [
 
-            containerView.topAnchor.constraint(equalTo: view.topAnchor),
-            bottomConstraint,
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                containerView.topAnchor.constraint(equalTo: view.topAnchor),
+                bottomConstraint,
+                containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-            shareablePreviewTopConstraint,
-            shareablePreviewWrapper.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: shareablePreviewWrapperMargin),
-            shareablePreviewWrapper.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -shareablePreviewWrapperMargin),
+                shareablePreviewTopConstraint,
+                shareablePreviewWrapper.leadingAnchor.constraint(
+                    equalTo: containerView.leadingAnchor,
+                    constant: shareablePreviewWrapperMargin
+                ),
+                shareablePreviewWrapper.trailingAnchor.constraint(
+                    equalTo: containerView.trailingAnchor,
+                    constant: -shareablePreviewWrapperMargin
+                ),
 
-            shareablePreviewView.leadingAnchor.constraint(equalTo: shareablePreviewWrapper.leadingAnchor),
-            shareablePreviewView.topAnchor.constraint(equalTo: shareablePreviewWrapper.topAnchor),
-            shareablePreviewView.trailingAnchor.constraint(equalTo: shareablePreviewWrapper.trailingAnchor),
-            shareablePreviewView.bottomAnchor.constraint(equalTo: shareablePreviewWrapper.bottomAnchor),
+                shareablePreviewView.leadingAnchor.constraint(equalTo: shareablePreviewWrapper.leadingAnchor),
+                shareablePreviewView.topAnchor.constraint(equalTo: shareablePreviewWrapper.topAnchor),
+                shareablePreviewView.trailingAnchor.constraint(equalTo: shareablePreviewWrapper.trailingAnchor),
+                shareablePreviewView.bottomAnchor.constraint(equalTo: shareablePreviewWrapper.bottomAnchor),
 
-            tokenFieldShareablePreviewSpacingConstraint,
-            tokenFieldTopConstraint,
+                tokenFieldShareablePreviewSpacingConstraint,
+                tokenFieldTopConstraint,
 
-            tokenField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: tokenFieldMargin),
-            tokenField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -tokenFieldMargin),
-            tokenFieldHeightConstraint,
+                tokenField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: tokenFieldMargin),
+                tokenField.trailingAnchor.constraint(
+                    equalTo: containerView.trailingAnchor,
+                    constant: -tokenFieldMargin
+                ),
+                tokenFieldHeightConstraint,
 
-            searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-            searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
+                searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+                searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
 
-            clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-            clearButton.leadingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -32),
+                clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+                clearButton.leadingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -32),
 
-            topSeparatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topSeparatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topSeparatorView.topAnchor.constraint(equalTo: destinationsTableView.topAnchor),
-            topSeparatorView.heightAnchor.constraint(equalToConstant: .hairline),
+                topSeparatorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                topSeparatorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                topSeparatorView.topAnchor.constraint(equalTo: destinationsTableView.topAnchor),
+                topSeparatorView.heightAnchor.constraint(equalToConstant: .hairline),
 
-            destinationsTableView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            destinationsTableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            destinationsTableView.topAnchor.constraint(equalTo: tokenField.bottomAnchor, constant: 8),
-            destinationsTableView.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
+                destinationsTableView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                destinationsTableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                destinationsTableView.topAnchor.constraint(equalTo: tokenField.bottomAnchor, constant: 8),
+                destinationsTableView.bottomAnchor.constraint(equalTo: bottomSeparatorLine.topAnchor),
 
-            bottomSeparatorLine.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            bottomSeparatorLine.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            bottomSeparatorLine.heightAnchor.constraint(equalToConstant: .hairline)] + allowsMultipleSelectionConstraints)
+                bottomSeparatorLine.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                bottomSeparatorLine.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                bottomSeparatorLine.heightAnchor.constraint(equalToConstant: .hairline)
+            ] +
+                allowsMultipleSelectionConstraints
+        )
 
         self.bottomConstraint = bottomConstraint
         self.shareablePreviewTopConstraint = shareablePreviewTopConstraint

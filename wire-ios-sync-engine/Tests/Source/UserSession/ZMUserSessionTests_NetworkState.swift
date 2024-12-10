@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
@@ -27,7 +27,11 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
-        cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: userId, useCache: true)
+        cookieStorage = ZMPersistentCookieStorage(
+            forServerName: "usersessiontest.example.com",
+            userIdentifier: userId,
+            useCache: true
+        )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = createCoreDataStack()
@@ -37,11 +41,12 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // when
         let mockContextStore = MockLAContextStorable()
-        mockContextStore.clear_MockMethod = { }
+        mockContextStore.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
+            apiServiceFactory: { _, _ in MockAPIService() },
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,

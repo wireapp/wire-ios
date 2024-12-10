@@ -29,10 +29,12 @@ public final class ClientMessageRequestFactory: NSObject {
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
 
-    public func upstreamRequestForFetchingClients(conversationId: UUID,
-                                                  domain: String?,
-                                                  selfClient: UserClient,
-                                                  apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func upstreamRequestForFetchingClients(
+        conversationId: UUID,
+        domain: String?,
+        selfClient: UserClient,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         var path: String
         var message: SwiftProtobuf.Message
 
@@ -92,9 +94,14 @@ public final class ClientMessageRequestFactory: NSObject {
         )
     }
 
-    public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
+    public func requestToGetAsset(
+        _ assetId: String,
+        inConversation conversationId: UUID,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
-        let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId].joined(separator: "/")
+        let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId]
+            .joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path, apiVersion: apiVersion.rawValue)
         request.forceToBackgroundSession()
         return request
@@ -103,18 +110,29 @@ public final class ClientMessageRequestFactory: NSObject {
 }
 
 // MARK: - Downloading
+
 extension ClientMessageRequestFactory {
-    func downstreamRequestForEcryptedOriginalFileMessage(_ message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func downstreamRequestForEcryptedOriginalFileMessage(
+        _ message: ZMAssetClientMessage,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }
-        guard let conversation = message.conversation, let identifier = conversation.remoteIdentifier else { return nil }
+        guard let conversation = message.conversation,
+              let identifier = conversation.remoteIdentifier else { return nil }
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
 
         let request = ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
 
-        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form
+        // `addContentDebugInformation`.
         // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
-        request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
-        request.contentHintForRequestLoop += "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
+        request
+            .addContentDebugInformation(
+                "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
+            )
+        request
+            .contentHintForRequestLoop +=
+            "Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))"
 
         request.forceToBackgroundSession()
         return request
@@ -127,9 +145,9 @@ extension String {
         switch strategy {
         case .doNotIgnoreAnyMissingClient,
              .ignoreAllMissingClientsNotFromUsers:
-            return self
+            self
         case .ignoreAllMissingClients:
-            return self + "?ignore_missing=true"
+            self + "?ignore_missing=true"
         }
     }
 }

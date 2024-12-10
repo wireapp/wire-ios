@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
 
@@ -40,7 +40,9 @@ final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
 
     /// Disabled since the MKMApView makes the test flaky (The map view is black when running on local machine)
     func testThatItRendersLocationCellWithAddressCorrect() throws {
-        throw XCTSkip("Disabled since the MKMApView makes the test flaky (The map view is black when running on local machine)")
+        throw XCTSkip(
+            "Disabled since the MKMApView makes the test flaky (The map view is black when running on local machine)"
+        )
         // This is experimental as the MKMapView might break the snapshot tests,
         verify(message: makeMessage())
     }

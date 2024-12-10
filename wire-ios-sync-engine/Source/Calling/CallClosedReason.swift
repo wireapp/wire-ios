@@ -19,9 +19,7 @@
 import avs
 import Foundation
 
-/**
- * Reasons why a call can be terminated.
- */
+/// Reasons why a call can be terminated.
 
 public enum CallClosedReason: Int32 {
 
@@ -60,11 +58,9 @@ public enum CallClosedReason: Int32 {
 
     // MARK: - Briding
 
-    /**
-     * Creates the call closed reason from the AVS flag.
-     * - parameter wcall_reason: The flag
-     * - returns: The decoded reason, or `.unknown` if the flag couldn't be processed.
-     */
+    /// Creates the call closed reason from the AVS flag.
+    /// - parameter wcall_reason: The flag
+    /// - returns: The decoded reason, or `.unknown` if the flag couldn't be processed.
 
     init(wcall_reason: Int32) {
         switch wcall_reason {
@@ -105,37 +101,37 @@ public enum CallClosedReason: Int32 {
     var wcall_reason: Int32 {
         switch self {
         case .normal:
-            return WCALL_REASON_NORMAL
+            WCALL_REASON_NORMAL
         case .canceled:
-            return WCALL_REASON_CANCELED
+            WCALL_REASON_CANCELED
         case .answeredElsewhere:
-            return WCALL_REASON_ANSWERED_ELSEWHERE
+            WCALL_REASON_ANSWERED_ELSEWHERE
         case .rejectedElsewhere:
-            return WCALL_REASON_REJECTED
+            WCALL_REASON_REJECTED
         case .timeout:
-            return WCALL_REASON_TIMEOUT
+            WCALL_REASON_TIMEOUT
         case .lostMedia:
-            return WCALL_REASON_LOST_MEDIA
+            WCALL_REASON_LOST_MEDIA
         case .internalError:
-            return WCALL_REASON_ERROR
+            WCALL_REASON_ERROR
         case .inputOutputError:
-            return WCALL_REASON_IO_ERROR
+            WCALL_REASON_IO_ERROR
         case .stillOngoing:
-            return WCALL_REASON_STILL_ONGOING
+            WCALL_REASON_STILL_ONGOING
         case .securityDegraded:
-            return WCALL_REASON_ERROR
+            WCALL_REASON_ERROR
         case .outdatedClient:
-            return WCALL_REASON_OUTDATED_CLIENT
+            WCALL_REASON_OUTDATED_CLIENT
         case .timeoutECONN:
-            return WCALL_REASON_TIMEOUT_ECONN
+            WCALL_REASON_TIMEOUT_ECONN
         case .datachannel:
-            return WCALL_REASON_DATACHANNEL
+            WCALL_REASON_DATACHANNEL
         case .noOneJoined:
-            return WCALL_REASON_NOONE_JOINED
+            WCALL_REASON_NOONE_JOINED
         case .everyoneLeft:
-            return WCALL_REASON_EVERYONE_LEFT
+            WCALL_REASON_EVERYONE_LEFT
         case .unknown:
-            return WCALL_REASON_ERROR
+            WCALL_REASON_ERROR
         }
     }
 }

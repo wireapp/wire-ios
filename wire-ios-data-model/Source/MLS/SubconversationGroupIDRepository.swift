@@ -41,7 +41,7 @@ public protocol SubconversationGroupIDRepositoryInterface {
     ///   - parentGroupID: The group ID of the parent conversation
     /// - Returns: The group ID of the subconversation
     ///
-    /// **Note:** This will return `nil` if the group ID hasn't previously been stored 
+    /// **Note:** This will return `nil` if the group ID hasn't previously been stored
     /// by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
 
     func fetchSubconversationGroupID(
@@ -54,7 +54,7 @@ public protocol SubconversationGroupIDRepositoryInterface {
     /// - Parameter targetGroupID: The group ID of the subconversation
     /// - Returns: The type and parent group ID of the subconversation
     ///
-    /// **Note:** This will return `nil` if the group ID hasn't previously been stored 
+    /// **Note:** This will return `nil` if the group ID hasn't previously been stored
     /// by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
 
     func findSubgroupTypeAndParentID(
@@ -73,9 +73,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
 
     // MARK: - Life cycle
 
-    public init() {
-
-    }
+    public init() {}
 
     // MARK: - Store
 
@@ -93,7 +91,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     ) -> MLSGroupID? {
-        return storage[parentGroupID]?[type]
+        storage[parentGroupID]?[type]
     }
 
     // MARK: - Finding subgroup

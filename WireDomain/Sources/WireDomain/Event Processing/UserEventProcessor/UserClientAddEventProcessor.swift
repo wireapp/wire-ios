@@ -36,16 +36,16 @@ struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
         case failedToUpdateUserClient(Swift.Error)
     }
 
-    let repository: any UserRepositoryProtocol
+    let repository: any UserClientsRepositoryProtocol
 
     func processEvent(_ event: UserClientAddEvent) async throws {
         do {
-            let localUserClient = try await repository.fetchOrCreateUserClient(
-                with: event.client.id
+            let localUserClient = try await repository.fetchOrCreateClient(
+                id: event.client.id
             )
 
-            try await repository.updateUserClient(
-                localUserClient.client,
+            try await repository.updateClient(
+                id: event.client.id,
                 from: event.client,
                 isNewClient: localUserClient.isNew
             )

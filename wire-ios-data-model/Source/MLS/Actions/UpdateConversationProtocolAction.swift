@@ -37,13 +37,13 @@ public struct UpdateConversationProtocolAction: EntityAction {
     }
 }
 
-extension UpdateConversationProtocolAction {
+public extension UpdateConversationProtocolAction {
 
     // MARK: - Types
 
-    public typealias Result = Void
+    typealias Result = Void
 
-    public enum Failure: Equatable, Error {
+    enum Failure: Equatable, Error {
 
         case endpointUnavailable
         case api(APIFailure)
@@ -70,11 +70,11 @@ extension UpdateConversationProtocolAction {
             public var statusCode: Int {
                 switch self {
                 case .mlsMigrationCriteriaNotSatisfied, .invalidBody:
-                    return 400
+                    400
                 case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
-                    return 403
+                    403
                 case .conversationIdOrDomainNotFound, .noTeam, .noConversation:
-                    return 404
+                    404
                 }
             }
         }

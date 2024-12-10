@@ -89,7 +89,7 @@ jobs:
       WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
       WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
       APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
-      APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
+      APPCENTER_OWNER_NAME: "Wire"
       S3_BUCKET: "z-lohika"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
@@ -117,6 +117,8 @@ jobs:
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      REPO_ROOT: ${{ github.workspace }}
+      PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       
     steps:
       - name: Add Masks
@@ -143,6 +145,15 @@ jobs:
       - name: Bootstrap Carthage if no cache
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+      - name: Restore Swift Package Dependencies Cache
+        id: cache-swift-packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PACKAGES_DIR }}
+          key: ${{ runner.os }}-swiftpm-project-${{ hashFiles('**/*.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ env.ENABLE_DATADOG }}
+      - name: Resolve Swift Package Dependencies
+        run: |
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

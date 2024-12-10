@@ -39,7 +39,8 @@ private let ZMPushStringFileAdd             = "add.file"             // "[sender
 private let ZMPushStringLocationAdd         = "add.location"         // "[senderName] shared a location"
 
 // currently disabled
-// public let ZMPushStringMessageAddMany      = "add.message.many"    // "x new messages in [conversationName] / from [senderName]"
+// public let ZMPushStringMessageAddMany      = "add.message.many"    // "x new messages in [conversationName] / from
+// [senderName]"
 
 private let ZMPushStringFailedToSend        = "failed.message"       // "Unable to send a message"
 
@@ -49,7 +50,7 @@ private let ZMPushStringBundledMessages     = "bundled-messages"
 
 private let ZMPushStringMemberJoin          = "member.join"          // "[senderName] added you"
 private let ZMPushStringMemberLeave         = "member.leave"         // "[senderName] removed you"
-private let ZMPushStringMessageTimerUpdate  = "message-timer.update" // "[senderName] set the message timer to [duration]
+private let ZMPushStringMessageTimerUpdate = "message-timer.update" // "[senderName] set the message timer to [duration]
 private let ZMPushStringMessageTimerOff     = "message-timer.off"    // "[senderName] turned off the message timer
 
 private let ZMPushStringKnock               = "knock"                // "pinged"
@@ -80,75 +81,76 @@ private let NoUserNameKey = "nousername"
 
 extension LocalNotificationType {
 
-    fileprivate var baseKey: String {
+    private var baseKey: String {
         switch self {
-        case .message(let contentType):
+        case let .message(contentType):
             switch contentType {
             case .image:
-                return ZMPushStringImageAdd
+                ZMPushStringImageAdd
             case .video:
-                return ZMPushStringVideoAdd
+                ZMPushStringVideoAdd
             case .audio:
-                return ZMPushStringAudioAdd
+                ZMPushStringAudioAdd
             case .location:
-                return ZMPushStringLocationAdd
+                ZMPushStringLocationAdd
             case .fileUpload:
-                return ZMPushStringFileAdd
+                ZMPushStringFileAdd
             case .text:
-                return ZMPushStringMessageAdd
+                ZMPushStringMessageAdd
             case .knock:
-                return ZMPushStringKnock
+                ZMPushStringKnock
             case .reaction:
-                return ZMPushStringReaction
+                ZMPushStringReaction
             case .ephemeral:
-                return ZMPushStringEphemeral
+                ZMPushStringEphemeral
             case .hidden:
-                return ZMPushStringDefault
+                ZMPushStringDefault
             case .participantsAdded:
-                return ZMPushStringMemberJoin
+                ZMPushStringMemberJoin
             case .participantsRemoved:
-                return ZMPushStringMemberLeave
+                ZMPushStringMemberLeave
             case .messageTimerUpdate(nil):
-                return ZMPushStringMessageTimerOff
+                ZMPushStringMessageTimerOff
             case .messageTimerUpdate:
-                return ZMPushStringMessageTimerUpdate
+                ZMPushStringMessageTimerUpdate
             }
 
-        case .calling(let callState):
+        case let .calling(callState):
             switch callState {
             case .incomingCall(video: true):
-                return ZMPushStringVideoCallStarts
+                ZMPushStringVideoCallStarts
             case .incomingCall(video: false):
-                return ZMPushStringCallStarts
+                ZMPushStringCallStarts
             case .missedCall:
-                return ZMPushStringCallMissed
+                ZMPushStringCallMissed
             }
 
-        case .event(let eventType):
+        case let .event(eventType):
             switch eventType {
             case .conversationCreated:
-                return ZMPushStringConversationCreate
+                ZMPushStringConversationCreate
             case .conversationDeleted:
-                return ZMPushStringConversationDelete
+                ZMPushStringConversationDelete
             case .connectionRequestPending:
-                return ZMPushStringConnectionRequest
+                ZMPushStringConnectionRequest
             case .connectionRequestAccepted:
-                return ZMPushStringConnectionAccepted
+                ZMPushStringConnectionAccepted
             case .newConnection:
-                return ZMPushStringNewConnection
+                ZMPushStringNewConnection
             }
+
         case .failedMessage:
-            return ZMPushStringFailedToSend
+            ZMPushStringFailedToSend
 
         case .availabilityBehaviourChangeAlert:
-            return ZMPushStringAlertAvailability
+            ZMPushStringAlertAvailability
 
         case .bundledMessages:
-            return ZMPushStringBundledMessages
+            ZMPushStringBundledMessages
         }
     }
 
-    fileprivate func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
+    private func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
         guard let sender else { return NoUserNameKey }
 
         if case .failedMessage = self {
@@ -160,15 +162,15 @@ extension LocalNotificationType {
         return nil
     }
 
-    fileprivate func conversationKey(_ conversation: ZMConversation?) -> String? {
-        if conversation?.conversationType != .oneOnOne && conversation?.displayName == nil {
+    private func conversationKey(_ conversation: ZMConversation?) -> String? {
+        if conversation?.conversationType != .oneOnOne, conversation?.displayName == nil {
             return NoConversationNameKey
         }
 
         return nil
     }
 
-    fileprivate func messageBodyText(eventType: LocalNotificationEventType, senderName: String?) -> String {
+    private func messageBodyText(eventType: LocalNotificationEventType, senderName: String?) -> String {
         let senderKey = senderName == nil ? NoUserNameKey : nil
         let localizationKey = [baseKey, senderKey].compactMap { $0 }.joined(separator: ".")
         var arguments: [CVarArg] = []
@@ -182,7 +184,7 @@ extension LocalNotificationType {
 
     public func titleText(selfUser: ZMUser, conversation: ZMConversation? = nil) -> String? {
 
-        if case .message(let contentType) = self {
+        if case let .message(contentType) = self {
             switch contentType {
             case .ephemeral:
                 return .localizedStringWithFormat(ZMPushStringEphemeralTitle.pushFormatString)
@@ -197,7 +199,10 @@ extension LocalNotificationType {
         let conversationName = conversation?.displayName
 
         if let conversationName, let teamName {
-            return .localizedStringWithFormat(ZMPushStringTitle.pushFormatString, arguments: [conversationName, teamName])
+            return .localizedStringWithFormat(
+                ZMPushStringTitle.pushFormatString,
+                arguments: [conversationName, teamName]
+            )
         } else if let conversationName {
             return conversationName
         } else if let teamName {
@@ -208,20 +213,22 @@ extension LocalNotificationType {
     }
 
     public func alertTitleText(team: Team?) -> String? {
-        guard case .availabilityBehaviourChangeAlert(let availability) = self, availability.isOne(of: .away, .busy) else { return nil }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return nil }
 
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap({ $0 }).joined(separator: ".")
-        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap({ $0 }))
+        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap { $0 }.joined(separator: ".")
+        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap { $0 })
     }
 
     public func alertMessageBodyText() -> String {
-        guard case .availabilityBehaviourChangeAlert(let availability) = self, availability.isOne(of: .away, .busy) else { return "" }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return "" }
 
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "message"].compactMap({ $0 }).joined(separator: ".")
+        let localizationKey = [baseKey, availabilityKey, "message"].compactMap { $0 }.joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString)
     }
 
@@ -231,23 +238,23 @@ extension LocalNotificationType {
     }
 
     func messageBodyText(senderName: String?) -> String {
-        if case LocalNotificationType.event(let eventType) = self {
-            return messageBodyText(eventType: eventType, senderName: senderName)
+        if case let LocalNotificationType.event(eventType) = self {
+            messageBodyText(eventType: eventType, senderName: senderName)
         } else {
-            return messageBodyText(sender: nil, conversation: nil)
+            messageBodyText(sender: nil, conversation: nil)
         }
     }
 
     public func messageBodyText(sender: ZMUser?, conversation: ZMConversation?) -> String {
-        if case LocalNotificationType.event(let eventType) = self {
+        if case let LocalNotificationType.event(eventType) = self {
             return messageBodyText(eventType: eventType, senderName: sender?.name)
         }
 
         let conversationName = conversation?.userDefinedName ?? ""
         let senderName = sender?.name ?? "conversation.status.someone"
-        var senderKey = self.senderKey(sender, conversation)
+        var senderKey = senderKey(sender, conversation)
         var conversationTypeKey: String? = (conversation?.conversationType != .oneOnOne) ? GroupKey : OneOnOneKey
-        let conversationKey = self.conversationKey(conversation)
+        let conversationKey = conversationKey(conversation)
 
         var arguments: [CVarArg] = []
 
@@ -259,13 +266,13 @@ extension LocalNotificationType {
         var mentionOrReplyKey: String?
 
         switch self {
-        case .message(let contentType):
+        case let .message(contentType):
             switch contentType {
             case let .text(content, isMention, isReply):
                 arguments.append(content)
                 mentionOrReplyKey = isMention ? MentionKey : (isReply ? ReplyKey : nil)
 
-            case .reaction(emoji: let emoji):
+            case let .reaction(emoji: emoji):
                 arguments.append(emoji)
 
             case .knock:
@@ -279,7 +286,7 @@ extension LocalNotificationType {
             case .hidden:
                 return .localizedStringWithFormat(baseKey.pushFormatString)
 
-            case .messageTimerUpdate(let timerString):
+            case let .messageTimerUpdate(timerString):
                 if let string = timerString {
                     arguments.append(string)
                 }
@@ -289,7 +296,7 @@ extension LocalNotificationType {
                 conversationTypeKey = nil // System messages don't follow the template and is missing the `group` suffix
                 senderKey = SelfKey
 
-            case .participantsRemoved(let reason):
+            case let .participantsRemoved(reason):
                 conversationTypeKey = nil // System messages don't follow the template and is missing the `group` suffix
                 senderKey = SelfKey
                 // If there is a reason for removal, we should display a simple message "You were removed"
@@ -305,7 +312,8 @@ extension LocalNotificationType {
             arguments.append(conversationName)
         }
 
-        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey].compactMap({ $0 }).joined(separator: ".")
+        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey]
+            .compactMap { $0 }.joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: arguments)
     }
 
@@ -314,26 +322,33 @@ extension LocalNotificationType {
 public extension String {
 
     var pushFormatString: String {
-        return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(
+            forKey: "push.notification.\(self)",
+            value: "",
+            table: "Push"
+        )
     }
 
     var pushActionString: String {
-        return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(
+            forKey: "push.notification.action.\(self)",
+            value: "",
+            table: "Push"
+        )
     }
 
-    static fileprivate func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {
+    fileprivate static func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {
         switch arguments.count {
         case 1:
-            return String.localizedStringWithFormat(format, arguments[0])
+            String.localizedStringWithFormat(format, arguments[0])
         case 2:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1])
         case 3:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2])
         case 4:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2], arguments[3])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2], arguments[3])
         default:
-            return NSLocalizedString(format, comment: "")
-
+            NSLocalizedString(format, comment: "")
         }
     }
 

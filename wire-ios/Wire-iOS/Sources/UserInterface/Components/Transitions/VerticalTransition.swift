@@ -33,7 +33,7 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -57,10 +57,10 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
 
         containerView.layoutIfNeeded()
 
-        let sign = copysign(1.0, self.offset)
+        let sign = copysign(1.0, offset)
         let finalRect = transitionContext.finalFrame(for: toViewController)
-        let toTransfrom = CGAffineTransform(translationX: 0, y: -self.offset)
-        let fromTransform = CGAffineTransform(translationX: 0, y: sign * (finalRect.size.height - abs(self.offset)))
+        let toTransfrom = CGAffineTransform(translationX: 0, y: -offset)
+        let fromTransform = CGAffineTransform(translationX: 0, y: sign * (finalRect.size.height - abs(offset)))
 
         toView.transform = toTransfrom
         fromView.transform = fromTransform
@@ -69,16 +69,21 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
             viewsToHide.forEach { $0.isHidden = true }
         }
 
-        UIView.animate(easing: EasingFunction.easeOutExpo, duration: transitionDuration(using: transitionContext), animations: {
-            fromView.transform = CGAffineTransform(translationX: 0.0, y: sign * finalRect.size.height)
-            toView.transform = CGAffineTransform.identity
-        }, completion: { _ in
-            fromView.transform = CGAffineTransform.identity
-            if let viewsToHide = self.dataSource?.viewsToHideDuringVerticalTransition(transition: self) {
-                viewsToHide.forEach { $0.isHidden = false }
-            }
+        UIView.animate(
+            easing: EasingFunction.easeOutExpo,
+            duration: transitionDuration(using: transitionContext),
+            animations: {
+                fromView.transform = CGAffineTransform(translationX: 0.0, y: sign * finalRect.size.height)
+                toView.transform = CGAffineTransform.identity
+            },
+            completion: { _ in
+                fromView.transform = CGAffineTransform.identity
+                if let viewsToHide = self.dataSource?.viewsToHideDuringVerticalTransition(transition: self) {
+                    viewsToHide.forEach { $0.isHidden = false }
+                }
 
-            transitionContext.completeTransition(true)
-        })
+                transitionContext.completeTransition(true)
+            }
+        )
     }
 }

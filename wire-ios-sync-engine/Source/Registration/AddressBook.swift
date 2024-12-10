@@ -25,7 +25,7 @@ import libPhoneNumberiOS
 protocol AddressBookAccessor {
 
     /// Number of contacts in the address book
-    var numberOfContacts: UInt {get}
+    var numberOfContacts: UInt { get }
 
     /// Enumerates the contacts whitout performing any normalization or validation, invoking the block for each contact.
     /// If the block returns false, it will stop enumerating them.
@@ -47,8 +47,9 @@ extension AddressBookAccessor {
     /// Non valid contacts (no email nor phone) will be excluded from the enumeration.
     /// If the block returns false, it will stop enumerating them.
     func enumerateValidContacts(block: @escaping (ZMAddressBookContact) -> (Bool)) {
-        self.enumerateRawContacts {
-            guard let parsed = ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) else {
+        enumerateRawContacts {
+            guard let parsed = ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer)
+            else {
                 return true
             }
             return block(parsed)
@@ -57,7 +58,7 @@ extension AddressBookAccessor {
 
     /// Returns valid contacts matching the search query, with normalized email and phone numbers
     func contacts(matchingQuery: String) -> [ZMAddressBookContact] {
-        return self.rawContacts(matchingQuery: matchingQuery)
+        rawContacts(matchingQuery: matchingQuery)
             .compactMap { ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) }
     }
 
@@ -77,21 +78,23 @@ extension AddressBookAccessor {
         // never blocked indefinitely as this is the only function using it
         groupQueue.dispatchGroup?.async(on: addressBookProcessingQueue) {
 
-            let range: Range<UInt> = startingContactIndex..<(startingContactIndex + maxNumberOfContacts)
+            let range: Range<UInt> = startingContactIndex ..< (startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
 
-            guard cards.count > 0 || startingContactIndex > 0 else {
+            guard !cards.isEmpty || startingContactIndex > 0 else {
                 // this should happen if I have zero contacts
-                groupQueue.performGroupedBlock({
+                groupQueue.performGroupedBlock {
                     completion(nil)
-                })
+                }
                 return
             }
 
-            let cardsRange = startingContactIndex..<(startingContactIndex + UInt(cards.count))
-            let encodedAB = EncodedAddressBookChunk(numberOfTotalContacts: self.numberOfContacts,
-                                                    otherContactsHashes: cards,
-                                                    includedContacts: cardsRange)
+            let cardsRange = startingContactIndex ..< (startingContactIndex + UInt(cards.count))
+            let encodedAB = EncodedAddressBookChunk(
+                numberOfTotalContacts: self.numberOfContacts,
+                otherContactsHashes: cards,
+                includedContacts: cardsRange
+            )
             groupQueue.performGroupedBlock {
                 completion(encodedAB)
             }
@@ -99,13 +102,13 @@ extension AddressBookAccessor {
     }
 
     /// Generate contact cards for the given range of contacts
-    fileprivate func generateContactCards(range: Range<UInt>) -> [String: [String]] {
+    private func generateContactCards(range: Range<UInt>) -> [String: [String]] {
         var cards = [String: [String]]()
 
-        self.contacts(range: range).enumerated().forEach {
+        contacts(range: range).enumerated().forEach {
             let contact = $0.element
-            cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
-            + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
+            cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map(\.base64EncodedSHADigest))
+                + (contact.phoneNumbers.map(\.base64EncodedSHADigest))
         }
         return cards
     }
@@ -118,7 +121,7 @@ extension AddressBookAccessor {
         contacts.reserveCapacity(maxElements)
 
         var skipped: UInt = 0
-        self.enumerateValidContacts { contact -> (Bool) in
+        enumerateValidContacts { contact -> (Bool) in
             if skipped < range.lowerBound {
                 skipped += 1
                 return true
@@ -135,7 +138,7 @@ extension AddressBookAccessor {
         var contacts = [ContactRecord]()
         contacts.reserveCapacity(number)
         var count = 0
-        self.enumerateRawContacts { record in
+        enumerateRawContacts { record in
             contacts.append(record)
             count += 1
             return count < number
@@ -161,7 +164,7 @@ class AddressBook {
     /// Will return an instance of the address book accessor best suited for the
     /// current OS version. Will return `nil` if the user did not grant access to the AB
     static func factory() -> AddressBookAccessor? {
-        guard self.accessGranted() else {
+        guard accessGranted() else {
             return nil
         }
 
@@ -179,6 +182,7 @@ class AddressBook {
 }
 
 // MARK: - Encoded address book chunk
+
 struct EncodedAddressBookChunk {
 
     /// Total number of contacts in the address book
@@ -193,7 +197,8 @@ struct EncodedAddressBookChunk {
 }
 
 // MARK: - Phone number and email normalization
-extension NBPhoneNumberUtil {
+
+private extension NBPhoneNumberUtil {
 
     /// Returns a normalized version of the phone number, or nil
     /// if the phone number was not normalizable.
@@ -202,16 +207,16 @@ extension NBPhoneNumberUtil {
     /// used for QA automation and will always be accepted, without being
     /// normalized through the normalization library but just sanitized
     /// from any non-numberic character
-    fileprivate func normalize(phoneNumber: String) -> String? {
+    func normalize(phoneNumber: String) -> String? {
         let testingNumberPrefix = "+0"
         guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
             return phoneNumber.validatedPhoneNumber
         }
 
-        guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
+        guard let parsedNumber = try? parse(withPhoneCarrierRegion: phoneNumber) else {
             return nil
         }
-        guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
+        guard let normalizedNumber = try? format(parsedNumber, numberFormat: .E164) else {
             return nil
         }
         return normalizedNumber
@@ -225,9 +230,8 @@ extension String {
     var validatedPhoneNumber: String? {
 
         // allow +0 numbers
-        if self.hasPrefix("+0") {
-            return "+" + (self
-                .components(separatedBy: CharacterSet.decimalDigits.inverted)
+        if hasPrefix("+0") {
+            return "+" + (components(separatedBy: CharacterSet.decimalDigits.inverted)
                 .joined(separator: "")) // remove all non-digit
         }
 
@@ -260,7 +264,7 @@ extension String {
 
     /// Returns the base64 encoded string of the SHA hash of the string
     var base64EncodedSHADigest: String {
-        return Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
+        Data(utf8).zmSHA256Digest().base64EncodedString(options: [])
     }
 
 }
@@ -273,7 +277,7 @@ extension Sequence {
     /// Returns the elements of the sequence in the positions indicated by the range
     func elements(_ range: Range<UInt>) -> AnyIterator<Self.Iterator.Element> {
 
-        var generator = self.makeIterator()
+        var generator = makeIterator()
         var count: UInt = 0
 
         return AnyIterator {
@@ -312,7 +316,7 @@ protocol ContactRecord {
 extension ContactRecord {
 
     var displayName: String {
-        return [self.firstName, self.middleName, self.lastName]
+        [firstName, middleName, lastName]
             .filter { $0 != "" }
             .joined(separator: " ")
     }
@@ -320,8 +324,10 @@ extension ContactRecord {
 
 extension ZMAddressBookContact {
 
-    convenience init?(contact: ContactRecord,
-                      phoneNumberNormalizer: AddressBook.Normalizer) {
+    convenience init?(
+        contact: ContactRecord,
+        phoneNumberNormalizer: AddressBook.Normalizer
+    ) {
         self.init()
 
         // names
@@ -330,13 +336,13 @@ extension ZMAddressBookContact {
         self.middleName = contact.middleName
         self.nickname = contact.nickname
         self.organization = contact.organization
-        self.emailAddresses = contact.rawEmails.compactMap { $0.validatedEmail }
+        self.emailAddresses = contact.rawEmails.compactMap(\.validatedEmail)
         self.rawPhoneNumbers = contact.rawPhoneNumbers
-        self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
+        self.phoneNumbers = rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
         self.localIdentifier = contact.localIdentifier
 
         // ignore contacts with no email nor phones
-        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
+        guard !emailAddresses.isEmpty || !phoneNumbers.isEmpty else {
             return nil
         }
     }

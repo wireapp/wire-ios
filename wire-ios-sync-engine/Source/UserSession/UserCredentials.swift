@@ -44,11 +44,11 @@ public class UserCredentials: NSObject {
         guard let other = object as? UserCredentials else {
             return false
         }
-        return self.email == other.email &&
-        self.password == other.password &&
-        self.phoneNumber == other.phoneNumber &&
-        self.phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
-        self.emailVerificationCode == other.emailVerificationCode
+        return email == other.email &&
+            password == other.password &&
+            phoneNumber == other.phoneNumber &&
+            phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
+            emailVerificationCode == other.emailVerificationCode
     }
 
     public override var hash: Int {
@@ -61,14 +61,12 @@ public class UserCredentials: NSObject {
         return hasher.finalize()
     }
 
-    @objc
     public var credentialWithEmail: Bool {
-        return email != nil
+        email != nil
     }
 
-    @objc
     public var credentialWithPhone: Bool {
-        return phoneNumber != nil
+        phoneNumber != nil
     }
 }
 
@@ -85,12 +83,16 @@ public class UserPhoneCredentials: UserCredentials {
 public class UserEmailCredentials: UserCredentials {
     @objc(credentialsWithEmail:password:)
     public static func credentials(email: String, password: String) -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
+        UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
     }
 
     @objc(credentialsWithEmail:password:emailVerificationCode:)
-    public static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
+    public static func credentials(
+        email: String,
+        password: String,
+        emailVerificationCode: String?
+    ) -> UserEmailCredentials {
+        UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
     }
 
 }

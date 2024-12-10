@@ -106,7 +106,7 @@ final class BadgeUserImageView: UserImageView {
         super.userDidChange(changeInfo)
 
         if changeInfo.connectionStateChanged {
-            self.updateBadgeIcon()
+            updateBadgeIcon()
         }
     }
 
@@ -128,11 +128,9 @@ final class BadgeUserImageView: UserImageView {
 
     // MARK: - Interface
 
-    /**
-     * Updates the icon view with the specified icon, with an optional animation.
-     * - parameter icon: The icon to show on the badge.
-     * - parameter animated: Whether to animate the change.
-     */
+    /// Updates the icon view with the specified icon, with an optional animation.
+    /// - parameter icon: The icon to show on the badge.
+    /// - parameter animated: Whether to animate the change.
 
     private func updateIconView(with icon: StyleKitIcon?, animated: Bool) {
         badgeImageView.image = nil
@@ -160,7 +158,15 @@ final class BadgeUserImageView: UserImageView {
             if animated {
                 hideBadge()
                 changeImage()
-                UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 15.0, options: [], animations: showBadge, completion: nil)
+                UIView.animate(
+                    withDuration: 0.65,
+                    delay: 0,
+                    usingSpringWithDamping: 0.5,
+                    initialSpringVelocity: 15.0,
+                    options: [],
+                    animations: showBadge,
+                    completion: nil
+                )
                 UIView.animate(easing: .easeOutQuart, duration: 0.15, animations: showShadow)
             } else {
                 changeImage()
@@ -180,7 +186,7 @@ extension BadgeUserImageView {
 
     var wr_badgeIconSize: CGFloat {
         get {
-            return badgeIconSize.rawValue
+            badgeIconSize.rawValue
         }
         set {
             badgeIconSize = .custom(newValue)

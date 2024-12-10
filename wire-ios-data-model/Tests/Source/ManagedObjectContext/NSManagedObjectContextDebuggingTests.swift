@@ -23,27 +23,27 @@ final class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
     func testThatItInvokesCallbackWhenFailedToSave() {
 
         // GIVEN
-        self.makeChangeThatWillCauseRollback()
-        let expectation = self.customExpectation(description: "callback invoked")
-        self.uiMOC.errorOnSaveCallback = { moc, error in
+        makeChangeThatWillCauseRollback()
+        let expectation = customExpectation(description: "callback invoked")
+        uiMOC.errorOnSaveCallback = { moc, error in
             XCTAssertEqual(moc, self.uiMOC)
             XCTAssertNotNil(error)
             expectation.fulfill()
         }
 
         // WHEN
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             self.uiMOC.saveOrRollback()
         }
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 }
 
 // MARK: - Helper
 
-private let longString = (0..<50)
+private let longString = (0 ..< 50)
     .reduce(into: "") { partialResult, _ in
         partialResult.append("AaAaAaAaAa")
     }
@@ -51,7 +51,7 @@ private let longString = (0..<50)
 extension NSManagedObjectContextDebuggingTests {
 
     func makeChangeThatWillCauseRollback() {
-        let user = ZMUser.selfUser(in: self.uiMOC)
+        let user = ZMUser.selfUser(in: uiMOC)
         // this user name is too long and will fail validation
         user.name = longString
     }

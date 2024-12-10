@@ -19,11 +19,11 @@
 import Foundation
 import WireUtilities
 
-extension ZMUser {
+public extension ZMUser {
 
     /// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
-    @objc static var predicateForConnectedNonBotUsers: NSPredicate {
-        return predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+    @objc internal static var predicateForConnectedNonBotUsers: NSPredicate {
+        predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
 
     /// Retrieves connected users with name or handle matching search string
@@ -31,34 +31,52 @@ extension ZMUser {
     /// - Parameter query: search string
     /// - Returns: predicate having search query and ZMConnectionStatusAccepted connection statuses
     @objc(predicateForConnectedUsersWithSearchString:)
-    public static func predicateForConnectedUsers(withSearch query: String) -> NSPredicate {
-        return predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+    static func predicateForConnectedUsers(withSearch query: String) -> NSPredicate {
+        predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+    }
+
+    static func predicateForConnectedUsers(
+        withSearch query: String,
+        hostedOnDomain domain: String
+    ) -> NSPredicate {
+        predicateForUsers(
+            withSearch: query,
+            connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        .and(NSPredicate.isHostedOnDomain(domain))
     }
 
     /// Retrieves all users with name or handle matching search string
     ///
     /// - Parameter query: search string
     /// - Returns: predicate having search query
-    public static func predicateForAllUsers(withSearch query: String) -> NSPredicate {
-        return predicateForUsers(withSearch: query, connectionStatuses: nil)
+    static func predicateForAllUsers(withSearch query: String) -> NSPredicate {
+        predicateForUsers(withSearch: query, connectionStatuses: nil)
     }
 
     /// Retrieves users with name or handle matching search string, having one of given connection statuses
     ///
     /// - Parameters:
     ///   - query: search string
-    ///   - connectionStatuses: an array of connections status of the users. E.g. for connected users it is [ZMConnectionStatus.accepted.rawValue]
+    ///   - connectionStatuses: an array of connections status of the users. E.g. for connected users it is
+    /// [ZMConnectionStatus.accepted.rawValue]
     /// - Returns: predicate having search query and supplied connection statuses
     @objc(predicateForUsersWithSearchString:connectionStatusInArray:)
-    public static func predicateForUsers(withSearch query: String, connectionStatuses: [Int16]? ) -> NSPredicate {
+    static func predicateForUsers(withSearch query: String, connectionStatuses: [Int16]?) -> NSPredicate {
         var allPredicates = [[NSPredicate]]()
         if let statuses = connectionStatuses {
             allPredicates.append([predicateForUsers(withConnectionStatuses: statuses)])
         }
 
         if !query.isEmpty {
-            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"], matchingSearch: query)
-            let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
+            let namePredicate = NSPredicate(
+                formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"],
+                matchingSearch: query
+            )
+            let handlePredicate = NSPredicate(
+                format: "%K BEGINSWITH %@",
+                #keyPath(ZMUser.handle),
+                query.strippingLeadingAtSign()
+            )
             allPredicates.append([namePredicate, handlePredicate].compactMap { $0 })
         }
 
@@ -68,31 +86,33 @@ extension ZMUser {
     }
 
     @objc(predicateForUsersWithConnectionStatusInArray:)
-    public static func predicateForUsers(withConnectionStatuses connectionStatuses: [Int16]) -> NSPredicate {
-        return NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), connectionStatuses)
+    static func predicateForUsers(withConnectionStatuses connectionStatuses: [Int16]) -> NSPredicate {
+        NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), connectionStatuses)
     }
 
-    public static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
-        return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
+    static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
+        NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
 
-    public static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
-        return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
+    static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
+        NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 
-    static func predicateForUsersWithOneOnOneConversation() -> NSPredicate {
+    internal static func predicateForUsersWithOneOnOneConversation() -> NSPredicate {
         NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
     }
 
-    public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
-        return NSPredicate.isHostedOnDomain(domain)
-                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
+    static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
+        NSPredicate.isHostedOnDomain(domain)
+            .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
     }
 
-    public static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
-        return NSPredicate.isHostedOnDomain(domain)
-                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
-                                                                          ZMConnectionStatus.sent.rawValue]))
+    static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
+        NSPredicate.isHostedOnDomain(domain)
+            .and(predicateForUsers(withConnectionStatuses: [
+                ZMConnectionStatus.pending.rawValue,
+                ZMConnectionStatus.sent.rawValue
+            ]))
     }
 
 }
@@ -102,7 +122,7 @@ extension ZMUser {
 private extension NSPredicate {
 
     static func isHostedOnDomain(_ domain: String) -> NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K == %@",
             #keyPath(ZMUser.domain),
             domain

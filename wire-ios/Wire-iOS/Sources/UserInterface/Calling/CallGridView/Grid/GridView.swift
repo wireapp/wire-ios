@@ -63,6 +63,7 @@ final class GridView: UICollectionView {
         setupViews()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -161,7 +162,7 @@ private extension GridView {
     }
 
     func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
-        let numberOfItemsInPage = self.numberOfItemsInPage(indexPath: indexPath)
+        let numberOfItemsInPage = numberOfItemsInPage(indexPath: indexPath)
 
         let participantAmount = ParticipantAmount(numberOfItemsInPage)
         let splitType = SplitType(layoutDirection, segmentType)
@@ -171,7 +172,7 @@ private extension GridView {
             return (numberOfItemsInPage + 1) / 2
 
         case (.moreThanTwo, .middleSplit):
-            let isOddLastRow = self.isOddLastRow(indexPath)
+            let isOddLastRow = isOddLastRow(indexPath)
             let isLayoutDirectionVertical = layoutDirection == .vertical
             return isOddLastRow && isLayoutDirectionVertical ? 1 : 2
 
@@ -198,9 +199,13 @@ private extension GridView {
 
 extension GridView: UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
 
-        return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
+        sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
     }
 
     private func sizeForNewUIItem(withIndexPath indexPath: IndexPath, collectionView: UICollectionView) -> CGSize {
@@ -218,7 +223,10 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 
-    func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint
+    ) -> CGPoint {
         guard
             let indexPath = firstIndexPath(forPage: currentPage),
             let attributes = layoutAttributesForItem(at: indexPath)
@@ -230,34 +238,38 @@ extension GridView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int) -> UIEdgeInsets {
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
 
-            return .zero
-        }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-
-            return 1.0
-        }
+        .zero
+    }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
 
-            return 1.0
-        }
+        1.0
+    }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int) -> CGSize {
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
 
-            return .zero
-        }
+        1.0
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+
+        .zero
+    }
 }
 
 // MARK: - UIScrollViewDelegate

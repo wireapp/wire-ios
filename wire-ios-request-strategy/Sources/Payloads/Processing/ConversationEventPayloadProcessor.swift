@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 enum ConversationEventPayloadProcessorError: Error {
     case noBackendConversationId
@@ -108,7 +109,7 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         let conversation = await context.perform {
-            self.fetchOrCreateConversation(
+            fetchOrCreateConversation(
                 from: payload,
                 in: context
             )
@@ -153,7 +154,8 @@ struct ConversationEventPayloadProcessor {
 
         let (isSelfUserRemoved, messageProtocol) = await context.perform {
             if !conversation.localParticipants.isDisjoint(with: removedUsers) {
-                // TODO jacob refactor to append method on conversation
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(
                     from: originalEvent,
                     in: context
@@ -167,13 +169,17 @@ struct ConversationEventPayloadProcessor {
 
             // Idea for improvement, return removed users from this call to benefit from
             // checking that the participants are in the conversation before being removed
-            conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
+            conversation.removeParticipantsAndUpdateConversationState(
+                users: Set(removedUsers),
+                initiatingUser: initiatingUser
+            )
 
             let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
             return (isSelfUserRemoved, conversation.messageProtocol)
         }
 
-        if DeveloperFlag.enableMLSSupport.isOn {
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        if mlsFeature.isEnabled {
             if isSelfUserRemoved, messageProtocol.isOne(of: .mls, .mixed) {
                 await mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
             }
@@ -227,11 +233,12 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let users = Set(usersAndRoles.map { $0.0 })
+            let users = Set(usersAndRoles.map(\.0))
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if newUsers && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if newUsers, conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
 
@@ -242,8 +249,10 @@ struct ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
-                // TODO jacob refactor to append method on conversation
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser),
+               conversation.conversationType == .group {
+                // swiftlint:disable:next todo_requires_jira_link
+                // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
             conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
@@ -265,8 +274,10 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        if conversation.userDefinedName != payload.data.name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
-            // TODO jacob refactor to append method on conversation
+        if conversation.userDefinedName != payload.data.name
+            || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: jacob refactor to append method on conversation
             _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
 
@@ -289,7 +300,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing.error("Conversation member update missing conversation or target user, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation member update missing conversation or target user, aborting...")
             return
         }
 
@@ -326,7 +338,8 @@ struct ConversationEventPayloadProcessor {
 
         if let accessRoles = payload.data.accessRoleV2 {
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles)
-        } else if let accessRole = payload.data.accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+        } else if let accessRole = payload.data.accessRole,
+                  let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
             let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles.map(\.rawValue))
         }
@@ -348,7 +361,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing.error("Conversation message timer update missing sender or conversation, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation message timer update missing sender or conversation, aborting...")
             return
         }
 
@@ -378,7 +392,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation
+            .lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
             WireLogger.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
@@ -396,7 +411,8 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        // TODO jacob refactor to append method on conversation
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: jacob refactor to append method on conversation
         _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
     }
 
@@ -408,7 +424,10 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let qualifiedID = payload.qualifiedID else {
-            WireLogger.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting..."
+                )
             return
         }
 
@@ -416,7 +435,10 @@ struct ConversationEventPayloadProcessor {
             var action = SyncConversationAction(qualifiedID: qualifiedID)
             try await action.perform(in: context.notificationContext)
         } catch {
-            WireLogger.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)"
+                )
         }
     }
 
@@ -464,7 +486,7 @@ struct ConversationEventPayloadProcessor {
         case .oneOnOne:
             // Conversations are of type `oneOnOne` when the connection
             // is accepted.
-            return await self.updateOrCreateOneToOneConversation(
+            return await updateOrCreateOneToOneConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
@@ -504,19 +526,22 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
-            self.updateAttributes(from: payload, for: conversation, context: context)
-            self.updateMetadata(from: payload, for: conversation, context: context)
-            self.updateMembers(from: payload, for: conversation, context: context)
-            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            self.updateConversationStatus(from: payload, for: conversation)
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
 
             if isInitialFetch {
-                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+                assignMessageProtocol(from: payload, for: conversation, in: context)
             } else {
-                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+                updateMessageProtocol(from: payload, for: conversation, in: context)
             }
 
-            Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+            Flow.createGroup
+                .checkpoint(
+                    description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
+                )
 
             return conversation
         }
@@ -619,7 +644,10 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
+        WireLogger.mls
+            .debug(
+                "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
+            )
 
         if await context.perform({ conversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
@@ -678,7 +706,7 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        let conversation = await context.perform {
+        return await context.perform {
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
@@ -703,8 +731,6 @@ struct ConversationEventPayloadProcessor {
 
             return conversation
         }
-
-        return conversation
     }
 
     private func updateAttributes(
@@ -872,7 +898,10 @@ struct ConversationEventPayloadProcessor {
         case .mixed:
             switch newMessageProtocol {
             case .proteus:
-                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
+                    )
             case .mixed:
                 break // no update, ignore
             case .mls:
@@ -883,7 +912,10 @@ struct ConversationEventPayloadProcessor {
         case .mls:
             switch newMessageProtocol {
             case .proteus, .mixed:
-                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
+                    )
             case .mls:
                 break // no update, ignore
             }
@@ -896,7 +928,9 @@ struct ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        let mlsFeature = await FeatureRepository(context: context).fetchMLS()
+        guard mlsFeature.isEnabled else { return }
+
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
@@ -937,8 +971,8 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
-    func fetchOrCreateConversation<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateConversation(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
@@ -956,7 +990,11 @@ struct ConversationEventPayloadProcessor {
         from payload: Payload.UpdateConverationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
-        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(with: $0.uuid, domain: $0.domain, in: context) }) {
+        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(
+            with: $0.uuid,
+            domain: $0.domain,
+            in: context
+        ) }) {
             return users
         }
 
@@ -967,8 +1005,8 @@ struct ConversationEventPayloadProcessor {
         return nil
     }
 
-    func fetchOrCreateSender<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateSender(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMUser? {
         guard let userID = payload.from ?? payload.qualifiedFrom?.uuid else {
@@ -1002,7 +1040,7 @@ struct ConversationEventPayloadProcessor {
         conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> [(ZMUser, Role?)] {
-        return payload.others.compactMap {
+        payload.others.compactMap {
             fetchUserAndRole(
                 from: $0,
                 for: conversation,

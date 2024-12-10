@@ -19,7 +19,7 @@
 import UIKit
 
 extension UIResponder {
-    private static weak var currentFirstResponder: UIResponder?
+    private weak static var currentFirstResponder: UIResponder?
 
     class var currentFirst: UIResponder? {
         currentFirstResponder = nil

@@ -41,7 +41,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesNotReturnTheSelfConversation() {
-        // given 
+        // given
         let group = ZMConversation.insertNewObject(in: uiMOC)
         group.team = team
         group.conversationType = .group
@@ -124,7 +124,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItReturnsTeamConversationsSorted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         let conversation2 = createGroupConversation(in: team)
@@ -142,13 +142,13 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItRecreatesListsAndTokensForTeamConversations() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         uiMOC.saveOrRollback()
 
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
-        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
+        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: uiMOC)
 
         let factory = ConversationPredicateFactory(selfTeam: team)
 
@@ -182,12 +182,12 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesWhenANewTeamConversationIsInserted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
-        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
+        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: uiMOC)
 
         // when inserting a new conversation
         let conversation2 = createGroupConversation(in: team)
@@ -201,7 +201,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatDoesUpdateWhenAConversationInADifferentTeamIsInserted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
@@ -209,7 +209,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
+        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: uiMOC)
 
         // when inserting a new conversation
         let conversation2 = createGroupConversation(in: otherTeam)
@@ -223,7 +223,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesWhenNewConversationLastModifiedChangesThroughTheNotificationDispatcher() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         let conversation2 = createGroupConversation(in: team)
@@ -237,7 +237,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         XCTAssertEqual(sut.items.count, 3)
         XCTAssertEqual(sut.items, [conversation2, conversation1, conversation3])
-        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
+        let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: uiMOC)
 
         // when
         XCTAssert(uiMOC.saveOrRollback())
@@ -269,8 +269,14 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        let unarchivedObserver = ConversationListChangeObserver(conversationList: unarchivedList, managedObjectContext: self.uiMOC)
-        let archivedObserver = ConversationListChangeObserver(conversationList: archivedList, managedObjectContext: self.uiMOC)
+        let unarchivedObserver = ConversationListChangeObserver(
+            conversationList: unarchivedList,
+            managedObjectContext: uiMOC
+        )
+        let archivedObserver = ConversationListChangeObserver(
+            conversationList: archivedList,
+            managedObjectContext: uiMOC
+        )
 
         // when
         XCTAssert(uiMOC.saveOrRollback())
@@ -353,7 +359,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     // MARK: - Helper
 
-    @discardableResult func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
+    @discardableResult
+    func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.lastServerTimeStamp = Date()
         conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp

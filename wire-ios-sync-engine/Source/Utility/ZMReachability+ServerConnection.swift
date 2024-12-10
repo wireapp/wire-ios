@@ -22,7 +22,7 @@ import class WireTransport.ZMReachability
 extension ZMReachability: ServerConnection {
 
     public var isOffline: Bool {
-        return !mayBeReachable
+        !mayBeReachable
     }
 
     // isMobileConnection is declared already

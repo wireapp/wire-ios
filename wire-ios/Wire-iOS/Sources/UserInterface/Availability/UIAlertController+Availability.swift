@@ -43,9 +43,13 @@ extension UIAlertController {
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.dontRemindMe, style: .default, handler: { _ in
-            Settings.shared.dontRemindUserWhenChanging(availability)
-        }))
+        alert.addAction(UIAlertAction(
+            title: AvailabilityReminderLocale.Action.dontRemindMe,
+            style: .default,
+            handler: { _ in
+                Settings.shared.dontRemindUserWhenChanging(availability)
+            }
+        ))
 
         alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.ok, style: .default, handler: { _ in }))
 
@@ -55,7 +59,11 @@ extension UIAlertController {
     static func availabilityPicker(_ handler: @escaping (_ availability: Availability) -> Void) -> UIAlertController {
         typealias AvailabilityMessageLocale = L10n.Localizable.Availability.Message
 
-        let alert = UIAlertController(title: AvailabilityMessageLocale.setStatus, message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(
+            title: AvailabilityMessageLocale.setStatus,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         for availability in Availability.allCases {
             alert.addAction(UIAlertAction(title: availability.localizedName, style: .default, handler: { _ in
@@ -63,7 +71,7 @@ extension UIAlertController {
             }))
         }
 
-        alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
+        alert.popoverPresentationController?.permittedArrowDirections = [.up, .down]
         alert.addAction(UIAlertAction(title: AvailabilityMessageLocale.cancel, style: .cancel, handler: nil))
 
         return alert

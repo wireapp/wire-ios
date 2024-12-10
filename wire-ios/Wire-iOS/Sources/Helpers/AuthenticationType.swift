@@ -17,14 +17,18 @@
 //
 
 import LocalAuthentication
+import WireLogging
 import WireSystem
 
 enum AuthenticationType: CaseIterable {
 
-    case faceID, touchID, passcode, unavailable
+    case faceID
+    case touchID
+    case passcode
+    case unavailable
 
     static var current: AuthenticationType {
-        return AuthenticationTypeDetector().current
+        AuthenticationTypeDetector().current
     }
 
 }

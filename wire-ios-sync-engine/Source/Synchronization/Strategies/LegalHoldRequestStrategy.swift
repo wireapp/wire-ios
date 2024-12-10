@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMEventConsumer {
 
@@ -24,13 +25,17 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     fileprivate var singleRequstSync: ZMSingleRequestSync!
 
     @objc
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
         self.syncStatus = syncStatus
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsDuringSlowSync]
-        singleRequstSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.singleRequstSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -45,14 +50,17 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let teamID = selfUser.team?.remoteIdentifier else {
-                // Skip sync phase if the user doesn't belong to a team
-                syncStatus.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
-                return nil
+            // Skip sync phase if the user doesn't belong to a team
+            syncStatus.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
+            return nil
         }
 
         guard let userID = selfUser.remoteIdentifier else { return nil }
 
-        return ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

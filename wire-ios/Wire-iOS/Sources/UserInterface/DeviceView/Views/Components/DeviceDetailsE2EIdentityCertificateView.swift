@@ -38,12 +38,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                         textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
+
                 case .revoked:
                     viewForStatus(
                         statusText: status.title,
                         textColor: Color(uiColor: SemanticColors.Label.textCertificateInvalid),
                         image: status.image
                     )
+
                 case .expired:
                     viewForStatus(
                         statusText: status.title,

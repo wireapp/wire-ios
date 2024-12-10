@@ -28,7 +28,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,
             conversation: groupConversation,
-            completionHandler: nil)
+            completionHandler: nil
+        )
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
 
@@ -50,7 +51,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             message: GenericMessage(content: Confirmation(messageId: uuid)),
             context: syncMOC,
             conversation: groupConversation,
-            completionHandler: nil)
+            completionHandler: nil
+        )
         message.shouldIgnoreTheSecurityLevelCheck = true
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -71,7 +73,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,
             conversation: groupConversation,
-            completionHandler: nil)
+            completionHandler: nil
+        )
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
 
@@ -101,7 +104,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             message: GenericMessage(content: Text(content: "Hello World")),
             context: syncMOC,
             conversation: groupConversation,
-            completionHandler: nil)
+            completionHandler: nil
+        )
 
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -119,10 +123,11 @@ final class MessageDependencyResolverTests: MessagingTestBase {
 
     struct Arrangement {
 
-        struct Scaffolding {
+        enum Scaffolding {
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let prekey = Payload.Prekey(key: "prekey123", id: nil)
-            static let prekeyByQualifiedUserID = [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
+            static let prekeyByQualifiedUserID =
+                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
         }
 
         let coreDataStack: CoreDataStack

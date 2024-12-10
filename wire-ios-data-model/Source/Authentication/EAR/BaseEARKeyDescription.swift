@@ -37,8 +37,8 @@ open class BaseEARKeyDescription {
     ) {
         self.accountID = accountID.transportString()
         self.label = label
-        id = "com.wire.ear.\(self.label).\(self.accountID)"
-        tag = id.data(using: .utf8)!
+        self.id = "com.wire.ear.\(self.label).\(self.accountID)"
+        self.tag = id.data(using: .utf8)!
     }
 
 }

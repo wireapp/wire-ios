@@ -31,7 +31,7 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)
     }
@@ -54,7 +54,7 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 }
 
-fileprivate extension UIViewController {
+private extension UIViewController {
 
     func prepareForSnapshots() -> UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
