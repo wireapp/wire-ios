@@ -70,6 +70,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()
+        accentColor = .blue
     }
 
     // MARK: - tearDown

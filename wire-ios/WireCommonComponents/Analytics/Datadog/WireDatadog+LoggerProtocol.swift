@@ -81,7 +81,7 @@ extension WireDatadog: LoggerProtocol {
     // MARK: Helpers
 
     private func log(
-        level: WireDatadog.LogLevel,
+        level: WireLogLevel,
         message: any LogConvertible,
         error: Error? = nil,
         attributes: [LogAttributes] = []
