@@ -37,7 +37,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     //
     var selfUserProvider: SelfUserProvider!
 
-    open override func setUp() {
+    override func setUp() {
         super.setUp()
         snapshotBackgroundColor = .white
         setupTestObjects()
@@ -46,7 +46,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUserProvider = SelfProvider(providedSelfUser: selfUser)
     }
 
-    open override func tearDown() {
+    override func tearDown() {
         selfUser = nil
         otherUser = nil
         otherUserConversation = nil

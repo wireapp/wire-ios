@@ -47,8 +47,11 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             return nil
         }
 
+        let path = apiVersion >= .v7
+            ? "/one2one-conversations/\(domain)/\(userID)"
+            : "/conversations/one2one/\(domain)/\(userID)"
         return ZMTransportRequest(
-            getFromPath: "/conversations/one2one/\(domain)/\(userID)",
+            getFromPath: path,
             apiVersion: apiVersion.rawValue
         )
     }
@@ -89,7 +92,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     payload: payload
                 )
 
-            case .v6:
+            case .v6, .v7:
                 guard
                     let result = Payload.ConversationWithRemovalKeys(data, decoder: decoder),
                     let payload = result.conversation
