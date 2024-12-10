@@ -14,7 +14,8 @@ let package = Package(
         .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
         .library(name: "WireCountly", targets: ["WireCountly"]),
-        .library(name: "WireDatadog", targets: ["WireDatadog"])
+        .library(name: "WireDatadog", targets: ["WireDatadog"]),
+        .library(name: "WireAnalyticsDummy", targets: ["WarningPrevention"]) // don't use
     ],
     dependencies: [
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
@@ -47,6 +48,15 @@ let package = Package(
             name: "WireDatadog",
             dependencies: datadogDependencies() + ["WireLogging"],
             sources: datadogFiles()
+        ),
+
+        // This target prevents warnings saying countly-sdk-ios or dd-sdk-ios are not used.
+        .target(
+            name: "WarningPrevention",
+            dependencies: [
+                .product(name: "Countly", package: "countly-sdk-ios"),
+                .product(name: "DatadogCore", package: "dd-sdk-ios")
+            ]
         )
     ]
 )
@@ -55,7 +65,6 @@ let package = Package(
 
 func countlyDependencies() -> [Target.Dependency] {
     guard isCountlyEnabled else {
-        // note: in this case SPM will warn that the countly-sdk-ios is not used
         return []
     }
     return [
@@ -75,7 +84,6 @@ func countlyFiles() -> [String] {
 
 func datadogDependencies() -> [Target.Dependency] {
     guard isDatadogEnabled else {
-        // note: in this case SPM will warn that the dd-sdk-ios is not used
         return []
     }
     return [
