@@ -33,7 +33,7 @@ public class UserClientRequestFactory {
 
         return ZMTransportRequest(
             path: "/clients/\(clientId)",
-            method: ZMTransportRequestMethod.delete,
+            method: .delete,
             payload: payload as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )

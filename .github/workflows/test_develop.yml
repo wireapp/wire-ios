@@ -3,7 +3,7 @@ name: Nightly Tests
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 21 * * *"
+    - cron: "0 21 * * MON-FRI"
   
 # This is what will cancel the workflow
 concurrency:

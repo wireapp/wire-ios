@@ -37,7 +37,7 @@ class ZMSnapshotTestCase: XCTestCase {
 
     var documentsDirectory: URL?
 
-    open override func setUp() {
+    override func setUp() {
         super.setUp()
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
@@ -83,7 +83,7 @@ class ZMSnapshotTestCase: XCTestCase {
         uiMOC = coreDataStack.viewContext
     }
 
-    open override func tearDown() {
+    override func tearDown() {
         if needsCaches {
             wipeCaches()
         }
