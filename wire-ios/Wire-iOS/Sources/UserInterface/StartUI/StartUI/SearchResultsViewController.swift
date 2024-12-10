@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import WireLogging
 
 enum SearchGroup: Int {
     case people
@@ -145,16 +146,10 @@ final class SearchResultsViewController: UIViewController {
         return view
     }()
 
-    private lazy var searchDirectory: SearchDirectory? = {
-        guard let session = userSession as? ZMUserSession else {
-            return nil
-        }
-
-        return SearchDirectory(userSession: session)
-    }()
-
-    let userSelection: UserSelection
-    let userSession: UserSession
+    private let userSelection: UserSelection
+    private let userSession: UserSession
+    private let searchUsersUseCase: SearchUsersUseCaseProtocol
+    private var pendingSearchTask: Task<Void, Never>?
 
     let sectionController: SectionCollectionViewController = .init()
     let contactsSection: ContactsSectionController = .init()
@@ -173,7 +168,6 @@ final class SearchResultsViewController: UIViewController {
     let servicesSection: SearchServicesSectionController
     let inviteTeamMemberSection: InviteTeamMemberSection
 
-    var pendingSearchTask: SearchTask?
     var isAddingParticipants: Bool
     let isFederationEnabled: Bool
     var searchGroup: SearchGroup = .people {
@@ -193,10 +187,6 @@ final class SearchResultsViewController: UIViewController {
         }
     }
 
-    deinit {
-        searchDirectory?.tearDown()
-    }
-
     init(
         userSelection: UserSelection,
         userSession: UserSession,
@@ -210,6 +200,7 @@ final class SearchResultsViewController: UIViewController {
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
+        self.searchUsersUseCase = userSession.makeSearchUsersUseCase()
 
         let team = userSession.selfUser.membership?.team
         let teamName = team?.name
@@ -264,37 +255,30 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
-        searchDirectory?.updateIncompleteMetadataIfNeeded()
     }
 
-    @objc
-    func cancelPreviousSearch() {
+    private func performSearch(
+        query: String,
+        options: SearchOptions
+    ) {
         pendingSearchTask?.cancel()
         pendingSearchTask = nil
-    }
-
-    private func performSearch(query: String, options: SearchOptions) {
-        let selfUser = userSession.selfUser
-
-        pendingSearchTask?.cancel()
         searchResultsView.emptyResultContainer.isHidden = true
 
-        var options = options
-        options.updateForSelfUserTeamRole(selfUser: selfUser)
+        pendingSearchTask = Task {
+            do {
+                var options = options
+                options.updateForSelfUserTeamRole(selfUser: userSession.selfUser)
 
-        let request = SearchRequest(
-            query: query.trim(),
-            searchOptions: options,
-            team: selfUser.membership?.team
-        )
+                let result = try await searchUsersUseCase.invoke(
+                    query: query,
+                    options: options,
+                    messageProtocol: filterConversation?.messageProtocol)
 
-        if let task = searchDirectory?.perform(request) {
-            task.addResultHandler { [weak self] result, isCompleted in
-                self?.handleSearchResult(result: result, isCompleted: isCompleted)
+                handleSearchResult(result: result, isCompleted: true)
+            } catch {
+                WireLogger.search.warn("Search failed with error: \(error.localizedDescription)")
             }
-            task.start()
-
-            pendingSearchTask = task
         }
     }
 

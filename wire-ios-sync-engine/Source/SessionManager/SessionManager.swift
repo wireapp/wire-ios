@@ -24,6 +24,7 @@ import UserNotifications
 import WireAnalytics
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireRequestStrategy
 import WireTransport
 import WireUtilities
@@ -547,7 +548,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.analyticsService = AnalyticsService(
             config: analyticsConfig,
-            logger: { WireLogger.analytics.debug($0) }
+            deviceModel: UIDevice.current.model,
+            deviceOS: UIDevice.current.systemVersion
         )
 
         if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {

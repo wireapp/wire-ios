@@ -20,6 +20,7 @@ import Foundation
 import WireAPI
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.

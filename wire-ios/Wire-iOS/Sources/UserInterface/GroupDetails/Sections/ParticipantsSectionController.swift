@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLogging
 import WireSyncEngine
 
 enum ParticipantsRowType {
@@ -267,12 +268,14 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         switch configuration {
         case let .user(user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
+
             let isE2EICertified =
                 if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] {
                     userStatus.isE2EICertified
                 } else {
                     false
                 }
+
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,

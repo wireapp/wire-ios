@@ -336,6 +336,7 @@
 		5915B9582BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B95A2BF4BAFF00215817 /* DidPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */; };
 		5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */; };
+		59191A652D0051C7001AB388 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59191A642D0051C7001AB388 /* WireLogging */; };
 		591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
@@ -364,6 +365,10 @@
 		5950A9472C2F1C31005AB9CE /* AvailabilityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */; };
 		59510DD32CB3E6EE00BCD5FD /* SidebarViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59510DD22CB3E6E700BCD5FD /* SidebarViewControllerBuilder.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
+		59537D8F2CFFA05600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8E2CFFA05600920B59 /* WireLogging */; };
+		59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D902CFFA0BA00920B59 /* WireLogging */; };
+		59537D932CFFA0DA00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D922CFFA0DA00920B59 /* WireLogging */; };
+		59537D952CFFA11A00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D942CFFA11A00920B59 /* WireLogging */; };
 		595BFD7D2CA9365800D02361 /* ConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595BFD7C2CA9365200D02361 /* ConversationListCoordinator.swift */; };
 		595C49362CA93D7200F8F881 /* AnyConversationListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595C49352CA93D6D00F8F881 /* AnyConversationListCoordinator.swift */; };
 		595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettingsUI */; };
@@ -694,6 +699,7 @@
 		6636CFDE2C519980001403F9 /* EditingStateControllable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6636CFDD2C519980001403F9 /* EditingStateControllable.swift */; };
 		669105C327397E6A00324115 /* NSAttributedString+DownTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669105C227397E6900324115 /* NSAttributedString+DownTests.swift */; };
 		70355A7127AAD96E00F02C76 /* SecurityLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70355A7027AAD96E00F02C76 /* SecurityLevelView.swift */; };
+		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		7A702FB7286322D800004580 /* ConversationEncryptionProtocolCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A702FB6286322D800004580 /* ConversationEncryptionProtocolCell.swift */; };
 		7C0BB6E61FE682A200386A19 /* AccountSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0BB6E41FE680F200386A19 /* AccountSelectionViewController.swift */; };
 		7C23A26D20247500005FEB54 /* ShareViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C23A26B20247474005FEB54 /* ShareViewControllerTests.swift */; };
@@ -1354,7 +1360,6 @@
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
 		E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A079F2817E553006BA73B /* DynamicFontButton.swift */; };
-		E92C8CC62C942A5C00E0F7F7 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E92C8CC52C942A5C00E0F7F7 /* Inject */; };
 		E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D1B94285B773B00366AFC /* LabelStyle.swift */; };
 		E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */; };
 		E9398D312B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */; };
@@ -3914,6 +3919,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */,
+				59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */,
 				EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3924,6 +3930,7 @@
 			files = (
 				591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */,
 				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
+				59537D932CFFA0DA00920B59 /* WireLogging in Frameworks */,
 				59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */,
 				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
 			);
@@ -3945,7 +3952,6 @@
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
-				E92C8CC62C942A5C00E0F7F7 /* Inject in Frameworks */,
 				59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
@@ -3962,12 +3968,14 @@
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
+				59537D952CFFA11A00920B59 /* WireLogging in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
 				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
 				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
+				76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */,
 				016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */,
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
 				59B99FB02C89DFB700201827 /* WireDomainPackage in Frameworks */,
@@ -3989,6 +3997,7 @@
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
+				59191A652D0051C7001AB388 /* WireLogging in Frameworks */,
 				E9816C9A2CC929FC00D77F22 /* WireFoundationSupport in Frameworks */,
 				590DCA0A2C971AFF002D0A2C /* WireFoundation in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
@@ -4018,6 +4027,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */,
+				59537D8F2CFFA05600920B59 /* WireLogging in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8603,6 +8613,7 @@
 			packageProductDependencies = (
 				5945D0292C219F7200D039E3 /* WireDesign */,
 				59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */,
+				59537D922CFFA0DA00920B59 /* WireLogging */,
 			);
 			productName = "Wire-iOS Share Extension";
 			productReference = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */;
@@ -8648,9 +8659,10 @@
 				595C49682CA995E900F8F881 /* WireSettingsUI */,
 				59076F942C934A9800AE7529 /* WireAccountImageUI */,
 				590DCA072C971A56002D0A2C /* WireSidebarUI */,
-				E92C8CC52C942A5C00E0F7F7 /* Inject */,
 				CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */,
 				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
+				59537D942CFFA11A00920B59 /* WireLogging */,
+				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -8682,6 +8694,7 @@
 				E9816C992CC929FC00D77F22 /* WireFoundationSupport */,
 				59C2F09E2CA54E4900B25E5D /* WireMainNavigationUI */,
 				59B4046D2CAB141000CC33BF /* WireSettingsUI */,
+				59191A642D0051C7001AB388 /* WireLogging */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -8728,6 +8741,7 @@
 			name = WireCommonComponents;
 			packageProductDependencies = (
 				016A141C2CE6BFC4006A7EF5 /* WireDatadog */,
+				59537D8E2CFFA05600920B59 /* WireLogging */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -8823,7 +8837,6 @@
 				061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
-				E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -11303,11 +11316,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-Xlinker",
-					"-interposable",
-				);
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -11694,14 +11702,6 @@
 				version = 2.3.5;
 			};
 		};
-		E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
-			requirement = {
-				kind = exactVersion;
-				version = 1.5.2;
-			};
-		};
 		E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flipboard/FLAnimatedImage";
@@ -11753,6 +11753,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};
+		59191A642D0051C7001AB388 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		5929CB212CA6C9C800070488 /* WireConversationListUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireConversationListUI;
@@ -11764,6 +11768,22 @@
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDesign;
+		};
+		59537D8E2CFFA05600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D902CFFA0BA00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D922CFFA0DA00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D942CFFA11A00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
 		};
 		595C49682CA995E900F8F881 /* WireSettingsUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -11821,6 +11841,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireMainNavigationUI;
 		};
+		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireIndividualToTeamMigrationUI;
+		};
 		CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFolderPickerUI;
@@ -11829,11 +11853,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */;
 			productName = Down;
-		};
-		E92C8CC52C942A5C00E0F7F7 /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
 		};
 		E9816C992CC929FC00D77F22 /* WireFoundationSupport */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -291,6 +291,7 @@
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
 		5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */; };
 		5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */; };
+		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
@@ -515,6 +516,8 @@
 		BFF8AE8520E4E12A00988700 /* ZMMessage+ShouldDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF8AE8420E4E12A00988700 /* ZMMessage+ShouldDisplay.swift */; };
 		BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */; };
 		BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */; };
+		C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D22CEF630500012A0E /* TypingUsers.swift */; };
+		C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */; };
 		CB1BF6FC2C8AF6A5001EC670 /* ExpirationReason+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */; };
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
@@ -1426,6 +1429,8 @@
 		BFF8AE8420E4E12A00988700 /* ZMMessage+ShouldDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ShouldDisplay.swift"; sourceTree = "<group>"; };
 		BFFBFD921D59E3F00079773E /* ConversationMessage+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationMessage+Deletion.swift"; sourceTree = "<group>"; };
 		BFFBFD941D59E49D0079773E /* ZMClientMessageTests+Deletion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Deletion.swift"; sourceTree = "<group>"; };
+		C9D574D22CEF630500012A0E /* TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsers.swift; sourceTree = "<group>"; };
+		C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TypingUsers.swift"; sourceTree = "<group>"; };
 		CB1BF6FB2C8AF6A5001EC670 /* ExpirationReason+Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExpirationReason+Description.swift"; sourceTree = "<group>"; };
 		CB7979172C747652006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79791A2C7476AC006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -1882,6 +1887,7 @@
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
 				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
+				59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
 			);
@@ -2464,6 +2470,15 @@
 			name = Accounts;
 			sourceTree = "<group>";
 		};
+		C9D574D12CEF62DB00012A0E /* TypingUsers */ = {
+			isa = PBXGroup;
+			children = (
+				C9D574D22CEF630500012A0E /* TypingUsers.swift */,
+				C9D574D42CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift */,
+			);
+			path = TypingUsers;
+			sourceTree = "<group>";
+		};
 		CE4EDC071D6D9A04002A20AA /* Reaction */ = {
 			isa = PBXGroup;
 			children = (
@@ -2862,6 +2877,7 @@
 		F9A705D91CAEE01D00C2F5FE /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
+				C9D574D12CEF62DB00012A0E /* TypingUsers */,
 				63C2EABB2A93B14D008A0AB7 /* Actions */,
 				A943BBE725B5A59D003D66BA /* ConversationLike.swift */,
 				F1103BD82135471A00EB9ED6 /* Calling */,
@@ -3825,6 +3841,7 @@
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
 				59B48C5B2C89CBBD00EA7999 /* WireFoundation */,
+				59537CDA2CFF8F2B00920B59 /* WireLogging */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -4425,6 +4442,7 @@
 				EE9AD9162696F01700DD5F51 /* FeatureRepository.swift in Sources */,
 				63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */,
 				0630E4B6257F888600C75BFB /* NSManagedObjectContext+AppLock.swift in Sources */,
+				C9D574D52CEF63AC00012A0E /* NSManagedObjectContext+TypingUsers.swift in Sources */,
 				63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */,
 				EEF4010723A9213B007B1A97 /* UserType+Team.swift in Sources */,
 				EE4CCA95256C558400848212 /* Feature.AppLock.swift in Sources */,
@@ -4485,6 +4503,7 @@
 				E6E504412BC542C5004948E7 /* PublicEARKeyDescription.swift in Sources */,
 				F9C877091E000C9D00792613 /* AssetCollection.swift in Sources */,
 				169315EF25AC4C8100709F15 /* MigrateSenderClient.swift in Sources */,
+				C9D574D32CEF630500012A0E /* TypingUsers.swift in Sources */,
 				BF10B58B1E6432ED00E7036E /* Message.swift in Sources */,
 				59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */,
 				E6E504342BC542C5004948E7 /* BaseEARKeyDescription.swift in Sources */,
@@ -5190,6 +5209,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;

@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 // MARK: Conversation Changes
 

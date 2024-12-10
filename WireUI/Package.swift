@@ -14,6 +14,7 @@ let package = Package(
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
+        .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
@@ -23,7 +24,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireFoundation"),
+        .package(name: "WireDomainPackage", path: "../WireDomain"),
+        .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -37,6 +39,16 @@ let package = Package(
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
+
+        .target(
+            name: "WireIndividualToTeamMigrationUI",
+            dependencies: [
+                .product(name: "WireDomainAPI", package: "WireDomainPackage"),
+                "WireFoundation",
+                "WireReusableUIComponents"
+            ]
+        ),
+        .testTarget(name: "WireIndividualToTeamMigrationUITests", dependencies: ["WireIndividualToTeamMigrationUI"]),
 
         .target(name: "WireMainNavigationUI"),
         .testTarget(name: "WireMainNavigationUITests", dependencies: ["WireMainNavigationUI"]),

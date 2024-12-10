@@ -20,6 +20,7 @@ import avs
 import CallKit
 import Foundation
 import Intents
+import WireLogging
 import WireRequestStrategy
 
 protocol CallKitManagerDelegate: AnyObject {

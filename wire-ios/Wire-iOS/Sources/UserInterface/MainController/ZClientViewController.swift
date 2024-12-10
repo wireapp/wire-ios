@@ -23,6 +23,7 @@ import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireFoundation
+import WireLogging
 import WireMainNavigationUI
 import WireSidebarUI
 import WireSyncEngine

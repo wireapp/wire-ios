@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 enum ImportEventsError: Error {
     case fileNotFound(String)

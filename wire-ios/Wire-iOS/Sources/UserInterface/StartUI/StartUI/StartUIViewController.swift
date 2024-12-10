@@ -64,7 +64,7 @@ final class StartUIViewController: UIViewController {
     var showsGroupSelector: Bool {
         SearchGroup.all.count > 1 &&
             userSession.selfUser.canSeeServices &&
-            userSession.mlsFeature.config.defaultProtocol != .mls
+            userSession.defaultProtocol != .mls
     }
 
     // MARK: - Init
@@ -263,7 +263,9 @@ final class StartUIViewController: UIViewController {
         if needsAddressBookPermission {
             presentShareContactsViewController()
         } else {
-            navigationController?.pushViewController(ContactsViewController(), animated: true)
+            navigationController?.pushViewController(
+                ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed),
+                animated: true)
         }
     }
 

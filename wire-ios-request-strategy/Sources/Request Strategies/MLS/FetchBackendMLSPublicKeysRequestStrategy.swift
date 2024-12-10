@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStrategy {
 
@@ -76,16 +77,6 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
 
                 WireLogger.mls.info("slow sync start fetch backend MLS public keys!")
 
-                let mlsFeature = await FeatureRepository(context: managedObjectContext).fetchMLS()
-                guard mlsFeature.isEnabled else {
-                    WireLogger.mls.info("slow sync can't fetch backend MLS public keys, MlS feature flag is disabled!")
-
-                    await managedObjectContext.perform {
-                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-                    }
-                    return
-                }
-
                 do {
                     // perform action notifies the registered action handler `FetchBackendMLSPublicKeysActionHandler`.
                     // the action stay pending until in the operation loop creates and executes the next request.
@@ -97,17 +88,16 @@ public final class FetchBackendMLSPublicKeysRequestStrategy: AbstractRequestStra
                     BackendInfo.isMLSEnabled = hasValidKeys
 
                     WireLogger.mls.info("slow sync finished fetch backend MLS public keys!")
-
-                    await managedObjectContext.perform {
-                        syncStatus.finishCurrentSyncPhase(phase: syncPhase)
-                    }
                 } catch {
-                    WireLogger.mls.error("slow sync failed fetch backend MLS public keys!")
-
+                    // If we get an error while fetching MLS public keys,
+                    // it shouldn't fail the current phase. This is expected behavior for some customers.
+                    // More details here: https://wearezeta.atlassian.net/browse/WPB-14455
                     BackendInfo.isMLSEnabled = false
-                    await managedObjectContext.perform {
-                        syncStatus.failCurrentSyncPhase(phase: syncPhase)
-                    }
+
+                    WireLogger.mls.info("slow sync can't fetch backend MLS public keys!")
+                }
+                await managedObjectContext.perform {
+                    syncStatus.finishCurrentSyncPhase(phase: syncPhase)
                 }
 
                 slowSyncTask = nil
