@@ -120,6 +120,7 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
+      SHA256: $(echo -n ${{ github.sha }} | sha256sum | awk '{print $1}')
       
     steps:
       - name: Add Masks
@@ -208,10 +209,6 @@ jobs:
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
-      - name: Calculate SHA256
-        id: calculate_sha256
-        run: |
-          echo "SHA256=$(echo -n ${{ github.sha }} | sha256sum | awk '{print $1}')" >> $GITHUB_ENV    
       - name: Notify on Wire if succeeded
         if: success()
         uses: 8398a7/action-slack@v3
