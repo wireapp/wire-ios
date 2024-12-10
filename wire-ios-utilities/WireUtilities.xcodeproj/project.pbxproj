@@ -13,11 +13,6 @@
 		097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */; };
 		09F027D01B721DA300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F027CD1B721D8300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m */; };
-		09F028D31B78BE2700BADDB6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D21B78BE2700BADDB6 /* main.m */; };
-		09F028D61B78BE2700BADDB6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D51B78BE2700BADDB6 /* AppDelegate.m */; };
-		09F028D91B78BE2700BADDB6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D81B78BE2700BADDB6 /* ViewController.m */; };
-		09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DA1B78BE2700BADDB6 /* Main.storyboard */; };
-		09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DD1B78BE2700BADDB6 /* Images.xcassets */; };
 		16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */; };
 		16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */; };
 		1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */; };
@@ -74,12 +69,9 @@
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
 		596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */; };
-		598E86B62BF4D64100FC5438 /* WireUtilitiesSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */; };
 		59B48C5A2C89CB1F00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C592C89CB1F00EA7999 /* WireFoundation */; };
 		59E3C25C2BD8053000C95BD7 /* ZMAccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */; };
 		59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59F654252BF83DC500E521E0 /* MockUserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
 		5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */; };
 		5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */; };
@@ -208,15 +200,6 @@
 		09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+SharedUserDefaults.m"; sourceTree = "<group>"; };
 		09F027CD1B721D8300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSUserDefaults+SharedUserDefaultsTests.m"; path = "Source/NSUserDefaults+SharedUserDefaultsTests.m"; sourceTree = "<group>"; };
 		09F028CE1B78BE2700BADDB6 /* WireUtilities-tests-host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireUtilities-tests-host.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		09F028D11B78BE2700BADDB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09F028D21B78BE2700BADDB6 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		09F028D41B78BE2700BADDB6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		09F028D51B78BE2700BADDB6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		09F028D71B78BE2700BADDB6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		09F028D81B78BE2700BADDB6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		09F028DB1B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		09F028DD1B78BE2700BADDB6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
 		16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+PartitionByKeyPath.swift"; sourceTree = "<group>"; };
 		16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayPartitionByKeyPathTests.swift; sourceTree = "<group>"; };
 		1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+DispatchGroups.swift"; sourceTree = "<group>"; };
@@ -273,13 +256,8 @@
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
 		596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+GroupQueue.swift"; sourceTree = "<group>"; };
 		598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireUtilitiesSupport.h; sourceTree = "<group>"; };
-		598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
-		598E86C42BF4D77200FC5438 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
-		598E86C52BF4D77200FC5438 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColorTests.swift; sourceTree = "<group>"; };
 		59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAccentColor.h; sourceTree = "<group>"; };
-		59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
 		5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyProperty.swift; sourceTree = "<group>"; };
 		5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPropertyTests.swift; sourceTree = "<group>"; };
@@ -378,6 +356,24 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		590E68762D08C05300E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
+				Sourcery/config.yml,
+			);
+			publicHeaders = (
+				WireUtilitiesSupport.h,
+			);
+			target = 598E86B22BF4D64000FC5438 /* WireUtilitiesSupport */;
+		};
+		590E68882D08C06600E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 09F028CD1B78BE2700BADDB6 /* WireUtilities-tests-host */;
+		};
 		59D2643A2CF725E00005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -388,6 +384,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		590E68702D08C05200E5B498 /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E68762D08C05300E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
+		590E68812D08C06600E5B498 /* WireUtilities-tests-host */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E68882D08C06600E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireUtilities-tests-host"; sourceTree = "<group>"; };
 		59D264392CF725D90005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643A2CF725E00005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -446,39 +444,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */ = {
-			isa = PBXGroup;
-			children = (
-				09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */,
-				09F028D41B78BE2700BADDB6 /* AppDelegate.h */,
-				09F028D51B78BE2700BADDB6 /* AppDelegate.m */,
-				09F028D71B78BE2700BADDB6 /* ViewController.h */,
-				09F028D81B78BE2700BADDB6 /* ViewController.m */,
-				09F028DA1B78BE2700BADDB6 /* Main.storyboard */,
-				09F028DD1B78BE2700BADDB6 /* Images.xcassets */,
-				09F028D01B78BE2700BADDB6 /* Supporting Files */,
-			);
-			path = "WireUtilities-tests-host";
-			sourceTree = "<group>";
-		};
-		09F028D01B78BE2700BADDB6 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				09F028D11B78BE2700BADDB6 /* Info.plist */,
-				09F028D21B78BE2700BADDB6 /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		3E88BD291B1F3E8400232589 = {
 			isa = PBXGroup;
 			children = (
 				EE9AEC872BD158BC00F7853F /* WireUtilities.docc */,
 				3E88BD3A1B1F3EA300232589 /* Source */,
-				598E86B42BF4D64100FC5438 /* Support */,
+				590E68702D08C05200E5B498 /* Support */,
 				3E88BD471B1F3EA300232589 /* Tests */,
 				3E88BD7C1B1F3F6700232589 /* Resources */,
-				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
+				590E68812D08C06600E5B498 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
 				3E88BD391B1F3EA300232589 /* Products */,
 			);
@@ -681,34 +655,6 @@
 			path = AccentColor;
 			sourceTree = "<group>";
 		};
-		598E86B42BF4D64100FC5438 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				598E86C62BF4D77200FC5438 /* Sourcery */,
-				598E86B52BF4D64100FC5438 /* WireUtilitiesSupport.h */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		598E86C32BF4D77200FC5438 /* generated */ = {
-			isa = PBXGroup;
-			children = (
-				598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */,
-			);
-			path = generated;
-			sourceTree = "<group>";
-		};
-		598E86C62BF4D77200FC5438 /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-				59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */,
-				598E86C32BF4D77200FC5438 /* generated */,
-				598E86C42BF4D77200FC5438 /* AutoMockable.stencil */,
-				598E86C52BF4D77200FC5438 /* config.yml */,
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
 		A9A3B1EE24D9811B001AF38E /* Keychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -847,7 +793,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				598E86B62BF4D64100FC5438 /* WireUtilitiesSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,6 +811,9 @@
 			);
 			dependencies = (
 				F1D567B3207BA4CF00CCDD77 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				590E68812D08C06600E5B498 /* WireUtilities-tests-host */,
 			);
 			name = "WireUtilities-tests-host";
 			productName = "WireUtilities-tests-host";
@@ -933,6 +881,9 @@
 			dependencies = (
 				598E86BD2BF4D6A900FC5438 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				590E68702D08C05200E5B498 /* Support */,
+			);
 			name = WireUtilitiesSupport;
 			productName = Support;
 			productReference = 598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */;
@@ -997,8 +948,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */,
-				09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1061,9 +1010,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F028D91B78BE2700BADDB6 /* ViewController.m in Sources */,
-				09F028D61B78BE2700BADDB6 /* AppDelegate.m in Sources */,
-				09F028D31B78BE2700BADDB6 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,8 +1150,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */,
-				59F654252BF83DC500E521E0 /* MockUserNotificationCenterAbstraction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1233,17 +1177,6 @@
 			targetProxy = F1D567B2207BA4CF00CCDD77 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		09F028DA1B78BE2700BADDB6 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09F028DB1B78BE2700BADDB6 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		09F028EE1B78BE2800BADDB6 /* Debug */ = {
