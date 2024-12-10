@@ -13,6 +13,10 @@ on:
           - all
         required: true
         default: 'all'
+      countly_enabled:
+        description: 'Enable Countly'
+        type: boolean
+        default: false
       datadog_enabled:
         description: 'Enable DataDog'
         type: boolean
@@ -31,6 +35,7 @@ jobs:
     with:
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
+      countly_enabled: ${{ inputs.countly_enabled }}
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets: inherit
@@ -41,6 +46,7 @@ jobs:
     with:
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
+      countly_enabled: ${{ inputs.countly_enabled }}
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets: inherit
@@ -51,6 +57,7 @@ jobs:
     with:
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
+      countly_enabled: ${{ inputs.countly_enabled }}
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets: inherit

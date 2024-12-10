@@ -719,10 +719,6 @@ class Build
         !ENV['PR_S3_SUBFOLDER'].nil? 
     end
 
-    def countly_enabled
-        !@countly_api_key.nil? && !@countly_api_key.empty?
-    end
-
     def playground_build
         @build_type == "Playground"
     end
