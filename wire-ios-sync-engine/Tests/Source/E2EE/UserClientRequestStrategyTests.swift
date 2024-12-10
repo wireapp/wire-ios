@@ -771,7 +771,7 @@ extension UserClientRequestStrategyTests {
                     "email": self.clientUpdateStatus.mockCredentials.email!,
                     "password": self.clientUpdateStatus.mockCredentials.password!
                 ])
-                XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
+                XCTAssertEqual($0.method, .delete)
             }
         }
     }
