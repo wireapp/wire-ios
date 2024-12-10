@@ -24,8 +24,8 @@ import SwiftUI
 import UIKit
 import WireAPI
 import WireCommonComponents
-import WireDomainAPI
 import WireDesign
+import WireDomainAPI
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
@@ -117,11 +117,11 @@ final class SelfProfileViewController: UIViewController {
             let backendInfoApiVersion = BackendInfo.apiVersion,
             let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
-            teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
-               actionCallback: { [weak self] action in
-                   self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
-               }
-           )
+            self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
+                actionCallback: { [weak self] action in
+                    self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
+                }
+            )
         }
     }
 
@@ -194,11 +194,13 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
 
-        profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+        profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
+            .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
 
         if let teamMigrationBanner {
             teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
-            profileLayoutGuideBannerTopConstraint = profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
+            profileLayoutGuideBannerTopConstraint = profileLayoutGuide.topAnchor
+                .constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
             NSLayoutConstraint.activate([
 
                 // teamMigrationBanner
@@ -252,7 +254,8 @@ final class SelfProfileViewController: UIViewController {
             let sessionContextProvider = userSession.contextProvider
             let user = ZMUser.selfUser(inUserSession: sessionContextProvider)
             guard let userName = user.normalizedName,
-                  let useCase =  SessionManager.shared?.activeUserSession?.createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
+                  let useCase = SessionManager.shared?.activeUserSession?
+                  .createIndividualToTeamMigrationUseCase(apiVersion: apiVersion) else {
                 return
             }
             userDidTapCreateTeam(useCase: useCase, userName: userName)

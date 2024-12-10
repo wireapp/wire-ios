@@ -248,7 +248,6 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     }
 }
 
-
 @MainActor
 private func hostedView(
     for step: IndividualToTeamMigrationViewController.Step,

@@ -24,7 +24,7 @@ import WireDomainAPI
 
 public extension ZMUserSession {
     func createIndividualToTeamMigrationUseCase(apiVersion: WireAPI.APIVersion) -> IndividualToTeamMigrationUseCase? {
-        guard let apiService = apiService else {
+        guard let apiService else {
             assertionFailure("apiService is nil")
             return nil
         }
