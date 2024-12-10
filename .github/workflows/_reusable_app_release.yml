@@ -186,7 +186,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: build-logs (${{ github.run_id }})
+          name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -196,7 +196,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }})
+          name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/.post_build/*.env
       - name: Load .env file

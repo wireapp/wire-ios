@@ -118,7 +118,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: artifacts/**/*.xcresult  # Adjust this if necessary
 
       # Scripts
@@ -133,7 +133,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/SnapshotResults/
             xcodebuild*.log
@@ -142,7 +142,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
@@ -160,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -212,7 +212,7 @@ jobs:
       - name: Download .xcresult files
         uses: actions/download-artifact@v4
         with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: ./artifacts
 
       - name: Display downloaded files
@@ -240,7 +240,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }})
+          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
       - uses: actions/setup-node@v3
         with:
           node-version: 18
