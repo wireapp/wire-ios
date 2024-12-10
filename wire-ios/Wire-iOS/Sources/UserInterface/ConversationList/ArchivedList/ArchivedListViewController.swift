@@ -24,7 +24,6 @@ import WireSyncEngine
 final class ArchivedListViewController: UIViewController {
 
     private var collectionView: UICollectionView!
-    private var emptyPlaceholderView: UIStackView!
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
     private let viewModel: ArchivedListViewModel
@@ -62,7 +61,6 @@ final class ArchivedListViewController: UIViewController {
 
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
-        emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
     }
 
     private func setupNavigationItem() {
@@ -73,6 +71,17 @@ final class ArchivedListViewController: UIViewController {
         titleLabel.textColor = SemanticColors.Label.textDefault
         titleLabel.accessibilityTraits = .header
         navigationItem.titleView = titleLabel
+
+        let dismissButton = IconButton()
+        dismissButton.setIcon(.cross, size: .tiny, for: [])
+        dismissButton.addAction(
+            .init { [weak self] _ in self?.delegate?.archivedListViewControllerWantsToDismiss(self!) },
+            for: .primaryActionTriggered
+        )
+        dismissButton.accessibilityIdentifier = "archiveCloseButton"
+        dismissButton.accessibilityLabel = L10n.Localizable.General.close
+        dismissButton.setIconColor(SemanticColors.Label.textDefault, for: .normal)
+        navigationItem.rightBarButtonItem = .init(customView: dismissButton)
     }
 
     private func setupCollectionView() {
@@ -116,23 +125,31 @@ final class ArchivedListViewController: UIViewController {
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
 
-        emptyPlaceholderView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
-        emptyPlaceholderView.axis = .vertical
-        emptyPlaceholderView.spacing = 2
-        emptyPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(emptyPlaceholderView)
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, descriptionLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 2
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
         NSLayoutConstraint.activate([
 
-            emptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyPlaceholderView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            emptyPlaceholderView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: emptyPlaceholderView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyPlaceholderView.bottomAnchor, multiplier: 1),
+            stackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
+            stackView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
 
-            emptyPlaceholderView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+            stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
         ])
+        stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
+    }
+
+    // MARK: - Accessibility
+
+    override func accessibilityPerformEscape() -> Bool {
+        self.delegate?.archivedListViewControllerWantsToDismiss(self)
+        return true
     }
 }
 
@@ -189,10 +206,15 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
         applyChangesClosure: @escaping () -> Void
     ) {
         applyChangesClosure()
-        guard isViewLoaded else { return }
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
-        emptyPlaceholderView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
+    }
+
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateConversationWithChange change: ConversationChangeInfo
+    ) {
+        // no-op, ConversationListCell extended ZMConversationObserver
     }
 }
 

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import protocol WireSyncEngine.SelfUserProvider
 
 /// Retains a shared self user provider object.

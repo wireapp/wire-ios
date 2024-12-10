@@ -21,9 +21,7 @@ import WireDataModel
 
 final class PersonalAccountView: BaseAccountView {
 
-    // MARK: - Properties
-
-    private let userImageView = {
+    let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
         avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
 
@@ -35,8 +33,6 @@ final class PersonalAccountView: BaseAccountView {
 
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
-
-    // MARK: - Init
 
     override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         super.init(account: account, user: user, displayContext: displayContext)
@@ -67,8 +63,6 @@ final class PersonalAccountView: BaseAccountView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Override methods
-
     override func update() {
         super.update()
 
@@ -80,9 +74,19 @@ final class PersonalAccountView: BaseAccountView {
             userImageView.avatar = .text(personName.initials)
         }
     }
-}
 
-// MARK: - User Observing
+    override func createDotConstraints() -> [NSLayoutConstraint] {
+        let dotSize: CGFloat = 9
+        dotView.translatesAutoresizingMaskIntoConstraints = false
+        imageViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        return [
+            dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
+            dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),
+            dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
+            dotView.widthAnchor.constraint(equalToConstant: dotSize)
+        ]
+    }
+}
 
 extension PersonalAccountView {
 

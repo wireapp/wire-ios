@@ -18,9 +18,7 @@
 
 import UIKit
 
-final class SearchGroupSelector: UIView {
-
-    // MARK: - Properties
+final class SearchGroupSelector: UIView, TabBarDelegate {
 
     var onGroupSelected: ((SearchGroup) -> Void)?
 
@@ -30,17 +28,21 @@ final class SearchGroupSelector: UIView {
         }
     }
 
-    private let segmentedControl: UISegmentedControl
+    // MARK: - Views
+
+    private let tabBar: TabBar
     private let groups: [SearchGroup]
 
-    // MARK: - Init
+    // MARK: - Initialization
 
     init() {
         groups = SearchGroup.all
 
-        let groupItems: [String] = groups.map { $0.name }
+        let groupItems: [UITabBarItem] = groups.enumerated().map { index, group in
+            UITabBarItem(title: group.name, image: nil, tag: index)
+        }
 
-        segmentedControl = UISegmentedControl(items: groupItems)
+        tabBar = TabBar(items: groupItems, selectedIndex: 0)
         super.init(frame: .zero)
 
         configureViews()
@@ -52,31 +54,20 @@ final class SearchGroupSelector: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - View Configuration and constraints
-
     private func configureViews() {
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
-
+        tabBar.delegate = self
         backgroundColor = SemanticColors.View.backgroundDefault
-
-        addSubview(segmentedControl)
+        addSubview(tabBar)
     }
 
     private func configureConstraints() {
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            segmentedControl.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            segmentedControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            segmentedControl.topAnchor.constraint(equalTo: topAnchor, constant: 6),
-            segmentedControl.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6)
-        ])
+        tabBar.fitIn(view: self)
     }
 
-    // MARK: - Actions
+    // MARK: - Tab Bar Delegate
 
-    @objc
-    private func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-        group = groups[sender.selectedSegmentIndex]
+    func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
+        group = groups[index]
     }
+
 }

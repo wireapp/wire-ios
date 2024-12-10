@@ -95,11 +95,10 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 }
 
 extension SettingsInternalGroupCellDescriptorType {
-
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        items.flatMap { section in
-            section.allCellDescriptors()
-        }
+        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
+            return section.allCellDescriptors()
+        })
     }
 }
 

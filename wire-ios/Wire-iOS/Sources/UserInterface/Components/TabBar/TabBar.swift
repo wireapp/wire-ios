@@ -44,6 +44,10 @@ final class TabBar: UIView {
         }
     }
 
+    private var selectedTab: Tab {
+        return self.tabs[selectedIndex]
+    }
+
     private var titleObservers: [NSKeyValueObservation] = []
 
     deinit {

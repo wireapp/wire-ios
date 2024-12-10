@@ -18,7 +18,6 @@
 
 import Foundation
 import LocalAuthentication
-import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine

@@ -20,13 +20,15 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-/// The first page of the user settings.
+/**
+ * The first page of the user settings.
+ */
+
 final class SelfProfileViewController: UIViewController {
 
-    let userSession: UserSession
-    private let userRightInterfaceType: UserRightInterface.Type
-    private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
-    let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
+    var userRightInterfaceType: UserRightInterface.Type
+    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
+    var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
 
     // MARK: - Views
 
@@ -36,6 +38,7 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
+    let userSession: UserSession
     private let accountSelector: AccountSelector?
 
     // MARK: - AppLock
@@ -49,6 +52,12 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Initialization
 
+    /**
+     * Creates the settings screen with the specified user and permissions.
+     * - parameter selfUser: The current user.
+     * - parameter userRightInterfaceType: The type of object to determine the user permissions.
+     */
+
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
@@ -56,9 +65,11 @@ final class SelfProfileViewController: UIViewController {
         accountSelector: AccountSelector?
     ) {
 
+        self.userSession = userSession
         self.accountSelector = accountSelector
 
         // Create the settings hierarchy
+
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
@@ -66,7 +77,8 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup()
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
@@ -84,7 +96,6 @@ final class SelfProfileViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
-        self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup

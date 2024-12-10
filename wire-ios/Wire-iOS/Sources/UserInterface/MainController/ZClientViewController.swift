@@ -26,16 +26,16 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
-    // TODO [WPB-8778]: Check if this property is still needed
     private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = SplitViewController()
+    let wireSplitViewController: SplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
     let conversationListViewController: ConversationListViewController
+    let conversationListWithFoldersViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -48,8 +48,8 @@ final class ZClientViewController: UIViewController {
     private var contentTopCompactConstraint: NSLayoutConstraint!
 
     private let colorSchemeController: ColorSchemeController
-    private var incomingApnsObserver: NSObjectProtocol?
-    private var networkAvailabilityObserverToken: NSObjectProtocol?
+    private var incomingApnsObserver: Any?
+    private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
@@ -70,8 +70,19 @@ final class ZClientViewController: UIViewController {
             selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+        conversationListWithFoldersViewController = .init(
+            account: account,
+            selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -172,15 +183,11 @@ final class ZClientViewController: UIViewController {
 
         wireSplitViewController.view.backgroundColor = .clear
 
-        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
-            userSession: userSession,
-            selfUser: userSession.selfUserLegalHoldSubject
-        )
-
         mainTabBarController = MainTabBarController(
+            contacts: .init(),
             conversations: UINavigationController(rootViewController: conversationListViewController),
-            archive: createArchivedListViewController(),
-            settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
+            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
+            archive: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController
 
@@ -231,7 +238,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.presentNewConversationViewController()
+        conversationListViewController.presentPeoplePicker()
     }
 
     // MARK: Status bar
@@ -279,7 +286,6 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -410,7 +416,7 @@ final class ZClientViewController: UIViewController {
         if userSession.ringingCallConversation != nil {
             dismissAction()
         } else {
-            minimizeCallOverlay(animated: true, completion: dismissAction)
+            minimizeCallOverlay(animated: true, withCompletion: dismissAction)
         }
     }
 
@@ -441,6 +447,10 @@ final class ZClientViewController: UIViewController {
     /// Attempt to load the last viewed conversation associated with the current account.
     /// If no info is available, we attempt to load the first conversation in the list.
     ///
+    ///
+    /// - Parameters:
+    ///   - focus: <#focus description#>
+    ///   - animated: <#animated description#>
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
@@ -713,18 +723,8 @@ final class ZClientViewController: UIViewController {
         (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
-    func minimizeCallOverlay(
-        animated: Bool,
-        completion: Completion?
-    ) {
-        router?.minimizeCallOverlay(animated: animated, completion: completion)
-    }
-
-    // MARK: - Archive Tab
-
-    private func createArchivedListViewController() -> UIViewController {
-        let viewController = ArchivedListViewController(userSession: userSession)
-        viewController.delegate = conversationListViewController
-        return UINavigationController(rootViewController: viewController)
+    func minimizeCallOverlay(animated: Bool,
+                             withCompletion completion: Completion?) {
+        router?.minimizeCallOverlay(animated: animated, withCompletion: completion)
     }
 }

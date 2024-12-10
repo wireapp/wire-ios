@@ -71,16 +71,11 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Init
 
-    init(
-        newEmail: String,
-        delegate: ConfirmEmailDelegate?,
-        userSession: UserSession,
-        useTypeIntrinsicSizeTableView: Bool
-    ) {
+    init(newEmail: String, delegate: ConfirmEmailDelegate?, userSession: UserSession) {
         self.newEmail = newEmail
         self.delegate = delegate
         self.userSession = userSession
-        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
+        super.init(style: .grouped)
         setupViews()
     }
 

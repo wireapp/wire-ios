@@ -34,7 +34,7 @@ final class ChangeEmailViewControllerTests: XCTestCase {
         userSession = UserSessionMock(mockUser: mockUser)
         mockUser.emailAddress = emailAddress
 
-        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession, useTypeIntrinsicSizeTableView: true)
+        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
         let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
         return viewController

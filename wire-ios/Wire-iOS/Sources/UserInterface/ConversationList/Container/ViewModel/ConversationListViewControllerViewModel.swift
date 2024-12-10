@@ -32,6 +32,10 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
+    func setState(_ state: ConversationListState,
+                  animated: Bool,
+                  completion: Completion?)
+
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
@@ -39,13 +43,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showPermissionDeniedViewController()
 
     @discardableResult
-    func selectOnListContentController(
-        _ conversation: ZMConversation!,
-        scrollTo message: ZMConversationMessage?,
-        focusOnView focus: Bool,
-        animated: Bool,
-        completion: (() -> Void)?
-    ) -> Bool
+    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
 
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
@@ -131,11 +129,9 @@ extension ConversationListViewController.ViewModel {
 
         updateObserverTokensForActiveTeam()
 
-        didBecomeActiveNotificationToken = notificationCenter.addObserver(
-            forName: UIApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                                                          object: nil,
+                                                                          queue: .main) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
 
@@ -162,22 +158,16 @@ extension ConversationListViewController.ViewModel {
     ///   - focus: focus on the view or not
     ///   - animated: perform animation or not
     ///   - completion: the completion block
-    func select(
-        conversation: ZMConversation,
-        scrollTo message: ZMConversationMessage? = nil,
-        focusOnView focus: Bool = false,
-        animated: Bool = false,
-        completion: Completion? = nil
-    ) {
-
+    func select(conversation: ZMConversation,
+                scrollTo message: ZMConversationMessage? = nil,
+                focusOnView focus: Bool = false,
+                animated: Bool = false,
+                completion: Completion? = nil) {
         selectedConversation = conversation
-        viewController?.selectOnListContentController(
-            selectedConversation,
-            scrollTo: message,
-            focusOnView: focus,
-            animated: animated,
-            completion: completion
-        )
+
+        viewController?.setState(.conversationList, animated: animated) { [weak self] in
+            self?.viewController?.selectOnListContentController(self?.selectedConversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
+        }
     }
 
     func requestMarketingConsentIfNeeded() {
@@ -243,20 +233,19 @@ extension ConversationListViewController.ViewModel {
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
-        if changeInfo.teamsChanged {
+        if changeInfo.nameChanged {
+            selfUserStatus.name = changeInfo.user.name ?? ""
+        }
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
             viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
         }
-
         if changeInfo.trustLevelChanged {
             selfUserStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
         }
-
         if changeInfo.legalHoldStatusChanged {
             viewController?.conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(self)
         }
-
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }

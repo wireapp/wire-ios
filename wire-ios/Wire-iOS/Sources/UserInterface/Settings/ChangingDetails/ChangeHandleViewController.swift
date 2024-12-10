@@ -210,37 +210,22 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
-    convenience init(
-        useTypeIntrinsicSizeTableView: Bool
-    ) {
+    convenience init() {
         let user = SelfUser.provider?.providedSelfUser
-        self.init(
-            state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown),
-            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
-        )
+        self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
     }
 
-    convenience init(
-        suggestedHandle handle: String,
-        useTypeIntrinsicSizeTableView: Bool
-    ) {
-        self.init(
-            state: .init(currentHandle: nil, newHandle: handle, availability: .unknown),
-            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
-        )
+    convenience init(suggestedHandle handle: String) {
+        self.init(state: .init(currentHandle: nil, newHandle: handle, availability: .unknown))
         setupViews()
         checkAvailability(of: handle)
     }
 
     /// Used to inject a specific `HandleChangeState` in tests. See `ChangeHandleViewControllerTests`.
-    init(
-        state: HandleChangeState,
-        useTypeIntrinsicSizeTableView: Bool,
-        federationEnabled: Bool = BackendInfo.isFederationEnabled
-    ) {
+    init(state: HandleChangeState, federationEnabled: Bool = BackendInfo.isFederationEnabled) {
         self.state = state
         self.federationEnabled = federationEnabled
-        super.init(style: .grouped, useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView)
+        super.init(style: .grouped)
 
         setupViews()
     }

@@ -47,8 +47,12 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(scrollView: UIScrollView!) {
         // no-op
+    }
+
+    func setState(_ state: ConversationListState, animated: Bool, completion: Completion?) {
+        completion?()
     }
 
     func showNoContactLabel(animated: Bool) {
@@ -64,6 +68,10 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
+        // no-op
+    }
+
+    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
         // no-op
     }
 

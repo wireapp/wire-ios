@@ -19,5 +19,6 @@
 import UIKit
 
 public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+    associatedtype ViewController where ViewController: UIViewController
+    func build() -> ViewController
 }

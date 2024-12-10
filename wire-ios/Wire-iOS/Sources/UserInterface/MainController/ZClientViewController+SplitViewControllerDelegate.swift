@@ -22,7 +22,7 @@ extension ZClientViewController: SplitViewControllerDelegate {
 
         return splitViewController.rightViewController != nil &&
         splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.tabBarController?.selectedIndex == MainTabBarControllerTab.conversations.rawValue &&
+        conversationListViewController.state == .conversationList &&
         (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }

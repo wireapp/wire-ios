@@ -63,30 +63,15 @@ extension SelfProfileViewController {
 
     @discardableResult
     func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
-
-        guard
-            let tabBarController = ZClientViewController.shared?.mainTabBarController,
-            let settingsViewController = tabBarController.viewControllers?
-                .compactMap({ $0 as? UINavigationController })
-                .compactMap({ $0.viewControllers.first as? SettingsTableViewController })
-                .first,
-            let navigationController = settingsViewController.navigationController
-        else { return nil }
-
         var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
-        let rootGroup = settingsViewController.group
-        settingsViewController.group.allCellDescriptors().forEach { topCellDescriptor in
+        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
 
             if let cellIdentifier = topCellDescriptor.identifier,
                let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,
                let viewController = cellGroupDescriptor.generateViewController(),
                cellIdentifier == identifier {
-
-                presentingViewController?.dismiss(animated: true) {
-                    tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
-                    navigationController.pushViewController(viewController, animated: true)
-                }
+                self.navigationController?.pushViewController(viewController, animated: false)
                 resultViewController = viewController
             }
 
@@ -97,20 +82,18 @@ extension SelfProfileViewController {
                        let topViewController = topCellGroupDescriptor.generateViewController(),
                        let viewController = cellGroupDescriptor.generateViewController(),
                        cellIdentifier == identifier {
-
-                        presentingViewController?.dismiss(animated: true) {
-                            tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
-                            navigationController.pushViewController(topViewController, animated: true)
-                            navigationController.pushViewController(viewController, animated: true)
-                        }
+                        self.navigationController?.pushViewController(topViewController, animated: false)
+                        self.navigationController?.pushViewController(viewController, animated: false)
                         resultViewController = viewController
                     }
                 })
             }
-        }
+
+        })
 
         return resultViewController
     }
+
 }
 
 extension UIAlertController {
@@ -153,4 +136,5 @@ extension UIAlertController {
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }
+
 }
