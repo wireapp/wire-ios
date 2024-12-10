@@ -316,6 +316,7 @@
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
+		59D230732D08875A00C661AB /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59D230722D08875A00C661AB /* WireFoundation */; };
 		59EC73F72C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EC73F62C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59EC73F92C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73F82C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
 		59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */; };
@@ -1901,6 +1902,7 @@
 			files = (
 				59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */,
 				CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */,
+				59D230732D08875A00C661AB /* WireFoundation in Frameworks */,
 				F9C9A5071CAD5DF10039E10C /* WireDataModel.framework in Frameworks */,
 				59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */,
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
@@ -5210,6 +5212,10 @@
 			productName = WireLogging;
 		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
+		59D230722D08875A00C661AB /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};
