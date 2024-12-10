@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -336,13 +336,6 @@
 		F15BDB1D20889772002F36E8 /* TearDownCapable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TearDownCapable.swift; sourceTree = "<group>"; };
 		F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ReadableHash.swift"; sourceTree = "<group>"; };
 		F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+ReadableHash.swift"; sourceTree = "<group>"; };
-		F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
-		F1E148C2207BAED000F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		F1E148C4207BAED000F81833 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		F1E148C7207BAED000F81833 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		F1E148CB207BAED000F81833 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		F1E148CC207BAED000F81833 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Normalization.h"; sourceTree = "<group>"; };
 		F9C9A78A1CAE9F9A0039E10C /* NSString+Normalization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Normalization.m"; sourceTree = "<group>"; };
 		F9C9A78C1CAEA00D0039E10C /* NSString_NormalizationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSString_NormalizationTests.m; path = Source/NSString_NormalizationTests.m; sourceTree = "<group>"; };
@@ -386,6 +379,7 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		590E68702D08C05200E5B498 /* Support */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E68762D08C05300E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Support; sourceTree = "<group>"; };
 		590E68812D08C06600E5B498 /* WireUtilities-tests-host */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (590E68882D08C06600E5B498 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "WireUtilities-tests-host"; sourceTree = "<group>"; };
+		590E68902D08C10800E5B498 /* zmc-config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "zmc-config"; sourceTree = "<group>"; };
 		59D264392CF725D90005317F /* TestPlans */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (59D2643A2CF725E00005317F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TestPlans; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -545,24 +539,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		546E84FA1B73DCA300532F17 /* zmc-config */ = {
-			isa = PBXGroup;
-			children = (
-				F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */,
-				F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */,
-				F1E148C7207BAED000F81833 /* project-common.xcconfig */,
-				F1E148C4207BAED000F81833 /* project-debug.xcconfig */,
-				F1E148CC207BAED000F81833 /* project.xcconfig */,
-				F1E148C2207BAED000F81833 /* tests.xcconfig */,
-				F1E148CB207BAED000F81833 /* warnings.xcconfig */,
-			);
-			path = "zmc-config";
-			sourceTree = "<group>";
-		};
 		54C1B0EE1B31A1E400CB8CF3 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				546E84FA1B73DCA300532F17 /* zmc-config */,
+				590E68902D08C10800E5B498 /* zmc-config */,
 				54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */,
 				01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */,
 				54C1B1001B31A1E400CB8CF3 /* version.xcconfig */,
@@ -1181,7 +1161,8 @@
 /* Begin XCBuildConfiguration section */
 		09F028EE1B78BE2800BADDB6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = "ios-test-host.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
@@ -1198,7 +1179,8 @@
 		};
 		09F028EF1B78BE2800BADDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = "ios-test-host.xcconfig";
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
@@ -1215,7 +1197,8 @@
 		};
 		3E88BD2E1B1F3E8400232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = "project-debug.xcconfig";
 			buildSettings = {
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -1223,7 +1206,8 @@
 		};
 		3E88BD2F1B1F3E8400232589 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = project.xcconfig;
 			buildSettings = {
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
@@ -1254,7 +1238,8 @@
 		};
 		3E88BD501B1F3EA300232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = "ios-test-target.xcconfig";
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1267,7 +1252,8 @@
 		};
 		3E88BD511B1F3EA300232589 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */;
+			baseConfigurationReferenceAnchor = 590E68902D08C10800E5B498 /* zmc-config */;
+			baseConfigurationReferenceRelativePath = "ios-test-target.xcconfig";
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
