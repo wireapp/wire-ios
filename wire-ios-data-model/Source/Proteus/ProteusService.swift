@@ -187,7 +187,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusDecrypt
 
-    public enum DecryptionError: Error, Equatable {
+    public enum DecryptionError: Error {
 
         case failedToDecryptData(ProteusError)
         case failedToEstablishSessionFromMessage(ProteusError)
@@ -219,8 +219,8 @@ public final class ProteusService: ProteusServiceInterface {
                         sessionId: id.rawValue,
                         ciphertext: data
                     )
-                } catch {
-                    throw DecryptionError.failedToDecryptData($0.lastProteusError)
+                } catch let CoreCryptoError.Proteus(error) {
+                    throw DecryptionError.failedToDecryptData(error)
                 }
             }
 
@@ -235,8 +235,8 @@ public final class ProteusService: ProteusServiceInterface {
                         sessionId: id.rawValue,
                         envelope: data
                     )
-                } catch {
-                    throw DecryptionError.failedToEstablishSessionFromMessage($0.lastProteusError)
+                } catch let CoreCryptoError.Proteus(error) {
+                    throw DecryptionError.failedToEstablishSessionFromMessage(error)
                 }
             }
 
@@ -355,16 +355,4 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
-}
-
-private extension CoreCryptoProtocol {
-
-    var lastProteusError: ProteusError {
-        guard let proteusCode = proteusLastErrorCode() else {
-            return .unknown
-        }
-
-        return ProteusError(proteusCode: proteusCode)
-    }
-
 }

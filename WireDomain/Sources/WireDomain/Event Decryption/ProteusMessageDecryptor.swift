@@ -40,8 +40,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     let proteusService: any ProteusServiceInterface
     let managedObjectContext: NSManagedObjectContext
 
-    private let maxCiphertextSize = Int(12_000 * 1.5)
-
     typealias Context = (
         selfClient: WireDataModel.UserClient,
         senderUser: WireDataModel.ZMUser,
@@ -66,11 +64,6 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         }
 
         let ciphertextData = try validateCiphertext(ciphertext)
-
-        if case let .ciphertext(externalCiphertext) = eventData.externalData {
-            try validateExternalCiphertext(externalCiphertext)
-        }
-
         let context = try await extractContext(from: eventData)
 
         let (didCreateSession, plaintextData) = try await proteusService.decrypt(
@@ -95,23 +88,11 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             throw ProteusMessageDecryptorError.senderFailedToEncrypt
         }
 
-        guard
-            ciphertext.count <= maxCiphertextSize,
-            let ciphertextData = Data(base64Encoded: ciphertext)
-        else {
-            throw ProteusError.decodeError
+        guard let ciphertextData = Data(base64Encoded: ciphertext) else {
+            throw ProteusMessageDecryptorError.invalidCiphertext
         }
 
         return ciphertextData
-    }
-
-    private func validateExternalCiphertext(_ ciphertext: String) throws {
-        // External messages aren't encrypted via Proteus, instead they are symmetrically
-        // encrypted with a key that is E2EE via Proteus. Decryption of external messages
-        // happens during event processing, here we just want to validate it.
-        guard ciphertext.count <= maxCiphertextSize else {
-            throw ProteusError.decodeError
-        }
     }
 
     private func extractContext(
