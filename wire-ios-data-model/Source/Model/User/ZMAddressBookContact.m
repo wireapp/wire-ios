@@ -26,6 +26,7 @@
     self = [super init];
     if (self) {
         self.emailAddresses = @[];
+        self.phoneNumbers = @[];
     }
     return self;
 }
@@ -54,21 +55,25 @@
         return self.nickname;
     } else if (self.emailAddresses.count > 0) {
         return self.emailAddresses.firstObject;
+    } else if (self.phoneNumbers.count > 0) {
+        return self.phoneNumbers.firstObject;
     }
     return @"";
 }
 
 - (NSString *)description;
 {
-    return [NSString stringWithFormat:@"<%@: %p> email: {%@}",
+    return [NSString stringWithFormat:@"<%@: %p> email: {%@}, phone: {%@}",
             self.class, self,
-            [self.emailAddresses componentsJoinedByString:@"; "]];
+            [self.emailAddresses componentsJoinedByString:@"; "],
+            [self.phoneNumbers componentsJoinedByString:@"; "]];
 }
 
 - (NSArray *)contactDetails
 {
     NSMutableArray *details = [NSMutableArray array];
     [details addObjectsFromArray:self.emailAddresses];
+    [details addObjectsFromArray:self.phoneNumbers];
     return details;
 }
 
@@ -82,11 +87,12 @@
 
 - (BOOL)isEqualToAddressBookContact:(ZMAddressBookContact *)addressBookContact {
     return [self.emailAddresses isEqualToArray:addressBookContact.emailAddresses]
+    && [self.phoneNumbers isEqualToArray:addressBookContact.phoneNumbers]
     && [self.name isEqualToString:addressBookContact.name];
 }
 
 - (NSUInteger)hash {
-    return self.emailAddresses.hash ^ self.name.hash;
+    return self.emailAddresses.hash ^ self.phoneNumbers.hash ^ self.name.hash;
 }
 
 @end

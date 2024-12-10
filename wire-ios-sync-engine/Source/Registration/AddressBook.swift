@@ -18,9 +18,10 @@
 
 import Foundation
 import Contacts
+import libPhoneNumberiOS
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
-/// without a valid email
+/// without a valid email or phone
 protocol AddressBookAccessor {
 
     /// Number of contacts in the address book
@@ -33,6 +34,9 @@ protocol AddressBookAccessor {
     /// Returns contacts matching search query
     func rawContacts(matchingQuery: String) -> [ContactRecord]
 
+    /// Normalization function for phone numbers
+    var phoneNumberNormalizer: AddressBook.Normalizer { get }
+
     /// Gets a specific address book user by the local address book indentifier
     func contact(identifier: String) -> ContactRecord?
 }
@@ -40,21 +44,21 @@ protocol AddressBookAccessor {
 extension AddressBookAccessor {
 
     /// Enumerates the contacts, normalized and validated, invoking the block for each contact.
-    /// Non valid contacts (no email) will be excluded from the enumeration.
+    /// Non valid contacts (no email nor phone) will be excluded from the enumeration.
     /// If the block returns false, it will stop enumerating them.
     func enumerateValidContacts(block: @escaping (ZMAddressBookContact) -> (Bool)) {
         self.enumerateRawContacts {
-            guard let parsed = ZMAddressBookContact(contact: $0) else {
+            guard let parsed = ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) else {
                 return true
             }
             return block(parsed)
         }
     }
 
-    /// Returns valid contacts matching the search query, with normalized email
+    /// Returns valid contacts matching the search query, with normalized email and phone numbers
     func contacts(matchingQuery: String) -> [ZMAddressBookContact] {
         return self.rawContacts(matchingQuery: matchingQuery)
-            .compactMap { ZMAddressBookContact(contact: $0) }
+            .compactMap { ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) }
     }
 
     /// Encodes an arbitraty part the address book asynchronously. Will invoke the completion handler when done.
@@ -97,8 +101,10 @@ extension AddressBookAccessor {
     fileprivate func generateContactCards(range: Range<UInt>) -> [String: [String]] {
         var cards = [String: [String]]()
 
-        self.contacts(range: range).enumerated().forEach { offset, contact in
-            cards[contact.localIdentifier ?? "\(offset)"] = contact.emailAddresses.map { $0.base64EncodedSHADigest }
+        self.contacts(range: range).enumerated().forEach {
+            let contact = $0.element
+            cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
+                + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
         }
         return cards
     }
@@ -137,9 +143,16 @@ extension AddressBookAccessor {
     }
 }
 
-// TODO: remove AddressBook framework support
 /// Common base class between iOS 8 (AddressBook framework) and iOS 9+ (Contacts framework)
 class AddressBook {
+
+    /// normalizer for phone numbers
+    let phoneNumberNormalizer: AddressBook.Normalizer
+
+    init() {
+        let libPhoneNumber = NBPhoneNumberUtil.sharedInstance()
+        self.phoneNumberNormalizer = { libPhoneNumber?.normalize(phoneNumber: $0)?.validatedPhoneNumber }
+    }
 
     typealias Normalizer = (String) -> (String?)
     typealias AccessCheck = () -> (Bool)
@@ -178,9 +191,53 @@ struct EncodedAddressBookChunk {
     let includedContacts: CountableRange<UInt>
 }
 
-// MARK: - Email validation
+// MARK: - Phone number and email normalization
+extension NBPhoneNumberUtil {
+
+    /// Returns a normalized version of the phone number, or nil
+    /// if the phone number was not normalizable.
+    /// - note: numbers starting with "+0", a prefix that is not
+    /// assigned to any real number, are considered test numbers
+    /// used for QA automation and will always be accepted, without being
+    /// normalized through the normalization library but just sanitized
+    /// from any non-numberic character
+    fileprivate func normalize(phoneNumber: String) -> String? {
+        let testingNumberPrefix = "+0"
+        guard !phoneNumber.hasPrefix(testingNumberPrefix) else {
+            return phoneNumber.validatedPhoneNumber
+        }
+
+        guard let parsedNumber = try? self.parse(withPhoneCarrierRegion: phoneNumber) else {
+            return nil
+        }
+        guard let normalizedNumber = try? self.format(parsedNumber, numberFormat: .E164) else {
+            return nil
+        }
+        return normalizedNumber
+    }
+
+}
 
 extension String {
+
+    /// Returns a normalized phone number or nil
+    var validatedPhoneNumber: String? {
+
+        // allow +0 numbers
+        if self.hasPrefix("+0") {
+            return "+" + (self
+                .components(separatedBy: CharacterSet.decimalDigits.inverted)
+                .joined(separator: "")) // remove all non-digit
+        }
+
+        var number: Any? = self as Any?
+        do {
+            try ZMPhoneNumberValidator.validateValue(&number)
+            return number as? String
+        } catch {
+            return nil
+        }
+    }
 
     /// Returns a normalized email or nil
     var validatedEmail: String? {
@@ -202,8 +259,9 @@ extension String {
 
     /// Returns the base64 encoded string of the SHA hash of the string
     var base64EncodedSHADigest: String {
-        Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
+        return Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
     }
+
 }
 
 /// Private AB processing queue
@@ -240,6 +298,7 @@ extension Sequence {
 protocol ContactRecord {
 
     var rawEmails: [String] { get }
+    var rawPhoneNumbers: [String] { get }
     var firstName: String { get }
     var lastName: String { get }
     var middleName: String { get }
@@ -260,7 +319,8 @@ extension ContactRecord {
 
 extension ZMAddressBookContact {
 
-    convenience init?(contact: ContactRecord) {
+    convenience init?(contact: ContactRecord,
+                      phoneNumberNormalizer: AddressBook.Normalizer) {
         self.init()
 
         // names
@@ -270,10 +330,12 @@ extension ZMAddressBookContact {
         self.nickname = contact.nickname
         self.organization = contact.organization
         self.emailAddresses = contact.rawEmails.compactMap { $0.validatedEmail }
+        self.rawPhoneNumbers = contact.rawPhoneNumbers
+        self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
         self.localIdentifier = contact.localIdentifier
 
-        // ignore contacts with no email
-        guard self.emailAddresses.count > 0 else {
+        // ignore contacts with no email nor phones
+        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
             return nil
         }
     }

@@ -25,6 +25,9 @@ import WireSyncEngine
  */
 
 enum AuthenticationCredentialsType {
+    /// Register by phone.
+    case phone
+
     /// Register by email.
     case email
 }

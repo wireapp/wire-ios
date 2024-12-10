@@ -18,13 +18,15 @@
 
 import Foundation
 
-/// The representation of a user that is going through the registration process.
-///
-/// Typically, you create this object once you start the registration flow and start asking
-/// for credentails and metadata. You set the values to the properties of this class
-/// as the user provides them to the app.
-///
-/// You then use it to register the user with the backend.
+/**
+ * The representation of a user that is going through the registration process.
+ *
+ * Typically, you create this object once you start the registration flow and start asking
+ * for credentails and metadata. You set the values to the properties of this class
+ * as the user provides them to the app.
+ *
+ * You then use it to register the user with the backend.
+ */
 
 public class UnregisteredUser {
 
@@ -36,7 +38,9 @@ public class UnregisteredUser {
     public var marketingConsent: Bool?
     public var password: String?
 
-    /// Creates an empty unregistered user.
+    /**
+     * Creates an empty unregistered user.
+     */
 
     public init() {}
 
@@ -55,7 +59,12 @@ public class UnregisteredUser {
 
     /// Whether the user needs a password.
     public var needsPassword: Bool {
-        return password == nil
+        switch credentials {
+        case .phone?:
+            return false
+        default:
+            return password == nil
+        }
     }
 
 }
@@ -93,6 +102,11 @@ extension UnregisteredUser {
     /// Returns whether the specified password can be used to register the user.
     public static func normalizedPassword(_ password: String) -> NormalizationResult<String> {
         return normalizedString(password, using: ZMUser.normalizePassword)
+    }
+
+    /// Returns whether the specified phone number can be used to register the user.
+    public static func normalizedPhoneNumber(_ phoneNumber: String) -> NormalizationResult<String> {
+        return normalizedString(phoneNumber, using: ZMUser.normalizePhoneNumber)
     }
 
     /// Returns whether the specified verification code can be used to register the user.

@@ -34,5 +34,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
          verificationResendRequest:(ZMSingleRequestSync *)verificationResendRequest NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic) ZMTimedSingleRequestSync *timedDownstreamSync;
+@property (nonatomic) ZMSingleRequestSync *loginWithPhoneNumberSync;
 
 @end
