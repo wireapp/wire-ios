@@ -120,7 +120,6 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
-      SHA256: $(echo -n ${{ github.sha }} | sha256sum | awk '{print $1}')
       
     steps:
       - name: Add Masks

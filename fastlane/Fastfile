@@ -575,9 +575,9 @@ platform :ios do
             app_name = build.app_center_app_name
         end
 
-        
-        sh "echo SHA of IPA is:"
-        sh "shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true"
+        sh "SHA256=$(shasum -a 256 ../#{build.artifact_path(with_filename: true)}.ipa || true)"
+        sh "echo SHA of IPA is: #{SHA256}"
+        sh "echo SHA256=$SHA256 >> #{ENV['GITHUB_ENV']}"
 
         appcenter_upload(
           api_token: ENV["APPCENTER_API_TOKEN"],
