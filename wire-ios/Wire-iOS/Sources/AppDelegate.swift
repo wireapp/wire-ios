@@ -22,9 +22,9 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
+import WireCountly
 import WireLogging
 import WireSyncEngine
-import WireCountly
 
 enum ApplicationLaunchType {
     case unknown

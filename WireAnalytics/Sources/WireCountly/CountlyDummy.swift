@@ -31,5 +31,5 @@ public struct CountlyDummy: CountlyAbstraction {
     public func changeDeviceID(_ id: String, mergeData: Bool) {}
     public func beginSession() {}
     public func endSession() {}
-    public func recordEvent(_ key: String, segmentation: [String : String]?) {}
+    public func recordEvent(_ key: String, segmentation: [String: String]?) {}
 }

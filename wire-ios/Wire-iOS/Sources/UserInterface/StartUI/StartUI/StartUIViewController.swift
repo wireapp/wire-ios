@@ -265,7 +265,8 @@ final class StartUIViewController: UIViewController {
         } else {
             navigationController?.pushViewController(
                 ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed),
-                animated: true)
+                animated: true
+            )
         }
     }
 
