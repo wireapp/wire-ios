@@ -9078,7 +9078,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "alias periphery=/opt/homebrew/bin/periphery\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --config ../.periphery.yml \\\n    --schemes AllTargetsTests \\\n    --targets AllTargetsTests \\\n    --report-exclude ../wire-ios/Wire-iOS/Generated \\\n    -- -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.4'\n";
+			shellScript = "alias periphery=/opt/homebrew/bin/periphery\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --config ../.periphery.yml \\\n    --schemes AllTargetsTests \\\n    --targets AllTargetsTests \\\n    --report-exclude ../wire-ios/Wire-iOS/Generated \\\n    -- -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.5'\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
