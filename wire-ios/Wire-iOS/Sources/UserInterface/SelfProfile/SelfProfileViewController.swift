@@ -43,6 +43,8 @@ final class SelfProfileViewController: UIViewController {
     private let settingsController: SettingsTableViewController
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
+    private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
+    private var profileLayoutGuideBannerTopConstraint = NSLayoutConstraint()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
     private var teamMigrationBanner: UIViewController?
@@ -196,8 +198,11 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
 
+        profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+
         if let teamMigrationBanner {
             teamMigrationBanner.view.translatesAutoresizingMaskIntoConstraints = false
+            profileLayoutGuideBannerTopConstraint = profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
             NSLayoutConstraint.activate([
 
                 // teamMigrationBanner
@@ -207,12 +212,10 @@ final class SelfProfileViewController: UIViewController {
                     constant: 20
                 ),
                 teamMigrationBanner.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-
-                profileLayoutGuide.topAnchor.constraint(equalTo: teamMigrationBanner.view.bottomAnchor)
+                profileLayoutGuideBannerTopConstraint
             ])
-
         } else {
-            profileLayoutGuide.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+            profileLayoutGuideViewTopConstraint.isActive = true
         }
 
         NSLayoutConstraint.activate([
@@ -260,16 +263,22 @@ final class SelfProfileViewController: UIViewController {
             useCase: useCase,
             userProfileName: userName,
             actionCallback: { [weak self] action in
-                guard let self else { return }
-                switch action {
-                case .cancel:
-                    presentedViewController?.dismiss(animated: true)
-                case .completionGoToApp:
-                    dismissIndividualToTeamMigrationBanner()
-                    presentedViewController?.dismiss(animated: true)
-                case .completionGoToTeamManagement:
-                    dismissIndividualToTeamMigrationBanner()
-                    presentedViewController?.dismiss(animated: true)
+                Task { [weak self] in
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        switch action {
+                        case .cancel:
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToApp:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true)
+                        case .completionGoToTeamManagement:
+                            dismissIndividualToTeamMigrationBanner()
+                            presentedViewController?.dismiss(animated: true, completion: { [weak self] in
+                                self?.navigateToTeam()
+                            })
+                        }
+                    }
                 }
             }
         )
@@ -281,6 +290,12 @@ final class SelfProfileViewController: UIViewController {
         teamMigrationBanner?.view.removeFromSuperview()
         teamMigrationBanner?.removeFromParent()
         teamMigrationBanner = nil
+        profileLayoutGuideBannerTopConstraint.isActive = false
+        profileLayoutGuideViewTopConstraint.isActive = true
+    }
+
+    private func navigateToTeam() {
+        // TODO: [WPB-11968] navigate to team
     }
 
     @objc
