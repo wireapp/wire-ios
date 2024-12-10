@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import struct WireSystem.WireLogger
+import WireLogging
 
 protocol APIMigration {
     func perform(with session: ZMUserSession, clientID: String) async throws

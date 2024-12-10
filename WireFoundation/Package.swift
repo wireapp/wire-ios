@@ -40,7 +40,6 @@ let package = Package(
 )
 
 for target in package.targets {
-    guard target.type != .plugin else { continue }
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("FullTypedThrows"),

@@ -197,6 +197,8 @@
 		591B6E422C8B09B6009F8A7B /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		59271BED2B90D2140019B726 /* ClientRegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */; };
 		59271BF02B90D2510019B726 /* MockOTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BEE2B90D24A0019B726 /* MockOTREntity.swift */; };
+		59537D852CFF9D1600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D842CFF9D1600920B59 /* WireLogging */; };
+		59537D872CFF9DF600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D862CFF9DF600920B59 /* WireLogging */; };
 		597B70C92B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */; };
 		597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70CA2B03CC7D006C2121 /* UpdateConversationProtocolActionHandlerTests.swift */; };
 		598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D042F2C89C67E00B64D71 /* WireFoundation */; };
@@ -964,6 +966,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				598D04332C89C6CF00B64D71 /* WireFoundation in Frameworks */,
+				59537D852CFF9D1600920B59 /* WireLogging in Frameworks */,
 				591B6E3B2C8B09AA009F8A7B /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -976,6 +979,7 @@
 				CB7979052C73663B006FBA58 /* WireRequestStrategySupport.framework in Frameworks */,
 				598D04302C89C67E00B64D71 /* WireFoundation in Frameworks */,
 				598E870D2BF4E08100FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
+				59537D872CFF9DF600920B59 /* WireLogging in Frameworks */,
 				CB5120532C6FD69F000C8FEC /* WireTransportSupport.framework in Frameworks */,
 				591B6E3D2C8B09AE009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 			);
@@ -2208,6 +2212,7 @@
 			name = WireRequestStrategy;
 			packageProductDependencies = (
 				598D04322C89C6CF00B64D71 /* WireFoundation */,
+				59537D842CFF9D1600920B59 /* WireLogging */,
 			);
 			productName = WireRequestStrategy;
 			productReference = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */;
@@ -2234,6 +2239,7 @@
 			name = WireRequestStrategyTests;
 			packageProductDependencies = (
 				598D042F2C89C67E00B64D71 /* WireFoundation */,
+				59537D862CFF9DF600920B59 /* WireLogging */,
 			);
 			productName = WireRequestStrategyTests;
 			productReference = 166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */;
@@ -3217,6 +3223,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		59537D842CFF9D1600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D862CFF9DF600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
 		598D042F2C89C67E00B64D71 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
