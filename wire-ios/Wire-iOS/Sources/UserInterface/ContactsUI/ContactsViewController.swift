@@ -51,7 +51,7 @@ final class ContactsViewController: UIViewController {
     // MARK: - Life Cycle
 
     init(isFederationUsageAllowed: Bool) {
-        dataSource = ContactsDataSource(isFederationUsageAllowed: isFederationUsageAllowed)
+        self.dataSource = ContactsDataSource(isFederationUsageAllowed: isFederationUsageAllowed)
         super.init(nibName: nil, bundle: nil)
 
         dataSource.delegate = self
