@@ -25,6 +25,8 @@ public protocol FileLoggerDestination {
 
 struct SystemLogger: LoggerProtocol {
 
+    let persistQueue = DispatchQueue(label: "persistQueue")
+
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval else { return nil }

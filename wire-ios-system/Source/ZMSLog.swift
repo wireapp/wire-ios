@@ -210,7 +210,6 @@ extension ZMSLog {
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }
 
-    #warning("Parameters file and line are unused")
     static private func logEntry(
         _ entry: ZMSLogEntry,
         level: ZMLogLevel,
@@ -372,7 +371,6 @@ extension ZMSLog {
 let logQueue = DispatchQueue(label: "ZMSLog")
 
 public extension FileManager {
-
     func zipData(from url: URL?) -> Data? {
         guard
             let url,
@@ -385,6 +383,20 @@ public extension FileManager {
         tmpURL.appendPathComponent("\(UUID().uuidString).zip")
 
         SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [url.path])
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
+    }
+
+    func zipData(from urls: [URL]) -> Data? {
+        var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory(),
+                                        isDirectory: false)
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: urls.map { $0.path })
         defer {
             // clean up
             try? self.removeItem(at: tmpURL)

@@ -25,7 +25,6 @@ public class AggregatedLogger: LoggerProtocol {
         self.loggers = loggers
     }
 
-    #warning("Function 'addLogger(_:)' is unused")
     public func addLogger(_ logger: LoggerProtocol) {
         self.loggers.append(logger)
     }

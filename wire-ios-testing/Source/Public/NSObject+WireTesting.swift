@@ -18,12 +18,10 @@
 
 import Foundation
 
-public actor GenericArrayActor<T> {
-    public var items = [T]()
+@objc extension NSObject {
 
-    public init() {}
-
-    public func append(_ item: T) {
-        items.append(item)
+    public static func isEqualOrBothNil(_ object1: NSObject?, toObject object2: NSObject?) -> Bool {
+        return object1 == object2
     }
+
 }

@@ -18,10 +18,9 @@
 
 import Foundation
 import ImageIO
+@testable import WireImages
 import WireTesting
 import XCTest
-
-@testable import WireImages
 
 class NSDataMetadataTests: XCTestCase {
     func testThatItThrowsForEmptyData() {
@@ -52,6 +51,19 @@ class NSDataMetadataTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(errorReceived as! MetadataError, MetadataError.unknownFormat)
+    }
+
+    func testThatItReadsMetadataForImageTypes() {
+        // GIVEN
+        [self.data(forResource: "ceiling_rotated_1", extension: "jpg")!,
+        self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!,
+        self.data(forResource: "ceiling_rotated_3", extension: "tiff")!].forEach { data in
+            // WHEN
+            let metadata = try! data.wr_metadata()
+
+            // THEN
+            XCTAssertNotNil(metadata[String(kCGImagePropertyTIFFDictionary)])
+        }
     }
 
     func testThatGIFsAreExcludedFromMetadataRemoval() {
