@@ -166,9 +166,13 @@ extension ZMOTRMessage {
             return nil
 
         case .inCallEmoji:
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
             return nil
 
+        case .inCallHandRaise:
+            // Not supported yet, just discard. TODO: [WPB-11769] implement here
+            return nil
+            
         default:
             guard
                 conversation.shouldAdd(event: updateEvent),

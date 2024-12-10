@@ -119,6 +119,8 @@ public extension GenericMessage {
             return data
         case let .dataTransfer(data):
             return data
+        case let .inCallHandRaise(data):
+            return data
         }
     }
 
@@ -537,7 +539,15 @@ public extension Text {
         }
     }
 }
-
+extension WireProtos.InCallHandRaise {
+    init(handUp: Bool)
+    {
+        
+        self = InCallHandRaise.with {
+            $0.isHandUp = handUp
+        }
+    }
+}
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
