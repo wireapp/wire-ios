@@ -208,12 +208,23 @@ jobs:
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
+      - name: Calculate SHA256
+        id: calculate_sha256
+        run: |
+          echo "SHA256=$(echo -n ${{ github.sha }} | sha256sum | awk '{print $1}')" >> $GITHUB_ENV    
       - name: Notify on Wire if succeeded
         if: success()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: |
+            **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀
+            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
+            **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
+            **AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            **SHA256:  ${{ env.SHA256 }}
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3
