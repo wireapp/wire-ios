@@ -43,7 +43,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
         if let navigationController = viewController.navigationController {
             var viewControllers = navigationController.viewControllers
             _ = viewControllers.popLast()
-            viewControllers.append(ContactsViewController())
+            viewControllers.append(ContactsViewController(isFederationUsageAllowed: userSession.isFederationUsageAllowed))
             navigationController.setViewControllers(viewControllers, animated: true)
         } else {
             viewController.dismiss(animated: true) {
