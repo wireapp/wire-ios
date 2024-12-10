@@ -19,6 +19,8 @@
 public import Foundation
 public import WireAnalytics
 
+public typealias CountlyWrapper = CountlyDummy
+
 public struct CountlyDummy: CountlyAbstraction {
 
     public init() {}

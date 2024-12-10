@@ -5,7 +5,7 @@ import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
-let isCountlyEnabled = false // true
+let isCountlyEnabled = true // TODO: [WPB-11285] use env variable to set
 
 let package = Package(
     name: "WireAnalytics",
@@ -40,14 +40,12 @@ let package = Package(
         .target(
             name: "WireCountly",
             dependencies: countlyDependencies() + ["WireAnalytics"],
-            path: "./Sources/WireCountly",
             sources: countlyFiles()
         ),
 
         .target(
             name: "WireDatadog",
             dependencies: datadogDependencies() + ["WireLogging"],
-            path: "./Sources/WireDatadog",
             sources: datadogFiles()
         )
     ]
