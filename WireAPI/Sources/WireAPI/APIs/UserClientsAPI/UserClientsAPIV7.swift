@@ -45,7 +45,9 @@ final class UserClientsAPIV7: UserClientsAPIV6 {
     }
 }
 
-struct ListUserClientV7: Decodable, ToAPIModelConvertible {
+// SelfUserClientV7.capabilities is now a list and not nested within another object anymore.
+
+private struct ListUserClientV7: Decodable, ToAPIModelConvertible {
 
     let payload: [SelfUserClientV7]
 
@@ -60,7 +62,7 @@ struct ListUserClientV7: Decodable, ToAPIModelConvertible {
     }
 }
 
-struct SelfUserClientV7: Decodable, ToAPIModelConvertible {
+private struct SelfUserClientV7: Decodable, ToAPIModelConvertible {
 
     let id: String
     let type: UserClientType
@@ -71,7 +73,7 @@ struct SelfUserClientV7: Decodable, ToAPIModelConvertible {
     let lastActiveDate: UTCTime?
     let mlsPublicKeys: MLSPublicKeys?
     let cookie: String?
-    let capabilities: [UserClientCapability]?
+    let capabilities: [UserClientCapability]? // not of type `CapabilitiesList` anymore
 
     enum CodingKeys: String, CodingKey {
 
