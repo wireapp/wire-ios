@@ -416,15 +416,19 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
+            enable_countly_args = [
+                "COUNTLY_APP_KEY=#{build.countly_api_key}",
+            ]
+
             # DataDog values needs to go through WireCommonComponents
             enable_datadog_args = [
-            "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
-            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
+                "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
+                "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
-            xcargs += ["COUNTLY_APP_KEY=#{build.countly_api_key}"] if build.countly_enabled
+            xcargs += enable_countly_args if build.enable_countly
 
             sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
@@ -667,6 +671,7 @@ class Build
     # send to non-default external distribution list
     attr_reader :send_to_externals
     attr_reader :countly_api_key
+    attr_reader :enable_countly
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -687,6 +692,7 @@ class Build
         end
 
         @countly_api_key = options[:countly_api_key]
+        @enable_countly = ENV['ENABLE_COUNTLY'] == "true" || ENV['ENABLE_COUNTLY'] == "1"
         @send_to_externals = ENV['SEND_TO_EXTERNALS'] == "true" || ENV['SEND_TO_EXTERNALS'] == "1"
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
@@ -711,10 +717,6 @@ class Build
 
     def pr_build?
         !ENV['PR_S3_SUBFOLDER'].nil? 
-    end
-
-    def countly_enabled
-        !@countly_api_key.nil? && !@countly_api_key.empty?
     end
 
     def playground_build
