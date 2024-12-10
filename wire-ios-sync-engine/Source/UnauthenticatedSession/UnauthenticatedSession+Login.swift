@@ -22,7 +22,9 @@ extension ZMCredentials {
     var isInvalid: Bool {
         let noEmail = email?.isEmpty ?? true
         let noPassword = password?.isEmpty ?? true
-        return (noEmail || noPassword)
+        let noNumber = phoneNumber?.isEmpty ?? true
+        let noVerificationCode = phoneNumberVerificationCode?.isEmpty ?? true
+        return (noEmail || noPassword) && (noNumber || noVerificationCode)
     }
 }
 
@@ -49,6 +51,23 @@ extension UnauthenticatedSession {
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
             }
         }
+    }
+
+    /// Requires a phone verification code for login. Returns NO if the phone number was invalid
+    @objc(requestPhoneVerificationCodeForLogin:)
+    @discardableResult public func requestPhoneVerificationCodeForLogin(phoneNumber: String) -> Bool {
+        do {
+            var phoneNumber: String? = phoneNumber
+            _ = try ZMUser.validate(phoneNumber: &phoneNumber)
+        } catch {
+            return false
+        }
+
+        authenticationErrorIfNotReachable {
+            self.authenticationStatus.prepareForRequestingPhoneVerificationCode(forLogin: phoneNumber)
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
+        return true
     }
 
     /// Triggers a request for an email verification code for login. 

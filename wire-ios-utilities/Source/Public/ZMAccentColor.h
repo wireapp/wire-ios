@@ -16,8 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <WireUtilities/WireUtilities-Swift.h>
-#import "ZMAccentColor.h"
-
-int16_t const ZMAccentColorMin = ZMAccentColorStrongBlue;
-int16_t const ZMAccentColorMax = ZMAccentColorViolet;
+typedef NS_ENUM(int16_t, ZMAccentColor) {
+    ZMAccentColorUndefined = 0,
+    ZMAccentColorStrongBlue,
+    ZMAccentColorStrongLimeGreen,
+    ZMAccentColorBrightYellow,
+    ZMAccentColorVividRed,
+    ZMAccentColorBrightOrange,
+    ZMAccentColorSoftPink,
+    ZMAccentColorViolet,
+    
+    ZMAccentColorMin = ZMAccentColorStrongBlue,
+    ZMAccentColorMax = ZMAccentColorViolet,
+};

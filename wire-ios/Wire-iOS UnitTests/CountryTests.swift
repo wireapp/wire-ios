@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc(ZMAccentColor)
-public enum AccentColor: Int16, CaseIterable, Hashable {
-    case undefined
-    case strongBlue
-    case strongLimeGreen
-    case brightYellow
-    case vividRed
-    case brightOrange
-    case softPink
-    case violet
+import XCTest
+@testable import Wire
+
+final class CountryTests: XCTestCase {
+
+    func testThatCountryFromDeviceGivesCurrentCountry() {
+        // GIVEN
+        let countryFromDevice = Country.countryFromDevice!
+
+        // WHEN & THEN
+        XCTAssertEqual(countryFromDevice.iso, "us")
+    }
 }

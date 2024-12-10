@@ -17,27 +17,30 @@
 //
 
 import Foundation
-import WireUtilities
 
-/// The representation of a user that is going through the registration process.
-///
-/// Typically, you create this object once you start the registration flow and start asking
-/// for credentails and metadata. You set the values to the properties of this class
-/// as the user provides them to the app.
-///
-/// You then use it to register the user with the backend.
+/**
+ * The representation of a user that is going through the registration process.
+ *
+ * Typically, you create this object once you start the registration flow and start asking
+ * for credentails and metadata. You set the values to the properties of this class
+ * as the user provides them to the app.
+ *
+ * You then use it to register the user with the backend.
+ */
 
-public struct UnregisteredUser: Equatable {
+public class UnregisteredUser {
 
-    public var email = ""
+    public var credentials: UnverifiedCredentials?
     public var verificationCode: String?
     public var name: String?
-    public var accentColorValue: AccentColor?
+    public var accentColorValue: ZMAccentColor?
     public var acceptedTermsOfService: Bool?
     public var marketingConsent: Bool?
     public var password: String?
 
-    /// Creates an empty unregistered user.
+    /**
+     * Creates an empty unregistered user.
+     */
 
     public init() {}
 
@@ -45,7 +48,7 @@ public struct UnregisteredUser: Equatable {
     public var isComplete: Bool {
         let passwordStepFinished = needsPassword ? password != nil : true
 
-        return !email.isEmpty
+        return credentials != nil
             && verificationCode != nil
             && name != nil
             && accentColorValue != nil
@@ -56,8 +59,30 @@ public struct UnregisteredUser: Equatable {
 
     /// Whether the user needs a password.
     public var needsPassword: Bool {
-        return password == nil
+        switch credentials {
+        case .phone?:
+            return false
+        default:
+            return password == nil
+        }
     }
+
+}
+
+// MARK: - Equatable
+
+extension UnregisteredUser: Equatable {
+
+    public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
+        return lhs.credentials == rhs.credentials
+            && lhs.verificationCode == rhs.verificationCode
+            && lhs.name == rhs.name
+            && lhs.accentColorValue == rhs.accentColorValue
+            && lhs.acceptedTermsOfService == rhs.acceptedTermsOfService
+            && lhs.marketingConsent == rhs.marketingConsent
+            && lhs.password == rhs.password
+    }
+
 }
 
 // MARK: - Normalization
@@ -79,6 +104,11 @@ extension UnregisteredUser {
         return normalizedString(password, using: ZMUser.normalizePassword)
     }
 
+    /// Returns whether the specified phone number can be used to register the user.
+    public static func normalizedPhoneNumber(_ phoneNumber: String) -> NormalizationResult<String> {
+        return normalizedString(phoneNumber, using: ZMUser.normalizePhoneNumber)
+    }
+
     /// Returns whether the specified verification code can be used to register the user.
     public static func normalizedVerificationCode(_ verificationCode: String) -> NormalizationResult<String> {
         return normalizedString(verificationCode, using: ZMUser.normalizeVerificationCode)
@@ -89,4 +119,5 @@ extension UnregisteredUser {
     private static func normalizedString(_ value: String, using normalizer: (String) -> ZMPropertyNormalizationResult<NSString>) -> NormalizationResult<String> {
         return NormalizationResult(normalizer(value))
     }
+
 }

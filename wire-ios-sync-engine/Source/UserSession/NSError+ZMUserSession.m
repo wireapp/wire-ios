@@ -59,6 +59,14 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
++ (instancetype)unauthorizedErrorWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
+    }
+    return nil;
+}
+
 + (instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {
@@ -67,10 +75,34 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
++ (instancetype)invalidPhoneVerificationCodeErrorWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 404 && [[response payloadLabel] isEqualToString:@"invalid-code"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumberVerificationCode userInfo:nil];
+    }
+    return nil;
+}
+
 + (instancetype)invalidEmailVerificationCodeErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"code-authentication-failed"]) {
         return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmailVerificationCode userInfo:nil];
+    }
+    return nil;
+}
+
++ (instancetype)invalidPhoneNumberErrorWithReponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 400 && ([[response payloadLabel] isEqualToString:@"invalid-phone"] || [[response payloadLabel] isEqualToString:@"bad-request"])) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
+    }
+    return nil;
+}
+
++ (instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 409) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionPhoneNumberIsAlreadyRegistered userInfo:nil];
     }
     return nil;
 }

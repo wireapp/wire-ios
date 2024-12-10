@@ -413,7 +413,25 @@ GZIP is licensed as follow:
 
 
 
-13) Localytics under BSD license
+13) libPhoneNumber (iOS / OS X) under Apache 2.0 license
+--------------------------------------------------------
+Copyright (C) 2011 The Libphonenumber Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+14) Localytics under BSD license
 --------------------------------
 Copyright (c) 2015, Char Software, Inc. d/b/a Localytics
 All rights reserved.
@@ -439,7 +457,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-14) MTAnimation under MIT license
+15) MTAnimation under MIT license
 ---------------------------------
 Copyright (c) 2010 Mysterious Trousers, LLC (http://www.mysterioustrousers.com)
 
@@ -463,7 +481,7 @@ THE SOFTWARE.
 
 
 
-15) NSObject-ObjectMap under UA license
+16) NSObject-ObjectMap under UA license
 ---------------------------------------
 Copyright (c) 2012 The Board of Trustees of The University of Alabama
 All rights reserved.
@@ -496,7 +514,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-16) OCMock under Apache 2.0 license
+17) OCMock under Apache 2.0 license
 -----------------------------------
 Copyright (c) 2004-2016 Erik Dörnenburg
 
@@ -513,7 +531,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-17) Ono under MIT license
+18) Ono under MIT license
 -------------------------
 Copyright (c) 2014 Mattt Thompson (http://mattt.me/)
 
@@ -537,7 +555,7 @@ THE SOFTWARE.
 
 
 
-18) PINCache under Apache 2.0 license
+19) PINCache under Apache 2.0 license
 -------------------------------------
 Copyright (c) 2013 Tumblr, Inc.
 
@@ -555,7 +573,7 @@ limitations under the License.
 
 
 
-19) Protobuf-objc under Apache 2.0 license
+20) Protobuf-objc under Apache 2.0 license
 ------------------------------------------
 Copyright (c) 2008 Google Inc.
 
@@ -573,7 +591,7 @@ limitations under the License.
 
 
 
-20) PureLayout under MIT license
+21) PureLayout under MIT license
 --------------------------------
 Copyright (c) 2014-2015 Tyler Fox
 
@@ -594,7 +612,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 
 
-21) RBBAnimation under MIT license
+22) RBBAnimation under MIT license
 ----------------------------------
 Copyright (c) 2013 Robert Böhnke.
 
@@ -617,7 +635,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 
-22) SCSiriWaveformView under MIT license
+23) SCSiriWaveformView under MIT license
 ----------------------------------------
 Copyright (c) 2013 Stefan Ceriu
 
@@ -639,7 +657,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-23) SmoothLineView under MIT license
+24) SmoothLineView under MIT license
 ------------------------------------
 Copyright (c) 2013 Levi Nunnink
 
@@ -661,7 +679,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-24) TTTAttributedLabel under MIT license
+26) TTTAttributedLabel under MIT license
 ----------------------------------------
 Copyright (c) 2011 Mattt Thompson (http://mattt.me/)
 
@@ -684,7 +702,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-25) VIMObjectMapper under MIT license
+27) VIMObjectMapper under MIT license
 ----------------------------------------
 Copyright (c) 2015-2016 Vimeo (https://vimeo.com)
 
@@ -705,7 +723,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 
-26) VIMNetworking under MIT license
+28) VIMNetworking under MIT license
 -----------------------------------
 Copyright (c) 2014-2016 Vimeo (https://vimeo.com)
 
@@ -726,7 +744,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 
-27) ZipArchive under MIT license
+29) ZipArchive under MIT license
 --------------------------------
 Copyright (c) 2010-2015, Sam Soffes, http://soff.es
 
@@ -750,7 +768,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-28) GTMSessionFetcher under Apache 2.0 license
+30) GTMSessionFetcher under Apache 2.0 license
 ----------------------------------------------
 Copyright (c) Google Inc.
 
@@ -766,7 +784,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-29) Down under MIT
+31) Down under MIT
 -----------------------
 
 The MIT License (MIT)

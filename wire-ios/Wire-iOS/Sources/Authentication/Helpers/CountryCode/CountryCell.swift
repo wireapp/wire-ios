@@ -16,5 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extern int16_t const ZMAccentColorMin;
-extern int16_t const ZMAccentColorMax;
+import Foundation
+import UIKit
+
+final class CountryCell: UITableViewCell {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(for country: Country) {
+        textLabel?.text = country.displayName
+        detailTextLabel?.text = "+\(country.e164)"
+
+        accessibilityHint = L10n.Localizable.Registration.Phone.CountryCode.hint
+    }
+}

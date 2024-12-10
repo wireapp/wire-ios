@@ -23,6 +23,7 @@ extension ZMUser {
 
     @objc public var loginCredentials: LoginCredentials {
         return LoginCredentials(emailAddress: self.emailAddress,
+                                phoneNumber: self.phoneNumber,
                                 hasPassword: self.emailAddress != nil,
                                 usesCompanyLogin: self.usesCompanyLogin)
     }
@@ -40,6 +41,10 @@ extension LoginCredentials {
 
         if let emailAddress = emailAddress, !emailAddress.isEmpty {
             userInfo[ZMEmailCredentialKey] = emailAddress
+        }
+
+        if let phoneNumber = phoneNumber, !phoneNumber.isEmpty {
+            userInfo[ZMPhoneCredentialKey] = phoneNumber
         }
 
         return userInfo

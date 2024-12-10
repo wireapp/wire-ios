@@ -24,6 +24,7 @@ FOUNDATION_EXPORT double WireUtilitiesVersionNumber;
 //! Project version string for WireUtilities.
 FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 
+
 #import <WireUtilities/NSData+ZMAdditions.h>
 #import <WireUtilities/NSData+ZMSCrypto.h>
 #import <WireUtilities/NSOperationQueue+Helpers.h>
@@ -36,5 +37,6 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMMobileProvisionParser.h>
 #import <WireUtilities/NSString+Normalization.h>
 #import <WireUtilities/ZMEncodedNSUUIDWithTimestamp.h>
+#import <WireUtilities/ZMAccentColor.h>
 #import <WireUtilities/ZMAtomicInteger.h>
 #import <WireUtilities/ZMObjectValidationError.h>
