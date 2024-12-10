@@ -205,9 +205,7 @@
 		54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionTests.m; sourceTree = "<group>"; };
 		54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionUsersTests.m; sourceTree = "<group>"; };
 		54C902331B7532DD007162A8 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		54C902371B7532DD007162A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54C9023E1B7532DD007162A8 /* WireMockTransportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireMockTransportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		54C902441B7532DD007162A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54C902511B7532F6007162A8 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54C902541B7532F6007162A8 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		54C902551B7532F6007162A8 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -468,7 +466,6 @@
 			children = (
 				545AFFB81CB695040054B665 /* medium.jpg */,
 				545AFFB91CB695040054B665 /* tiny.jpg */,
-				54C902441B7532DD007162A8 /* Info.plist */,
 				541797631CE1F86500C7646D /* Bridging-Header.h */,
 			);
 			path = Resources;
@@ -559,7 +556,6 @@
 				54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */,
 				54664D331CBEB9FA00527CDA /* medium.jpg */,
 				54664D341CBEB9FA00527CDA /* tiny.jpg */,
-				54C902371B7532DD007162A8 /* Info.plist */,
 				54C902501B7532F6007162A8 /* Configurations */,
 			);
 			path = Resources;
@@ -1049,7 +1045,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1061,7 +1057,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -1072,7 +1068,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Tests/Resources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";
@@ -1084,7 +1080,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = Tests/Resources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Bridging-Header.h";

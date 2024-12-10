@@ -86,9 +86,7 @@
 		DB772FB51B67D3AC0037CCAA /* Ziph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ziph.swift; sourceTree = "<group>"; };
 		DBCFF4F91B6A93150019AEDC /* ZiphyPaginationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyPaginationController.swift; sourceTree = "<group>"; };
 		DBF380591B15C0B800369FB7 /* Ziphy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Ziphy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBF3805D1B15C0B800369FB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF380641B15C0B800369FB7 /* ZiphyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZiphyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBF3806A1B15C0B800369FB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF380751B15C2D700369FB7 /* ZiphyClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyClient.swift; sourceTree = "<group>"; };
 		DBF3807A1B15D32C00369FB7 /* ZiphyAnimatedImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyAnimatedImage.swift; sourceTree = "<group>"; };
 		EE9AEC992BD159F700F7853F /* Ziphy.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Ziphy.docc; sourceTree = "<group>"; };
@@ -262,7 +260,6 @@
 		DBF3805C1B15C0B800369FB7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DBF3805D1B15C0B800369FB7 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -287,7 +284,6 @@
 		DBF380691B15C0B800369FB7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DBF3806A1B15C0B800369FB7 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -572,7 +568,7 @@
 				);
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wearezeta.$(PRODUCT_NAME:rfc1034identifier)";
@@ -591,7 +587,7 @@
 				);
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wearezeta.$(PRODUCT_NAME:rfc1034identifier)";
@@ -612,7 +608,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = ziphyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wearezeta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -626,7 +622,7 @@
 					x86_64,
 					arm64,
 				);
-				INFOPLIST_FILE = ziphyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wearezeta.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";

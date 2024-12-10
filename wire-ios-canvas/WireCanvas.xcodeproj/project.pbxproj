@@ -28,7 +28,6 @@
 /* Begin PBXFileReference section */
 		01E944602D01805B006921E4 /* WireCanvasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCanvasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		165EA0C31DB67C3B008ECC60 /* WireCanvas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCanvas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		165EA0C71DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		165EA0DD1DB67C6C008ECC60 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Trimmed.swift"; sourceTree = "<group>"; };
 		16CB8A301DBA5B7300B5BC47 /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
@@ -101,7 +100,6 @@
 				16CB8A301DBA5B7300B5BC47 /* Stroke.swift */,
 				16CB8A321DBA5BB800B5BC47 /* Image.swift */,
 				1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */,
-				165EA0C71DB67C3B008ECC60 /* Info.plist */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -448,7 +446,7 @@
 					x86_64,
 					arm64,
 				);
-				INFOPLIST_FILE = Sources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
@@ -463,7 +461,7 @@
 					x86_64,
 					arm64,
 				);
-				INFOPLIST_FILE = Sources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;
 			};

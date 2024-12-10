@@ -240,8 +240,6 @@
 		22D0F91B29027191004E2882 /* ProxySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySettings.swift; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3E88BD211B1F383000232589 /* WireTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Info.plist"; sourceTree = "<group>"; };
-		3E88BD221B1F383000232589 /* WireTransport-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Test-Info.plist"; sourceTree = "<group>"; };
 		542434AA1BEA5C2400D33ACB /* WireTransport-ios-tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTransport-ios-tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestLoopDetection.swift; sourceTree = "<group>"; };
 		5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestLoopDetectionTests.swift; sourceTree = "<group>"; };
@@ -519,8 +517,6 @@
 			isa = PBXGroup;
 			children = (
 				09F027D61B721EBE00BADDB6 /* Configurations */,
-				3E88BD211B1F383000232589 /* WireTransport-Info.plist */,
-				3E88BD221B1F383000232589 /* WireTransport-Test-Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1369,7 +1365,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1381,7 +1377,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SKIP_INSTALL = YES;
@@ -1392,7 +1388,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Resources/WireTransport-Test-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
@@ -1405,7 +1401,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120C1B751F7900223568 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Resources/WireTransport-Test-Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";

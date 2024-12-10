@@ -297,7 +297,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -314,7 +314,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTING_SEARCH_PATHS = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -327,7 +327,7 @@
 			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/test-target.xcconfig";
 			buildSettings = {
-				INFOPLIST_FILE = "Tests/Resources/WireTesting-test-iOS.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";
@@ -340,7 +340,7 @@
 			baseConfigurationReferenceAnchor = 590E56142D08B15800E5B498 /* Resources */;
 			baseConfigurationReferenceRelativePath = "Configurations/zmc-config/test-target.xcconfig";
 			buildSettings = {
-				INFOPLIST_FILE = "Tests/Resources/WireTesting-test-iOS.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";

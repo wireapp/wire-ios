@@ -807,7 +807,6 @@
 		F9A706C91CAEE01D00C2F5FE /* ZMUpdateEvent+WireDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A7064F1CAEE01D00C2F5FE /* ZMUpdateEvent+WireDataModel.m */; };
 		F9A706F61CAEE31800C2F5FE /* 1900x1500.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9A706CA1CAEE30700C2F5FE /* 1900x1500.jpg */; };
 		F9A706F71CAEE31C00C2F5FE /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = F9A706CB1CAEE30700C2F5FE /* animated.gif */; };
-		F9A706F81CAEE32400C2F5FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F9A706CD1CAEE30700C2F5FE /* InfoPlist.strings */; };
 		F9A706F91CAEE32A00C2F5FE /* EncryptedBase64EncondedExternalMessageTestFixture.txt in Resources */ = {isa = PBXBuildFile; fileRef = F9A706CF1CAEE30700C2F5FE /* EncryptedBase64EncondedExternalMessageTestFixture.txt */; };
 		F9A706FA1CAEE32A00C2F5FE /* ExternalMessageTextFixture.txt in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D01CAEE30700C2F5FE /* ExternalMessageTextFixture.txt */; };
 		F9A706FC1CAEE32A00C2F5FE /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D21CAEE30700C2F5FE /* Lorem Ipsum.txt */; };
@@ -1758,10 +1757,8 @@
 		F9A7064F1CAEE01D00C2F5FE /* ZMUpdateEvent+WireDataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ZMUpdateEvent+WireDataModel.m"; sourceTree = "<group>"; };
 		F9A706CA1CAEE30700C2F5FE /* 1900x1500.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 1900x1500.jpg; path = Tests/Resources/1900x1500.jpg; sourceTree = SOURCE_ROOT; };
 		F9A706CB1CAEE30700C2F5FE /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = animated.gif; path = Tests/Resources/animated.gif; sourceTree = SOURCE_ROOT; };
-		F9A706CE1CAEE30700C2F5FE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
 		F9A706CF1CAEE30700C2F5FE /* EncryptedBase64EncondedExternalMessageTestFixture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EncryptedBase64EncondedExternalMessageTestFixture.txt; path = Tests/Resources/EncryptedBase64EncondedExternalMessageTestFixture.txt; sourceTree = SOURCE_ROOT; };
 		F9A706D01CAEE30700C2F5FE /* ExternalMessageTextFixture.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ExternalMessageTextFixture.txt; path = Tests/Resources/ExternalMessageTextFixture.txt; sourceTree = SOURCE_ROOT; };
-		F9A706D11CAEE30700C2F5FE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/Resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		F9A706D21CAEE30700C2F5FE /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "Lorem Ipsum.txt"; path = "Tests/Resources/Lorem Ipsum.txt"; sourceTree = SOURCE_ROOT; };
 		F9A706D31CAEE30700C2F5FE /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = medium.jpg; path = Tests/Resources/medium.jpg; sourceTree = SOURCE_ROOT; };
 		F9A706D41CAEE30700C2F5FE /* not_animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = not_animated.gif; path = Tests/Resources/not_animated.gif; sourceTree = SOURCE_ROOT; };
@@ -1827,7 +1824,6 @@
 		F9C8770A1E015AAF00792613 /* AssetColletionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetColletionTests.swift; sourceTree = "<group>"; };
 		F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9C9A5061CAD5DF10039E10C /* WireDataModelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireDataModelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F9C9A5DC1CAD76A50039E10C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		F9C9A60C1CAD76A50039E10C /* WireDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireDataModel.h; sourceTree = "<group>"; };
 		F9C9A66E1CAD77930039E10C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		F9C9A6791CAD7A790039E10C /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -3174,15 +3170,6 @@
 			path = Utilis;
 			sourceTree = "<group>";
 		};
-		F9A706CC1CAEE30700C2F5FE /* en.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				F9A706CD1CAEE30700C2F5FE /* InfoPlist.strings */,
-			);
-			name = en.lproj;
-			path = Tests/Resources/en.lproj;
-			sourceTree = SOURCE_ROOT;
-		};
 		F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */ = {
 			isa = PBXGroup;
 			children = (
@@ -3588,7 +3575,6 @@
 				017962AB2B853C8600D6C7B6 /* Databases Changelog.md */,
 				0158DF1A2C594B1600C7BFFD /* ZMEventModel.xcdatamodeld */,
 				E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */,
-				F9C9A5DC1CAD76A50039E10C /* Info.plist */,
 				F9C9A6781CAD7A790039E10C /* Configurations */,
 			);
 			path = Resources;
@@ -3728,10 +3714,8 @@
 				5495BC421E019F1B004253ED /* audio.m4a */,
 				F9A706CA1CAEE30700C2F5FE /* 1900x1500.jpg */,
 				F9A706CB1CAEE30700C2F5FE /* animated.gif */,
-				F9A706CC1CAEE30700C2F5FE /* en.lproj */,
 				F9A706CF1CAEE30700C2F5FE /* EncryptedBase64EncondedExternalMessageTestFixture.txt */,
 				F9A706D01CAEE30700C2F5FE /* ExternalMessageTextFixture.txt */,
-				F9A706D11CAEE30700C2F5FE /* Info.plist */,
 				F9A706D21CAEE30700C2F5FE /* Lorem Ipsum.txt */,
 				F9A706D31CAEE30700C2F5FE /* medium.jpg */,
 				F9A706D41CAEE30700C2F5FE /* not_animated.gif */,
@@ -3991,7 +3975,6 @@
 				16500C0325E3A7F80021B3AE /* store2-90-0.wiredatabase in Resources */,
 				E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */,
 				EE980FB22834EB3A00CC6B9F /* store2-100-0.wiredatabase in Resources */,
-				F9A706F81CAEE32400C2F5FE /* InfoPlist.strings in Resources */,
 				0612D241243DC134008811A7 /* store2-81-0.wiredatabase in Resources */,
 				0630E4C1257FC41400C75BFB /* store2-88-0.wiredatabase in Resources */,
 				16EFC3B02BAB8B910046C1D7 /* store2-115-0.wiredatabase in Resources */,
@@ -4864,17 +4847,6 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		F9A706CD1CAEE30700C2F5FE /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F9A706CE1CAEE30700C2F5FE /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		59D1C3082B1DE6FF0016F6B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5068,7 +5040,7 @@
 					x86_64,
 					arm64,
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModel;
@@ -5080,7 +5052,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A6891CAD7A790039E10C /* WireDataModel.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModel;
@@ -5093,7 +5065,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A67D1CAD7A790039E10C /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
@@ -5105,7 +5077,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F9C9A67D1CAD7A790039E10C /* ios-test-target.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "$(SRCROOT)/Tests/Resources/Info.plist";
+				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
