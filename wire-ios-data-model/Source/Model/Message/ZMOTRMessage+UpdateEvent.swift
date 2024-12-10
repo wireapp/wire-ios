@@ -172,7 +172,7 @@ extension ZMOTRMessage {
         case .inCallHandRaise:
             // Not supported yet, just discard. TODO: [WPB-11769] implement here
             return nil
-            
+
         default:
             guard
                 conversation.shouldAdd(event: updateEvent),

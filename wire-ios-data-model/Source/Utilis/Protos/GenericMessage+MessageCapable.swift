@@ -146,7 +146,6 @@ extension InCallHandRaise: MessageCapable {
     }
 }
 
-
 extension WireProtos.MessageEdit: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.edited = self

@@ -539,15 +539,16 @@ public extension Text {
         }
     }
 }
+
 extension WireProtos.InCallHandRaise {
-    init(handUp: Bool)
-    {
-        
+    init(handUp: Bool) {
+
         self = InCallHandRaise.with {
             $0.isHandUp = handUp
         }
     }
 }
+
 // MARK: - Reaction
 
 extension WireProtos.Reaction {

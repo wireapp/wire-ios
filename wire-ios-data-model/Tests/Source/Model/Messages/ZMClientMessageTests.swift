@@ -122,7 +122,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         // then
         XCTAssertNil(sut)
     }
-    
+
     // TODO: [WPB-11769] Delete this when we add support for call hand raise.
     func testThatItIgnoresInCallHandRaiseMessages() throws {
         // given
