@@ -15,6 +15,7 @@ jobs:
   # This job will tell us which frameworks have source code changes.
   # We'll use the results to run tests only for changed frameworks.
   detect-changes:
+    name: Detect PR Changes
     if: >
       github.event.action != 'edited' || (
         github.event.changes.title == null &&
@@ -90,6 +91,7 @@ jobs:
 
   trigger_tests_pr:
     needs: detect-changes
+    name: PR Tests
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
