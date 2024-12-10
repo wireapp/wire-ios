@@ -181,7 +181,7 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         XCTAssertEqual(receivedNotifications.count, 0)
     }
 
-    func testThatItSendsOutANotificationAgainWhenAUserTimesOutInARow() throws {
+    func testThatItSendsOutANotificationAgainWhenAUserTimesOutInARow() {
         // Given
         let timeout = 0.1
         sut.timeout = timeout
@@ -202,9 +202,10 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
 
         // Then
         XCTAssertEqual(receivedNotifications.count, 1)
-        var notification = try XCTUnwrap(receivedNotifications.first)
-        XCTAssertEqual(notification.conversation.objectID, conversationA.objectID)
-        XCTAssertEqual(notification.typingUsers, Set([userBOnUi]))
+        var notification = receivedNotifications.first
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification!.conversation.objectID, conversationA.objectID)
+        XCTAssertEqual(notification!.typingUsers, Set([userBOnUi]))
 
         resetNotifications()
 
@@ -213,8 +214,10 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
 
         // Then
         XCTAssertEqual(receivedNotifications.count, 1)
-        notification = try XCTUnwrap(receivedNotifications.first)
-        XCTAssertEqual(notification.conversation.objectID, conversationA.objectID)
-        XCTAssertEqual(notification.typingUsers, Set())
+        notification = receivedNotifications.first
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification!.conversation.objectID, conversationA.objectID)
+        XCTAssertEqual(notification!.typingUsers, Set())
     }
+
 }
