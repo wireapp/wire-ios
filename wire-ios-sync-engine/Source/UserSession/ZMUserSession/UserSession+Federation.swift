@@ -16,6 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserPropertiesAPIV7: UserPropertiesAPIV6 {
-    override var apiVersion: APIVersion { .v7 }
+public extension UserSession {
+
+    var defaultProtocol: MessageProtocol {
+        guard mlsFeature.isEnabled else {
+            return .proteus
+        }
+        switch mlsFeature.config.defaultProtocol {
+        case .proteus, .mixed:
+            return .proteus
+        case .mls:
+            return .mls
+        }
+    }
+
+    var isFederationUsageAllowed: Bool {
+        guard BackendInfo.isMLSEnabled else {
+            // If there is no MLS removal key configured,federation search is allowed.
+            return true
+        }
+        return defaultProtocol != .proteus
+    }
+
 }

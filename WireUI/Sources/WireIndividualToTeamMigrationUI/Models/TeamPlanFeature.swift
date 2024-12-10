@@ -28,12 +28,15 @@ public struct TeamPlanFeature: Hashable, Identifiable, Sendable {
     }
 }
 
-extension Array where Element == TeamPlanFeature {
+extension [TeamPlanFeature] {
     static var features: [TeamPlanFeature] {
         [
             .init(
                 id: "console",
-                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.adminConsole", bundle: .module)
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.adminConsole",
+                    bundle: .module
+                )
             ),
             .init(
                 id: "collaboration",
@@ -52,7 +55,10 @@ extension Array where Element == TeamPlanFeature {
             ),
             .init(
                 id: "enterprise",
-                description: .localizedMarkdown(key: "individualToTeam.planSelection.feature.enterprise", bundle: .module)
+                description: .localizedMarkdown(
+                    key: "individualToTeam.planSelection.feature.enterprise",
+                    bundle: .module
+                )
             )
         ]
     }

@@ -34,13 +34,15 @@ final class ContactsDataSource: NSObject {
 
     weak var delegate: ContactsDataSourceDelegate?
 
+    private let isFederationUsageAllowed: Bool
     private(set) var searchDirectory: SearchDirectory?
     private var sections = [[UserType]]()
     private var collation: UILocalizedIndexedCollation { .current() }
 
     // MARK: - Life Cycle
 
-    override init() {
+    init(isFederationUsageAllowed: Bool) {
+        self.isFederationUsageAllowed = isFederationUsageAllowed
         super.init()
         self.searchDirectory = ZMUserSession.shared().map(SearchDirectory.init)
         performSearch()
@@ -73,7 +75,13 @@ final class ContactsDataSource: NSObject {
     private func performSearch() {
         guard let searchDirectory else { return }
 
-        let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
+        let selfUserDomain = SelfUser.provider?.providedSelfUser.domain
+        let searchDomain = isFederationUsageAllowed ? nil : selfUserDomain
+        let request = SearchRequest(
+            query: searchQuery,
+            searchDomain: searchDomain,
+            searchOptions: [.contacts, .addressBook]
+        )
         let task = searchDirectory.perform(request)
 
         task.addResultHandler { [weak self] searchResult, _ in

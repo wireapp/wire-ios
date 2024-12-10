@@ -8843,7 +8843,6 @@
 				061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
-				594904852D0709C900238104 /* XCRemoteSwiftPackageReference "countly-sdk-ios" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
